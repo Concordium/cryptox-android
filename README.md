@@ -1,7 +1,8 @@
 # <img src="app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="Icon" style="vertical-align: bottom; height: 36px;"/>  CryptoX Concordium Wallet
 
-Use the CryptoX Concordium Wallet to get started with the open-source, privacy-centric and public Concordium Blockchain. 
-The wallet enables you to create and deploy a privacy-centric digital identity, create and manage accounts on the Concordium Blockchain.
+Use CryptoX Concordium Wallet to get started with the open-source, privacy-centric and public Concordium Blockchain. 
+
+![Screenshots](https://github.com/Concordium/cryptox-android/assets/5675681/1e95cd50-bf59-4484-b59a-134ec7952d89)
 
 With CryptoX Wallet, you can: 
 - Create digital identities and your initial account via an identity provider (IDP)
