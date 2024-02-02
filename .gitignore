@@ -1,0 +1,45 @@
+# MacOS
+.DS_Store
+*/.DS_Store
+
+# Built application files
+*.apk
+*.aab
+app/release*/
+app/debug*/
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log Files
+*.log
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Android Studio captures folder
+captures/
+
+# IntelliJ
+*.iml
+.idea/
+/workspace.xml
+
+# Keys and secrets
+*.jks
+app/secret/
