@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ccx_bottom_sheet_dialog_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="@string/welcome_activate_bottom_sheet_title"
+        android:textAppearance="@style/CCX_Typography_H1"
+        android:textColor="@color/ccx_neutral_tint_7" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ccx_create_wallet_card_background"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/create_wallet_title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_activate_bottom_sheet_create_wallet_title"
+            android:textAppearance="@style/CCX_Typography_DecorativeLabel"
+            android:textColor="@color/ccx_mineral_blue_tint_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintBottom_toBottomOf="@id/create_wallet_title_text_view"
+            app:layout_constraintStart_toEndOf="@id/create_wallet_title_text_view"
+            app:layout_constraintTop_toTopOf="@id/create_wallet_title_text_view"
+            app:srcCompat="@drawable/ccx_ico_star" />
+
+        <TextView
+            android:id="@+id/create_wallet_details_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/welcome_activate_bottom_sheet_create_wallet_details"
+            android:textAppearance="@style/CCX_Typography_Body"
+            android:textColor="@color/ccx_neutral_tint_5"
+            app:layout_constraintTop_toBottomOf="@id/create_wallet_title_text_view" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/create_wallet_steps_guide"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <TextView
+            android:layout_width="12sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1sp"
+            android:layout_marginEnd="4dp"
+            android:gravity="center"
+            android:text="1"
+            android:textAppearance="@style/CCX_Typography_TabTitle"
+            android:textColor="@color/ccx_mineral_blue_tint_2"
+            app:layout_constraintBottom_toBottomOf="@id/create_wallet_step_1_text_view"
+            app:layout_constraintEnd_toStartOf="@id/create_wallet_steps_guide"
+            app:layout_constraintTop_toTopOf="@id/create_wallet_step_1_text_view"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/create_wallet_step_1_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/welcome_activate_bottom_sheet_create_wallet_step_1"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/create_wallet_steps_guide"
+            app:layout_constraintTop_toBottomOf="@id/create_wallet_details_text_view" />
+
+        <!-- -->
+        <TextView
+            android:layout_width="12sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1sp"
+            android:layout_marginEnd="4dp"
+            android:gravity="center"
+            android:text="2"
+            android:textAppearance="@style/CCX_Typography_TabTitle"
+            android:textColor="@color/ccx_mineral_blue_tint_2"
+            app:layout_constraintBottom_toBottomOf="@id/create_wallet_step_2_text_view"
+            app:layout_constraintEnd_toStartOf="@id/create_wallet_steps_guide"
+            app:layout_constraintTop_toTopOf="@id/create_wallet_step_2_text_view"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/create_wallet_step_2_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/welcome_activate_bottom_sheet_create_wallet_step_2"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/create_wallet_steps_guide"
+            app:layout_constraintTop_toBottomOf="@id/create_wallet_step_1_text_view" />
+
+        <!-- -->
+        <TextView
+            android:layout_width="12sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1sp"
+            android:layout_marginEnd="4dp"
+            android:gravity="center"
+            android:text="3"
+            android:textAppearance="@style/CCX_Typography_TabTitle"
+            android:textColor="@color/ccx_mineral_blue_tint_2"
+            app:layout_constraintBottom_toBottomOf="@id/create_wallet_step_3_text_view"
+            app:layout_constraintEnd_toStartOf="@id/create_wallet_steps_guide"
+            app:layout_constraintTop_toTopOf="@id/create_wallet_step_3_text_view"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/create_wallet_step_3_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/welcome_activate_bottom_sheet_create_wallet_step_3"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/create_wallet_steps_guide"
+            app:layout_constraintTop_toBottomOf="@id/create_wallet_step_2_text_view" />
+
+        <Button
+            android:id="@+id/create_wallet_button"
+            style="@style/CCX_Button_Primary"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#14191F"
+            android:text="@string/welcome_activate_bottom_sheet_create_wallet_button"
+            android:textColor="#ffffff"
+            app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
+            app:drawableTint="#ffffff"
+            app:layout_constraintTop_toBottomOf="@id/create_wallet_step_3_text_view" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center">
+
+        <View
+            android:layout_width="64dp"
+            android:layout_height="1dp"
+            android:background="#0D101414" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:importantForAccessibility="no"
+            app:srcCompat="@drawable/ccx_ico_lilac" />
+
+        <View
+            android:layout_width="64dp"
+            android:layout_height="1dp"
+            android:background="#0D101414" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="@string/welcome_activate_bottom_sheet_import_wallet_details"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="@color/ccx_neutral_tint_5" />
+
+    <TextView
+        android:id="@+id/import_wallet_button"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:text="@string/welcome_activate_bottom_sheet_import_wallet_button"
+        android:textAppearance="@style/CCX_Typography_Link_L"
+        android:textColor="@color/ccx_neutral_tint_7" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        app:layout_constraintStart_toStartOf="parent" />
+</LinearLayout>

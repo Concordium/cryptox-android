@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <LinearLayout
+            android:id="@+id/content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
+
+            <LinearLayout
+                android:id="@+id/transfer_filter"
+                style="@style/AccountSettingsItem">
+
+                <TextView
+                    style="@style/AccountSettingsItemTextView"
+                    android:text="@string/account_details_menu_transfer_filter" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/release_schedule"
+                style="@style/AccountSettingsItem">
+
+                <View style="@style/CryptoX_Divider_Horizontal" />
+
+                <TextView
+                    style="@style/AccountSettingsItemTextView"
+                    android:text="@string/account_details_menu_release_schedule" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/export_key"
+                style="@style/AccountSettingsItem">
+
+                <View style="@style/CryptoX_Divider_Horizontal" />
+
+                <TextView
+                    style="@style/AccountSettingsItemTextView"
+                    android:text="@string/account_details_menu_export_key" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/export_transaction_log"
+                style="@style/AccountSettingsItem">
+
+                <View style="@style/CryptoX_Divider_Horizontal" />
+
+                <TextView
+                    style="@style/AccountSettingsItemTextView"
+                    android:text="@string/account_details_menu_export_transaction_log" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/change_name"
+                style="@style/AccountSettingsItem">
+
+                <View style="@style/CryptoX_Divider_Horizontal" />
+
+                <TextView
+                    style="@style/AccountSettingsItemTextView"
+                    android:text="@string/account_details_menu_change_name" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

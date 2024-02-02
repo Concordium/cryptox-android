@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toastLayoutTopError"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.passphrase.setup.OneStepSetupWalletActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="60dp"
+        android:fadingEdge="vertical"
+        android:fillViewport="true"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/consent_check_box"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/setup_wallet_seed_phrase_title"
+                android:textAppearance="@style/CCX_Typography_H1"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/setup_wallet_seed_phrase_details"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="space_evenly">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:text="@string/setup_wallet_seed_phrase_transcribe"
+                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:drawableStartCompat="@drawable/ccx_ico_approved" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:text="@string/setup_wallet_seed_phrase_digital_copy"
+                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:drawableStartCompat="@drawable/ccx_ico_declined" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:text="@string/setup_wallet_seed_phrase_screenshot"
+                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:drawableStartCompat="@drawable/ccx_ico_declined" />
+
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/words_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/ccx_card_dark_16_background"
+                android:padding="6dp"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="center"
+                tools:layout_height="64dp">
+                <!-- Words are added programmatically -->
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <TextView
+                android:id="@+id/copy_button"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:paddingHorizontal="20dp"
+                android:text="@string/setup_wallet_seed_phrase_copy"
+                android:textAppearance="@style/CCX_Typography_Button_M"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:drawableEndCompat="@drawable/cryptox_ico_copy"
+                app:drawableTint="@color/ccx_neutral_tint_1" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/consent_check_box"
+        style="@style/CCX_CompoundButton_Checkbox"
+        android:layout_width="0dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="4dp"
+        android:paddingVertical="16dp"
+        android:text="@string/setup_wallet_seed_phrase_consent"
+        app:layout_constraintBottom_toTopOf="@id/continue_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/continue_button"
+        style="@style/CCX_Button_Primary.ArrowRight"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:text="@string/setup_wallet_continue"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

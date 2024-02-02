@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ccx_status_success">#409F71</color>
+    <color name="ccx_status_error">#D64747</color>
+    <color name="ccx_status_warning">#D69D47</color>
+
+    <color name="ccx_mineral_blue_tint_1">#B6DADF</color>
+    <color name="ccx_mineral_blue_tint_2">#2B6168</color>
+    
+    <color name="ccx_egg_shell_tint_1">#FFFDE4</color>
+    <color name="ccx_egg_shell_tint_2">#FFFCD6</color>
+    
+    <color name="ccx_neutral_tint_1">#EBF0F0</color>
+    <color name="ccx_neutral_tint_2">#CCD5D5</color>
+    <color name="ccx_neutral_tint_3">#ACB9B9</color>
+    <color name="ccx_neutral_tint_4">#7B8C8C</color>
+    <color name="ccx_neutral_tint_5">#1B2323</color>
+    <color name="ccx_neutral_tint_6">#141A1A</color>
+    <color name="ccx_neutral_tint_7">#101414</color>
+</resources>

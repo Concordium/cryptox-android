@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.welcome.WelcomeActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="60dp"
+        android:fadingEdge="vertical"
+        android:fillViewport="true"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/consent_text_view"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginHorizontal="24dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_title"
+                    android:textAppearance="@style/CCX_Typography_Display"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/point_1_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="32dp"
+                    android:maxLines="1"
+                    android:text="@string/welcome_point_1"
+                    android:textAppearance="@style/CCX_Typography_H3"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/point_1_image_view"
+                    app:layout_constraintTop_toBottomOf="@id/title_text_view" />
+
+                <TextView
+                    android:id="@+id/point_1_details_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/welcome_point_1_details"
+                    android:textAppearance="@style/CCX_Typography_Body"
+                    android:textColor="@color/ccx_neutral_tint_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/point_1_image_view"
+                    app:layout_constraintTop_toBottomOf="@id/point_1_text_view" />
+
+                <ImageView
+                    android:id="@+id/point_1_image_view"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="@id/point_1_details_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/point_1_text_view"
+                    app:srcCompat="@drawable/ccx_ico_square_shield" />
+
+                <!-- -->
+
+                <TextView
+                    android:id="@+id/point_2_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="24dp"
+                    android:maxLines="1"
+                    android:text="@string/welcome_point_2"
+                    android:textAppearance="@style/CCX_Typography_H3"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/point_2_image_view"
+                    app:layout_constraintTop_toBottomOf="@id/point_1_details_text_view" />
+
+                <TextView
+                    android:id="@+id/point_2_details_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/welcome_point_2_details"
+                    android:textAppearance="@style/CCX_Typography_Body"
+                    android:textColor="@color/ccx_neutral_tint_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/point_2_image_view"
+                    app:layout_constraintTop_toBottomOf="@id/point_2_text_view" />
+
+                <ImageView
+                    android:id="@+id/point_2_image_view"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="@id/point_2_details_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/point_2_text_view"
+                    app:srcCompat="@drawable/ccx_ico_blockchain_27" />
+
+                <!-- -->
+
+                <TextView
+                    android:id="@+id/point_3_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="24dp"
+                    android:maxLines="1"
+                    android:text="@string/welcome_point_3"
+                    android:textAppearance="@style/CCX_Typography_H3"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/point_3_image_view"
+                    app:layout_constraintTop_toBottomOf="@id/point_2_details_text_view" />
+
+                <TextView
+                    android:id="@+id/point_3_details_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/welcome_point_3_details"
+                    android:textAppearance="@style/CCX_Typography_Body"
+                    android:textColor="@color/ccx_neutral_tint_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/point_3_image_view"
+                    app:layout_constraintTop_toBottomOf="@id/point_3_text_view" />
+
+                <ImageView
+                    android:id="@+id/point_3_image_view"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="@id/point_3_details_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/point_3_text_view"
+                    app:srcCompat="@drawable/ccx_ico_blockchain_35" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/consent_check_box"
+        style="@style/CCX_CompoundButton_Checkbox"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="36dp"
+        android:paddingVertical="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/consent_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/consent_text_view" />
+
+    <TextView
+        android:id="@+id/consent_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:paddingBottom="4dp"
+        android:text="@string/welcome_consent"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="@color/ccx_neutral_tint_1"
+        android:textColorLink="@color/ccx_neutral_tint_1"
+        app:layout_constraintBottom_toTopOf="@id/get_started_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/consent_check_box">
+
+        <!-- Bottom padding is required to avoid cutting part
+       of the URL underline.
+       Separate TextView is required as clickable text
+       interferes with the checkbox-->
+
+    </TextView>
+
+    <Button
+        android:id="@+id/get_started_button"
+        style="@style/CCX_Button_Primary.ArrowRight"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:text="@string/welcome_get_started"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

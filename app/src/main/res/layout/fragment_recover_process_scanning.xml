@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/description_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/pass_phrase_recover_process_scanning"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="@color/ccx_neutral_tint_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/progress_identities_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/pass_phrase_recover_process_identities"
+        android:textAppearance="@style/CCX_Typography_Caption"
+        android:textColor="@color/ccx_neutral_tint_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description_textview" />
+
+    <ProgressBar
+        android:id="@+id/progress_identities"
+        style="@style/CryptoX_Progress_Horizontal"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_identities_text"
+        tools:progress="65"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/progress_accounts_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/pass_phrase_recover_process_accounts"
+        android:textAppearance="@style/CCX_Typography_Caption"
+        android:textColor="@color/ccx_neutral_tint_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_identities" />
+
+    <ProgressBar
+        android:id="@+id/progress_accounts"
+        style="@style/CryptoX_Progress_Horizontal"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_accounts_text"
+        tools:progress="30"
+        tools:visibility="visible" />
+</androidx.constraintlayout.widget.ConstraintLayout>

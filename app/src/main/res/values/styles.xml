@@ -1,0 +1,177 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="searchViewStyle">@style/SearchView</item>
+    </style>
+
+    <style name="AppTheme.DarkActionbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/cryptox_gradient_main</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="android:navigationBarColor">@color/cryptox_gradient_main_start</item>
+        <item name="android:statusBarColor">@color/cryptox_gradient_main_end</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="android:textColor">
+            @color/cryptox_white_main
+            <!-- Title color -->
+        </item>
+        <item name="android:textColorPrimary">
+            @color/cryptox_grey_secondary
+            <!-- Message color -->
+        </item>
+        <item name="colorAccent">
+            @color/cryptox_grey_additional
+            <!-- Cursor and handle color of the inner EditText-->
+        </item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <!--    <style name="AppTheme.NoActionBar.WithBackground">-->
+    <!--    </style>-->
+
+    <style name="AppTheme.NoActionBar.Launcher">
+        <item name="android:windowBackground">@drawable/app_launcher_screen</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="CircularProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/cryptox_grey_secondary</item>
+    </style>
+
+    <!--
+    Below are the general app styles
+    - Do not put layout attributes (except width and height)
+    - If styles are very specific for one screen (there could also be a need to include additional layout attributes), put them in a separate file called styles_[screen].xml
+    - All TextView, EditText and Button elements must have a style (eg. just basic "TextView", "EditText" or "Button") - it makes it easier to identify and define additional general styles later
+    -->
+
+
+    <!--............................................................................-->
+
+    <style name="Layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Layout.TextInputLayout">
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:textColorHint">@color/cryptox_black_additional</item>
+    </style>
+    <!--............................................................................-->
+
+    <!--............................................................................-->
+
+    <style name="DigitEditText" parent="CryptoX_InputField">
+        <item name="android:layout_width">45dp</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/ibm_mono_w500</item>
+    </style>
+
+    <style name="SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:editTextColor">@color/text_white</item>
+        <item name="android:textColorHint">@color/cryptox_grey_additional</item>
+        <item name="android:iconTint">@color/text_white</item>
+        <item name="searchHintIcon">@color/text_white</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="Image">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="TabLayoutTextAppearance" parent="CryptoX_Typography_Headline_Medium">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/cryptox_bottom_sheet_background</item>
+    </style>
+
+    <declare-styleable name="CodeScannerView">
+        <attr name="maskColor" format="color" />
+        <attr name="frameColor" format="color" />
+        <attr name="autoFocusButtonColor" format="color" />
+        <attr name="flashButtonColor" format="color" />
+        <attr name="autoFocusButtonVisible" format="boolean" />
+        <attr name="flashButtonVisible" format="boolean" />
+        <attr name="frameThickness" format="dimension" />
+        <attr name="frameCornersSize" format="dimension" />
+        <attr name="frameCornersRadius" format="dimension" />
+        <attr name="frameAspectRatioWidth" format="float" />
+        <attr name="frameAspectRatioHeight" format="float" />
+        <attr name="frameSize" format="float" />
+    </declare-styleable>
+
+    <style name="MoreOverviewItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="MoreOverviewItemTextView" parent="CCX_Typography_H3">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:layout_marginVertical">20dp</item>
+        <item name="drawableTint">@color/ccx_neutral_tint_1</item>
+        <item name="android:textColor">@color/ccx_neutral_tint_1</item>
+    </style>
+
+    <style name="AccountSettingsItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="AccountSettingsItemTextView" parent="CryptoX_Typography_Headline_Large">
+        <item name="android:drawablePadding">12sp</item>
+        <item name="android:layout_marginVertical">20dp</item>
+        <item name="drawableTint">@color/cryptox_grey_secondary</item>
+        <item name="drawableEndCompat">@drawable/cryptox_ico_chevron_right</item>
+    </style>
+
+</resources>

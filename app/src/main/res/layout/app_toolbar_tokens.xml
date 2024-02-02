@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@null">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:contentInsetStart="18dp"
+        android:contentInsetEnd="6dp"
+        app:contentInsetEnd="6dp"
+        app:contentInsetStart="18dp"
+        app:title="Wall 1"
+        app:titleTextColor="@color/text_white">
+
+        <!-- End inset is decreased to match the SearchView padding-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/toolbar_back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/toolbar_btn_bg"
+                android:padding="10dp"
+                android:src="@drawable/ic_ico_back_new"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="4dp"
+                android:ellipsize="marquee"
+                android:gravity="center_horizontal"
+                android:maxLines="2"
+                android:singleLine="false"
+                android:textColor="@color/cryptox_white_main"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_tokens_view"
+                app:layout_constraintStart_toEndOf="@id/toolbar_back_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="A title" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_tokens_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:closeIcon="@drawable/cryptox_ico_close"
+                app:iconifiedByDefault="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@id/toolbar_back_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap"
+                app:searchHintIcon="@null"
+                app:searchIcon="@drawable/cryptox_ico_search_rectangle"
+                app:theme="@style/SearchView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+</LinearLayout>
+
+

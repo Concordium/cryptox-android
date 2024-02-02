@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="23dp"
+    android:viewportWidth="22"
+    android:viewportHeight="23">
+    <path
+        android:pathData="M11,11.5m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0"
+        android:strokeWidth="1"
+        android:strokeColor="@color/cryptox_black_additional" />
+    <path
+        android:fillColor="@color/cryptox_white_main"
+        android:pathData="M13.307,11.5C13.307,12.775 12.274,13.808 10.999,13.808C9.725,13.808 8.691,12.775 8.691,11.5C8.691,10.226 9.725,9.192 10.999,9.192C12.274,9.192 13.307,10.226 13.307,11.5Z" />
+    <path
+        android:fillColor="@color/cryptox_white_main"
+        android:fillType="evenOdd"
+        android:pathData="M11,6.5C11.462,6.5 11.909,6.563 12.333,6.68V7.728C11.916,7.58 11.467,7.5 11,7.5C8.791,7.5 7,9.291 7,11.5C7,13.709 8.791,15.5 11,15.5C11.467,15.5 11.916,15.42 12.333,15.272V16.32C11.909,16.437 11.462,16.5 11,16.5C8.239,16.5 6,14.261 6,11.5C6,8.739 8.239,6.5 11,6.5ZM15.423,13.833C15.792,13.137 16,12.343 16,11.5C16,10.657 15.792,9.863 15.423,9.167H14.249C14.722,9.823 15,10.629 15,11.5C15,12.371 14.722,13.177 14.249,13.833H15.423Z" />
+</vector>

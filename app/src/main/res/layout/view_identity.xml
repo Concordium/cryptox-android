@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@drawable/ccx_card_dark_20_background"
+    tools:gravity="center"
+    tools:layout_height="wrap_content"
+    tools:orientation="vertical"
+    tools:padding="20dp"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/logo_imageview"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        tools:background="@drawable/simple_circle_bg" />
+
+    <TextView
+        android:id="@+id/status_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAllCaps="true"
+        android:textAppearance="@style/CCX_Typography_DecorativeLabel"
+        tools:text="@string/view_identity_status_done"
+        tools:textColor="@color/ccx_status_success" />
+
+    <TextView
+        android:id="@+id/name_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textAppearance="@style/CCX_Typography_H2"
+        android:textColor="@color/ccx_neutral_tint_1"
+        tools:drawableEndCompat="@drawable/cryptox_ico_edit"
+        tools:text="Identity 1" />
+
+    <TextView
+        android:id="@+id/expires_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="@string/template_view_identity_expires_on"
+        android:textAppearance="@style/CCX_Typography_Caption"
+        android:textColor="@color/ccx_neutral_tint_2" />
+
+</merge>

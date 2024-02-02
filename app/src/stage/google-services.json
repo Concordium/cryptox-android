@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "386481585928",
+    "project_id": "tacans-stage",
+    "storage_bucket": "tacans-stage.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386481585928:android:a8a8a949ee052abd8476bd",
+        "android_client_info": {
+          "package_name": "com.tacans.connect.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386481585928-1tm38v9vno9rtt091kl3qam0ftikbpgr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxTLXlSFzM2dbp_sGnL9PRXjtIxcjboyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386481585928-1tm38v9vno9rtt091kl3qam0ftikbpgr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

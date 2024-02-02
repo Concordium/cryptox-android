@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/balance_layout"
+        style="@style/CryptoX_Container_TextCard"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="10dp"
+        android:padding="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <ImageView
+            android:id="@+id/status_icon_image_view"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/cryptox_ico_successfully" />
+
+        <TextView
+            android:id="@+id/status_text_view"
+            style="@style/CryptoX_Typography_Headline_Large"
+            android:layout_width="0dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/status_icon_image_view"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Delegation registered" />
+
+        <TextView
+            android:id="@+id/status_empty_text_view"
+            style="@style/CryptoX_Typography_Body_Medium"
+            android:layout_width="0dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/cryptox_grey_additional"
+            app:layout_constraintEnd_toEndOf="@id/status_text_view"
+            app:layout_constraintStart_toStartOf="@id/status_text_view"
+            app:layout_constraintTop_toBottomOf="@id/status_text_view"
+            tools:text="Empty" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/button_layout"
+        app:layout_constraintTop_toBottomOf="@id/balance_layout">
+
+        <LinearLayout
+            android:id="@+id/status_list_container"
+            style="@style/CryptoX_Container_Stroked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="12dp" />
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginVertical="20dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/status_button_top"
+            style="@style/Cryptox_Button_Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:enabled="false"
+            tools:text="Button top"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/status_button_bottom"
+            style="@style/Cryptox_Button_Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            tools:enabled="false"
+            tools:text="Button buttom" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

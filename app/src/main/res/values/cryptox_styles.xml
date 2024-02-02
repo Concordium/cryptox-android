@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Styles defined in CryptoX design -->
+
+    <style name="CryptoX_BottomSheetHandle">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:background">@drawable/cryptox_bottom_sheet_handle_background</item>
+    </style>
+
+    <!-- region Typography -->
+    <style name="CryptoX_Typography_Default">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/cryptox_grey_additional</item>
+    </style>
+
+    <style name="CryptoX_Typography_TitleMedium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="CryptoX_Typography_TitleLarge">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="CryptoX_Typography_Caption">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_grey_main</item>
+    </style>
+
+    <style name="CryptoX_Typography_Body_Medium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_grey_secondary</item>
+    </style>
+
+    <style name="CryptoX_Typography_Body_Medium.Error">
+        <item name="drawableStartCompat">@drawable/cryptox_ico_info_pinky</item>
+        <item name="android:drawablePadding">16sp</item>
+    </style>
+
+    <style name="CryptoX_Typography_Headline_Medium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="CryptoX_Typography_Body_Large">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_grey_secondary</item>
+    </style>
+
+    <style name="CryptoX_Typography_Headline_Large">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+    <!-- endregion Typography -->
+
+    <!-- region Buttons -->
+    <style name="Cryptox_Button_Secondary">
+        <item name="android:layout_height">53dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/cryptox_button_secondary_background</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_button_secondary_text_color</item>
+        <item name="android:paddingHorizontal">28dp</item>
+        <item name="android:drawablePadding">13sp</item>
+    </style>
+
+    <style name="Cryptox_Button_Secondary_Small">
+        <item name="android:layout_height">37dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/cryptox_button_secondary_small_background</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_button_secondary_text_color</item>
+        <item name="android:paddingHorizontal">20dp</item>
+        <item name="android:drawablePadding">8sp</item>
+    </style>
+
+    <style name="CryptoX_Button_Primary">
+        <item name="android:layout_height">53dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/cryptox_button_primary_background</item>
+        <item name="android:textSize">17sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_button_primary_text_color</item>
+        <item name="android:paddingHorizontal">28dp</item>
+        <item name="android:drawablePadding">13sp</item>
+    </style>
+
+    <style name="CryptoX_Button_Primary_Small">
+        <item name="android:layout_height">37dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/cryptox_button_primary_small_background</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_button_primary_text_color</item>
+        <item name="android:paddingHorizontal">20dp</item>
+        <item name="android:drawablePadding">8sp</item>
+    </style>
+
+    <style name="CryptoX_Button_Text">
+        <item name="android:layout_height">53dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">17sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:drawablePadding">12sp</item>
+    </style>
+
+    <style name="CryptoX_Button_Text_Small">
+        <item name="android:layout_height">37dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">14sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:drawablePadding">8sp</item>
+    </style>
+
+    <style name="CryptoX_ImageButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="tint">@color/cryptox_button_secondary_text_color</item>
+    </style>
+    <!-- endregion Buttons -->
+
+    <!-- region Containers -->
+    <style name="CryptoX_Container_Stroked">
+        <item name="android:background">@drawable/cryptox_container_stroked_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CryptoX_Container_Error">
+        <item name="android:background">@drawable/cryptox_container_error_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">50dp</item>
+    </style>
+
+    <style name="CryptoX_Container_Error.TextView">
+        <item name="android:textAppearance">@style/CryptoX_Typography_Default</item>
+        <item name="drawableStartCompat">@drawable/cryptox_ico_info_pinky</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:drawablePadding">16sp</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="CryptoX_Container_Information">
+        <item name="android:background">@drawable/cryptox_container_information_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">50dp</item>
+    </style>
+
+    <style name="CryptoX_Container_Information.TextView">
+        <item name="android:textAppearance">@style/CryptoX_Typography_Default</item>
+        <item name="drawableStartCompat">@drawable/cryptox_ico_info_green</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:drawablePadding">16sp</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="CryptoX_Container_TextCard">
+        <item name="android:background">@drawable/cryptox_container_textcard_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CryptoX_Container_IdentityWithAccount">
+        <item name="android:background">
+            @drawable/cryptox_container_identity_with_accounts_background
+        </item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- endregion Containers -->
+
+    <!-- region Compound buttons -->
+    <style name="CryptoX_CompoundButton_Checkbox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/cryptox_checkbox_button</item>
+        <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:paddingStart">12sp</item>
+    </style>
+    <!-- endregion Compound buttons-->
+
+    <!-- region Dividers -->
+    <style name="CryptoX_Divider_Horizontal">
+        <item name="android:background">@color/cryptox_black_additional_20</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <style name="CryptoX_Divider_Vertical">
+        <item name="android:background">@color/cryptox_black_additional_20</item>
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <!-- endregion Dividers -->
+
+    <!-- region Progress -->
+    <style name="CryptoX_Progress_Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:progressDrawable">@drawable/cryptox_progress_bar</item>
+        <item name="android:max">100</item>
+        <item name="android:min">0</item>
+    </style>
+    <!-- endregion Progress -->
+
+    <!-- region Input -->
+    <style name="CryptoX_InputField">
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/cryptox_grey_main</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColorHint">@color/cryptox_black_additional</item>
+        <item name="android:layout_marginHorizontal">-4dp</item>
+    </style>
+    <!-- endregion Input -->
+
+    <!-- region Segmented control -->
+    <style name="CryptoX_SegmentedControl">
+        <item name="android:background">@drawable/cryptox_segmented_control_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="CryptoX_SegmentedControl_Button">
+        <item name="android:background">@drawable/cryptox_segmented_control_button_background</item>
+        <item name="android:textColor">@color/cryptox_segmented_control_button_text</item>
+        <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingVertical">0dp</item>
+        <item name="android:minHeight">0dp</item>
+    </style>
+    <!-- endregion Segmented control -->
+</resources>

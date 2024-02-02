@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/account_release_schedule_inner_list_padding_top_bottom"
+    android:paddingBottom="@dimen/account_release_schedule_inner_list_padding_top_bottom">
+
+    <TextView
+        android:id="@+id/status_item_title"
+        style="@style/CryptoX_Typography_Body_Medium"
+        tools:text="12-12-2020 13:40" />
+
+    <TextView
+        android:id="@+id/status_item_content"
+        style="@style/CryptoX_Typography_Headline_Medium"
+        android:layout_marginTop="8dp"
+        tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+</LinearLayout>

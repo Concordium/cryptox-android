@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <LinearLayout
+            android:id="@+id/content_layout"
+            style="@style/CryptoX_Container_TextCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/message_textview"
+                style="@style/CryptoX_Container_Error.TextView"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                tools:text="Error message for api - this can be long 32 Segmentation fault      timeout 15s" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="8dp" />
+
+            <include
+                android:id="@+id/transaction_item"
+                layout="@layout/item_transaction" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/transaction_date_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_date" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/from_address_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_from_address" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/to_address_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_to_address" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/transaction_hash_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_transaction_hash" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/block_hash_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_block_hash" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/memo_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_memo" />
+
+            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                android:id="@+id/details_layout"
+                style="@style/Layout"
+                app:entry_title="@string/transaction_details_details" />
+
+            <Button
+                android:id="@+id/view_on_explorer_button"
+                style="@style/CryptoX_Button_Text_Small"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/transaction_details_view_on_explorer"
+                app:drawableEndCompat="@drawable/cryptox_ico_arrow" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="18dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/progress"
+        layout="@layout/progress" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

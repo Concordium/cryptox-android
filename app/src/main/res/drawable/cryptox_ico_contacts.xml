@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="23dp"
+    android:height="22dp"
+    android:viewportWidth="23"
+    android:viewportHeight="22">
+    <path
+        android:pathData="M7.5,6m-3.25,0a3.25,3.25 0,1 1,6.5 0a3.25,3.25 0,1 1,-6.5 0"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/cryptox_black_additional" />
+    <path
+        android:pathData="M16.5,7m-2.25,0a2.25,2.25 0,1 1,4.5 0a2.25,2.25 0,1 1,-4.5 0"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/cryptox_black_additional" />
+    <path
+        android:pathData="M9.214,13H5.786C3.419,13 1.5,15.239 1.5,18C1.5,18.552 1.948,19 2.5,19H12.5C13.052,19 13.5,18.552 13.5,18C13.5,15.239 11.581,13 9.214,13Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/cryptox_black_additional"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M11.949,14.14C12.56,12.863 13.729,12 15.07,12H17.927C19.9,12 21.499,13.866 21.499,16.167V16.167C21.499,16.627 21.126,17 20.666,17H13.499"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/cryptox_black_additional"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

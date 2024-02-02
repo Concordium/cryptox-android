@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="-16dp"
+        android:clipToPadding="false"
+        android:fadingEdge="vertical"
+        android:fillViewport="true"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/missing_backup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/accounts_overview_wallet_total"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2" />
+
+            <TextView
+                android:id="@+id/total_balance_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="4dp"
+                android:drawablePadding="6sp"
+                android:maxLines="1"
+                android:text="@string/accounts_overview_balance_placeholder"
+                android:textAppearance="@style/CCX_Typography_Display"
+                android:textColor="@color/ccx_mineral_blue_tint_1"
+                app:autoSizeMaxTextSize="28sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="2sp"
+                app:autoSizeTextType="uniform"
+                app:drawableEndCompat="@drawable/cryptox_ico_ccd_dark"
+                tools:text="224.2443" />
+
+            <View
+                style="@style/CryptoX_Divider_Horizontal"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/accounts_overview_total_at_disposal"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2" />
+
+            <TextView
+                android:id="@+id/accounts_overview_total_details_disposal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="4dp"
+                android:drawablePadding="6sp"
+                android:maxLines="1"
+                android:text="@string/accounts_overview_balance_placeholder"
+                android:textAppearance="@style/CCX_Typography_Display"
+                android:textColor="@color/ccx_mineral_blue_tint_1"
+                app:autoSizeMaxTextSize="28sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="2sp"
+                app:autoSizeTextType="uniform"
+                app:drawableEndCompat="@drawable/cryptox_ico_ccd_dark"
+                tools:text="224.28" />
+
+            <View
+                style="@style/CryptoX_Divider_Horizontal"
+                android:layout_marginTop="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/account_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/activity_vertical_margin"
+                android:scrollbars="none"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+                <!-- The height is set programmatically -->
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <LinearLayout
+                android:id="@+id/no_accounts_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/no_accounts_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:gravity="center_horizontal"
+                    android:text="@string/accounts_overview_no_accounts"
+                    android:textAppearance="@style/CCX_Typography_Body"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/create_account_button"
+                    style="@style/CCX_Button_Primary.ArrowRight"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/accounts_overview_create_account"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/no_accounts_textview"
+                    app:layout_constraintVertical_bias="1" />
+
+                <LinearLayout
+                    android:id="@+id/no_identities_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/create_identity_button"
+                        style="@style/CCX_Button_Primary.ArrowRight"
+                        android:layout_width="match_parent"
+                        android:text="@string/accounts_overview_create_identity" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView>
+
+    <include
+        android:id="@+id/progress"
+        layout="@layout/progress"
+        tools:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/missing_backup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFBC11"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/backup_suggestion"
+            android:textAppearance="@style/CCX_Typography_H3"
+            android:textColor="@color/text_white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.concordium.wallet.ui.recipient.recipientlist.SwipeLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:left_swipe_enabled="true"
+        app:right_swipe_enabled="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/foreground_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
+                android:elevation="444dp">
+
+                <TextView
+                    android:id="@+id/recipient_name_textview"
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toTopOf="@+id/recipient_address_textview"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="Carrie Riley - xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+
+                <TextView
+                    android:id="@+id/recipient_address_textview"
+                    style="@style/CryptoX_Typography_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipient_name_textview"
+                    tools:text="Adress --- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/rightDrag"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:gravity="right"
+            app:sticky="self"
+            tools:ignore="MissingPrefix">
+
+            <ImageView
+                android:id="@+id/deleteContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_delete_forever"
+                tools:ignore="ContentDescription" />
+
+        </FrameLayout>
+
+    </com.concordium.wallet.ui.recipient.recipientlist.SwipeLayout>
+
+    <View
+        style="@style/CryptoX_Divider_Horizontal"
+        android:layout_marginTop="12dp" />
+</LinearLayout>

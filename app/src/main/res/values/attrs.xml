@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TransactionDetailsEntryView">
+        <attr name="entry_title" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="AccountView">
+        <!-- Whether to show bottom quick action buttons -->
+        <attr name="showButtons" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="SwipeLayout">
+        <!--where view must be located in default state-->
+        <attr name="gravity">
+            <enum name="left" value="-1" />
+            <enum name="right" value="1" />
+            <enum name="center" value="0" />
+        </attr>
+
+        <!--Does view should been stick after touch up-->
+        <attr name="sticky" format="dimension">
+            <!--stick mode is off-->
+            <enum name="none" value="-2" />
+            <!--stick view if it has reached offset equals to its width-->
+            <enum name="self" value="-1" />
+        </attr>
+        <attr name="sticky_sensitivity" format="float" />
+
+        <!--the maximum offset that view can be moved-->
+        <attr name="clamp" format="dimension">
+            <enum name="parent" value="-1" />
+            <enum name="self" value="-2" />
+        </attr>
+
+        <!--move view to clamp if the offset reached this value-->
+        <attr name="bring_to_clamp" format="dimension">
+            <enum name="no" value="-1" />
+        </attr>
+
+        <!--enable or disable swipe gestures -->
+        <attr name="swipe_enabled" format="boolean" />
+
+        <!--enable or disable swipe gestures from left side-->
+        <attr name="left_swipe_enabled" format="boolean" />
+
+        <!--enable or disable swipe gestures from right side-->
+        <attr name="right_swipe_enabled" format="boolean" />
+
+    </declare-styleable>
+    <declare-styleable name="ProgressLine">
+        <attr name="numberOfDots" format="integer" />
+        <attr name="filledDots" format="integer" />
+    </declare-styleable>
+</resources>

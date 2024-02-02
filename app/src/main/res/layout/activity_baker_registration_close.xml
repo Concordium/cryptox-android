@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@id/baker_registration_export"
+        android:layout_below="@+id/toolbar_layout"
+        android:layout_marginTop="11dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@string/baker_registration_export_explain"
+                android:textColor="@color/cryptox_grey_additional" />
+
+
+            <TextView
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_marginTop="16dp"
+                android:text="@string/baker_registration_export_election_verify_key" />
+
+            <TextView
+                android:id="@+id/baker_registration_export_election_verify_key"
+                style="@style/CryptoX_Typography_Headline_Medium"
+                android:layout_marginTop="8dp"
+                tools:text="14f3632ac857400d417a7277f726c43a8ddf07184f10a429cf0759e985247c33" />
+
+            <TextView
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_marginTop="16dp"
+                android:text="@string/baker_registration_export_signature_verify_key" />
+
+            <TextView
+                android:id="@+id/baker_registration_export_signature_verify_key"
+                style="@style/CryptoX_Typography_Headline_Medium"
+                android:layout_marginTop="8dp"
+                tools:text="7bb9028cc6f7202f1b72608b98ba9e4c43e922cea3b01120eb70b7e01a623df7" />
+
+            <TextView
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_marginTop="16dp"
+                android:text="@string/baker_registration_export_aggregation_verify_key" />
+
+            <TextView
+                android:id="@+id/baker_registration_export_aggregation_verify_key"
+                style="@style/CryptoX_Typography_Headline_Medium"
+                android:layout_marginTop="8dp"
+                tools:text="b9ad84290785866393b631c431616b5f0b6a3e5665ae47b90e6a572b61b724cf5942c68740eba94f532661396eca64cc0e2bc00446632e2dc69fdce4a6c904814fa6416212d582b36551527c370f425bf43c98f50a8b2e34d9fe10f4495f1570" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/baker_registration_export"
+        style="@style/CryptoX_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginVertical="20dp"
+        android:text="@string/baker_registration_export" />
+
+</RelativeLayout>

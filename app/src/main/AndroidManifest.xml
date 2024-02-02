@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.concordium.wallet">
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Protection level: normal -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- Protection level: normal -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- Protection level: dangerous -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="${appName}"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
+
+        <activity
+            android:name=".ui.connect.add_wallet.AddWalletNftActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.airdrop.AirdropActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.connect.uni_ref.UniRefActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.tokens.tokens.TokensOverviewActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.tokens.wallets.WalletsOverviewActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.tokens.add_provider.AddProviderActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.connect.ConnectActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter
+                android:autoVerify="true"
+                android:icon="@mipmap/ic_launcher_round"
+                android:label="${appName}"
+                android:priority="50">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="ws"
+                    android:scheme="tcwb" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="wc" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/wc_scheme" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".DataFileProvider"
+            android:authorities="@string/PROVIDER_AUTHORITY"
+            android:enabled="true"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider" />
+        </provider>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Launcher">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Import file, with an empty mimeType -->
+            <intent-filter
+                android:icon="@mipmap/ic_launcher_round"
+                android:label="@string/app_name"
+                android:priority="50">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
+            </intent-filter>
+            <!-- Import file, with no mimeType -->
+            <intent-filter
+                android:icon="@mipmap/ic_launcher_round"
+                android:label="@string/app_name"
+                android:priority="50">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
+            </intent-filter>
+            <!--
+                 Import file, with json mimeType. This catches all json files, but if pathPattern
+                 is added, it does not even  catch the ones with the correct file extension.
+            -->
+            <intent-filter
+                android:icon="@mipmap/ic_launcher_round"
+                android:label="@string/app_name"
+                android:priority="50">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:mimeType="application/json" />
+            </intent-filter>
+        </activity> <!-- Common -->
+        <activity
+            android:name=".ui.common.failed.FailedActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" /> <!-- Intro -->
+        <activity
+            android:name=".ui.welcome.WelcomeRecoverWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <!-- Auth -->
+        <activity
+            android:name=".ui.auth.login.AuthLoginActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.auth.setup.AuthSetupActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.auth.setuprepeat.AuthSetupRepeatActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.auth.setup.AuthSetupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.auth.setuppassword.AuthSetupPasswordActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.auth.setup.AuthSetupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.auth.setuppasswordrepeat.AuthSetupPasswordRepeatActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.auth.setupbiometrics.AuthSetupBiometricsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.identity.identitycreate.IdentityIntroFlow"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebViewActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter android:label="schemefilter">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "concordiumwallet://identity-issuer” -->
+                <data
+                    android:host="identity-issuer"
+                    android:scheme="@string/scheme" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.identity.identityconfirmed.IdentityConfirmedActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.identity.identitydetails.IdentityDetailsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" /> <!-- Account -->
+        <activity
+            android:name=".ui.account.newaccountname.NewAccountNameActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.account.newaccountidentity.NewAccountIdentityActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.newaccountname.NewAccountNameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.newaccountsetup.NewAccountSetupActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.newaccountidentity.NewAccountIdentityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.newaccountidentityattributes.NewAccountIdentityAttributesActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.newaccountconfirmed.NewAccountConfirmedActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.accountdetails.AccountDetailsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.accountqrcode.AccountQRCodeActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" /> <!-- Transaction / Send funds -->
+        <activity
+            android:name=".ui.transaction.sendfunds.AddMemoActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.transaction.sendfunds.SendFundsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" /> <!-- More -->
+        <activity
+            android:name=".ui.more.dev.DevActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.more.export.ExportActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.more.import.ImportActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.more.about.AboutActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.more.alterpassword.AlterPasswordActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.recipient.recipientlist.RecipientListActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.recipient.recipient.RecipientActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.recipient.recipientlist.RecipientListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.recipient.scanqr.ScanQRActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.TokenDetailsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.SendTokenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.SendTokenReceiptActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.passphrase.recover.RecoverWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.passphrase.recoverprocess.RecoverProcessActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.more.export.ExportAccountKeysActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.more.export.ExportTransactionLogActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.accountdetails.AccountSettingsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.earn.EarnInfoActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterPoolActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterAmountActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRemoveActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerRegistrationActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerRegistrationCloseActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerRegistrationOpenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerStatusActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerRegisterAmountActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerRegistrationConfirmationActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerUpdatePoolSettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_WelcomeScreen" />
+        <activity
+            android:name=".ui.welcome.WelcomeTermsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.welcome.WelcomePromoActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_WelcomePromoScreen" />
+        <activity
+            android:name=".ui.auth.passcode.PasscodeSetupActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.passphrase.setup.OneStepSetupWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.passphrase.reveal.SavedPassPhraseRevealActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+    </application>
+
+</manifest>

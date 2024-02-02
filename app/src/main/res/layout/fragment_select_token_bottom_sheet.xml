@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="18dp"
+    android:paddingTop="16dp"
+    tools:background="@drawable/cryptox_bottom_sheet_background">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView style="@style/CryptoX_BottomSheetHandle" />
+
+    <TextView
+        android:id="@+id/title_text_view"
+        style="@style/CryptoX_Typography_TitleLarge"
+        android:layout_marginTop="30dp"
+        android:text="@string/cis_select_token_title" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tokens_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        android:paddingBottom="20dp"
+        android:scrollbars="none"
+        tools:listitem="@layout/item_token_account_details" />
+</LinearLayout>

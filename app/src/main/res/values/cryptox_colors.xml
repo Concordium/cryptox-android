@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colors defined in CryptoX design -->
+
+    <color name="cryptox_pinky_main">#FF163D</color>
+    <color name="cryptox_pinky_main_70">#B3FF163D</color>
+    <color name="cryptox_pinky_main_5">#0DFF163D</color>
+    <color name="cryptox_black_main">#101010</color>
+    <color name="cryptox_black_secondary">#333333</color>
+    <color name="cryptox_black_additional">#878787</color>
+    <color name="cryptox_black_additional_20">#33878787</color>
+    <color name="cryptox_deep_blue">#273451</color>
+    <color name="cryptox_grey_main">#A9AEB9</color>
+    <color name="cryptox_grey_secondary">#BABEC7</color>
+    <color name="cryptox_grey_additional">#D4D6DC</color>
+    <color name="cryptox_grey_additional_10">#1AD4D6DC</color>
+    <color name="cryptox_green_main">#09CFA0</color>
+    <color name="cryptox_green_main_12">#1F09CFA0</color>
+    <color name="cryptox_white_main">#FFFFFF</color>
+    <color name="cryptox_white_main_6">#0FFFFFFF</color>
+    <color name="cryptox_white_main_30">#4DFFFFFF</color>
+    <color name="cryptox_white_main_50">#80FFFFFF</color>
+    <color name="cryptox_yellow">#FFBC11</color>
+    <color name="cryptox_green_secondary">#149E7E</color>
+    <color name="cryptox_green_secondary_5">#0D149E7E</color>
+    <color name="cryptox_gradient_main_end">#242427</color>
+    <color name="cryptox_gradient_main_start">#09090B</color>
+</resources>

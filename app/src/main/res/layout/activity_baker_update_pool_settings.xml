@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_layout"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/baker_update_pool_settings_explain"
+                    android:textColor="@color/cryptox_grey_additional" />
+
+                <TextView
+                    android:id="@+id/pool_settings_current_status"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    tools:text="@string/baker_update_pool_settings_current_status_open" />
+
+                <com.concordium.wallet.uicore.view.SegmentedControlView
+                    android:id="@+id/pool_options"
+                    style="@style/CryptoX_SegmentedControl"
+                    android:layout_marginTop="12dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/update_pool_settings_continue"
+                style="@style/CryptoX_Button_Primary"
+                android:layout_width="match_parent"
+                android:text="@string/baker_update_pool_settings_continue" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

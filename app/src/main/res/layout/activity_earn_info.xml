@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toastLayoutTopError"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:id="@+id/scrollViewInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/CryptoX_Typography_Default"
+                android:text="@string/earn_subtitle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/error_text_view"
+                style="@style/CryptoX_Container_Information.TextView"
+                android:layout_marginTop="16dp"
+                android:text="@string/earn_single_account_notice" />
+
+            <LinearLayout
+                style="@style/CryptoX_Container_TextCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:text="@string/earn_baker_title" />
+
+                <TextView
+                    android:id="@+id/tvBakerDescription"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/earn_baker_description"
+                    android:textColor="@color/cryptox_grey_additional" />
+
+                <Button
+                    android:id="@+id/btnBaker"
+                    style="@style/CryptoX_Button_Primary"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/earn_baker_button" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/CryptoX_Container_TextCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:text="@string/earn_delegation_title" />
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/earn_delegation_description"
+                    android:textColor="@color/cryptox_grey_additional" />
+
+                <Button
+                    android:id="@+id/btnDelegation"
+                    style="@style/CryptoX_Button_Primary"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/earn_delegation_button" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

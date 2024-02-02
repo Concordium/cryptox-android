@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/send"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                style="@style/CryptoX_Container_TextCard"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:text="@string/cis_currently_available_amounts" />
+
+                <TextView
+                    android:id="@+id/balance"
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_marginTop="20dp"
+                    tools:text="132.955" />
+
+                <TextView
+                    android:id="@+id/balance_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/cis_token_balance" />
+
+                <View
+                    style="@style/CryptoX_Divider_Horizontal"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/at_disposal"
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_marginTop="16dp"
+                    tools:text="50" />
+
+                <TextView
+                    android:id="@+id/at_disposal_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/cis_at_disposal" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/CCX_GradientCard_16"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/amount_desc"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:text="@string/delegation_register_delegation_amount_enter_amount"
+                    android:textColor="@color/cryptox_black_secondary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.concordium.wallet.uicore.view.AmountEditText
+                    android:id="@+id/amount"
+                    style="@style/CryptoX_Typography_TitleMedium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@null"
+                    android:imeOptions="actionDone"
+                    android:textColor="@color/cryptox_black_secondary"
+                    android:textColorHint="@color/cryptox_black_secondary"
+                    app:layout_constraintEnd_toStartOf="@id/send_all_button"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount_desc"
+                    tools:text="123,45" />
+
+                <TextView
+                    android:id="@+id/send_all_button"
+                    style="@style/CryptoX_Button_Text_Small"
+                    android:gravity="center_vertical|end"
+                    android:text="@string/cis_send_all"
+                    android:textColor="@color/cryptox_black_secondary"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="@id/amount"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/amount" />
+
+                <View
+                    style="@style/CryptoX_Divider_Horizontal"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount" />
+
+                <TextView
+                    android:id="@+id/token_label"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:text="@string/cis_send_token"
+                    android:textColor="@color/cryptox_black_secondary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount" />
+
+                <TextView
+                    android:id="@+id/token"
+                    style="@style/CryptoX_Typography_Body_Large"
+                    android:layout_width="0dp"
+                    android:layout_marginStart="8dp"
+                    android:drawablePadding="10sp"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:paddingVertical="8dp"
+                    android:textColor="@color/cryptox_black_secondary"
+                    app:drawableEndCompat="@drawable/cryptox_ico_chevron_right"
+                    app:layout_constraintBottom_toBottomOf="@id/token_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/token_label"
+                    app:layout_constraintTop_toTopOf="@id/token_label"
+                    tools:text="Unique long-name CIS-2 non-fungible token" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/amount_error"
+                style="@style/CryptoX_Typography_Body_Medium.Error"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/delegation_register_delegation_amount_insufficient_error"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/fee"
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/send_funds_fee_info"
+                android:textColor="@color/cryptox_grey_main"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                style="@style/CryptoX_Container_Stroked"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:text="@string/cis_send_address" />
+
+                <EditText
+                    android:id="@+id/receiver"
+                    style="@style/CryptoX_InputField"
+                    android:hint="@string/cis_send_paste_recipient_address"
+                    android:importantForAutofill="no"
+                    android:inputType="textNoSuggestions|textVisiblePassword" />
+
+                <TextView
+                    android:id="@+id/receiver_name"
+                    style="@style/CryptoX_Typography_Caption"
+                    android:visibility="gone"
+                    tools:text="My contact"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/or"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/cis_send_or" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/address_book"
+                        style="@style/Cryptox_Button_Secondary_Small"
+                        android:layout_width="0dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:text="@string/cis_address_book" />
+
+                    <Button
+                        android:id="@+id/scan_qr"
+                        style="@style/Cryptox_Button_Secondary_Small"
+                        android:layout_width="0dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:text="@string/cis_scan_qr" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/add_memo"
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_marginTop="16dp"
+                android:drawablePadding="4sp"
+                android:gravity="center_vertical"
+                android:text="@string/cis_add_memo"
+                android:textColor="@color/cryptox_grey_main"
+                app:drawableStartCompat="@drawable/cryptox_ico_add_memo" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="24dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/send"
+        style="@style/CryptoX_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="20dp"
+        android:enabled="false"
+        android:text="@string/cis_send_continue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

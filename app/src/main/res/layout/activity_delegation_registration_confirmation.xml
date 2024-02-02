@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/button_container"
+        android:layout_below="@id/toolbar_layout"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingTop="10dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/grace_period"
+                style="@style/CryptoX_Container_Information.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
+                tools:text="You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time."
+                tools:visibility="visible" />
+
+            <LinearLayout
+                style="@style/CryptoX_Container_Stroked"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <include
+                    android:id="@+id/include_transaction_submitted_header"
+                    layout="@layout/transaction_submitted_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp" />
+
+                <TextView
+                    android:id="@+id/delegation_transaction_title"
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delegation_register_delegation_confirmation_receipt_title" />
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/delegation_register_delegation_confirmation_receipt_account_to_delegate_from" />
+
+                <TextView
+                    android:id="@+id/account_to_delegate_from"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+
+                <TextView
+                    android:id="@+id/delegation_amount_confirmation_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/delegation_register_delegation_confirmation_receipt_amount_to_delegate" />
+
+                <TextView
+                    android:id="@+id/delegation_amount_confirmation"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="Ͼ100.00" />
+
+                <TextView
+                    android:id="@+id/target_pool_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/delegation_register_delegation_confirmation_receipt_target_pool" />
+
+                <TextView
+                    android:id="@+id/target_pool"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="73456" />
+
+                <TextView
+                    android:id="@+id/rewards_will_be_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/delegation_register_delegation_confirmation_receipt_rewards_will_be" />
+
+                <TextView
+                    android:id="@+id/rewards_will_be"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="@string/delegation_status_added_to_delegation_amount" />
+
+                <TextView
+                    android:id="@+id/estimated_transaction_fee"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    tools:text="Estimated transaction fee:\nϾ 0.0059" />
+
+                <com.concordium.wallet.uicore.view.TransactionSubmittedHashView
+                    android:id="@+id/transaction_hash_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginVertical="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/submit_delegation_transaction"
+            style="@style/CryptoX_Button_Primary"
+            android:layout_width="match_parent"
+            android:text="@string/delegation_register_delegation_submit_delegation_transaction" />
+
+        <Button
+            android:id="@+id/submit_delegation_finish"
+            style="@style/CryptoX_Button_Primary"
+            android:layout_width="match_parent"
+            android:text="@string/delegation_register_delegation_finish"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        tools:visibility="gone" />
+
+</RelativeLayout>

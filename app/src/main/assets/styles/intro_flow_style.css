@@ -1,0 +1,14 @@
+html, body {
+    font-family: 'Roboto';
+    font-size: 15px;
+    font-weight: 400;
+    text-align: left;
+    color: #D4D6DC;
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+}
+
+a:link, a:visited, a:hover, a:active  {
+  color: white;
+}

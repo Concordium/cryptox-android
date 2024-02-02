@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.concordium.wallet.ui.account.accountsoverview.AccountView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/account_view"
+    style="@style/CCX_GradientCard_16.WithButtons"
+    android:layout_marginBottom="16dp" />

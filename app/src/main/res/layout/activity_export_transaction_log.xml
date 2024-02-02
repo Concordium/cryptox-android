@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/buttons_layout"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/notice"
+                style="@style/CryptoX_Container_Information.TextView"
+                android:text="@string/export_transaction_log_notice"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+            <TextView
+                android:id="@+id/description"
+                style="@style/CryptoX_Container_TextCard"
+                android:layout_marginTop="16dp"
+                android:padding="20dp"
+                android:textAppearance="@style/CryptoX_Typography_Body_Medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notice"
+                tools:text="@string/export_transaction_log_description" />
+
+            <LinearLayout
+                android:id="@+id/download_progress_layout"
+                style="@style/CryptoX_Container_TextCard"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/description">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:text="@string/export_transaction_log_downloading" />
+
+                <ProgressBar
+                    android:id="@+id/download_progress"
+                    style="@style/CryptoX_Progress_Horizontal"
+                    android:layout_marginTop="20dp"
+                    android:max="100"
+                    android:min="0"
+                    tools:progress="62" />
+
+                <TextView
+                    android:id="@+id/progress_text_view"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_marginTop="8dp"
+                    tools:text="47%" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/success_layout"
+                style="@style/CryptoX_Container_TextCard"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:id="@+id/icon_image_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/cryptox_ico_successfully" />
+
+                <TextView
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/export_transaction_log_saved" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/failed_layout"
+                style="@style/CryptoX_Container_Error.TextView"
+                android:text="@string/export_transaction_log_failed" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="20dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/generate"
+            style="@style/CryptoX_Button_Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_transaction_log_save" />
+
+        <Button
+            android:id="@+id/cancel"
+            style="@style/Cryptox_Button_Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_transaction_log_cancel" />
+
+        <Button
+            android:id="@+id/done"
+            style="@style/CryptoX_Button_Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_transaction_log_done" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

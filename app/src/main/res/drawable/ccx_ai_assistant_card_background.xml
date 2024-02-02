@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:bottom="55dp">
+        <!-- 1 extra dp to hide the bottom stroke
+        behind the bottom section-->
+        <shape android:shape="rectangle">
+            <corners
+                android:topLeftRadius="20dp"
+                android:topRightRadius="20dp" />
+            <solid android:color="#1D232A" />
+            <stroke
+                android:width="1dp"
+                android:color="#99353F4B" />
+        </shape>
+    </item>
+
+    <item
+        android:height="56dp"
+        android:gravity="bottom">
+        <shape>
+            <solid android:color="#232B33" />
+            <corners
+                android:bottomLeftRadius="20dp"
+                android:bottomRightRadius="20dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#99353F4B" />
+        </shape>
+    </item>
+</layer-list>

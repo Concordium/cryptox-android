@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <!-- 16 in Figma – 20 in XML. THIS IS FINE! -->
+    <path
+        android:fillColor="@color/cryptox_grey_additional"
+        android:fillType="evenOdd"
+        android:pathData="M21,10H22C23.657,10 25,11.343 25,13V23C25,24.657 23.657,26 22,26H14C12.343,26 11,24.657 11,23V22H10C8.343,22 7,20.657 7,19V9C7,7.343 8.343,6 10,6H18C19.657,6 21,7.343 21,9V10ZM19.6,10V9.4C19.6,8.295 18.705,7.4 17.6,7.4H10.4C9.295,7.4 8.4,8.295 8.4,9.4V18.6C8.4,19.705 9.295,20.6 10.4,20.6H11V13C11,11.343 12.343,10 14,10H19.6ZM14.4,11.4C13.295,11.4 12.4,12.295 12.4,13.4V22.6C12.4,23.705 13.295,24.6 14.4,24.6H21.6C22.705,24.6 23.6,23.705 23.6,22.6V13.4C23.6,12.295 22.705,11.4 21.6,11.4H14.4Z" />
+</vector>

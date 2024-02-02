@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <corners android:radius="@dimen/ccx_modal_corner_radius" />
+            <solid android:color="#FFFFFF" />
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <corners android:radius="@dimen/ccx_modal_corner_radius" />
+            <gradient
+                android:angle="90"
+                android:endColor="#33EBF0F0"
+                android:startColor="#664D6666"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,40 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_height="wrap_content"
+    tools:layout_width="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/copy_hash_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/wallet_connect_transaction_submitted_copy_hash"
+        android:tooltipText="@string/wallet_connect_transaction_submitted_copy_hash"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/cryptox_ico_copy" />
+
+    <TextView
+        android:id="@+id/hash_title_text_view"
+        style="@style/CryptoX_Typography_Body_Medium"
+        android:layout_width="0dp"
+        android:text="@string/wallet_connect_transaction_submitted_hash"
+        app:layout_constraintEnd_toStartOf="@id/copy_hash_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/hash_text_view"
+        style="@style/CryptoX_Typography_Headline_Medium"
+        android:layout_width="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintEnd_toStartOf="@id/copy_hash_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hash_title_text_view"
+        tools:text="ffe2be99f1ce2e282a975193658f5dc93feab2ff7928eba529672c4f8dc4c8c55230eb0c6514e326" />
+</merge>

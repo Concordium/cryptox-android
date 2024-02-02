@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:paddingBottom="4dp">
+
+        <View
+            android:id="@+id/main_circle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/welcome_promo_circle"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Space
+            android:id="@+id/circle_inner_space"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="@id/main_circle"
+            app:layout_constraintStart_toStartOf="@id/main_circle"
+            app:layout_constraintTop_toTopOf="@id/main_circle"
+            app:layout_constraintWidth_percent="0.75" />
+
+        <View
+            android:id="@+id/start_secondary_circle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="32dp"
+            android:background="@drawable/welcome_promo_circle"
+            app:layout_constraintBottom_toBottomOf="@id/main_circle"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintEnd_toStartOf="@id/circle_inner_space"
+            app:layout_constraintTop_toTopOf="@id/main_circle" />
+
+        <View
+            android:id="@+id/end_secondary_circle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="32dp"
+            android:background="@drawable/welcome_promo_circle"
+            app:layout_constraintBottom_toBottomOf="@id/main_circle"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintStart_toEndOf="@id/circle_inner_space"
+            app:layout_constraintTop_toTopOf="@id/main_circle" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/circle_center_guide"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/main_circle"
+            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintTop_toTopOf="@id/main_circle" />
+
+        <ImageView
+            android:id="@+id/crypto_x_image_view"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="40dp"
+            android:background="@drawable/simple_circle_bg"
+            android:backgroundTint="@color/ccx_neutral_tint_5"
+            android:importantForAccessibility="no"
+            android:padding="18dp"
+            android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="@id/main_circle"
+            app:layout_constraintStart_toStartOf="@id/main_circle"
+            app:layout_constraintTop_toTopOf="@id/account_image_view"
+            app:srcCompat="@drawable/crypto_x_logo" />
+
+        <ImageView
+            android:id="@+id/account_image_view"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/simple_circle_bg"
+            android:backgroundTint="@color/ccx_egg_shell_tint_1"
+            android:importantForAccessibility="no"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toTopOf="@id/activate_and_get_text_view"
+            app:layout_constraintEnd_toEndOf="@id/main_circle"
+            app:layout_constraintStart_toStartOf="@id/main_circle"
+            app:layout_constraintTop_toTopOf="@id/main_circle"
+            app:layout_constraintVertical_bias="0.6"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:srcCompat="@drawable/ccx_ico_user" />
+
+        <TextView
+            android:id="@+id/activate_and_get_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/welcome_promo_activate_and_get"
+            android:textAppearance="@style/CCX_Typography_Body"
+            android:textColor="@color/ccx_neutral_tint_2"
+            app:layout_constraintBottom_toTopOf="@id/reward_text_view"
+            app:layout_constraintEnd_toStartOf="@id/end_secondary_circle"
+            app:layout_constraintStart_toEndOf="@id/start_secondary_circle"
+            app:layout_constraintTop_toBottomOf="@id/account_image_view"
+            app:layout_constraintWidth_default="wrap">
+            <!--Star is added programmatically-->
+        </TextView>
+
+        <TextView
+            android:id="@+id/reward_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/CCX_Typography_Display"
+            android:textColor="@color/ccx_mineral_blue_tint_1"
+            app:layout_constraintBottom_toTopOf="@id/watch_video_button"
+            app:layout_constraintEnd_toEndOf="@id/main_circle"
+            app:layout_constraintHorizontal_bias="0.48"
+            app:layout_constraintStart_toStartOf="@id/main_circle"
+            app:layout_constraintTop_toBottomOf="@id/activate_and_get_text_view"
+            tools:text="1.000" />
+
+        <TextView
+            android:id="@+id/reward_ccd_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="3sp"
+            android:text="CCD"
+            android:textAppearance="@style/CCX_Typography_Caption"
+            android:textColor="@color/ccx_mineral_blue_tint_1"
+            app:layout_constraintBottom_toBottomOf="@id/reward_text_view"
+            app:layout_constraintStart_toEndOf="@id/reward_text_view" />
+
+        <androidx.constraintlayout.widget.Group
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:constraint_referenced_ids="reward_text_view,reward_ccd_text_view">
+            <!-- To be shown once rewards are implemented-->
+        </androidx.constraintlayout.widget.Group>
+
+        <TextView
+            android:id="@+id/watch_video_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
+            android:padding="20dp"
+            android:text="@string/welcome_promo_watch_video"
+            android:textAppearance="@style/CCX_Typography_Button_M"
+            android:textColor="@color/ccx_neutral_tint_1"
+            app:drawableEndCompat="@drawable/ccx_ico_arrow_up_right"
+            app:layout_constraintBottom_toBottomOf="@id/main_circle"
+            app:layout_constraintEnd_toEndOf="@id/main_circle"
+            app:layout_constraintStart_toStartOf="@id/main_circle"
+            app:layout_constraintTop_toBottomOf="@id/reward_text_view" />
+
+        <Button
+            android:id="@+id/activate_button"
+            style="@style/CCX_Button_Primary.ArrowRight"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/welcome_promo_activate_account"
+            app:layout_constraintTop_toBottomOf="@id/main_circle" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ai_assistant_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/ccx_ai_assistant_card_background"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activate_button">
+
+            <ImageView
+                android:id="@+id/ai_image_view"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/simple_circle_bg"
+                android:backgroundTint="@color/ccx_mineral_blue_tint_1"
+                android:importantForAccessibility="no"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ccx_ico_assistant"
+                app:tint="@color/ccx_neutral_tint_5" />
+
+            <TextView
+                android:id="@+id/ask_anything_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="@string/welcome_promo_ask_ai"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintEnd_toStartOf="@id/ai_image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/question_example_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/welcome_promo_ask_ai_example"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2"
+                app:layout_constraintEnd_toStartOf="@id/ai_image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ask_anything_text_view" />
+
+            <TextView
+                android:id="@+id/question_prompt_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="34dp"
+                android:paddingBottom="4dp"
+                android:text="@string/welcome_promo_ai_prompt_hint"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/question_example_text_view" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

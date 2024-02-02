@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.concordium.wallet.uicore.view.IdentityView
+        android:id="@+id/identity_view"
+        style="@style/CCX_GradientCard_16"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/info_textview"
+        style="@style/CryptoX_Container_Information"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="12dp"
+        android:drawablePadding="16sp"
+        android:padding="16dp"
+        android:text="@string/new_account_setup_info"
+        android:textAppearance="@style/CryptoX_Typography_Default"
+        android:textColor="@color/cryptox_white_main"
+        app:drawableStartCompat="@drawable/cryptox_ico_info_green"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/identity_view" />
+
+    <Button
+        android:id="@+id/confirm_reveal_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/new_account_setup_confirm_reveal"
+        app:layout_constraintBottom_toTopOf="@id/confirm_submit_button"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/confirm_submit_button"
+        style="@style/CryptoX_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/new_account_setup_confirm_submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/progress"
+        layout="@layout/progress" />
+</androidx.constraintlayout.widget.ConstraintLayout>

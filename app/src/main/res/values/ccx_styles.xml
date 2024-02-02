@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- region Buttons -->
+    <style name="CCX_Button_Primary">
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/ccx_button_primary_background</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/CCX_Typography_Button_L</item>
+        <item name="drawableTint">@color/ccx_button_primary_text_color</item>
+        <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+    <style name="CCX_Button_Primary.ArrowRight">
+        <item name="drawableEndCompat">@drawable/ccx_ico_arrow_right</item>
+    </style>
+
+    <style name="CCX_Button_Primary.Modal">
+        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="backgroundTint">#14181D</item>
+        <item name="android:background">@drawable/ccx_button_primary_background</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/ccx_neutral_tint_1</item>
+        <item name="android:textAppearance">@style/CCX_Typography_Button_M</item>
+        <item name="android:paddingHorizontal">24dp</item>
+        <item name="android:minEms">5</item>
+    </style>
+
+    <style name="CCX_Button_Passcode_Digit">
+        <item name="android:layout_width">68dp</item>
+        <item name="android:layout_height">68dp</item>
+        <item name="android:background">@drawable/ccx_passcode_number_button_background</item>
+        <item name="fontFamily">@font/w500</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/ccx_neutral_tint_7</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="CCX_Button_Passcode_Extra">
+        <item name="android:layout_width">68dp</item>
+        <item name="android:layout_height">68dp</item>
+        <item name="android:background">@drawable/ccx_passcode_extra_button_background</item>
+        <item name="fontFamily">@font/w500</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawableTint">#DEE7E7</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <!-- endregion -->
+
+    <!-- region Compound buttons -->
+    <style name="CCX_CompoundButton_Checkbox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/ccx_checkbox_button</item>
+        <item name="android:textAppearance">@style/CCX_Typography_Body</item>
+        <item name="android:textColor">@color/ccx_neutral_tint_1</item>
+        <item name="android:paddingStart">16dp</item>
+    </style>
+    <!-- endregion Compound buttons-->
+
+    <!-- region Dialogs -->
+    <style name="CCX_Dialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="dialogCornerRadius">@dimen/ccx_modal_corner_radius</item>
+        <item name="windowNoTitle">true</item>
+        <!-- The background @drawable/ccx_dialog_background must be set
+        as the background of the content layout -->
+    </style>
+
+    <style name="CCX_BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CCX_BottomSheetDialogBottomSheetStyle</item>
+        <!-- The background @drawable/ccx_bottom_sheet_dialog_background must be set
+        as the background of the content layout -->
+    </style>
+
+    <style name="CCX_BottomSheetDialogBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearance">@null</item>
+    </style>
+    <!-- endregion -->
+
+    <!-- region Typography -->
+    <style name="CCX_Typography_Display">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <style name="CCX_Typography_H1">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="CCX_Typography_H2">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="CCX_Typography_H3">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CCX_Typography_Item">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CCX_Typography_Body">
+        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CCX_Typography_Caption">
+        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="CCX_Typography_Button_L">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/ccx_button_primary_text_color</item>
+    </style>
+
+    <style name="CCX_Typography_Button_M">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ccx_button_primary_text_color</item>
+    </style>
+
+    <style name="CCX_Typography_Link_L" parent="CCX_Typography_Button_L" />
+
+    <style name="CCX_Typography_Link_M" parent="CCX_Typography_Button_M" />
+
+    <style name="CCX_Typography_DecorativeLabel">
+        <item name="android:fontFamily">@font/ibm_mono_w500</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="CCX_Typography_PageTitle">
+        <item name="android:fontFamily">@font/ibm_w400</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CCX_Typography_CardLabel">
+        <item name="android:fontFamily">@font/ibm_w400</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CCX_Typography_TabTitle">
+        <item name="android:fontFamily">@font/ibm_w400</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <!-- endregion -->
+
+    <!-- region Screens -->
+    <style name="CCX_Screen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">
+            <!-- This color is obtained experimentally.
+            Figma value doesn't match the rendered background bottom color-->
+            #0D0E12
+        </item>
+        <item name="android:windowBackground">@drawable/ccx_main_background</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <style name="CCX_WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowBackground">@drawable/ccx_welcome_background</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <style name="CCX_WelcomePromoScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/bottom_navigation_bar_background</item>
+        <item name="android:windowBackground">@drawable/ccx_main_background</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <!-- endregion -->
+
+    <!-- region Cards -->
+    <style name="CCX_GradientCard_16">
+        <item name="android:background">@drawable/ccx_card_gradient_16_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CCX_GradientCard_16.WithButtons">
+        <item name="android:background">
+            @drawable/ccx_card_gradient_with_buttons_16_background
+        </item>
+    </style>
+    <!-- endregion -->
+
+</resources>

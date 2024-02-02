@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="18dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="20dp">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView style="@style/CryptoX_BottomSheetHandle" />
+
+    <TextView
+        style="@style/CryptoX_Typography_TitleLarge"
+        android:layout_marginTop="28dp"
+        android:text="@string/baker_status_change_baking_status" />
+
+    <Button
+        android:id="@+id/update_stake_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginTop="28dp"
+        android:text="@string/update_baker_settings_menu_update_baker_stake" />
+
+    <Button
+        android:id="@+id/update_pool_settings_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:text="@string/update_baker_settings_menu_update_pool_settings" />
+
+    <Button
+        android:id="@+id/update_keys_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:text="@string/update_baker_settings_menu_update_baker_keys" />
+
+    <Button
+        android:id="@+id/stop_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:text="@string/update_baker_settings_menu_stop_baking" />
+</LinearLayout>

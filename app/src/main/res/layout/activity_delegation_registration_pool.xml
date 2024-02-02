@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/pool_registration_continue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <LinearLayout
+            style="@style/CryptoX_Container_Stroked"
+            android:layout_marginHorizontal="18dp"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                style="@style/CryptoX_Typography_Headline_Large"
+                android:text="@string/delegation_register_delegation_intro" />
+
+            <com.concordium.wallet.uicore.view.SegmentedControlView
+                android:id="@+id/pool_options"
+                style="@style/CryptoX_SegmentedControl"
+                android:layout_marginVertical="20dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/existing_pool_id"
+                    style="@style/CryptoX_Typography_Caption"
+                    tools:text="[Current target: 2323]" />
+
+                <EditText
+                    android:id="@+id/pool_id"
+                    style="@style/CryptoX_InputField"
+                    android:layout_width="match_parent"
+                    android:hint="@string/delegation_register_delegation_pool_id_hint"
+                    android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:paddingBottom="20dp"
+                    android:textColor="@color/cryptox_white_main"
+                    android:textColorHint="@color/cryptox_black_additional"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/pool_id_error"
+                    style="@style/CryptoX_Typography_Body_Medium.Error"
+                    android:visibility="invisible"
+                    tools:text="@string/delegation_register_delegation_pool_id_error"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/pool_desc"
+                style="@style/CryptoX_Typography_Default"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/cryptox_grey_additional"
+                tools:text="@string/delegation_register_delegation_desc" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/pool_registration_continue"
+        style="@style/CryptoX_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginVertical="20dp"
+        android:text="@string/delegation_register_delegation_continue"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        tools:visibility="gone" />
+</androidx.constraintlayout.widget.ConstraintLayout>

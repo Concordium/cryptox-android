@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuitem_accounts"
+        android:icon="@drawable/ccx_ico_accounts"
+        android:title="@string/app_menu_item_accounts" />
+
+    <item
+        android:id="@+id/menuitem_tokens"
+        android:icon="@drawable/ccx_ico_nft"
+        android:title="@string/app_menu_item_tokens" />
+
+    <!-- The following two items are to be enabled later -->
+    <!--    <item-->
+    <!--        android:id="@+id/menuitem_assistant"-->
+    <!--        android:icon="@drawable/ccx_ico_assistant"-->
+    <!--        android:title="@string/app_menu_item_assistant" />-->
+
+    <!--    <item-->
+    <!--        android:id="@+id/menuitem_notifications"-->
+    <!--        android:icon="@drawable/ccx_ico_notifications"-->
+    <!--        android:title="@string/app_menu_item_notifications" />-->
+
+    <item
+        android:id="@+id/menuitem_more"
+        android:icon="@drawable/ccx_ico_more"
+        android:title="@string/app_menu_item_more" />
+</menu>
