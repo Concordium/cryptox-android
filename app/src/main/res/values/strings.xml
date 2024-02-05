@@ -1029,8 +1029,8 @@
     <string name="nft_add_provider_next">Next</string>
     <string name="nft_nothing_found">Nothing found</string>
     <plurals name="nft_found_items_count">
-        <item quantity="one">%1$d item</item>
-        <item quantity="other">%1$d items</item>
+        <item quantity="one">Showing %1$d item</item>
+        <item quantity="other">Showing %1$d items</item>
     </plurals>
 
     <string name="welcome_title">Welcome to Concordium CryptoX wallet</string>

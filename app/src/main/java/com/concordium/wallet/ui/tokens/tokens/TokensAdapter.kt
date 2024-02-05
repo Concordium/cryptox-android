@@ -39,14 +39,14 @@ class TokensAdapter(private val callback: TokenItemView.ITokenItemView) : Recycl
         this.data.addAll(data)
         this.dataOrig.addAll(data)
         this.walletName = walletName
-        callback.showFoundCount(data.size)
+        callback.showFoundCount(this.data.size)
         notifyDataSetChanged()
     }
 
-    fun setNextData(data: List<Token>, walletName: String) {
-        this.data.addAll(data)
+    fun setNextData(nextData: List<Token>, walletName: String) {
+        this.data.addAll(nextData)
         this.walletName = walletName
-        callback.showFoundCount(data.size)
+        callback.showFoundCount(this.data.size)
         notifyDataSetChanged()
     }
 

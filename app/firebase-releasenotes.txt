@@ -1,4 +1,2 @@
-⚠️ This update may require app reinstall
-
 Fixed:
-- WAL-3 Not wrapping CCDs on wccd.testnet.concordium.com
+- CCRYPTOX-32 "Nothing found" when scrolling down a large NFT collection
