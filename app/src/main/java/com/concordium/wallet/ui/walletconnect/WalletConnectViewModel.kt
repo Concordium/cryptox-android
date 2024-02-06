@@ -97,9 +97,14 @@ private constructor(
         "${application.getString(R.string.wc_scheme)}:",
     )
     private val allowedAccountTransactionTypeMap = mapOf(
-        TransactionType.UPDATE to "Update",
-        TransactionType.TRANSFER to "Transfer",
-        TransactionType.INIT_CONTRACT to "InitContract",
+        TransactionType.UPDATE to TransactionTypeValues(
+            cryptoLibraryType = "Update",
+            transactionCostType = ProxyRepository.UPDATE,
+        ),
+        TransactionType.TRANSFER to TransactionTypeValues(
+            cryptoLibraryType = "Transfer",
+            transactionCostType = ProxyRepository.SIMPLE_TRANSFER,
+        ),
     )
     private val allowedRequestMethods = setOf(
         REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
@@ -673,7 +678,9 @@ private constructor(
     private suspend fun getSessionRequestTransactionCost()
             : TransferCost = suspendCancellableCoroutine { continuation ->
         val backendRequest = proxyRepository.getTransferCost(
-            type = ProxyRepository.UPDATE,
+            type = checkNotNull(allowedAccountTransactionTypeMap[sessionRequestParams.type]) {
+                "The unsupported transaction type should have been rejected before"
+            }.transactionCostType,
             amount = sessionRequestParamsPayload.amount.toBigInteger(),
             sender = sessionRequestAccount.address,
             contractIndex = sessionRequestParamsPayload.address.index,
@@ -837,7 +844,7 @@ private constructor(
             payload = sessionRequestParamsPayload,
             type = checkNotNull(allowedAccountTransactionTypeMap[sessionRequestParams.type]) {
                 "The unsupported transaction type should have been rejected before"
-            },
+            }.cryptoLibraryType,
         )
 
         val accountTransactionOutput =
@@ -1197,6 +1204,11 @@ private constructor(
             val error: Error,
         ) : Event
     }
+
+    private data class TransactionTypeValues(
+        val cryptoLibraryType: String,
+        val transactionCostType: String,
+    )
 
     private companion object {
         private const val WC_URI_PREFIX = "wc:"
