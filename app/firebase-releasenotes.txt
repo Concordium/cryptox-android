@@ -1,2 +1,2 @@
-Fixed:
-- CCRYPTOX-32 "Nothing found" when scrolling down a large NFT collection
+Added:
+- WAL-41 EUROe to the list of default tokens

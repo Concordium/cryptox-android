@@ -7,7 +7,7 @@ interface AccountContractDao {
     @Query("SELECT * FROM account_contract_table WHERE account_address = :accountAddress AND contract_index = :contractIndex")
     suspend fun find(accountAddress: String, contractIndex: String): AccountContract?
 
-    @Query("SELECT * FROM account_contract_table WHERE account_address = :accountAddress")
+    @Query("SELECT * FROM account_contract_table WHERE account_address = :accountAddress ORDER BY id")
     suspend fun find(accountAddress: String): List<AccountContract>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
