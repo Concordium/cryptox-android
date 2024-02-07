@@ -501,7 +501,11 @@ private constructor(
                 }
             }
         } catch (error: Exception) {
-            Log.e("failed_parsing_session_request_params", error)
+            Log.e(
+                "failed_parsing_session_request_params:" +
+                        "\nparams=$params",
+                error
+            )
 
             respondError(
                 message = "Failed parse the request: $error"
@@ -517,7 +521,10 @@ private constructor(
 
         val sessionRequestParamsPayload: Payload? = sessionRequestParams.parsePayload()
         if (sessionRequestParamsPayload == null) {
-            Log.e("failed_parsing_session_request_params_payload")
+            Log.e(
+                "failed_parsing_session_request_params_payload:" +
+                        "\npayload=${sessionRequestParams.payload}"
+            )
 
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
