@@ -17,6 +17,7 @@ import com.concordium.wallet.databinding.AccountReleaseScheduleTransactionItemBi
 import com.concordium.wallet.databinding.ActivityAccountReleaseScheduleBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -82,7 +83,7 @@ class AccountReleaseScheduleActivity : BaseActivity(
         viewModel.scheduledReleasesLiveData.observe(this) { list ->
 
             binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
-                viewModel.account.finalizedAccountReleaseSchedule?.total.toBigInteger(),
+                viewModel.account.finalizedAccountReleaseSchedule?.total ?: BigInteger.ZERO,
                 true
             )
 

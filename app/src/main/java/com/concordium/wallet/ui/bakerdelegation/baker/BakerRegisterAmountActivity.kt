@@ -14,7 +14,6 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.common.GenericFlowActivity
-import com.concordium.wallet.util.toBigInteger
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
@@ -131,12 +130,13 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         if (viewModel.bakerDelegationData.isUpdateBaker()) {
             setActionBarTitle(R.string.baker_registration_update_amount_title)
             viewModel.bakerDelegationData.oldStakedAmount =
-                viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toBigInteger()
+                viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
             viewModel.bakerDelegationData.oldRestake =
                 viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true
+                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: BigInteger.ZERO,
+                    true
                 )
             )
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
@@ -151,7 +151,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             getString(
                 R.string.amount,
                 CurrencyUtil.formatGTU(
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0",
+                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: BigInteger.ZERO,
                     true
                 )
             )
@@ -184,6 +184,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         return StakeAmountInputValidator(
             minimumValue = viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
             maximumValue = viewModel.getStakeInputMax(),
+            oldStakedAmount = viewModel.bakerDelegationData.oldStakedAmount,
             balance = viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
             atDisposal = viewModel.atDisposal(),
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
@@ -209,17 +210,15 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
     private fun onContinueClicked() {
         if (!binding.bakerRegistrationContinue.isEnabled) return
 
+        val amountToStake = CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: BigInteger.ZERO
         val stakeAmountInputValidator = getStakeAmountInputValidator()
-        val stakeError = stakeAmountInputValidator.validate(
-            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(), validateFee
-        )
+        val stakeError = stakeAmountInputValidator.validate(amountToStake, validateFee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             binding.amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
             return
         }
 
-        val amountToStake = getAmountToStake()
         if (viewModel.bakerDelegationData.isUpdateBaker()) {
             when {
                 amountToStake == viewModel.bakerDelegationData.oldStakedAmount && viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake -> showNoChange()
@@ -232,10 +231,6 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
                 else -> gotoNextPage()
             }
         }
-    }
-
-    private fun getAmountToStake(): BigInteger {
-        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: BigInteger.ZERO
     }
 
     private fun show95PercentWarning() {

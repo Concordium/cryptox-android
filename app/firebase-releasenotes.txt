@@ -1,2 +1,2 @@
-Added:
-- WAL-41 EUROe to the list of default tokens
+Fixed:
+- WAL-12 Can't change restaking options after minimum equity capital was increased

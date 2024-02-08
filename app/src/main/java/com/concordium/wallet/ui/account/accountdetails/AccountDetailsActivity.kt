@@ -282,7 +282,7 @@ class AccountDetailsActivity : BaseActivity(
                     View.VISIBLE
                 binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
                     CurrencyUtil.formatGTU(
-                        viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: ""
+                        viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: BigInteger.ZERO
                     )
             } else {
                 binding.walletInfoCard.delegatingLabel.visibility = View.GONE

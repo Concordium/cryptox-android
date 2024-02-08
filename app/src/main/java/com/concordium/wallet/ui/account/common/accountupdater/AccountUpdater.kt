@@ -13,15 +13,33 @@ import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
-import com.concordium.wallet.data.model.*
-import com.concordium.wallet.data.room.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountEncryptedAmount
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.TransferSubmissionStatus
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.EncryptedAmount
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
 import com.concordium.wallet.util.toBigInteger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
 import java.math.BigInteger
 
@@ -353,16 +371,15 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
 
-                        if(it.accountBaker != null && it.accountBaker.stakedAmount != null){
-                            it.accountBaker.stakedAmount.toBigInteger()
-                                .let { request.account.totalStaked = it }
+                        if(it.accountBaker != null){
+                            request.account.totalStaked = it.accountBaker.stakedAmount
                         }
                         else{
                             request.account.totalStaked = BigInteger.ZERO
                         }
 
-                        if(it.accountBaker != null && it.accountBaker.bakerId != null){
-                            it.accountBaker.bakerId.toLong().let { request.account.bakerId = it }
+                        if(it.accountBaker?.bakerId != null){
+                            request.account.bakerId=it.accountBaker.bakerId.toLong()
                         }
                         else{
                             request.account.bakerId = null
@@ -485,7 +502,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             if(!account.readOnly){
                 totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
                 totalStakedForAllAccounts += account.totalStaked
-                totalDelegatingForAllAccounts += account.accountDelegation?.stakedAmount.toBigInteger()
+                totalDelegatingForAllAccounts += account.accountDelegation?.stakedAmount ?: BigInteger.ZERO
             }
 
             if(containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED){

@@ -4,7 +4,6 @@ import androidx.room.*
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
-import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonObject
 import java.io.Serializable
 import java.math.BigInteger
@@ -136,9 +135,9 @@ data class Account(
     }
 
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {
-        val stakedAmount: BigInteger = accountDelegation?.stakedAmount?.toBigInteger()
-            ?: accountBaker?.stakedAmount?.toBigInteger() ?: BigInteger.ZERO
-        val scheduledTotal: BigInteger = finalizedAccountReleaseSchedule?.total.toBigInteger()
+        val stakedAmount: BigInteger = accountDelegation?.stakedAmount
+            ?: accountBaker?.stakedAmount ?: BigInteger.ZERO
+        val scheduledTotal: BigInteger = finalizedAccountReleaseSchedule?.total ?: BigInteger.ZERO
         val subtract: BigInteger = if (stakedAmount in BigInteger.ONE..scheduledTotal)
             scheduledTotal
         else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
@@ -148,9 +147,5 @@ data class Account(
         else
             BigInteger.ZERO
         return BigInteger.ZERO.max(totalBalance - subtract)
-    }
-
-    fun getAtDisposal(): BigInteger {
-        return finalizedBalance - finalizedAccountReleaseSchedule?.total.toBigInteger()
     }
 }
