@@ -34,15 +34,19 @@ It is based on Concordium reference wallet.
 ## Development notes
 
 ### Build variants
-- Stage – Concordium testnet chain + Spaceseven stage
-- Prod – Concordium mainnet chain + Spaceseven prod
+- Testnet (`tstnet`) – Public Concordium test network, fake funds and identities. Spaceseven stage
+- Stagenet (`stagenet`) – Unstable Concordium test network, fake funds and identities.
+No Spaceseven instance
+- Mainnet (`mainnet`) – Public Concordium network, real funds and identities. Spaceseven production
 
-### Use Firebase App Distribution for stage builds
-1. Place the Firebase JSON config file to `app/secret/firebase-stage.json`
-2. Set up a quick runnable Gradle action in Android Studio: 
-    - Run: `app:assembleStageRelease app:appDistributionUploadStageRelease`
-    - Env variables: `FIREBASE_APP_ID=id-of-the-stage-app` (i.e. `1:000000000000:android:aaaaaaaaaaaaaaaaaaaaaa`)
-3. Maintain `app/firebase-releasenotes.txt` to give testers useful context
+### Use Firebase App Distribution
+1. Create a JSON key for `app-distribution@concordiummobilewallet.iam.gserviceaccount.com`
+in the Google Cloud IAM of the `ConcordiumMobileWallet` (or ask for existing key)
+2. Place the key to `app/secret/app-distribution-key.json`
+3. Set up a quick runnable Gradle action in Android Studio:
+   - For Testnet: `app:assembleTestnetRelease app:appDistributionUploadTestnetRelease`
+   - For Stagenet: `app:assembleStagenetRelease app:appDistributionUploadStagenetRelease`
+4. Maintain `app/app-distribution-release-notes.txt` to give testers useful context
 
 ### Sign app bundle for Google Play
 1. Acquire an upload keystore from the company credential storage

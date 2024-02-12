@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "124880082147",
+    "project_id": "concordiummobilewallet",
+    "storage_bucket": "concordiummobilewallet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124880082147:android:40bb3b4880d6aa92c7e1d6",
+        "android_client_info": {
+          "package_name": "com.pioneeringtechventures.wallet.testnet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9thKlEIUkdDK0h5ciWowlYNuzRqQdM5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
