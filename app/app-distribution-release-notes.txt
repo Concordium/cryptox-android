@@ -1,2 +1,2 @@
-Fixed:
-- WAL-12 Can't change restaking options after minimum equity capital was increased
+Changed:
+- WAL-6 Actualized support email and website on the About page
