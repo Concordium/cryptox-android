@@ -42,4 +42,5 @@ captures/
 
 # Keys and secrets
 *.jks
+!app/dev-only-signing.jks
 app/secret/

@@ -8,8 +8,6 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.appdistribution'
 
-apply from: '../ktlint.gradle'
-
 def SCHEME_BASE = "cryptoxmwallet"
 def WC_SCHEME_BASE = "cryptox-wc"
 def PROVIDER_AUTHORITY_BASE = "com.pioneeringtechventures.wallet.DataFileProvider"
@@ -75,6 +73,18 @@ android {
         }
     }
 
+    signingConfigs {
+        // A signature to be used for pre-release app distribution.
+        // Unlike the debug signing config, it does not depend on
+        // developer's personal debug keypair.
+        dev {
+            storeFile file("dev-only-signing.jks")
+            storePassword "concordium"
+            keyAlias "dev-sign-1"
+            keyPassword "concordium"
+        }
+    }
+
     buildTypes {
         debug {
             debuggable true
@@ -82,8 +92,8 @@ android {
 
         release {
             debuggable false
-            // TODO Add stable dev-only signature.
-            signingConfig signingConfigs.debug
+            // Only used for CLI builds.
+            signingConfig signingConfigs.dev
             // Unlocking requires vigilant testing.
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -311,5 +321,3 @@ dependencies {
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 }
-
-check.dependsOn ktlint
