@@ -35,7 +35,7 @@ int extractVersionCode() {
 }
 
 android {
-    def vCode = extractVersionCode() + 700
+    def vCode = 1300 + extractVersionCode()
     compileSdkVersion 34
 
     defaultConfig {
