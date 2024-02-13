@@ -21,7 +21,9 @@ import com.concordium.wallet.data.model.TransferCost
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.Params
+import com.concordium.wallet.data.walletconnect.ParamsDeserializer
 import com.concordium.wallet.data.walletconnect.Payload
+import com.concordium.wallet.data.walletconnect.Schema
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
@@ -33,6 +35,12 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
@@ -43,6 +51,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.io.Serializable
+import java.lang.reflect.Type
 import java.math.BigInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -464,6 +474,7 @@ private constructor(
             // Only handle the request if not reviewing another one.
             // Otherwise, the request will be handled as a pending one
             // once the current is reviewed.
+            println("What is going on?")
             handleSessionRequest(
                 topic = sessionRequest.topic,
                 id = sessionRequest.request.id,
@@ -479,22 +490,8 @@ private constructor(
         }
     }
 
-    private fun handleSessionRequest(
-        topic: String,
-        id: Long,
-        method: String,
-        params: String,
-        peerMetadata: Core.Model.AppMetaData,
-    ) = viewModelScope.launch {
-        // Needs to be set first to allow sending responses.
-        this@WalletConnectViewModel.sessionRequestId = id
-        this@WalletConnectViewModel.sessionRequestTopic = topic
-
+    private suspend fun handleSignTransactionRequest(params: String, peerMetadata: Core.Model.AppMetaData) {
         val sessionRequestParams: Params = try {
-            check(method in allowedRequestMethods) {
-                "Request method '$method' is not supported"
-            }
-
             Params.fromSessionRequestParams(params).also { parsedParams ->
                 check(allowedAccountTransactionTypeMap.containsKey(parsedParams.type)) {
                     "Transaction type '${parsedParams.type}' is not supported"
@@ -516,7 +513,7 @@ private constructor(
                     Error.InvalidRequest
                 )
             )
-            return@launch
+            return
         }
 
         val sessionRequestParamsPayload: Payload? = sessionRequestParams.parsePayload()
@@ -531,7 +528,7 @@ private constructor(
                     Error.InvalidRequest
                 )
             )
-            return@launch
+            return
         }
 
         val sessionRequestAccount: Account? =
@@ -544,7 +541,7 @@ private constructor(
                     Error.MissingRequestedAccount
                 )
             )
-            return@launch
+            return
         }
 
         this@WalletConnectViewModel.sessionRequestParams = sessionRequestParams
@@ -558,12 +555,81 @@ private constructor(
                     "\nparams=$sessionRequestParams"
         )
 
-        when (method) {
-            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
-                onSignAndSendTransactionRequested()
+        onSignAndSendTransactionRequested()
+    }
 
-            REQUEST_METHOD_SIGN_MESSAGE ->
-                onSignMessageRequested()
+    class SignMessageParamsDeserializer : JsonDeserializer<SignMessageParams?> {
+        @Throws(JsonParseException::class)
+        override fun deserialize(
+            jElement: JsonElement,
+            typeOfT: Type?,
+            context: JsonDeserializationContext
+        ): SignMessageParams {
+            val jObject = jElement.asJsonObject
+
+            return SignMessageParams(
+                message = jObject["message"].asString,
+            )
+        }
+    }
+
+    data class SignMessageParams(
+        val message: String
+    ) {
+        companion object {
+            fun fromSessionRequestParams(signMessageParams: String): SignMessageParams {
+                val gson = GsonBuilder()
+                    .registerTypeAdapter(
+                        SignMessageParams::class.java,
+                        SignMessageParamsDeserializer()
+                    )
+                    .create()
+
+                return gson.fromJson(signMessageParams, SignMessageParams::class.java)
+            }
+        }
+    }
+
+    private fun handleSignMessage(params: String) {
+        Log.d("Before parsing the thing")
+
+        val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
+
+        Log.d(signMessageParams.message)
+        respondError(message = "Just respond with an error")
+        mutableEventsFlow.tryEmit(
+            Event.ShowFloatingError(
+                Error.InvalidRequest
+            )
+        )
+    }
+
+    private fun handleSessionRequest(
+        topic: String,
+        id: Long,
+        method: String,
+        params: String,
+        peerMetadata: Core.Model.AppMetaData,
+    ) = viewModelScope.launch {
+        // Needs to be set first to allow sending responses.
+        this@WalletConnectViewModel.sessionRequestId = id
+        this@WalletConnectViewModel.sessionRequestTopic = topic
+
+        Log.d("WalletConnect method: $method")
+
+        when (method) {
+            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params, peerMetadata)
+            REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
+            else -> {
+                val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
+                Log.e(unsupportedMethodMessage)
+                respondError(message = unsupportedMethodMessage)
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.InvalidRequest
+                    )
+                )
+            }
         }
     }
 
