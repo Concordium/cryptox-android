@@ -137,10 +137,11 @@ class DefaultTokensManagerFactory(
     fun getDefaultFungibleTokensManager() =
         DefaultFungibleTokensManager(
             defaults =
-            if (BuildConfig.ENV_NAME == "production")
-                mainnetDefaultFungibleTokens
-            else
-                testnetDefaultFungibleTokens,
+            when (BuildConfig.ENV_NAME) {
+                "production" -> mainnetDefaultFungibleTokens
+                "testnet" -> testnetDefaultFungibleTokens
+                else -> emptyList()
+            },
             contractTokensRepository = contractTokensRepository,
             accountContractRepository = accountContractRepository,
         )
