@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAboutBinding
@@ -42,7 +43,7 @@ class AboutActivity : BaseActivity(
             }
         }
 
-        binding.aboutVersionText.text = BuildConfig.VERSION_NAME
+        binding.aboutVersionText.text = AppConfig.appVersion
 
         hideActionBarBack(isVisible = true)
         binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
