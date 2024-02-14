@@ -11,7 +11,6 @@ data class Params(
     val type: TransactionType,
     val sender: String,
     var payload: String?,
-    var message: String?,
     var schema: Schema?
 ) : Serializable {
     fun parsePayload(): Payload? {
