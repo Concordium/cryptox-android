@@ -74,7 +74,6 @@ import kotlin.coroutines.resumeWithException
  * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature.
  *
  * @see State
- * @see allowedRequestMethods
  * @see allowedAccountTransactionTypeMap
  */
 class WalletConnectViewModel
@@ -115,10 +114,6 @@ private constructor(
             cryptoLibraryType = "Transfer",
             transactionCostType = ProxyRepository.SIMPLE_TRANSFER,
         ),
-    )
-    private val allowedRequestMethods = setOf(
-        REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
-        REQUEST_METHOD_SIGN_MESSAGE,
     )
 
     private val accountRepository: AccountRepository by lazy {
