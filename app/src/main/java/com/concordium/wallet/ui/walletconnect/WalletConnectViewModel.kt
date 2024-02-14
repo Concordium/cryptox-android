@@ -140,6 +140,7 @@ private constructor(
     private lateinit var sessionRequestTransactionCost: BigInteger
     private lateinit var sessionRequestTransactionNonce: AccountNonce
     private lateinit var sessionRequestMessageToSign: String
+    private lateinit var sessionSelectedAccount: Account
 
     private val handledRequests = mutableSetOf<Long>()
 
@@ -363,14 +364,15 @@ private constructor(
             "Session proposal approval is only possible in the proposal review state"
         }
 
-        val accountAddress = sessionProposalReviewState.selectedAccount.address
+        val selectedAccount = sessionProposalReviewState.selectedAccount
+        this@WalletConnectViewModel.sessionSelectedAccount = selectedAccount
 
         SignClient.approveSession(
             Sign.Params.Approve(
                 proposerPublicKey = sessionProposalPublicKey,
                 namespaces = mapOf(
                     sessionProposalNamespaceKey to Sign.Model.Namespace.Session(
-                        accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
+                        accounts = listOf("$sessionProposalNamespaceChain:${selectedAccount.address}"),
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,
                         extensions = null,
@@ -490,7 +492,7 @@ private constructor(
         }
     }
 
-    private suspend fun handleSignTransactionRequest(params: String, peerMetadata: Core.Model.AppMetaData) {
+    private suspend fun handleSignTransactionRequest(params: String) {
         val sessionRequestParams: Params = try {
             Params.fromSessionRequestParams(params).also { parsedParams ->
                 check(allowedAccountTransactionTypeMap.containsKey(parsedParams.type)) {
@@ -547,8 +549,6 @@ private constructor(
         this@WalletConnectViewModel.sessionRequestParams = sessionRequestParams
         this@WalletConnectViewModel.sessionRequestParamsPayload = sessionRequestParamsPayload
         this@WalletConnectViewModel.sessionRequestAccount = sessionRequestAccount
-        this@WalletConnectViewModel.sessionRequestAppMetadata = peerMetadata
-            .let(WalletConnectViewModel::AppMetadata)
 
         Log.d(
             "handling_session_request:" +
@@ -558,50 +558,38 @@ private constructor(
         onSignAndSendTransactionRequested()
     }
 
-    class SignMessageParamsDeserializer : JsonDeserializer<SignMessageParams?> {
-        @Throws(JsonParseException::class)
-        override fun deserialize(
-            jElement: JsonElement,
-            typeOfT: Type?,
-            context: JsonDeserializationContext
-        ): SignMessageParams {
-            val jObject = jElement.asJsonObject
-
-            return SignMessageParams(
-                message = jObject["message"].asString,
-            )
-        }
-    }
-
     data class SignMessageParams(
         val message: String
     ) {
         companion object {
             fun fromSessionRequestParams(signMessageParams: String): SignMessageParams {
-                val gson = GsonBuilder()
-                    .registerTypeAdapter(
-                        SignMessageParams::class.java,
-                        SignMessageParamsDeserializer()
-                    )
-                    .create()
-
-                return gson.fromJson(signMessageParams, SignMessageParams::class.java)
+                return Gson().fromJson(signMessageParams, SignMessageParams::class.java)
             }
         }
     }
 
     private fun handleSignMessage(params: String) {
-        Log.d("Before parsing the thing")
+        try {
+            val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
+            this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.message
+            this@WalletConnectViewModel.sessionRequestAccount = sessionSelectedAccount
 
-        val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
-
-        Log.d(signMessageParams.message)
-        respondError(message = "Just respond with an error")
-        mutableEventsFlow.tryEmit(
-            Event.ShowFloatingError(
-                Error.InvalidRequest
+            mutableStateFlow.tryEmit(
+                State.SessionRequestReview.SignRequestReview(
+                    message = sessionRequestMessageToSign,
+                    account = sessionRequestAccount,
+                    appMetadata = sessionRequestAppMetadata
+                )
             )
-        )
+        } catch (e: Exception) {
+            Log.e("Failed to parse sign message parameters: $params", e)
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return
+        }
     }
 
     private fun handleSessionRequest(
@@ -614,11 +602,11 @@ private constructor(
         // Needs to be set first to allow sending responses.
         this@WalletConnectViewModel.sessionRequestId = id
         this@WalletConnectViewModel.sessionRequestTopic = topic
-
-        Log.d("WalletConnect method: $method")
+        this@WalletConnectViewModel.sessionRequestAppMetadata = peerMetadata
+            .let(WalletConnectViewModel::AppMetadata)
 
         when (method) {
-            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params, peerMetadata)
+            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
             else -> {
                 val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
@@ -854,30 +842,6 @@ private constructor(
                 )
             )
         }
-    }
-
-    private fun onSignMessageRequested() {
-        val messageToSign: String? = sessionRequestParams.message
-        if (messageToSign == null) {
-            Log.e("missing_message_to_sign")
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
-                )
-            )
-            return
-        }
-
-        this.sessionRequestMessageToSign = messageToSign
-
-        mutableStateFlow.tryEmit(
-            State.SessionRequestReview.SignRequestReview(
-                message = messageToSign,
-                account = sessionRequestAccount,
-                appMetadata = sessionRequestAppMetadata
-            )
-        )
     }
 
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
