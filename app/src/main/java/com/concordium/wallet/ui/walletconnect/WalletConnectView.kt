@@ -149,8 +149,8 @@ class WalletConnectView(
                     WalletConnectViewModel.Error.LoadingFailed ->
                         R.string.wallet_connect_error_loading_failed
 
-                    WalletConnectViewModel.Error.MissingRequestedAccount ->
-                        R.string.wallet_connect_error_missing_requested_account
+                    WalletConnectViewModel.Error.AccountMismatch ->
+                        R.string.wallet_connect_error_account_mismatch
 
                     WalletConnectViewModel.Error.NoAccounts ->
                         R.string.wallet_connect_error_no_accounts

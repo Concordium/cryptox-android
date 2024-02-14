@@ -140,7 +140,6 @@ private constructor(
     private lateinit var sessionRequestTransactionCost: BigInteger
     private lateinit var sessionRequestTransactionNonce: AccountNonce
     private lateinit var sessionRequestMessageToSign: String
-    private lateinit var sessionSelectedAccount: Account
 
     private val handledRequests = mutableSetOf<Long>()
 
@@ -365,7 +364,7 @@ private constructor(
         }
 
         val selectedAccount = sessionProposalReviewState.selectedAccount
-        this@WalletConnectViewModel.sessionSelectedAccount = selectedAccount
+        this@WalletConnectViewModel.sessionRequestAccount = selectedAccount
 
         SignClient.approveSession(
             Sign.Params.Approve(
@@ -476,7 +475,6 @@ private constructor(
             // Only handle the request if not reviewing another one.
             // Otherwise, the request will be handled as a pending one
             // once the current is reviewed.
-            println("What is going on?")
             handleSessionRequest(
                 topic = sessionRequest.topic,
                 id = sessionRequest.request.id,
@@ -492,7 +490,7 @@ private constructor(
         }
     }
 
-    private suspend fun handleSignTransactionRequest(params: String) {
+    private fun handleSignTransactionRequest(params: String) {
         val sessionRequestParams: Params = try {
             Params.fromSessionRequestParams(params).also { parsedParams ->
                 check(allowedAccountTransactionTypeMap.containsKey(parsedParams.type)) {
@@ -533,14 +531,13 @@ private constructor(
             return
         }
 
-        val sessionRequestAccount: Account? =
-            accountRepository.findByAddress(sessionRequestParams.sender)
-        if (sessionRequestAccount == null) {
-            Log.e("missing_account_required_for_session_request")
-
+        val senderAccountAddress = sessionRequestParams.sender
+        if (senderAccountAddress != sessionRequestAccount.address) {
+            Log.e("Received a request to sign an account transaction for a different account than the one connected in the session: $senderAccountAddress")
+            respondError(message = "The request was for a different account than the one connected.")
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
-                    Error.MissingRequestedAccount
+                    Error.AccountMismatch
                 )
             )
             return
@@ -548,7 +545,6 @@ private constructor(
 
         this@WalletConnectViewModel.sessionRequestParams = sessionRequestParams
         this@WalletConnectViewModel.sessionRequestParamsPayload = sessionRequestParamsPayload
-        this@WalletConnectViewModel.sessionRequestAccount = sessionRequestAccount
 
         Log.d(
             "handling_session_request:" +
@@ -572,7 +568,6 @@ private constructor(
         try {
             val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
             this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.message
-            this@WalletConnectViewModel.sessionRequestAccount = sessionSelectedAccount
 
             mutableStateFlow.tryEmit(
                 State.SessionRequestReview.SignRequestReview(
@@ -1196,9 +1191,10 @@ private constructor(
         object InvalidRequest : Error
 
         /**
-         * The dApp sent a request for an account not in the wallet.
+         * The dApp sent an account transaction request for a different account
+         * than the one connected in the session.
          */
-        object MissingRequestedAccount : Error
+        object AccountMismatch : Error
 
         /**
          * There are no accounts in the wallet therefore a session can't be established.
