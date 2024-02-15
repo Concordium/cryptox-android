@@ -157,11 +157,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         .filter { it.totalSupply != "0" }
 
                     tokens.addAll(filteredCis2Tokens)
-                    loadTokensMetadataUrls(filteredCis2Tokens)
-                    if (filteredCis2Tokens.isEmpty())
+                    if (filteredCis2Tokens.isEmpty()) {
                         lookForTokens.postValue(TOKENS_EMPTY)
-                    else
+                    } else {
+                        loadTokensMetadata()
                         lookForTokens.postValue(TOKENS_OK)
+                    }
                     allowToLoadMore = true
                 },
                 failure = {
@@ -355,33 +356,31 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         return Token.ccd(account)
     }
 
-    private fun loadTokensMetadataUrls(tokens: List<Token>) {
-        viewModelScope.launch {
-            val commaSeparated = tokens.joinToString(",") { it.token }
-            proxyRepository.getCIS2TokenMetadata(
-                tokenData.contractIndex,
-                tokenData.subIndex,
-                tokenIds = commaSeparated,
-                success = { cis2TokensMetadata ->
-                    tokenData.contractName = cis2TokensMetadata.contractName
-                    tokens.forEach {
-                        it.contractName = cis2TokensMetadata.contractName
-                    }
+    private fun loadTokensMetadata() = viewModelScope.launch(Dispatchers.IO) {
+        val commaSeparated = tokens.filter { !it.isCCDToken }.joinToString(",") { it.token }
+        proxyRepository.getCIS2TokenMetadata(
+            tokenData.contractIndex,
+            tokenData.subIndex,
+            tokenIds = commaSeparated,
+            success = { cis2TokensMetadata ->
+                tokenData.contractName = cis2TokensMetadata.contractName
+                tokens.forEach {
+                    it.contractName = cis2TokensMetadata.contractName
+                }
 
-                    cis2TokensMetadata.metadata.forEach { metadataItem ->
-                        loadTokenMetadata(
-                            tokenToUpdate = tokens.first {
-                                it.token == metadataItem.tokenId
-                                        && it.contractIndex == tokenData.contractIndex
-                            },
-                            cis2TokensMetadataItem = metadataItem,
-                        )
-                    }
-                },
-                failure = {
-                    handleBackendError(it)
-                })
-        }
+                cis2TokensMetadata.metadata.forEach { metadataItem ->
+                    loadTokenMetadata(
+                        tokenToUpdate = tokens.first {
+                            it.token == metadataItem.tokenId
+                                    && it.contractIndex == tokenData.contractIndex
+                        },
+                        cis2TokensMetadataItem = metadataItem,
+                    )
+                }
+            },
+            failure = {
+                handleBackendError(it)
+            })
     }
 
     private fun loadTokenMetadata(
