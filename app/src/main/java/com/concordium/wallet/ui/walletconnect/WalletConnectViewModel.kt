@@ -21,9 +21,7 @@ import com.concordium.wallet.data.model.TransferCost
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.Params
-import com.concordium.wallet.data.walletconnect.ParamsDeserializer
 import com.concordium.wallet.data.walletconnect.Payload
-import com.concordium.wallet.data.walletconnect.Schema
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
@@ -35,12 +33,6 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
-import com.google.gson.JsonSyntaxException
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
@@ -51,8 +43,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.Serializable
-import java.lang.reflect.Type
 import java.math.BigInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -358,15 +348,14 @@ private constructor(
             "Session proposal approval is only possible in the proposal review state"
         }
 
-        val selectedAccount = sessionProposalReviewState.selectedAccount
-        this@WalletConnectViewModel.sessionRequestAccount = selectedAccount
+        val accountAddress = sessionProposalReviewState.selectedAccount.address
 
         SignClient.approveSession(
             Sign.Params.Approve(
                 proposerPublicKey = sessionProposalPublicKey,
                 namespaces = mapOf(
                     sessionProposalNamespaceKey to Sign.Model.Namespace.Session(
-                        accounts = listOf("$sessionProposalNamespaceChain:${selectedAccount.address}"),
+                        accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,
                         extensions = null,
@@ -446,7 +435,7 @@ private constructor(
         mutableStateFlow.tryEmit(
             State.SessionProposalReview(
                 selectedAccount = selectedAccount,
-                appMetadata = selectionState.appMetadata,
+                appMetadata = selectionState.appMetadata
             )
         )
     }
@@ -582,6 +571,36 @@ private constructor(
         }
     }
 
+    /**
+     * Extracts the account address from a map of session namespaces. This works as the account
+     * format follows the convention: `ccd:network:accountAddress`, which is defined by what we set
+     * in the namespace in [approveSessionProposal].
+     * If the account address cannot be found, then a null value is returned instead.
+     */
+    private fun extractAccountAddressFromNamespaces(namespaces: Map<String, Sign.Model.Namespace.Session>): String? {
+        val concordiumNamespaceSession = namespaces["ccd"]
+        if (concordiumNamespaceSession == null) {
+            Log.e("Namespaces did not contain the ccd namespace")
+            return null
+        }
+
+        // A WalletConnect session should always be for exactly one account. If there are more, then
+        // we cannot uniquely determine the correct account address.
+        if (concordiumNamespaceSession.accounts.size != 1) {
+            Log.e("There was not exactly one account in the namespace session")
+            return null
+        }
+
+        val accountLine = concordiumNamespaceSession.accounts[0]
+        accountLine.split(":").let {
+            if (it.size != 3) {
+                Log.e("The account address line did not split into the expected chunks: $accountLine")
+                return null
+            }
+            return it[2]
+        }
+    }
+
     private fun handleSessionRequest(
         topic: String,
         id: Long,
@@ -594,6 +613,50 @@ private constructor(
         this@WalletConnectViewModel.sessionRequestTopic = topic
         this@WalletConnectViewModel.sessionRequestAppMetadata = peerMetadata
             .let(WalletConnectViewModel::AppMetadata)
+
+        // Find the session that the request matches. The session will allow us to extract
+        // the account that the request is for.
+        val currentSession = SignClient.getSettledSessionByTopic(topic)
+        if (currentSession == null) {
+            Log.e("Received a request for a topic where we did not find the session: Topic=$topic")
+            respondError(message = "No session found for the received topic: $topic")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return@launch
+        }
+
+        // Extract the account address from the namespaces. This is expected to always work
+        // unless the creation of the session is altered.
+        val accountAddress = extractAccountAddressFromNamespaces(currentSession.namespaces)
+        if (accountAddress == null) {
+            Log.e("Unable to extract account address from the session namespaces")
+            respondError(message = "Broken session")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return@launch
+        }
+
+        // Load the account from the repository. This is expected to always find an account
+        // as the account address in the session has been provided by the wallet.
+        val account = accountRepository.findByAddress(accountAddress)
+        if (account == null) {
+            Log.e("Unable to find account with address: $accountAddress")
+            respondError(message = "Broken session")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return@launch
+        }
+
+        this@WalletConnectViewModel.sessionRequestAccount = account
 
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
