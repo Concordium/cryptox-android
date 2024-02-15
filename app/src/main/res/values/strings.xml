@@ -546,7 +546,7 @@
     <string name="wallet_connect_error_invalid_request">The WalletConnect request is invalid</string>
     <string name="wallet_connect_error_cryptography_failed">Unexpected cryptography error</string>
     <string name="wallet_connect_error_loading_failed">Could not load the required data</string>
-    <string name="wallet_connect_error_missing_requested_account">The requested account is missing</string>
+    <string name="wallet_connect_error_account_mismatch">The received transaction was not for the chosen account</string>
     <string name="wallet_connect_error_response_failed">Could not send the response</string>
     <string name="wallet_connect_error_tx_submit_failed">Could not submit the transaction</string>
     <string name="wallet_connect_error_no_accounts">You must have at least one active account to continue</string>

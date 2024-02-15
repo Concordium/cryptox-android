@@ -64,7 +64,6 @@ import kotlin.coroutines.resumeWithException
  * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature.
  *
  * @see State
- * @see allowedRequestMethods
  * @see allowedAccountTransactionTypeMap
  */
 class WalletConnectViewModel
@@ -105,10 +104,6 @@ private constructor(
             cryptoLibraryType = "Transfer",
             transactionCostType = ProxyRepository.SIMPLE_TRANSFER,
         ),
-    )
-    private val allowedRequestMethods = setOf(
-        REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
-        REQUEST_METHOD_SIGN_MESSAGE,
     )
 
     private val accountRepository: AccountRepository by lazy {
@@ -440,7 +435,7 @@ private constructor(
         mutableStateFlow.tryEmit(
             State.SessionProposalReview(
                 selectedAccount = selectedAccount,
-                appMetadata = selectionState.appMetadata,
+                appMetadata = selectionState.appMetadata
             )
         )
     }
@@ -479,22 +474,8 @@ private constructor(
         }
     }
 
-    private fun handleSessionRequest(
-        topic: String,
-        id: Long,
-        method: String,
-        params: String,
-        peerMetadata: Core.Model.AppMetaData,
-    ) = viewModelScope.launch {
-        // Needs to be set first to allow sending responses.
-        this@WalletConnectViewModel.sessionRequestId = id
-        this@WalletConnectViewModel.sessionRequestTopic = topic
-
+    private fun handleSignTransactionRequest(params: String) {
         val sessionRequestParams: Params = try {
-            check(method in allowedRequestMethods) {
-                "Request method '$method' is not supported"
-            }
-
             Params.fromSessionRequestParams(params).also { parsedParams ->
                 check(allowedAccountTransactionTypeMap.containsKey(parsedParams.type)) {
                     "Transaction type '${parsedParams.type}' is not supported"
@@ -516,7 +497,7 @@ private constructor(
                     Error.InvalidRequest
                 )
             )
-            return@launch
+            return
         }
 
         val sessionRequestParamsPayload: Payload? = sessionRequestParams.parsePayload()
@@ -531,39 +512,165 @@ private constructor(
                     Error.InvalidRequest
                 )
             )
-            return@launch
+            return
         }
 
-        val sessionRequestAccount: Account? =
-            accountRepository.findByAddress(sessionRequestParams.sender)
-        if (sessionRequestAccount == null) {
-            Log.e("missing_account_required_for_session_request")
-
+        val senderAccountAddress = sessionRequestParams.sender
+        if (senderAccountAddress != sessionRequestAccount.address) {
+            Log.e("Received a request to sign an account transaction for a different account than the one connected in the session: $senderAccountAddress")
+            respondError(message = "The request was for a different account than the one connected.")
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
-                    Error.MissingRequestedAccount
+                    Error.AccountMismatch
                 )
             )
-            return@launch
+            return
         }
 
         this@WalletConnectViewModel.sessionRequestParams = sessionRequestParams
         this@WalletConnectViewModel.sessionRequestParamsPayload = sessionRequestParamsPayload
-        this@WalletConnectViewModel.sessionRequestAccount = sessionRequestAccount
-        this@WalletConnectViewModel.sessionRequestAppMetadata = peerMetadata
-            .let(WalletConnectViewModel::AppMetadata)
 
         Log.d(
             "handling_session_request:" +
                     "\nparams=$sessionRequestParams"
         )
 
-        when (method) {
-            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
-                onSignAndSendTransactionRequested()
+        onSignAndSendTransactionRequested()
+    }
 
-            REQUEST_METHOD_SIGN_MESSAGE ->
-                onSignMessageRequested()
+    data class SignMessageParams(
+        val message: String
+    ) {
+        companion object {
+            fun fromSessionRequestParams(signMessageParams: String): SignMessageParams {
+                return Gson().fromJson(signMessageParams, SignMessageParams::class.java)
+            }
+        }
+    }
+
+    private fun handleSignMessage(params: String) {
+        try {
+            val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
+            this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.message
+
+            mutableStateFlow.tryEmit(
+                State.SessionRequestReview.SignRequestReview(
+                    message = sessionRequestMessageToSign,
+                    account = sessionRequestAccount,
+                    appMetadata = sessionRequestAppMetadata
+                )
+            )
+        } catch (e: Exception) {
+            Log.e("Failed to parse sign message parameters: $params", e)
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return
+        }
+    }
+
+    /**
+     * Extracts the account address from a map of session namespaces. This works as the account
+     * format follows the convention: `ccd:network:accountAddress`, which is defined by what we set
+     * in the namespace in [approveSessionProposal].
+     * If the account address cannot be found, then a null value is returned instead.
+     */
+    private fun extractAccountAddressFromNamespaces(namespaces: Map<String, Sign.Model.Namespace.Session>): String? {
+        val concordiumNamespaceSession = namespaces["ccd"]
+        if (concordiumNamespaceSession == null) {
+            Log.e("Namespaces did not contain the ccd namespace")
+            return null
+        }
+
+        // A WalletConnect session should always be for exactly one account. If there are more, then
+        // we cannot uniquely determine the correct account address.
+        if (concordiumNamespaceSession.accounts.size != 1) {
+            Log.e("There was not exactly one account in the namespace session")
+            return null
+        }
+
+        val accountLine = concordiumNamespaceSession.accounts[0]
+        accountLine.split(":").let {
+            if (it.size != 3) {
+                Log.e("The account address line did not split into the expected chunks: $accountLine")
+                return null
+            }
+            return it[2]
+        }
+    }
+
+    private fun handleSessionRequest(
+        topic: String,
+        id: Long,
+        method: String,
+        params: String,
+        peerMetadata: Core.Model.AppMetaData,
+    ) = viewModelScope.launch {
+        // Needs to be set first to allow sending responses.
+        this@WalletConnectViewModel.sessionRequestId = id
+        this@WalletConnectViewModel.sessionRequestTopic = topic
+        this@WalletConnectViewModel.sessionRequestAppMetadata = peerMetadata
+            .let(WalletConnectViewModel::AppMetadata)
+
+        // Find the session that the request matches. The session will allow us to extract
+        // the account that the request is for.
+        val currentSession = SignClient.getSettledSessionByTopic(topic)
+        if (currentSession == null) {
+            Log.e("Received a request for a topic where we did not find the session: Topic=$topic")
+            respondError(message = "No session found for the received topic: $topic")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return@launch
+        }
+
+        // Extract the account address from the namespaces. This is expected to always work
+        // unless the creation of the session is altered.
+        val accountAddress = extractAccountAddressFromNamespaces(currentSession.namespaces)
+        if (accountAddress == null) {
+            Log.e("Unable to extract account address from the session namespaces")
+            respondError(message = "Broken session")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return@launch
+        }
+
+        // Load the account from the repository. This is expected to always find an account
+        // as the account address in the session has been provided by the wallet.
+        val account = accountRepository.findByAddress(accountAddress)
+        if (account == null) {
+            Log.e("Unable to find account with address: $accountAddress")
+            respondError(message = "Broken session")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return@launch
+        }
+
+        this@WalletConnectViewModel.sessionRequestAccount = account
+
+        when (method) {
+            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
+            REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
+            else -> {
+                val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
+                Log.e(unsupportedMethodMessage)
+                respondError(message = unsupportedMethodMessage)
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.InvalidRequest
+                    )
+                )
+            }
         }
     }
 
@@ -788,30 +895,6 @@ private constructor(
                 )
             )
         }
-    }
-
-    private fun onSignMessageRequested() {
-        val messageToSign: String? = sessionRequestParams.message
-        if (messageToSign == null) {
-            Log.e("missing_message_to_sign")
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
-                )
-            )
-            return
-        }
-
-        this.sessionRequestMessageToSign = messageToSign
-
-        mutableStateFlow.tryEmit(
-            State.SessionRequestReview.SignRequestReview(
-                message = messageToSign,
-                account = sessionRequestAccount,
-                appMetadata = sessionRequestAppMetadata
-            )
-        )
     }
 
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
@@ -1166,9 +1249,10 @@ private constructor(
         object InvalidRequest : Error
 
         /**
-         * The dApp sent a request for an account not in the wallet.
+         * The dApp sent an account transaction request for a different account
+         * than the one connected in the session.
          */
-        object MissingRequestedAccount : Error
+        object AccountMismatch : Error
 
         /**
          * There are no accounts in the wallet therefore a session can't be established.

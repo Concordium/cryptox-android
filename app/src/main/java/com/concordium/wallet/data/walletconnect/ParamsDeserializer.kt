@@ -22,7 +22,6 @@ class ParamsDeserializer : JsonDeserializer<Params?> {
             type = context.deserialize(jObject["type"], TransactionType::class.java),
             sender = jObject["sender"]!!.asString,
             payload = jObject["payload"]?.asString,
-            message = jObject["message"]?.asString,
             schema = getSchema(context, jObject["schema"])
         )
     }
