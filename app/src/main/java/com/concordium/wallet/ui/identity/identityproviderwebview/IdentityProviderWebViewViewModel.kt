@@ -33,6 +33,7 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -204,8 +205,14 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityError(errorContent: String) {
-        val error: Map<String, Any> =
+        val error: Map<String, Any> = try {
             gson.fromJson(errorContent, object : TypeToken<Map<String, Any>>() {}.type)
+        } catch (jsonException: JsonParseException) {
+            Log.e("Unexpected identity error content", jsonException)
+            _identityCreationError.value = Event(errorContent)
+            return
+        }
+
         val map = error["error"] as Map<*, *>
         val event = Event(map["detail"].toString())
         if (map["code"]!! == "USER_CANCEL") {
