@@ -32,9 +32,11 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -50,6 +52,10 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
+
+    private val _openIdentityVerificationUrl = MutableLiveData<Event<String>>()
+    val openIdentityVerificationUrl: LiveData<Event<String>>
+        get() = _openIdentityVerificationUrl
 
     private val _identityCreationError = MutableLiveData<Event<String>>()
     val identityCreationError: LiveData<Event<String>>
@@ -111,16 +117,32 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         }
     }
 
-    fun getIdentityProviderUrl(): String {
+    /**
+     * Upon finish, either [openIdentityVerificationUrl] or [identityCreationError]
+     * gets triggered.
+     */
+    fun beginVerification() = viewModelScope.launch(Dispatchers.IO) {
+        _waitingLiveData.postValue(true)
+
         val idObjectRequest = gson.toJson(IdentityRequest(identityCreationData.idObjectRequest))
         val baseUrl = identityCreationData.identityProvider.metadata.issuanceStart
         val delimiter = if (baseUrl.contains('?')) "&" else "?"
-        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase()
-                .contains("notabene")
-        )
-            "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest&test_flow=1"
-        else
-            "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest"
+        try {
+            val verificationRedirectUrl = IdentityProviderApiInstance.getVerificationRedirectUri(
+                verificationStartUrl = baseUrl +
+                        "${delimiter}response_type=code" +
+                        "&redirect_uri=$CALLBACK_URL" +
+                        "&scope=identity" +
+                        "&state=$idObjectRequest",
+                redirectUriScheme = BuildConfig.SCHEME,
+            )
+
+            _openIdentityVerificationUrl.postValue(Event(verificationRedirectUrl))
+        } catch (error: Exception) {
+            _identityCreationError.postValue(Event(error.message ?: error.toString()))
+        } finally {
+            _waitingLiveData.postValue(false)
+        }
     }
 
     private fun saveNewIdentity(identityObject: IdentityObject) {
