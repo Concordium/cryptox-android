@@ -206,9 +206,13 @@ class IdentityProviderWebviewActivity : BaseActivity(
                 showError(value)
             }
         })
-        viewModel.openIdentityVerificationUrl.observe(this, object : EventObserver<String>() {
-            override fun onUnhandledEvent(value: String) {
-                showChromeCustomTab(value)
+        viewModel.handleIdentityVerificationUri.observe(this, object : EventObserver<Uri>() {
+            override fun onUnhandledEvent(value: Uri) {
+                if (hasValidCallbackUri(value)) {
+                    handleNewIntentData(value, null)
+                } else {
+                    showChromeCustomTab(value.toString())
+                }
             }
         })
         viewModel.identityCreationError.observe(this, object : EventObserver<String>() {

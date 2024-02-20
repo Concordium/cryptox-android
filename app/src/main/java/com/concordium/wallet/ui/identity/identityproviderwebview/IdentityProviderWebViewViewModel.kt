@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.identity.identityproviderwebview
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -53,9 +54,9 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
 
-    private val _openIdentityVerificationUrl = MutableLiveData<Event<String>>()
-    val openIdentityVerificationUrl: LiveData<Event<String>>
-        get() = _openIdentityVerificationUrl
+    private val _handleIdentityVerificationUri = MutableLiveData<Event<Uri>>()
+    val handleIdentityVerificationUri: LiveData<Event<Uri>>
+        get() = _handleIdentityVerificationUri
 
     private val _identityCreationError = MutableLiveData<Event<String>>()
     val identityCreationError: LiveData<Event<String>>
@@ -118,7 +119,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     /**
-     * Upon finish, either [openIdentityVerificationUrl] or [identityCreationError]
+     * Upon finish, either [handleIdentityVerificationUri] or [identityCreationError]
      * gets triggered.
      */
     fun beginVerification() = viewModelScope.launch(Dispatchers.IO) {
@@ -128,7 +129,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         val baseUrl = identityCreationData.identityProvider.metadata.issuanceStart
         val delimiter = if (baseUrl.contains('?')) "&" else "?"
         try {
-            val verificationRedirectUrl = IdentityProviderApiInstance.getVerificationRedirectUri(
+            val verificationRedirectUri = IdentityProviderApiInstance.getVerificationRedirectUri(
                 verificationStartUrl = baseUrl +
                         "${delimiter}response_type=code" +
                         "&redirect_uri=$CALLBACK_URL" +
@@ -136,8 +137,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                         "&state=$idObjectRequest",
                 redirectUriScheme = BuildConfig.SCHEME,
             )
-
-            _openIdentityVerificationUrl.postValue(Event(verificationRedirectUrl))
+            _handleIdentityVerificationUri.postValue(Event(Uri.parse(verificationRedirectUri)))
         } catch (error: Exception) {
             _identityCreationError.postValue(Event(error.message ?: error.toString()))
         } finally {
