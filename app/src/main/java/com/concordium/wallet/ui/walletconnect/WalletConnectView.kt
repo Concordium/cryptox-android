@@ -12,6 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectProgressBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectSessionProposalReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectSignRequestReviewBinding
@@ -118,6 +119,15 @@ class WalletConnectView(
                 )
             }
 
+            is WalletConnectViewModel.State.SessionRequestReview.IdentityProofRequestReview -> {
+                showIdentityProofRequestReview(
+                    account = state.account,
+                    appMetadata = state.appMetadata,
+                    // TODO We don't want to show the challenge. This should be the statements.
+                    challenge = state.request.challenge
+                )
+            }
+
             is WalletConnectViewModel.State.TransactionSubmitted -> {
                 showTransactionSubmitted(
                     submissionId = state.submissionId,
@@ -163,6 +173,9 @@ class WalletConnectView(
 
                     WalletConnectViewModel.Error.NoSupportedChains ->
                         R.string.wallet_connect_error_no_supported_chains
+
+                    WalletConnectViewModel.Error.InternalError ->
+                        R.string.wallet_connect_error_internal_error
                 }
 
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
@@ -355,6 +368,7 @@ class WalletConnectView(
         }
     }
 
+
     private fun showSignRequestReview(
         message: String,
         account: Account,
@@ -399,6 +413,64 @@ class WalletConnectView(
         }
 
         messageTextView.text = message
+
+        declineButton.setOnClickListener {
+            viewModel.rejectSessionRequest()
+        }
+
+        approveButton.setOnClickListener {
+            viewModel.approveSessionRequest()
+        }
+        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
+            lifecycleOwner = lifecycleOwner,
+            action = approveButton::setEnabled
+        )
+    }
+
+    private fun showIdentityProofRequestReview(
+        challenge: String,
+        account: Account,
+        appMetadata: WalletConnectViewModel.AppMetadata,
+    ) {
+        getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
+            initIdentityProofRequestReview(
+                view = view,
+                lifecycleOwner = lifecycleOwner,
+                account = account,
+                appMetadata = appMetadata,
+                challenge = challenge
+            )
+        }
+    }
+
+    private fun initIdentityProofRequestReview(
+        view: FragmentWalletConnectIdentityProofRequestReviewBinding,
+        lifecycleOwner: LifecycleOwner,
+        account: Account,
+        appMetadata: WalletConnectViewModel.AppMetadata,
+        challenge: String
+    ) = with(view) {
+        Glide.with(appIconImageView.context)
+            .load(appMetadata.iconUrl)
+            .placeholder(ThemedCircularProgressDrawable(root.context))
+            .fitCenter()
+            .into(appIconImageView)
+
+        appNameTextView.text = appMetadata.name
+
+        with(selectedAccountInclude) {
+            accAddress.text = account.getAccountName()
+            accBalance.text = root.context.getString(
+                R.string.acc_balance_placeholder,
+                CurrencyUtil.formatGTU(
+                    account.getAtDisposalWithoutStakedOrScheduled(
+                        account.totalUnshieldedBalance
+                    ), true
+                )
+            )
+        }
+
+        messageTextView.text = challenge
 
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()

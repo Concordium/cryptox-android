@@ -216,6 +216,9 @@ android {
 }
 
 dependencies {
+    // TODO REMOVE THIS BEFORE MERGING TO MAIN.
+    implementation files('/home/orhoj/git/concordium-java-sdk/concordium-android-sdk/target/concordium-android-sdk.aar')
+
     def lifecycle_version = "2.4.0"
     def room_version = "2.5.0"
 
@@ -320,4 +323,14 @@ dependencies {
 
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
+
+    // Jackson
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.10.1'
+
+    implementation(group: 'org.bitcoinj', name: 'bitcoinj-core', version: '0.16.2') {
+        exclude group: "org.bouncycastle"
+        exclude group: "net.jcip"
+    }
 }

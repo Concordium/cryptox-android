@@ -4,20 +4,39 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toSeed
+import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
+import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
+import com.concordium.sdk.crypto.wallet.ConcordiumHdWallet
+import com.concordium.sdk.crypto.wallet.Network
+import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
+import com.concordium.sdk.crypto.wallet.web3Id.CommitmentInput
+import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
+import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProof
+import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
+import com.concordium.sdk.responses.accountinfo.credential.AttributeType
+import com.concordium.sdk.transactions.CredentialRegistrationId
+import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.SignMessageInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.Params
@@ -30,8 +49,10 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.HexUtil.toHex
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
@@ -111,6 +132,13 @@ private constructor(
     }
     private val proxyRepository: ProxyRepository by lazy(::ProxyRepository)
 
+    private val identityRepository: IdentityRepository by lazy {
+        IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+    }
+
+    private val authPreferences: AuthPreferences
+
+
     private lateinit var sessionProposalPublicKey: String
     private lateinit var sessionProposalNamespaceKey: String
     private lateinit var sessionProposalNamespaceChain: String
@@ -125,6 +153,8 @@ private constructor(
     private lateinit var sessionRequestTransactionCost: BigInteger
     private lateinit var sessionRequestTransactionNonce: AccountNonce
     private lateinit var sessionRequestMessageToSign: String
+    private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
+
 
     private val handledRequests = mutableSetOf<Long>()
 
@@ -157,6 +187,8 @@ private constructor(
                         "\nevent=$event"
             )
         }
+
+        authPreferences = AuthPreferences(application)
     }
 
     fun initialize() {
@@ -571,6 +603,29 @@ private constructor(
         }
     }
 
+    private fun handleIdentityProofRequest(params: String) {
+        try {
+            val identityProofRequest = UnqualifiedRequest.fromJson(params)
+            sessionRequestIdentityRequest = identityProofRequest
+
+            mutableStateFlow.tryEmit(
+                State.SessionRequestReview.IdentityProofRequestReview(
+                    account = sessionRequestAccount,
+                    appMetadata = sessionRequestAppMetadata,
+                    request = identityProofRequest
+                )
+            )
+        } catch (e: Exception) {
+            Log.e("Failed to parse identity proof request parameters: $params", e)
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+            return
+        }
+    }
+
     /**
      * Extracts the account address from a map of session namespaces. This works as the account
      * format follows the convention: `ccd:network:accountAddress`, which is defined by what we set
@@ -661,6 +716,7 @@ private constructor(
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
+            "proof_of_identity" -> handleIdentityProofRequest(params)
             else -> {
                 val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
                 Log.e(unsupportedMethodMessage)
@@ -871,10 +927,12 @@ private constructor(
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
             .decryptInBackground(password, storageAccountDataEncrypted)
+
+
+
         if (decryptedJson != null) {
-            val accountKeys =
-                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
-                    .accountKeys
+            val storageAccountData = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+            val accountKeys = storageAccountData.accountKeys
 
             when (reviewState) {
                 is State.SessionRequestReview.SignRequestReview ->
@@ -882,6 +940,10 @@ private constructor(
 
                 is State.SessionRequestReview.TransactionRequestReview ->
                     signAndSubmitRequestedTransaction(accountKeys)
+
+                is State.SessionRequestReview.IdentityProofRequestReview -> {
+                    createProofPresentation(storageAccountData.getAttributeRandomness())
+                }
             }
         } else {
             Log.e("failed_account_decryption")
@@ -895,6 +957,101 @@ private constructor(
                 )
             )
         }
+    }
+
+    private suspend fun createProofPresentation(attributeRandomness: AttributeRandomness?) {
+        val request = sessionRequestIdentityRequest
+        val account = sessionRequestAccount
+
+        if (attributeRandomness == null) {
+            Log.e("Attribute randomness is not available for account ${account.address}")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InternalError
+                )
+            )
+            return
+        }
+
+        val identity = identityRepository.findById(account.identityId)
+        if (identity == null) {
+            Log.e("Failed to find identity with id: ${account.identityId} for account with address: ${account.address}")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InternalError
+                )
+            )
+            return
+        }
+
+        val identityProviderIndex = identity.identityProviderId
+
+        val commitmentInputs = try {
+            request.credentialStatements.map { statement ->
+                val randomness: MutableMap<AttributeType, String> = mutableMapOf()
+                val attributeValues: MutableMap<AttributeType, String> = mutableMapOf()
+
+                statement.statement.forEach { stat ->
+                    val attributeTag = stat.attributeTag
+                    val attributeType = AttributeType.fromJSON(attributeTag)
+                    randomness[attributeType] = attributeRandomness.attributesRand[attributeTag]!!
+                    attributeValues[attributeType] = identity.identityObject!!.attributeList.chosenAttributes[attributeTag]!!
+                }
+
+                AccountCommitmentInput.builder()
+                    .issuer(UInt32.from(identityProviderIndex))
+                    .values(attributeValues)
+                    .randomness(randomness)
+                    .build()
+            }
+        } catch (e: Exception) {
+            Log.e("Failed to build commitment inputs", e)
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InternalError
+                )
+            )
+            return
+        }
+
+        val qualifiedRequest = try {
+            request.qualify { stat ->
+                stat.qualify(CredentialRegistrationId.from(account.credential!!.getCredId()!!), Network.TESTNET)
+            }
+        } catch (e: Exception) {
+            Log.e("Failed to qualify request.", e)
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InternalError
+                )
+            )
+            return
+        }
+
+        ProxyRepository().getIGlobalInfo({ globalInfo ->
+            val cryptographicParams: GlobalParams = globalInfo.value
+
+            val input = Web3IdProofInput.builder()
+                .request(qualifiedRequest)
+                .commitmentInputs(commitmentInputs)
+                .globalContext(com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters.builder()
+                    .genesisString(cryptographicParams.genesisString)
+                    .bulletproofGenerators(BulletproofGenerators.from(cryptographicParams.bulletproofGenerators))
+                    .onChainCommitmentKey(PedersenCommitmentKey.from(cryptographicParams.onChainCommitmentKey)).build())
+                .build()
+
+            val proof = Web3IdProof.getWeb3IdProof(input)
+            respondSuccess(result = proof)
+            mutableStateFlow.tryEmit(State.Idle)
+            handleNextOldestPendingSessionRequest() },
+        {
+            Log.e("Failed to retrieve global cryptographic parameters", it)
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.LoadingFailed
+                )
+            )
+        })
     }
 
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
@@ -1219,6 +1376,17 @@ private constructor(
                 appMetadata = appMetadata,
                 canApprove = true,
             )
+
+            class IdentityProofRequestReview(
+                val request: UnqualifiedRequest,
+                account: Account,
+                appMetadata: AppMetadata,
+            ) : SessionRequestReview(
+                account = account,
+                appMetadata = appMetadata,
+                // TODO This should use the Android SDK to validate if
+                canApprove = true
+            )
         }
 
         /**
@@ -1279,6 +1447,11 @@ private constructor(
          * There is a problem decrypting the account or the crypto library failed.
          */
         object CryptographyFailed : Error
+
+        /**
+         * An internal error occurred.
+         */
+        object InternalError : Error
     }
 
     sealed interface Event {
