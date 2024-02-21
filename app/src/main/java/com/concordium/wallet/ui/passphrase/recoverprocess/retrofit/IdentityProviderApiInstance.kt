@@ -94,7 +94,7 @@ object IdentityProviderApiInstance {
                     .build()
             )
             .execute()
-            .let { response ->
+            .use { response ->
                 check(response.isRedirect) {
                     "The identity provider did not redirect as expected"
                 }
@@ -102,7 +102,7 @@ object IdentityProviderApiInstance {
                 val redirectLocation = response.header("Location")
                     ?: error("Can't find the location in the identity provider response")
 
-                return@let if (Uri.parse(redirectLocation).scheme in setOf(
+                return@use if (Uri.parse(redirectLocation).scheme in setOf(
                         "http",
                         "https",
                         redirectUriScheme,
