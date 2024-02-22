@@ -180,7 +180,7 @@ android {
 
             resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE}\""
 
-            def providerAuthority = PROVIDER_AUTHORITY_BASE+"-testnet"
+            def providerAuthority = PROVIDER_AUTHORITY_BASE
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
