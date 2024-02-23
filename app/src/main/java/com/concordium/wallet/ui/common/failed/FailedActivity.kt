@@ -94,16 +94,16 @@ class FailedActivity : BaseActivity(
     private fun finishFlow() {
         when (viewModel.source) {
             FailedViewModel.Source.Identity -> {
+                finishAffinity()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
-                finishAffinity()
             }
             FailedViewModel.Source.Account -> {
+                finishAffinity()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
-                finishAffinity()
             }
             FailedViewModel.Source.Transfer -> {
                 val intent = Intent(this, AccountDetailsActivity::class.java)
