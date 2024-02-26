@@ -217,7 +217,7 @@ android {
 
 dependencies {
     // TODO REMOVE THIS BEFORE MERGING TO MAIN.
-    implementation files('/home/orhoj/git/concordium-java-sdk/concordium-android-sdk/target/concordium-android-sdk.aar')
+    implementation files('/home/hjort/Projects/concordium-java-sdk/concordium-android-sdk/target/concordium-android-sdk.aar')
 
     def lifecycle_version = "2.4.0"
     def room_version = "2.5.0"
