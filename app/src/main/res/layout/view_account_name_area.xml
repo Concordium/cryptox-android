@@ -78,30 +78,30 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/status_baker"
         style="@style/Image"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
         android:layout_marginStart="8dp"
+        android:adjustViewBounds="true"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_baker"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/status_delegating"
         app:layout_constraintStart_toEndOf="@id/name_identity_layout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/ccx_mineral_blue_tint_2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/status_delegating"
         style="@style/Image"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
         android:layout_marginStart="8dp"
+        android:adjustViewBounds="true"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_delegating"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/status_read_only"
         app:layout_constraintStart_toEndOf="@id/status_baker"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/ccx_mineral_blue_tint_2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/status_read_only"

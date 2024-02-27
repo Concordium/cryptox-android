@@ -12,5 +12,6 @@
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors
+- Baker/baking renamed to Validator/validating
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD
