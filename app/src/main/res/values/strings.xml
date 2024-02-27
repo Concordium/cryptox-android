@@ -1103,4 +1103,5 @@
     <string name="saved_pass_phrase_reveal_copied">@string/copied</string>
     <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
+    <string name="information_to_reveal">Information to reveal</string>
 </resources>

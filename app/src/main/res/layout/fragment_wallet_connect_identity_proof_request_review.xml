@@ -50,35 +50,17 @@
 
     </FrameLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/message_layout"
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statements"
+        android:name="com.concordium.wallet.ui.walletconnect.proof.DisplayStatements"
         style="@style/CryptoX_Container_Stroked"
         android:layout_marginTop="28dp"
         android:paddingBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selected_account_include_container">
-
-        <TextView
-            android:id="@+id/message_title_text_view"
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_width="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Challenge"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/message_text_view"
-            style="@style/CryptoX_Typography_Caption"
-            android:layout_width="match_parent"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/cryptox_white_main"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/message_title_text_view"
-            tools:text="some hex code" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
+        />
 
     <Button
         android:id="@+id/decline_button"
@@ -89,7 +71,7 @@
         android:text="@string/wallet_connect_session_request_decline"
         app:layout_constraintEnd_toStartOf="@id/approve_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/message_layout" />
+        app:layout_constraintTop_toBottomOf="@id/statements" />
 
     <Button
         android:id="@+id/approve_button"

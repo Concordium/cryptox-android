@@ -470,8 +470,6 @@ class WalletConnectView(
             )
         }
 
-        messageTextView.text = challenge
-
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()
         }

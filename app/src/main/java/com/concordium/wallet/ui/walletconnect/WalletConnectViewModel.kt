@@ -605,7 +605,7 @@ private constructor(
 
     private fun handleIdentityProofRequest(params: String) {
         try {
-            val identityProofRequest = UnqualifiedRequest.fromJson(params)
+            val identityProofRequest = ObjectMapper().readValue(params, UnqualifiedRequest::class.java)
             sessionRequestIdentityRequest = identityProofRequest
 
             mutableStateFlow.tryEmit(
