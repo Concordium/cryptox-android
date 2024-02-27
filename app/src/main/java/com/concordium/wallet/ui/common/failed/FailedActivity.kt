@@ -61,14 +61,17 @@ class FailedActivity : BaseActivity(
             FailedViewModel.Source.Identity -> {
                 setActionBarTitle(R.string.identity_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.identity_confirmed_failed)
+                binding.infoTextview.setText(R.string.failed_run_recovery_and_try_again)
             }
             FailedViewModel.Source.Account -> {
                 setActionBarTitle(R.string.new_account_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.new_account_confirmed_failed)
+                binding.infoTextview.setText(R.string.failed_run_recovery_and_try_again)
             }
             FailedViewModel.Source.Transfer -> {
                 setActionBarTitle(R.string.send_funds_title)
                 binding.errorTitleTextview.setText(R.string.send_funds_confirmed_failed)
+                binding.infoTextview.setText(R.string.failed_try_again)
             }
         }
 

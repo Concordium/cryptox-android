@@ -50,6 +50,7 @@
     <!-- Failed -->
     <string name="failed_title">Failed</string>
     <string name="failed_try_again">Please try again.</string>
+    <string name="failed_run_recovery_and_try_again">Please run the recovery and try again.</string>
     <string name="failed_confirm">Okay</string>
     <string name="failed_remove">Remove from the list</string>
     <!-- Welcome recover wallet-->
@@ -159,7 +160,7 @@
     <string name="identity_confirmed_notice_approved_details">Your request has been approved by identity provider. Now you can create an account and start using your wallet</string>
     <string name="identity_confirmed_notice_got_it">Got it</string>
     <string name="identity_confirmed_confirm">Continue</string>
-    <string name="identity_confirmed_failed">Identity issuance failed!</string>
+    <string name="identity_confirmed_failed">Identity issuance failed</string>
     <string name="identity_confirmed_finish_button">@string/finish</string>
     <string name="identity_confirmed_submit_new_account_for_identity">Submit a new account for Identity %1$s?</string>
     <string name="identity_confirmed_create_new_account">Create new account</string>
@@ -226,7 +227,7 @@
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
     <string name="new_account_confirmed_confirm">Done</string>
-    <string name="new_account_confirmed_failed">Account creation failed!</string>
+    <string name="new_account_confirmed_failed">Account creation failed</string>
     <string name="new_account_confirmed_info">Account submitted. Once it\'s finalized, you can use the account from the account overview.</string>
     <!--  Account details  -->
     <string name="account_details_error_msg">Account creation failed in the process of creation.</string>
@@ -294,7 +295,7 @@
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_title">Send funds</string>
     <string name="send_funds_confirmed_fee_info">Estimated transaction fee:\n%1$s</string>
-    <string name="send_funds_confirmed_failed">Transaction error!</string>
+    <string name="send_funds_confirmed_failed">Transaction error</string>
     <!-- Transaction details -->
     <string name="transaction_title">Transaction</string>
     <string name="transaction_status">Status</string>
