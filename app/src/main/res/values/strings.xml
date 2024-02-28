@@ -552,6 +552,7 @@
     <string name="wallet_connect_error_tx_submit_failed">Could not submit the transaction</string>
     <string name="wallet_connect_error_no_accounts">You must have at least one active account to continue</string>
     <string name="wallet_connect_error_no_supported_chains">The wallet does not support the requested chains</string>
+    <string name="wallet_connect_error_unsupported_methods">The wallet does not support the requested methods</string>
     <string name="wallet_connect_choose_another_account">Choose another account</string>
     <string name="wallet_connect_template_session_proposal_review_title">Connect to %1$s?</string>
     <string name="wallet_connect_session_proposal_allow">@string/allow</string>

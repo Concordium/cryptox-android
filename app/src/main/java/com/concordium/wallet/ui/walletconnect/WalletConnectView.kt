@@ -163,6 +163,9 @@ class WalletConnectView(
 
                     WalletConnectViewModel.Error.NoSupportedChains ->
                         R.string.wallet_connect_error_no_supported_chains
+
+                    WalletConnectViewModel.Error.UnsupportedMethod ->
+                        R.string.wallet_connect_error_unsupported_methods
                 }
 
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
