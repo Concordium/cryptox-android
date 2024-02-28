@@ -13,5 +13,6 @@
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors
 - Baker/baking renamed to Validator/validating
+- WalletConnect session proposals are now rejected if the namespace or methods are not supported, or if the wallet contains no accounts.
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD

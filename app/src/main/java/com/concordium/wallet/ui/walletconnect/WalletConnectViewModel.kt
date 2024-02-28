@@ -106,6 +106,11 @@ private constructor(
         ),
     )
 
+    private val allowedRequestMethods = setOf(
+        REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
+        REQUEST_METHOD_SIGN_MESSAGE,
+    )
+
     private val accountRepository: AccountRepository by lazy {
         AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     }
@@ -289,15 +294,30 @@ private constructor(
             allowedChains.contains(chain)
         }
 
+        val proposerPublicKey = sessionProposal.proposerPublicKey
+
         if (singleNamespaceEntry == null || singleNamespaceChain == null) {
             Log.e("cant_find_supported_chain")
-
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.NoSupportedChains
                 )
             )
-            mutableStateFlow.tryEmit(State.Idle)
+            rejectSession(proposerPublicKey, "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains")
+            return@launch
+        }
+
+        // Check if the proposer requests unsupported methods, and reject the session proposal
+        // if that is the case.
+        val requestedMethods = singleNamespaceEntry.value.methods
+        if (!allowedRequestMethods.containsAll(requestedMethods)) {
+            Log.e("Received an unsupported request method: $requestedMethods")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.UnsupportedMethod
+                )
+            )
+            rejectSession(proposerPublicKey, "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods")
             return@launch
         }
 
@@ -306,17 +326,16 @@ private constructor(
         val accounts = getAvailableAccounts()
         if (accounts.isEmpty()) {
             Log.d("there_are_no_accounts")
-
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.NoAccounts
                 )
             )
-            mutableStateFlow.tryEmit(State.Idle)
+            rejectSession(proposerPublicKey, "The wallet does not contain any accounts to open a session for")
             return@launch
         }
 
-        this@WalletConnectViewModel.sessionProposalPublicKey = sessionProposal.proposerPublicKey
+        this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
         this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
         this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
         this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
@@ -375,20 +394,14 @@ private constructor(
         mutableStateFlow.tryEmit(State.Idle)
     }
 
-    fun rejectSessionProposal() {
-        check(state is State.SessionProposalReview || state is State.AccountSelection) {
-            "Session proposal rejection is only possible in the proposal review " +
-                    "or account selection states"
-        }
+    private fun rejectSession(proposerPublicKey: String, reason: String) {
+        val rejectParams = Sign.Params.Reject(
+            proposerPublicKey = proposerPublicKey,
+            reason = reason
+        )
 
-        SignClient.rejectSession(
-            Sign.Params.Reject(
-                proposerPublicKey = sessionProposalPublicKey,
-                reason = "Rejected by user",
-            )
-        ) { error ->
+        SignClient.rejectSession(rejectParams) { error ->
             Log.e("failed_rejecting_session", error.throwable)
-
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.ResponseFailed
@@ -397,6 +410,14 @@ private constructor(
         }
 
         mutableStateFlow.tryEmit(State.Idle)
+    }
+
+    fun rejectSessionProposal() {
+        check(state is State.SessionProposalReview || state is State.AccountSelection) {
+            "Session proposal rejection is only possible in the proposal review " +
+                    "or account selection states"
+        }
+        rejectSession(sessionProposalPublicKey, "Rejected by user")
     }
 
     fun onChooseAccountClicked() {
@@ -1242,6 +1263,11 @@ private constructor(
          * The dApp sent a session proposal without any supported chains.
          */
         object NoSupportedChains : Error
+
+        /**
+         * The dApp sent a session proposal requesting an unsupported method.
+         */
+        object UnsupportedMethod : Error
 
         /**
          * The dApp sent a request that can't be parsed.
