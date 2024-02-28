@@ -8,6 +8,8 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.UnqualifiedRequestStatement
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -123,8 +125,7 @@ class WalletConnectView(
                 showIdentityProofRequestReview(
                     account = state.account,
                     appMetadata = state.appMetadata,
-                    // TODO We don't want to show the challenge. This should be the statements.
-                    challenge = state.request.challenge
+                    statement = state.request.credentialStatements.get(0)
                 )
             }
 
@@ -428,7 +429,7 @@ class WalletConnectView(
     }
 
     private fun showIdentityProofRequestReview(
-        challenge: String,
+        statement: RequestStatement,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
@@ -438,7 +439,7 @@ class WalletConnectView(
                 lifecycleOwner = lifecycleOwner,
                 account = account,
                 appMetadata = appMetadata,
-                challenge = challenge
+                statement = statement
             )
         }
     }
@@ -448,7 +449,7 @@ class WalletConnectView(
         lifecycleOwner: LifecycleOwner,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
-        challenge: String
+        statement: RequestStatement
     ) = with(view) {
         Glide.with(appIconImageView.context)
             .load(appMetadata.iconUrl)
@@ -457,6 +458,7 @@ class WalletConnectView(
             .into(appIconImageView)
 
         appNameTextView.text = appMetadata.name
+        statements.setStatement(statement)
 
         with(selectedAccountInclude) {
             accAddress.text = account.getAccountName()

@@ -39,9 +39,9 @@ class SecretStatementAdapter(context: Context, objects: List<AtomicStatement>) :
     private fun getStatementDescription(atomicStatement: AtomicStatement): String {
         val name = getPropertyTitle(atomicStatement.attributeTag)
         return when (atomicStatement) {
-            is RangeStatement -> "This will prove that your $name is between ${atomicStatement.lower} and ${atomicStatement.upper}"
-            is MembershipStatement -> "This will prove that your $name is 1 of the following: ${atomicStatement.set.joinToString { it.toString() }}"
-            is NonMembershipStatement -> "This will prove that your $name is none of the following: ${atomicStatement.set.joinToString { it.toString() }}"
+            is RangeStatement -> "This will prove that your $name is between ${atomicStatement.lower.value} and ${atomicStatement.upper.value}"
+            is MembershipStatement -> "This will prove that your $name is 1 of the following: ${atomicStatement.set.joinToString { it.value }}"
+            is NonMembershipStatement -> "This will prove that your $name is none of the following: ${atomicStatement.set.joinToString { it.value }}"
             else -> throw IllegalArgumentException("Unknown statement type")
         }
     }
@@ -53,7 +53,7 @@ class SecretStatementAdapter(context: Context, objects: List<AtomicStatement>) :
 
     private fun getStatementValue(atomicStatement: AtomicStatement?): String {
         return when (atomicStatement) {
-            is RangeStatement -> "Between ${atomicStatement.lower} and ${atomicStatement.upper}"
+            is RangeStatement -> "Between ${atomicStatement.lower.value} and ${atomicStatement.upper.value}"
             is MembershipStatement -> "1 of the following"
             is NonMembershipStatement -> "none of the following"
             else -> throw IllegalArgumentException("Unknown statement type")

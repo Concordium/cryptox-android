@@ -1,39 +1,30 @@
 package com.concordium.wallet.ui.walletconnect.proof
 
 import android.content.Context
-import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.widget.LinearLayout
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
-import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
-import com.fasterxml.jackson.databind.ObjectMapper
 
-class DisplayStatements :
-    Fragment(R.layout.fragment_wallet_connect_identity_proof_statements) {
+class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(context, attr) {
+    var binding: FragmentWalletConnectIdentityProofStatementsBinding;
 
-    lateinit var binding: FragmentWalletConnectIdentityProofStatementsBinding;
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding = FragmentWalletConnectIdentityProofStatementsBinding.bind(view)
+    init {
+        binding = FragmentWalletConnectIdentityProofStatementsBinding.inflate(LayoutInflater.from(context))
+        addView(binding.root)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        val requestString = arguments?.getString("request")
-        val request = ObjectMapper().readValue(requestString, RequestStatement::class.java)
+     fun setStatement(request: RequestStatement) {
 
         val secretStatements = request.statement.filterNot { it is RevealStatement }
         val revealStatements = request.statement.filterIsInstance<RevealStatement>()
 
-        binding.listView.adapter = SecretStatementAdapter(context, secretStatements)
-        binding.revealStatements.statementLines.adapter = RevealStatementLinesAdapter(context, revealStatements, object: Map<String, CredentialAttribute> {
+         binding.listView.adapter = SecretStatementAdapter(context, secretStatements)
+
+         binding.revealStatements.statementLines.adapter = RevealStatementLinesAdapter(context, revealStatements, object: Map<String, CredentialAttribute> {
             override fun get(key: String): CredentialAttribute? {
                 return CredentialAttribute.builder().type(CredentialAttribute.CredentialAttributeType.STRING).value("Age").build()
             }

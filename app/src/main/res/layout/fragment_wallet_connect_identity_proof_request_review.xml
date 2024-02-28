@@ -50,17 +50,14 @@
 
     </FrameLayout>
 
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <com.concordium.wallet.ui.walletconnect.proof.DisplayStatements
         android:id="@+id/statements"
-        android:name="com.concordium.wallet.ui.walletconnect.proof.DisplayStatements"
-        style="@style/CryptoX_Container_Stroked"
         android:layout_marginTop="28dp"
         android:paddingBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
-        />
+        style="@style/CryptoX_Container_Stroked"
+        layout="@layout/account_info_row"  android:layout_height="wrap_content" android:layout_width="match_parent"/>
 
     <Button
         android:id="@+id/decline_button"
