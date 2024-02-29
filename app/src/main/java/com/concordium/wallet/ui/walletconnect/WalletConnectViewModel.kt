@@ -4,22 +4,18 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
 import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
 import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
-import com.concordium.sdk.crypto.wallet.ConcordiumHdWallet
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
-import com.concordium.sdk.crypto.wallet.web3Id.CommitmentInput
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProof
 import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
+import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
 import com.concordium.sdk.transactions.CredentialRegistrationId
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
@@ -38,6 +34,7 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.model.TransferCost
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.Params
 import com.concordium.wallet.data.walletconnect.Payload
@@ -49,10 +46,8 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.HexUtil.toHex
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
@@ -149,6 +144,7 @@ private constructor(
     private lateinit var sessionRequestParams: Params
     private lateinit var sessionRequestParamsPayload: Payload
     private lateinit var sessionRequestAccount: Account
+    private lateinit var sessionRequestIdentity: Identity
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private lateinit var sessionRequestTransactionCost: BigInteger
     private lateinit var sessionRequestTransactionNonce: AccountNonce
@@ -611,6 +607,7 @@ private constructor(
             mutableStateFlow.tryEmit(
                 State.SessionRequestReview.IdentityProofRequestReview(
                     account = sessionRequestAccount,
+                    identity = sessionRequestIdentity,
                     appMetadata = sessionRequestAppMetadata,
                     request = identityProofRequest
                 )
@@ -711,7 +708,18 @@ private constructor(
             return@launch
         }
 
+        val identity = identityRepository.findById(account.identityId)
+        if (identity == null) {
+            Log.e("Failed to find identity with id: ${account.identityId} for account with address: ${account.address}")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InternalError
+                )
+            )
+            return@launch
+        }
         this@WalletConnectViewModel.sessionRequestAccount = account
+        this@WalletConnectViewModel.sessionRequestIdentity = identity
 
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
@@ -962,20 +970,10 @@ private constructor(
     private suspend fun createProofPresentation(attributeRandomness: AttributeRandomness?) {
         val request = sessionRequestIdentityRequest
         val account = sessionRequestAccount
+        val identity = sessionRequestIdentity
 
         if (attributeRandomness == null) {
             Log.e("Attribute randomness is not available for account ${account.address}")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InternalError
-                )
-            )
-            return
-        }
-
-        val identity = identityRepository.findById(account.identityId)
-        if (identity == null) {
-            Log.e("Failed to find identity with id: ${account.identityId} for account with address: ${account.address}")
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.InternalError
@@ -1034,7 +1032,8 @@ private constructor(
             val input = Web3IdProofInput.builder()
                 .request(qualifiedRequest)
                 .commitmentInputs(commitmentInputs)
-                .globalContext(com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters.builder()
+                .globalContext(
+                    CryptographicParameters.builder()
                     .genesisString(cryptographicParams.genesisString)
                     .bulletproofGenerators(BulletproofGenerators.from(cryptographicParams.bulletproofGenerators))
                     .onChainCommitmentKey(PedersenCommitmentKey.from(cryptographicParams.onChainCommitmentKey)).build())
@@ -1352,6 +1351,7 @@ private constructor(
          */
         sealed class SessionRequestReview(
             val account: Account,
+            val identity: Identity?,
             val appMetadata: AppMetadata,
             val canApprove: Boolean,
         ) : State {
@@ -1363,6 +1363,7 @@ private constructor(
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = account,
+                identity = null,
                 appMetadata = appMetadata,
                 canApprove = isEnoughFunds,
             )
@@ -1373,6 +1374,7 @@ private constructor(
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = account,
+                identity = null,
                 appMetadata = appMetadata,
                 canApprove = true,
             )
@@ -1380,10 +1382,12 @@ private constructor(
             class IdentityProofRequestReview(
                 val request: UnqualifiedRequest,
                 account: Account,
+                identity: Identity,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = account,
                 appMetadata = appMetadata,
+                identity = identity,
                 // TODO This should use the Android SDK to validate if
                 canApprove = true
             )

@@ -21,7 +21,7 @@ class IdentityAttributeAdapter :
             isLast: Boolean,
             onItemClickListener: OnItemClickListener?
         ) {
-            val attributeKeyValue = IdentityAttributeConverterUtil.convertAttributeValue(
+            val attributeKeyValue = IdentityAttributeConverterUtil.convertAttribute(
                 view.root.context,
                 Pair(item.name, item.value)
             )

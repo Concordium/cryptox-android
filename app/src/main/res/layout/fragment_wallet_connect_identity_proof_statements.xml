@@ -9,6 +9,7 @@
             layout="@layout/fragment_wallet_connect_identity_proof_reveal_statement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             app:layout_constraintBottom_toTopOf="@+id/listView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -20,5 +21,8 @@
             android:contentDescription=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/reveal_statements"
-            app:layout_constraintTop_toBottomOf="@+id/reveal_statements" />
+            app:layout_constraintTop_toBottomOf="@+id/reveal_statements"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="15dp"
+            />
 </androidx.constraintlayout.widget.ConstraintLayout>

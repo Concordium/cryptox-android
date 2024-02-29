@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
+import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
 
 
@@ -28,8 +29,12 @@ class RevealStatementLinesAdapter(private val context: Context,
             )
 
         val statement = statements.get(position)
-        binding.attributeTag.text = statement.attributeTag
-        binding.attributeValue.text = attributes[statement.attributeTag]?.value ?: "???"
+
+        val rawAttribute = attributes[statement.attributeTag]?.value ?: "???"
+        // Assuming this is identity attributes
+        val pair = IdentityAttributeConverterUtil.convertAttribute(context, Pair(statement.attributeTag,rawAttribute))
+        binding.attributeTag.text = pair.first
+        binding.attributeValue.text = pair.second
 
         return binding.root
     }

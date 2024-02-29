@@ -8,10 +8,11 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
+import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
-import com.concordium.sdk.crypto.wallet.web3Id.Statement.UnqualifiedRequestStatement
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
@@ -124,6 +125,7 @@ class WalletConnectView(
             is WalletConnectViewModel.State.SessionRequestReview.IdentityProofRequestReview -> {
                 showIdentityProofRequestReview(
                     account = state.account,
+                    identity = state.identity,
                     appMetadata = state.appMetadata,
                     statement = state.request.credentialStatements.get(0)
                 )
@@ -430,6 +432,7 @@ class WalletConnectView(
 
     private fun showIdentityProofRequestReview(
         statement: RequestStatement,
+        identity: Identity?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
@@ -438,6 +441,7 @@ class WalletConnectView(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
                 account = account,
+                identity = identity,
                 appMetadata = appMetadata,
                 statement = statement
             )
@@ -448,6 +452,7 @@ class WalletConnectView(
         view: FragmentWalletConnectIdentityProofRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
         account: Account,
+        identity: Identity?,
         appMetadata: WalletConnectViewModel.AppMetadata,
         statement: RequestStatement
     ) = with(view) {
@@ -458,7 +463,13 @@ class WalletConnectView(
             .into(appIconImageView)
 
         appNameTextView.text = appMetadata.name
-        statements.setStatement(statement)
+
+        val attributes = identity?.identityObject?.let { it.attributeList.chosenAttributes.mapValues {
+            CredentialAttribute.builder().value(it.value)
+                .type(CredentialAttribute.CredentialAttributeType.STRING).build()
+        }} ?: emptyMap()
+
+        statements.setStatement(statement, attributes)
 
         with(selectedAccountInclude) {
             accAddress.text = account.getAccountName()

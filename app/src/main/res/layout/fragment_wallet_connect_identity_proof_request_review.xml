@@ -56,8 +56,8 @@
         android:paddingBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
-        style="@style/CryptoX_Container_Stroked"
-        layout="@layout/account_info_row"  android:layout_height="wrap_content" android:layout_width="match_parent"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
 
     <Button
         android:id="@+id/decline_button"

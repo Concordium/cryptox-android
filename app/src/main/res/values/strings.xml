@@ -178,8 +178,10 @@
     <string name="identity_attribute_doc_expires_at">ID valid to</string>
     <string name="identity_attribute_national_id_no">National ID number</string>
     <string name="identity_attribute_tax_id_no">Tax ID number</string>
+    <string name="identity_attribute_sex_not_known">Not known</string>
     <string name="identity_attribute_sex_male">Male</string>
     <string name="identity_attribute_sex_female">Female</string>
+    <string name="identity_attribute_unavailable">Unavailable</string>
     <string name="identity_attribute_doc_type_passport">Passport</string>
     <string name="identity_attribute_doc_type_national_id">National id card\"</string>
     <string name="identity_attribute_doc_type_driving_license">Driving license</string>
@@ -1104,4 +1106,5 @@
     <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
     <string name="information_to_reveal">Information to reveal</string>
+    <string name="reveal_description">Note that all the information above will be revealed to the connected service.</string>
 </resources>

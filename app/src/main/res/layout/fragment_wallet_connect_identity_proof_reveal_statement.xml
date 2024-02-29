@@ -17,55 +17,33 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/statementHeader"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:background="@drawable/identity_proof_header_gradient"
-                android:orientation="horizontal"
-                android:paddingVertical="15dp">
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="15dp"
+                android:text="@string/information_to_reveal"
+                android:textColor="#455A64" />
 
-                <TextView
-                    android:id="@+id/statementHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="15dp"
-                    android:text="@string/information_to_reveal"
-                    android:textColor="#455A64" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <ListView
+                android:id="@+id/statementLines"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:paddingHorizontal="15dp"
-                android:paddingVertical="16dp">
+                android:paddingVertical="15dp"
+                tools:listitem="@layout/identity_proof_statement_line" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <ListView
-                        android:id="@+id/statementLines"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:listitem="@layout/identity_proof_statement_line" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/statementDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    tools:text="This will prove that your Date of birth is between January 01, 1800 and February 27, 2006 " />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/statementDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:text="@string/reveal_description"
+                tools:text="Note that all the information above will be revealed to the connected service." />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
