@@ -126,8 +126,14 @@ class IdentityConfirmedActivity :
                 identity = newIdentity
                 binding.identityView.setIdentityData(newIdentity)
 
-                if (newIdentity.status == IdentityStatus.DONE) {
-                    showRequestNoticeDialog(IdentityRequestNoticeDialog.approved())
+                when (newIdentity.status) {
+                    IdentityStatus.DONE -> {
+                        showRequestNoticeDialog(IdentityRequestNoticeDialog.approved())
+                    }
+
+                    IdentityStatus.ERROR -> {
+                        dismissAnyRequestNoticeDialog()
+                    }
                 }
 
                 showSubmitAccount()
@@ -209,12 +215,16 @@ class IdentityConfirmedActivity :
         }
     }
 
-    private fun showRequestNoticeDialog(dialog: IdentityRequestNoticeDialog) {
+    private fun dismissAnyRequestNoticeDialog() {
         supportFragmentManager.fragments.forEach { fragment ->
             if (fragment.tag == IdentityRequestNoticeDialog.TAG && fragment is DialogFragment) {
                 fragment.dismissAllowingStateLoss()
             }
         }
+    }
+
+    private fun showRequestNoticeDialog(dialog: IdentityRequestNoticeDialog) {
+        dismissAnyRequestNoticeDialog()
         dialog.show(supportFragmentManager, IdentityRequestNoticeDialog.TAG)
     }
 }
