@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.common.delegates
 
-import android.app.AlertDialog
 import android.content.Intent
 import androidx.core.app.ComponentActivity
 import com.concordium.wallet.App
@@ -13,6 +12,7 @@ import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -127,7 +127,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
             return
         }
 
-        val builder = AlertDialog.Builder(activity)
+        val builder = MaterialAlertDialogBuilder(activity)
         builder.setTitle(R.string.identities_overview_identity_verified_title)
         builder.setMessage(
             activity.getString(
@@ -161,7 +161,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
             return
         App.appCore.newIdentities.remove(identity.id)
 
-        val builder = AlertDialog.Builder(activity)
+        val builder = MaterialAlertDialogBuilder(activity)
         builder.setTitle(R.string.identities_overview_identity_rejected_title)
 
         if (showForFirstIdentity)
@@ -178,7 +178,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     private fun identityErrorNextIdentity(
         activity: ComponentActivity,
         identity: Identity,
-        builder: AlertDialog.Builder,
+        builder: MaterialAlertDialogBuilder,
         statusChanged: (Identity) -> Unit
     ) {
         builder.setMessage(
@@ -200,7 +200,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     private fun identityErrorFirstIdentity(
         activity: ComponentActivity,
         identity: Identity,
-        builder: AlertDialog.Builder
+        builder: MaterialAlertDialogBuilder
     ) {
         builder.setMessage(
             activity.getString(
