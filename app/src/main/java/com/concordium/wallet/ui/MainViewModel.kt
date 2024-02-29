@@ -12,9 +12,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
-import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,10 +30,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     var databaseVersionAllowed = true
 
-    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
-    val newFinalizedAccountLiveData: LiveData<String>
-        get() = _newFinalizedAccountLiveData
-
     private val _titleLiveData = MutableLiveData<String>()
     val titleLiveData: LiveData<String>
         get() = _titleLiveData
@@ -43,10 +37,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _stateLiveData = MutableLiveData<State>()
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
-
-    private val _identityErrorLiveData = MutableLiveData<IdentityErrorData>()
-    val identityErrorLiveData: LiveData<IdentityErrorData>
-        get() = _identityErrorLiveData
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
@@ -101,10 +91,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {
             override fun onError(identity: Identity, account: Account?) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    val isFirst = isFirst(identityRepository.getCount())
-                    _identityErrorLiveData.postValue(IdentityErrorData(identity, account, isFirst))
-                }
             }
 
             override fun onDone() {
@@ -112,7 +98,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
-                    _newFinalizedAccountLiveData.postValue(accountName)
                     App.appCore.session.setAccountsBackedUp(false)
                 }
             }

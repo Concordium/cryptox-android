@@ -17,8 +17,6 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
@@ -108,16 +106,6 @@ class IdentityConfirmedActivity :
             waiting?.let {
                 showWaiting(waiting)
             }
-        }
-
-        viewModel.identityErrorLiveData.observe(this) { data ->
-            data?.let {
-                IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
-            }
-        }
-
-        viewModel.newFinalizedAccountLiveData.observe(this) {
-            CustomDialogFragment.newAccountFinalizedDialog(this)
         }
     }
 
