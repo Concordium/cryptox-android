@@ -9,6 +9,7 @@
 - Crashing when received unexpected error from an identity provider
 - Exiting the wallet after accepting an identity verification error
 - Incorrect environment name in a private key export file for Mainnet
+- Improper handling of rejected identity verification when setting up a new wallet
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors
