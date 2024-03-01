@@ -1,28 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/statements"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical"
+    android:showDividers="middle"
+    android:divider="@drawable/empty_divider"
+    >
 
         <include
             android:id="@+id/reveal_statements"
             layout="@layout/fragment_wallet_connect_identity_proof_reveal_statement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/listView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        />
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription=""
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/reveal_statements"
-            app:layout_constraintTop_toBottomOf="@+id/reveal_statements"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="15dp"
-            />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

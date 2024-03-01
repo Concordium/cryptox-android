@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:background="@android:color/white">
 
     <TextView
         android:id="@+id/attributeTag"
@@ -20,18 +15,19 @@
 
     <TextView
         android:id="@+id/attributeValue"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:breakStrategy="balanced"
+        android:singleLine="false"
         android:layout_weight="1"
         android:textAlignment="textEnd"
-        tools:text="1 day old" />
+        tools:text="Over 18 years old" />
 
-        <ImageView
-            android:id="@+id/checkMark"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="?android:attr/textCheckMark"
-            tools:srcCompat="?android:attr/textCheckMark" />
+    <ImageView
+        android:id="@+id/checkMark"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="?android:attr/textCheckMark" />
 
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

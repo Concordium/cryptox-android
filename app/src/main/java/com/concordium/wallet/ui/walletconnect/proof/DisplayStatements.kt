@@ -6,9 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.MembershipStatement
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.NonMembershipStatement
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.RangeStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
+import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
+import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofSecretStatementBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
+import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
 
 class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(context, attr) {
     var binding: FragmentWalletConnectIdentityProofStatementsBinding;
@@ -23,14 +30,77 @@ class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(cont
         val secretStatements = request.statement.filterNot { it is RevealStatement }
         val revealStatements = request.statement.filterIsInstance<RevealStatement>()
 
-         binding.listView.adapter = SecretStatementAdapter(context, secretStatements)
+         secretStatements.forEach {
+             binding.root.addView(getSecretStatement(it))
+         }
 
          if (revealStatements.isEmpty()) {
              // If there are no reveal statements, then don't show the reveal box
              binding.revealStatements.root.visibility = View.GONE
          } else {
-             binding.revealStatements.statementLines.adapter = RevealStatementLinesAdapter(context, revealStatements, attributes)
+             revealStatements.forEach {
+                 binding.revealStatements.statementLines.addView(getRevealLine(it, attributes))
+             }
          }
     }
 
+    private fun getRevealLine(statement: RevealStatement, attributes: Map<String, CredentialAttribute>): View {
+        val revealBinding =
+            IdentityProofStatementLineBinding.inflate(
+                LayoutInflater.from(
+                    context
+                ), binding.root, false
+            )
+
+
+        val rawAttribute = attributes[statement.attributeTag]?.value ?: "???"
+        // Assuming this is identity attributes
+        val pair = IdentityAttributeConverterUtil.convertAttribute(context, Pair(statement.attributeTag,rawAttribute))
+        revealBinding.attributeTag.text = pair.first
+        revealBinding.attributeValue.text = pair.second
+
+        return revealBinding.root
+    }
+
+    private fun getSecretStatement(statement: AtomicStatement): View {
+        val secretBinding =
+            FragmentWalletConnectIdentityProofSecretStatementBinding.inflate(
+                LayoutInflater.from(
+                    context
+                ), binding.root, false
+            )
+
+        secretBinding.statementLine.attributeTag.text = getPropertyTitle(statement.attributeTag)
+        secretBinding.statementLine.attributeValue.text = getStatementValue(statement)
+        secretBinding.statementDescription.text = getStatementDescription(statement)
+
+        return secretBinding.root
+    }
+
+    private fun getStatementDescription(atomicStatement: AtomicStatement): String {
+        val name = getPropertyTitle(atomicStatement.attributeTag)
+        return when (atomicStatement) {
+            is RangeStatement -> "This will prove that your $name is between ${getPropertyValue(atomicStatement.attributeTag, atomicStatement.lower.value)} and ${getPropertyValue(atomicStatement.attributeTag, atomicStatement.upper.value)}"
+            is MembershipStatement -> "This will prove that your $name is 1 of the following: ${atomicStatement.set.joinToString { getPropertyValue(atomicStatement.attributeTag, it.value) }}"
+            is NonMembershipStatement -> "This will prove that your $name is none of the following: ${atomicStatement.set.joinToString { getPropertyValue(atomicStatement.attributeTag, it.value) }}"
+            else -> throw IllegalArgumentException("Unknown statement type")
+        }
+    }
+
+    private fun getPropertyTitle(attributeTag: String): String {
+        return IdentityAttributeConverterUtil.convertAttributeTag(context, attributeTag)
+    }
+
+    private fun getPropertyValue(attributeTag: String, attributeValue: String): String {
+        return IdentityAttributeConverterUtil.convertAttributeValue(context, attributeTag, attributeValue)
+    }
+
+    private fun getStatementValue(atomicStatement: AtomicStatement?): String {
+        return when (atomicStatement) {
+            is RangeStatement -> "between ${getPropertyValue(atomicStatement.attributeTag,atomicStatement.lower.value)} and ${getPropertyValue(atomicStatement.attributeTag, atomicStatement.upper.value)}"
+            is MembershipStatement -> "1 of the following"
+            is NonMembershipStatement -> "none of the following"
+            else -> throw IllegalArgumentException("Unknown statement type")
+        }
+    }
 }

@@ -170,7 +170,7 @@
     <string name="identity_attribute_sex">Sex</string>
     <string name="identity_attribute_birth_date">Date of birth</string>
     <string name="identity_attribute_country_residence">Country of residence</string>
-    <string name="identity_attribute_nationality">Country of nationality</string>
+    <string name="identity_attribute_nationality">Nationality</string>
     <string name="identity_attribute_doc_type">Identity document type</string>
     <string name="identity_attribute_doc_no">Identity document number</string>
     <string name="identity_attribute_doc_issuer">Identity document issuer</string>

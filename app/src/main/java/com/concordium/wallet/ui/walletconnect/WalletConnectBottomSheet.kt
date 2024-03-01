@@ -77,7 +77,7 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
     ) {
         val fragment: WalletConnectIdentityProofRequestReviewFragment =
             getShownFragment(IDENTITY_PROOF_REQUEST_REVIEW_TAG)
-1
+
         fragment.createdView.observe(this) { createdView ->
             onShown(createdView)
             fragment.createdView.removeObservers(this)
