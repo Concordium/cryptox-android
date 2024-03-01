@@ -17,9 +17,6 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +27,7 @@ class IdentityConfirmedActivity :
         R.layout.activity_identity_confirmed,
         R.string.identity_confirmed_title
     ),
-    IdentityStatusDelegate by IdentityStatusDelegateImpl(),
-    Dialogs.DialogFragmentListener {
+    IdentityStatusDelegate by IdentityStatusDelegateImpl() {
 
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
@@ -109,16 +105,6 @@ class IdentityConfirmedActivity :
                 showWaiting(waiting)
             }
         }
-
-        viewModel.identityErrorLiveData.observe(this) { data ->
-            data?.let {
-                IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
-            }
-        }
-
-        viewModel.newFinalizedAccountLiveData.observe(this) {
-            CustomDialogFragment.newAccountFinalizedDialog(this)
-        }
     }
 
     private fun initializeViews() {
@@ -140,8 +126,14 @@ class IdentityConfirmedActivity :
                 identity = newIdentity
                 binding.identityView.setIdentityData(newIdentity)
 
-                if (newIdentity.status == IdentityStatus.DONE) {
-                    showRequestNoticeDialog(IdentityRequestNoticeDialog.approved())
+                when (newIdentity.status) {
+                    IdentityStatus.DONE -> {
+                        showRequestNoticeDialog(IdentityRequestNoticeDialog.approved())
+                    }
+
+                    IdentityStatus.ERROR -> {
+                        dismissAnyRequestNoticeDialog()
+                    }
                 }
 
                 showSubmitAccount()
@@ -223,16 +215,16 @@ class IdentityConfirmedActivity :
         }
     }
 
-    private fun showRequestNoticeDialog(dialog: IdentityRequestNoticeDialog) {
+    private fun dismissAnyRequestNoticeDialog() {
         supportFragmentManager.fragments.forEach { fragment ->
             if (fragment.tag == IdentityRequestNoticeDialog.TAG && fragment is DialogFragment) {
                 fragment.dismissAllowingStateLoss()
             }
         }
-        dialog.show(supportFragmentManager, IdentityRequestNoticeDialog.TAG)
     }
 
-    override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
-        // No use of this, yet currently required to have.
+    private fun showRequestNoticeDialog(dialog: IdentityRequestNoticeDialog) {
+        dismissAnyRequestNoticeDialog()
+        dialog.show(supportFragmentManager, IdentityRequestNoticeDialog.TAG)
     }
 }
