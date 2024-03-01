@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/statement_description"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp"
+    android:layout_marginBottom="10dp"
+    />
