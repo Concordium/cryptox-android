@@ -34,7 +34,6 @@ class ExportTransactionLogActivity : BaseActivity(
         viewModel.onIdleRequested()
 
         hideActionBarBack(isVisible = true) {
-            viewModel.onIdleRequested()
             finish()
         }
     }
