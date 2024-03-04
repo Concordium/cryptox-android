@@ -1,2 +1,2 @@
 Fixed:
-- WAL-10 Incorrect "environment" for mainnet keys export
+- WAL-61 improper handling of rejected identity verification
