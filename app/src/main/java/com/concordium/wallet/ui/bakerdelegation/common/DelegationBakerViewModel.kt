@@ -14,6 +14,7 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.core.crypto.CryptoLibrary
+import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
@@ -56,6 +57,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.math.BigInteger
 import java.util.Date
+import javax.crypto.Cipher
 
 class DelegationBakerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -69,7 +71,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
 
     companion object {
-        const val FILE_NAME_BAKER_KEYS = "baker-credentials.json"
+        const val FILE_NAME_BAKER_KEYS = "validator-credentials.json"
         const val EXTRA_DELEGATION_BAKER_DATA = "EXTRA_DELEGATION_BAKER_DATA"
         const val AMOUNT_TOO_LARGE_FOR_POOL = -100
         const val AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN = -200
@@ -141,6 +143,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             ?: 0) > 0
         else bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
     }
+
+    fun commissionRatesHasChanged(): Boolean =
+        bakerDelegationData.oldCommissionRates?.bakingCommission != bakerDelegationData.chainParameters?.bakingCommissionRate ||
+                bakerDelegationData.oldCommissionRates?.transactionCommission != bakerDelegationData.chainParameters?.transactionCommissionRate
+
 
     fun openStatusHasChanged(): Boolean {
         return bakerDelegationData.bakerPoolInfo?.openStatus != bakerDelegationData.oldOpenStatus
@@ -424,6 +431,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(throwable))
     }
 
+    fun usePasscode(): Boolean {
+        return App.appCore.getCurrentAuthenticationManager().usePasscode()
+    }
+
     fun prepareTransaction() {
         if (bakerDelegationData.amount == null && bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL) {
             _errorLiveData.value = Event(R.string.app_error_general)
@@ -450,9 +461,35 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    fun getCipherForBiometrics(): Cipher? {
+        return try {
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            if (cipher == null) {
+                _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
+            }
+            cipher
+        } catch (e: KeystoreEncryptionException) {
+            _errorLiveData.value = Event(R.string.app_error_keystore)
+            null
+        }
+    }
+
     fun continueWithPassword(password: String) = viewModelScope.launch {
         _waitingLiveData.value = true
         decryptAndContinue(password)
+    }
+
+    fun checkLogin(cipher: Cipher) = viewModelScope.launch {
+        _waitingLiveData.value = true
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        if (password != null) {
+            decryptAndContinue(password)
+        } else {
+            _errorLiveData.value = Event(R.string.app_error_encryption)
+            _waitingLiveData.value = false
+        }
     }
 
     private suspend fun decryptAndContinue(password: String) {
@@ -526,13 +563,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val bakerKeys =
             if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
-        val transactionFeeCommission: Double? =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRange?.max else null
-        val bakingRewardCommission: Double? =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRange?.max else null
-        val finalizationRewardCommission: Double? =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
-
+        val transactionFeeCommission =
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.chainParameters?.transactionCommissionRate else null
+        val bakingRewardCommission =
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.chainParameters?.bakingCommissionRate else null
+        val finalizationRewardCommission =
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
         val transferInput = CreateTransferInput(
             from,
             keys,
@@ -552,9 +588,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             metadataUrl,
             openStatus,
             bakerKeys,
-            transactionFeeCommission?.toString(),
-            bakingRewardCommission?.toString(),
-            finalizationRewardCommission?.toString(),
+            transactionFeeCommission,
+            bakingRewardCommission,
+            finalizationRewardCommission
         )
 
         val output = App.appCore.cryptoLibrary.createTransfer(
@@ -775,4 +811,13 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
     ) ?: BigInteger.ZERO
 
+    fun setSelectedCommissionRates(
+        transactionRate: Double?,
+        bakingRate: Double?,
+    ) {
+        bakerDelegationData.chainParameters = bakerDelegationData.chainParameters?.copy(
+            bakingCommissionRate = bakingRate,
+            transactionCommissionRate = transactionRate,
+        )
+    }
 }
