@@ -14,24 +14,33 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-        android:text="@string/information_to_reveal"
-        layout="@layout/identity_proof_statement_header"
-            />
+        <TextView
+            android:id="@+id/statementHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/identity_proof_header_gradient"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="15dp"
+            android:textColor="#455A64" />
 
         <LinearLayout
             android:id="@+id/statementLines"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:paddingHorizontal="15dp"
             android:paddingVertical="15dp"
             tools:listitem="@layout/identity_proof_statement_line"
             android:orientation="vertical" />
 
-        <include
-            layout="@layout/identity_proof_statement_description"
-            android:text="@string/reveal_description"
-            tools:text="Note that all the information above will be revealed to the connected service."
+        <TextView
+            android:id="@+id/statementDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:layout_marginBottom="10dp"
+            android:minLines="1"
+            tools:text="This will prove that your Date of birth is between January 01, 1800 and February 27, 2006 "
             />
 
     </LinearLayout>

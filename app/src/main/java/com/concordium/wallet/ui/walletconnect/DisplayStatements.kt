@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.walletconnect.proof
+package com.concordium.wallet.ui.walletconnect
 
 import android.content.Context
 import android.util.AttributeSet
@@ -12,8 +12,9 @@ import com.concordium.sdk.crypto.wallet.web3Id.Statement.NonMembershipStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RangeStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
+import com.concordium.wallet.R
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
-import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofSecretStatementBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementCardBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
 import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
 
@@ -22,6 +23,8 @@ class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(cont
 
     init {
         binding = FragmentWalletConnectIdentityProofStatementsBinding.inflate(LayoutInflater.from(context))
+        binding.revealStatements.statementHeader.setText(R.string.information_to_reveal)
+        binding.revealStatements.statementDescription.setText(R.string.reveal_description)
         addView(binding.root)
     }
 
@@ -44,7 +47,7 @@ class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(cont
          }
     }
 
-    private fun getRevealLine(statement: RevealStatement, attributes: Map<String, CredentialAttribute>): View {
+    private fun getStatementLine(tag: String, value: String, ): View {
         val revealBinding =
             IdentityProofStatementLineBinding.inflate(
                 LayoutInflater.from(
@@ -52,6 +55,18 @@ class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(cont
                 ), binding.root, false
             )
 
+        revealBinding.attributeTag.text = tag
+        revealBinding.attributeValue.text = value
+        return revealBinding.root
+    }
+
+    private fun getRevealLine(statement: RevealStatement, attributes: Map<String, CredentialAttribute>): View {
+        val revealBinding =
+            IdentityProofStatementLineBinding.inflate(
+                LayoutInflater.from(
+                    context
+                ), binding.root, false
+            )
 
         val rawAttribute = attributes[statement.attributeTag]?.value ?: "???"
         // Assuming this is identity attributes
@@ -64,15 +79,16 @@ class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(cont
 
     private fun getSecretStatement(statement: AtomicStatement): View {
         val secretBinding =
-            FragmentWalletConnectIdentityProofSecretStatementBinding.inflate(
+            FragmentWalletConnectIdentityProofStatementCardBinding.inflate(
                 LayoutInflater.from(
                     context
                 ), binding.root, false
             )
 
-        secretBinding.statementLine.attributeTag.text = getPropertyTitle(statement.attributeTag)
-        secretBinding.statementLine.attributeValue.text = getStatementValue(statement)
+        secretBinding.statementHeader.setText(R.string.zero_knowledge_proof)
         secretBinding.statementDescription.text = getStatementDescription(statement)
+        val statementLine = getStatementLine(getPropertyTitle(statement.attributeTag), getStatementValue(statement))
+        secretBinding.statementLines.addView(statementLine)
 
         return secretBinding.root
     }

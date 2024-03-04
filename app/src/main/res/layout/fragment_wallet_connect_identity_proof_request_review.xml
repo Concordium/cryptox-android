@@ -50,7 +50,7 @@
 
     </FrameLayout>
 
-    <com.concordium.wallet.ui.walletconnect.proof.DisplayStatements
+    <com.concordium.wallet.ui.walletconnect.DisplayStatements
         android:id="@+id/statements"
         android:layout_marginTop="28dp"
         android:paddingBottom="20dp"
