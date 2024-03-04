@@ -43,24 +43,27 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         super.initViews()
         super.initReStakeOptionsView(binding.restakeOptions)
 
-        binding.amount.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                onContinueClicked()
-            }
-            false
-        }
-        setAmountHint(binding.amount)
-        binding.amount.doOnTextChanged { _, _, _, _ ->
-            validateAmountInput(binding.amount, binding.amountError)
-        }
-        binding.amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.amount.text.isEmpty()) binding.amount.hint = ""
-            else setAmountHint(binding.amount)
+        if (viewModel.bakerDelegationData.isUpdateBaker()) {
+            setActionBarTitle(R.string.baker_registration_update_amount_title)
+            viewModel.bakerDelegationData.oldStakedAmount =
+                viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
+            viewModel.bakerDelegationData.oldRestake =
+                viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings
+            binding.amount.setText(
+                CurrencyUtil.formatGTU(
+                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
+                        ?: BigInteger.ZERO,
+                    true
+                )
+            )
+            binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
         }
 
-        binding.bakerRegistrationContinue.setOnClickListener {
-            onContinueClicked()
-        }
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
+        binding.bakerAmount.text = CurrencyUtil.formatGTU(
+            viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: BigInteger.ZERO,
+            true
+        )
 
         viewModel.transactionFeeLiveData.observe(this) { response ->
             response?.second?.let { requestId ->
@@ -105,7 +108,6 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         showWaiting(binding.includeProgress.progressLayout, true)
 
         loadTransactionFee()
-        updateViews()
 
         try {
             viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
@@ -122,39 +124,29 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
     }
 
     private fun updateViews() {
+        binding.amount.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                onContinueClicked()
+            }
+            false
+        }
+        setAmountHint(binding.amount)
+        binding.amount.doOnTextChanged { _, _, _, _ ->
+            validateAmountInput(binding.amount, binding.amountError)
+        }
+        binding.amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.amount.text.isEmpty()) binding.amount.hint = ""
+            else setAmountHint(binding.amount)
+        }
+
+        binding.bakerRegistrationContinue.setOnClickListener {
+            onContinueClicked()
+        }
+
         if (viewModel.isInCoolDown()) {
             binding.amountLocked.visibility = View.VISIBLE
             binding.amount.isEnabled = false
         }
-
-        if (viewModel.bakerDelegationData.isUpdateBaker()) {
-            setActionBarTitle(R.string.baker_registration_update_amount_title)
-            viewModel.bakerDelegationData.oldStakedAmount =
-                viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
-            viewModel.bakerDelegationData.oldRestake =
-                viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings
-            binding.amount.setText(
-                CurrencyUtil.formatGTU(
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: BigInteger.ZERO,
-                    true
-                )
-            )
-            binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
-        }
-
-        binding.balanceAmount.text =
-            getString(
-                R.string.amount,
-                CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
-            )
-        binding.bakerAmount.text =
-            getString(
-                R.string.amount,
-                CurrencyUtil.formatGTU(
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: BigInteger.ZERO,
-                    true
-                )
-            )
     }
 
     override fun loadTransactionFee() {
