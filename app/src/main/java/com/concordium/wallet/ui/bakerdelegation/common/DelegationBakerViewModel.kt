@@ -8,13 +8,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.core.crypto.CryptoLibrary
-import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
@@ -54,10 +52,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.io.File
 import java.math.BigInteger
 import java.util.Date
-import javax.crypto.Cipher
 
 class DelegationBakerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -431,10 +427,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(throwable))
     }
 
-    fun usePasscode(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().usePasscode()
-    }
-
     fun prepareTransaction() {
         if (bakerDelegationData.amount == null && bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL) {
             _errorLiveData.value = Event(R.string.app_error_general)
@@ -461,35 +453,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun getCipherForBiometrics(): Cipher? {
-        return try {
-            val cipher =
-                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
-            if (cipher == null) {
-                _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
-            }
-            cipher
-        } catch (e: KeystoreEncryptionException) {
-            _errorLiveData.value = Event(R.string.app_error_keystore)
-            null
-        }
-    }
-
     fun continueWithPassword(password: String) = viewModelScope.launch {
         _waitingLiveData.value = true
         decryptAndContinue(password)
-    }
-
-    fun checkLogin(cipher: Cipher) = viewModelScope.launch {
-        _waitingLiveData.value = true
-        val password =
-            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
-        if (password != null) {
-            decryptAndContinue(password)
-        } else {
-            _errorLiveData.value = Event(R.string.app_error_encryption)
-            _waitingLiveData.value = false
-        }
     }
 
     private suspend fun decryptAndContinue(password: String) {
@@ -803,9 +769,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
         return null
     }
-
-    fun getTempFileWithPath(): Uri =
-        Uri.parse("content://" + BuildConfig.PROVIDER_AUTHORITY + File.separator.toString() + FILE_NAME_BAKER_KEYS)
 
     fun getAvailableBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
         bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
