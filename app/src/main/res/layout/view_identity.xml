@@ -31,18 +31,34 @@
         tools:text="@string/view_identity_status_done"
         tools:textColor="@color/ccx_status_success" />
 
-    <TextView
-        android:id="@+id/name_textview"
+    <RelativeLayout
+        android:id="@+id/name_text_and_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="8dp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textAppearance="@style/CCX_Typography_H2"
-        android:textColor="@color/ccx_neutral_tint_1"
-        tools:drawableEndCompat="@drawable/cryptox_ico_edit"
-        tools:text="Identity 1" />
+        >
+
+        <TextView
+            android:id="@+id/name_textview"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="25dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/CCX_Typography_H2"
+            android:textColor="@color/ccx_neutral_tint_1"
+            tools:text="Identity 1" />
+
+        <ImageView
+            android:id="@+id/name_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:visibility="invisible"
+            android:src="@drawable/cryptox_ico_edit"/>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/expires_textview"

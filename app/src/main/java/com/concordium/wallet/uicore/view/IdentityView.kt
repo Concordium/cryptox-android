@@ -46,15 +46,8 @@ constructor(
     private var onChangeNameClickListener: OnChangeNameClickListener? = null
 
     fun enableChangeNameOption(identity: Identity) {
-        binding.nameTextview.compoundDrawablePadding = 20
-        val drawable = AppCompatResources.getDrawable(context, R.drawable.cryptox_ico_edit)
-        binding.nameTextview.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            null,
-            null,
-            drawable,
-            null
-        )
-        binding.nameTextview.setOnClickListener {
+        binding.nameIcon.isVisible = true
+        binding.nameTextAndIcon.setOnClickListener {
             onChangeNameClickListener?.onChangeNameClicked(identity)
         }
     }
