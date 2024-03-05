@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.MembershipStatement
@@ -18,7 +19,7 @@ import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofState
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
 import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
 
-class DisplayStatements(context: Context, attr: AttributeSet): LinearLayout(context, attr) {
+class DisplayStatements(context: Context): LinearLayout(context) {
     var binding: FragmentWalletConnectIdentityProofStatementsBinding;
 
     init {

@@ -50,14 +50,15 @@
 
     </FrameLayout>
 
-    <com.concordium.wallet.ui.walletconnect.DisplayStatements
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/statements"
         android:layout_marginTop="28dp"
         android:paddingBottom="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        />
 
     <Button
         android:id="@+id/decline_button"

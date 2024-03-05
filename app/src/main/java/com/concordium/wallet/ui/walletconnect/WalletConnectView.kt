@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.bumptech.glide.Glide
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
@@ -127,7 +129,7 @@ class WalletConnectView(
                     account = state.account,
                     identity = state.identity,
                     appMetadata = state.appMetadata,
-                    statement = state.request.credentialStatements.get(0)
+                    statements = state.request.credentialStatements
                 )
             }
 
@@ -431,7 +433,7 @@ class WalletConnectView(
     }
 
     private fun showIdentityProofRequestReview(
-        statement: RequestStatement,
+        statements: List<RequestStatement>,
         identity: Identity?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -443,7 +445,7 @@ class WalletConnectView(
                 account = account,
                 identity = identity,
                 appMetadata = appMetadata,
-                statement = statement
+                statements = statements
             )
         }
     }
@@ -454,7 +456,7 @@ class WalletConnectView(
         account: Account,
         identity: Identity?,
         appMetadata: WalletConnectViewModel.AppMetadata,
-        statement: RequestStatement
+        statements: List<RequestStatement>
     ) = with(view) {
         Glide.with(appIconImageView.context)
             .load(appMetadata.iconUrl)
@@ -464,12 +466,18 @@ class WalletConnectView(
 
         appNameTextView.text = appMetadata.name
 
-        val attributes = identity?.identityObject?.let { it.attributeList.chosenAttributes.mapValues {
-            CredentialAttribute.builder().value(it.value)
+        val attributes = identity?.identityObject?.let { it.attributeList.chosenAttributes.mapValues { attribute ->
+            CredentialAttribute.builder().value(attribute.value)
                 .type(CredentialAttribute.CredentialAttributeType.STRING).build()
         }} ?: emptyMap()
 
-        statements.setStatement(statement, attributes)
+        this.statements.adapter = CredentialStatementAdapter(statements, attributes)
+        this.statements.setPageTransformer{ page, position ->
+            run {
+                // Resize
+                page.requestLayout()
+            }
+        }
 
         with(selectedAccountInclude) {
             accAddress.text = account.getAccountName()
