@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Streaming
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit
 interface FileDownloadApi {
     @Streaming
     @GET
-    suspend fun downloadFile(@Url url: String?): ResponseBody
+    suspend fun downloadFile(@Url url: String?): Response<ResponseBody>
 }
 
 sealed class FileDownloadScreenState {
@@ -39,11 +40,15 @@ sealed class FileDownloadScreenState {
     data class Downloading(val progress: Int) : FileDownloadScreenState()
     object Failed : FileDownloadScreenState()
     object Downloaded : FileDownloadScreenState()
+    object NoContent : FileDownloadScreenState()
 }
 
 class ExportTransactionLogViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var account: Account
     private lateinit var api: FileDownloadApi
+
+    val HTTP_OK = 200
+    val HTTP_NO_CONTENT = 204
 
     val textResourceInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
@@ -78,8 +83,17 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
                     )
                 )
 
-                api.downloadFile(downloadFile)
-                    .saveFile(destinationFolder)
+                val response = api.downloadFile(downloadFile)
+                val statusCode = response.code()
+                if (statusCode == HTTP_NO_CONTENT) {
+                    this@ExportTransactionLogViewModel.downloadState.postValue(FileDownloadScreenState.NoContent)
+                    return@launch
+                } else if (statusCode != HTTP_OK || response.body() == null) {
+                    this@ExportTransactionLogViewModel.downloadState.postValue(FileDownloadScreenState.Failed)
+                    return@launch
+                }
+
+                response.body()!!.saveFile(destinationFolder)
                     .collect { downloadState ->
                         // Add visual delay and ensure the coroutine is active.
                         delay(300)
