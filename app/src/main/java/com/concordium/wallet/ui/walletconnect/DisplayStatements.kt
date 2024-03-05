@@ -19,7 +19,7 @@ import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofState
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
 import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
 
-class DisplayStatements(context: Context): LinearLayout(context) {
+class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(context, attrs) {
     var binding: FragmentWalletConnectIdentityProofStatementsBinding;
 
     init {

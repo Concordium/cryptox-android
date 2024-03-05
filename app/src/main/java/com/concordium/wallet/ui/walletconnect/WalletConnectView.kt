@@ -471,37 +471,13 @@ class WalletConnectView(
                 .type(CredentialAttribute.CredentialAttributeType.STRING).build()
         }} ?: emptyMap()
 
-        this.statements.adapter = CredentialStatementAdapter(statements, attributes)
-        this.statements.setPageTransformer{ page, position ->
+        this.proofView.adapter = CredentialStatementAdapter(statements, attributes, viewModel, lifecycleOwner)
+        this.proofView.setPageTransformer{ page, position ->
             run {
                 // Resize
                 page.requestLayout()
             }
         }
-
-        with(selectedAccountInclude) {
-            accAddress.text = account.getAccountName()
-            accBalance.text = root.context.getString(
-                R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    account.getAtDisposalWithoutStakedOrScheduled(
-                        account.totalUnshieldedBalance
-                    ), true
-                )
-            )
-        }
-
-        declineButton.setOnClickListener {
-            viewModel.rejectSessionRequest()
-        }
-
-        approveButton.setOnClickListener {
-            viewModel.approveSessionRequest()
-        }
-        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
-            lifecycleOwner = lifecycleOwner,
-            action = approveButton::setEnabled
-        )
     }
 
     private fun showConnecting() {
