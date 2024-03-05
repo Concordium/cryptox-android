@@ -1022,6 +1022,7 @@
     <string name="export_transaction_log_cancel">Cancel</string>
     <string name="export_transaction_log_saved">The transaction logs have been saved</string>
     <string name="export_transaction_log_failed">Failed to download transaction logs</string>
+    <string name="export_transaction_log_no_content">There are no transaction logs available for this account</string>
     <string name="export_transaction_log_progress">%1$d%%</string> <!-- 45% -->
     <string name="export_transaction_log_downloading">Downloading transaction logs…</string>
 
