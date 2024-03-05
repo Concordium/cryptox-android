@@ -10,6 +10,7 @@
 - Exiting the wallet after accepting an identity verification error
 - Incorrect environment name in a private key export file for Mainnet
 - Improper handling of rejected identity verification when setting up a new wallet
+- Showing "Address copied" when copying a transaction hash to the clipboard in the scheduled transfer view
 - An issue where the identity name was off-center when the edit name icon was visible
 - An issue where exporting transaction logs for an account without any transactions would be stuck at 0%
 

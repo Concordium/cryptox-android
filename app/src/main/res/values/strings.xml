@@ -451,8 +451,8 @@
     <string name="account_release_schedule_locked_amount">Locked amount:</string>
     <string name="account_release_schedule_release_date">Release date</string>
     <string name="account_release_schedule_amount">Amount</string>
-    <string name="account_release_schedule_copied">Address copied</string>
-    <string name="account_release_schedule_copy_title">Account address</string>
+    <string name="account_release_schedule_copied">Transaction hash copied</string>
+    <string name="account_release_schedule_copy_title">Transaction hash</string>
     <string name="account_release_schedule_no_data">No data</string>
     <string name="account_details_baker_id">Validator ID:</string>
     <string name="title_create_nft">Mint NFT</string>
