@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -210,7 +209,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun showCommissionRates() {
         if (viewModel.commissionRatesHasChanged().not()) {
             hideCommissionRates()

@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -58,7 +57,6 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun ActivityBakerSettingsBinding.setTransactionRates(
         transactionRange: TransactionCommissionRange
     ) {
