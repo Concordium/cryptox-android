@@ -9,5 +9,5 @@ data class PassiveDelegation(
     val currentPaydayDelegatedCapital: BigInteger,
     val currentPaydayTransactionFeesEarned: BigInteger,
     val delegatedCapital: BigInteger,
-    val poolType: String
+    val poolType: String,
 ) : Serializable

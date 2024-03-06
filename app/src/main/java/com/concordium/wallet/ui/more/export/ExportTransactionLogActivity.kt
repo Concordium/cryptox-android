@@ -34,7 +34,6 @@ class ExportTransactionLogActivity : BaseActivity(
         viewModel.onIdleRequested()
 
         hideActionBarBack(isVisible = true) {
-            viewModel.onIdleRequested()
             finish()
         }
     }
@@ -86,6 +85,7 @@ class ExportTransactionLogActivity : BaseActivity(
 
             binding.successLayout.isVisible = downloadState is FileDownloadScreenState.Downloaded
             binding.failedLayout.isVisible = downloadState is FileDownloadScreenState.Failed
+            binding.noContentLayout.isVisible = downloadState is FileDownloadScreenState.NoContent
 
             binding.generate.isVisible = downloadState is FileDownloadScreenState.Idle
             binding.cancel.isVisible = downloadState is FileDownloadScreenState.Downloading

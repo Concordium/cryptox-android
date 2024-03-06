@@ -174,4 +174,9 @@
         <item name="drawableEndCompat">@drawable/cryptox_ico_chevron_right</item>
     </style>
 
+    <style name="SeekBarTheme">
+        <item name="colorAccent">@color/cryptox_white_main</item>
+        <item name="colorControlNormal">@color/cryptox_white_main</item>
+    </style>
+
 </resources>

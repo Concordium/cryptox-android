@@ -133,6 +133,46 @@
                     tools:visibility="visible" />
 
                 <TextView
+                    android:id="@+id/transaction_fee_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/baker_pool_settings_fee_explain"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/transaction_fee_status"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    tools:text="10%"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/baking_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/baker_pool_settings_baking_explain"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/baking_status"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    tools:text="40%"
+                    tools:visibility="visible" />
+
+                <TextView
                     android:id="@+id/meta_data_url_title"
                     style="@style/CryptoX_Typography_Body_Medium"
                     android:layout_width="match_parent"

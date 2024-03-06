@@ -451,8 +451,8 @@
     <string name="account_release_schedule_locked_amount">Locked amount:</string>
     <string name="account_release_schedule_release_date">Release date</string>
     <string name="account_release_schedule_amount">Amount</string>
-    <string name="account_release_schedule_copied">Address copied</string>
-    <string name="account_release_schedule_copy_title">Account address</string>
+    <string name="account_release_schedule_copied">Transaction hash copied</string>
+    <string name="account_release_schedule_copy_title">Transaction hash</string>
     <string name="account_release_schedule_no_data">No data</string>
     <string name="account_details_baker_id">Validator ID:</string>
     <string name="title_create_nft">Mint NFT</string>
@@ -844,7 +844,15 @@
     <string name="baker_intro_subtitle3">Opening a pool</string>
 
     <string name="baker_registration_title">Register validator</string>
-    <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your validating pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_pool_settings_explain">When you open your validator as a pool, you earn commissions of stake delegated to your pool from other accounts:</string>
+    <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
+    <string name="baker_pool_settings_baking_explain">Block reward commission</string>
+    <string name="baker_pool_settings_reward_explain">Finalization reward commission</string>
+    <string name="baking_commission_rate_error_transaction_not_in_range">Transaction fee is out of specified range</string>
+    <string name="baking_commission_rate_error_baking_not_in_range">Baking reward is out of specified range</string>
+    <string name="baking_pool_range_min">Min:\n%1$s%%</string>
+    <string name="baking_pool_range_max">Max:\n%1$s%%</string>
     <string name="baker_registration_open">Open for delegation</string>
     <string name="baker_registration_close">Close for delegation</string>
     <string name="baker_registration_continue">Continue</string>
@@ -1022,6 +1030,7 @@
     <string name="export_transaction_log_cancel">Cancel</string>
     <string name="export_transaction_log_saved">The transaction logs have been saved</string>
     <string name="export_transaction_log_failed">Failed to download transaction logs</string>
+    <string name="export_transaction_log_no_content">There are no transaction logs available for this account</string>
     <string name="export_transaction_log_progress">%1$d%%</string> <!-- 45% -->
     <string name="export_transaction_log_downloading">Downloading transaction logs…</string>
 
