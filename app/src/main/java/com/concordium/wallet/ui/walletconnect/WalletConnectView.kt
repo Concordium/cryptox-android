@@ -472,12 +472,21 @@ class WalletConnectView(
         }} ?: emptyMap()
 
         this.proofView.adapter = CredentialStatementAdapter(statements, attributes, viewModel, lifecycleOwner)
-        this.proofView.setPageTransformer{ page, position ->
-            run {
-                // Resize
-                page.requestLayout()
-            }
+
+        approveButton.setOnClickListener {
+            viewModel.approveSessionRequest()
         }
+
+        declineButton.setOnClickListener {
+            viewModel.rejectSessionRequest()
+        }
+
+        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
+            lifecycleOwner = lifecycleOwner,
+            action = approveButton::setEnabled
+        )
+
+        this.proofView.setPageTransformer(ZoomOutPageTransformer())
     }
 
     private fun showConnecting() {

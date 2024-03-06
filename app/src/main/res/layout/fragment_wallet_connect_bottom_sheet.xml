@@ -10,15 +10,9 @@
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView style="@style/CryptoX_BottomSheetHandle" />
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true"
-        >
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:background="@color/cryptox_grey_secondary" />
-    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

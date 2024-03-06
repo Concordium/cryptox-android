@@ -25,27 +25,6 @@ class CredentialStatementAdapter(private val requests: List<RequestStatement>, p
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        println(position)
         holder.containerBinding.statements.setStatement(requests.get(position), attributes)
-
-        holder.containerBinding.declineButton.setOnClickListener {
-            viewModel.rejectSessionRequest()
-        }
-
-        if (position == itemCount - 1) {
-
-            holder.containerBinding.approveButton.setOnClickListener {
-                viewModel.approveSessionRequest()
-            }
-            holder.containerBinding.approveButton.isEnabled = true
-        } else {
-            holder.containerBinding.approveButton.isEnabled = false
-        }
-
-        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
-            lifecycleOwner = lifecycleOwner,
-            action = holder.containerBinding.approveButton::setEnabled
-        )
-
     }
 }
