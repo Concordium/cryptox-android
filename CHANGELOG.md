@@ -2,6 +2,9 @@
 
 ## [Unreleased] 
 
+### Added
+- Setting up and updating validator pool commission rates
+
 ### Fixed
 
 - An issue where signing a text message through WalletConnect did not work
