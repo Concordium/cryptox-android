@@ -8,7 +8,9 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.INVISIBLE
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
@@ -29,6 +31,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import java.math.BigInteger
 
 /**
@@ -471,7 +474,14 @@ class WalletConnectView(
                 .type(CredentialAttribute.CredentialAttributeType.STRING).build()
         }} ?: emptyMap()
 
-        this.proofView.adapter = CredentialStatementAdapter(statements, attributes, viewModel, lifecycleOwner)
+        // Ensure statement cannot be approved until all statements have been seen
+        approveButton.visibility = INVISIBLE
+
+        val adapter = CredentialStatementAdapter(statements, attributes) {
+            // Ensure statement can be approved when all statements have been seen
+            if (it == statements.size - 1) approveButton.visibility = VISIBLE
+        }
+        this.proofView.adapter = adapter
 
         approveButton.setOnClickListener {
             viewModel.approveSessionRequest()
@@ -481,12 +491,13 @@ class WalletConnectView(
             viewModel.rejectSessionRequest()
         }
 
+        // Connect tab dots to the proofView pager
+        TabLayoutMediator(pagerDots,this.proofView) { _, _ -> }.attach()
+
         viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
             lifecycleOwner = lifecycleOwner,
             action = approveButton::setEnabled
         )
-
-        this.proofView.setPageTransformer(ZoomOutPageTransformer())
     }
 
     private fun showConnecting() {

@@ -10,9 +10,7 @@ import com.concordium.wallet.databinding.IdentityProofContainerBinding
 import com.concordium.wallet.extension.collect
 
 // TODO: move attributes, when we enable choosing account
-class CredentialStatementAdapter(private val requests: List<RequestStatement>, private val attributes: Map<String, CredentialAttribute>, val viewModel: WalletConnectViewModel, val lifecycleOwner: LifecycleOwner):
-    RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
-
+class CredentialStatementAdapter(private val requests: List<RequestStatement>, private val attributes: Map<String, CredentialAttribute>, val onPageChange: (index: Int) -> Unit): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
         class ViewHolder(val containerBinding: IdentityProofContainerBinding): RecyclerView.ViewHolder(containerBinding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = IdentityProofContainerBinding.inflate(LayoutInflater.from(parent.context))
@@ -25,6 +23,7 @@ class CredentialStatementAdapter(private val requests: List<RequestStatement>, p
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.containerBinding.statements.setStatement(requests.get(position), attributes)
+        holder.containerBinding.statements.setStatement(requests[position], attributes)
+        onPageChange(position)
     }
 }

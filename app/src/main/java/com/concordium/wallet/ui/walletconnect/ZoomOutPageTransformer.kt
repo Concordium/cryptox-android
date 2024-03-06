@@ -1,3 +1,4 @@
+// Copied from android/ViewPager2 documentation
 package com.concordium.wallet.ui.walletconnect
 
 import android.view.View
