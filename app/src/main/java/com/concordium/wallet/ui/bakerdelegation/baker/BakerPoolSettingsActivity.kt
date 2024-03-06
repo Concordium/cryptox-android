@@ -68,33 +68,32 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
             transactionFeeMax.text = getMaxRangeText(transactionRange.max)
 
             transactionFeeValue.afterTextChanged { textAmount ->
-                if (transactionFeeValue.hasFocus()) {
-                    when {
-                        textAmount.isEmpty() -> Unit
-                        else -> {
-                            try {
-                                isDynamicChange = true
+                if (!transactionFeeValue.hasFocus()) {
+                    return@afterTextChanged
+                }
 
-                                val parsedAmount =
-                                    percentNumberFormat.parse(textAmount)!!.toDouble()
-                                val previousProgress = transactionFeeSlider.progress
-                                transactionFeeSlider.progress =
-                                    if (parsedAmount in transactionRange.min..transactionRange.max) {
-                                        getSliderRangeValue(parsedAmount)
-                                    } else if (parsedAmount > transactionRange.max) {
-                                        getSliderRangeValue(transactionRange.max)
-                                    } else {
-                                        getSliderRangeValue(transactionRange.min)
-                                    }
-                                if (previousProgress == transactionFeeSlider.progress) {
-                                    isDynamicChange = false
-                                }
+                try {
+                    isDynamicChange = true
 
-                            } catch (e: ParseException) {
-                                isDynamicChange = false
-                            }
+                    val parsedAmount: Double = textAmount
+                        .takeIf(String::isNotBlank)
+                        ?.let(percentNumberFormat::parse)
+                        ?.toDouble()
+                        ?: 0.0
+                    val previousProgress = transactionFeeSlider.progress
+                    transactionFeeSlider.progress =
+                        if (parsedAmount in transactionRange.min..transactionRange.max) {
+                            getSliderRangeValue(parsedAmount)
+                        } else if (parsedAmount > transactionRange.max) {
+                            getSliderRangeValue(transactionRange.max)
+                        } else {
+                            getSliderRangeValue(transactionRange.min)
                         }
+                    if (previousProgress == transactionFeeSlider.progress) {
+                        isDynamicChange = false
                     }
+                } catch (e: ParseException) {
+                    isDynamicChange = false
                 }
             }
 
@@ -146,33 +145,31 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
             bakingMax.text = getMaxRangeText(bakingRange.max)
 
             bakingValue.afterTextChanged { textAmount ->
-                if (bakingValue.hasFocus()) {
-                    when {
-                        textAmount.isEmpty() -> Unit
-                        else -> {
-                            try {
-                                isDynamicChange = true
+                if (!bakingValue.hasFocus()) {
+                    return@afterTextChanged
+                }
+                try {
+                    isDynamicChange = true
 
-                                val parsedAmount =
-                                    percentNumberFormat.parse(textAmount)!!.toDouble()
-                                val previousProgress = bakingSlider.progress
-                                bakingSlider.progress =
-                                    if (parsedAmount in bakingRange.min..bakingRange.max) {
-                                        getSliderRangeValue(parsedAmount)
-                                    } else if (parsedAmount > bakingRange.max) {
-                                        getSliderRangeValue(bakingRange.max)
-                                    } else {
-                                        getSliderRangeValue(bakingRange.min)
-                                    }
-                                if (previousProgress == bakingSlider.progress) {
-                                    isDynamicChange = false
-                                }
-
-                            } catch (e: ParseException) {
-                                isDynamicChange = false
-                            }
+                    val parsedAmount: Double = textAmount
+                        .takeIf(String::isNotBlank)
+                        ?.let(percentNumberFormat::parse)
+                        ?.toDouble()
+                        ?: 0.0
+                    val previousProgress = bakingSlider.progress
+                    bakingSlider.progress =
+                        if (parsedAmount in bakingRange.min..bakingRange.max) {
+                            getSliderRangeValue(parsedAmount)
+                        } else if (parsedAmount > bakingRange.max) {
+                            getSliderRangeValue(bakingRange.max)
+                        } else {
+                            getSliderRangeValue(bakingRange.min)
                         }
+                    if (previousProgress == bakingSlider.progress) {
+                        isDynamicChange = false
                     }
+                } catch (e: ParseException) {
+                    isDynamicChange = false
                 }
             }
 
@@ -220,10 +217,20 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
         )
         val bakingRange = chainParams.bakingCommissionRange
 
-        val selectedTransactionRate =
-            percentNumberFormat.parse(binding.transactionFeeValue.text.toString())!!.toDouble()
-        val selectedBakingRate =
-            percentNumberFormat.parse(binding.bakingValue.text.toString())!!.toDouble()
+        val selectedTransactionRate: Double =
+            binding.transactionFeeValue.text
+                .toString()
+                .takeIf(String::isNotBlank)
+                ?.let(percentNumberFormat::parse)
+                ?.toDouble()
+                ?: 0.0
+        val selectedBakingRate: Double =
+            binding.bakingValue.text
+                .toString()
+                .takeIf(String::isNotBlank)
+                ?.let(percentNumberFormat::parse)
+                ?.toDouble()
+                ?: 0.0
 
         if (selectedTransactionRate !in transactionRange.min..transactionRange.max) {
             showErrorMessage(getString(R.string.baking_commission_rate_error_transaction_not_in_range))
