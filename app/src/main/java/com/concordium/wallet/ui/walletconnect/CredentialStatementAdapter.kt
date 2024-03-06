@@ -6,11 +6,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
+import com.concordium.wallet.R
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.IdentityProofContainerBinding
 import com.concordium.wallet.extension.collect
 
 // TODO: move attributes, when we enable choosing account
-class CredentialStatementAdapter(private val requests: List<RequestStatement>, private val attributes: Map<String, CredentialAttribute>, val onPageChange: (index: Int) -> Unit): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
+class CredentialStatementAdapter(private val requests: List<RequestStatement>, private val accounts: List<Account>, private val attributes: Map<String, CredentialAttribute>, private val onPageChanged: (index: Int) -> Unit, private val onChangeAccount: (index: Int) -> Unit): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
         class ViewHolder(val containerBinding: IdentityProofContainerBinding): RecyclerView.ViewHolder(containerBinding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = IdentityProofContainerBinding.inflate(LayoutInflater.from(parent.context))
@@ -24,6 +27,22 @@ class CredentialStatementAdapter(private val requests: List<RequestStatement>, p
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.containerBinding.statements.setStatement(requests[position], attributes)
-        onPageChange(position)
+        val account = accounts[position]
+        with(holder.containerBinding.selectedAccountInclude) {
+            accAddress.text = account.getAccountName()
+            // TODO do we want to show amount here or identity?
+            accBalance.text = root.context.getString(
+                com.concordium.wallet.R.string.acc_balance_placeholder,
+                com.concordium.wallet.data.util.CurrencyUtil.formatGTU(
+                    account.getAtDisposalWithoutStakedOrScheduled(
+                        account.totalUnshieldedBalance
+                    ), true
+                )
+            )
+        }
+        holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
+            onChangeAccount(position)
+        }
+        onPageChanged(position)
     }
 }

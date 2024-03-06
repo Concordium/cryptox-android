@@ -129,10 +129,11 @@ class WalletConnectView(
 
             is WalletConnectViewModel.State.SessionRequestReview.IdentityProofRequestReview -> {
                 showIdentityProofRequestReview(
-                    account = state.account,
+                    accounts = state.chosenAccounts,
                     identity = state.identity,
                     appMetadata = state.appMetadata,
                     statements = state.request.credentialStatements
+
                 )
             }
 
@@ -438,14 +439,14 @@ class WalletConnectView(
     private fun showIdentityProofRequestReview(
         statements: List<RequestStatement>,
         identity: Identity?,
-        account: Account,
+        accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
         getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
             initIdentityProofRequestReview(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
-                account = account,
+                accounts = accounts,
                 identity = identity,
                 appMetadata = appMetadata,
                 statements = statements
@@ -456,7 +457,7 @@ class WalletConnectView(
     private fun initIdentityProofRequestReview(
         view: FragmentWalletConnectIdentityProofRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
-        account: Account,
+        accounts: List<Account>,
         identity: Identity?,
         appMetadata: WalletConnectViewModel.AppMetadata,
         statements: List<RequestStatement>
@@ -477,10 +478,15 @@ class WalletConnectView(
         // Ensure statement cannot be approved until all statements have been seen
         approveButton.visibility = INVISIBLE
 
-        val adapter = CredentialStatementAdapter(statements, attributes) {
-            // Ensure statement can be approved when all statements have been seen
-            if (it == statements.size - 1) approveButton.visibility = VISIBLE
-        }
+        val adapter = CredentialStatementAdapter(statements, accounts, attributes,
+            onPageChanged = {
+                // Ensure statement can be approved when all statements have been seen
+                if (it == statements.size - 1) approveButton.visibility = VISIBLE
+            },
+            onChangeAccount = {
+                viewModel.onChooseAccountIdentityProof(it)
+            }
+        )
         this.proofView.adapter = adapter
 
         approveButton.setOnClickListener {

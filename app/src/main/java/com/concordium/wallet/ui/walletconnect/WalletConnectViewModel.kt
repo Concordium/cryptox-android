@@ -150,7 +150,7 @@ private constructor(
     private lateinit var sessionRequestTransactionNonce: AccountNonce
     private lateinit var sessionRequestMessageToSign: String
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
-
+    private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
 
     private val handledRequests = mutableSetOf<Long>()
 
@@ -445,6 +445,7 @@ private constructor(
                     selectedAccount = reviewState.selectedAccount,
                     accounts = accounts,
                     appMetadata = reviewState.appMetadata,
+                    identityProofPosition = null
                 )
             )
         }
@@ -460,12 +461,53 @@ private constructor(
                     "\nnewSelectedAccountId=${selectedAccount.id}"
         )
 
-        mutableStateFlow.tryEmit(
-            State.SessionProposalReview(
-                selectedAccount = selectedAccount,
-                appMetadata = selectionState.appMetadata
+        if (selectionState.identityProofPosition == null) {
+            mutableStateFlow.tryEmit(
+                State.SessionProposalReview(
+                    selectedAccount = selectedAccount,
+                    appMetadata = selectionState.appMetadata
+                )
             )
-        )
+        } else {
+            onAccountSelectedIdentityProof(selectedAccount, selectionState.identityProofPosition)
+        }
+    }
+
+    fun onChooseAccountIdentityProof(position: Int) {
+        val proofRequestReview = checkNotNull(state as? State.SessionRequestReview.IdentityProofRequestReview) {
+            "Choose account button can only be clicked in the proposal review state"
+        }
+
+        viewModelScope.launch {
+            val accounts = getAvailableAccounts()
+
+            Log.d(
+                "switching_to_account_selection:" +
+                        "\navailableAccounts=${accounts.size}"
+            )
+
+            mutableStateFlow.emit(
+                State.AccountSelection(
+                    selectedAccount = proofRequestReview.chosenAccounts[position],
+                    accounts = accounts,
+                    appMetadata = proofRequestReview.appMetadata,
+                    identityProofPosition = position
+                )
+            )
+        }
+    }
+
+    fun onAccountSelectedIdentityProof(selectedAccount: Account, position: Int) {
+        sessionRequestIdentityProofAccounts[position] = selectedAccount
+        println(sessionRequestIdentityProofAccounts)
+
+        mutableStateFlow.tryEmit(State.SessionRequestReview.IdentityProofRequestReview(
+           connectedAccount = sessionRequestAccount,
+           identity = sessionRequestIdentity,
+           appMetadata = sessionRequestAppMetadata,
+           request = sessionRequestIdentityRequest,
+           chosenAccounts = sessionRequestIdentityProofAccounts
+       ))
     }
 
     override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
@@ -604,12 +646,16 @@ private constructor(
             val identityProofRequest = UnqualifiedRequest.fromJson(params)
             sessionRequestIdentityRequest = identityProofRequest
 
+            val initialAccounts = MutableList(identityProofRequest.credentialStatements.size) { _ -> sessionRequestAccount }
+            sessionRequestIdentityProofAccounts = initialAccounts
+
             mutableStateFlow.tryEmit(
                 State.SessionRequestReview.IdentityProofRequestReview(
-                    account = sessionRequestAccount,
+                    connectedAccount = sessionRequestAccount,
                     identity = sessionRequestIdentity,
                     appMetadata = sessionRequestAppMetadata,
-                    request = identityProofRequest
+                    request = identityProofRequest,
+                    chosenAccounts = initialAccounts
                 )
             )
         } catch (e: Exception) {
@@ -950,7 +996,7 @@ private constructor(
                     signAndSubmitRequestedTransaction(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
-                    createProofPresentation(storageAccountData.getAttributeRandomness())
+                    createProofPresentation(storageAccountData.getAttributeRandomness(), reviewState.chosenAccounts)
                 }
             }
         } else {
@@ -967,7 +1013,12 @@ private constructor(
         }
     }
 
-    private suspend fun createProofPresentation(attributeRandomness: AttributeRandomness?) {
+    private suspend fun createProofPresentation(
+        attributeRandomness: AttributeRandomness?,
+        chosenAccounts: List<Account>
+    ) {
+        // TODO: use chosen accounts instead of session account
+
         val request = sessionRequestIdentityRequest
         val account = sessionRequestAccount
         val identity = sessionRequestIdentity
@@ -1337,6 +1388,7 @@ private constructor(
         class AccountSelection(
             val selectedAccount: Account,
             val accounts: List<Account>,
+            val identityProofPosition: Int?,
             val appMetadata: AppMetadata,
         ) : State
 
@@ -1381,11 +1433,12 @@ private constructor(
 
             class IdentityProofRequestReview(
                 val request: UnqualifiedRequest,
-                account: Account,
+                val chosenAccounts: List<Account>,
+                connectedAccount: Account,
                 identity: Identity,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
-                account = account,
+                account = connectedAccount,
                 appMetadata = appMetadata,
                 identity = identity,
                 // TODO This should use the Android SDK to validate if
