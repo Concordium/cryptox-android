@@ -818,6 +818,22 @@ private constructor(
                     is AccountTransactionPayload.Update ->
                         accountTransactionPayload.receiveName
                 },
+                receiver = when (accountTransactionPayload) {
+                    is AccountTransactionPayload.Transfer ->
+                        accountTransactionPayload.toAddress
+
+                    is AccountTransactionPayload.Update ->
+                        accountTransactionPayload.address.run {
+                            "${index}, ${subIndex}"
+                        }
+                },
+                amount = when (accountTransactionPayload) {
+                    is AccountTransactionPayload.Transfer ->
+                        accountTransactionPayload.amount
+
+                    is AccountTransactionPayload.Update ->
+                        accountTransactionPayload.amount
+                },
                 estimatedFee = sessionRequestTransactionCost,
                 account = sessionRequestAccount,
                 isEnoughFunds = isEnoughFunds,
@@ -1253,6 +1269,8 @@ private constructor(
         ) : State {
             class TransactionRequestReview(
                 val method: String,
+                val receiver: String,
+                val amount: BigInteger,
                 val estimatedFee: BigInteger,
                 val isEnoughFunds: Boolean,
                 account: Account,
