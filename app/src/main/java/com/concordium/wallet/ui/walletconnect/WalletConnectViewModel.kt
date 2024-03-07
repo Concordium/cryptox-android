@@ -152,6 +152,7 @@ private constructor(
     private lateinit var sessionRequestMessageToSign: String
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
+    private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
 
     private val handledRequests = mutableSetOf<Long>()
 
@@ -498,17 +499,26 @@ private constructor(
         }
     }
 
-    fun onAccountSelectedIdentityProof(selectedAccount: Account, position: Int) {
+    private fun onAccountSelectedIdentityProof(selectedAccount: Account, position: Int) {
         sessionRequestIdentityProofAccounts[position] = selectedAccount
-        println(sessionRequestIdentityProofAccounts)
 
-        mutableStateFlow.tryEmit(State.SessionRequestReview.IdentityProofRequestReview(
-           connectedAccount = sessionRequestAccount,
-           identity = sessionRequestIdentity,
-           appMetadata = sessionRequestAppMetadata,
-           request = sessionRequestIdentityRequest,
-           chosenAccounts = sessionRequestIdentityProofAccounts
-       ))
+        viewModelScope.launch {
+        with(selectedAccount.identityId) {
+            if (!sessionRequestIdentityProofIdentities.containsKey(this)) {
+                val identity = identityRepository.findById(this)
+                if (identity != null) sessionRequestIdentityProofIdentities[this] = identity
+            }
+            }
+
+            mutableStateFlow.tryEmit(State.SessionRequestReview.IdentityProofRequestReview(
+                connectedAccount = sessionRequestAccount,
+                identity = sessionRequestIdentity,
+                appMetadata = sessionRequestAppMetadata,
+                request = sessionRequestIdentityRequest,
+                chosenAccounts = sessionRequestIdentityProofAccounts,
+                getIdentity = this@WalletConnectViewModel::getIdentity
+            ))
+        }
     }
 
     override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
@@ -642,23 +652,17 @@ private constructor(
         }
     }
 
-    private fun handleIdentityProofRequest(params: String) {
+    private fun initializeProofRequestSession(params: String) {
         try {
-            val identityProofRequest = UnqualifiedRequest.fromJson(params)
-            sessionRequestIdentityRequest = identityProofRequest
+        val identityProofRequest = UnqualifiedRequest.fromJson(params)
+        sessionRequestIdentityRequest = identityProofRequest
 
-            val initialAccounts = MutableList(identityProofRequest.credentialStatements.size) { _ -> sessionRequestAccount }
-            sessionRequestIdentityProofAccounts = initialAccounts
+        val initialAccounts = MutableList(identityProofRequest.credentialStatements.size) { _ -> sessionRequestAccount }
+        sessionRequestIdentityProofAccounts = initialAccounts
 
-            mutableStateFlow.tryEmit(
-                State.SessionRequestReview.IdentityProofRequestReview(
-                    connectedAccount = sessionRequestAccount,
-                    identity = sessionRequestIdentity,
-                    appMetadata = sessionRequestAppMetadata,
-                    request = identityProofRequest,
-                    chosenAccounts = initialAccounts
-                )
-            )
+        val identities = HashMap<Int, Identity>()
+        identities[sessionRequestAccount.identityId] = sessionRequestIdentity
+            sessionRequestIdentityProofIdentities = identities
         } catch (e: Exception) {
             Log.e("Failed to parse identity proof request parameters: $params", e)
             mutableEventsFlow.tryEmit(
@@ -668,6 +672,18 @@ private constructor(
             )
             return
         }
+    }
+    private fun handleIdentityProofRequest() {
+        mutableStateFlow.tryEmit(
+            State.SessionRequestReview.IdentityProofRequestReview(
+                connectedAccount = sessionRequestAccount,
+                identity = sessionRequestIdentity,
+                appMetadata = sessionRequestAppMetadata,
+                request = sessionRequestIdentityRequest,
+                chosenAccounts = sessionRequestIdentityProofAccounts,
+                getIdentity = this::getIdentity
+            )
+        )
     }
 
     /**
@@ -771,7 +787,10 @@ private constructor(
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
-            "proof_of_identity" -> handleIdentityProofRequest(params)
+            "proof_of_identity" -> {
+                initializeProofRequestSession(params)
+                handleIdentityProofRequest()
+            }
             else -> {
                 val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
                 Log.e(unsupportedMethodMessage)
@@ -1012,7 +1031,7 @@ private constructor(
                     signAndSubmitRequestedTransaction(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
-                    val attributeRandomness = HashMap<String, AttributeRandomness?>();
+                    val attributeRandomness = HashMap<String, AttributeRandomness?>()
                     attributeRandomness[storageAccountData.accountAddress] = storageAccountData.getAttributeRandomness()
                     reviewState.chosenAccounts.forEach {
                         if (!attributeRandomness.contains(it.address)) {
@@ -1036,7 +1055,7 @@ private constructor(
         }
     }
 
-    private suspend fun createProofPresentation(
+    private fun createProofPresentation(
         chosenAccounts: List<Account>,
         randomnessMap: Map<String,AttributeRandomness?>,
     ) {
@@ -1047,7 +1066,7 @@ private constructor(
             request.credentialStatements.map { statement ->
                 val account = accountIterator.next()
                 val attributeRandomness = randomnessMap[account.address]
-                val identity = identityRepository.findById(account.identityId)
+                val identity = getIdentity(account)
 
                 if (attributeRandomness == null) {
                     Log.e("Attribute randomness is not available for account ${account.address}")
@@ -1136,6 +1155,10 @@ private constructor(
                 )
             )
         })
+    }
+
+    fun getIdentity(account: Account): Identity? {
+        return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
@@ -1468,6 +1491,7 @@ private constructor(
             class IdentityProofRequestReview(
                 val request: UnqualifiedRequest,
                 val chosenAccounts: List<Account>,
+                getIdentity: (account: Account) -> Identity?,
                 connectedAccount: Account,
                 identity: Identity,
                 appMetadata: AppMetadata,
@@ -1476,7 +1500,9 @@ private constructor(
                 appMetadata = appMetadata,
                 identity = identity,
                 // TODO This should use the Android SDK to validate if
-                canApprove = true
+                canApprove = request.credentialStatements.withIndex().all { (i ,s) -> s.canBeProvedBy(
+                    getIdentityObject(getIdentity(chosenAccounts[i])!!))
+                }
             )
         }
 

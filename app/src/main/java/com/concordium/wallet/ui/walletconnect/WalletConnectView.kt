@@ -130,7 +130,6 @@ class WalletConnectView(
             is WalletConnectViewModel.State.SessionRequestReview.IdentityProofRequestReview -> {
                 showIdentityProofRequestReview(
                     accounts = state.chosenAccounts,
-                    identity = state.identity,
                     appMetadata = state.appMetadata,
                     statements = state.request.credentialStatements
 
@@ -438,7 +437,6 @@ class WalletConnectView(
 
     private fun showIdentityProofRequestReview(
         statements: List<RequestStatement>,
-        identity: Identity?,
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
@@ -447,7 +445,6 @@ class WalletConnectView(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
                 accounts = accounts,
-                identity = identity,
                 appMetadata = appMetadata,
                 statements = statements
             )
@@ -458,7 +455,6 @@ class WalletConnectView(
         view: FragmentWalletConnectIdentityProofRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
         accounts: List<Account>,
-        identity: Identity?,
         appMetadata: WalletConnectViewModel.AppMetadata,
         statements: List<RequestStatement>
     ) = with(view) {
@@ -470,15 +466,11 @@ class WalletConnectView(
 
         appNameTextView.text = appMetadata.name
 
-        val attributes = identity?.identityObject?.let { it.attributeList.chosenAttributes.mapValues { attribute ->
-            CredentialAttribute.builder().value(attribute.value)
-                .type(CredentialAttribute.CredentialAttributeType.STRING).build()
-        }} ?: emptyMap()
 
         // Ensure statement cannot be approved until all statements have been seen
         approveButton.visibility = INVISIBLE
 
-        val adapter = CredentialStatementAdapter(statements, accounts, attributes,
+        val adapter = CredentialStatementAdapter(statements, accounts, viewModel::getIdentity,
             onPageChanged = {
                 // Ensure statement can be approved when all statements have been seen
                 if (it == statements.size - 1) approveButton.visibility = VISIBLE

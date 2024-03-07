@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.concordium.sdk.crypto.wallet.identityobject.AttributeList
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.MembershipStatement
@@ -13,7 +13,10 @@ import com.concordium.sdk.crypto.wallet.web3Id.Statement.NonMembershipStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RangeStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
+import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.IdentityObject
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementCardBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
@@ -29,13 +32,18 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         addView(binding.root)
     }
 
-     fun setStatement(request: RequestStatement, attributes: Map<String, CredentialAttribute>) {
+     fun setStatement(request: RequestStatement, identity: Identity) {
 
         val secretStatements = request.statement.filterNot { it is RevealStatement }
         val revealStatements = request.statement.filterIsInstance<RevealStatement>()
 
+         val attributes = identity.identityObject?.let { it.attributeList.chosenAttributes.mapValues { attribute ->
+             CredentialAttribute.builder().value(attribute.value)
+                 .type(CredentialAttribute.CredentialAttributeType.STRING).build()
+         }} ?: emptyMap()
+
          secretStatements.forEach {
-             binding.root.addView(getSecretStatement(it))
+             binding.root.addView(getSecretStatement(it, it.canBeProvedBy(getIdentityObject(identity))))
          }
 
          if (revealStatements.isEmpty()) {
@@ -48,7 +56,7 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
          }
     }
 
-    private fun getStatementLine(tag: String, value: String, ): View {
+    private fun getStatementLine(tag: String, value: String, provable: Boolean, ): View {
         val revealBinding =
             IdentityProofStatementLineBinding.inflate(
                 LayoutInflater.from(
@@ -58,6 +66,11 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
 
         revealBinding.attributeTag.text = tag
         revealBinding.attributeValue.text = value
+
+        if (!provable) {
+            revealBinding.checkMark.setImageResource(R.drawable.ccx_ico_declined)
+        }
+
         return revealBinding.root
     }
 
@@ -78,7 +91,7 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         return revealBinding.root
     }
 
-    private fun getSecretStatement(statement: AtomicStatement): View {
+    private fun getSecretStatement(statement: AtomicStatement, provable: Boolean): View {
         val secretBinding =
             FragmentWalletConnectIdentityProofStatementCardBinding.inflate(
                 LayoutInflater.from(
@@ -88,7 +101,7 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
 
         secretBinding.statementHeader.setText(R.string.zero_knowledge_proof)
         secretBinding.statementDescription.text = getStatementDescription(statement)
-        val statementLine = getStatementLine(getPropertyTitle(statement.attributeTag), getStatementValue(statement))
+        val statementLine = getStatementLine(getPropertyTitle(statement.attributeTag), getStatementValue(statement), provable)
         secretBinding.statementLines.addView(statementLine)
 
         return secretBinding.root
@@ -120,4 +133,10 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
             else -> throw IllegalArgumentException("Unknown statement type")
         }
     }
+}
+
+fun getIdentityObject(identity: Identity): com.concordium.sdk.crypto.wallet.identityobject.IdentityObject {
+    val identityObject = identity.identityObject
+    val attributes = AttributeList.builder().chosenAttributes(identityObject!!.attributeList.chosenAttributes.mapKeys { AttributeType.fromJSON(it.key) }).build()
+    return com.concordium.sdk.crypto.wallet.identityobject.IdentityObject.builder().attributeList(attributes).build()
 }
