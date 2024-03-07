@@ -7,16 +7,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.INVISIBLE
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
-import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
@@ -131,8 +126,8 @@ class WalletConnectView(
                 showIdentityProofRequestReview(
                     accounts = state.chosenAccounts,
                     appMetadata = state.appMetadata,
-                    statements = state.request.credentialStatements
-
+                    statements = state.request.credentialStatements,
+                    currentStatement = state.currentStatement
                 )
             }
 
@@ -439,6 +434,7 @@ class WalletConnectView(
         statements: List<RequestStatement>,
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
+        currentStatement: Int
     ) {
         getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
             initIdentityProofRequestReview(
@@ -446,7 +442,8 @@ class WalletConnectView(
                 lifecycleOwner = lifecycleOwner,
                 accounts = accounts,
                 appMetadata = appMetadata,
-                statements = statements
+                statements = statements,
+                currentStatement = currentStatement
             )
         }
     }
@@ -456,7 +453,8 @@ class WalletConnectView(
         lifecycleOwner: LifecycleOwner,
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
-        statements: List<RequestStatement>
+        statements: List<RequestStatement>,
+        currentStatement: Int
     ) = with(view) {
         Glide.with(appIconImageView.context)
             .load(appMetadata.iconUrl)
@@ -466,20 +464,19 @@ class WalletConnectView(
 
         appNameTextView.text = appMetadata.name
 
-
-        // Ensure statement cannot be approved until all statements have been seen
-        approveButton.visibility = INVISIBLE
-
-        val adapter = CredentialStatementAdapter(statements, accounts, viewModel::getIdentity,
-            onPageChanged = {
-                // Ensure statement can be approved when all statements have been seen
-                if (it == statements.size - 1) approveButton.visibility = VISIBLE
-            },
-            onChangeAccount = {
-                viewModel.onChooseAccountIdentityProof(it)
-            }
-        )
+        val adapter = CredentialStatementAdapter(
+            statements, accounts, viewModel::getIdentity
+        ) {
+            viewModel.onChooseAccountIdentityProof(it)
+        }
         this.proofView.adapter = adapter
+        this.proofView.setCurrentItem(currentStatement, false)
+        this.proofView.registerOnPageChangeCallback(object: OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewModel.onStatementSelected(position)
+            }
+        })
 
         approveButton.setOnClickListener {
             viewModel.approveSessionRequest()

@@ -9,7 +9,12 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.IdentityProofContainerBinding
 import com.concordium.wallet.util.Log
 
-class CredentialStatementAdapter(private val requests: List<RequestStatement>, private val accounts: List<Account>, private val getIdentity: (account: Account) -> Identity?, private val onPageChanged: (index: Int) -> Unit, private val onChangeAccount: (index: Int) -> Unit): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
+class CredentialStatementAdapter(
+    private val requests: List<RequestStatement>,
+    private val accounts: List<Account>,
+    private val getIdentity: (account: Account) -> Identity?,
+    private val onChangeAccount: (index: Int) -> Unit
+): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
         class ViewHolder(val containerBinding: IdentityProofContainerBinding): RecyclerView.ViewHolder(containerBinding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = IdentityProofContainerBinding.inflate(LayoutInflater.from(parent.context))
@@ -46,6 +51,5 @@ class CredentialStatementAdapter(private val requests: List<RequestStatement>, p
         holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
             onChangeAccount(position)
         }
-        onPageChanged(position)
     }
 }

@@ -153,6 +153,8 @@ private constructor(
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
+    private var sessionRequestIdentityProofCurrentIndex: Int = 0
+    private var sessionRequestIdentityProofSeenAllStatements: Boolean = false
 
     private val handledRequests = mutableSetOf<Long>()
 
@@ -516,8 +518,17 @@ private constructor(
                 appMetadata = sessionRequestAppMetadata,
                 request = sessionRequestIdentityRequest,
                 chosenAccounts = sessionRequestIdentityProofAccounts,
-                getIdentity = this@WalletConnectViewModel::getIdentity
+                getIdentity = this@WalletConnectViewModel::getIdentity,
+                currentStatement = sessionRequestIdentityProofCurrentIndex,
+                seenAllStatements = sessionRequestIdentityProofSeenAllStatements
             ))
+        }
+    }
+
+    fun onStatementSelected(position: Int) {
+        sessionRequestIdentityProofCurrentIndex = position
+        if (position == sessionRequestIdentityRequest.credentialStatements.size -1) {
+            sessionRequestIdentityProofSeenAllStatements = true
         }
     }
 
@@ -681,7 +692,9 @@ private constructor(
                 appMetadata = sessionRequestAppMetadata,
                 request = sessionRequestIdentityRequest,
                 chosenAccounts = sessionRequestIdentityProofAccounts,
-                getIdentity = this::getIdentity
+                getIdentity = this::getIdentity,
+                currentStatement = sessionRequestIdentityProofCurrentIndex,
+                seenAllStatements = sessionRequestIdentityProofSeenAllStatements
             )
         )
     }
@@ -1491,6 +1504,8 @@ private constructor(
             class IdentityProofRequestReview(
                 val request: UnqualifiedRequest,
                 val chosenAccounts: List<Account>,
+                val currentStatement: Int,
+                seenAllStatements: Boolean,
                 getIdentity: (account: Account) -> Identity?,
                 connectedAccount: Account,
                 identity: Identity,
@@ -1499,10 +1514,10 @@ private constructor(
                 account = connectedAccount,
                 appMetadata = appMetadata,
                 identity = identity,
-                // TODO This should use the Android SDK to validate if
+                // Check that we can prove the statement with current accounts
                 canApprove = request.credentialStatements.withIndex().all { (i ,s) -> s.canBeProvedBy(
                     getIdentityObject(getIdentity(chosenAccounts[i])!!))
-                }
+                } && seenAllStatements
             )
         }
 

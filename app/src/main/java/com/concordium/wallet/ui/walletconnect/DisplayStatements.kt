@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import com.concordium.sdk.crypto.wallet.identityobject.AttributeList
+import com.concordium.sdk.crypto.wallet.identityobject.IdentityObject
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.MembershipStatement
@@ -15,7 +16,6 @@ import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.IdentityObject
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementCardBinding
@@ -135,8 +135,12 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
     }
 }
 
-fun getIdentityObject(identity: Identity): com.concordium.sdk.crypto.wallet.identityobject.IdentityObject {
-    val identityObject = identity.identityObject
-    val attributes = AttributeList.builder().chosenAttributes(identityObject!!.attributeList.chosenAttributes.mapKeys { AttributeType.fromJSON(it.key) }).build()
-    return com.concordium.sdk.crypto.wallet.identityobject.IdentityObject.builder().attributeList(attributes).build()
+/**
+ * Get an IdentityObject compatible with the Concordium SDK methods.
+ * N.B. Only the attributeList is populated, the remaining fields are null
+  */
+fun getIdentityObject(identity: Identity): IdentityObject {
+    val identityObject = identity.identityObject!!
+    val attributes = AttributeList.builder().chosenAttributes(identityObject.attributeList.chosenAttributes.mapKeys { AttributeType.fromJSON(it.key) }).build()
+    return IdentityObject.builder().attributeList(attributes).build()
 }
