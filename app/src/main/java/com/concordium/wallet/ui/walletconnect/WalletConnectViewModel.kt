@@ -528,6 +528,10 @@ private constructor(
                         "\npayload=${sessionRequestParams.payload}"
             )
 
+            respondError(
+                message = "Failed parsing the request params payload"
+            )
+
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.InvalidRequest
