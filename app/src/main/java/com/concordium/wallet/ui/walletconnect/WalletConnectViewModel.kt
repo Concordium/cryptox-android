@@ -60,6 +60,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.math.BigInteger
+import java.util.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -963,6 +964,23 @@ private constructor(
         }
     }
 
+    private suspend fun getAccountAttributes(account: Account, password: String): AttributeRandomness? {
+        val storageAccountDataEncrypted = account.encryptedAccountData
+        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+            Log.e("account_has_no_encrypted_data")
+
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.CryptographyFailed
+                )
+            )
+            return null
+        }
+        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+            .decryptInBackground(password, storageAccountDataEncrypted)
+        val storageAccountData = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+        return storageAccountData.getAttributeRandomness()
+    }
     private fun decryptAccountAndApproveRequest(password: String) = viewModelScope.launch {
         val reviewState = checkNotNull(state as? State.SessionRequestReview) {
             "Approval is only possible in a session request review state"
@@ -982,8 +1000,6 @@ private constructor(
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
             .decryptInBackground(password, storageAccountDataEncrypted)
 
-
-
         if (decryptedJson != null) {
             val storageAccountData = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
             val accountKeys = storageAccountData.accountKeys
@@ -996,7 +1012,14 @@ private constructor(
                     signAndSubmitRequestedTransaction(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
-                    createProofPresentation(storageAccountData.getAttributeRandomness(), reviewState.chosenAccounts)
+                    val attributeRandomness = HashMap<String, AttributeRandomness?>();
+                    attributeRandomness[storageAccountData.accountAddress] = storageAccountData.getAttributeRandomness()
+                    reviewState.chosenAccounts.forEach {
+                        if (!attributeRandomness.contains(it.address)) {
+                            attributeRandomness[it.address] = getAccountAttributes(it, password)
+                        }
+                    }
+                    createProofPresentation(reviewState.chosenAccounts, attributeRandomness)
                 }
             }
         } else {
@@ -1014,29 +1037,38 @@ private constructor(
     }
 
     private suspend fun createProofPresentation(
-        attributeRandomness: AttributeRandomness?,
-        chosenAccounts: List<Account>
+        chosenAccounts: List<Account>,
+        randomnessMap: Map<String,AttributeRandomness?>,
     ) {
-        // TODO: use chosen accounts instead of session account
-
         val request = sessionRequestIdentityRequest
-        val account = sessionRequestAccount
-        val identity = sessionRequestIdentity
 
-        if (attributeRandomness == null) {
-            Log.e("Attribute randomness is not available for account ${account.address}")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InternalError
-                )
-            )
-            return
-        }
-
-        val identityProviderIndex = identity.identityProviderId
-
+        var accountIterator = chosenAccounts.iterator()
         val commitmentInputs = try {
             request.credentialStatements.map { statement ->
+                val account = accountIterator.next()
+                val attributeRandomness = randomnessMap[account.address]
+                val identity = identityRepository.findById(account.identityId)
+
+                if (attributeRandomness == null) {
+                    Log.e("Attribute randomness is not available for account ${account.address}")
+                    mutableEventsFlow.tryEmit(
+                        Event.ShowFloatingError(
+                            Error.InternalError
+                        )
+                    )
+                    return
+                }
+                if (identity == null) {
+                    Log.e("Identity is not available for account ${account.address}")
+                    mutableEventsFlow.tryEmit(
+                        Event.ShowFloatingError(
+                            Error.InternalError
+                        )
+                    )
+                    return
+                }
+
+                val identityProviderIndex = identity.identityProviderId
                 val randomness: MutableMap<AttributeType, String> = mutableMapOf()
                 val attributeValues: MutableMap<AttributeType, String> = mutableMapOf()
 
@@ -1063,9 +1095,11 @@ private constructor(
             return
         }
 
+        val network = if (BuildConfig.ENV_NAME == "production") Network.MAINNET else Network.TESTNET
+        accountIterator = chosenAccounts.iterator()
         val qualifiedRequest = try {
             request.qualify { stat ->
-                stat.qualify(CredentialRegistrationId.from(account.credential!!.getCredId()!!), Network.TESTNET)
+                stat.qualify(CredentialRegistrationId.from(accountIterator.next().credential!!.getCredId()!!), network)
             }
         } catch (e: Exception) {
             Log.e("Failed to qualify request.", e)
