@@ -803,7 +803,7 @@ private constructor(
         val reviewState = when (accountTransactionPayload) {
             is AccountTransactionPayload.Transfer ->
                 State.SessionRequestReview.TransactionRequestReview(
-                    method = "Transfer CCD",
+                    method = getApplication<Application>().getString(R.string.transaction_type_transfer),
                     receiver = accountTransactionPayload.toAddress,
                     amount = accountTransactionPayload.amount,
                     estimatedFee = sessionRequestTransactionCost,
