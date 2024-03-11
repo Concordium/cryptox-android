@@ -794,52 +794,36 @@ private constructor(
                 sessionRequestAccount.totalUnshieldedBalance
             )
         val accountTransactionPayload = sessionRequestAccountTransactionPayload
-        val isEnoughFunds =
-            accountAtDisposalBalance >= when (accountTransactionPayload) {
-                is AccountTransactionPayload.Transfer ->
-                    accountTransactionPayload.amount + transactionCost
-
-                is AccountTransactionPayload.Update ->
-                    accountTransactionPayload.amount + transactionCost
-            }
-
         sessionRequestTransactionCost = transactionCost
         sessionRequestTransactionNonce = accountNonce
         if (accountTransactionPayload is AccountTransactionPayload.Update) {
             accountTransactionPayload.maxEnergy = transactionCostResponse.energy
         }
 
-        mutableStateFlow.tryEmit(
-            State.SessionRequestReview.TransactionRequestReview(
-                method = when (accountTransactionPayload) {
-                    is AccountTransactionPayload.Transfer ->
-                        "Transfer CCD"
+        val reviewState = when (accountTransactionPayload) {
+            is AccountTransactionPayload.Transfer ->
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = "Transfer CCD",
+                    receiver = accountTransactionPayload.toAddress,
+                    amount = accountTransactionPayload.amount,
+                    estimatedFee = sessionRequestTransactionCost,
+                    account = sessionRequestAccount,
+                    isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
+                    appMetadata = sessionRequestAppMetadata,
+                )
 
-                    is AccountTransactionPayload.Update ->
-                        accountTransactionPayload.receiveName
-                },
-                receiver = when (accountTransactionPayload) {
-                    is AccountTransactionPayload.Transfer ->
-                        accountTransactionPayload.toAddress
-
-                    is AccountTransactionPayload.Update ->
-                        accountTransactionPayload.address.run {
-                            "${index}, ${subIndex}"
-                        }
-                },
-                amount = when (accountTransactionPayload) {
-                    is AccountTransactionPayload.Transfer ->
-                        accountTransactionPayload.amount
-
-                    is AccountTransactionPayload.Update ->
-                        accountTransactionPayload.amount
-                },
-                estimatedFee = sessionRequestTransactionCost,
-                account = sessionRequestAccount,
-                isEnoughFunds = isEnoughFunds,
-                appMetadata = sessionRequestAppMetadata,
-            )
-        )
+            is AccountTransactionPayload.Update ->
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = accountTransactionPayload.receiveName,
+                    receiver = accountTransactionPayload.address.run { "$index, $subIndex" },
+                    amount = accountTransactionPayload.amount,
+                    estimatedFee = sessionRequestTransactionCost,
+                    account = sessionRequestAccount,
+                    isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
+                    appMetadata = sessionRequestAppMetadata,
+                )
+        }
+        mutableStateFlow.tryEmit(reviewState)
     }
 
     private suspend fun getSessionRequestTransactionCost(
