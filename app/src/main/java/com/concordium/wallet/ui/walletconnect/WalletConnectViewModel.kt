@@ -20,8 +20,9 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.model.TransferCost
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.data.walletconnect.Params
-import com.concordium.wallet.data.walletconnect.Payload
+import com.concordium.wallet.data.walletconnect.AccountTransactionParams
+import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
+import com.concordium.wallet.data.walletconnect.SignMessageParams
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
@@ -64,7 +65,7 @@ import kotlin.coroutines.resumeWithException
  * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature.
  *
  * @see State
- * @see allowedAccountTransactionTypeMap
+ * @see allowedAccountTransactionTypes
  */
 class WalletConnectViewModel
 private constructor(
@@ -95,17 +96,10 @@ private constructor(
         WC_URI_PREFIX,
         "${application.getString(R.string.wc_scheme)}:",
     )
-    private val allowedAccountTransactionTypeMap = mapOf(
-        TransactionType.UPDATE to TransactionTypeValues(
-            cryptoLibraryType = "Update",
-            transactionCostType = ProxyRepository.UPDATE,
-        ),
-        TransactionType.TRANSFER to TransactionTypeValues(
-            cryptoLibraryType = "Transfer",
-            transactionCostType = ProxyRepository.SIMPLE_TRANSFER,
-        ),
+    private val allowedAccountTransactionTypes = setOf(
+        TransactionType.UPDATE,
+        TransactionType.TRANSFER,
     )
-
     private val allowedRequestMethods = setOf(
         REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
         REQUEST_METHOD_SIGN_MESSAGE,
@@ -123,8 +117,8 @@ private constructor(
 
     private var sessionRequestId: Long = 0L
     private lateinit var sessionRequestTopic: String
-    private lateinit var sessionRequestParams: Params
-    private lateinit var sessionRequestParamsPayload: Payload
+    private lateinit var sessionRequestAccountTransactionParams: AccountTransactionParams
+    private lateinit var sessionRequestAccountTransactionPayload: AccountTransactionPayload
     private lateinit var sessionRequestAccount: Account
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private lateinit var sessionRequestTransactionCost: BigInteger
@@ -303,7 +297,10 @@ private constructor(
                     Error.NoSupportedChains
                 )
             )
-            rejectSession(proposerPublicKey, "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains")
+            rejectSession(
+                proposerPublicKey,
+                "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
+            )
             return@launch
         }
 
@@ -317,7 +314,10 @@ private constructor(
                     Error.UnsupportedMethod
                 )
             )
-            rejectSession(proposerPublicKey, "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods")
+            rejectSession(
+                proposerPublicKey,
+                "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
+            )
             return@launch
         }
 
@@ -331,7 +331,10 @@ private constructor(
                     Error.NoAccounts
                 )
             )
-            rejectSession(proposerPublicKey, "The wallet does not contain any accounts to open a session for")
+            rejectSession(
+                proposerPublicKey,
+                "The wallet does not contain any accounts to open a session for"
+            )
             return@launch
         }
 
@@ -496,9 +499,9 @@ private constructor(
     }
 
     private fun handleSignTransactionRequest(params: String) {
-        val sessionRequestParams: Params = try {
-            Params.fromSessionRequestParams(params).also { parsedParams ->
-                check(allowedAccountTransactionTypeMap.containsKey(parsedParams.type)) {
+        val sessionRequestAccountTransactionParams: AccountTransactionParams = try {
+            AccountTransactionParams.fromSessionRequestParams(params).also { parsedParams ->
+                check(parsedParams.type in allowedAccountTransactionTypes) {
                     "Transaction type '${parsedParams.type}' is not supported"
                 }
             }
@@ -521,11 +524,16 @@ private constructor(
             return
         }
 
-        val sessionRequestParamsPayload: Payload? = sessionRequestParams.parsePayload()
-        if (sessionRequestParamsPayload == null) {
+        val sessionRequestAccountTransactionPayload: AccountTransactionPayload? =
+            sessionRequestAccountTransactionParams.parsePayload()
+        if (sessionRequestAccountTransactionPayload == null) {
             Log.e(
                 "failed_parsing_session_request_params_payload:" +
-                        "\npayload=${sessionRequestParams.payload}"
+                        "\npayload=${sessionRequestAccountTransactionParams.payload}"
+            )
+
+            respondError(
+                message = "Failed parsing the request params payload"
             )
 
             mutableEventsFlow.tryEmit(
@@ -536,7 +544,7 @@ private constructor(
             return
         }
 
-        val senderAccountAddress = sessionRequestParams.sender
+        val senderAccountAddress = sessionRequestAccountTransactionParams.sender
         if (senderAccountAddress != sessionRequestAccount.address) {
             Log.e("Received a request to sign an account transaction for a different account than the one connected in the session: $senderAccountAddress")
             respondError(message = "The request was for a different account than the one connected.")
@@ -548,25 +556,17 @@ private constructor(
             return
         }
 
-        this@WalletConnectViewModel.sessionRequestParams = sessionRequestParams
-        this@WalletConnectViewModel.sessionRequestParamsPayload = sessionRequestParamsPayload
+        this@WalletConnectViewModel.sessionRequestAccountTransactionParams =
+            sessionRequestAccountTransactionParams
+        this@WalletConnectViewModel.sessionRequestAccountTransactionPayload =
+            sessionRequestAccountTransactionPayload
 
         Log.d(
             "handling_session_request:" +
-                    "\nparams=$sessionRequestParams"
+                    "\nparams=$sessionRequestAccountTransactionParams"
         )
 
         onSignAndSendTransactionRequested()
-    }
-
-    data class SignMessageParams(
-        val message: String
-    ) {
-        companion object {
-            fun fromSessionRequestParams(signMessageParams: String): SignMessageParams {
-                return Gson().fromJson(signMessageParams, SignMessageParams::class.java)
-            }
-        }
     }
 
     private fun handleSignMessage(params: String) {
@@ -683,7 +683,8 @@ private constructor(
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
             else -> {
-                val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
+                val unsupportedMethodMessage =
+                    "Received an unsupported WalletConnect method request: $method"
                 Log.e(unsupportedMethodMessage)
                 respondError(message = unsupportedMethodMessage)
                 mutableEventsFlow.tryEmit(
@@ -792,39 +793,64 @@ private constructor(
             sessionRequestAccount.getAtDisposalWithoutStakedOrScheduled(
                 sessionRequestAccount.totalUnshieldedBalance
             )
-        val isEnoughFunds =
-            accountAtDisposalBalance >= (sessionRequestParamsPayload.amount.toBigInteger() + transactionCost)
-
+        val accountTransactionPayload = sessionRequestAccountTransactionPayload
         sessionRequestTransactionCost = transactionCost
-        sessionRequestParamsPayload.maxEnergy = transactionCostResponse.energy
         sessionRequestTransactionNonce = accountNonce
+        if (accountTransactionPayload is AccountTransactionPayload.Update) {
+            accountTransactionPayload.maxEnergy = transactionCostResponse.energy
+        }
 
-        mutableStateFlow.tryEmit(
-            State.SessionRequestReview.TransactionRequestReview(
-                method = sessionRequestParamsPayload.receiveName,
-                estimatedFee = sessionRequestTransactionCost,
-                account = sessionRequestAccount,
-                isEnoughFunds = isEnoughFunds,
-                appMetadata = sessionRequestAppMetadata,
-            )
-        )
+        val reviewState = when (accountTransactionPayload) {
+            is AccountTransactionPayload.Transfer ->
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = getApplication<Application>().getString(R.string.transaction_type_transfer),
+                    receiver = accountTransactionPayload.toAddress,
+                    amount = accountTransactionPayload.amount,
+                    estimatedFee = sessionRequestTransactionCost,
+                    account = sessionRequestAccount,
+                    isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
+                    appMetadata = sessionRequestAppMetadata,
+                )
+
+            is AccountTransactionPayload.Update ->
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = accountTransactionPayload.receiveName,
+                    receiver = accountTransactionPayload.address.run { "$index, $subIndex" },
+                    amount = accountTransactionPayload.amount,
+                    estimatedFee = sessionRequestTransactionCost,
+                    account = sessionRequestAccount,
+                    isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
+                    appMetadata = sessionRequestAppMetadata,
+                )
+        }
+        mutableStateFlow.tryEmit(reviewState)
     }
 
-    private suspend fun getSessionRequestTransactionCost()
-            : TransferCost = suspendCancellableCoroutine { continuation ->
-        val backendRequest = proxyRepository.getTransferCost(
-            type = checkNotNull(allowedAccountTransactionTypeMap[sessionRequestParams.type]) {
-                "The unsupported transaction type should have been rejected before"
-            }.transactionCostType,
-            amount = sessionRequestParamsPayload.amount.toBigInteger(),
-            sender = sessionRequestAccount.address,
-            contractIndex = sessionRequestParamsPayload.address.index,
-            contractSubindex = sessionRequestParamsPayload.address.subIndex,
-            receiveName = sessionRequestParamsPayload.receiveName,
-            parameter = sessionRequestParamsPayload.message,
-            success = continuation::resume,
-            failure = continuation::resumeWithException,
-        )
+    private suspend fun getSessionRequestTransactionCost(
+    ): TransferCost = suspendCancellableCoroutine { continuation ->
+        val backendRequest =
+            when (val accountTransactionPayload = sessionRequestAccountTransactionPayload) {
+                is AccountTransactionPayload.Transfer ->
+                    proxyRepository.getTransferCost(
+                        type = ProxyRepository.SIMPLE_TRANSFER,
+                        success = continuation::resume,
+                        failure = continuation::resumeWithException,
+                    )
+
+                is AccountTransactionPayload.Update ->
+                    proxyRepository.getTransferCost(
+                        type = ProxyRepository.UPDATE,
+                        amount = accountTransactionPayload.amount,
+                        sender = sessionRequestAccount.address,
+                        contractIndex = accountTransactionPayload.address.index,
+                        contractSubindex = accountTransactionPayload.address.subIndex,
+                        receiveName = accountTransactionPayload.receiveName,
+                        parameter = accountTransactionPayload.message,
+                        success = continuation::resume,
+                        failure = continuation::resumeWithException,
+                    )
+            }
+
         continuation.invokeOnCancellation { backendRequest.dispose() }
     }
 
@@ -947,15 +973,21 @@ private constructor(
     }
 
     private suspend fun signAndSubmitRequestedTransaction(accountKeys: AccountData) {
+        val accountTransactionPayload = sessionRequestAccountTransactionPayload
+
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000,
             from = sessionRequestAccount.address,
             keys = accountKeys,
             nonce = sessionRequestTransactionNonce.nonce,
-            payload = sessionRequestParamsPayload,
-            type = checkNotNull(allowedAccountTransactionTypeMap[sessionRequestParams.type]) {
-                "The unsupported transaction type should have been rejected before"
-            }.cryptoLibraryType,
+            payload = accountTransactionPayload,
+            type = when (accountTransactionPayload) {
+                is AccountTransactionPayload.Transfer ->
+                    "Transfer"
+
+                is AccountTransactionPayload.Update ->
+                    "Update"
+            },
         )
 
         val accountTransactionOutput =
@@ -1221,6 +1253,8 @@ private constructor(
         ) : State {
             class TransactionRequestReview(
                 val method: String,
+                val receiver: String,
+                val amount: BigInteger,
                 val estimatedFee: BigInteger,
                 val isEnoughFunds: Boolean,
                 account: Account,
@@ -1321,11 +1355,6 @@ private constructor(
             val error: Error,
         ) : Event
     }
-
-    private data class TransactionTypeValues(
-        val cryptoLibraryType: String,
-        val transactionCostType: String,
-    )
 
     private companion object {
         private const val WC_URI_PREFIX = "wc:"

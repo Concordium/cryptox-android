@@ -559,6 +559,7 @@
     <string name="wallet_connect_session_proposal_decline">@string/decline</string>
     <string name="wallet_connect_session_request_sign">@string/sign</string>
     <string name="wallet_connect_session_request_decline">@string/decline</string>
+    <string name="wallet_connect_transaction_request_ccd_amount">CCD amount</string>
     <string name="wallet_connect_transaction_request_approximate_fee">@string/approximate_fee</string>
     <string name="wallet_connect_transaction_request_insufficient_funds">Insufficient funds to sign the transaction</string>
     <string name="wallet_connect_transaction_submitted_finish">@string/finish</string>
@@ -568,6 +569,7 @@
     <string name="wallet_connect_transaction_submitted_copy_hash">Copy the hash</string>
     <string name="wallet_connect_transaction_submitted_hash_copied">Transaction hash copied</string>
     <string name="wallet_connect_transaction_method">Method</string>
+    <string name="wallet_connect_transaction_receiver">Receiver</string>
     <string name="wallet_connect_sign_transaction">Sign transaction</string>
     <string name="wallet_connect_signature_request">Signature request</string>
     <string name="wallet_connect_signature_request_message">Message</string>
