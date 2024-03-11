@@ -4,6 +4,11 @@
 
 ### Added
 - Setting up and updating validator pool commission rates
+- Support of WalletConnect CCD transfer requests
+
+### Changed
+- WalletConnect transaction signing request now shows the receiver
+(either smart contract or an account) and amount of CCD to send (not including CIS-2 tokens)
 
 ### Fixed
 
@@ -16,6 +21,7 @@
 - Showing "Address copied" when copying a transaction hash to the clipboard in the scheduled transfer view
 - An issue where the identity name was off-center when the edit name icon was visible
 - An issue where exporting transaction logs for an account without any transactions would be stuck at 0%
+- "Invalid WalletConnect request" message repeatedly shown if received a request with unsupported transaction type
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors

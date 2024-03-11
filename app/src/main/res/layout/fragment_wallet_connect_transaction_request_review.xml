@@ -50,61 +50,89 @@
 
     </FrameLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/transaction_data_layout"
         style="@style/CryptoX_Container_Stroked"
         android:layout_marginTop="28dp"
-        android:paddingBottom="20dp"
+        android:orientation="vertical"
+        android:padding="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selected_account_include_container">
 
         <TextView
-            android:id="@+id/method_title_text_view"
             style="@style/CryptoX_Typography_Body_Medium"
             android:layout_width="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/wallet_connect_transaction_method"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="@string/wallet_connect_transaction_method" />
 
         <TextView
             android:id="@+id/method_text_view"
             style="@style/CryptoX_Typography_Body_Medium"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="8dp"
             android:textColor="@color/cryptox_white_main"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/method_title_text_view"
             tools:text="CIS2-TOKEN.mint" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            style="@style/CryptoX_Typography_Body_Medium"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/wallet_connect_transaction_receiver" />
+
+        <TextView
+            android:id="@+id/receiver_text_view"
+            style="@style/CryptoX_Typography_Body_Medium"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/cryptox_white_main"
+            tools:text="2059, 0" />
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/amounts_layout"
         style="@style/CryptoX_Container_Stroked"
         android:layout_marginTop="8dp"
-        android:paddingBottom="20dp"
+        android:paddingVertical="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/transaction_data_layout">
+
+        <TextView
+            android:id="@+id/amount_title_text_view"
+            style="@style/CryptoX_Typography_Body_Medium"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:text="@string/wallet_connect_transaction_request_ccd_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/amount_text_view"
+            style="@style/CryptoX_Typography_Body_Medium"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/amount_title_text_view"
+            tools:text="124,55" />
 
         <TextView
             android:id="@+id/fee_title_text_view"
             style="@style/CryptoX_Typography_Body_Medium"
             android:layout_width="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="16dp"
             android:text="@string/wallet_connect_transaction_request_approximate_fee"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/amount_title_text_view" />
 
         <TextView
             android:id="@+id/fee_text_view"
             style="@style/CryptoX_Typography_Body_Medium"
             android:layout_width="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginHorizontal="20dp"
             android:textColor="@color/cryptox_white_main"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fee_title_text_view"
             tools:text="1,2455 CCD" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
