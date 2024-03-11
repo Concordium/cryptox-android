@@ -60,7 +60,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.math.BigInteger
-import java.util.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -478,9 +477,10 @@ private constructor(
     }
 
     fun onChooseAccountIdentityProof(position: Int) {
-        val proofRequestReview = checkNotNull(state as? State.SessionRequestReview.IdentityProofRequestReview) {
-            "Choose account button can only be clicked in the proposal review state"
-        }
+        val proofRequestReview =
+            checkNotNull(state as? State.SessionRequestReview.IdentityProofRequestReview) {
+                "Choose account button can only be clicked in the proposal review state"
+            }
 
         viewModelScope.launch {
             val accounts = getAvailableAccounts()
@@ -490,10 +490,18 @@ private constructor(
                         "\navailableAccounts=${accounts.size}"
             )
 
+            val validAccounts = accounts.filter {
+                val identity = getIdentity(it) ?: return@filter false
+                val identityObject = getIdentityObject(identity)
+                sessionRequestIdentityRequest.credentialStatements[position].canBeProvedBy(
+                    identityObject
+                )
+            }
+
             mutableStateFlow.emit(
                 State.AccountSelection(
                     selectedAccount = proofRequestReview.chosenAccounts[position],
-                    accounts = accounts,
+                    accounts = validAccounts.ifEmpty { accounts },
                     appMetadata = proofRequestReview.appMetadata,
                     identityProofPosition = position
                 )
@@ -505,29 +513,31 @@ private constructor(
         sessionRequestIdentityProofAccounts[position] = selectedAccount
 
         viewModelScope.launch {
-        with(selectedAccount.identityId) {
-            if (!sessionRequestIdentityProofIdentities.containsKey(this)) {
-                val identity = identityRepository.findById(this)
-                if (identity != null) sessionRequestIdentityProofIdentities[this] = identity
-            }
+            with(selectedAccount.identityId) {
+                if (!sessionRequestIdentityProofIdentities.containsKey(this)) {
+                    val identity = identityRepository.findById(this)
+                    if (identity != null) sessionRequestIdentityProofIdentities[this] = identity
+                }
             }
 
-            mutableStateFlow.tryEmit(State.SessionRequestReview.IdentityProofRequestReview(
-                connectedAccount = sessionRequestAccount,
-                identity = sessionRequestIdentity,
-                appMetadata = sessionRequestAppMetadata,
-                request = sessionRequestIdentityRequest,
-                chosenAccounts = sessionRequestIdentityProofAccounts,
-                getIdentity = this@WalletConnectViewModel::getIdentity,
-                currentStatement = sessionRequestIdentityProofCurrentIndex,
-                seenAllStatements = sessionRequestIdentityProofSeenAllStatements
-            ))
+            mutableStateFlow.tryEmit(
+                State.SessionRequestReview.IdentityProofRequestReview(
+                    connectedAccount = sessionRequestAccount,
+                    identity = sessionRequestIdentity,
+                    appMetadata = sessionRequestAppMetadata,
+                    request = sessionRequestIdentityRequest,
+                    chosenAccounts = sessionRequestIdentityProofAccounts,
+                    getIdentity = this@WalletConnectViewModel::getIdentity,
+                    currentStatement = sessionRequestIdentityProofCurrentIndex,
+                    seenAllStatements = sessionRequestIdentityProofSeenAllStatements
+                )
+            )
         }
     }
 
     fun onStatementSelected(position: Int) {
         sessionRequestIdentityProofCurrentIndex = position
-        if (position == sessionRequestIdentityRequest.credentialStatements.size -1) {
+        if (position == sessionRequestIdentityRequest.credentialStatements.size - 1) {
             sessionRequestIdentityProofSeenAllStatements = true
         }
     }
@@ -663,16 +673,19 @@ private constructor(
         }
     }
 
-    private fun initializeProofRequestSession(params: String) {
+    private suspend fun initializeProofRequestSession(params: String) {
         try {
-        val identityProofRequest = UnqualifiedRequest.fromJson(params)
-        sessionRequestIdentityRequest = identityProofRequest
+            val identityProofRequest = UnqualifiedRequest.fromJson(params)
+            sessionRequestIdentityRequest = identityProofRequest
 
-        val initialAccounts = MutableList(identityProofRequest.credentialStatements.size) { _ -> sessionRequestAccount }
-        sessionRequestIdentityProofAccounts = initialAccounts
+            val initialAccounts =
+                MutableList(identityProofRequest.credentialStatements.size) { _ -> sessionRequestAccount }
+            sessionRequestIdentityProofAccounts = initialAccounts
 
-        val identities = HashMap<Int, Identity>()
-        identities[sessionRequestAccount.identityId] = sessionRequestIdentity
+            val identities = HashMap<Int, Identity>()
+            identityRepository.getAllDone().forEach { identities[it.id] = it }
+
+
             sessionRequestIdentityProofIdentities = identities
         } catch (e: Exception) {
             Log.e("Failed to parse identity proof request parameters: $params", e)
@@ -684,6 +697,7 @@ private constructor(
             return
         }
     }
+
     private fun handleIdentityProofRequest() {
         mutableStateFlow.tryEmit(
             State.SessionRequestReview.IdentityProofRequestReview(
@@ -804,8 +818,10 @@ private constructor(
                 initializeProofRequestSession(params)
                 handleIdentityProofRequest()
             }
+
             else -> {
-                val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
+                val unsupportedMethodMessage =
+                    "Received an unsupported WalletConnect method request: $method"
                 Log.e(unsupportedMethodMessage)
                 respondError(message = unsupportedMethodMessage)
                 mutableEventsFlow.tryEmit(
@@ -996,7 +1012,10 @@ private constructor(
         }
     }
 
-    private suspend fun getAccountAttributes(account: Account, password: String): AttributeRandomness? {
+    private suspend fun getAccountAttributes(
+        account: Account,
+        password: String
+    ): AttributeRandomness? {
         val storageAccountDataEncrypted = account.encryptedAccountData
         if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
             Log.e("account_has_no_encrypted_data")
@@ -1010,9 +1029,11 @@ private constructor(
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
             .decryptInBackground(password, storageAccountDataEncrypted)
-        val storageAccountData = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+        val storageAccountData =
+            App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
         return storageAccountData.getAttributeRandomness()
     }
+
     private fun decryptAccountAndApproveRequest(password: String) = viewModelScope.launch {
         val reviewState = checkNotNull(state as? State.SessionRequestReview) {
             "Approval is only possible in a session request review state"
@@ -1033,7 +1054,8 @@ private constructor(
             .decryptInBackground(password, storageAccountDataEncrypted)
 
         if (decryptedJson != null) {
-            val storageAccountData = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+            val storageAccountData =
+                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
             val accountKeys = storageAccountData.accountKeys
 
             when (reviewState) {
@@ -1045,7 +1067,8 @@ private constructor(
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
                     val attributeRandomness = HashMap<String, AttributeRandomness?>()
-                    attributeRandomness[storageAccountData.accountAddress] = storageAccountData.getAttributeRandomness()
+                    attributeRandomness[storageAccountData.accountAddress] =
+                        storageAccountData.getAttributeRandomness()
                     reviewState.chosenAccounts.forEach {
                         if (!attributeRandomness.contains(it.address)) {
                             attributeRandomness[it.address] = getAccountAttributes(it, password)
@@ -1070,7 +1093,7 @@ private constructor(
 
     private fun createProofPresentation(
         chosenAccounts: List<Account>,
-        randomnessMap: Map<String,AttributeRandomness?>,
+        randomnessMap: Map<String, AttributeRandomness?>,
     ) {
         val request = sessionRequestIdentityRequest
 
@@ -1108,7 +1131,8 @@ private constructor(
                     val attributeTag = stat.attributeTag
                     val attributeType = AttributeType.fromJSON(attributeTag)
                     randomness[attributeType] = attributeRandomness.attributesRand[attributeTag]!!
-                    attributeValues[attributeType] = identity.identityObject!!.attributeList.chosenAttributes[attributeTag]!!
+                    attributeValues[attributeType] =
+                        identity.identityObject!!.attributeList.chosenAttributes[attributeTag]!!
                 }
 
                 AccountCommitmentInput.builder()
@@ -1131,7 +1155,10 @@ private constructor(
         accountIterator = chosenAccounts.iterator()
         val qualifiedRequest = try {
             request.qualify { stat ->
-                stat.qualify(CredentialRegistrationId.from(accountIterator.next().credential!!.getCredId()!!), network)
+                stat.qualify(
+                    CredentialRegistrationId.from(accountIterator.next().credential!!.getCredId()!!),
+                    network
+                )
             }
         } catch (e: Exception) {
             Log.e("Failed to qualify request.", e)
@@ -1151,23 +1178,26 @@ private constructor(
                 .commitmentInputs(commitmentInputs)
                 .globalContext(
                     CryptographicParameters.builder()
-                    .genesisString(cryptographicParams.genesisString)
-                    .bulletproofGenerators(BulletproofGenerators.from(cryptographicParams.bulletproofGenerators))
-                    .onChainCommitmentKey(PedersenCommitmentKey.from(cryptographicParams.onChainCommitmentKey)).build())
+                        .genesisString(cryptographicParams.genesisString)
+                        .bulletproofGenerators(BulletproofGenerators.from(cryptographicParams.bulletproofGenerators))
+                        .onChainCommitmentKey(PedersenCommitmentKey.from(cryptographicParams.onChainCommitmentKey))
+                        .build()
+                )
                 .build()
 
             val proof = Web3IdProof.getWeb3IdProof(input)
             respondSuccess(result = proof)
             mutableStateFlow.tryEmit(State.Idle)
-            handleNextOldestPendingSessionRequest() },
-        {
-            Log.e("Failed to retrieve global cryptographic parameters", it)
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.LoadingFailed
+            handleNextOldestPendingSessionRequest()
+        },
+            {
+                Log.e("Failed to retrieve global cryptographic parameters", it)
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.LoadingFailed
+                    )
                 )
-            )
-        })
+            })
     }
 
     fun getIdentity(account: Account): Identity? {
@@ -1515,8 +1545,10 @@ private constructor(
                 appMetadata = appMetadata,
                 identity = identity,
                 // Check that we can prove the statement with current accounts
-                canApprove = request.credentialStatements.withIndex().all { (i ,s) -> s.canBeProvedBy(
-                    getIdentityObject(getIdentity(chosenAccounts[i])!!))
+                canApprove = request.credentialStatements.withIndex().all { (i, s) ->
+                    s.canBeProvedBy(
+                        getIdentityObject(getIdentity(chosenAccounts[i])!!)
+                    )
                 } && seenAllStatements
             )
         }
