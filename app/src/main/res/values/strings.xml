@@ -1107,4 +1107,5 @@
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
     <string name="information_to_reveal">Information to reveal</string>
     <string name="reveal_description">Note that all the information above will be revealed to the connected service.</string>
+    <string name="unable_to_prove_request">You are unable to prove the entire request. You may go through the statements, but you won\'t be able to approve the request.</string>
 </resources>

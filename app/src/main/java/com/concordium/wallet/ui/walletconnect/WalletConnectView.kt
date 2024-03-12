@@ -8,6 +8,7 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
@@ -463,6 +464,10 @@ class WalletConnectView(
             .into(appIconImageView)
 
         appNameTextView.text = appMetadata.name
+
+        if (!viewModel.isStatementProvable()) {
+           view.unprovableStatement.visibility = VISIBLE
+        }
 
         val adapter = CredentialStatementAdapter(
             statements, accounts, viewModel::getIdentity

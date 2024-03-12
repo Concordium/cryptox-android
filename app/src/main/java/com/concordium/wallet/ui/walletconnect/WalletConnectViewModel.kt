@@ -154,7 +154,7 @@ private constructor(
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
     private var sessionRequestIdentityProofCurrentIndex: Int = 0
     private var sessionRequestIdentityProofSeenAllStatements: Boolean = false
-
+    private var sessionRequestIdentityProofProvable: Boolean = false
     private val handledRequests = mutableSetOf<Long>()
 
     private val mutableStateFlow = MutableStateFlow<State>(State.Idle)
@@ -513,13 +513,6 @@ private constructor(
         sessionRequestIdentityProofAccounts[position] = selectedAccount
 
         viewModelScope.launch {
-            with(selectedAccount.identityId) {
-                if (!sessionRequestIdentityProofIdentities.containsKey(this)) {
-                    val identity = identityRepository.findById(this)
-                    if (identity != null) sessionRequestIdentityProofIdentities[this] = identity
-                }
-            }
-
             mutableStateFlow.tryEmit(
                 State.SessionRequestReview.IdentityProofRequestReview(
                     connectedAccount = sessionRequestAccount,
@@ -527,9 +520,9 @@ private constructor(
                     appMetadata = sessionRequestAppMetadata,
                     request = sessionRequestIdentityRequest,
                     chosenAccounts = sessionRequestIdentityProofAccounts,
-                    getIdentity = this@WalletConnectViewModel::getIdentity,
                     currentStatement = sessionRequestIdentityProofCurrentIndex,
-                    seenAllStatements = sessionRequestIdentityProofSeenAllStatements
+                    seenAllStatements = sessionRequestIdentityProofSeenAllStatements,
+                    provable = sessionRequestIdentityProofProvable
                 )
             )
         }
@@ -678,15 +671,26 @@ private constructor(
             val identityProofRequest = UnqualifiedRequest.fromJson(params)
             sessionRequestIdentityRequest = identityProofRequest
 
-            val initialAccounts =
-                MutableList(identityProofRequest.credentialStatements.size) { _ -> sessionRequestAccount }
-            sessionRequestIdentityProofAccounts = initialAccounts
-
             val identities = HashMap<Int, Identity>()
             identityRepository.getAllDone().forEach { identities[it.id] = it }
-
-
             sessionRequestIdentityProofIdentities = identities
+
+            val accounts = getAvailableAccounts()
+            val initialAccounts = identityProofRequest.credentialStatements.map { statement ->
+                // Prefer session account
+                if (statement.canBeProvedBy(getIdentityObject(sessionRequestIdentity))) sessionRequestAccount else
+                // Otherwise find any account that can prove the statement
+                    accounts.find { statement.canBeProvedBy(getIdentityObject(identities[it.identityId]!!)) }
+            }
+
+            sessionRequestIdentityProofAccounts = if (initialAccounts.any { it == null }) {
+                sessionRequestIdentityProofProvable = false
+                initialAccounts.map { it ?: sessionRequestAccount }.toMutableList()
+            } else {
+                sessionRequestIdentityProofProvable = true
+                initialAccounts.requireNoNulls().toMutableList()
+            }
+
         } catch (e: Exception) {
             Log.e("Failed to parse identity proof request parameters: $params", e)
             mutableEventsFlow.tryEmit(
@@ -706,9 +710,9 @@ private constructor(
                 appMetadata = sessionRequestAppMetadata,
                 request = sessionRequestIdentityRequest,
                 chosenAccounts = sessionRequestIdentityProofAccounts,
-                getIdentity = this::getIdentity,
                 currentStatement = sessionRequestIdentityProofCurrentIndex,
-                seenAllStatements = sessionRequestIdentityProofSeenAllStatements
+                seenAllStatements = sessionRequestIdentityProofSeenAllStatements,
+                provable = sessionRequestIdentityProofProvable
             )
         )
     }
@@ -1204,6 +1208,10 @@ private constructor(
         return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
+    fun isStatementProvable(): Boolean {
+        return sessionRequestIdentityProofProvable
+    }
+
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
         val signMessageInput = SignMessageInput(
             address = sessionRequestAccount.address,
@@ -1535,8 +1543,8 @@ private constructor(
                 val request: UnqualifiedRequest,
                 val chosenAccounts: List<Account>,
                 val currentStatement: Int,
+                provable: Boolean,
                 seenAllStatements: Boolean,
-                getIdentity: (account: Account) -> Identity?,
                 connectedAccount: Account,
                 identity: Identity,
                 appMetadata: AppMetadata,
@@ -1545,11 +1553,7 @@ private constructor(
                 appMetadata = appMetadata,
                 identity = identity,
                 // Check that we can prove the statement with current accounts
-                canApprove = request.credentialStatements.withIndex().all { (i, s) ->
-                    s.canBeProvedBy(
-                        getIdentityObject(getIdentity(chosenAccounts[i])!!)
-                    )
-                } && seenAllStatements
+                canApprove = provable && seenAllStatements
             )
         }
 

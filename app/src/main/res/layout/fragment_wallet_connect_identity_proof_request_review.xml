@@ -35,15 +35,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_icon_image_view" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/proof_view"
-        android:layout_marginTop="28dp"
-        android:paddingBottom="20dp"
+    <TextView
+        android:id="@+id/unprovable_statement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unable_to_prove_request"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_text_view"
+        />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/proof_view"
+        android:layout_marginVertical="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/unprovable_statement"
         app:layout_constraintBottom_toTopOf="@id/pager_dots"
         android:layout_height="0dp"
-        app:layout_constraintHeight_min="360dp"
+        app:layout_constraintHeight_min="320dp"
         android:layout_width="match_parent"
         />
 
