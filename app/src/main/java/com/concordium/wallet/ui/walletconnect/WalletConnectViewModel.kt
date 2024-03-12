@@ -1062,6 +1062,8 @@ private constructor(
                 "Show details button can only be clicked in the transaction request review state"
             }
 
+        val context = getApplication<Application>()
+
         viewModelScope.launch(Dispatchers.IO) {
             val accountTransactionPayload = sessionRequestAccountTransactionPayload
             val accountTransactionParamsSchema = sessionRequestAccountTransactionParams.schema
@@ -1079,14 +1081,20 @@ private constructor(
                                 )
                             )
                             ?.prettyPrint()
-                            ?: "Failed to stringify the parameters"
+                            ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
+                    else if (accountTransactionPayload.message == "")
+                        context.getString(R.string.wallet_connect_transaction_request_no_parameters)
                     else
-                        "Can't stringify the parameters as there is no schema"
+                        context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
 
                 mutableEventsFlow.emit(
                     Event.ShowCallDetailsDialog(
                         method = reviewState.method,
-                        prettyPrintDetails = prettyPrintParams,
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_transaction_request_details,
+                            accountTransactionPayload.maxEnergy.toString(),
+                            prettyPrintParams,
+                        ),
                     )
                 )
             } else {
