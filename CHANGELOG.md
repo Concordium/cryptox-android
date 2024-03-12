@@ -5,6 +5,7 @@
 ### Added
 - Setting up and updating validator pool commission rates
 - Support of WalletConnect CCD transfer requests
+- Ability to see full details of the WalletConnect transaction to sign
 
 ### Changed
 - WalletConnect transaction signing request now shows the receiver
