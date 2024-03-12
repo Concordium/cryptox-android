@@ -111,6 +111,7 @@ class WalletConnectView(
                     receiver = state.receiver,
                     amount = state.amount,
                     estimatedFee = state.estimatedFee,
+                    canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
                     account = state.account,
                     appMetadata = state.appMetadata,
@@ -279,6 +280,7 @@ class WalletConnectView(
         receiver: String,
         amount: BigInteger,
         estimatedFee: BigInteger,
+        canShowDetails: Boolean,
         isEnoughFunds: Boolean,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -291,6 +293,7 @@ class WalletConnectView(
                 receiver = receiver,
                 amount = amount,
                 estimatedFee = estimatedFee,
+                canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
                 account = account,
                 appMetadata = appMetadata,
@@ -305,6 +308,7 @@ class WalletConnectView(
         receiver: String,
         amount: BigInteger,
         estimatedFee: BigInteger,
+        canShowDetails: Boolean,
         isEnoughFunds: Boolean,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -347,8 +351,13 @@ class WalletConnectView(
                     null
             }
 
-        showDetailsButton.setOnClickListener {
-            viewModel.onShowTransactionRequestDetailsClicked()
+        with(showDetailsButton) {
+            isVisible = canShowDetails
+            if (canShowDetails) {
+                setOnClickListener {
+                    viewModel.onShowTransactionRequestDetailsClicked()
+                }
+            }
         }
 
         declineButton.setOnClickListener {

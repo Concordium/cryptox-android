@@ -811,6 +811,7 @@ private constructor(
                     amount = accountTransactionPayload.amount,
                     estimatedFee = sessionRequestTransactionCost,
                     account = sessionRequestAccount,
+                    canShowDetails = false,
                     isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
                     appMetadata = sessionRequestAppMetadata,
                 )
@@ -822,6 +823,7 @@ private constructor(
                     amount = accountTransactionPayload.amount,
                     estimatedFee = sessionRequestTransactionCost,
                     account = sessionRequestAccount,
+                    canShowDetails = true,
                     isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
                     appMetadata = sessionRequestAppMetadata,
                 )
@@ -1057,10 +1059,11 @@ private constructor(
     }
 
     fun onShowTransactionRequestDetailsClicked() {
-        val reviewState =
-            checkNotNull(state as? State.SessionRequestReview.TransactionRequestReview) {
-                "Show details button can only be clicked in the transaction request review state"
-            }
+        val reviewState = state as? State.SessionRequestReview.TransactionRequestReview
+        check(reviewState != null && reviewState.canShowDetails) {
+            "Show details button can only be clicked in the transaction request review state " +
+                    "allowing showing the details"
+        }
 
         val context = getApplication<Application>()
 
@@ -1311,6 +1314,7 @@ private constructor(
                 val receiver: String,
                 val amount: BigInteger,
                 val estimatedFee: BigInteger,
+                val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,
                 account: Account,
                 appMetadata: AppMetadata,
