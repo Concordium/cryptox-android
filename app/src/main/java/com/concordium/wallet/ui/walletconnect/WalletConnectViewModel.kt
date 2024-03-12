@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
 import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
+import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProof
@@ -683,7 +684,20 @@ private constructor(
         }
     }
 
-    private suspend fun initializeProofRequestSession(params: String) {
+    private fun onInvalidRequest(responseMessage: String, e: Exception) {
+        Log.e(responseMessage, e)
+        mutableEventsFlow.tryEmit(
+            Event.ShowFloatingError(
+                Error.InvalidRequest
+            )
+        )
+        respondError(responseMessage)
+        mutableStateFlow.tryEmit(State.Idle)
+    }
+
+    /// Initializes session variables for proof request session.
+    /// Returns a boolean indicating whether initialization succeeded.
+    private suspend fun initializeProofRequestSession(params: String): Boolean {
         if (!authPreferences.hasEncryptedSeed()) {
             Log.d("A non-seed phrase wallet does not support identity proofs")
             mutableEventsFlow.tryEmit(
@@ -692,44 +706,52 @@ private constructor(
                 )
             )
             rejectSessionRequest()
-            return
+            return false
         }
         try {
             val wrappedParams = Gson().fromJson(params, WalletConnectParamsWrapper::class.java)
             val identityProofRequest = UnqualifiedRequest.fromJson(wrappedParams.paramsJson)
             sessionRequestIdentityRequest = identityProofRequest
-
-            val identities = HashMap<Int, Identity>()
-            identityRepository.getAllDone().forEach { identities[it.id] = it }
-            sessionRequestIdentityProofIdentities = identities
-
-            val accounts = getAvailableAccounts()
-            val initialAccounts = identityProofRequest.credentialStatements.map { statement ->
-                // Prefer session account
-                if (statement.canBeProvedBy(getIdentityObject(sessionRequestIdentity))) sessionRequestAccount else
-                // Otherwise find any account that can prove the statement
-                    accounts.find { statement.canBeProvedBy(getIdentityObject(identities[it.identityId]!!)) }
-            }
-
-            sessionRequestIdentityProofAccounts = if (initialAccounts.any { it == null }) {
-                sessionRequestIdentityProofProvable = false
-                initialAccounts.map { it ?: sessionRequestAccount }.toMutableList()
-            } else {
-                sessionRequestIdentityProofProvable = true
-                initialAccounts.requireNoNulls().toMutableList()
-            }
-
         } catch (e: Exception) {
-            Log.e("Failed to parse identity proof request parameters: $params", e)
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
-                )
-            )
-            respondError("Invalid request")
-            mutableStateFlow.tryEmit(State.Idle)
-            return
+            onInvalidRequest("Failed to parse identity proof request parameters: $params", e)
+            return false
         }
+        try {
+            // Check that the statement is acceptable. Using the session account here to qualify
+            // is sufficient because we don't check that the statement is provable.
+            val network = if (BuildConfig.ENV_NAME == "production") Network.MAINNET else Network.TESTNET
+            val credId = CredentialRegistrationId.from(sessionRequestAccount.credential!!.getCredId()!!)
+            AcceptableRequest.acceptableRequest(sessionRequestIdentityRequest.qualify { stat ->
+                stat.qualify(
+                    credId,
+                    network
+                )
+            })
+        } catch (e: Exception) {
+            onInvalidRequest("Request received is not acceptable", e)
+            return false
+        }
+
+        val identities = HashMap<Int, Identity>()
+        identityRepository.getAllDone().forEach { identities[it.id] = it }
+        sessionRequestIdentityProofIdentities = identities
+
+        val accounts = getAvailableAccounts()
+        val initialAccounts = sessionRequestIdentityRequest.credentialStatements.map { statement ->
+            // Prefer session account
+            if (statement.canBeProvedBy(getIdentityObject(sessionRequestIdentity))) sessionRequestAccount else
+            // Otherwise find any account that can prove the statement
+                accounts.find { statement.canBeProvedBy(getIdentityObject(identities[it.identityId]!!)) }
+        }
+
+        sessionRequestIdentityProofAccounts = if (initialAccounts.any { it == null }) {
+            sessionRequestIdentityProofProvable = false
+            initialAccounts.map { it ?: sessionRequestAccount }.toMutableList()
+        } else {
+            sessionRequestIdentityProofProvable = true
+            initialAccounts.requireNoNulls().toMutableList()
+        }
+        return true
     }
 
     private fun handleIdentityProofRequest() {
@@ -848,8 +870,7 @@ private constructor(
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
             REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
-                initializeProofRequestSession(params)
-                handleIdentityProofRequest()
+                if (initializeProofRequestSession(params)) handleIdentityProofRequest()
             }
             else -> {
                 val unsupportedMethodMessage =
