@@ -716,7 +716,7 @@ private constructor(
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
-            "proof_of_identity" -> handleIdentityProofRequest(params)
+            REQUEST_METHOD_VERIFIABLE_PRESENTATION -> handleIdentityProofRequest(params)
             else -> {
                 val unsupportedMethodMessage = "Received an unsupported WalletConnect method request: $method"
                 Log.e(unsupportedMethodMessage)
@@ -1482,5 +1482,6 @@ private constructor(
 
         private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
         private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
+        private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
     }
 }
