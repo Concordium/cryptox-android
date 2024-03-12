@@ -12,6 +12,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.cryptolib.SignMessageInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
@@ -32,12 +33,14 @@ import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreD
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.concordium.wallet.util.toBigInteger
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -1053,6 +1056,50 @@ private constructor(
         )
     }
 
+    fun onShowTransactionRequestDetailsClicked() {
+        val reviewState =
+            checkNotNull(state as? State.SessionRequestReview.TransactionRequestReview) {
+                "Show details button can only be clicked in the transaction request review state"
+            }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val accountTransactionPayload = sessionRequestAccountTransactionPayload
+            val accountTransactionParamsSchema = sessionRequestAccountTransactionParams.schema
+
+            if (accountTransactionPayload is AccountTransactionPayload.Update) {
+                val prettyPrintParams =
+                    if (accountTransactionParamsSchema != null)
+                        App.appCore.cryptoLibrary
+                            .parameterToJson(
+                                ParameterToJsonInput(
+                                    parameter = accountTransactionPayload.message,
+                                    receiveName = accountTransactionPayload.receiveName,
+                                    schema = accountTransactionParamsSchema,
+                                    null
+                                )
+                            )
+                            ?.prettyPrint()
+                            ?: "Failed to stringify the parameters"
+                    else
+                        "Can't stringify the parameters as there is no schema"
+
+                mutableEventsFlow.emit(
+                    Event.ShowCallDetailsDialog(
+                        method = reviewState.method,
+                        prettyPrintDetails = prettyPrintParams,
+                    )
+                )
+            } else {
+                mutableEventsFlow.emit(
+                    Event.ShowCallDetailsDialog(
+                        method = reviewState.method,
+                        prettyPrintDetails = "",
+                    )
+                )
+            }
+        }
+    }
+
     fun onDialogCancelled() {
         when (state) {
             State.Idle -> {
@@ -1353,6 +1400,15 @@ private constructor(
          */
         class ShowFloatingError(
             val error: Error,
+        ) : Event
+
+        /**
+         * A dialog showing pretty print contract call details must be shown.
+         * The details printout may be quite long.
+         */
+        class ShowCallDetailsDialog(
+            val method: String,
+            val prettyPrintDetails: String,
         ) : Event
     }
 

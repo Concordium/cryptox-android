@@ -1,5 +1,9 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.graphics.Typeface
+import android.util.TypedValue
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
@@ -23,6 +27,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
 /**
@@ -171,6 +176,24 @@ class WalletConnectView(
                 }
 
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
+            }
+
+            is WalletConnectViewModel.Event.ShowCallDetailsDialog -> {
+                MaterialAlertDialogBuilder(activity)
+                    .setTitle(event.method)
+                    .setMessage(event.prettyPrintDetails)
+                    .setPositiveButton(R.string.dialog_ok, null)
+                    .show()
+                    .apply {
+                        val messageTextView = findViewById<View>(android.R.id.message) as? TextView
+                            ?: return@apply
+
+                        with(messageTextView) {
+                            typeface = Typeface.MONOSPACE
+                            setTextIsSelectable(true)
+                            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                        }
+                    }
             }
         }
     }
@@ -323,6 +346,10 @@ class WalletConnectView(
                 else ->
                     null
             }
+
+        showDetailsButton.setOnClickListener {
+            viewModel.onShowTransactionRequestDetailsClicked()
+        }
 
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()

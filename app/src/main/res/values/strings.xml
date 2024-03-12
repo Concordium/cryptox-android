@@ -561,6 +561,7 @@
     <string name="wallet_connect_session_request_decline">@string/decline</string>
     <string name="wallet_connect_transaction_request_ccd_amount">CCD amount</string>
     <string name="wallet_connect_transaction_request_approximate_fee">@string/approximate_fee</string>
+    <string name="wallet_connect_transaction_request_show_details">Show details</string>
     <string name="wallet_connect_transaction_request_insufficient_funds">Insufficient funds to sign the transaction</string>
     <string name="wallet_connect_transaction_submitted_finish">@string/finish</string>
     <string name="wallet_connect_transaction_submitted_total_amount">@string/total_amount</string>
