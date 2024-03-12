@@ -124,6 +124,7 @@ private constructor(
     private val allowedRequestMethods = setOf(
         REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
         REQUEST_METHOD_SIGN_MESSAGE,
+        REQUEST_METHOD_VERIFIABLE_PRESENTATION,
     )
 
     private val accountRepository: AccountRepository by lazy {
