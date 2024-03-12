@@ -626,6 +626,19 @@ private constructor(
     }
 
     private fun handleIdentityProofRequest(params: String) {
+        // Only seed phrase wallets have the attribute randomness required to generate the required
+        // proofs. Therefore we reject requests if the wallet does not have a seed.
+        if (!authPreferences.hasEncryptedSeed()) {
+            Log.d("A non-seed phrase wallet does not support identity proofs")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.NotSeedPhraseWalletError
+                )
+            )
+            rejectSessionRequest()
+            return
+        }
+
         try {
             val identityProofRequest = UnqualifiedRequest.fromJson(params)
             sessionRequestIdentityRequest = identityProofRequest
@@ -975,8 +988,6 @@ private constructor(
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
             .decryptInBackground(password, storageAccountDataEncrypted)
-
-
 
         if (decryptedJson != null) {
             val storageAccountData = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
@@ -1513,6 +1524,11 @@ private constructor(
          * An internal error occurred.
          */
         object InternalError : Error
+
+        /**
+         * The functionality is only supported by a seed phrase based wallet.
+         */
+        object NotSeedPhraseWalletError : Error
     }
 
     sealed interface Event {

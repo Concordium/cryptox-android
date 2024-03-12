@@ -181,6 +181,9 @@ class WalletConnectView(
 
                     WalletConnectViewModel.Error.InternalError ->
                         R.string.wallet_connect_error_internal_error
+
+                    WalletConnectViewModel.Error.NotSeedPhraseWalletError ->
+                        R.string.wallet_connect_error_not_seed_phrase_wallet
                 }
 
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
