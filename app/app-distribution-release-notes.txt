@@ -1,2 +1,2 @@
-Changed:
-- WAL-6 Actualized support email and website on the About page
+Fixed:
+- WAL-10 Incorrect "environment" for mainnet keys export

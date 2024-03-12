@@ -104,6 +104,8 @@ class WalletConnectView(
             is WalletConnectViewModel.State.SessionRequestReview.TransactionRequestReview -> {
                 showTransactionRequestReview(
                     method = state.method,
+                    receiver = state.receiver,
+                    amount = state.amount,
                     estimatedFee = state.estimatedFee,
                     isEnoughFunds = state.isEnoughFunds,
                     account = state.account,
@@ -173,6 +175,9 @@ class WalletConnectView(
 
                     WalletConnectViewModel.Error.NoSupportedChains ->
                         R.string.wallet_connect_error_no_supported_chains
+
+                    WalletConnectViewModel.Error.UnsupportedMethod ->
+                        R.string.wallet_connect_error_unsupported_methods
 
                     WalletConnectViewModel.Error.InternalError ->
                         R.string.wallet_connect_error_internal_error
@@ -261,6 +266,8 @@ class WalletConnectView(
 
     private fun showTransactionRequestReview(
         method: String,
+        receiver: String,
+        amount: BigInteger,
         estimatedFee: BigInteger,
         isEnoughFunds: Boolean,
         account: Account,
@@ -271,6 +278,8 @@ class WalletConnectView(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
                 method = method,
+                receiver = receiver,
+                amount = amount,
                 estimatedFee = estimatedFee,
                 isEnoughFunds = isEnoughFunds,
                 account = account,
@@ -283,6 +292,8 @@ class WalletConnectView(
         view: FragmentWalletConnectTransactionRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
         method: String,
+        receiver: String,
+        amount: BigInteger,
         estimatedFee: BigInteger,
         isEnoughFunds: Boolean,
         account: Account,
@@ -297,6 +308,7 @@ class WalletConnectView(
         appNameTextView.text = appMetadata.name
 
         methodTextView.text = method
+        receiverTextView.text = receiver
 
         with(selectedAccountInclude) {
             accAddress.text = account.getAccountName()
@@ -310,6 +322,8 @@ class WalletConnectView(
             )
         }
 
+        amountTextView.text =
+            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(amount))
         feeTextView.text =
             root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
 

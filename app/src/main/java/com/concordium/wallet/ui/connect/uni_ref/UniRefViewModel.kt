@@ -36,8 +36,8 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.data.walletconnect.ContractAddress
-import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.connect.TransactionResult
@@ -365,7 +365,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             nonce = checkNotNull(tempData.accountNonce?.nonce) {
                 "The nonce must be loaded at this moment"
             },
-            payload = Payload(
+            payload = AccountTransactionPayload.Update(
                 address = ContractAddress(
                     index = checkNotNull(tempData.origPayload.contractAddress?.index?.toInt()) {
                         "There must be a contract index in the payload"
@@ -374,7 +374,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
                         "There must be a contract subindex in the payload"
                     },
                 ),
-                amount = getAmount().toString(),
+                amount = getAmount(),
                 maxEnergy = tempData.origPayload.energyLimit,
                 message = tempData.origPayload.serializedParams ?: "",
                 receiveName = tempData.origPayload.receiveName!!,

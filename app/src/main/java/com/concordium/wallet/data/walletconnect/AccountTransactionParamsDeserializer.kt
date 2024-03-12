@@ -9,16 +9,16 @@ import com.google.gson.JsonParseException
 import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 
-class ParamsDeserializer : JsonDeserializer<Params?> {
+class AccountTransactionParamsDeserializer : JsonDeserializer<AccountTransactionParams?> {
     @Throws(JsonParseException::class)
     override fun deserialize(
         jElement: JsonElement,
         typeOfT: Type?,
         context: JsonDeserializationContext
-    ): Params {
+    ): AccountTransactionParams {
         val jObject = jElement.asJsonObject
 
-        return Params(
+        return AccountTransactionParams(
             type = context.deserialize(jObject["type"], TransactionType::class.java),
             sender = jObject["sender"]!!.asString,
             payload = jObject["payload"]?.asString,

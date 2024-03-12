@@ -61,7 +61,11 @@ class IdentityProviderWebviewActivity : BaseActivity(
     }
 
     // Have to keep this intent data in case the Activity is force killed while on the IdentityProvider website
-    private inner class IdentityDataPreferences(context: Context, preferenceName: String, preferenceMode: Int) :
+    private inner class IdentityDataPreferences(
+        context: Context,
+        preferenceName: String,
+        preferenceMode: Int
+    ) :
         Preferences(context, preferenceName, preferenceMode) {
         private inner class StoredIdentityCreationData(
             val version: Int,
@@ -162,7 +166,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
                 viewModel.initialize(tempData)
                 initViews()
                 if (!viewModel.useTemporaryBackend) {
-                    showChromeCustomTab(viewModel.getIdentityProviderUrl())
+                    viewModel.beginVerification()
                 }
             }
         }
@@ -200,6 +204,15 @@ class IdentityProviderWebviewActivity : BaseActivity(
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
+            }
+        })
+        viewModel.handleIdentityVerificationUri.observe(this, object : EventObserver<Uri>() {
+            override fun onUnhandledEvent(value: Uri) {
+                if (hasValidCallbackUri(value)) {
+                    handleNewIntentData(value, null)
+                } else {
+                    showChromeCustomTab(value.toString())
+                }
             }
         })
         viewModel.identityCreationError.observe(this, object : EventObserver<String>() {

@@ -1,8 +1,13 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.app.Dialog
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.concordium.wallet.R
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlin.reflect.full.createInstance
 
@@ -11,6 +16,22 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
 ) {
     override fun getTheme() =
         R.style.AppBottomSheetDialogTheme
+
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        super.onCreateDialog(savedInstanceState).apply {
+            setOnShowListener { dialogInterface ->
+                (dialogInterface as? BottomSheetDialog)
+                    ?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                    ?.let { BottomSheetBehavior.from(it) }
+                    ?.also { bottomSheetBehavior ->
+                        // Automatically expand the sheet to show as much content as possible.
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                        // Prevent returning to the collapsed one for better dismiss experience
+                        bottomSheetBehavior.skipCollapsed = true
+                    }
+            }
+        }
 
     fun showSessionProposalReview(
         onShown: (createdView: WalletConnectSessionProposalReviewFragment.CreatedView) -> Unit
