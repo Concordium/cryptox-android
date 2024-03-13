@@ -1101,10 +1101,12 @@ private constructor(
                     )
                 )
             } else {
+                Log.w("Nothing to show as details for ${accountTransactionPayload::class.simpleName}")
+
                 mutableEventsFlow.emit(
                     Event.ShowCallDetailsDialog(
                         method = reviewState.method,
-                        prettyPrintDetails = "",
+                        prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
                     )
                 )
             }
