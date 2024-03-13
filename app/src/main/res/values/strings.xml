@@ -228,7 +228,6 @@
     <string name="account_details_pending_msg">Account creation in progress.\n\nYou can start using this account once it’s been finalized on the chain.</string>
     <string name="account_details_title">Account details</string>
     <string name="account_details_transfers_title">Transfers</string>
-    <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_send">Send</string>
     <string name="account_details_unshield">Unshield</string>
     <string name="account_details_shield">Shield</string>
