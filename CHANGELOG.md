@@ -6,9 +6,9 @@
 - Setting up and updating validator pool commission rates
 - Support of WalletConnect CCD transfer requests
 
-### Changed
-- WalletConnect transaction signing request now shows the receiver
-(either smart contract or an account) and amount of CCD to send (not including CIS-2 tokens)
+### Removed
+- Revealing identity attributes when creating an account
+- Display of account's revealed identity attributes
 
 ### Fixed
 
@@ -27,5 +27,8 @@
 - Suggest running a recovery when facing account or identity creation errors
 - Baker/baking renamed to Validator/validating
 - WalletConnect session proposals are now rejected if the namespace or methods are not supported, or if the wallet contains no accounts.
+- WalletConnect transaction signing request now shows the receiver
+(either smart contract or an account) and amount of CCD to send (not including CIS-2 tokens)
+- Transfers tab renamed to Activity on the account details screen
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD
