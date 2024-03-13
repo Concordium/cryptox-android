@@ -213,14 +213,7 @@
     <string name="new_account_identity_title">Add Identity Data</string>
     <string name="new_account_please_wait">This process may take a while on some phones. Please hang on.</string>
     <!-- New account setup -->
-    <string name="new_account_setup_title">Reveal Identity Data?</string>
-    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your name and country of residence. This is not necessary, and you can choose to reveal no attributes at all.</string>
-    <string name="new_account_setup_confirm_reveal">Reveal account attributes</string>
     <string name="new_account_setup_confirm_submit">Create account</string>
-    <!-- New account identity attributes -->
-    <string name="new_account_identity_attributes_title">Reveal Identity Data</string>
-    <string name="new_account_identity_attributes_confirm">Submit account</string>
-    <string name="new_account_identity_attributes_header">Select identity data</string>
     <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
     <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
     <string name="new_account_identity_attributes_error_max_accounts_alt">You already have the maximum number of accounts for this identity.</string>
