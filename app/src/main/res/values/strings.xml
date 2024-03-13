@@ -1104,8 +1104,37 @@
     <string name="saved_pass_phrase_reveal_screenshot">Screenshot</string>
     <string name="saved_pass_phrase_reveal_copied">@string/copied</string>
     <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+
+    <!-- Identity proofs in WalletConnect -->
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
     <string name="information_to_reveal">Information to reveal</string>
     <string name="reveal_description">Note that all the information above will be revealed to the connected service.</string>
     <string name="unable_to_prove_request">You are unable to prove the entire request. You may go through the statements, but you won\'t be able to approve the request.</string>
+
+    <string name="identity_proofs_age">Age</string>
+    <string name="identity_proofs_age_min">%1$d years or older</string>
+    <string name="identity_proofs_age_max">%1$d years or younger</string>
+    <string name="identity_proofs_age_exact">%1$d years old</string>
+    <string name="identity_proofs_age_between">%1$d to %2$d years old</string>
+
+    <string name="identity_proofs_date_after_inclusive">%1$s or later</string>
+    <string name="identity_proofs_date_before">Before %1$s</string>
+    <string name="identity_proofs_date_between">%1$s to %2$s</string>
+
+    <string name="identity_proofs_generic_between">Between %1$s and %2$s</string>
+
+    <string name="identity_proofs_eu_membership">EU</string>
+    <string name="identity_proofs_non_eu_membership">Outside EU</string>
+
+    <string name="identity_proofs_countries">1 of %1$d countries</string>
+    <string name="identity_proofs_none_countries">None of %1$d countries</string>
+
+    <string name="identity_proofs_id_doc_types">1 of %1$d types</string>
+    <string name="identity_proofs_none_id_doc_types">None of %1$d types</string>
+
+    <string name="identity_proofs_id_doc_issuer">1 of %1$d issuers</string>
+    <string name="identity_proofs_none_id_doc_issuer">None of %1$d issuers</string>
+
+    <string name="identity_proofs_set_fallback">1 of %1$d values</string>
+    <string name="identity_proofs_set_non_fallback">None of %1$d values</string>
 </resources>
