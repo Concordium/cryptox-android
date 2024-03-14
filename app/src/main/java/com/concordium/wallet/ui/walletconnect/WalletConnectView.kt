@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.viewpager2.widget.ViewPager2.GONE
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
@@ -480,8 +481,16 @@ class WalletConnectView(
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 viewModel.onStatementSelected(position)
+                if (position == statements.size - 1) {
+                    this@with.approveButton.visibility = VISIBLE
+                    this@with.nextButton.visibility = GONE
+                }
             }
         })
+
+        nextButton.setOnClickListener {
+            this.proofView.currentItem++
+        }
 
         approveButton.setOnClickListener {
             viewModel.approveSessionRequest()

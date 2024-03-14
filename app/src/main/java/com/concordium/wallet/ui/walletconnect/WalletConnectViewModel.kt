@@ -153,7 +153,6 @@ private constructor(
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
     private var sessionRequestIdentityProofCurrentIndex: Int = 0
-    private var sessionRequestIdentityProofSeenAllStatements: Boolean = false
     private var sessionRequestIdentityProofProvable: Boolean = false
     private val handledRequests = mutableSetOf<Long>()
 
@@ -521,7 +520,6 @@ private constructor(
                     request = sessionRequestIdentityRequest,
                     chosenAccounts = sessionRequestIdentityProofAccounts,
                     currentStatement = sessionRequestIdentityProofCurrentIndex,
-                    seenAllStatements = sessionRequestIdentityProofSeenAllStatements,
                     provable = sessionRequestIdentityProofProvable
                 )
             )
@@ -530,9 +528,6 @@ private constructor(
 
     fun onStatementSelected(position: Int) {
         sessionRequestIdentityProofCurrentIndex = position
-        if (position == sessionRequestIdentityRequest.credentialStatements.size - 1) {
-            sessionRequestIdentityProofSeenAllStatements = true
-        }
     }
 
     override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
@@ -711,7 +706,6 @@ private constructor(
                 request = sessionRequestIdentityRequest,
                 chosenAccounts = sessionRequestIdentityProofAccounts,
                 currentStatement = sessionRequestIdentityProofCurrentIndex,
-                seenAllStatements = sessionRequestIdentityProofSeenAllStatements,
                 provable = sessionRequestIdentityProofProvable
             )
         )
@@ -1544,7 +1538,6 @@ private constructor(
                 val chosenAccounts: List<Account>,
                 val currentStatement: Int,
                 provable: Boolean,
-                seenAllStatements: Boolean,
                 connectedAccount: Account,
                 identity: Identity,
                 appMetadata: AppMetadata,
@@ -1553,7 +1546,7 @@ private constructor(
                 appMetadata = appMetadata,
                 identity = identity,
                 // Check that we can prove the statement with current accounts
-                canApprove = provable && seenAllStatements
+                canApprove = provable
             )
         }
 
