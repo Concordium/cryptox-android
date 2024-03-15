@@ -695,6 +695,7 @@ private constructor(
         mutableStateFlow.tryEmit(State.Idle)
     }
 
+
     /// Initializes session variables for proof request session.
     /// Returns a boolean indicating whether initialization succeeded.
     private suspend fun initializeProofRequestSession(params: String): Boolean {
@@ -716,6 +717,7 @@ private constructor(
             onInvalidRequest("Failed to parse identity proof request parameters: $params", e)
             return false
         }
+        sessionRequestIdentityProofCurrentIndex = 0
         try {
             // Check that the statement is acceptable. Using the session account here to qualify
             // is sufficient because we don't check that the statement is provable.
@@ -1410,7 +1412,13 @@ private constructor(
                 mutableStateFlow.tryEmit(State.Idle)
             }
 
-            is State.AccountSelection,
+            is State.AccountSelection -> {
+                if ((state as State.AccountSelection).identityProofPosition != null) {
+                   rejectSessionRequest()
+                } else {
+                    rejectSessionProposal()
+                }
+            }
             is State.SessionProposalReview -> {
                 rejectSessionProposal()
             }
