@@ -11,6 +11,7 @@
         android:id="@+id/attributeTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/CryptoX_Typography_Headline_Medium"
         tools:text="Age:" />
 
     <TextView
@@ -22,6 +23,7 @@
         android:breakStrategy="balanced"
         android:singleLine="false"
         android:textAlignment="textEnd"
+        style="@style/CryptoX_Typography_Headline_Medium"
         tools:text="Over 18 years old" />
 
     <ImageView

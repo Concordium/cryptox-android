@@ -14,4 +14,12 @@
             android:layout_height="wrap_content"
         />
 
+        <include
+            android:id="@+id/secret_statements"
+            layout="@layout/fragment_wallet_connect_identity_proof_statement_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+
 </LinearLayout>

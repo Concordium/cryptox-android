@@ -19,6 +19,7 @@ import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
+import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofSecretStatementBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementCardBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
 import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
@@ -35,82 +36,87 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
 
     init {
         binding = FragmentWalletConnectIdentityProofStatementsBinding.inflate(LayoutInflater.from(context))
+        binding.secretStatements.statementHeader.setText(R.string.zero_knowledge_proof)
+        binding.secretStatements.revealDescription.visibility = GONE
+        binding.secretStatements.revealLines.visibility = GONE
         binding.revealStatements.statementHeader.setText(R.string.information_to_reveal)
-        binding.revealStatements.statementDescription.setText(R.string.reveal_description)
+        binding.revealStatements.secretLines.visibility = GONE
         addView(binding.root)
     }
 
      fun setStatement(request: RequestStatement, identity: Identity) {
+         binding.revealStatements.revealLines.removeAllViews()
+         binding.secretStatements.secretLines.removeAllViews()
 
         val secretStatements = request.statement.filterNot { it is RevealStatement }
         val revealStatements = request.statement.filterIsInstance<RevealStatement>()
 
-         val attributes = identity.identityObject?.let { it.attributeList.chosenAttributes.mapValues { attribute ->
-             CredentialAttribute.builder().value(attribute.value)
-                 .type(CredentialAttribute.CredentialAttributeType.STRING).build()
-         }} ?: emptyMap()
-
-         secretStatements.forEach {
-             binding.root.addView(getSecretStatement(it, it.canBeProvedBy(getIdentityObject(identity))))
+         if (secretStatements.isEmpty()) {
+             // If there are no reveal statements, then don't show the reveal box
+             binding.secretStatements.root.visibility = GONE
+         } else {
+             binding.secretStatements.root.visibility = VISIBLE
+             secretStatements.forEach {
+                 binding.secretStatements.secretLines.addView(getSecretStatement(it, it.canBeProvedBy((getIdentityObject(identity)))))
+             }
          }
 
          if (revealStatements.isEmpty()) {
              // If there are no reveal statements, then don't show the reveal box
-             binding.revealStatements.root.visibility = View.GONE
+             binding.revealStatements.root.visibility = GONE
          } else {
+             val attributes = identity.identityObject?.let { it.attributeList.chosenAttributes.mapValues { attribute ->
+                 CredentialAttribute.builder().value(attribute.value)
+                     .type(CredentialAttribute.CredentialAttributeType.STRING).build()
+             }} ?: emptyMap()
+
+             binding.revealStatements.root.visibility = VISIBLE
              revealStatements.forEach {
-                 binding.revealStatements.statementLines.addView(getRevealLine(it, attributes))
+                 binding.revealStatements.revealLines.addView(getRevealLine(it, attributes))
              }
          }
     }
 
-    private fun getStatementLine(tag: String, value: String, provable: Boolean, ): View {
-        val revealBinding =
-            IdentityProofStatementLineBinding.inflate(
-                LayoutInflater.from(
-                    context
-                ), binding.root, false
-            )
 
-        revealBinding.attributeTag.text = tag
-        revealBinding.attributeValue.text = value
+    private fun setStatementLine(line: IdentityProofStatementLineBinding, tag: String, value: String, provable: Boolean) {
+        line.attributeTag.text = tag
+        line.attributeValue.text = value
 
         if (!provable) {
-            revealBinding.checkMark.setImageResource(R.drawable.ccx_ico_declined)
+            line.checkMark.setImageResource(R.drawable.ccx_ico_declined)
         }
+    }
 
-        return revealBinding.root
+    private fun createStatementLine(): IdentityProofStatementLineBinding {
+        return IdentityProofStatementLineBinding.inflate(
+            LayoutInflater.from(
+                context
+            ), binding.root, false
+        )
     }
 
     private fun getRevealLine(statement: RevealStatement, attributes: Map<String, CredentialAttribute>): View {
-        val revealBinding =
-            IdentityProofStatementLineBinding.inflate(
-                LayoutInflater.from(
-                    context
-                ), binding.root, false
-            )
-
+        val revealBinding = createStatementLine()
         val rawAttribute = attributes[statement.attributeTag]?.value ?: "???"
         // Assuming this is identity attributes
         val pair = IdentityAttributeConverterUtil.convertAttribute(context, Pair(statement.attributeTag,rawAttribute))
         revealBinding.attributeTag.text = pair.first
         revealBinding.attributeValue.text = pair.second
+        setStatementLine(revealBinding, pair.first, pair.second, true)
 
         return revealBinding.root
     }
 
     private fun getSecretStatement(statement: AtomicStatement, provable: Boolean): View {
         val secretBinding =
-            FragmentWalletConnectIdentityProofStatementCardBinding.inflate(
+            FragmentWalletConnectIdentityProofSecretStatementBinding.inflate(
                 LayoutInflater.from(
                     context
                 ), binding.root, false
             )
 
-        secretBinding.statementHeader.setText(R.string.zero_knowledge_proof)
+        setStatementLine(secretBinding.secretStatement, getPropertyTitle(statement), getStatementValue(statement), provable)
         secretBinding.statementDescription.text = getStatementDescription(statement)
-        val statementLine = getStatementLine(getPropertyTitle(statement), getStatementValue(statement), provable)
-        secretBinding.statementLines.addView(statementLine)
 
         return secretBinding.root
     }
