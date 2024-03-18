@@ -12,8 +12,10 @@ data class CredentialWrapper(
 ) : Serializable {
     fun getCredId(): String? {
         return try {
-            val credentialContent = Gson().fromJson(value.json, CredentialContent::class.java)
-            credentialContent.credential.contents.credId
+            Gson().fromJson(value.json, CredentialContent::class.java)
+                .credential
+                .contents
+                .let { it.credId ?: it.regId }
         } catch (ex: Exception) {
             null
         }
@@ -38,7 +40,14 @@ data class Credential(
 )
 
 data class Contents(
-    val credId: String,
+    /**
+     * If null, use legacy [regId].
+     */
+    val credId: String?,
+    /**
+     * Legacy credential ID. If null, use [credId]
+     */
+    val regId: String?,
     val credentialPublicKeys: CredentialPublicKeys
 )
 

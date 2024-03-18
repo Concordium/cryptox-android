@@ -22,6 +22,7 @@
 - An issue where the identity name was off-center when the edit name icon was visible
 - An issue where exporting transaction logs for an account without any transactions would be stuck at 0%
 - "Invalid WalletConnect request" message repeatedly shown if received a request with unsupported transaction type
+- Exported private key for file-based initial account being incompatible with concordium-client
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors
