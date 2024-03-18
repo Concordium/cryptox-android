@@ -18,7 +18,7 @@ android {
     def versionMajor = 0
     def versionMinor = 6
     def versionPatch = 1
-    def versionMeta = "-qa.10"
+    def versionMeta = "-oko.1"
     def versionCodeIncremental = 1360
 
     compileSdkVersion 34
@@ -47,7 +47,8 @@ android {
         }
 
         firebaseAppDistribution {
-            serviceCredentialsFile = file("secret/app-distribution-key.json")
+            // This file is created by CI.
+            serviceCredentialsFile = file("app-distribution-credentials.json")
         }
     }
 
@@ -139,7 +140,8 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                // TODO: Everyone is excluded for testing purposes.
+                groups = ""//"concordium-team, spaceseven-team"
             }
         }
 
