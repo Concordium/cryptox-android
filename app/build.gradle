@@ -18,7 +18,7 @@ android {
     def versionMajor = 0
     def versionMinor = 6
     def versionPatch = 1
-    def versionMeta = "-oko.1"
+    def versionMeta = "-oko.1" // TODO Remove once the workflow is tested
     def versionCodeIncremental = 1360
 
     compileSdkVersion 34
@@ -320,4 +320,11 @@ dependencies {
 
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
+}
+
+task printVersionName {
+    group = "help"
+    doLast {
+        println android.defaultConfig.versionName
+    }
 }
