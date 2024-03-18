@@ -166,7 +166,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
-                groups = "concordium-team"
+                groups = "concordium-team, spaceseven-team"
             }
         }
     }
