@@ -48,7 +48,6 @@ android {
 
         firebaseAppDistribution {
             serviceCredentialsFile = file("secret/app-distribution-key.json")
-            releaseNotesFile = file("app-distribution-release-notes.txt")
         }
     }
 
