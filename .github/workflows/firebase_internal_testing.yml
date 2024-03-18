@@ -1,0 +1,42 @@
+name: Distribute builds for internal testing through Firebase
+
+on:
+  push:
+    tags:
+      - "*-qa.*"
+      - "*-rc.*"
+    branches:
+      - "feature/build_pipelines"
+  workflow_dispatch:
+
+env:
+  java_version: "11"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "${{env.java_version}}"
+          distribution: corretto
+          cache: gradle
+
+      - name: Build Stagenet release APK
+        run: ./gradlew app:assembleStagenetRelease --stacktrace
+
+      - name: Build Testnet release APK
+        run: ./gradlew app:assembleTstnetRelease --stacktrace
+
+      - name: Build Mainnet release APK
+        run: ./gradlew app:assembleMainnetRelease --stacktrace
+
+      - name: Upload the APKs
+        uses: actions/upload-artifact@v3
+        with:
+          name: APKs
+          path: app/build/outputs/apk/**/*.apk
