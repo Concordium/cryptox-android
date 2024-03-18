@@ -33,8 +33,8 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.data.walletconnect.ContractAddress
-import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsPreferences
@@ -525,12 +525,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(
-                    ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0),
-                    "0",
-                    sendTokenData.energy!!,
-                    serializeTokenTransferParametersOutput.parameter,
-                    sendTokenData.token!!.contractName + ".transfer"
+                val payload = AccountTransactionPayload.Update(
+                    address = ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0),
+                    amount = BigInteger.ZERO,
+                    maxEnergy = sendTokenData.energy!!,
+                    message = serializeTokenTransferParametersOutput.parameter,
+                    receiveName = sendTokenData.token!!.contractName + ".transfer"
                 )
                 val accountTransactionInput = CreateAccountTransactionInput(
                     expiry,

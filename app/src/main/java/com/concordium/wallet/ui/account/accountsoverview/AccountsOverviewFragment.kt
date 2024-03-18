@@ -27,7 +27,6 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,10 +131,6 @@ class AccountsOverviewFragment : BaseFragment() {
                 showError(value)
             }
         })
-
-        viewModel.newFinalizedAccountLiveData.observe(viewLifecycleOwner) {
-            CustomDialogFragment.newAccountFinalizedDialog(requireContext())
-        }
 
         viewModel.stateLiveData.observe(viewLifecycleOwner) { state ->
             when (state) {

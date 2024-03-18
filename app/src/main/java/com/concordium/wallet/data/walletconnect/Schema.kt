@@ -1,6 +1,8 @@
 package com.concordium.wallet.data.walletconnect
 
-sealed class Schema {
+import java.io.Serializable
+
+sealed class Schema: Serializable {
     data class ValueSchema(
         val type: String?,
         val value: String?
@@ -15,6 +17,6 @@ sealed class Schema {
         val type: String?,
         val value: BrokenValue
     ) : Schema() {
-        data class BrokenValue(val type: String?, val data: List<Int>)
+        data class BrokenValue(val type: String?, val data: List<Int>): Serializable
     }
 }

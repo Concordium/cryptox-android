@@ -14,7 +14,8 @@ import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
@@ -23,12 +24,11 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.concordium.wallet.ui.welcome.WelcomePromoActivity
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import com.concordium.wallet.uicore.dialog.Dialogs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
-    Dialogs.DialogFragmentListener, AuthDelegate by AuthDelegateImpl() {
+    AuthDelegate by AuthDelegateImpl(),
+    IdentityStatusDelegate by IdentityStatusDelegateImpl() {
 
     companion object {
         const val EXTRA_CREATE_FIRST_IDENTITY = "EXTRA_CREATE_FIRST_IDENTITY"
@@ -102,6 +102,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                 }
 
                 viewModel.startIdentityUpdate()
+                startCheckForPendingIdentity(this, null, false) {}
             }
         }
     }
@@ -125,14 +126,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         handlePossibleWalletConnectUri(newIntent)
     }
 
-    override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG) {
-            if (resultCode == Dialogs.POSITIVE) {
-                gotoIdentityProviderList()
-            }
-        }
-    }
-
     //endregion
 
     //region Initialize
@@ -152,16 +145,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             hideRightPlus(false)
             hideQrScan(false)
             replaceFragment(state)
-        }
-
-        viewModel.identityErrorLiveData.observe(this) { data ->
-            data?.let {
-                IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
-            }
-        }
-
-        viewModel.newFinalizedAccountLiveData.observe(this) {
-            CustomDialogFragment.newAccountFinalizedDialog(this)
         }
 
         walletConnectViewModel = ViewModelProvider(
@@ -278,10 +261,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun gotoIdentityProviderList() {
-        viewModel.identityErrorLiveData.value?.let {
-            val intent = Intent(this, IdentityProviderListActivity::class.java)
-            startActivity(intent)
-        }
+        val intent = Intent(this, IdentityProviderListActivity::class.java)
+        startActivity(intent)
     }
 
     private fun goToFirstIdentityCreation() {

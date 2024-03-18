@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
@@ -17,6 +16,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivi
 import com.concordium.wallet.util.UnitConvertUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
+import java.text.DecimalFormat
 
 class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     R.layout.activity_baker_registration_confirmation,
@@ -25,6 +25,14 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     private var receiptMode = false
 
     private lateinit var binding: ActivityBakerRegistrationConfirmationBinding
+
+    /**
+     * Formats values in range [[0.0; 1.0]].
+     */
+    private val percentFormat = (DecimalFormat.getPercentInstance() as DecimalFormat).apply {
+        minimumFractionDigits = PERCENT_FORMAT_DECIMALS
+        maximumFractionDigits = PERCENT_FORMAT_DECIMALS
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +48,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     override fun initViews() {
         super.initViews()
-        viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
-            success?.let {
-                loadFee()
-            }
-        })
         showWaiting(binding.includeProgress.progressLayout, true)
-        viewModel.loadChainParameters()
+        loadFee()
     }
 
     private fun loadFee() {
@@ -68,9 +71,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding.submitBakerTransaction.text =
             getString(R.string.baker_registration_confirmation_submit)
         binding.accountToBakeFrom.text =
-            viewModel.bakerDelegationData.account!!.getAccountName()
-                .plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account!!.address)
+            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
+                .plus(viewModel.bakerDelegationData.account?.address ?: "")
         binding.estimatedTransactionFee.visibility = View.VISIBLE
 
         when (viewModel.bakerDelegationData.type) {
@@ -118,34 +120,35 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     private fun updateViewsRegisterBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_title)
         binding.gracePeriod.text = getString(R.string.baker_registration_confirmation_explain)
-        binding.gracePeriod.isVisible = true
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_register_confirmation_receipt_title)
         showAmount()
         showRewards()
         showPoolStatus()
+        showCommissionRates()
         showMetaUrl()
         showKeys()
     }
 
     private fun updateViewsUpdateBakerKeys() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_keys_title)
-        binding.gracePeriod.isVisible = false
+        binding.gracePeriod.visibility = View.GONE
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_update_affected_account)
         showKeys()
+        showCommissionRates()
     }
 
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
-        binding.gracePeriod.isVisible = false
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_update_affected_account)
         showPoolStatus()
+        showCommissionRates()
         showMetaUrl()
     }
 
@@ -160,6 +163,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             getString(R.string.baker_registration_confirmation_update_stake_update)
         showAmount()
         showRewards()
+        showCommissionRates()
     }
 
     private fun updateViewsRemoveBaker() {
@@ -170,6 +174,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             getString(R.string.baker_registration_confirmation_remove_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+        hideCommissionRates()
     }
 
     private fun showAmount() {
@@ -177,8 +182,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
-                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO,
-                true
+                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true
             )
         }
     }
@@ -202,6 +206,44 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
                 if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(
                     R.string.baker_register_confirmation_receipt_pool_status_closed
                 )
+        }
+    }
+
+    private fun showCommissionRates() {
+        if (viewModel.commissionRatesHasChanged().not()) {
+            hideCommissionRates()
+            return
+        }
+
+        binding.apply {
+            if (viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate != null) {
+                transactionFeeTitle.visibility = View.VISIBLE
+                transactionFeeStatus.visibility = View.VISIBLE
+                transactionFeeStatus.text =
+                    percentFormat.format(viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate)
+            } else {
+                transactionFeeTitle.visibility = View.GONE
+                transactionFeeStatus.visibility = View.GONE
+            }
+
+            if (viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate != null) {
+                bakingTitle.visibility = View.VISIBLE
+                bakingStatus.visibility = View.VISIBLE
+                bakingStatus.text =
+                    percentFormat.format(viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate)
+            } else {
+                bakingTitle.visibility = View.GONE
+                bakingStatus.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun hideCommissionRates() {
+        binding.apply {
+            transactionFeeTitle.visibility = View.GONE
+            transactionFeeStatus.visibility = View.GONE
+            bakingTitle.visibility = View.GONE
+            bakingStatus.visibility = View.GONE
         }
     }
 
@@ -269,9 +311,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
                 viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
             )
             noticeMessage = resources.getQuantityString(
-                R.plurals.baker_notice_message_update_decrease,
-                gracePeriod,
-                gracePeriod
+                R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod
             )
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
                 ?: BigInteger.ZERO) == (viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
@@ -286,9 +326,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
                 viewModel.bakerDelegationData.chainParameters?.poolOwnerCooldown ?: 0
             )
             noticeMessage = resources.getQuantityString(
-                R.plurals.baker_notice_message_remove,
-                gracePeriod,
-                gracePeriod
+                R.plurals.baker_notice_message_remove, gracePeriod, gracePeriod
             )
         }
 
@@ -307,8 +345,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         val messageFromWalletProxy = getString(value)
         builder.setMessage(
             getString(
-                R.string.baker_register_transaction_failed,
-                messageFromWalletProxy
+                R.string.baker_register_transaction_failed, messageFromWalletProxy
             )
         )
         builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
@@ -324,5 +361,9 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     override fun showWaiting(progressLayout: View, waiting: Boolean) {
         super.showWaiting(progressLayout, waiting)
         binding.submitBakerTransaction.isEnabled = !waiting
+    }
+
+    private companion object {
+        private const val PERCENT_FORMAT_DECIMALS = 3
     }
 }

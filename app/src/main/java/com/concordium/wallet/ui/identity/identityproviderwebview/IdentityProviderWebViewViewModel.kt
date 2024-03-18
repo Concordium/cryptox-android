@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.identity.identityproviderwebview
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -32,8 +33,11 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.Log
+import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -49,6 +53,10 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
+
+    private val _handleIdentityVerificationUri = MutableLiveData<Event<Uri>>()
+    val handleIdentityVerificationUri: LiveData<Event<Uri>>
+        get() = _handleIdentityVerificationUri
 
     private val _identityCreationError = MutableLiveData<Event<String>>()
     val identityCreationError: LiveData<Event<String>>
@@ -110,16 +118,31 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         }
     }
 
-    fun getIdentityProviderUrl(): String {
+    /**
+     * Upon finish, either [handleIdentityVerificationUri] or [identityCreationError]
+     * gets triggered.
+     */
+    fun beginVerification() = viewModelScope.launch(Dispatchers.IO) {
+        _waitingLiveData.postValue(true)
+
         val idObjectRequest = gson.toJson(IdentityRequest(identityCreationData.idObjectRequest))
         val baseUrl = identityCreationData.identityProvider.metadata.issuanceStart
         val delimiter = if (baseUrl.contains('?')) "&" else "?"
-        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase()
-                .contains("notabene")
-        )
-            "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest&test_flow=1"
-        else
-            "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest"
+        try {
+            val verificationRedirectUri = IdentityProviderApiInstance.getVerificationRedirectUri(
+                verificationStartUrl = baseUrl +
+                        "${delimiter}response_type=code" +
+                        "&redirect_uri=$CALLBACK_URL" +
+                        "&scope=identity" +
+                        "&state=$idObjectRequest",
+                redirectUriScheme = BuildConfig.SCHEME,
+            )
+            _handleIdentityVerificationUri.postValue(Event(Uri.parse(verificationRedirectUri)))
+        } catch (error: Exception) {
+            _identityCreationError.postValue(Event(error.message ?: error.toString()))
+        } finally {
+            _waitingLiveData.postValue(false)
+        }
     }
 
     private fun saveNewIdentity(identityObject: IdentityObject) {
@@ -204,8 +227,14 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityError(errorContent: String) {
-        val error: Map<String, Any> =
+        val error: Map<String, Any> = try {
             gson.fromJson(errorContent, object : TypeToken<Map<String, Any>>() {}.type)
+        } catch (jsonException: JsonParseException) {
+            Log.e("Unexpected identity error content", jsonException)
+            _identityCreationError.value = Event(errorContent)
+            return
+        }
+
         val map = error["error"] as Map<*, *>
         val event = Event(map["detail"].toString())
         if (map["code"]!! == "USER_CANCEL") {

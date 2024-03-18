@@ -5,8 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.databinding.ActivityBakerRegistrationOpenBinding
@@ -15,7 +13,6 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.KeyboardUtil
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
     R.layout.activity_baker_registration_open, R.string.baker_registration_open_title
@@ -35,10 +32,6 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
         viewModel.bakerDelegationData.oldMetadataUrl =
             viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl
 
-        binding.openUrl.doOnTextChanged { _, _, _, _ ->
-            hideMetadataUrlInvalid()
-        }
-
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             setActionBarTitle(R.string.baker_update_pool_settings_title)
             binding.openUrlExplain.setText(R.string.baker_update_pool_settings_open_url_explain)
@@ -50,41 +43,32 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
             }
         }
 
-        binding.readMoreTextView.handleUrlClicks { url ->
+        binding.openUrlExplain.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
 
         binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
-            viewModel.bakerDelegationData.metadataUrl =
-                binding.openUrl.text?.toString()?.trim()
+            viewModel.bakerDelegationData.metadataUrl = binding.openUrl.text?.toString()
             validate()
         }
     }
 
     private fun validate() {
-        var gotoNextPage = false
-
-        val metadataUrl = viewModel.bakerDelegationData.metadataUrl
-        val isMetadataUrlValid = metadataUrl.isNullOrEmpty() || metadataUrl.toHttpUrlOrNull() != null
-
-        if (isMetadataUrlValid
-            && (viewModel.bakerDelegationData.oldMetadataUrl != metadataUrl
-                    || viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
-                    )
-        ) {
-            gotoNextPage = true
-        }
-
-        if (gotoNextPage) {
-            gotoNextPage()
-        } else if (!isMetadataUrlValid) {
-            showMetadataUrlInvalid()
-        } else {
-            showNoChange()
-        }
+        val gotoNextPage =
+            if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
+                viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
+            ) {
+                true
+            } else {
+                viewModel.bakerDelegationData.oldCommissionRates?.transactionCommission != viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate ||
+                        viewModel.bakerDelegationData.oldCommissionRates?.bakingCommission != viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
+            }
+        if (gotoNextPage) gotoNextPage()
+        else showNoChange()
     }
+
 
     private fun gotoNextPage() {
         val intent = if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
@@ -98,14 +82,6 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
             viewModel.bakerDelegationData
         )
         startActivityForResultAndHistoryCheck(intent)
-    }
-
-    private fun showMetadataUrlInvalid() {
-        binding.openUrlError.isVisible = true
-    }
-
-    private fun hideMetadataUrlInvalid() {
-        binding.openUrlError.isVisible = false
     }
 
     override fun errorLiveData(value: Int) {

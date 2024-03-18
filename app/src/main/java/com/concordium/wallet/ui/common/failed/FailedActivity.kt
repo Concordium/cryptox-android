@@ -61,14 +61,17 @@ class FailedActivity : BaseActivity(
             FailedViewModel.Source.Identity -> {
                 setActionBarTitle(R.string.identity_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.identity_confirmed_failed)
+                binding.infoTextview.setText(R.string.failed_run_recovery_and_try_again)
             }
             FailedViewModel.Source.Account -> {
                 setActionBarTitle(R.string.new_account_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.new_account_confirmed_failed)
+                binding.infoTextview.setText(R.string.failed_run_recovery_and_try_again)
             }
             FailedViewModel.Source.Transfer -> {
                 setActionBarTitle(R.string.send_funds_title)
                 binding.errorTitleTextview.setText(R.string.send_funds_confirmed_failed)
+                binding.infoTextview.setText(R.string.failed_try_again)
             }
         }
 
@@ -94,16 +97,16 @@ class FailedActivity : BaseActivity(
     private fun finishFlow() {
         when (viewModel.source) {
             FailedViewModel.Source.Identity -> {
+                finishAffinity()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
-                finishAffinity()
             }
             FailedViewModel.Source.Account -> {
+                finishAffinity()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
-                finishAffinity()
             }
             FailedViewModel.Source.Transfer -> {
                 val intent = Intent(this, AccountDetailsActivity::class.java)

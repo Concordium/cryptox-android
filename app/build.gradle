@@ -44,7 +44,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 34
         versionCode vCode
-        versionName "0.6.1-qa.5"
+        versionName "0.6.1-qa.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -161,7 +161,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = "concordium-team"
+                groups = "concordium-team, spaceseven-team"
             }
         }
 
@@ -180,7 +180,7 @@ android {
 
             resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE}\""
 
-            def providerAuthority = PROVIDER_AUTHORITY_BASE+"-testnet"
+            def providerAuthority = PROVIDER_AUTHORITY_BASE
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 

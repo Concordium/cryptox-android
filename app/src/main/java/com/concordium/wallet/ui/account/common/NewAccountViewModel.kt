@@ -260,8 +260,8 @@ open class NewAccountViewModel(application: Application) :
             }
 
         if (output == null) {
-            _errorLiveData.value = Event(R.string.app_error_lib)
-            _waitingLiveData.value = false
+            _errorLiveData.postValue(Event(R.string.app_error_lib))
+            _waitingLiveData.postValue(false)
         } else {
             tempData.accountAddress = output.accountAddress
             val jsonToBeEncrypted = gson.toJson(
@@ -280,8 +280,8 @@ open class NewAccountViewModel(application: Application) :
                 tempData.credential = output.credential
                 submitCredential(output.credential)
             } else {
-                _errorLiveData.value = Event(R.string.app_error_encryption)
-                _waitingLiveData.value = false
+                _errorLiveData.postValue(Event(R.string.app_error_encryption))
+                _waitingLiveData.postValue(false)
             }
         }
     }
