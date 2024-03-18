@@ -215,6 +215,12 @@ android {
     namespace 'com.concordium.wallet'
 }
 
+allprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs).configureEach {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+
 dependencies {
 
     implementation("com.concordium.sdk:concordium-android-sdk:7.1.0") {
