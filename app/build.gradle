@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.tasks.FinalizeBundleTask
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
@@ -91,13 +93,13 @@ android {
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
-            def scheme = SCHEME_BASE+"-stagenet"
+            def scheme = SCHEME_BASE + "-stagenet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
 
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE+"-stagenet"}\""
+            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-stagenet"}\""
 
-            def providerAuthority = PROVIDER_AUTHORITY_BASE+"-stagenet"
+            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-stagenet"
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
@@ -123,13 +125,13 @@ android {
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
-            def scheme = SCHEME_BASE+"-testnet"
+            def scheme = SCHEME_BASE + "-testnet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
 
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE+"-testnet"}\""
+            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-testnet"}\""
 
-            def providerAuthority = PROVIDER_AUTHORITY_BASE+"-testnet"
+            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-testnet"
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
@@ -190,6 +192,27 @@ android {
         viewBinding true
     }
     namespace 'com.concordium.wallet'
+
+    // Set meaningful names for build artifacts.
+    applicationVariants.all { variant ->
+        def flavor = variant.productFlavors[0].name
+        def artifactName = "cryptox-" +
+                flavor + "-" +
+                variant.buildType.name + "-" +
+                variant.versionName
+
+        // APK.
+        variant.outputs.all {
+            outputFileName = artifactName + ".apk"
+        }
+
+        // AAB.
+        tasks.named("sign${variant.name.capitalize()}Bundle", FinalizeBundleTask) {
+            File file = finalBundleFile.asFile.get()
+            File finalFile = new File(file.parentFile, artifactName + ".aab")
+            finalBundleFile.set(finalFile)
+        }
+    }
 }
 
 dependencies {
