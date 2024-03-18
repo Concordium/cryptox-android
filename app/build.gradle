@@ -216,8 +216,11 @@ android {
 }
 
 dependencies {
-    // TODO REMOVE THIS BEFORE MERGING TO MAIN.
-    implementation files('/home/hjort/Projects/concordium-java-sdk/concordium-android-sdk/target/concordium-android-sdk.aar')
+
+    implementation("com.concordium.sdk:concordium-android-sdk:7.1.0") {
+        exclude group: "org.bouncycastle"
+        exclude group: "net.jcip"
+    }
 
     def lifecycle_version = "2.4.0"
     def room_version = "2.5.0"
@@ -328,9 +331,4 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.1'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.10.1'
-
-    implementation(group: 'org.bitcoinj', name: 'bitcoinj-core', version: '0.16.2') {
-        exclude group: "org.bouncycastle"
-        exclude group: "net.jcip"
-    }
 }
