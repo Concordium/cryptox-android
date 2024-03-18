@@ -2,12 +2,11 @@ name: Distribute builds for internal testing through Firebase
 
 on:
   push:
+    # Run for QA builds and release candidates.
     tags:
       - "*-qa.*"
       - "*-rc.*"
-      - "*-oko.*"
-    branches:
-      - "feature/build_pipelines"
+      - "*-oko.*" # TODO Remove once the workflow is tested
   workflow_dispatch:
 
 env:
@@ -38,17 +37,17 @@ jobs:
           distribution: corretto
           cache: gradle
 
-      - name: Build and distribute Testnet release APK
+      - name: Build and distribute Testnet APK
         run: ./gradlew app:assembleTstnetRelease app:appDistributionUploadTstnetRelease --stacktrace
 
-      #- name: Build Stagenet release APK
-      #  run: ./gradlew app:assembleStagenetRelease --stacktrace
+      - name: Build and distribute Stagenet APK
+        run: ./gradlew app:assembleStagenetRelease app:appDistributionUploadStagenetRelease --stacktrace
 
-      #- name: Build Mainnet release APK
-      #  run: ./gradlew app:assembleMainnetRelease --stacktrace
+      - name: Build and distribute Mainnet APK
+        run: ./gradlew app:assembleMainnetRelease app:appDistributionUploadMainnetRelease --stacktrace
 
-#      - name: Upload the APKs
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: APKs
-#          path: app/build/outputs/apk/**/*.apk
+      - name: Upload the APKs
+        uses: actions/upload-artifact@v3
+        with:
+          name: APKs
+          path: app/build/outputs/apk/**/*.apk
