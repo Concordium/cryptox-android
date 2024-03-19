@@ -12,6 +12,11 @@ def SCHEME_BASE = "cryptoxmwallet"
 def WC_SCHEME_BASE = "cryptox-wc"
 def PROVIDER_AUTHORITY_BASE = "com.pioneeringtechventures.wallet.DataFileProvider"
 
+def configurableSigningProperties = new Properties()
+configurableSigningProperties.load(new FileInputStream(
+        file(System.getenv("CONFIGURABLE_SIGNING_PROPERTIES_FILE") ?: "dev-signing.properties")
+))
+
 android {
     // This project uses semantic versioning
     // https://semver.org/
@@ -53,14 +58,11 @@ android {
     }
 
     signingConfigs {
-        // A signature to be used for pre-release app distribution.
-        // Unlike the debug signing config, it does not depend on
-        // developer's personal debug keypair.
-        dev {
-            storeFile file("dev-only-signing.jks")
-            storePassword "concordium"
-            keyAlias "dev-sign-1"
-            keyPassword "concordium"
+        configurable {
+            storeFile file(configurableSigningProperties['storeFile'])
+            storePassword configurableSigningProperties['storePassword']
+            keyAlias configurableSigningProperties['keyAlias']
+            keyPassword configurableSigningProperties['keyPassword']
         }
     }
 
@@ -71,8 +73,7 @@ android {
 
         release {
             debuggable false
-            // Only used for CLI builds.
-            signingConfig signingConfigs.dev
+            signingConfig signingConfigs.configurable
             // Unlocking requires vigilant testing.
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -140,7 +141,8 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = ""//"concordium-team, spaceseven-team" // TODO turn back on once the workflow is tested
+                groups = ""
+//"concordium-team, spaceseven-team" // TODO turn back on once the workflow is tested
             }
         }
 
