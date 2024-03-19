@@ -1126,29 +1126,64 @@
     <string name="unable_to_prove_request">You are unable to prove the entire request. You may go through the statements, but you won\'t be able to approve the request.</string>
 
     <string name="identity_proofs_age">Age</string>
-    <string name="identity_proofs_age_min">%1$d years or older</string>
-    <string name="identity_proofs_age_max">%1$d years or younger</string>
-    <string name="identity_proofs_age_exact">%1$d years old</string>
-    <string name="identity_proofs_age_between">%1$d to %2$d years old</string>
+    <plurals name="identity_proofs_age_min">
+        <item quantity="one">%1$d year or older</item>
+        <item quantity="other">%1$d years or older</item>
+    </plurals>
+    <plurals name="identity_proofs_age_max">
+        <item quantity="one">%1$d year or younger</item>
+        <item quantity="other">%1$d years or younger</item>
+    </plurals>
+    <plurals name="identity_proofs_age_exact">
+        <item quantity="one">%1$d year old</item>
+        <item quantity="other">%1$d years old</item>
+    </plurals>
+    <plurals name="identity_proofs_age_between">
+        <item quantity="one">%1$d to %2$d year old</item>
+        <item quantity="other">%1$d to %2$d years old</item>
+    </plurals>
 
     <string name="identity_proofs_date_after_inclusive">%1$s or later</string>
     <string name="identity_proofs_date_before">Before %1$s</string>
     <string name="identity_proofs_date_between">%1$s to %2$s</string>
-
     <string name="identity_proofs_generic_between">Between %1$s and %2$s</string>
 
     <string name="identity_proofs_eu_membership">EU</string>
     <string name="identity_proofs_non_eu_membership">Outside EU</string>
 
-    <string name="identity_proofs_countries">1 of %1$d countries</string>
-    <string name="identity_proofs_none_countries">None of %1$d countries</string>
+    <plurals name="identity_proofs_countries">
+        <item quantity="one">1 of %1$d country</item>
+        <item quantity="other">1 of %1$d countries</item>
+    </plurals>
+    <plurals name="identity_proofs_none_countries">
+        <item quantity="one">None of %1$d country</item>
+        <item quantity="other">None of %1$d countries</item>
+    </plurals>
 
-    <string name="identity_proofs_id_doc_types">1 of %1$d types</string>
-    <string name="identity_proofs_none_id_doc_types">None of %1$d types</string>
+    <plurals name="identity_proofs_id_doc_types">
+        <item quantity="one">1 of %1$d type</item>
+        <item quantity="other">1 of %1$d types</item>
+    </plurals>
+    <plurals name="identity_proofs_none_id_doc_types">
+        <item quantity="one">None of %1$d type</item>
+        <item quantity="other">None of %1$d types</item>
+    </plurals>
 
-    <string name="identity_proofs_id_doc_issuer">1 of %1$d issuers</string>
-    <string name="identity_proofs_none_id_doc_issuer">None of %1$d issuers</string>
+    <plurals name="identity_proofs_id_doc_issuer">
+        <item quantity="one">1 of %1$d issuer</item>
+        <item quantity="other">1 of %1$d issuers</item>
+    </plurals>
+    <plurals name="identity_proofs_none_id_doc_issuer">
+        <item quantity="one">None of %1$d issuer</item>
+        <item quantity="other">None of %1$d issuers</item>
+    </plurals>
 
-    <string name="identity_proofs_set_fallback">1 of %1$d values</string>
-    <string name="identity_proofs_set_non_fallback">None of %1$d values</string>
+    <plurals name="identity_proofs_set_fallback">
+        <item quantity="one">1 of %1$d value</item>
+        <item quantity="other">1 of %1$d values</item>
+    </plurals>
+    <plurals name="identity_proofs_set_non_fallback">
+        <item quantity="one">None of %1$d value</item>
+        <item quantity="other">None of %1$d values</item>
+    </plurals>
 </resources>

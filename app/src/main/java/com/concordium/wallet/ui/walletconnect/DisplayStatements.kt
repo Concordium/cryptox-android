@@ -205,18 +205,18 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
                     val ageMax = getYearFromDateString(today) - getYearFromDateString(addDays(lowerValue, -1)) - 1
 
                     if (lowerValue == MIN_DATE) {
-                        return context.getString(R.string.identity_proofs_age_min, ageMin)
+                        return context.resources.getQuantityString(R.plurals.identity_proofs_age_min, ageMin, ageMin)
                     }
 
                     if (upperValue > today) {
-                        return context.getString(R.string.identity_proofs_age_max, ageMax)
+                        return context.resources.getQuantityString(R.plurals.identity_proofs_age_max, ageMax, ageMax)
                     }
 
                     if (ageMin == ageMax) {
-                        return context.getString(R.string.identity_proofs_age_exact, ageMin)
+                        return context.resources.getQuantityString(R.plurals.identity_proofs_age_exact, ageMin, ageMin)
                     }
 
-                    return context.getString(R.string.identity_proofs_age_between, ageMin, ageMax)
+                    return context.resources.getQuantityString(R.plurals.identity_proofs_age_between, ageMax, ageMin, ageMax)
                 }
 
                 val minDateString = formatDateString(lowerValue)
@@ -271,16 +271,16 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
                 if (isEuCountrySet(setStatement.set.map { it.value })) {
                     return if (isMembershipStatement) context.getString(R.string.identity_proofs_eu_membership) else context.getString(R.string.identity_proofs_non_eu_membership)
                 }
-                return if (isMembershipStatement) context.getString(R.string.identity_proofs_countries, setSize) else context.getString(R.string.identity_proofs_none_countries, setSize)
+                return if (isMembershipStatement) context.resources.getQuantityString(R.plurals.identity_proofs_countries, setSize, setSize) else context.resources.getQuantityString(R.plurals.identity_proofs_none_countries, setSize, setSize)
             }
             AttributeType.ID_DOC_TYPE -> {
-                return if (isMembershipStatement) context.getString(R.string.identity_proofs_id_doc_types, setSize) else context.getString(R.string.identity_proofs_none_id_doc_types, setSize)
+                return if (isMembershipStatement) context.resources.getQuantityString(R.plurals.identity_proofs_id_doc_types, setSize, setSize) else context.resources.getQuantityString(R.plurals.identity_proofs_none_id_doc_types, setSize, setSize)
             }
             AttributeType.ID_DOC_ISSUER -> {
-                return if (isMembershipStatement) context.getString(R.string.identity_proofs_id_doc_issuer, setSize) else context.getString(R.string.identity_proofs_none_id_doc_issuer, setSize)
+                return if (isMembershipStatement) context.resources.getQuantityString(R.plurals.identity_proofs_id_doc_issuer, setSize, setSize) else context.resources.getQuantityString(R.plurals.identity_proofs_none_id_doc_issuer, setSize, setSize)
             }
             else -> {
-                return if (isMembershipStatement) context.getString(R.string.identity_proofs_set_fallback, setSize) else context.getString(R.string.identity_proofs_set_non_fallback, setSize)
+                return if (isMembershipStatement) context.resources.getQuantityString(R.plurals.identity_proofs_set_fallback, setSize, setSize) else context.resources.getQuantityString(R.plurals.identity_proofs_set_non_fallback, setSize, setSize)
             }
         }
     }
