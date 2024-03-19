@@ -695,7 +695,8 @@ private constructor(
             return
         }
         try {
-            val identityProofRequest = UnqualifiedRequest.fromJson(params)
+            val wrappedParams = Gson().fromJson(params, WalletConnectParamsWrapper::class.java)
+            val identityProofRequest = UnqualifiedRequest.fromJson(wrappedParams.paramsJson)
             sessionRequestIdentityRequest = identityProofRequest
 
             val identities = HashMap<Int, Identity>()
@@ -725,6 +726,8 @@ private constructor(
                     Error.InvalidRequest
                 )
             )
+            respondError("Invalid request")
+            mutableStateFlow.tryEmit(State.Idle)
             return
         }
     }
@@ -1240,7 +1243,11 @@ private constructor(
                 .build()
 
             val proof = Web3IdProof.getWeb3IdProof(input)
-            respondSuccess(result = proof)
+            val wrappedProof = VerifiablePresentationWrapper(
+                verifiablePresentationJson = proof
+            )
+            respondSuccess(result = Gson().toJson(wrappedProof))
+
             mutableStateFlow.tryEmit(State.Idle)
             handleNextOldestPendingSessionRequest()
         },
@@ -1703,6 +1710,23 @@ private constructor(
             val error: Error,
         ) : Event
     }
+
+    /**
+     * Wrapper for sending the verifiable presentation as JSON over WalletConnect. This is
+     * required to prevent WalletConnect from automatically parsing the JSON as an object
+     * on the dApp side.
+     */
+    private class VerifiablePresentationWrapper(
+        val verifiablePresentationJson: String
+    )
+
+    /**
+     * Wrapper for receiving parameters as JSON over WalletConnect. This is required to allow a
+     * dApp to send bigint values from the Javascript side.
+     */
+    private class WalletConnectParamsWrapper(
+        val paramsJson: String
+    )
 
     private companion object {
         private const val WC_URI_PREFIX = "wc:"
