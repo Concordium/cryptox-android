@@ -1281,14 +1281,27 @@ private constructor(
                 )
                 .build()
 
-            val proof = Web3IdProof.getWeb3IdProof(input)
-            val wrappedProof = VerifiablePresentationWrapper(
-                verifiablePresentationJson = proof
-            )
-            respondSuccess(result = Gson().toJson(wrappedProof))
+            try {
+                val proof = Web3IdProof.getWeb3IdProof(input)
 
-            mutableStateFlow.tryEmit(State.Idle)
-            handleNextOldestPendingSessionRequest()
+                val wrappedProof = VerifiablePresentationWrapper(
+                    verifiablePresentationJson = proof
+                )
+                respondSuccess(result = Gson().toJson(wrappedProof))
+
+                mutableStateFlow.tryEmit(State.Idle)
+                handleNextOldestPendingSessionRequest()
+            } catch (e: Exception) {
+                Log.e("failed_creating_verifiable_presentation", e)
+                respondError(
+                    message = "Unable to create verifiable presentation: internal error"
+                )
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.CryptographyFailed
+                    )
+                )
+            }
         },
             {
                 Log.e("Failed to retrieve global cryptographic parameters", it)
