@@ -148,7 +148,6 @@ private constructor(
     private lateinit var sessionRequestAccountTransactionParams: AccountTransactionParams
     private lateinit var sessionRequestAccountTransactionPayload: AccountTransactionPayload
     private lateinit var sessionRequestAccount: Account
-    private lateinit var sessionRequestIdentity: Identity
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private lateinit var sessionRequestTransactionCost: BigInteger
     private lateinit var sessionRequestTransactionNonce: AccountNonce
@@ -544,7 +543,6 @@ private constructor(
     private fun createIdentityProofRequestState(): State.SessionRequestReview {
         return State.SessionRequestReview.IdentityProofRequestReview(
             connectedAccount = sessionRequestAccount,
-            identity = sessionRequestIdentity,
             appMetadata = sessionRequestAppMetadata,
             request = sessionRequestIdentityRequest,
             chosenAccounts = sessionRequestIdentityProofAccounts,
@@ -767,7 +765,7 @@ private constructor(
         val accounts = getAvailableAccounts()
         val initialAccounts = sessionRequestIdentityRequest.credentialStatements.map { statement ->
             // Prefer session account
-            if (isValidIdentityForStatement(sessionRequestIdentity, statement))
+            if (isValidIdentityForStatement(identities[sessionRequestAccount.identityId]!!, statement))
                 sessionRequestAccount
             else {
                 // Otherwise find any account that can prove the statement
@@ -808,7 +806,6 @@ private constructor(
         mutableStateFlow.tryEmit(
             State.SessionRequestReview.IdentityProofRequestReview(
                 connectedAccount = sessionRequestAccount,
-                identity = sessionRequestIdentity,
                 appMetadata = sessionRequestAppMetadata,
                 request = sessionRequestIdentityRequest,
                 chosenAccounts = sessionRequestIdentityProofAccounts,
@@ -903,18 +900,7 @@ private constructor(
             return@launch
         }
 
-        val identity = identityRepository.findById(account.identityId)
-        if (identity == null) {
-            Log.e("Failed to find identity with id: ${account.identityId} for account with address: ${account.address}")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InternalError
-                )
-            )
-            return@launch
-        }
         this@WalletConnectViewModel.sessionRequestAccount = account
-        this@WalletConnectViewModel.sessionRequestIdentity = identity
 
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
@@ -1658,7 +1644,6 @@ private constructor(
          */
         sealed class SessionRequestReview(
             val account: Account,
-            val identity: Identity?,
             val appMetadata: AppMetadata,
             val canApprove: Boolean,
         ) : State {
@@ -1672,7 +1657,6 @@ private constructor(
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = account,
-                identity = null,
                 appMetadata = appMetadata,
                 canApprove = isEnoughFunds,
             )
@@ -1683,7 +1667,6 @@ private constructor(
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = account,
-                identity = null,
                 appMetadata = appMetadata,
                 canApprove = true,
             )
@@ -1694,12 +1677,10 @@ private constructor(
                 val currentStatement: Int,
                 provable: ProofProvableState,
                 connectedAccount: Account,
-                identity: Identity,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = connectedAccount,
                 appMetadata = appMetadata,
-                identity = identity,
                 // Check that we can prove the statement with current accounts
                 canApprove = provable == ProofProvableState.Provable
             )
