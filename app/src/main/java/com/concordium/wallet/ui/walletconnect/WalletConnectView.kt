@@ -8,6 +8,7 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager2.widget.ViewPager2.GONE
+import androidx.viewpager2.widget.ViewPager2.INVISIBLE
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
@@ -483,8 +484,38 @@ class WalletConnectView(
 
         appNameTextView.text = appMetadata.name
 
-        if (!viewModel.isStatementProvable()) {
-           view.unprovableStatement.visibility = VISIBLE
+        nextButton.setOnClickListener {
+            this.proofView.currentItem++
+        }
+
+        approveButton.setOnClickListener {
+            viewModel.approveSessionRequest()
+        }
+
+        declineButton.setOnClickListener {
+            viewModel.rejectSessionRequest()
+        }
+
+        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
+            lifecycleOwner = lifecycleOwner,
+            action = approveButton::setEnabled
+        )
+        when (viewModel.isStatementProvable()) {
+            WalletConnectViewModel.ProofProvableState.UnProvable -> {
+                view.unprovableStatement.visibility = VISIBLE
+            }
+            // Specially handle if there are no compatible issuer
+            WalletConnectViewModel.ProofProvableState.NoCompatibleIssuer -> {
+                view.proofView.visibility = INVISIBLE
+                view.pagerDots.visibility = GONE
+                view.unprovableStatement.visibility = VISIBLE
+                view.unprovableStatement.setText(R.string.noCredentialsForThatIssuer)
+                view.nextButton.visibility = GONE
+                return@with
+            }
+            else -> {
+                view.unprovableStatement.visibility = GONE
+            }
         }
 
         val adapter = CredentialStatementAdapter(
@@ -505,25 +536,8 @@ class WalletConnectView(
             }
         })
 
-        nextButton.setOnClickListener {
-            this.proofView.currentItem++
-        }
-
-        approveButton.setOnClickListener {
-            viewModel.approveSessionRequest()
-        }
-
-        declineButton.setOnClickListener {
-            viewModel.rejectSessionRequest()
-        }
-
         // Connect tab dots to the proofView pager
         TabLayoutMediator(pagerDots,this.proofView) { _, _ -> }.attach()
-
-        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
-            lifecycleOwner = lifecycleOwner,
-            action = approveButton::setEnabled
-        )
     }
 
     private fun showConnecting() {

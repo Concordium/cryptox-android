@@ -9,6 +9,8 @@ import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.IdentityQualifier
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.UnqualifiedRequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProof
 import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
@@ -154,8 +156,14 @@ private constructor(
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
     private var sessionRequestIdentityProofCurrentIndex: Int = 0
-    private var sessionRequestIdentityProofProvable: Boolean = false
+    private lateinit var sessionRequestIdentityProofProvable: ProofProvableState
     private val handledRequests = mutableSetOf<Long>()
+
+    enum class ProofProvableState {
+        Provable,
+        UnProvable,
+        NoCompatibleIssuer
+    }
 
     private val mutableStateFlow = MutableStateFlow<State>(State.Idle)
     val stateFlow: Flow<State> = mutableStateFlow
@@ -509,6 +517,7 @@ private constructor(
 
         viewModelScope.launch {
             val accounts = getAvailableAccounts()
+            val statement = sessionRequestIdentityRequest.credentialStatements[position]
 
             Log.d(
                 "switching_to_account_selection:" +
@@ -517,10 +526,7 @@ private constructor(
 
             val validAccounts = accounts.filter {
                 val identity = getIdentity(it) ?: return@filter false
-                val identityObject = getIdentityObject(identity)
-                sessionRequestIdentityRequest.credentialStatements[position].canBeProvedBy(
-                    identityObject
-                )
+                isValidIdentityForStatement(identity, statement)
             }
 
             mutableStateFlow.emit(
@@ -695,6 +701,11 @@ private constructor(
         mutableStateFlow.tryEmit(State.Idle)
     }
 
+    private fun isValidIdentityForStatement(identity: Identity, statement: UnqualifiedRequestStatement): Boolean {
+        return statement.idQualifier is IdentityQualifier
+                && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
+                && statement.canBeProvedBy(getIdentityObject(identity))
+    }
 
     /// Initializes session variables for proof request session.
     /// Returns a boolean indicating whether initialization succeeded.
@@ -706,7 +717,6 @@ private constructor(
                     Error.NotSeedPhraseWalletError
                 )
             )
-            rejectSessionRequest()
             return false
         }
         try {
@@ -741,16 +751,34 @@ private constructor(
         val accounts = getAvailableAccounts()
         val initialAccounts = sessionRequestIdentityRequest.credentialStatements.map { statement ->
             // Prefer session account
-            if (statement.canBeProvedBy(getIdentityObject(sessionRequestIdentity))) sessionRequestAccount else
-            // Otherwise find any account that can prove the statement
-                accounts.find { statement.canBeProvedBy(getIdentityObject(identities[it.identityId]!!)) }
+            if (isValidIdentityForStatement(sessionRequestIdentity, statement))
+                sessionRequestAccount
+            else {
+                // Otherwise find any account that can prove the statement
+                accounts.find {
+                    isValidIdentityForStatement(
+                        identities[it.identityId]!!,
+                        statement
+                    )
+                }
+            }
         }
 
         sessionRequestIdentityProofAccounts = if (initialAccounts.any { it == null }) {
-            sessionRequestIdentityProofProvable = false
+            // Check whether any statement does not have any account, which issuer is allowed.
+            if (identityProofRequest.credentialStatements.any {
+                s -> accounts.none {
+                    a -> (s.idQualifier as IdentityQualifier).issuers.contains(identities[a.identityId]!!.identityProviderId.toLong())
+                }
+            }) {
+                sessionRequestIdentityProofProvable = ProofProvableState.NoCompatibleIssuer
+            } else {
+                sessionRequestIdentityProofProvable = ProofProvableState.UnProvable
+            }
+
             initialAccounts.map { it ?: sessionRequestAccount }.toMutableList()
         } else {
-            sessionRequestIdentityProofProvable = true
+            sessionRequestIdentityProofProvable = ProofProvableState.Provable
             initialAccounts.requireNoNulls().toMutableList()
         }
         return true
@@ -1288,7 +1316,7 @@ private constructor(
         return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
-    fun isStatementProvable(): Boolean {
+    fun isStatementProvable(): ProofProvableState {
         return sessionRequestIdentityProofProvable
     }
 
@@ -1637,7 +1665,7 @@ private constructor(
                 val request: UnqualifiedRequest,
                 val chosenAccounts: List<Account>,
                 val currentStatement: Int,
-                provable: Boolean,
+                provable: ProofProvableState,
                 connectedAccount: Account,
                 identity: Identity,
                 appMetadata: AppMetadata,
@@ -1646,7 +1674,7 @@ private constructor(
                 appMetadata = appMetadata,
                 identity = identity,
                 // Check that we can prove the statement with current accounts
-                canApprove = provable
+                canApprove = provable == ProofProvableState.Provable
             )
         }
 
