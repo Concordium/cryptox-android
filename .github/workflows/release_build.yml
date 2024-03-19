@@ -6,6 +6,8 @@ on:
     tags:
       - "*.*.*"
       - "!*-*"
+    branches:
+      - "feature/build_pipelines" # TODO Remove once the workflow is tested
   workflow_dispatch:
 
 env:
@@ -22,6 +24,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Create signing configuration files
+        run: |
+          echo "$PLAY_UPLOAD_SIGNING_PROPERTIES" > app/play-upload-signing.properties
+          echo "$STANDALONE_RELEASE_SIGNING_PROPERTIES" > app/standalone-release-signing.properties
+        shell: bash
+        env:
+          PLAY_UPLOAD_SIGNING_PROPERTIES: ${{secrets.PLAY_UPLOAD_SIGNING_PROPERTIES}}
+          STANDALONE_RELEASE_SIGNING_PROPERTIES: ${{secrets.STANDALONE_RELEASE_SIGNING_PROPERTIES}}
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -42,11 +53,25 @@ jobs:
         env:
           SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
 
-      - name: Build Testnet APK and bundle
-        run: ./gradlew app:assembleTstnetRelease app:bundleTstnetRelease --stacktrace
+      - name: Build Testnet APK for standalone release
+        run: ./gradlew app:assembleTstnetRelease --stacktrace
+        env:
+          CONFIGURABLE_SIGNING_PROPERTIES_FILE: standalone-release-signing.properties
 
-      - name: Build Mainnet APK and bundle
-        run: ./gradlew app:assembleMainnetRelease app:bundleMainnetRelease --stacktrace
+      - name: Build Testnet bundle for Google Play upload
+        run: ./gradlew app:bundleTstnetRelease --stacktrace
+        env:
+          CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
+
+      - name: Build Mainnet APK for standalone release
+        run: ./gradlew app:assembleMainnetRelease --stacktrace
+        env:
+          CONFIGURABLE_SIGNING_PROPERTIES_FILE: standalone-release-signing.properties
+
+      - name: Build Mainnet bundle for Google Play upload
+        run: ./gradlew app:bundleMainnetRelease --stacktrace
+        env:
+          CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
 
       - name: Upload the APKs and bundles
         uses: actions/upload-artifact@v3
