@@ -10,6 +10,7 @@ import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.IdentityQualifier
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.StatementType
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.UnqualifiedRequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProof
@@ -690,8 +691,8 @@ private constructor(
         }
     }
 
-    private fun onInvalidRequest(responseMessage: String, e: Exception) {
-        Log.e(responseMessage, e)
+    private fun onInvalidRequest(responseMessage: String, e: Exception? = null) {
+        if (e == null ) Log.e(responseMessage) else Log.e(responseMessage, e)
         mutableEventsFlow.tryEmit(
             Event.ShowFloatingError(
                 Error.InvalidRequest
@@ -701,7 +702,10 @@ private constructor(
         mutableStateFlow.tryEmit(State.Idle)
     }
 
-    private fun isValidIdentityForStatement(identity: Identity, statement: UnqualifiedRequestStatement): Boolean {
+    private fun isValidIdentityForStatement(
+        identity: Identity,
+        statement: UnqualifiedRequestStatement
+    ): Boolean {
         return statement.idQualifier is IdentityQualifier
                 && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
                 && statement.canBeProvedBy(getIdentityObject(identity))
@@ -727,12 +731,20 @@ private constructor(
             onInvalidRequest("Failed to parse identity proof request parameters: $params", e)
             return false
         }
+
+        if (sessionRequestIdentityRequest.credentialStatements.any { it.statementType == StatementType.SmartContract }) {
+            onInvalidRequest("Web3Id statements are not supported.")
+            return false
+        }
+
         sessionRequestIdentityProofCurrentIndex = 0
         try {
             // Check that the statement is acceptable. Using the session account here to qualify
             // is sufficient because we don't check that the statement is provable.
-            val network = if (BuildConfig.ENV_NAME == "production") Network.MAINNET else Network.TESTNET
-            val credId = CredentialRegistrationId.from(sessionRequestAccount.credential!!.getCredId()!!)
+            val network =
+                if (BuildConfig.ENV_NAME == "production") Network.MAINNET else Network.TESTNET
+            val credId =
+                CredentialRegistrationId.from(sessionRequestAccount.credential!!.getCredId()!!)
             AcceptableRequest.acceptableRequest(sessionRequestIdentityRequest.qualify { stat ->
                 stat.qualify(
                     credId,
@@ -766,14 +778,18 @@ private constructor(
 
         sessionRequestIdentityProofAccounts = if (initialAccounts.any { it == null }) {
             // Check whether any statement does not have any account, which issuer is allowed.
-            if (identityProofRequest.credentialStatements.any {
-                s -> accounts.none {
-                    a -> (s.idQualifier as IdentityQualifier).issuers.contains(identities[a.identityId]!!.identityProviderId.toLong())
+            val noCompatibleIssuers =
+                sessionRequestIdentityRequest.credentialStatements.any { statement ->
+                    accounts.none { account ->
+                        (statement.idQualifier as IdentityQualifier).issuers.contains(
+                            identities[account.identityId]!!.identityProviderId.toLong()
+                        )
+                    }
                 }
-            }) {
-                sessionRequestIdentityProofProvable = ProofProvableState.NoCompatibleIssuer
+            sessionRequestIdentityProofProvable = if (noCompatibleIssuers) {
+                ProofProvableState.NoCompatibleIssuer
             } else {
-                sessionRequestIdentityProofProvable = ProofProvableState.UnProvable
+                ProofProvableState.UnProvable
             }
 
             initialAccounts.map { it ?: sessionRequestAccount }.toMutableList()
@@ -902,6 +918,7 @@ private constructor(
             REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
                 if (initializeProofRequestSession(params)) handleIdentityProofRequest()
             }
+
             else -> {
                 val unsupportedMethodMessage =
                     "Received an unsupported WalletConnect method request: $method"
@@ -1442,11 +1459,12 @@ private constructor(
 
             is State.AccountSelection -> {
                 if ((state as State.AccountSelection).identityProofPosition != null) {
-                   rejectSessionRequest()
+                    rejectSessionRequest()
                 } else {
                     rejectSessionProposal()
                 }
             }
+
             is State.SessionProposalReview -> {
                 rejectSessionProposal()
             }
