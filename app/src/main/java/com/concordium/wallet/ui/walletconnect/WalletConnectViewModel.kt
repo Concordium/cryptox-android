@@ -541,20 +541,24 @@ private constructor(
         }
     }
 
+    private fun createIdentityProofRequestState(): State.SessionRequestReview {
+        return State.SessionRequestReview.IdentityProofRequestReview(
+            connectedAccount = sessionRequestAccount,
+            identity = sessionRequestIdentity,
+            appMetadata = sessionRequestAppMetadata,
+            request = sessionRequestIdentityRequest,
+            chosenAccounts = sessionRequestIdentityProofAccounts,
+            currentStatement = sessionRequestIdentityProofCurrentIndex,
+            provable = sessionRequestIdentityProofProvable
+        )
+    }
+
     private fun onAccountSelectedIdentityProof(selectedAccount: Account, position: Int) {
         sessionRequestIdentityProofAccounts[position] = selectedAccount
 
         viewModelScope.launch {
             mutableStateFlow.tryEmit(
-                State.SessionRequestReview.IdentityProofRequestReview(
-                    connectedAccount = sessionRequestAccount,
-                    identity = sessionRequestIdentity,
-                    appMetadata = sessionRequestAppMetadata,
-                    request = sessionRequestIdentityRequest,
-                    chosenAccounts = sessionRequestIdentityProofAccounts,
-                    currentStatement = sessionRequestIdentityProofCurrentIndex,
-                    provable = sessionRequestIdentityProofProvable
-                )
+                createIdentityProofRequestState()
             )
         }
     }
@@ -692,7 +696,7 @@ private constructor(
     }
 
     private fun onInvalidRequest(responseMessage: String, e: Exception? = null) {
-        if (e == null ) Log.e(responseMessage) else Log.e(responseMessage, e)
+        if (e == null) Log.e(responseMessage) else Log.e(responseMessage, e)
         mutableEventsFlow.tryEmit(
             Event.ShowFloatingError(
                 Error.InvalidRequest
@@ -1458,7 +1462,7 @@ private constructor(
             }
 
             is State.AccountSelection -> {
-                if ((state as State.AccountSelection).identityProofPosition != null) {
+                if ((state as State.AccountSelection).forIdentityProof) {
                     rejectSessionRequest()
                 } else {
                     rejectSessionProposal()
@@ -1490,14 +1494,17 @@ private constructor(
         when (val state = this.state) {
             is State.AccountSelection -> {
                 Log.d(
-                    "switching_back_to_session_proposal_review"
+                    "switching_back_from_account_selection"
                 )
 
                 mutableStateFlow.tryEmit(
-                    State.SessionProposalReview(
-                        selectedAccount = state.selectedAccount,
-                        appMetadata = state.appMetadata,
-                    )
+                    if (state.forIdentityProof)
+                        createIdentityProofRequestState()
+                    else
+                        State.SessionProposalReview(
+                            selectedAccount = state.selectedAccount,
+                            appMetadata = state.appMetadata,
+                        )
                 )
                 true
             }
@@ -1636,7 +1643,9 @@ private constructor(
             val accounts: List<Account>,
             val identityProofPosition: Int?,
             val appMetadata: AppMetadata,
-        ) : State
+        ) : State {
+            val forIdentityProof = identityProofPosition != null
+        }
 
         /**
          * Explicitly waiting for a session request after receiving a request URI.
