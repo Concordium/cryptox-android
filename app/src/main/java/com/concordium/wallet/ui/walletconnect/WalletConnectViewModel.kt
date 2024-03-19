@@ -155,7 +155,6 @@ private constructor(
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
-    private var sessionRequestIdentityProofCurrentIndex: Int = 0
     private lateinit var sessionRequestIdentityProofProvable: ProofProvableState
     private val handledRequests = mutableSetOf<Long>()
 
@@ -497,7 +496,7 @@ private constructor(
                     "\nnewSelectedAccountId=${selectedAccount.id}"
         )
 
-        if (selectionState.identityProofPosition == null) {
+        if (!selectionState.forIdentityProof) {
             mutableStateFlow.tryEmit(
                 State.SessionProposalReview(
                     selectedAccount = selectedAccount,
@@ -505,14 +504,14 @@ private constructor(
                 )
             )
         } else {
-            onAccountSelectedIdentityProof(selectedAccount, selectionState.identityProofPosition)
+            onAccountSelectedIdentityProof(selectedAccount, selectionState.identityProofPosition!!)
         }
     }
 
     fun onChooseAccountIdentityProof(position: Int) {
         val proofRequestReview =
             checkNotNull(state as? State.SessionRequestReview.IdentityProofRequestReview) {
-                "Choose account button can only be clicked in the proposal review state"
+                "Choose account button can only be clicked in the proof request review state"
             }
 
         viewModelScope.launch {
@@ -540,29 +539,22 @@ private constructor(
         }
     }
 
-    private fun createIdentityProofRequestState(): State.SessionRequestReview {
+    private fun createIdentityProofRequestState(currentStatement: Int): State.SessionRequestReview {
         return State.SessionRequestReview.IdentityProofRequestReview(
             connectedAccount = sessionRequestAccount,
             appMetadata = sessionRequestAppMetadata,
             request = sessionRequestIdentityRequest,
             chosenAccounts = sessionRequestIdentityProofAccounts,
-            currentStatement = sessionRequestIdentityProofCurrentIndex,
+            currentStatement = currentStatement,
             provable = sessionRequestIdentityProofProvable
         )
     }
 
     private fun onAccountSelectedIdentityProof(selectedAccount: Account, position: Int) {
         sessionRequestIdentityProofAccounts[position] = selectedAccount
-
-        viewModelScope.launch {
-            mutableStateFlow.tryEmit(
-                createIdentityProofRequestState()
-            )
-        }
-    }
-
-    fun onStatementSelected(position: Int) {
-        sessionRequestIdentityProofCurrentIndex = position
+        mutableStateFlow.tryEmit(
+            createIdentityProofRequestState(position)
+        )
     }
 
     override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
@@ -739,7 +731,6 @@ private constructor(
             return false
         }
 
-        sessionRequestIdentityProofCurrentIndex = 0
         try {
             // Check that the statement is acceptable. Using the session account here to qualify
             // is sufficient because we don't check that the statement is provable.
@@ -800,19 +791,6 @@ private constructor(
             initialAccounts.requireNoNulls().toMutableList()
         }
         return true
-    }
-
-    private fun handleIdentityProofRequest() {
-        mutableStateFlow.tryEmit(
-            State.SessionRequestReview.IdentityProofRequestReview(
-                connectedAccount = sessionRequestAccount,
-                appMetadata = sessionRequestAppMetadata,
-                request = sessionRequestIdentityRequest,
-                chosenAccounts = sessionRequestIdentityProofAccounts,
-                currentStatement = sessionRequestIdentityProofCurrentIndex,
-                provable = sessionRequestIdentityProofProvable
-            )
-        )
     }
 
     /**
@@ -906,7 +884,10 @@ private constructor(
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
             REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
-                if (initializeProofRequestSession(params)) handleIdentityProofRequest()
+                if (initializeProofRequestSession(params))
+                    mutableStateFlow.tryEmit(
+                        createIdentityProofRequestState(0)
+                    )
             }
 
             else -> {
@@ -1323,7 +1304,7 @@ private constructor(
         return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
-    fun isStatementProvable(): ProofProvableState {
+    fun getProofProvableState(): ProofProvableState {
         return sessionRequestIdentityProofProvable
     }
 
@@ -1485,7 +1466,7 @@ private constructor(
 
                 mutableStateFlow.tryEmit(
                     if (state.forIdentityProof)
-                        createIdentityProofRequestState()
+                        createIdentityProofRequestState(state.identityProofPosition!!)
                     else
                         State.SessionProposalReview(
                             selectedAccount = state.selectedAccount,

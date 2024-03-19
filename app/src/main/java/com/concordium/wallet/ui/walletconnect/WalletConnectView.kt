@@ -500,7 +500,7 @@ class WalletConnectView(
             lifecycleOwner = lifecycleOwner,
             action = approveButton::setEnabled
         )
-        when (viewModel.isStatementProvable()) {
+        when (viewModel.getProofProvableState()) {
             WalletConnectViewModel.ProofProvableState.UnProvable -> {
                 view.unprovableStatement.visibility = VISIBLE
             }
@@ -528,7 +528,6 @@ class WalletConnectView(
         this.proofView.registerOnPageChangeCallback(object: OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                viewModel.onStatementSelected(position)
                 if (position == statements.size - 1) {
                     this@with.approveButton.visibility = VISIBLE
                     this@with.nextButton.visibility = GONE
