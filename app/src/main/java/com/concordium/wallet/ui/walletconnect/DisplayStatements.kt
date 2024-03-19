@@ -124,9 +124,9 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
     private fun getStatementDescription(atomicStatement: AtomicStatement): String {
         val name = IdentityAttributeConverterUtil.convertAttributeTag(context, atomicStatement.attributeTag)
         return when (atomicStatement) {
-            is RangeStatement -> "This will prove that your $name is between ${getPropertyValue(atomicStatement.attributeTag, atomicStatement.lower.value)} and ${getPropertyValue(atomicStatement.attributeTag, atomicStatement.upper.value)}"
-            is MembershipStatement -> "This will prove that your $name is 1 of the following: ${atomicStatement.set.joinToString { getPropertyValue(atomicStatement.attributeTag, it.value) }}"
-            is NonMembershipStatement -> "This will prove that your $name is none of the following: ${atomicStatement.set.joinToString { getPropertyValue(atomicStatement.attributeTag, it.value) }}"
+            is RangeStatement -> context.getString(R.string.identity_proofs_range_statement_description, name, getPropertyValue(atomicStatement.attributeTag, atomicStatement.lower.value), getPropertyValue(atomicStatement.attributeTag, atomicStatement.upper.value))
+            is MembershipStatement -> context.getString(R.string.identity_proofs_membership_statement_description, name, atomicStatement.set.joinToString { getPropertyValue(atomicStatement.attributeTag, it.value) })
+            is NonMembershipStatement -> context.getString(R.string.identity_proofs_non_membership_statement_description, name, atomicStatement.set.joinToString { getPropertyValue(atomicStatement.attributeTag, it.value) })
             else -> throw IllegalArgumentException("Unknown statement type")
         }
     }

@@ -1186,4 +1186,8 @@
         <item quantity="one">None of %1$d value</item>
         <item quantity="other">None of %1$d values</item>
     </plurals>
+
+    <string name="identity_proofs_range_statement_description">This will prove that your %1$s is between %2$s and %3$s</string>
+    <string name="identity_proofs_membership_statement_description">This will prove that your %1$s is 1 of the following: %2$s</string>
+    <string name="identity_proofs_non_membership_statement_description">This will prove that your %1$s is none of the following: %2$s</string>
 </resources>
