@@ -142,6 +142,11 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         return IdentityAttributeConverterUtil.convertAttributeValue(context, attributeTag, attributeValue)
     }
 
+    /**
+     * @param date, the date string which days are added to.
+     * It is assumed to be on the form "YYYYMMDD"
+     * @returns A new date string on the form "YYYYMMDD"
+     */
     private fun addDays(date: String, days: Long): String {
         val dateObject = DateTimeUtil.parseLongDate(date)
             ?: throw RuntimeException("Failed to parse date: $date")
@@ -149,6 +154,9 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         return dateToDateString(dateWithDaysAdded)
     }
 
+    /**
+     * Change a date to a string on the form "YYYYMMDD"
+     */
     private fun dateToDateString(date: LocalDateTime): String {
         val day = date.dayOfMonth.toString().padStart(2, '0')
         val month = date.monthValue.toString().padStart(2, '0')
@@ -179,14 +187,27 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         }
     }
 
+    /**
+     * @param date, the date string from which the year should be extracted from.
+     * It is assumed to be on the form "YYYYMMDD"
+     * @returns the year as an integer
+     */
     private fun getYearFromDateString(date: String): Int {
         return Integer.parseInt(date.substring(0, 4))
     }
 
+    /**
+     * @param date, the date string that should be formatted for display.
+     * It is assumed to be on the form "YYYYMMDD"
+     */
     private fun formatDateString(date: String): String {
         return date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6)
     }
 
+    /**
+     * returns a date string for the specified years ago with the specified day offset.
+     * @return A string on the form "YYYYMMDD"
+     */
     private fun getPastDate(yearsAgo: Long, daysOffset: Long = 0): String {
         val now = LocalDateTime.now().minusYears(yearsAgo).minusDays(daysOffset)
         return dateToDateString(now)
