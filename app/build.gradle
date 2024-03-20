@@ -21,7 +21,7 @@ android {
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 0
-    def versionMinor = 6
+    def versionMinor = 0
     def versionPatch = 1
     def versionMeta = "-oko.1" // TODO Remove once the workflow is tested
     def versionCodeIncremental = 1360
@@ -110,7 +110,8 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:44ec3892cba12e73c7e1d6'
-                groups = "concordium-team"
+                groups = ""//"concordium-team"
+                // TODO turn back on once the workflow is tested
             }
         }
 
@@ -169,7 +170,8 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = ""//"concordium-team, spaceseven-team"
+                // TODO turn back on once the workflow is tested
             }
         }
     }
