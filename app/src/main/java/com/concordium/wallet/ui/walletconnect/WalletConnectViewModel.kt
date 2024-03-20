@@ -1317,10 +1317,6 @@ private constructor(
         return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
-    fun getProofProvableState(): ProofProvableState {
-        return sessionRequestIdentityProofProvable
-    }
-
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
         val signMessageInput = SignMessageInput(
             address = sessionRequestAccount.address,
@@ -1669,7 +1665,7 @@ private constructor(
                 val request: UnqualifiedRequest,
                 val chosenAccounts: List<Account>,
                 val currentStatement: Int,
-                provable: ProofProvableState,
+                val provable: ProofProvableState,
                 connectedAccount: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(

@@ -132,7 +132,8 @@ class WalletConnectView(
                     accounts = state.chosenAccounts,
                     appMetadata = state.appMetadata,
                     statements = state.request.credentialStatements,
-                    currentStatement = state.currentStatement
+                    currentStatement = state.currentStatement,
+                    provableState = state.provable
                 )
             }
 
@@ -454,7 +455,8 @@ class WalletConnectView(
         statements: List<RequestStatement>,
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
-        currentStatement: Int
+        currentStatement: Int,
+        provableState: WalletConnectViewModel.ProofProvableState
     ) {
         getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
             initIdentityProofRequestReview(
@@ -463,7 +465,8 @@ class WalletConnectView(
                 accounts = accounts,
                 appMetadata = appMetadata,
                 statements = statements,
-                currentStatement = currentStatement
+                currentStatement = currentStatement,
+                provableState = provableState
             )
         }
     }
@@ -474,7 +477,8 @@ class WalletConnectView(
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
         statements: List<RequestStatement>,
-        currentStatement: Int
+        currentStatement: Int,
+        provableState: WalletConnectViewModel.ProofProvableState
     ) = with(view) {
         Glide.with(appIconImageView.context)
             .load(appMetadata.iconUrl)
@@ -500,7 +504,7 @@ class WalletConnectView(
             lifecycleOwner = lifecycleOwner,
             action = approveButton::setEnabled
         )
-        when (viewModel.getProofProvableState()) {
+        when (provableState) {
             WalletConnectViewModel.ProofProvableState.UnProvable -> {
                 view.unprovableStatement.visibility = VISIBLE
             }
