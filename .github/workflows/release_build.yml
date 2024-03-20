@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create signing configuration files
         run: |
@@ -32,7 +32,7 @@ jobs:
           STANDALONE_RELEASE_SIGNING_PROPERTIES: ${{secrets.STANDALONE_RELEASE_SIGNING_PROPERTIES}}
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: "${{env.java_version}}"
           distribution: corretto
@@ -71,7 +71,7 @@ jobs:
           CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
 
       - name: Upload the APKs and bundles
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: APKs and bundles
           path: |
