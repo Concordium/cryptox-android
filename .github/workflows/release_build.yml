@@ -1,4 +1,4 @@
-name: Build release packages for Google Play publishing
+name: Build release packages for Google Play and standalone publishing
 
 on:
   push:
@@ -6,8 +6,6 @@ on:
     tags:
       - "*.*.*"
       - "!*-*"
-    branches:
-      - "feature/build_pipelines" # TODO Remove once the workflow is tested
   workflow_dispatch:
 
 env:
@@ -18,8 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: Google Play
-      url: https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet
+      name: Releases
 
     steps:
       - name: Checkout
