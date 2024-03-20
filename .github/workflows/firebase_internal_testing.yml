@@ -6,7 +6,6 @@ on:
     tags:
       - "*-qa.*"
       - "*-rc.*"
-      - "*-oko.*" # TODO Remove once the workflow is tested
   workflow_dispatch:
 
 env:
