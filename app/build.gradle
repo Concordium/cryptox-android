@@ -23,7 +23,7 @@ android {
     def versionMajor = 0
     def versionMinor = 0
     def versionPatch = 1
-    def versionMeta = "-oko.1" // TODO Remove once the workflow is tested
+    def versionMeta = ""
     def versionCodeIncremental = 1360
 
     compileSdkVersion 34
