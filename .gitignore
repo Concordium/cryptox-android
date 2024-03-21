@@ -39,8 +39,3 @@ captures/
 *.iml
 .idea/
 /workspace.xml
-
-# Keys and secrets
-*.jks
-!app/dev-only-signing.jks
-app/secret/

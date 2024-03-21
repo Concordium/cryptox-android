@@ -1,2 +1,0 @@
-Fixed:
-- WAL-61 improper handling of rejected identity verification

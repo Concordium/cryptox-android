@@ -1,0 +1,65 @@
+name: Distribute builds for internal testing through Firebase
+
+on:
+  push:
+    # Run for QA builds and release candidates.
+    tags:
+      - "*-qa.*"
+      - "*-rc.*"
+  workflow_dispatch:
+
+env:
+  java_version: "11"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Internal testing
+      url: https://console.firebase.google.com/project/concordiummobilewallet/appdistribution/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Firebase credentials file
+        run: 'echo "$CREDENTIALS" > app/app-distribution-credentials.json'
+        shell: bash
+        env:
+          CREDENTIALS: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "${{env.java_version}}"
+          distribution: corretto
+          cache: gradle
+
+      - name: Check if build version matches the tag
+        run: |
+          buildVersion="$(./gradlew -q printVersionName)"
+          tagVersion="${GITHUB_REF#refs/tags/}"
+          if [ "$buildVersion" != "$tagVersion" ]; then
+            echo "Build version '$buildVersion' doesn't match the tag '$tagVersion'"
+            exit 1
+          fi
+        shell: bash
+        env:
+          SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+
+      - name: Build and distribute Testnet APK
+        run: ./gradlew app:assembleTstnetRelease app:appDistributionUploadTstnetRelease --stacktrace
+
+      - name: Build and distribute Stagenet APK
+        run: ./gradlew app:assembleStagenetRelease app:appDistributionUploadStagenetRelease --stacktrace
+
+      - name: Build and distribute Mainnet APK
+        run: ./gradlew app:assembleMainnetRelease app:appDistributionUploadMainnetRelease --stacktrace
+
+      - name: Upload the APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: APKs
+          path: app/build/outputs/**/*.apk
+          compression-level: 0
