@@ -1080,7 +1080,7 @@ private constructor(
                                     parameter = accountTransactionPayload.message,
                                     receiveName = accountTransactionPayload.receiveName,
                                     schema = accountTransactionParamsSchema,
-                                    null
+                                    schemaVersion = accountTransactionParamsSchema.version,
                                 )
                             )
                             ?.prettyPrint()
