@@ -1,4 +1,4 @@
-import java.text.SimpleDateFormat
+import com.android.build.gradle.internal.tasks.FinalizeBundleTask
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -12,45 +12,29 @@ def SCHEME_BASE = "cryptoxmwallet"
 def WC_SCHEME_BASE = "cryptox-wc"
 def PROVIDER_AUTHORITY_BASE = "com.pioneeringtechventures.wallet.DataFileProvider"
 
-static def buildTime() {
-    def dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
-    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return dateFormat.format(new Date())
-}
-
-static def buildTimeTicks() {
-    def time = System.currentTimeMillis()
-    return time
-}
-
-int extractVersionCode() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        workingDir projectDir
-        executable 'git'
-        args 'rev-list', '--count', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim().toInteger()
-}
+def configurableSigningProperties = new Properties()
+configurableSigningProperties.load(new FileInputStream(
+        file(System.getenv("CONFIGURABLE_SIGNING_PROPERTIES_FILE") ?: "dev-signing.properties")
+))
 
 android {
-    def vCode = 1300 + extractVersionCode()
+    // This project uses semantic versioning
+    // https://semver.org/
+    def versionMajor = 0
+    def versionMinor = 6
+    def versionPatch = 1
+    def versionMeta = "-qa.10"
+    def versionCodeIncremental = 1360
+
     compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
-
         minSdkVersion 26
         targetSdkVersion 34
-        versionCode vCode
-        versionName "0.6.1-qa.10"
-
+        versionCode versionCodeIncremental
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionMeta}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "BUILD_NUMBER", "\"${vCode}\"")
-        buildConfigField("String", "BUILD_TIME", "\"${buildTime()}\"")
-        buildConfigField("String", "BUILD_TIME_TICKS", "\"${buildTimeTicks()}\"")
 
         buildConfigField("boolean", "USE_BACKEND_MOCK", "false")
         buildConfigField("boolean", "INCL_DEV_OPTIONS", "false")
@@ -68,20 +52,17 @@ android {
         }
 
         firebaseAppDistribution {
-            serviceCredentialsFile = file("secret/app-distribution-key.json")
-            releaseNotesFile = file("app-distribution-release-notes.txt")
+            // This file is created by CI.
+            serviceCredentialsFile = file("app-distribution-credentials.json")
         }
     }
 
     signingConfigs {
-        // A signature to be used for pre-release app distribution.
-        // Unlike the debug signing config, it does not depend on
-        // developer's personal debug keypair.
-        dev {
-            storeFile file("dev-only-signing.jks")
-            storePassword "concordium"
-            keyAlias "dev-sign-1"
-            keyPassword "concordium"
+        configurable {
+            storeFile file(configurableSigningProperties['storeFile'])
+            storePassword configurableSigningProperties['storePassword']
+            keyAlias configurableSigningProperties['keyAlias']
+            keyPassword configurableSigningProperties['keyPassword']
         }
     }
 
@@ -92,8 +73,7 @@ android {
 
         release {
             debuggable false
-            // Only used for CLI builds.
-            signingConfig signingConfigs.dev
+            signingConfig signingConfigs.configurable
             // Unlocking requires vigilant testing.
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -114,13 +94,13 @@ android {
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
-            def scheme = SCHEME_BASE+"-stagenet"
+            def scheme = SCHEME_BASE + "-stagenet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
 
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE+"-stagenet"}\""
+            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-stagenet"}\""
 
-            def providerAuthority = PROVIDER_AUTHORITY_BASE+"-stagenet"
+            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-stagenet"
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
@@ -146,13 +126,13 @@ android {
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
-            def scheme = SCHEME_BASE+"-testnet"
+            def scheme = SCHEME_BASE + "-testnet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
 
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE+"-testnet"}\""
+            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-testnet"}\""
 
-            def providerAuthority = PROVIDER_AUTHORITY_BASE+"-testnet"
+            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-testnet"
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
@@ -188,7 +168,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
-                groups = "concordium-team"
+                groups = "concordium-team, spaceseven-team"
             }
         }
     }
@@ -213,6 +193,27 @@ android {
         viewBinding true
     }
     namespace 'com.concordium.wallet'
+
+    // Set meaningful names for build artifacts.
+    applicationVariants.all { variant ->
+        def flavor = variant.productFlavors[0].name
+        def artifactName = "cryptox-" +
+                flavor + "-" +
+                variant.buildType.name + "-" +
+                variant.versionName
+
+        // APK.
+        variant.outputs.all {
+            outputFileName = artifactName + ".apk"
+        }
+
+        // AAB.
+        tasks.named("sign${variant.name.capitalize()}Bundle", FinalizeBundleTask) {
+            File file = finalBundleFile.asFile.get()
+            File finalFile = new File(file.parentFile, artifactName + ".aab")
+            finalBundleFile.set(finalFile)
+        }
+    }
 }
 
 dependencies {
@@ -320,4 +321,11 @@ dependencies {
 
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
+}
+
+task printVersionName {
+    group = "help"
+    doLast {
+        println android.defaultConfig.versionName
+    }
 }
