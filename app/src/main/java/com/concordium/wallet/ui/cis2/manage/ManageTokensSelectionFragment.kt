@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -75,6 +77,10 @@ class ManageTokensSelectionFragment : Fragment() {
             }
         })
 
+        with(binding.search.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)) {
+            setTextColor(ContextCompat.getColor(context, R.color.cryptox_white_main))
+            setHintTextColor(ContextCompat.getColor(context, R.color.cryptox_black_additional))
+        }
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 selectionAdapter.dataSet = emptyArray()
@@ -105,7 +111,8 @@ class ManageTokensSelectionFragment : Fragment() {
             }
         }
 
-        selectionAdapter.setTokenClickListener(object : ManageTokensSelectionAdapter.TokenClickListener {
+        selectionAdapter.setTokenClickListener(object :
+            ManageTokensSelectionAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseTokenInfo.postValue(token)
                 _viewModel.stepPage(1)
