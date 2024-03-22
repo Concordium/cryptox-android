@@ -216,7 +216,19 @@ android {
     }
 }
 
+allprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs).configureEach {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+
 dependencies {
+
+    implementation("com.concordium.sdk:concordium-android-sdk:7.1.0") {
+        exclude group: "org.bouncycastle"
+        exclude group: "net.jcip"
+    }
+
     def lifecycle_version = "2.4.0"
     def room_version = "2.5.0"
 
@@ -321,6 +333,11 @@ dependencies {
 
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
+
+    // Jackson
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.10.1'
 }
 
 task printVersionName {
