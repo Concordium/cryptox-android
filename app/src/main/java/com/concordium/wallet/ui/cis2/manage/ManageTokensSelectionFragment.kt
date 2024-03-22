@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +13,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
 import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.util.KeyboardUtil
 
 class ManageTokensSelectionFragment : Fragment() {
     private var _binding: FragmentManageTokensSelectionBinding? = null
@@ -52,7 +55,6 @@ class ManageTokensSelectionFragment : Fragment() {
     }
 
     private fun initViews() {
-        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
         selectionAdapter = ManageTokensSelectionAdapter(requireActivity(), arrayOf())
         selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
 
@@ -73,8 +75,37 @@ class ManageTokensSelectionFragment : Fragment() {
             }
         })
 
-        selectionAdapter.setTokenClickListener(object :
-            ManageTokensSelectionAdapter.TokenClickListener {
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                selectionAdapter.dataSet = emptyArray()
+                selectionAdapter.notifyDataSetChanged()
+
+                _viewModel.lookForExactToken(
+                    apparentTokenId = query?.trim() ?: "",
+                    accountAddress = _viewModel.tokenData.account!!.address,
+                )
+
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrBlank()) {
+                    selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+                    selectionAdapter.notifyDataSetChanged()
+
+                    _viewModel.dismissExactTokenLookup()
+                }
+                return true
+            }
+        })
+
+        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                KeyboardUtil.hideKeyboard(requireActivity())
+            }
+        }
+
+        selectionAdapter.setTokenClickListener(object : ManageTokensSelectionAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseTokenInfo.postValue(token)
                 _viewModel.stepPage(1)
@@ -86,6 +117,7 @@ class ManageTokensSelectionFragment : Fragment() {
         })
 
         binding.back.setOnClickListener {
+            binding.search.setQuery("", false)
             _viewModel.stepPage(-1)
         }
 
@@ -97,8 +129,14 @@ class ManageTokensSelectionFragment : Fragment() {
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
-            _viewModel.searchedTokens.clear()
             selectionAdapter.notifyDataSetChanged()
+        }
+        _viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
+            binding.noTokensFound.isVisible = status == TokensViewModel.TOKENS_EMPTY
+            if (status == TokensViewModel.TOKENS_OK) {
+                selectionAdapter.dataSet = arrayOf(checkNotNull(_viewModel.exactToken))
+                selectionAdapter.notifyDataSetChanged()
+            }
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()

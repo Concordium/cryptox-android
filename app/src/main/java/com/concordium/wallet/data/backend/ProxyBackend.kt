@@ -1,10 +1,31 @@
 package com.concordium.wallet.data.backend
 
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountKeyData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.AccountTransactions
+import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.CIS2Tokens
+import com.concordium.wallet.data.model.CIS2TokensBalances
+import com.concordium.wallet.data.model.CIS2TokensMetadata
+import com.concordium.wallet.data.model.ChainParameters
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.IdentityContainer
+import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.PassiveDelegation
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ProxyBackend {
 
@@ -100,25 +121,25 @@ interface ProxyBackend {
     fun getAccountEncryptedKey(@Path("accountAddress") accountAddress: String): Call<AccountKeyData>
 
     @GET("v0/CIS2Tokens/{index}/{subIndex}")
-    fun cis2Tokens(
+    suspend fun cis2Tokens(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Query("from") from: String? = null,
         @Query("limit") limit: Int? = null
-    ): Call<CIS2Tokens>
+    ): CIS2Tokens
 
-    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
-    fun cis2TokenMetadata(
+    @GET("v1/CIS2TokenMetadata/{index}/{subIndex}")
+    suspend fun cis2TokenMetadataV1(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Query("tokenId") tokenId: String
-    ): Call<CIS2TokensMetadata>
+    ): CIS2TokensMetadata
 
-    @GET("v0/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
-    fun cis2TokenBalance(
+    @GET("v1/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
+    suspend fun cis2TokenBalanceV1(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Path("accountAddress") accountAddress: String,
         @Query("tokenId") tokenId: String
-    ): Call<CIS2TokensBalances>
+    ): CIS2TokensBalances
 }
