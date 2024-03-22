@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  java_version: "11"
+  java_version: "17"
 
 jobs:
   build:
