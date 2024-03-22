@@ -3,100 +3,81 @@ package com.concordium.wallet.data.util
 import android.content.Context
 import com.concordium.wallet.R
 import com.concordium.wallet.util.DateTimeUtil
-import java.util.*
+import java.util.Locale
 
 object IdentityAttributeConverterUtil {
 
-    val visibleIdentityAttributes = arrayListOf("countryOfResidence", "nationality", "idDocType", "idDocIssuer")
+    val visibleIdentityAttributes =
+        arrayListOf("countryOfResidence", "nationality", "idDocType", "idDocIssuer")
 
-    fun convertAttributeValue(
+    fun convertAttribute(
         context: Context,
         attribute: Pair<String, String>
     ): Pair<String, String> {
-        return when (attribute.first) {
-            "firstName" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_first_name),
-                    attribute.second
-                )
-            "lastName" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_last_name),
-                    attribute.second
-                )
+        return Pair(convertAttributeTag(context, attribute.first), convertAttributeValue(context, attribute.first, attribute.second))
+    }
 
+    fun convertAttributeValue(context: Context, attributeTag: String, attributeValue: String): String {
+        return when (attributeTag) {
             "sex" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_sex),
-                    convertSex(context, attribute.second)
-                )
-
+                    convertSex(context, attributeValue)
             "dob" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_birth_date),
-                    DateTimeUtil.convertLongDate(attribute.second)
-                )
-
+                    DateTimeUtil.convertLongDate(attributeValue)
             "countryOfResidence" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_country_residence),
-                    getCountryName(attribute.second)
-                )
-
+                    getCountryName(attributeValue)
             "nationality" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_nationality),
-                    getCountryName(attribute.second)
-                )
-
+                    getCountryName(attributeValue)
             "idDocType" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_doc_type),
-                    getDocType(context, attribute.second)
-                )
-
-            "idDocNo" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_doc_no),
-                    attribute.second
-                )
-
+                    getDocType(context, attributeValue)
             "idDocIssuer" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_doc_issuer),
-                    getCountryName(attribute.second)
-                )
-
+                    getCountryName(attributeValue)
             "idDocIssuedAt" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_doc_issued_at),
-                    DateTimeUtil.convertLongDate(attribute.second)
-                )
-
+                    DateTimeUtil.convertLongDate(attributeValue)
             "idDocExpiresAt" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_doc_expires_at),
-                    DateTimeUtil.convertLongDate(attribute.second)
-                )
+                    DateTimeUtil.convertLongDate(attributeValue)
+            else -> attributeValue
+        }
+    }
+
+    fun convertAttributeTag(context: Context, tag: String): String {
+        return when (tag) {
+            "firstName" ->
+                context.getString(R.string.identity_attribute_first_name)
+            "lastName" ->
+                context.getString(R.string.identity_attribute_last_name)
+            "sex" ->
+                context.getString(R.string.identity_attribute_sex)
+            "dob" ->
+                context.getString(R.string.identity_attribute_birth_date)
+            "countryOfResidence" ->
+                context.getString(R.string.identity_attribute_country_residence)
+            "nationality" ->
+                context.getString(R.string.identity_attribute_nationality)
+            "idDocType" ->
+                context.getString(R.string.identity_attribute_doc_type)
+            "idDocNo" ->
+                context.getString(R.string.identity_attribute_doc_no)
+            "idDocIssuer" ->
+                context.getString(R.string.identity_attribute_doc_issuer)
+            "idDocIssuedAt" ->
+                context.getString(R.string.identity_attribute_doc_issued_at)
+            "idDocExpiresAt" ->
+                context.getString(R.string.identity_attribute_doc_expires_at)
             "nationalIdNo" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_national_id_no),
-                    attribute.second
-                )
+                context.getString(R.string.identity_attribute_national_id_no)
             "taxIdNo" ->
-                Pair(
-                    context.getString(R.string.identity_attribute_tax_id_no),
-                    attribute.second
-                )
-            else -> Pair("", "")
+                context.getString(R.string.identity_attribute_tax_id_no)
+            else -> tag
         }
     }
 
     private fun convertSex(context: Context, value: String): String {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_sex_not_known)
             "1" -> context.getString(R.string.identity_attribute_sex_male)
             "2" -> context.getString(R.string.identity_attribute_sex_female)
-            else -> context.getString(R.string.identity_attribute_na)
+            "9" -> context.getString(R.string.identity_attribute_na)
+            else -> context.getString(R.string.identity_attribute_unavailable)
         }
     }
 
@@ -107,11 +88,12 @@ object IdentityAttributeConverterUtil {
 
     private fun getDocType(context: Context, value: String): String {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_na)
             "1" -> context.getString(R.string.identity_attribute_doc_type_passport)
             "2" -> context.getString(R.string.identity_attribute_doc_type_national_id)
             "3" -> context.getString(R.string.identity_attribute_doc_type_driving_license)
             "4" -> context.getString(R.string.identity_attribute_doc_type_immigration_card)
-            else -> context.getString(R.string.identity_attribute_na)
+            else -> context.getString(R.string.identity_attribute_unavailable)
         }
     }
 }
