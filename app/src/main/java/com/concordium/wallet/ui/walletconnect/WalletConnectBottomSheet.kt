@@ -93,6 +93,18 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
         }
     }
 
+    fun showIdentityProofRequestReview(
+        onShown: (createdView: WalletConnectIdentityProofRequestReviewFragment.CreatedView) -> Unit
+    ) {
+        val fragment: WalletConnectIdentityProofRequestReviewFragment =
+            getShownFragment(IDENTITY_PROOF_REQUEST_REVIEW_TAG)
+
+        fragment.createdView.observe(this) { createdView ->
+            onShown(createdView)
+            fragment.createdView.removeObservers(this)
+        }
+    }
+
     fun showProgress(
         onShown: (createdView: WalletConnectProgressFragment.CreatedView) -> Unit
     ) {
@@ -119,6 +131,7 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
         private const val ACCOUNT_SELECTION_TAG = "wc_acc"
         private const val TRANSACTION_REQUEST_REVIEW_TAG = "wc_trr"
         private const val SIGN_REQUEST_REVIEW_TAG = "wc_srr"
+        private const val IDENTITY_PROOF_REQUEST_REVIEW_TAG = "wc_id"
         private const val TRANSACTION_SUBMITTED_TAG = "wc_ts"
         private const val PROGRESS_TAG = "wc_progress"
     }
