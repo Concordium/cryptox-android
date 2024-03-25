@@ -55,7 +55,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val contactAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+    val contractAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val lookForExactToken: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
@@ -142,6 +142,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         if (from == null) {
             tokens.clear()
             lookForTokens.postValue(TOKENS_NOT_LOADED)
+            contractAddressLoading.postValue(true)
         }
 
         val existingContractTokens =
@@ -163,7 +164,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             }
 
             tokens.addAll(pageTokens)
-            contactAddressLoading.postValue(false)
+            contractAddressLoading.postValue(false)
             allowToLoadMore = pageTokens.size >= pageLimit
 
             if (tokens.isEmpty() && !allowToLoadMore) {
@@ -174,7 +175,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         } catch (e: Throwable) {
             handleBackendError(e)
             allowToLoadMore = true
-            contactAddressLoading.postValue(false)
+            contractAddressLoading.postValue(false)
         }
     }
 
