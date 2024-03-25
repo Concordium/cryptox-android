@@ -141,6 +141,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         if (from == null) {
             tokens.clear()
+            everFoundExactTokens.clear()
             lookForTokens.postValue(TOKENS_NOT_LOADED)
             contractAddressLoading.postValue(true)
         }
