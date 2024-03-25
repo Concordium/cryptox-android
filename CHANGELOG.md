@@ -4,7 +4,7 @@
 
 ### Added
 - Setting up and updating validator pool commission rates
-- Support of WalletConnect CCD transfer requests
+- Support for WalletConnect CCD transfer requests
 - Support for WalletConnect verifiable presentation requests (for identity proofs)
 
 ### Fixed
