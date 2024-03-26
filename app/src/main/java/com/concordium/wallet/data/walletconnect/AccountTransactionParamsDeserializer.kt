@@ -63,7 +63,11 @@ class AccountTransactionParamsDeserializer : JsonDeserializer<AccountTransaction
                     }
                     val schemaValueBytes = schema.value.data.map { it.toByte() }.toByteArray()
                     val schemaValue = Base64.encodeToString(schemaValueBytes, Base64.NO_WRAP)
-                    return Schema.ValueSchema(type = schemaType, value = schemaValue)
+                    return Schema.ValueSchema(
+                        type = schemaType,
+                        value = schemaValue,
+                        version = schema.version,
+                    )
                 } catch (ex: JsonParseException) {
                     return null
                 }
@@ -71,7 +75,11 @@ class AccountTransactionParamsDeserializer : JsonDeserializer<AccountTransaction
         }
 
         return try {
-            Schema.ValueSchema(type = "module", value = schemaElement.asString)
+            Schema.ValueSchema(
+                type = "module",
+                value = schemaElement.asString,
+                version = null,
+            )
         } catch (ex: ClassCastException) {
             null
         } catch (ex: IllegalStateException) {

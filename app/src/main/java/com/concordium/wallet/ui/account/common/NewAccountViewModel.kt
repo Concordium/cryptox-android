@@ -26,7 +26,6 @@ import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.IdentityAttribute
 import com.concordium.wallet.data.model.PossibleAccount
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
@@ -37,7 +36,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.ui.account.newaccountidentityattributes.SelectableIdentityAttribute
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.KeyCreationVersion
@@ -92,7 +90,6 @@ open class NewAccountViewModel(application: Application) :
     }
 
     class TempData {
-        var revealedAttributeList: List<SelectableIdentityAttribute> = ArrayList()
         var globalParams: GlobalParams? = null
         var submissionId: String? = null
         var accountAddress: String? = null
@@ -126,13 +123,7 @@ open class NewAccountViewModel(application: Application) :
         }
     }
 
-    fun confirmWithoutAttributes() {
-        tempData.revealedAttributeList = emptyList()
-        getGlobalInfo()
-    }
-
-    fun confirmSelectedAttributes(revealedAttributeList: List<SelectableIdentityAttribute>) {
-        tempData.revealedAttributeList = revealedAttributeList
+    fun createAccount() {
         getGlobalInfo()
     }
 
@@ -208,27 +199,22 @@ open class NewAccountViewModel(application: Application) :
 
         tempData.nextCredNumber = accountRepository.nextCredNumber(identity.id)
 
-        val revealedAttributes = JsonArray()
-        for (identityAttribute in tempData.revealedAttributeList) {
-            revealedAttributes.add(identityAttribute.name)
-        }
-
         val output: CreateCredentialOutput? =
             if (keyCreationVersion.useV1) {
                 val net = AppConfig.net
                 val seed = AuthPreferences(getApplication()).getSeedHex(password)
 
                 val credentialInput = CreateCredentialInputV1(
-                    idProviderInfo,
-                    arsInfos,
-                    globalParams,
-                    identityObject,
-                    revealedAttributes,
-                    seed,
-                    net,
-                    identity.identityIndex,
-                    tempData.nextCredNumber ?: 0,
-                    (DateTimeUtil.nowPlusMinutes(5).time) / 1000
+                    ipInfo = idProviderInfo,
+                    arsInfos = arsInfos,
+                    global = globalParams,
+                    identityObject = identityObject,
+                    revealedAttributes = JsonArray(),
+                    seed = seed,
+                    net = net,
+                    identityIndex = identity.identityIndex,
+                    accountNumber = tempData.nextCredNumber ?: 0,
+                    expiry = (DateTimeUtil.nowPlusMinutes(5).time) / 1000,
                 )
 
                 App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
@@ -240,20 +226,18 @@ open class NewAccountViewModel(application: Application) :
                 val generateAccountsInput =
                     GenerateAccountsInput(globalParams, identityObject, privateIdObjectData)
                 val nextAccountNumber = findNextAccountNumber(generateAccountsInput)
-                if (nextAccountNumber == null) {
-                    // Error has been handled
+                    ?: // Error has been handled
                     return
-                }
 
                 val credentialInput = CreateCredentialInput(
-                    identityObject,
-                    privateIdObjectData,
-                    globalParams,
-                    idProviderInfo,
-                    revealedAttributes,
-                    nextAccountNumber,
-                    arsInfos,
-                    (DateTimeUtil.nowPlusMinutes(5).time) / 1000
+                    ipInfo = idProviderInfo,
+                    arsInfos = arsInfos,
+                    global = globalParams,
+                    identityObject = identityObject,
+                    privateIdObjectData = privateIdObjectData,
+                    revealedAttributes = JsonArray(),
+                    accountNumber = nextAccountNumber,
+                    expiry = (DateTimeUtil.nowPlusMinutes(5).time) / 1000,
                 )
 
                 App.appCore.cryptoLibrary.createCredential(credentialInput)
@@ -379,7 +363,6 @@ open class NewAccountViewModel(application: Application) :
         val encryptedAccountData = tempData.encryptedAccountData
         val credential = tempData.credential
         val submissionStatus = TransactionStatus.RECEIVED
-        val revealedAttributeList = tempData.revealedAttributeList
         if (accountAddress == null || submissionId == null || encryptedAccountData == null ||
             credential == null
         ) {
@@ -389,32 +372,28 @@ open class NewAccountViewModel(application: Application) :
         }
 
         val newAccount = Account(
-            0,
-            identity.id,
-            accountName,
-            accountAddress,
-            submissionId,
-            submissionStatus,
-            encryptedAccountData,
-            revealedAttributeList.map { IdentityAttribute(it.name, it.value) },
-            credential,
-            BigInteger.ZERO,
-            BigInteger.ZERO,
-            BigInteger.ZERO,
-            BigInteger.ZERO,
-            BigInteger.ZERO,
-            null,
-            null,
-            ShieldedAccountEncryptionStatus.ENCRYPTED,
-            BigInteger.ZERO,
-            BigInteger.ZERO,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null,
-            tempData.nextCredNumber ?: 0
+            id = 0,
+            identityId = identity.id,
+            name = accountName,
+            address = accountAddress,
+            submissionId = submissionId,
+            transactionStatus = submissionStatus,
+            encryptedAccountData = encryptedAccountData,
+            revealedAttributes = emptyList(),
+            credential = credential,
+            finalizedBalance = BigInteger.ZERO,
+            currentBalance = BigInteger.ZERO,
+            totalBalance = BigInteger.ZERO,
+            totalUnshieldedBalance = BigInteger.ZERO,
+            totalShieldedBalance = BigInteger.ZERO,
+            finalizedEncryptedBalance = null,
+            currentEncryptedBalance = null,
+            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+            totalStaked = BigInteger.ZERO,
+            totalAtDisposal = BigInteger.ZERO,
+            readOnly = false,
+            finalizedAccountReleaseSchedule = null,
+            credNumber = tempData.nextCredNumber ?: 0,
         )
         saveNewAccount(newAccount)
     }

@@ -29,6 +29,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.cryptolib.SignMessageInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
@@ -52,12 +53,14 @@ import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreD
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.concordium.wallet.util.toBigInteger
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -1016,6 +1019,7 @@ private constructor(
                     amount = accountTransactionPayload.amount,
                     estimatedFee = sessionRequestTransactionCost,
                     account = sessionRequestAccount,
+                    canShowDetails = false,
                     isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
                     appMetadata = sessionRequestAppMetadata,
                 )
@@ -1027,6 +1031,7 @@ private constructor(
                     amount = accountTransactionPayload.amount,
                     estimatedFee = sessionRequestTransactionCost,
                     account = sessionRequestAccount,
+                    canShowDetails = true,
                     isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
                     appMetadata = sessionRequestAppMetadata,
                 )
@@ -1426,6 +1431,61 @@ private constructor(
         )
     }
 
+    fun onShowTransactionRequestDetailsClicked() {
+        val reviewState = state as? State.SessionRequestReview.TransactionRequestReview
+        check(reviewState != null && reviewState.canShowDetails) {
+            "Show details button can only be clicked in the transaction request review state " +
+                    "allowing showing the details"
+        }
+
+        val context = getApplication<Application>()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val accountTransactionPayload = sessionRequestAccountTransactionPayload
+            val accountTransactionParamsSchema = sessionRequestAccountTransactionParams.schema
+
+            if (accountTransactionPayload is AccountTransactionPayload.Update) {
+                val prettyPrintParams =
+                    if (accountTransactionParamsSchema != null)
+                        App.appCore.cryptoLibrary
+                            .parameterToJson(
+                                ParameterToJsonInput(
+                                    parameter = accountTransactionPayload.message,
+                                    receiveName = accountTransactionPayload.receiveName,
+                                    schema = accountTransactionParamsSchema,
+                                    schemaVersion = accountTransactionParamsSchema.version,
+                                )
+                            )
+                            ?.prettyPrint()
+                            ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
+                    else if (accountTransactionPayload.message == "")
+                        context.getString(R.string.wallet_connect_transaction_request_no_parameters)
+                    else
+                        context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
+
+                mutableEventsFlow.emit(
+                    Event.ShowCallDetailsDialog(
+                        method = reviewState.method,
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_transaction_request_details,
+                            accountTransactionPayload.maxEnergy.toString(),
+                            prettyPrintParams,
+                        ),
+                    )
+                )
+            } else {
+                Log.w("Nothing to show as details for ${accountTransactionPayload::class.simpleName}")
+
+                mutableEventsFlow.emit(
+                    Event.ShowCallDetailsDialog(
+                        method = reviewState.method,
+                        prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
+                    )
+                )
+            }
+        }
+    }
+
     fun onDialogCancelled() {
         when (state) {
             State.Idle -> {
@@ -1642,6 +1702,7 @@ private constructor(
                 val receiver: String,
                 val amount: BigInteger,
                 val estimatedFee: BigInteger,
+                val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,
                 account: Account,
                 appMetadata: AppMetadata,
@@ -1763,6 +1824,15 @@ private constructor(
          */
         class ShowFloatingError(
             val error: Error,
+        ) : Event
+
+        /**
+         * A dialog showing pretty print contract call details must be shown.
+         * The details printout may be quite long.
+         */
+        class ShowCallDetailsDialog(
+            val method: String,
+            val prettyPrintDetails: String,
         ) : Event
     }
 

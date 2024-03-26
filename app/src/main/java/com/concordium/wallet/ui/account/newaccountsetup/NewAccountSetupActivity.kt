@@ -12,7 +12,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityNewAccountSetupBinding
 import com.concordium.wallet.ui.account.newaccountconfirmed.NewAccountConfirmedActivity
-import com.concordium.wallet.ui.account.newaccountidentityattributes.NewAccountIdentityAttributesActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -21,7 +20,7 @@ import com.concordium.wallet.ui.common.failed.FailedViewModel
 
 class NewAccountSetupActivity : BaseActivity(
     R.layout.activity_new_account_setup,
-    R.string.new_account_setup_title
+    R.string.app_name,
 ), AuthDelegate by AuthDelegateImpl() {
 
     companion object {
@@ -90,13 +89,15 @@ class NewAccountSetupActivity : BaseActivity(
                 gotoNewAccountConfirmed(value)
             }
         })
-        viewModel.gotoFailedLiveData.observe(this, object : EventObserver<Pair<Boolean, BackendError?>>() {
-            override fun onUnhandledEvent(value: Pair<Boolean, BackendError?>) {
-                if (value.first) {
-                    gotoFailed(value.second)
+        viewModel.gotoFailedLiveData.observe(
+            this,
+            object : EventObserver<Pair<Boolean, BackendError?>>() {
+                override fun onUnhandledEvent(value: Pair<Boolean, BackendError?>) {
+                    if (value.first) {
+                        gotoFailed(value.second)
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun initViews() {
@@ -104,13 +105,9 @@ class NewAccountSetupActivity : BaseActivity(
 
         binding.progress.progressLayout.visibility = View.GONE
 
-        binding.confirmRevealButton.setOnClickListener {
-            gotoNewAccountIdentityAttributes(viewModel.accountName, viewModel.identity)
-        }
         binding.confirmSubmitButton.setOnClickListener {
-            binding.confirmRevealButton.isEnabled = false
             binding.confirmSubmitButton.isEnabled = false
-            viewModel.confirmWithoutAttributes()
+            viewModel.createAccount()
         }
     }
 
@@ -122,11 +119,9 @@ class NewAccountSetupActivity : BaseActivity(
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
             binding.progress.progressLayout.visibility = View.VISIBLE
-            binding.confirmRevealButton.isEnabled = false
             binding.confirmSubmitButton.isEnabled = false
         } else {
             binding.progress.progressLayout.visibility = View.GONE
-            binding.confirmRevealButton.isEnabled = true
             binding.confirmSubmitButton.isEnabled = true
         }
     }
@@ -143,13 +138,6 @@ class NewAccountSetupActivity : BaseActivity(
         error?.let {
             intent.putExtra(FailedActivity.EXTRA_ERROR, it)
         }
-        startActivity(intent)
-    }
-
-    private fun gotoNewAccountIdentityAttributes(accountName: String, identity: Identity) {
-        val intent = Intent(this, NewAccountIdentityAttributesActivity::class.java)
-        intent.putExtra(NewAccountIdentityAttributesActivity.EXTRA_ACCOUNT_NAME, accountName)
-        intent.putExtra(NewAccountIdentityAttributesActivity.EXTRA_IDENTITY, identity)
         startActivity(intent)
     }
 

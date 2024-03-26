@@ -156,7 +156,7 @@ class IdentityConfirmedActivity :
             CoroutineScope(Dispatchers.IO).launch {
                 runOnUiThread {
                     viewModelNewAccount.initialize(Account.getDefaultName(""), identity)
-                    viewModelNewAccount.confirmWithoutAttributes()
+                    viewModelNewAccount.createAccount()
                 }
             }
         }
