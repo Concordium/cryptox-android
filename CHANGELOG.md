@@ -10,6 +10,9 @@
 - Validation of metadata checksum when adding CIS-2 tokens
 - Display of balance/ownership when adding CIS-2 tokens
 
+### Removed
+- Revealing identity attributes when creating an account
+
 ### Fixed
 
 - An issue where signing a text message through WalletConnect did not work
@@ -32,6 +35,8 @@
 - WalletConnect session proposals are now rejected if the namespace or methods are not supported, or if the wallet contains no accounts.
 - WalletConnect transaction signing request now shows the receiver
 (either smart contract or an account) and amount of CCD to send (not including CIS-2 tokens)
+- Transfers tab renamed to Activity on the account details screen
+- Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD

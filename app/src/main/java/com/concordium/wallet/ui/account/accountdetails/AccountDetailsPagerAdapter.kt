@@ -31,9 +31,11 @@ class AccountDetailsPagerAdapter(
         }
     }
 
-    override fun getCount(): Int {
-        return 3
-    }
+    override fun getCount(): Int =
+        if (account.revealedAttributes.isNotEmpty())
+            3
+        else
+            2
 
     private fun getFirstPositionFragment(): Fragment {
         return when (account.transactionStatus) {
@@ -53,7 +55,7 @@ class AccountDetailsPagerAdapter(
         }
     }
 
-    private fun getThirdPositionFragment() : Fragment {
+    private fun getThirdPositionFragment(): Fragment {
         return when (account.transactionStatus) {
             TransactionStatus.ABSENT -> AccountDetailsErrorFragment()
             TransactionStatus.COMMITTED -> AccountDetailsPendingFragment()
