@@ -1,5 +1,9 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.graphics.Typeface
+import android.util.TypedValue
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
@@ -29,6 +33,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 import java.math.BigInteger
 
@@ -113,6 +118,7 @@ class WalletConnectView(
                     receiver = state.receiver,
                     amount = state.amount,
                     estimatedFee = state.estimatedFee,
+                    canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
                     account = state.account,
                     appMetadata = state.appMetadata,
@@ -194,6 +200,24 @@ class WalletConnectView(
                 }
 
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
+            }
+
+            is WalletConnectViewModel.Event.ShowCallDetailsDialog -> {
+                MaterialAlertDialogBuilder(activity)
+                    .setTitle(event.method)
+                    .setMessage(event.prettyPrintDetails)
+                    .setPositiveButton(R.string.dialog_ok, null)
+                    .show()
+                    .apply {
+                        val messageTextView = findViewById<View>(android.R.id.message) as? TextView
+                            ?: return@apply
+
+                        with(messageTextView) {
+                            typeface = Typeface.MONOSPACE
+                            setTextIsSelectable(true)
+                            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                        }
+                    }
             }
         }
     }
@@ -279,6 +303,7 @@ class WalletConnectView(
         receiver: String,
         amount: BigInteger,
         estimatedFee: BigInteger,
+        canShowDetails: Boolean,
         isEnoughFunds: Boolean,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -291,6 +316,7 @@ class WalletConnectView(
                 receiver = receiver,
                 amount = amount,
                 estimatedFee = estimatedFee,
+                canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
                 account = account,
                 appMetadata = appMetadata,
@@ -305,6 +331,7 @@ class WalletConnectView(
         receiver: String,
         amount: BigInteger,
         estimatedFee: BigInteger,
+        canShowDetails: Boolean,
         isEnoughFunds: Boolean,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -346,6 +373,15 @@ class WalletConnectView(
                 else ->
                     null
             }
+
+        with(showDetailsButton) {
+            isVisible = canShowDetails
+            if (canShowDetails) {
+                setOnClickListener {
+                    viewModel.onShowTransactionRequestDetailsClicked()
+                }
+            }
+        }
 
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()
@@ -517,6 +553,7 @@ class WalletConnectView(
                 view.nextButton.visibility = GONE
                 return@with
             }
+
             else -> {
                 view.unprovableStatement.visibility = GONE
             }
@@ -529,7 +566,7 @@ class WalletConnectView(
         }
         this.proofView.adapter = adapter
         this.proofView.setCurrentItem(currentStatement, false)
-        this.proofView.registerOnPageChangeCallback(object: OnPageChangeCallback() {
+        this.proofView.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 if (position == statements.size - 1) {
@@ -540,7 +577,7 @@ class WalletConnectView(
         })
 
         // Connect tab dots to the proofView pager
-        TabLayoutMediator(pagerDots,this.proofView) { _, _ -> }.attach()
+        TabLayoutMediator(pagerDots, this.proofView) { _, _ -> }.attach()
     }
 
     private fun showConnecting() {

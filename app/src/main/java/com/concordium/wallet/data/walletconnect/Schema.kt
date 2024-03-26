@@ -2,11 +2,17 @@ package com.concordium.wallet.data.walletconnect
 
 import java.io.Serializable
 
-sealed class Schema: Serializable {
+sealed interface Schema : Serializable {
+    /**
+     * The version is present for "module" type schema.
+     */
+    val version: Int?
+
     data class ValueSchema(
         val type: String?,
-        val value: String?
-    ) : Schema()
+        val value: String?,
+        override val version: Int?,
+    ) : Schema
 
     /**
      * In some cases the buffer object in Java Script has been serialized directly, instead of first
@@ -15,8 +21,9 @@ sealed class Schema: Serializable {
      */
     data class BrokenSchema(
         val type: String?,
-        val value: BrokenValue
-    ) : Schema() {
+        val value: BrokenValue,
+        override val version: Int?,
+    ) : Schema {
         data class BrokenValue(val type: String?, val data: List<Int>): Serializable
     }
 }
