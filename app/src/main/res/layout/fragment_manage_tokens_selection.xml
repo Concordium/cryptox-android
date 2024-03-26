@@ -6,17 +6,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tokens_found"
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingHorizontal="18dp"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@+id/non_selected"
+        android:layout_height="wrap_content"
+        android:imeOptions="flagNoFullscreen|actionSearch"
+        app:closeIcon="@drawable/cryptox_ico_close"
+        app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_token_add" />
+        app:queryBackground="@null"
+        app:queryHint="@string/cis_search"
+        app:searchIcon="@drawable/cryptox_ico_search">
+        <!-- Text color is set programmatically -->
+    </androidx.appcompat.widget.SearchView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:layout_constraintBottom_toTopOf="@+id/non_selected"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tokens_found"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_token_add" />
+
+        <TextView
+            android:id="@+id/no_tokens_found"
+            style="@style/CryptoX_Typography_Body_Medium"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:text="@string/cis_no_tokens_found"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <TextView
         android:id="@+id/non_selected"
@@ -28,7 +63,6 @@
         app:layout_constraintBottom_toTopOf="@+id/button_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tokens_found"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.LinearLayoutCompat

@@ -42,6 +42,9 @@ enum class TransactionType {
     @SerializedName("initContract", alternate = ["InitContract"])
     INIT_CONTRACT,
 
+    @SerializedName("deployModule")
+    DEPLOY_MODULE,
+
     // This has been added to have a default value
     @SerializedName("unknown")
     UNKNOWN,

@@ -5,7 +5,10 @@
 ### Added
 - Setting up and updating validator pool commission rates
 - Support of WalletConnect CCD transfer requests
+- Ability to see full details of the WalletConnect transaction to sign
 - Support for WalletConnect verifiable presentation requests (for identity proofs)
+- Validation of metadata checksum when adding CIS-2 tokens
+- Display of balance/ownership when adding CIS-2 tokens
 
 ### Removed
 - Revealing identity attributes when creating an account
@@ -23,6 +26,8 @@
 - An issue where exporting transaction logs for an account without any transactions would be stuck at 0%
 - "Invalid WalletConnect request" message repeatedly shown if received a request with unsupported transaction type
 - Exported private key for file-based initial account being incompatible with concordium-client
+- Inability to search for CIS-2 token by ID on contracts with lots of tokens
+- When managing CIS-2 tokens, removing all of them when only unselecting the visible ones
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors
@@ -32,5 +37,6 @@
 (either smart contract or an account) and amount of CCD to send (not including CIS-2 tokens)
 - Transfers tab renamed to Activity on the account details screen
 - Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
+- CIS-2 tokens with corrupted or missing metadata can no longer be added
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD

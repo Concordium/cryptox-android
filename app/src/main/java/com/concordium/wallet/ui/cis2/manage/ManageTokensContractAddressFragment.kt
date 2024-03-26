@@ -63,6 +63,8 @@ class ManageTokensContractAddressFragment : Fragment() {
             showWaiting(false)
             showOrHideError(result)
         }
+
+        _viewModel.contractAddressLoading.observe(viewLifecycleOwner, ::showWaiting)
     }
 
     private fun lookForTokens() {
@@ -72,10 +74,8 @@ class ManageTokensContractAddressFragment : Fragment() {
             ?: return
 
         KeyboardUtil.hideKeyboard(requireActivity())
-        showWaiting(true)
 
         _viewModel.tokenData.contractIndex = contractIndex
-        _viewModel.tokens.clear()
         _viewModel.lookForTokens(_viewModel.tokenData.account!!.address)
     }
 
@@ -83,11 +83,11 @@ class ManageTokensContractAddressFragment : Fragment() {
         if (waiting) {
             binding.look.isEnabled = false
             binding.contractAddress.isEnabled = false
-            binding.includeProgress.progressBar.isVisible = true
+            binding.includeProgress.progressLayout.isVisible = true
         } else {
             binding.look.isEnabled = true
             binding.contractAddress.isEnabled = true
-            binding.includeProgress.progressBar.isVisible = false
+            binding.includeProgress.progressLayout.isVisible = false
         }
     }
 

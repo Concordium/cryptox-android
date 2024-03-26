@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import java.math.BigInteger
 
 class ManageTokensSelectionAdapter(
     private val context: Context,
@@ -60,6 +62,22 @@ class ManageTokensSelectionAdapter(
 
         holder.binding.title.text =
             tokenMetadata?.name ?: context.getString(R.string.cis_loading_metadata_progress)
+
+        if (token.tokenMetadata?.unique == true) {
+            holder.binding.subtitle.text =
+                if (token.totalBalance != BigInteger.ZERO)
+                    context.getString(R.string.cis_owned)
+                else
+                    context.getString(R.string.cis_not_owned)
+        } else {
+            val tokenBalance = CurrencyUtil.formatGTU(
+                token.totalBalance,
+                false,
+                token.tokenMetadata?.decimals ?: 0
+            )
+            holder.binding.subtitle.text =
+                context.getString(R.string.cis_search_balance, tokenBalance)
+        }
 
         // Only allow selection when the metadata is loaded.
         holder.binding.selection.isVisible = token.tokenMetadata != null
