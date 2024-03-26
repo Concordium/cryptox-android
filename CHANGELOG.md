@@ -9,7 +9,6 @@
 
 ### Removed
 - Revealing identity attributes when creating an account
-- Display of account's revealed identity attributes
 
 ### Fixed
 
@@ -32,5 +31,6 @@
 - WalletConnect transaction signing request now shows the receiver
 (either smart contract or an account) and amount of CCD to send (not including CIS-2 tokens)
 - Transfers tab renamed to Activity on the account details screen
+- Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD
