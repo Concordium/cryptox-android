@@ -7,11 +7,17 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.viewpager2.widget.ViewPager2.GONE
+import androidx.viewpager2.widget.ViewPager2.INVISIBLE
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectProgressBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectSessionProposalReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectSignRequestReviewBinding
@@ -23,6 +29,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import java.math.BigInteger
 
 /**
@@ -120,6 +127,16 @@ class WalletConnectView(
                 )
             }
 
+            is WalletConnectViewModel.State.SessionRequestReview.IdentityProofRequestReview -> {
+                showIdentityProofRequestReview(
+                    accounts = state.chosenAccounts,
+                    appMetadata = state.appMetadata,
+                    statements = state.request.credentialStatements,
+                    currentStatement = state.currentStatement,
+                    provableState = state.provable
+                )
+            }
+
             is WalletConnectViewModel.State.TransactionSubmitted -> {
                 showTransactionSubmitted(
                     submissionId = state.submissionId,
@@ -168,6 +185,12 @@ class WalletConnectView(
 
                     WalletConnectViewModel.Error.UnsupportedMethod ->
                         R.string.wallet_connect_error_unsupported_methods
+
+                    WalletConnectViewModel.Error.InternalError ->
+                        R.string.wallet_connect_error_internal_error
+
+                    WalletConnectViewModel.Error.NotSeedPhraseWalletError ->
+                        R.string.wallet_connect_error_not_seed_phrase_wallet
                 }
 
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
@@ -369,6 +392,7 @@ class WalletConnectView(
         }
     }
 
+
     private fun showSignRequestReview(
         message: String,
         account: Account,
@@ -425,6 +449,98 @@ class WalletConnectView(
             lifecycleOwner = lifecycleOwner,
             action = approveButton::setEnabled
         )
+    }
+
+    private fun showIdentityProofRequestReview(
+        statements: List<RequestStatement>,
+        accounts: List<Account>,
+        appMetadata: WalletConnectViewModel.AppMetadata,
+        currentStatement: Int,
+        provableState: WalletConnectViewModel.ProofProvableState
+    ) {
+        getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
+            initIdentityProofRequestReview(
+                view = view,
+                lifecycleOwner = lifecycleOwner,
+                accounts = accounts,
+                appMetadata = appMetadata,
+                statements = statements,
+                currentStatement = currentStatement,
+                provableState = provableState
+            )
+        }
+    }
+
+    private fun initIdentityProofRequestReview(
+        view: FragmentWalletConnectIdentityProofRequestReviewBinding,
+        lifecycleOwner: LifecycleOwner,
+        accounts: List<Account>,
+        appMetadata: WalletConnectViewModel.AppMetadata,
+        statements: List<RequestStatement>,
+        currentStatement: Int,
+        provableState: WalletConnectViewModel.ProofProvableState
+    ) = with(view) {
+        Glide.with(appIconImageView.context)
+            .load(appMetadata.iconUrl)
+            .placeholder(ThemedCircularProgressDrawable(root.context))
+            .fitCenter()
+            .into(appIconImageView)
+
+        appNameTextView.text = appMetadata.name
+
+        nextButton.setOnClickListener {
+            this.proofView.currentItem++
+        }
+
+        approveButton.setOnClickListener {
+            viewModel.approveSessionRequest()
+        }
+
+        declineButton.setOnClickListener {
+            viewModel.rejectSessionRequest()
+        }
+
+        viewModel.isSessionRequestApproveButtonEnabledFlow.collect(
+            lifecycleOwner = lifecycleOwner,
+            action = approveButton::setEnabled
+        )
+        when (provableState) {
+            WalletConnectViewModel.ProofProvableState.UnProvable -> {
+                view.unprovableStatement.visibility = VISIBLE
+            }
+            // Specially handle if there are no compatible issuer
+            WalletConnectViewModel.ProofProvableState.NoCompatibleIssuer -> {
+                view.proofView.visibility = INVISIBLE
+                view.pagerDots.visibility = GONE
+                view.unprovableStatement.visibility = VISIBLE
+                view.unprovableStatement.setText(R.string.noCredentialsForThatIssuer)
+                view.nextButton.visibility = GONE
+                return@with
+            }
+            else -> {
+                view.unprovableStatement.visibility = GONE
+            }
+        }
+
+        val adapter = CredentialStatementAdapter(
+            statements, accounts, viewModel::getIdentity
+        ) {
+            viewModel.onChooseAccountIdentityProof(it)
+        }
+        this.proofView.adapter = adapter
+        this.proofView.setCurrentItem(currentStatement, false)
+        this.proofView.registerOnPageChangeCallback(object: OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (position == statements.size - 1) {
+                    this@with.approveButton.visibility = VISIBLE
+                    this@with.nextButton.visibility = GONE
+                }
+            }
+        })
+
+        // Connect tab dots to the proofView pager
+        TabLayoutMediator(pagerDots,this.proofView) { _, _ -> }.attach()
     }
 
     private fun showConnecting() {

@@ -171,7 +171,7 @@
     <string name="identity_attribute_sex">Sex</string>
     <string name="identity_attribute_birth_date">Date of birth</string>
     <string name="identity_attribute_country_residence">Country of residence</string>
-    <string name="identity_attribute_nationality">Country of nationality</string>
+    <string name="identity_attribute_nationality">Nationality</string>
     <string name="identity_attribute_doc_type">Identity document type</string>
     <string name="identity_attribute_doc_no">Identity document number</string>
     <string name="identity_attribute_doc_issuer">Identity document issuer</string>
@@ -179,8 +179,10 @@
     <string name="identity_attribute_doc_expires_at">ID valid to</string>
     <string name="identity_attribute_national_id_no">National ID number</string>
     <string name="identity_attribute_tax_id_no">Tax ID number</string>
+    <string name="identity_attribute_sex_not_known">Not known</string>
     <string name="identity_attribute_sex_male">Male</string>
     <string name="identity_attribute_sex_female">Female</string>
+    <string name="identity_attribute_unavailable">Unavailable</string>
     <string name="identity_attribute_doc_type_passport">Passport</string>
     <string name="identity_attribute_doc_type_national_id">National id card\"</string>
     <string name="identity_attribute_doc_type_driving_license">Driving license</string>
@@ -546,6 +548,8 @@
     <string name="wallet_connect_error_no_accounts">You must have at least one active account to continue</string>
     <string name="wallet_connect_error_no_supported_chains">The wallet does not support the requested chains</string>
     <string name="wallet_connect_error_unsupported_methods">The wallet does not support the requested methods</string>
+    <string name="wallet_connect_error_internal_error">An internal error occurred</string>
+    <string name="wallet_connect_error_not_seed_phrase_wallet">Only seed phrase wallets support this feature</string>
     <string name="wallet_connect_choose_another_account">Choose another account</string>
     <string name="wallet_connect_template_session_proposal_review_title">Connect to %1$s?</string>
     <string name="wallet_connect_session_proposal_allow">@string/allow</string>
@@ -1107,4 +1111,78 @@
     <string name="saved_pass_phrase_reveal_screenshot">Screenshot</string>
     <string name="saved_pass_phrase_reveal_copied">@string/copied</string>
     <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+
+    <!-- Identity proofs in WalletConnect -->
+    <string name="zero_knowledge_proof">Zero-knowledge proof</string>
+    <string name="information_to_reveal">Information to reveal</string>
+    <string name="reveal_description">Note that all the information above will be revealed to the connected service.</string>
+    <string name="unable_to_prove_request">You are unable to prove the entire request. You may go through the statements, but you won\'t be able to approve the request.</string>
+
+    <string name="identity_proofs_age">Age</string>
+    <plurals name="identity_proofs_age_min">
+        <item quantity="one">%1$d year or older</item>
+        <item quantity="other">%1$d years or older</item>
+    </plurals>
+    <plurals name="identity_proofs_age_max">
+        <item quantity="one">%1$d year or younger</item>
+        <item quantity="other">%1$d years or younger</item>
+    </plurals>
+    <plurals name="identity_proofs_age_exact">
+        <item quantity="one">%1$d year old</item>
+        <item quantity="other">%1$d years old</item>
+    </plurals>
+    <plurals name="identity_proofs_age_between">
+        <item quantity="one">%1$d to %2$d year old</item>
+        <item quantity="other">%1$d to %2$d years old</item>
+    </plurals>
+
+    <string name="identity_proofs_date_after_inclusive">%1$s or later</string>
+    <string name="identity_proofs_date_before">Before %1$s</string>
+    <string name="identity_proofs_date_between">%1$s to %2$s</string>
+    <string name="identity_proofs_generic_between">Between %1$s and %2$s</string>
+
+    <string name="identity_proofs_eu_membership">EU</string>
+    <string name="identity_proofs_non_eu_membership">Outside EU</string>
+
+    <plurals name="identity_proofs_countries">
+        <item quantity="one">1 of %1$d country</item>
+        <item quantity="other">1 of %1$d countries</item>
+    </plurals>
+    <plurals name="identity_proofs_none_countries">
+        <item quantity="one">None of %1$d country</item>
+        <item quantity="other">None of %1$d countries</item>
+    </plurals>
+
+    <plurals name="identity_proofs_id_doc_types">
+        <item quantity="one">1 of %1$d type</item>
+        <item quantity="other">1 of %1$d types</item>
+    </plurals>
+    <plurals name="identity_proofs_none_id_doc_types">
+        <item quantity="one">None of %1$d type</item>
+        <item quantity="other">None of %1$d types</item>
+    </plurals>
+
+    <plurals name="identity_proofs_id_doc_issuer">
+        <item quantity="one">1 of %1$d issuer</item>
+        <item quantity="other">1 of %1$d issuers</item>
+    </plurals>
+    <plurals name="identity_proofs_none_id_doc_issuer">
+        <item quantity="one">None of %1$d issuer</item>
+        <item quantity="other">None of %1$d issuers</item>
+    </plurals>
+
+    <plurals name="identity_proofs_set_fallback">
+        <item quantity="one">1 of %1$d value</item>
+        <item quantity="other">1 of %1$d values</item>
+    </plurals>
+    <plurals name="identity_proofs_set_non_fallback">
+        <item quantity="one">None of %1$d value</item>
+        <item quantity="other">None of %1$d values</item>
+    </plurals>
+    <string name="identity_proofs_range_statement_description">This will prove that your %1$s is between %2$s and %3$s</string>
+    <string name="identity_proofs_membership_statement_description">This will prove that your %1$s is 1 of the following: %2$s</string>
+    <string name="identity_proofs_non_membership_statement_description">This will prove that your %1$s is none of the following: %2$s</string>
+    <string name="identity_proofs_set_fallback">1 of %1$d values</string>
+    <string name="identity_proofs_set_non_fallback">None of %1$d values</string>
+    <string name="noCredentialsForThatIssuer">You do not hold any credentials from the issuer that the verifier requested.</string>
 </resources>

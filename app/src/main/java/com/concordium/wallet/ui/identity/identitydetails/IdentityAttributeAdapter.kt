@@ -25,7 +25,7 @@ class IdentityAttributeAdapter(private var data: SortedMap<String, String>) :
         with(holder) {
             val name = keys[position]
             data[name]?.let { value ->
-                val attributeKeyValue = IdentityAttributeConverterUtil.convertAttributeValue(
+                val attributeKeyValue = IdentityAttributeConverterUtil.convertAttribute(
                     binding.root.context,
                     Pair(name, value)
                 )
