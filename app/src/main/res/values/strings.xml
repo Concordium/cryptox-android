@@ -307,7 +307,7 @@
     <string name="export_error_password_not_valid">Password is not valid - minimum length is 6.</string>
     <string name="export_error_password_setup">Failed to setup password</string>
     <string name="export_error_account_not_finalised">The following accounts are either failed or not ready on the chain, so they cannot be exported.\n\n</string>
-    <string name="export_error_account_not_finalised_name">%s. %s\n</string>
+    <string name="export_error_account_not_finalised_name">%1$s. %2$s\n</string>
     <string name="export_error_account_not_finalised_cancel">Cancel</string>
     <string name="export_error_account_not_finalised_continue">Continue</string>
     <!-- About -->
