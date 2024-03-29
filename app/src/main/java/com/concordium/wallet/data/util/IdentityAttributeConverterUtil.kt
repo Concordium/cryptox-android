@@ -35,7 +35,11 @@ object IdentityAttributeConverterUtil {
                     DateTimeUtil.convertLongDate(attributeValue)
             "idDocExpiresAt" ->
                     DateTimeUtil.convertLongDate(attributeValue)
-            else -> attributeValue
+            else ->
+                attributeValue
+                    .ifEmpty {
+                        context.getString(R.string.identity_attribute_unavailable)
+                    }
         }
     }
 
