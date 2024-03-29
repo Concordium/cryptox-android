@@ -34,7 +34,6 @@ jobs:
         with:
           java-version: "${{env.java_version}}"
           distribution: corretto
-          cache: gradle
 
       - name: Check if build version matches the tag
         run: |

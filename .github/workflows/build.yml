@@ -26,7 +26,6 @@ jobs:
         with:
           java-version: "${{env.java_version}}"
           distribution: corretto
-          cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
 
       - name: Build project (Stagenet)
         run: ./gradlew app:assembleStagenetDebug --stacktrace

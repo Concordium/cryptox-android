@@ -20,7 +20,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofSecretStatementBinding
-import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementCardBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofStatementsBinding
 import com.concordium.wallet.databinding.IdentityProofStatementLineBinding
 import com.concordium.wallet.util.DateTimeUtil
@@ -97,12 +96,12 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
 
     private fun getRevealLine(statement: RevealStatement, attributes: Map<String, CredentialAttribute>): View {
         val revealBinding = createStatementLine()
-        val rawAttribute = attributes[statement.attributeTag]?.value ?: "???"
+        val rawAttribute = attributes[statement.attributeTag]?.value ?: ""
         // Assuming this is identity attributes
-        val pair = IdentityAttributeConverterUtil.convertAttribute(context, Pair(statement.attributeTag,rawAttribute))
+        val pair = IdentityAttributeConverterUtil.convertAttribute(context, Pair(statement.attributeTag, rawAttribute))
         revealBinding.attributeTag.text = pair.first
         revealBinding.attributeValue.text = pair.second
-        setStatementLine(revealBinding, pair.first, pair.second, true)
+        setStatementLine(revealBinding, pair.first, pair.second, rawAttribute.isNotEmpty())
 
         return revealBinding.root
     }
