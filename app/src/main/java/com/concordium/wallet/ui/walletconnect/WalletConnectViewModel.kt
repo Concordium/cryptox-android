@@ -695,7 +695,7 @@ private constructor(
                 Error.InvalidRequest
             )
         )
-        respondError(responseMessage)
+        respondError(if (e == null) responseMessage else "$responseMessage: $e")
         mutableStateFlow.tryEmit(State.Idle)
     }
 
@@ -759,7 +759,11 @@ private constructor(
         val accounts = getAvailableAccounts()
         val initialAccounts = sessionRequestIdentityRequest.credentialStatements.map { statement ->
             // Prefer session account
-            if (isValidIdentityForStatement(identities[sessionRequestAccount.identityId]!!, statement))
+            if (isValidIdentityForStatement(
+                    identities[sessionRequestAccount.identityId]!!,
+                    statement
+                )
+            )
                 sessionRequestAccount
             else {
                 // Otherwise find any account that can prove the statement
