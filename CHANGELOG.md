@@ -28,6 +28,7 @@
 - Exported private key for file-based initial account being incompatible with concordium-client
 - Inability to search for CIS-2 token by ID on contracts with lots of tokens
 - When managing CIS-2 tokens, removing all of them when only unselecting the visible ones
+- Composing a letter with a malformed recipient when clicking the support email on the About screen
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors

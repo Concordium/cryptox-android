@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.AppConfig
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAboutBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -33,11 +32,11 @@ class AboutActivity : BaseActivity(
 
         binding.aboutSupportText.handleUrlClicks { url ->
             val emailIntent = Intent(Intent.ACTION_SENDTO)
-            emailIntent.data = Uri.parse("mailto:$url")
+            emailIntent.data = Uri.parse(url)
             emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(url))
             try {
                 // start email intent
-                startActivity(Intent.createChooser(emailIntent, ""))
+                startActivity(Intent.createChooser(emailIntent, getString(R.string.about_support)))
             } catch (e: Exception) {
                 // Left empty on purpose
             }
