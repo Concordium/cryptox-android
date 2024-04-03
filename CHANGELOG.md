@@ -14,7 +14,6 @@
 - Revealing identity attributes when creating an account
 
 ### Fixed
-
 - An issue where signing a text message through WalletConnect did not work
 - An issue where a dApp could request to get a transaction signed by a different account than the one chosen for the WalletConnect session
 - Crashing when received unexpected error from an identity provider
@@ -29,6 +28,7 @@
 - Inability to search for CIS-2 token by ID on contracts with lots of tokens
 - When managing CIS-2 tokens, removing all of them when only unselecting the visible ones
 - Composing a letter with a malformed recipient when clicking the support email on the About screen
+- Possibility of spamming the app with WalletConnect requests from a malfunctioning dApp
 
 ### Changed
 - Suggest running a recovery when facing account or identity creation errors

@@ -48,6 +48,7 @@ import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
@@ -577,7 +578,7 @@ private constructor(
         }
 
         if (state is State.Idle) {
-            // Only handle the request if doing anything else.
+            // Only handle the request if not doing anything else.
             // Otherwise, the request will be handled as a pending one
             // once the current affair is finished.
             handleSessionRequest(
@@ -588,10 +589,30 @@ private constructor(
                 peerMetadata = sessionRequestPeerMetadata
             )
         } else {
-            Log.d(
-                "session_request_to_be_handled_later:" +
-                        "\nrequestId=${sessionRequest.request.id}"
-            )
+            // We do not want to queue more than one request for each topic (dApp),
+            // as the dApp may be broken and spam requests.
+            // At this point, topic pending requests may already contain this sessionRequest.
+            val topicPendingRequests = SignClient.getPendingRequests(sessionRequest.topic)
+            if (topicPendingRequests.isEmpty() || topicPendingRequests.size == 1) {
+                Log.d(
+                    "session_request_to_be_handled_later:" +
+                            "\nrequestId=${sessionRequest.request.id}" +
+                            "\nrequestTopic=${sessionRequest.topic}"
+                )
+            } else {
+                Log.w(
+                    "received_next_session_request_in_topic_before_current_is_handled:" +
+                            "\nrequestId=${sessionRequest.request.id}" +
+                            "\nrequestTopic=${sessionRequest.topic}"
+                )
+
+                respondError(
+                    message = "Subsequent requests are rejected until the current one is handled: " +
+                            topicPendingRequests.first().requestId,
+                    sessionRequestId = sessionRequest.request.id,
+                    sessionRequestTopic = sessionRequest.topic,
+                )
+            }
         }
     }
 
@@ -1581,7 +1602,11 @@ private constructor(
         }
     }
 
-    private fun respondError(message: String) {
+    private fun respondError(
+        message: String,
+        sessionRequestId: Long = this.sessionRequestId,
+        sessionRequestTopic: String = this.sessionRequestTopic,
+    ) {
         handledRequests += sessionRequestId
 
         SignClient.respond(
