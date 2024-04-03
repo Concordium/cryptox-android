@@ -576,10 +576,10 @@ private constructor(
             return
         }
 
-        if (state !is State.SessionRequestReview) {
-            // Only handle the request if not reviewing another one.
+        if (state is State.Idle) {
+            // Only handle the request if doing anything else.
             // Otherwise, the request will be handled as a pending one
-            // once the current is reviewed.
+            // once the current affair is finished.
             handleSessionRequest(
                 topic = sessionRequest.topic,
                 id = sessionRequest.request.id,
