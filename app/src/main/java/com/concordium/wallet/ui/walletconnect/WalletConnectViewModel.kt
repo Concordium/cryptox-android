@@ -85,7 +85,8 @@ import kotlin.coroutines.resumeWithException
  * Currently supported requests:
  * - [REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION] – create, sign and submit an account transaction
  * of the requested type. Send back the submission ID;
- * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature.
+ * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature;
+ * - [REQUEST_METHOD_VERIFIABLE_PRESENTATION] - prove or reveal identity statements.
  *
  * @see State
  * @see allowedAccountTransactionTypes
@@ -1638,14 +1639,14 @@ private constructor(
     | | | |                  |
     | | | |                  v
     | | | +-------> SessionProposalReview   <---->  AccountSelection
-    | | |
-    | | |
-    | | |
-    | | +--------> WaitingForSessionRequest
-    | |                      |
-    | |                      |
-    | |                      v
-    | +------------> SessionRequestReview
+    | | |                                                   ^
+    | | |                                                   |
+    | | |                                                   |
+    | | +--------> WaitingForSessionRequest                 |
+    | |                      |                              |
+    | |                      |                              |
+    | |                      v                              |
+    | +------------> SessionRequestReview <-----------------+
     |                        |
     |                        |
     |                        v
