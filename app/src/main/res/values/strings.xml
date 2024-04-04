@@ -4,11 +4,7 @@
     <string name="app_name">CryptoX Wallet</string>
     <string name="app_menu_item_accounts">Accounts</string>
     <string name="app_menu_item_tokens">NFT</string>
-    <string name="app_menu_item_assistant">Assistant</string>
-    <string name="app_menu_item_notifications">Notifications</string>
     <string name="app_menu_item_more">More</string>
-    <string name="app_menu_item_add_recipient">Add</string>
-    <string name="app_menu_item_burger">Menu</string>
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected encryption/decryption error</string>
@@ -31,15 +27,9 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
-    <string name="dialog_initial_account_error_title">Initial account creation failed</string>
-    <string name="dialog_initial_account_error_text">Something went wrong with the initial account creation.\n\nPlease go back and try again, or try at another time.</string>
-    <string name="dialog_initial_account_error_text_first">Something went wrong with the initial account creation.\n\nPlease go back and try again.</string>
-    <string name="dialog_initial_account_error_positive">Try again</string>
     <!-- Main -->
-    <string name="main_title">Wallet</string>
     <!-- ***** Common ***** -->
     <!-- IdentityView -->
-    <string name="view_identity_status">Status:</string>
     <string name="template_view_identity_expires_on">Expires on %1$s</string>
     <string name="view_identity_status_done">Approved</string>
     <string name="view_identity_status_pending">Pending</string>
@@ -86,7 +76,6 @@
     <string name="auth_login_biometrics_dialog_cancel_passcode">Use passcode</string>
     <string name="auth_login_biometrics_dialog_cancel_password">Use password</string>
     <string name="auth_login_seed_error">Error 101: Encryption failed</string>
-    <string name="auth_login_seed_error_message">Please restart your mobile device and try to start the app again.\n\nIf it fails again, please contact \nsupport@concordium.software.com \nwith the error code 101 in the subject of your e-mail.</string>
     <!-- Auth Setup-->
     <string name="auth_setup_title">Select Passcode</string>
     <string name="auth_setup_repeat_title">Repeat Passcode</string>
@@ -111,8 +100,6 @@
     <!-- Identities overview -->
     <string name="identities_overview_title">Identities</string>
     <string name="identities_overview_no_identities">You have no identities yet.</string>
-    <string name="identities_overview_create_account_title">Create new account</string>
-    <string name="identities_overview_create_account_select_identity">Select identity to submit account with</string>
     <string name="identities_overview_identity_verified_title">Identity verified</string>
     <string name="identities_overview_identity_verified_message">%1$s has been verified by the identity provider. You can now start using the identity to create accounts</string>
     <string name="identities_overview_identity_create_account_now">Create account now</string>
@@ -129,27 +116,10 @@
     <string name="identity_details_change_name_popup_subtitle">You can enter the new identity name here.</string>
     <string name="identity_details_change_name_hint">Enter name</string>
     <!-- Identity create -->
-    <string name="identity_create_title">Identity verification</string>
-    <string name="identity_create_info_header">The initial account</string>
-    <string name="identity_create_info_info">On the following pages you will be guided through the 3-step process of requesting an initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
-    <string name="identity_create_info_info_first">The initial account, is an account created by an identity provider of your choice. This account is created at the same time as you request an identity from an identity provider. You will have to request both the identity and the initial account, before you can start using the Concordium blockchain.\n\nOn the following pages you will be guided through the three step process of requesting the initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
-    <string name="identity_create_info_confirm">Okay, got it!</string>
-    <string name="identity_create_account_name_header">The 1st step:\nNaming your initial account</string>
-    <string name="identity_create_account_name_info">What would you like to name your initial account?</string>
-    <string name="identity_create_account_name_account_name">Account name</string>
-    <string name="identity_create_account_name_confirm">Continue</string>
-    <string name="identity_create_identity_name_header">The 2nd step:\nNaming your identity</string>
-    <string name="identity_create_identity_name_info">What would you like to name your identity?</string>
-    <string name="identity_create_identity_name_identity_name">Identity name </string>
-    <string name="identity_create_identity_name_confirm">Continue to identity providers</string>
-    <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
-    <string name="identity_create_identity_setup_name">Setup identity name</string>
     <string name="identity_create_default_name_prefix">Identity</string>
     <!-- Identity provider list -->
     <string name="identity_provider_list_title">Identity verification</string>
     <string name="identity_provider_list_details">Select a provider to verify your identity</string>
-    <string name="identity_provider_list_note">Selecting a 3rd party Identity Issuer will take you to their
-        Identity Issuance flow.You will be returned to the app upon completion.\n\nNote: More Identity Issuers are coming soon!</string>
     <!-- Identity Provider Webview -->
     <string name="identity_provider_webview_title">Identity verification</string>
     <!-- Identity confirmed -->
@@ -162,7 +132,6 @@
     <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed</string>
     <string name="identity_confirmed_finish_button">@string/finish</string>
-    <string name="identity_confirmed_submit_new_account_for_identity">Submit a new account for Identity %1$s?</string>
     <string name="identity_confirmed_create_new_account">Create new account</string>
     <string name="identity_confirmed_first_account_creation_notice">Once your verification request is approved you can create your first account</string>
     <!-- Identity attributes -->
@@ -195,12 +164,9 @@
     <string name="accounts_overview_create_account">Create account</string>
     <string name="accounts_overview_wallet_total">Wallet total</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
-    <string name="accounts_overview_at_disposal">- At disposal:</string>
-    <string name="accounts_overview_staked">- Staked:</string>
     <string name="accounts_overview_balance">Balance</string>
     <string name="accounts_overview_balance_at_disposal">Balance (at disposal):</string>
     <string name="accounts_overview_shielded_balance">Shielded Balance</string>
-    <string name="accounts_overview_account_total">Account total</string>
     <string name="total_amount">Total amount</string>
     <!-- New account name -->
     <string name="new_account_name_title">Create new account</string>
@@ -209,11 +175,8 @@
     <string name="new_account_name_continue">Continue</string>
     <string name="new_account_name_account_name_hint">Account name</string>
     <!-- Identity overview -->
-    <string name="identity_verification_failed">Verification failed</string>
-    <string name="identity_verification_pending">Verification in progress</string>
     <!-- New account identity -->
     <string name="new_account_identity_title">Add Identity Data</string>
-    <string name="new_account_please_wait">This process may take a while on some phones. Please hang on.</string>
     <!-- New account setup -->
     <string name="new_account_setup_confirm_submit">Create account</string>
     <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
@@ -226,7 +189,6 @@
     <string name="new_account_confirmed_info">Account submitted. Once it\'s finalized, you can use the account from the account overview.</string>
     <!--  Account details  -->
     <string name="account_details_error_msg">Account creation failed in the process of creation.</string>
-    <string name="account_details_transfers">This balance has no transactions yet.</string>
     <string name="account_details_pending_msg">Account creation in progress.\n\nYou can start using this account once it’s been finalized on the chain.</string>
     <string name="account_details_title">Account details</string>
     <string name="account_details_transfers_title">Activity</string>
@@ -286,7 +248,6 @@
     <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
     <string name="send_funds_confirmation_memo">Memo: %1$s</string>
     <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
-    <string name="send_funds_error_same_account">Recipient account is not allowed to be the same as sending account.</string>
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_title">Send funds</string>
     <string name="send_funds_confirmed_fee_info">Estimated transaction fee:\n%1$s</string>
@@ -314,7 +275,6 @@
     <string name="more_overview_title">More</string>
     <string name="more_overview_item_identities">Identities</string>
     <string name="more_overview_item_address_book">Address Book</string>
-    <string name="more_overview_item_qr_scanner">QR Scanner</string>
     <string name="more_overview_item_export">Export</string>
     <string name="more_overview_item_import">Import</string>
     <string name="more_overview_item_about">About</string>
@@ -329,7 +289,6 @@
         using the secret recovery phrase or the backup file. Proceed with erasing?
     </string>
     <string name="more_overview_erase_wallet_continue">@string/dialog_yes</string>
-    <string name="more_overview_erase_wallet_cancel">@string/dialog_no</string>
     <string name="more_overview_erase_wallet_erased">The wallet has been successfully erased</string>
     <string name="more_overview_reveal_seed_phrase">Show My Seed Phrase</string>
     <!-- Export -->
@@ -348,29 +307,26 @@
     <string name="export_error_password_not_valid">Password is not valid - minimum length is 6.</string>
     <string name="export_error_password_setup">Failed to setup password</string>
     <string name="export_error_account_not_finalised">The following accounts are either failed or not ready on the chain, so they cannot be exported.\n\n</string>
-    <string name="export_error_account_not_finalised_name">%s. %s\n</string>
+    <string name="export_error_account_not_finalised_name">%1$s. %2$s\n</string>
     <string name="export_error_account_not_finalised_cancel">Cancel</string>
     <string name="export_error_account_not_finalised_continue">Continue</string>
     <!-- About -->
     <string name="about_title">About</string>
     <string name="about_support">Support</string>
-    <string name="about_support_text">If you encountered a problem, or need help with something, you can reach out to us via <a href="mailto:support@concordium.software?subject=CryptoX">support@concordium.software</a></string>
+    <string name="about_support_text">If you encountered a problem, or need help with something, you can reach out to us via <a href="mailto:support@concordium.com?subject=CryptoX">support@concordium.com</a></string>
     <string name="about_contact">Website</string>
     <string name="about_contact_text">For more info about CryptoX Wallet you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
-    <string name="about_version_text">%s</string>
     <!-- Import -->
     <string name="import_not_possible_when_using_phrase">File import is not possible when using a secret phrase</string>
     <string name="import_importing_progress">Importing…</string>
     <string name="import_title">Import</string>
     <string name="import_confirm">Okay</string>
     <string name="import_error_file">Could not read import file</string>
-    <string name="import_error_format">Unexpected import json format</string>
     <string name="import_error_password_or_file_content">Invalid password or import file corrupted</string>
     <string name="import_password_title">Export Password</string>
     <string name="import_password_info">Enter the password created when exporting the file</string>
     <string name="import_password_confirm">Continue</string>
-    <string name="import_password_error_password_not_valid">Password is not valid - minimum length is 6.</string>
     <string name="import_failed_message_template">Import failed\n%1$s</string>
     <string name="import_confirmed_title">Import</string>
     <string name="import_confirmed_header">Import finished!</string>
@@ -410,8 +366,6 @@
     <string name="recipient_list_default_title">Address Book</string>
     <string name="recipient_list_select_title">Select Recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
-    <string name="recipient_list_shield_amount">Shield amount</string>
-    <string name="recipient_list_unshield_amount">Unshield amount</string>
     <!-- New recipient -->
     <string name="recipient_edit_title">Edit Address</string>
     <string name="recipient_new_title">New Recipient</string>
@@ -425,7 +379,6 @@
     <string name="scan_qr_permission_camera_rationale">Permission to use the camera is necessary to scan QR codes</string>
     <string name="scan_qr_error_no_camera_permission_title">Information</string>
     <string name="scan_qr_error_no_camera_permission">The app does not have permission to use the camera and therefore cannot scan QR codes</string>
-    <string name="scan_qr_error_low_storage">QR scanner components from Google Play Services cannot be downloaded. Not enough space on the device.</string>
     <string name="scan_qr_error_invalid_qr_code">Invalid QR code</string>
     <string name="valid_special_chars_error_text"><![CDATA[The name can only contain letters, numbers, and these special characters: \"-\", \"_\", \",\", \".\", \"!\", \"?\". The name cannot be empty, or start or end with a space.]]></string>
     <string name="valid_special_chars_for_names"><![CDATA[-_, .!?]]></string>
@@ -458,16 +411,8 @@
     <string name="change_password_initial_error">Data could not be decrypted</string>
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
-    <string name="accounts_overview_currently_available_amounts">Currently available amounts:</string>
     <string name="plus_sign">+</string>
-    <string name="title_activity_connect">ConnectActivity</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="network_comission">Network commission</string>
     <string name="acc_address_placeholder">%1$s (%2$s)</string>
     <string name="acc_balance_placeholder">Balance: %1$s CCD</string>
@@ -483,27 +428,9 @@
     <string name="title_clean_up_nft">Clean Up NFT</string>
     <string name="title_finalize_nft">Auction Approval</string>
     <string name="add_memo_title">Add Memo</string>
-    <string name="add_memo_intro">Enter your memo below</string>
     <string name="add_memo_hint">You can enter an optional memo here</string>
     <string name="add_memo_confirm">Add memo to transfer</string>
 
-    <string name="finalized_account_title_singular">Your new account is ready!</string>
-    <string name="finalized_account_title_plural">Your new accounts are ready!</string>
-    <string name="finalized_account_message_singular">Your account %1$s has finalized, and is now ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
-    <string name="finalized_account_message_plural">Your new accounts are now finalized and ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
-    <string name="finalized_account_backup">Make back-up</string>
-    <string name="finalized_account_ok">Okay</string>
-
-    <string name="dialog_support">Contact Support</string>
-    <string name="dialog_copy">Copy reference</string>
-    <string name="dialog_popup_support_with_email_client_text">The identity issuance failed. You can either try again, or contact %1$s’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\nConcordium will be CC’ed in the correspondence.</string>
-    <string name="dialog_popup_support_without_email_client_text">The identity issuance failed. You can either try again, or contact %1$s’s support.\n\nYou can copy the reference below, and then contact %1$s at %2$s\n\nOptional: Add Concordium as CC via idiss@concordium.software</string>
-
-    <string name="dialog_send_email">Send email</string>
-
-    <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
-    <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
-    <string name="contact_issuance_hash_value_copied">Reference text copied</string>
     <string name="send_funds_optional_add_memo">Add memo</string>
     <string name="send_funds_optional_edit_memo">Edit memo</string>
 
@@ -521,15 +448,12 @@
     <string name="approximate_fee">Approximate fee</string>
     <string name="your_owned_nft">Your NFTs</string>
     <string name="discover_your_nft">Discover your NFTs</string>
-    <string name="title_activity_add_provider">AddProviderActivity</string>
     <string name="add_provider_description">To add NFTs from a particular marketplace to your CryptoX wallet you have to enter the marketplace URL and name below.\nExample:</string>
     <string name="hint_website_url">Website URL <font color='#FF0000'>*</font></string>
     <string name="hint_provider_name">Provider name <font color='#FF0000'>*</font></string>
     <string name="delete">Delete</string>
     <string name="btn_connect">Connect</string>
     <string name="promt_connect_to_this_website">Connect to this website?</string>
-    <string name="connect_description">Clicking on "Connect" you approve this application to view your profile and public address. It\'s important step for protecting your private data and potential fishing risks.</string>
-    <string name="airdrop_connect_description">Please confirm registration to AirDrop campaign at %1$s %2$s</string>
     <string name="airdrop_connect_description2">By clicking \'Connect\' you confirm the registration for the airdrop campaign at %1$s %2$s</string>
 
     <!-- Wallet Connect -->
@@ -580,7 +504,6 @@
     <string name="wallet_connect_pending_request_notice">New WalletConnect request is waiting on the home screen</string>
 
     <string name="allow">Allow</string>
-    <string name="approve">Approve</string>
     <string name="decline">Decline</string>
     <string name="sign">Sign</string>
     <string name="finish">Finish</string>
@@ -607,13 +530,11 @@
     <string name="cis_token_balance">%1$s balance</string>
     <string name="cis_token_quantity">Quantity</string>
     <string name="cis_at_disposal">CCD at disposal</string>
-    <string name="cis_type_the_amount">Type the amount</string>
     <string name="cis_send_all"><u>Send all</u></string>
     <string name="cis_send_token">Token:</string>
     <string name="cis_send_address">Address</string>
     <string name="cis_send_paste_recipient_address">Paste recipient address</string>
     <string name="cis_send_or">or</string>
-    <string name="cis_paste">Paste</string>
     <string name="cis_address_book">Address book</string>
     <string name="cis_scan_qr">Scan QR</string>
     <string name="cis_add_memo">Add memo</string>
@@ -630,8 +551,6 @@
     <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Estimated transaction fee:\n%1$s</string>
     <string name="cis_back_to_list">Back to list</string>
-    <string name="cis_invalid_account_address">Invalid account address</string>
-    <string name="cis_enter_receiver_address">Please enter a receiver address</string>
     <string name="cis_about_token">About the token</string>
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_image">Image</string>
@@ -654,19 +573,14 @@
     <string name="cis_search_balance">Your balance: %1$s</string>
 
     <string name="pass_phrase_title">Your seed phrase</string>
-    <string name="pass_phrase_pick">Pick the correct suggestion on the right, for each index.</string>
     <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
-    <string name="pass_phrase_reveal">Reveal</string>
-    <string name="pass_phrase_copy_phrase">Copy secret phrase</string>
 
     <string name="copied">Copied</string>
-    <string name="yay">Yay!</string>
 
     <string name="pass_phrase_recover_title">Your seed phrase</string>
     <string name="pass_phrase_recover_input_explain">Manually enter all your 24 words in order as it was presented to you</string>
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>
-    <string name="pass_phrase_recover_incorrect">Invalid secret recovery phrase. Please verify that all words are entered correctly.</string>
     <string name="pass_phrase_try_another_word">Please try another word</string>
 
     <string name="pass_phrase_recover_process_title">Recover your accounts(s)</string>
@@ -817,8 +731,6 @@
     <string name="delegation_remove_text">Are you sure you want to remove your delegation?</string>
     <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
     <string name="delegation_remove_account">Account to stop delegating</string>
-    <string name="delegation_remove_submit">Submit delegation transaction</string>
-    <string name="delegation_remove_finish">Finish</string>
     <string name="delegation_remove_not_enough_funds_title">Warning</string>
     <string name="delegation_remove_not_enough_funds_message">You don\'t have any funds on your balance to pay for the fee.</string>
     <string name="delegation_remove_not_enough_funds_ok">Okay</string>
@@ -854,7 +766,6 @@
     <string name="baker_pool_settings_explain">When you open your validator as a pool, you earn commissions of stake delegated to your pool from other accounts:</string>
     <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
     <string name="baker_pool_settings_baking_explain">Block reward commission</string>
-    <string name="baker_pool_settings_reward_explain">Finalization reward commission</string>
     <string name="baking_commission_rate_error_transaction_not_in_range">Transaction fee is out of specified range</string>
     <string name="baking_commission_rate_error_baking_not_in_range">Baking reward is out of specified range</string>
     <string name="baking_pool_range_min">Min:\n%1$s%%</string>
@@ -1014,7 +925,6 @@
     <string name="export_account_keys_reveal_message">Click the button below to reveal your private key for %1$s</string>
     <string name="export_account_keys_done">Done</string>
     <string name="export_account_keys_copy">Copy key</string>
-    <string name="export_account_keys_copied">@string/copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
     <string name="export_account_keys_reveal">Reveal</string>
@@ -1092,8 +1002,6 @@
     <string name="passcode_use_full_password">Use full password instead</string>
     <string name="passcode_backspace_button">Delete</string>
     <string name="passcode_biometrics_button">Use biometrics</string>
-    <string name="passcode_enter_title">Enter passcode</string>
-    <string name="template_passcode_enter_details">%1$d-digit passcode to access your wallet</string>
     <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.software.com</string>
     <string name="passcode_create_setup_biometrics_title">Enable biometrics for next time?</string>
     <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sin in faster when you come back</string>
@@ -1116,7 +1024,6 @@
     <string name="saved_pass_phrase_reveal_transcribe">Transcribe</string>
     <string name="saved_pass_phrase_reveal_digital_copy">Digital copy</string>
     <string name="saved_pass_phrase_reveal_screenshot">Screenshot</string>
-    <string name="saved_pass_phrase_reveal_copied">@string/copied</string>
     <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
 
     <!-- Identity proofs in WalletConnect -->
@@ -1189,7 +1096,5 @@
     <string name="identity_proofs_range_statement_description">This will prove that your %1$s is between %2$s and %3$s</string>
     <string name="identity_proofs_membership_statement_description">This will prove that your %1$s is 1 of the following: %2$s</string>
     <string name="identity_proofs_non_membership_statement_description">This will prove that your %1$s is none of the following: %2$s</string>
-    <string name="identity_proofs_set_fallback">1 of %1$d values</string>
-    <string name="identity_proofs_set_non_fallback">None of %1$d values</string>
     <string name="noCredentialsForThatIssuer">You do not hold any credentials from the issuer that the verifier requested.</string>
 </resources>

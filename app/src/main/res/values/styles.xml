@@ -11,12 +11,6 @@
         <item name="searchViewStyle">@style/SearchView</item>
     </style>
 
-    <style name="AppTheme.DarkActionbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="colorAccent">@color/theme_accent</item>
-    </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -58,10 +52,6 @@
     <style name="AppTheme.NoActionBar.Launcher">
         <item name="android:windowBackground">@drawable/app_launcher_screen</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="CircularProgress" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/cryptox_grey_secondary</item>
