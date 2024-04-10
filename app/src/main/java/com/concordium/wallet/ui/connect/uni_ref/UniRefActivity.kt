@@ -1,6 +1,8 @@
 package com.concordium.wallet.ui.connect.uni_ref
 
+import android.graphics.Typeface
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -22,6 +24,7 @@ import com.concordium.wallet.ui.connect.ITransactionResult
 import com.concordium.wallet.ui.connect.NotificationBottomSheet
 import com.concordium.wallet.ui.connect.TransactionResult
 import com.concordium.wallet.ui.connect.TransactionResultBottomSheet
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -126,6 +129,12 @@ class UniRefActivity : BaseActivity(
         totalAmount.text = getString(R.string.amount, amount)
         totalAmountHeader.text = getString(R.string.amount, amount)
 
+        findViewById<Button>(R.id.show_details_button).setOnClickListener {
+            showTransactionDetailsDialog(
+                title = messageType,
+                prettyPrintDetails = viewModel.getPrettyPrintTransactionDetails(),
+            )
+        }
         findViewById<Button>(R.id.btnCancel).setOnClickListener {
             viewModel.reject()
             finish()
@@ -233,59 +242,27 @@ class UniRefActivity : BaseActivity(
             transactionResultBottomSheet?.setData(transfer)
         }
 
-    private fun createConfirmString(): String? {
-        val amount = viewModel.getAmount()
-        val cost = viewModel.transactionFeeLiveData.value
-        val recipient = viewModel.selectedRecipient
-        if (cost == null || recipient == null) {
-            // TODO Show error to user
-            return null
-        }
-        val amountString = formatGTU(amount, withGStroke = true)
-        val costString = formatGTU(cost, withGStroke = true)
-
-        return if (viewModel.isShielded) {
-            if (viewModel.isTransferToSameAccount()) {
-                getString(
-                    R.string.send_funds_confirmation_unshield,
-                    amountString,
-                    recipient.name,
-                    costString,
-                    ""
-                )
-            } else {
-                getString(
-                    R.string.send_funds_confirmation_send_shielded,
-                    amountString,
-                    recipient.name,
-                    costString,
-                    ""
-                )
-            }
-        } else {
-            if (viewModel.isTransferToSameAccount()) {
-                getString(
-                    R.string.send_funds_confirmation_shield,
-                    amountString,
-                    recipient.name,
-                    costString,
-                    ""
-                )
-            } else {
-                getString(
-                    R.string.send_funds_confirmation,
-                    amountString,
-                    recipient.name,
-                    costString,
-                    ""
-                )
-            }
-        }
-    }
-
     override fun onResultBottomSheetDismissed() {
         transactionResultBottomSheet?.dismiss()
         notificationBottomSheet?.dismiss()
         finish()
+    }
+
+    private fun showTransactionDetailsDialog(title: String, prettyPrintDetails: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setMessage(prettyPrintDetails)
+            .setPositiveButton(R.string.dialog_ok, null)
+            .show()
+            .apply {
+                val messageTextView = findViewById<View>(android.R.id.message) as? TextView
+                    ?: return@apply
+
+                with(messageTextView) {
+                    typeface = Typeface.MONOSPACE
+                    setTextIsSelectable(true)
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+                }
+            }
     }
 }

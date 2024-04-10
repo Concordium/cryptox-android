@@ -44,6 +44,7 @@ import com.concordium.wallet.ui.connect.TransactionResult
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -271,6 +272,9 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             else ->
                 tempData.origPayload.receiveName ?: context.getString(R.string.unknown_action)
         }
+
+    fun getPrettyPrintTransactionDetails(): String =
+        tempData.origPayload.toJson().prettyPrint()
 
     private fun loadAccountNonce() {
         proxyRepository.getAccountNonce(account.address,
