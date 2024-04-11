@@ -577,7 +577,7 @@ private constructor(
             return
         }
 
-        if (state is State.Idle) {
+        if (state is State.Idle || state is State.WaitingForSessionRequest) {
             // Only handle the request if not doing anything else.
             // Otherwise, the request will be handled as a pending one
             // once the current affair is finished.
