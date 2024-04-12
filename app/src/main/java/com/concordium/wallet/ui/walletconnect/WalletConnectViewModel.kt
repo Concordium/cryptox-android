@@ -34,6 +34,7 @@ import com.concordium.wallet.data.cryptolib.SignMessageInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
@@ -41,6 +42,7 @@ import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.TransactionCostCalculator
 import com.concordium.wallet.data.walletconnect.AccountTransactionParams
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.data.walletconnect.SignMessageParams
@@ -1060,31 +1062,50 @@ private constructor(
         mutableStateFlow.tryEmit(reviewState)
     }
 
-    private suspend fun getSessionRequestTransactionCost(
-    ): TransactionCost = suspendCancellableCoroutine { continuation ->
-        val backendRequest =
-            when (val accountTransactionPayload = sessionRequestAccountTransactionPayload) {
-                is AccountTransactionPayload.Transfer ->
-                    proxyRepository.getTransferCost(
-                        type = ProxyRepository.SIMPLE_TRANSFER,
-                        success = continuation::resume,
-                        failure = continuation::resumeWithException,
-                    )
+    private suspend fun getSessionRequestTransactionCost(): TransactionCost =
+        when (val accountTransactionPayload = sessionRequestAccountTransactionPayload) {
+            is AccountTransactionPayload.Transfer ->
+                getSimpleTransferCost()
 
-                is AccountTransactionPayload.Update ->
-                    proxyRepository.getTransferCost(
-                        type = ProxyRepository.UPDATE,
-                        amount = accountTransactionPayload.amount,
-                        sender = sessionRequestAccount.address,
-                        contractIndex = accountTransactionPayload.address.index,
-                        contractSubindex = accountTransactionPayload.address.subIndex,
-                        receiveName = accountTransactionPayload.receiveName,
-                        parameter = accountTransactionPayload.message,
-                        success = continuation::resume,
-                        failure = continuation::resumeWithException,
-                    )
+            is AccountTransactionPayload.Update -> {
+                val chainParameters: ChainParameters =
+                    checkNotNull(proxyRepository.getChainParametersSuspended().body()) {
+                        "Failed loading chain parameters"
+                    }
+
+                val maxEnergy: Long =
+                    if (accountTransactionPayload.maxEnergy != null) {
+                        // Use the legacy total value if provided.
+                        accountTransactionPayload.maxEnergy
+                    } else if (accountTransactionPayload.maxContractExecutionEnergy != null) {
+                        // Calculate the total value locally if only the execution energy provided.
+                        // Max energy = contract execution energy + base transaction energy.
+                        accountTransactionPayload.maxContractExecutionEnergy +
+                                TransactionCostCalculator.getBaseCostEnergy(
+                                    transactionSize = TransactionCostCalculator.getContractTransactionSize(
+                                        receiveName = accountTransactionPayload.receiveName,
+                                        message = accountTransactionPayload.message,
+                                    ),
+                                )
+                    } else {
+                        error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
+                    }
+
+                TransactionCost(
+                    energy = maxEnergy,
+                    euroPerEnergy = chainParameters.euroPerEnergy,
+                    microGTUPerEuro = chainParameters.microGtuPerEuro,
+                )
             }
+        }
 
+    private suspend fun getSimpleTransferCost(
+    ): TransactionCost = suspendCancellableCoroutine { continuation ->
+        val backendRequest = proxyRepository.getTransferCost(
+            type = ProxyRepository.SIMPLE_TRANSFER,
+            success = continuation::resume,
+            failure = continuation::resumeWithException,
+        )
         continuation.invokeOnCancellation { backendRequest.dispose() }
     }
 
@@ -1292,7 +1313,7 @@ private constructor(
             return
         }
 
-        ProxyRepository().getIGlobalInfo({ globalInfo ->
+        proxyRepository.getIGlobalInfo({ globalInfo ->
             val cryptographicParams: GlobalParams = globalInfo.value
 
             val input = Web3IdProofInput.builder()

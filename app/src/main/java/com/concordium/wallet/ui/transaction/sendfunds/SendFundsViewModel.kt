@@ -184,7 +184,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (tempData.memo == null) 0 else tempData.memo!!.length,
             success = {
                 tempData.energy = it.energy
-                _transactionFeeLiveData.postValue(it.cost.toBigInteger())
+                _transactionFeeLiveData.postValue(it.cost)
             },
             failure = {
                 handleBackendError(it)

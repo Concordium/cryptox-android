@@ -46,7 +46,6 @@ import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -354,7 +353,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             openStatus = openStatus,
             success = {
                 bakerDelegationData.energy = it.energy
-                bakerDelegationData.cost = it.cost.toBigInteger()
+                bakerDelegationData.cost = it.cost
                 if (notifyObservers)
                     _transactionFeeLiveData.value = Pair(bakerDelegationData.cost, requestId)
             },
