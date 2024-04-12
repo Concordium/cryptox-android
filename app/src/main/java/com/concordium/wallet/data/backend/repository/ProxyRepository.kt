@@ -17,7 +17,7 @@ import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
-import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.util.Log
 import java.math.BigInteger
@@ -189,9 +189,9 @@ class ProxyRepository {
         receiveName: String? = null,
         parameter: String? = null,
         executionNRGBuffer: Int? = null,
-        success: (TransferCost) -> Unit,
+        success: (TransactionCost) -> Unit,
         failure: ((Throwable) -> Unit)?
-    ): BackendRequest<TransferCost> {
+    ): BackendRequest<TransactionCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
         val call = backend.transferCost(
@@ -210,8 +210,8 @@ class ProxyRepository {
             parameter,
             executionNRGBuffer
         )
-        call.enqueue(object : BackendCallback<TransferCost>() {
-            override fun onResponseData(response: TransferCost) {
+        call.enqueue(object : BackendCallback<TransactionCost>() {
+            override fun onResponseData(response: TransactionCost) {
                 success(response)
             }
 
