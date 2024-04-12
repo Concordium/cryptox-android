@@ -376,6 +376,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
                 ),
                 amount = getAmount(),
                 maxEnergy = tempData.origPayload.energyLimit,
+                maxContractExecutionEnergy = null,
                 message = tempData.origPayload.serializedParams ?: "",
                 receiveName = tempData.origPayload.receiveName!!,
             )
