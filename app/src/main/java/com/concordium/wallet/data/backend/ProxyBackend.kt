@@ -17,7 +17,7 @@ import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.model.PassiveDelegation
 import com.concordium.wallet.data.model.SubmissionData
-import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransferSubmissionStatus
 import retrofit2.Call
 import retrofit2.Response
@@ -72,7 +72,7 @@ interface ProxyBackend {
         @Query("receiveName") receiveName: String? = null,
         @Query("parameter") parameter: String? = null,
         @Query("executionNRGBuffer") executionNRGBuffer: Int? = null
-    ): Call<TransferCost>
+    ): Call<TransactionCost>
 
     @GET("v0/chainParameters")
     fun chainParameters(): Call<ChainParameters>

@@ -35,8 +35,8 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.model.TransferCost
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -55,7 +55,6 @@ import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalle
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
-import com.concordium.wallet.util.toBigInteger
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
@@ -154,7 +153,7 @@ private constructor(
     private lateinit var sessionRequestAccountTransactionPayload: AccountTransactionPayload
     private lateinit var sessionRequestAccount: Account
     private lateinit var sessionRequestAppMetadata: AppMetadata
-    private lateinit var sessionRequestTransactionCost: BigInteger
+    private lateinit var sessionRequestTransactionCost: TransactionCost
     private lateinit var sessionRequestTransactionNonce: AccountNonce
     private lateinit var sessionRequestMessageToSign: String
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
@@ -987,7 +986,7 @@ private constructor(
 
     private fun loadTransactionRequestDataAndReview() = viewModelScope.launch {
         val accountNonce: AccountNonce
-        val transactionCostResponse: TransferCost
+        val transactionCost: TransactionCost
 
         Log.d("loading_data")
 
@@ -999,7 +998,7 @@ private constructor(
                 throw error
             }
 
-            transactionCostResponse = try {
+            transactionCost = try {
                 getSessionRequestTransactionCost()
             } catch (error: Exception) {
                 Log.e("failed_loading_transaction_cost", error)
@@ -1021,11 +1020,10 @@ private constructor(
 
         Log.d(
             "data_loaded:" +
-                    "\ncost=$transactionCostResponse," +
+                    "\ncost=$transactionCost," +
                     "\nnonce=$accountNonce"
         )
 
-        val transactionCost = transactionCostResponse.cost.toBigInteger()
         val accountAtDisposalBalance =
             sessionRequestAccount.getAtDisposalWithoutStakedOrScheduled(
                 sessionRequestAccount.totalUnshieldedBalance
@@ -1040,10 +1038,10 @@ private constructor(
                     method = getApplication<Application>().getString(R.string.transaction_type_transfer),
                     receiver = accountTransactionPayload.toAddress,
                     amount = accountTransactionPayload.amount,
-                    estimatedFee = sessionRequestTransactionCost,
+                    estimatedFee = sessionRequestTransactionCost.cost,
                     account = sessionRequestAccount,
                     canShowDetails = false,
-                    isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
+                    isEnoughFunds = accountTransactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
                     appMetadata = sessionRequestAppMetadata,
                 )
 
@@ -1052,10 +1050,10 @@ private constructor(
                     method = accountTransactionPayload.receiveName,
                     receiver = accountTransactionPayload.address.run { "$index, $subIndex" },
                     amount = accountTransactionPayload.amount,
-                    estimatedFee = sessionRequestTransactionCost,
+                    estimatedFee = sessionRequestTransactionCost.cost,
                     account = sessionRequestAccount,
                     canShowDetails = true,
-                    isEnoughFunds = accountTransactionPayload.amount + transactionCost <= accountAtDisposalBalance,
+                    isEnoughFunds = accountTransactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
                     appMetadata = sessionRequestAppMetadata,
                 )
         }
@@ -1063,7 +1061,7 @@ private constructor(
     }
 
     private suspend fun getSessionRequestTransactionCost(
-    ): TransferCost = suspendCancellableCoroutine { continuation ->
+    ): TransactionCost = suspendCancellableCoroutine { continuation ->
         val backendRequest =
             when (val accountTransactionPayload = sessionRequestAccountTransactionPayload) {
                 is AccountTransactionPayload.Transfer ->
@@ -1434,7 +1432,7 @@ private constructor(
                 mutableStateFlow.tryEmit(
                     State.TransactionSubmitted(
                         submissionId = submissionData.submissionId,
-                        estimatedFee = sessionRequestTransactionCost,
+                        estimatedFee = sessionRequestTransactionCost.cost,
                     )
                 )
             },
@@ -1491,7 +1489,7 @@ private constructor(
                         method = reviewState.method,
                         prettyPrintDetails = context.getString(
                             R.string.wallet_connect_template_transaction_request_details,
-                            accountTransactionPayload.maxEnergy.toString(),
+                            sessionRequestTransactionCost.energy.toString(),
                             prettyPrintParams,
                         ),
                     )
