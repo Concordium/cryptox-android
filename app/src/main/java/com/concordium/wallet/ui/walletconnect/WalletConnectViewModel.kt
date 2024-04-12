@@ -1033,9 +1033,6 @@ private constructor(
         val accountTransactionPayload = sessionRequestAccountTransactionPayload
         sessionRequestTransactionCost = transactionCost
         sessionRequestTransactionNonce = accountNonce
-        if (accountTransactionPayload is AccountTransactionPayload.Update) {
-            accountTransactionPayload.maxEnergy = transactionCostResponse.energy
-        }
 
         val reviewState = when (accountTransactionPayload) {
             is AccountTransactionPayload.Transfer ->
