@@ -44,7 +44,6 @@ import com.concordium.wallet.ui.connect.TransactionResult
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -240,7 +239,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             memoSize = 0,
             success = {
                 val nrgCcdAmount =
-                    payload.energyLimit * (it.cost.toBigInteger().toLong() / it.energy)
+                    payload.energyLimit * (it.cost.toLong() / it.energy)
                 tempData.nrgCcdAmount = nrgCcdAmount
                 _transactionFeeLiveData.value = nrgCcdAmount.toBigInteger()
             },
@@ -376,6 +375,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
                 ),
                 amount = getAmount(),
                 maxEnergy = tempData.origPayload.energyLimit,
+                maxContractExecutionEnergy = null,
                 message = tempData.origPayload.serializedParams ?: "",
                 receiveName = tempData.origPayload.receiveName!!,
             )

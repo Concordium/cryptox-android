@@ -313,7 +313,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
             success = {
                 sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigInteger()
+                sendTokenData.fee = it.cost
                 sendTokenData.account?.let { account ->
                     sendTokenData.max =
                         account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
@@ -346,7 +346,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
                 sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigInteger()
+                sendTokenData.fee = it.cost
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
             },
@@ -529,6 +529,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     address = ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0),
                     amount = BigInteger.ZERO,
                     maxEnergy = sendTokenData.energy!!,
+                    maxContractExecutionEnergy = null,
                     message = serializeTokenTransferParametersOutput.parameter,
                     receiveName = sendTokenData.token!!.contractName + ".transfer"
                 )
