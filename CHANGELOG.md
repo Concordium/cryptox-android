@@ -5,7 +5,8 @@
 ### Added
 - Setting up and updating validator pool commission rates
 - Support of WalletConnect CCD transfer requests
-- Ability to see full details of the WalletConnect transaction to sign
+- Ability to see full details of a WalletConnect transaction to sign
+- Ability to see full details of a Spaceseven transaction to sign
 - Support for WalletConnect verifiable presentation requests (for identity proofs)
 - Validation of metadata checksum when adding CIS-2 tokens
 - Display of balance/ownership when adding CIS-2 tokens
