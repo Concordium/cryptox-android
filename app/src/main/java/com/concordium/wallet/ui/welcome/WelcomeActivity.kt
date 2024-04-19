@@ -30,9 +30,13 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             }
         }
         binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                App.appCore.tracker.trackWelcomeCheckBoxChecked()
+            }
             binding.getStartedButton.isEnabled = isChecked
         }
         binding.getStartedButton.setOnClickListener {
+            App.appCore.tracker.trackWelcomeGetStartedClicked()
             goToStart()
         }
 

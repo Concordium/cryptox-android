@@ -4,8 +4,6 @@ import android.app.Application
 import android.content.Context
 import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.util.Log
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
@@ -13,7 +11,6 @@ import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 
 class App : Application() {
-
     companion object {
         lateinit var appContext: Context
         lateinit var appCore: AppCore
@@ -34,7 +31,7 @@ class App : Application() {
         appContext = this
         initAppCore()
         initWalletConnect()
-        initFirebase()
+        appCore.tracker.trackInstall(this)
     }
 
     fun initAppCore() {
@@ -64,19 +61,6 @@ class App : Application() {
 
         SignClient.initialize(Sign.Params.Init(core = CoreClient)) { modelError ->
             println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
-        }
-    }
-
-    private fun initFirebase() {
-        with(FirebaseCrashlytics.getInstance()) {
-            setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
-            if (BuildConfig.DEBUG) {
-                deleteUnsentReports()
-            }
-        }
-
-        with(FirebaseAnalytics.getInstance(this)) {
-            setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
         }
     }
 }
