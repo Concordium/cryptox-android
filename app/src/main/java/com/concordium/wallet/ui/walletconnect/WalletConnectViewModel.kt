@@ -690,8 +690,10 @@ private constructor(
 
     private fun handleSignMessage(params: String) {
         try {
-            val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
-            this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.message
+            val signMessageParams = SignMessageParams
+                .fromSessionRequestParams(params) as? SignMessageParams.Text
+                ?: error("Only text messages are supported")
+            this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.data
 
             mutableStateFlow.tryEmit(
                 State.SessionRequestReview.SignRequestReview(
