@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityOneStepSetupWalletBinding
 import com.concordium.wallet.databinding.ItemCcxSeedPhraseWordBinding
@@ -60,6 +61,9 @@ class OneStepSetupWalletActivity :
 
     private fun initButtons() {
         binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                App.appCore.tracker.welcomePhraseCheckboxBoxChecked()
+            }
             binding.continueButton.isEnabled = isChecked
         }
 
@@ -68,6 +72,8 @@ class OneStepSetupWalletActivity :
         }
 
         binding.copyButton.setOnClickListener {
+            App.appCore.tracker.welcomePhraseCopyClicked()
+
             val clipboardManager: ClipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(

@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.IdentityStatus
@@ -71,6 +72,8 @@ class IdentityConfirmedActivity :
             return
         }
 
+        App.appCore.tracker.identityVerificationResultScreen()
+
         showRequestNoticeDialog(IdentityRequestNoticeDialog.submitted())
 
         if (showForFirstIdentity)
@@ -128,6 +131,7 @@ class IdentityConfirmedActivity :
 
                 when (newIdentity.status) {
                     IdentityStatus.DONE -> {
+                        App.appCore.tracker.identityVerificationResultApprovedDialog()
                         showRequestNoticeDialog(IdentityRequestNoticeDialog.approved())
                     }
 
@@ -153,6 +157,8 @@ class IdentityConfirmedActivity :
         }
 
         binding.btnSubmitAccount.setOnClickListener {
+            App.appCore.tracker.identityVerificationResultCreateAccountClicked()
+
             CoroutineScope(Dispatchers.IO).launch {
                 runOnUiThread {
                     viewModelNewAccount.initialize(Account.getDefaultName(""), identity)

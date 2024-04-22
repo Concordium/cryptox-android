@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
@@ -103,6 +104,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
                 viewModel.startIdentityUpdate()
                 startCheckForPendingIdentity(this, null, false) {}
+
+                App.appCore.tracker.homeScreen()
             }
         }
     }

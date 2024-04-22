@@ -54,7 +54,7 @@ class WelcomePromoActivity :
                     .show(supportFragmentManager, WelcomeNotificationPermissionDialog.TAG)
             }
 
-            App.appCore.tracker.trackWelcomeHomeScreen()
+            App.appCore.tracker.welcomeHomeScreen()
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->

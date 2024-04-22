@@ -31,7 +31,7 @@ class App : Application() {
         appContext = this
         initAppCore()
         initWalletConnect()
-        appCore.tracker.trackInstall(this)
+        appCore.tracker.installation(this)
     }
 
     fun initAppCore() {

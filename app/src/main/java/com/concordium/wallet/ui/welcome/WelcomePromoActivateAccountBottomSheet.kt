@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWelcomePromoActivateAccountBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -29,6 +30,7 @@ class WelcomePromoActivateAccountBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.createWalletButton.setOnClickListener {
+            App.appCore.tracker.welcomeActivateAccountDialogCreateClicked()
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(ChosenAction.CREATE)
@@ -36,11 +38,16 @@ class WelcomePromoActivateAccountBottomSheet : BottomSheetDialogFragment() {
             dismiss()
         }
         binding.importWalletButton.setOnClickListener {
+            App.appCore.tracker.welcomeActivateAccountDialogImportClicked()
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(ChosenAction.IMPORT)
             )
             dismiss()
+        }
+
+        if (savedInstanceState == null) {
+            App.appCore.tracker.welcomeActivateAccountDialog()
         }
     }
 

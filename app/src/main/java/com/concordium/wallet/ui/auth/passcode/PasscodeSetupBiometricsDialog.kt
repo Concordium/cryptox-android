@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.databinding.DialogPasscodeSetupBiometricsBinding
@@ -46,6 +47,7 @@ class PasscodeSetupBiometricsDialog : AppCompatDialogFragment() {
 
         listOf(binding.denyButton, binding.closeButton).forEach {
             it.setOnClickListener {
+                App.appCore.tracker.welcomePasscodeBiometricsRejected()
                 dismiss()
             }
         }
@@ -57,6 +59,12 @@ class PasscodeSetupBiometricsDialog : AppCompatDialogFragment() {
             if (cipher != null) {
                 biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
             }
+
+            App.appCore.tracker.welcomePasscodeBiometricsAccepted()
+        }
+
+        if (savedInstanceState == null) {
+            App.appCore.tracker.welcomePasscodeBiometricsDialog()
         }
     }
 

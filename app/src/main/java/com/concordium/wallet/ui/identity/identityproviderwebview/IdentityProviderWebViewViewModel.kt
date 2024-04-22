@@ -102,6 +102,10 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 )
             )
         }
+
+        App.appCore.tracker.identityVerificationScreen(
+            provider = identityCreationData.identityProvider.ipInfo.ipDescription.name
+        )
     }
 
     override fun onCleared() {
