@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
@@ -52,6 +53,8 @@ class WelcomePromoActivity :
                 WelcomeNotificationPermissionDialog()
                     .show(supportFragmentManager, WelcomeNotificationPermissionDialog.TAG)
             }
+
+            App.appCore.tracker.trackWelcomeHomeScreen()
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->

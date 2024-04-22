@@ -72,7 +72,7 @@ class WelcomePromoAccountsFragment : Fragment() {
             CurrencyUtil.formatGTU(promoViewModel.accountActivationReward, false)
 
         binding.activateButton.setOnClickListener {
-            App.appCore.tracker.trackHomeActivateAccountClicked()
+            App.appCore.tracker.trackWelcomeHomeActivateAccountClicked()
             (activity as? WelcomeAccountActivationLauncher)
                 ?.proceedWithAccountActivation()
         }
