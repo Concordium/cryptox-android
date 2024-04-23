@@ -69,6 +69,11 @@ jobs:
         env:
           CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
 
+      - name: Build Testnet bundle for Google Play upload
+        run: ./gradlew app:bundleTstnetRelease --stacktrace
+        env:
+          CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
+
       - name: Upload the APKs and bundles
         uses: actions/upload-artifact@v4
         with:
