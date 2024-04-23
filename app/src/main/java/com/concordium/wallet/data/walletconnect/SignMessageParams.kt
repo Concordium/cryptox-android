@@ -14,7 +14,7 @@ sealed interface SignMessageParams {
          * Hex-encoded binary data.
          */
         val data: String,
-    )
+    ): SignMessageParams
 
     companion object {
         private val gson by lazy {
