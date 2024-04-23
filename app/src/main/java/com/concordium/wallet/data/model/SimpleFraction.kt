@@ -1,7 +1,7 @@
 package com.concordium.wallet.data.model
 
+import java.io.Serializable
 import java.math.BigInteger
-import java.math.MathContext
 
 /**
  * A fraction defined as 2 integers:
@@ -10,13 +10,8 @@ import java.math.MathContext
  *  –
  *  D
  * ```
- *
- * @see toBigDecimal
  */
-data class SimpleFraction(
+class SimpleFraction(
     val numerator: BigInteger,
     val denominator: BigInteger,
-) {
-    fun toBigDecimal() =
-        numerator.toBigDecimal().divide(denominator.toBigDecimal(), MathContext.UNLIMITED)
-}
+): Serializable
