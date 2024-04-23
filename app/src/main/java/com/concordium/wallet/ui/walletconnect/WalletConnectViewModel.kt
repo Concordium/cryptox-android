@@ -702,13 +702,19 @@ private constructor(
                     appMetadata = sessionRequestAppMetadata
                 )
             )
-        } catch (e: Exception) {
-            Log.e("Failed to parse sign message parameters: $params", e)
+        } catch (error: Exception) {
+            Log.e("Failed to parse sign message parameters: $params", error)
+
+            respondError(
+                message = "Failed parse the request: $error"
+            )
+
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.InvalidRequest
                 )
             )
+
             return
         }
     }
