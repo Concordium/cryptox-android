@@ -157,7 +157,7 @@ private constructor(
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private lateinit var sessionRequestTransactionCost: TransactionCost
     private lateinit var sessionRequestTransactionNonce: AccountNonce
-    private lateinit var sessionRequestMessageToSign: String
+    private lateinit var sessionRequestSignMessageParams: SignMessageParams
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
@@ -688,16 +688,39 @@ private constructor(
         onSignAndSendTransactionRequested()
     }
 
-    private fun handleSignMessage(params: String) {
+    private fun handleSignMessage(params: String) = viewModelScope.launch {
         try {
             val signMessageParams = SignMessageParams
-                .fromSessionRequestParams(params) as? SignMessageParams.Text
-                ?: error("Only text messages are supported")
-            this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.data
+                // TODO temp solution
+                .fromSessionRequestParams(
+                    if (params.startsWith('{'))
+                        params
+                    else
+                        "{$params}"
+                )
+            this@WalletConnectViewModel.sessionRequestSignMessageParams = signMessageParams
 
             mutableStateFlow.tryEmit(
                 State.SessionRequestReview.SignRequestReview(
-                    message = sessionRequestMessageToSign,
+                    message = when (signMessageParams) {
+                        is SignMessageParams.Text ->
+                            signMessageParams.data
+
+                        is SignMessageParams.Binary ->
+                            App.appCore.cryptoLibrary
+                                .parameterToJson(
+                                    ParameterToJsonInput(
+                                        parameter = signMessageParams.data,
+                                        // Receive name doesn't matter,
+                                        // but must follow the format.
+                                        receiveName = "o.0",
+                                        schema = signMessageParams.schema,
+                                        schemaVersion = null,
+                                    )
+                                )
+                                ?.prettyPrint()
+                                ?: error("Failed to deserialize the raw binary data")
+                    },
                     account = sessionRequestAccount,
                     appMetadata = sessionRequestAppMetadata
                 )
@@ -714,8 +737,6 @@ private constructor(
                     Error.InvalidRequest
                 )
             )
-
-            return
         }
     }
 
@@ -1375,7 +1396,7 @@ private constructor(
     private suspend fun signRequestedMessage(accountKeys: AccountData) {
         val signMessageInput = SignMessageInput(
             address = sessionRequestAccount.address,
-            message = sessionRequestMessageToSign,
+            message = sessionRequestSignMessageParams.data,
             keys = accountKeys,
         )
         val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)

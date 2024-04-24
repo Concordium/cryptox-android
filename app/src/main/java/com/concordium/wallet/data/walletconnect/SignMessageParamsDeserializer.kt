@@ -29,10 +29,20 @@ class SignMessageParamsDeserializer : JsonDeserializer<SignMessageParams?> {
                 null
 
             messageElement.isJsonPrimitive ->
-                SignMessageParams.Text(data = messageElement.asString)
+                SignMessageParams.Text(
+                    data = messageElement.asString,
+                )
 
             messageElement.isJsonObject ->
-                context.deserialize(messageElement, SignMessageParams.Binary::class.java)
+                SignMessageParams.Binary(
+                    data = messageElement.asJsonObject["data"].asString,
+                    schema = Schema.ValueSchema(
+                        // For binary params deserialization, the parameter v1 schema is used.
+                        type = "parameter",
+                        value = messageElement.asJsonObject["schema"].asString,
+                        version = 1,
+                    ),
+                )
 
             else ->
                 throw JsonParseException("The 'message' element has unknown type")

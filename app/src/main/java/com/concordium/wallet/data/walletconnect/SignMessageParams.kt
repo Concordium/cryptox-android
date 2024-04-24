@@ -4,8 +4,10 @@ import com.concordium.wallet.App
 import com.google.gson.JsonSyntaxException
 
 sealed interface SignMessageParams {
+    val data: String
+
     class Text(
-        val data: String,
+        override val data: String,
     ) : SignMessageParams
 
     class Binary(
@@ -13,13 +15,12 @@ sealed interface SignMessageParams {
         /**
          * Hex-encoded binary data.
          */
-        val data: String,
+        override val data: String,
     ): SignMessageParams
 
     companion object {
         private val gson by lazy {
             App.appCore.gson.newBuilder()
-                .registerTypeAdapter(Schema::class.java, SchemaDeserializer())
                 .registerTypeAdapter(SignMessageParams::class.java, SignMessageParamsDeserializer())
                 .create()
         }
