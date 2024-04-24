@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:background="@color/cryptox_black_secondary">
 
     <ImageView
@@ -50,35 +50,45 @@
 
     </FrameLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/message_layout"
-        style="@style/CryptoX_Container_Stroked"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="28dp"
-        android:paddingBottom="20dp"
+        android:fadingEdge="vertical"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/decline_button"
+        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selected_account_include_container">
+        app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
+        app:layout_constraintVertical_chainStyle="spread_inside">
 
-        <TextView
-            android:id="@+id/message_title_text_view"
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_width="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/wallet_connect_signature_request_message"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/CryptoX_Container_Stroked"
+            android:paddingBottom="20dp">
 
-        <TextView
-            android:id="@+id/message_text_view"
-            style="@style/CryptoX_Typography_Caption"
-            android:layout_width="match_parent"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/cryptox_white_main"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/message_title_text_view"
-            tools:text="Welcome to the DEX\n\nClick ‘Sign’ to sign in.\n\nNo password needed! This request will not trigger a blockchain transaction or cost any gas fees." />
+            <TextView
+                android:id="@+id/message_title_text_view"
+                style="@style/CryptoX_Typography_Body_Medium"
+                android:layout_width="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/wallet_connect_signature_request_message"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/message_text_view"
+                style="@style/CryptoX_Typography_Caption"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/cryptox_white_main"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/message_title_text_view"
+                tools:text="Welcome to the DEX\n\nClick ‘Sign’ to sign in.\n\nNo password needed! This request will not trigger a blockchain transaction or cost any gas fees." />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/decline_button"
@@ -87,6 +97,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="4dp"
         android:text="@string/wallet_connect_session_request_decline"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/approve_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/message_layout" />
@@ -97,6 +108,7 @@
         android:layout_width="0dp"
         android:layout_marginStart="4dp"
         android:text="@string/wallet_connect_session_request_sign"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/decline_button"
         app:layout_constraintTop_toTopOf="@id/decline_button" />
