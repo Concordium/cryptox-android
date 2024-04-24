@@ -2,11 +2,10 @@ name: Build release packages for Google Play and standalone publishing
 
 on:
   push:
-    # Run only for releases and release candidates.
+    # Run for releases and release candidates.
     tags:
-      - "*.*.*"
-      - "*-rc.*"
-      - "!*-*"
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+rc.[0-9]+'
   workflow_dispatch:
 
 env:
