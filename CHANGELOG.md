@@ -1,10 +1,10 @@
 # Changelog
 
-## [Unreleased] 
+## [1.0.0] - 2022-04-24
 
 ### Added
 - Setting up and updating validator pool commission rates
-- Support of WalletConnect CCD transfer requests
+- Support for WalletConnect CCD transfer requests
 - Ability to see full details of a WalletConnect transaction to sign
 - Ability to see full details of a Spaceseven transaction to sign
 - Support for WalletConnect verifiable presentation requests (for identity proofs)
@@ -42,3 +42,4 @@
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD
+[1.0.0]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...1.0.0

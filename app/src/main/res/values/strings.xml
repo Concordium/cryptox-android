@@ -860,14 +860,14 @@
     <string name="baker_registration_confirmation_update_stake_update">Account to make validator update</string>
     <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Lowering your stake has a cool-down period, meaning it will not take effect immediately.\n\nThe validator cannot be removed and the stake cannot be changed until the cool-down is over.</string>
 
-    <string name="baker_update_intro_flow_title">Baking</string>
+    <string name="baker_update_intro_flow_title">Validating</string>
     <string name="baker_update_intro_subtitle1">Updating validator settings</string>
     <string name="baker_update_intro_subtitle2">Update validator stake</string>
     <string name="baker_update_intro_subtitle3" tools:ignore="TypographyFractions">Update pool settings (1/2)</string>
     <string name="baker_update_intro_subtitle4">Update pool settings (2/2)</string>
     <string name="baker_update_intro_subtitle5">Update validator keys</string>
 
-    <string name="baker_remove_intro_flow_title">Baking</string>
+    <string name="baker_remove_intro_flow_title">Validating</string>
     <string name="baker_remove_intro_subtitle1">Stop validating</string>
 
     <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>
