@@ -4,7 +4,9 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.concordium.sdk.crypto.SHA256
 import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
+import com.concordium.sdk.crypto.ed25519.ED25519SecretKey
 import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
@@ -18,6 +20,7 @@ import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
 import com.concordium.sdk.transactions.CredentialRegistrationId
+import com.concordium.sdk.types.AccountAddress
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -30,9 +33,11 @@ import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
-import com.concordium.wallet.data.cryptolib.SignMessageInput
+import com.concordium.wallet.data.cryptolib.SignMessageOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.cryptolib.X0
 import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountDataKeys
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.GlobalParams
@@ -57,11 +62,13 @@ import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalle
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
+import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import com.walletconnect.util.hexToBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -1393,17 +1400,38 @@ private constructor(
         return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
-    private suspend fun signRequestedMessage(accountKeys: AccountData) {
-        val signMessageInput = SignMessageInput(
-            address = sessionRequestAccount.address,
-            message = sessionRequestSignMessageParams.data,
-            keys = accountKeys,
-        )
-        val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
-        if (signMessageOutput == null) {
-            Log.e("failed_signing_message")
+    private fun signRequestedMessage(accountKeys: AccountData) {
+        val signatureHex = try {
+            val signKeyHex =
+                App.appCore.gson.fromJson(accountKeys.keys.json, AccountDataKeys::class.java)
+                    .level0
+                    .keys
+                    .keys
+                    .signKey
+
+            val message = when (val signMessageParams = sessionRequestSignMessageParams) {
+                is SignMessageParams.Binary ->
+                    signMessageParams.data.hexToBytes()
+
+                is SignMessageParams.Text ->
+                    signMessageParams.data.encodeToByteArray()
+            }
+
+            // See https://github.com/Concordium/concordium-base/blob/main/mobile_wallet/src/lib.rs#L89
+            val input = SHA256.hash(
+                AccountAddress.from(sessionRequestAccount.address).bytes
+                        + ByteArray(8)
+                        + message
+            )
+
+            ED25519SecretKey.from(signKeyHex)
+                .sign(input)
+                .toHex()
+        } catch (e: Exception) {
+            Log.e("failed_signing_message", e)
+
             respondError(
-                message = "Failed signing message: crypto library internal error"
+                message = "Failed signing message: $e"
             )
 
             mutableEventsFlow.tryEmit(
@@ -1411,14 +1439,16 @@ private constructor(
                     Error.CryptographyFailed
                 )
             )
-        } else {
-            respondSuccess(
-                result = Gson().toJson(signMessageOutput)
-            )
 
-            mutableStateFlow.tryEmit(State.Idle)
-            handleNextOldestPendingSessionRequest()
+            return
         }
+
+        respondSuccess(
+            result = App.appCore.gson.toJson(SignMessageOutput(X0(signatureHex)))
+        )
+
+        mutableStateFlow.tryEmit(State.Idle)
+        handleNextOldestPendingSessionRequest()
     }
 
     private suspend fun signAndSubmitRequestedTransaction(accountKeys: AccountData) {
