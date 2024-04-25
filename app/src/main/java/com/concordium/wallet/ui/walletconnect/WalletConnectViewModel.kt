@@ -697,14 +697,12 @@ private constructor(
 
     private fun handleSignMessage(params: String) = viewModelScope.launch {
         try {
-            val signMessageParams = SignMessageParams
-                // TODO temp solution
-                .fromSessionRequestParams(
-                    if (params.startsWith('{'))
-                        params
-                    else
-                        "{$params}"
-                )
+            val signMessageParams = SignMessageParams.fromSessionRequestParams(
+                if (params.startsWith('{'))
+                    params
+                else
+                    "{$params}"
+            )
             this@WalletConnectViewModel.sessionRequestSignMessageParams = signMessageParams
 
             mutableStateFlow.tryEmit(
