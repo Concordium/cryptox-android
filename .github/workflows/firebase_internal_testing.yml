@@ -2,10 +2,9 @@ name: Distribute builds for internal testing through Firebase
 
 on:
   push:
-    # Run for QA builds and release candidates.
+    # Run for QA builds.
     tags:
-      - "*-qa.*"
-      - "*-rc.*"
+      - '[0-9]+.[0-9]+.[0-9]+qa.[0-9]+'
   workflow_dispatch:
 
 env:

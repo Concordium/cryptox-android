@@ -44,7 +44,7 @@ No Spaceseven instance
 - Mainnet (`mainnet`) – Public Concordium network, real funds and identities. Spaceseven production
 
 ### Distribution for internal testing
-Builds for internal testing tagged as QA (`-qa.X`) or release candidate (`-rc.X`) are assembled and distributed through Firebase App distribution by the [corresponding pipeline](.github/workflows/firebase_internal_testing.yml).
+Builds for internal testing tagged as QA (`-qa.X`) are assembled and distributed through Firebase App distribution by the [corresponding pipeline](.github/workflows/firebase_internal_testing.yml).
 Update the version in `main`, tag the commit with the version name and push the changes.
 
 [Track the Internal testing pipeline](https://github.com/Concordium/cryptox-android/deployments/Internal%20testing)
@@ -52,9 +52,11 @@ Update the version in `main`, tag the commit with the version name and push the 
 APKs can be downloaded from the GitHub workflow artifacts or from the Firebase console.
 
 ### Building for release
-Builds for releases tagged with semver version (`X.Y.Z`) are assembled by the [corresponding pipeline](.github/workflows/release_build.yml).
+Builds for releases tagged with semver version (`X.Y.Z`) or release candidate (`-rc.X`) 
+are assembled by the [corresponding pipeline](.github/workflows/release_build.yml). 
 Update the version in `main`, tag the commit with the version name and push the changes.
 
 [Track the Release pipeline](https://github.com/Concordium/cryptox-android/deployments/Releases)
 
-APKs signed for standalone distribution and bundles signed with the Google Play upload key can be downloaded from the GitHub workflow artifacts.
+APKs signed for standalone distribution and bundles signed with the Google Play upload key 
+can be downloaded from the GitHub workflow artifacts.
