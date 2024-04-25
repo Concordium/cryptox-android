@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] 
+## [1.0.0] - 2022-04-24
 
 ### Added
 - Setting up and updating validator pool commission rates
@@ -42,3 +42,4 @@
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD
+[1.0.0]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...1.0.0
