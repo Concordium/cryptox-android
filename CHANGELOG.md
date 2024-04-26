@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Support for WalletConnect binary messages signing
+
 ## [1.0.0] - 2022-04-24
 
 ### Added
