@@ -706,13 +706,10 @@ private constructor(
             this@WalletConnectViewModel.sessionRequestSignMessageParams = signMessageParams
 
             mutableStateFlow.tryEmit(
-                State.SessionRequestReview.SignRequestReview(
-                    message = when (signMessageParams) {
-                        is SignMessageParams.Text ->
-                            signMessageParams.data
-
-                        is SignMessageParams.Binary ->
-                            App.appCore.cryptoLibrary
+                when (signMessageParams) {
+                    is SignMessageParams.Binary ->
+                        State.SessionRequestReview.SignRequestReview(
+                            message = App.appCore.cryptoLibrary
                                 .parameterToJson(
                                     ParameterToJsonInput(
                                         parameter = signMessageParams.data,
@@ -724,11 +721,20 @@ private constructor(
                                     )
                                 )
                                 ?.prettyPrint()
-                                ?: error("Failed to deserialize the raw binary data")
-                    },
-                    account = sessionRequestAccount,
-                    appMetadata = sessionRequestAppMetadata
-                )
+                                ?: error("Failed to deserialize the raw binary data"),
+                            canShowDetails = true,
+                            account = sessionRequestAccount,
+                            appMetadata = sessionRequestAppMetadata,
+                        )
+
+                    is SignMessageParams.Text ->
+                        State.SessionRequestReview.SignRequestReview(
+                            message = signMessageParams.data,
+                            canShowDetails = false,
+                            account = sessionRequestAccount,
+                            appMetadata = sessionRequestAppMetadata,
+                        )
+                }
             )
         } catch (error: Exception) {
             Log.e("Failed to parse sign message parameters: $params", error)
@@ -1449,6 +1455,31 @@ private constructor(
         handleNextOldestPendingSessionRequest()
     }
 
+    fun onShowSignRequestDetailsClicked() = viewModelScope.launch {
+        val reviewState = state as? State.SessionRequestReview.SignRequestReview
+        check(reviewState != null && reviewState.canShowDetails) {
+            "Show details button can only be clicked in the sign request review state " +
+                    "allowing showing the details"
+        }
+
+        val context = getApplication<Application>()
+        val signMessageParams = sessionRequestSignMessageParams
+
+        if (signMessageParams is SignMessageParams.Binary) {
+            mutableEventsFlow.emit(
+                Event.ShowDetailsDialog(
+                    title = null,
+                    prettyPrintDetails = context.getString(
+                        R.string.wallet_connect_template_signature_request_details,
+                        signMessageParams.data,
+                    ),
+                )
+            )
+        } else {
+            Log.w("Nothing to show as details for ${signMessageParams::class.simpleName}")
+        }
+    }
+
     private suspend fun signAndSubmitRequestedTransaction(accountKeys: AccountData) {
         val accountTransactionPayload = sessionRequestAccountTransactionPayload
 
@@ -1563,8 +1594,8 @@ private constructor(
                         context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
 
                 mutableEventsFlow.emit(
-                    Event.ShowCallDetailsDialog(
-                        method = reviewState.method,
+                    Event.ShowDetailsDialog(
+                        title = reviewState.method,
                         prettyPrintDetails = context.getString(
                             R.string.wallet_connect_template_transaction_request_details,
                             sessionRequestTransactionCost.energy.toString(),
@@ -1576,8 +1607,8 @@ private constructor(
                 Log.w("Nothing to show as details for ${accountTransactionPayload::class.simpleName}")
 
                 mutableEventsFlow.emit(
-                    Event.ShowCallDetailsDialog(
-                        method = reviewState.method,
+                    Event.ShowDetailsDialog(
+                        title = reviewState.method,
                         prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
                     )
                 )
@@ -1817,6 +1848,7 @@ private constructor(
 
             class SignRequestReview(
                 val message: String,
+                val canShowDetails: Boolean,
                 account: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
@@ -1933,8 +1965,8 @@ private constructor(
          * A dialog showing pretty print contract call details must be shown.
          * The details printout may be quite long.
          */
-        class ShowCallDetailsDialog(
-            val method: String,
+        class ShowDetailsDialog(
+            val title: String?,
             val prettyPrintDetails: String,
         ) : Event
     }

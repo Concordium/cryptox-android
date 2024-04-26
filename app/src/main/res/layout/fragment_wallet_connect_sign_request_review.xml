@@ -63,9 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
         app:layout_constraintVertical_chainStyle="spread_inside">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            style="@style/CryptoX_Container_Stroked"
-            android:paddingBottom="20dp">
+        <androidx.constraintlayout.widget.ConstraintLayout style="@style/CryptoX_Container_Stroked">
 
             <TextView
                 android:id="@+id/message_title_text_view"
@@ -86,6 +84,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/message_title_text_view"
                 tools:text="Welcome to the DEX\n\nClick ‘Sign’ to sign in.\n\nNo password needed! This request will not trigger a blockchain transaction or cost any gas fees." />
+
+            <Button
+                android:id="@+id/show_details_button"
+                style="@style/CryptoX_Button_Text_Small"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/wallet_connect_signature_request_show_details"
+                app:drawableEndCompat="@drawable/ccx_ico_arrow_up_right"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/message_text_view" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/show_details_button"
+                app:layout_goneMarginTop="8dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
