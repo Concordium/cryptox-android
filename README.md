@@ -31,7 +31,11 @@ CryptoX is a Concordium wallet with an advanced set of features.
 It is based on Concordium reference wallet and can be used instead of both Concordium and Concordium Legacy wallets.
 
 ## Download
-[<img alt='Get it on Google Play' width=200 src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet&hl=en)
+| Mainnet| Testnet|
+|:------:|:------:|
+|[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet&hl=en) &#124; [GitHub](https://github.com/Concordium/cryptox-android/releases/latest)|[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet.testnet&hl=en) &#124; [GitHub](https://github.com/Concordium/cryptox-android/releases/latest)|
+
+*APKs attached to GitHub releases have signature different from the packages distributed through GooglePlay, therefore can't be installed over each other without manual uninstall.*
 
 ## Development notes
 
