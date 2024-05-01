@@ -713,9 +713,6 @@ private constructor(
                                 .parameterToJson(
                                     ParameterToJsonInput(
                                         parameter = signMessageParams.data,
-                                        // Receive name doesn't matter,
-                                        // but must follow the format.
-                                        receiveName = "o.0",
                                         schema = signMessageParams.schema,
                                         schemaVersion = null,
                                     )
