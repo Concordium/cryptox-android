@@ -4,7 +4,9 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.concordium.sdk.crypto.SHA256
 import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
+import com.concordium.sdk.crypto.ed25519.ED25519SecretKey
 import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
@@ -18,6 +20,7 @@ import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
 import com.concordium.sdk.transactions.CredentialRegistrationId
+import com.concordium.sdk.types.AccountAddress
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -30,9 +33,11 @@ import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
-import com.concordium.wallet.data.cryptolib.SignMessageInput
+import com.concordium.wallet.data.cryptolib.SignMessageOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.cryptolib.X0
 import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountDataKeys
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.GlobalParams
@@ -57,11 +62,13 @@ import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalle
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
+import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import com.walletconnect.util.hexToBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -157,7 +164,7 @@ private constructor(
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private lateinit var sessionRequestTransactionCost: TransactionCost
     private lateinit var sessionRequestTransactionNonce: AccountNonce
-    private lateinit var sessionRequestMessageToSign: String
+    private lateinit var sessionRequestSignMessageParams: SignMessageParams
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
@@ -688,26 +695,56 @@ private constructor(
         onSignAndSendTransactionRequested()
     }
 
-    private fun handleSignMessage(params: String) {
+    private fun handleSignMessage(params: String) = viewModelScope.launch {
         try {
-            val signMessageParams = SignMessageParams.fromSessionRequestParams(params)
-            this@WalletConnectViewModel.sessionRequestMessageToSign = signMessageParams.message
+            val signMessageParams = SignMessageParams.fromSessionRequestParams(
+                if (params.startsWith('{'))
+                    params
+                else
+                    "{$params}"
+            )
+            this@WalletConnectViewModel.sessionRequestSignMessageParams = signMessageParams
 
             mutableStateFlow.tryEmit(
-                State.SessionRequestReview.SignRequestReview(
-                    message = sessionRequestMessageToSign,
-                    account = sessionRequestAccount,
-                    appMetadata = sessionRequestAppMetadata
-                )
+                when (signMessageParams) {
+                    is SignMessageParams.Binary ->
+                        State.SessionRequestReview.SignRequestReview(
+                            message = App.appCore.cryptoLibrary
+                                .parameterToJson(
+                                    ParameterToJsonInput(
+                                        parameter = signMessageParams.data,
+                                        schema = signMessageParams.schema,
+                                        schemaVersion = null,
+                                    )
+                                )
+                                ?.prettyPrint()
+                                ?: error("Failed to deserialize the raw binary data"),
+                            canShowDetails = true,
+                            account = sessionRequestAccount,
+                            appMetadata = sessionRequestAppMetadata,
+                        )
+
+                    is SignMessageParams.Text ->
+                        State.SessionRequestReview.SignRequestReview(
+                            message = signMessageParams.data,
+                            canShowDetails = false,
+                            account = sessionRequestAccount,
+                            appMetadata = sessionRequestAppMetadata,
+                        )
+                }
             )
-        } catch (e: Exception) {
-            Log.e("Failed to parse sign message parameters: $params", e)
+        } catch (error: Exception) {
+            Log.e("Failed to parse sign message parameters: $params", error)
+
+            respondError(
+                message = "Failed parse the request: $error"
+            )
+
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.InvalidRequest
                 )
             )
-            return
         }
     }
 
@@ -1364,17 +1401,44 @@ private constructor(
         return sessionRequestIdentityProofIdentities[account.identityId]
     }
 
-    private suspend fun signRequestedMessage(accountKeys: AccountData) {
-        val signMessageInput = SignMessageInput(
-            address = sessionRequestAccount.address,
-            message = sessionRequestMessageToSign,
-            keys = accountKeys,
-        )
-        val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
-        if (signMessageOutput == null) {
-            Log.e("failed_signing_message")
+    private fun signRequestedMessage(accountKeys: AccountData) {
+        val signatureHex = try {
+            val signKeyHex =
+                App.appCore.gson.fromJson(accountKeys.keys.json, AccountDataKeys::class.java)
+                    .level0
+                    .keys
+                    .keys
+                    .signKey
+
+            val message = when (val signMessageParams = sessionRequestSignMessageParams) {
+                is SignMessageParams.Binary ->
+                    signMessageParams.data.hexToBytes()
+
+                is SignMessageParams.Text ->
+                    signMessageParams.data.encodeToByteArray()
+            }
+
+            // The message signed the same way as in the Concordium browser wallet
+            // is prepended with the `account` address and 8 zero bytes.
+            // Accounts can either sign a regular transaction (in that case the prepend is
+            // `account` address and the nonce of the account which is by design >= 1)
+            // or sign a message (in that case the prepend is `account` address and 8 zero
+            // bytes). Hence, the 8 zero bytes ensure that the user does not accidentally
+            // sign a transaction. The account nonce is of type u64 (8 bytes).
+            val input = SHA256.hash(
+                AccountAddress.from(sessionRequestAccount.address).bytes
+                        + ByteArray(8)
+                        + message
+            )
+
+            ED25519SecretKey.from(signKeyHex)
+                .sign(input)
+                .toHex()
+        } catch (e: Exception) {
+            Log.e("failed_signing_message", e)
+
             respondError(
-                message = "Failed signing message: crypto library internal error"
+                message = "Failed signing message: $e"
             )
 
             mutableEventsFlow.tryEmit(
@@ -1382,13 +1446,40 @@ private constructor(
                     Error.CryptographyFailed
                 )
             )
-        } else {
-            respondSuccess(
-                result = Gson().toJson(signMessageOutput)
-            )
 
-            mutableStateFlow.tryEmit(State.Idle)
-            handleNextOldestPendingSessionRequest()
+            return
+        }
+
+        respondSuccess(
+            result = App.appCore.gson.toJson(SignMessageOutput(X0(signatureHex)))
+        )
+
+        mutableStateFlow.tryEmit(State.Idle)
+        handleNextOldestPendingSessionRequest()
+    }
+
+    fun onShowSignRequestDetailsClicked() = viewModelScope.launch {
+        val reviewState = state as? State.SessionRequestReview.SignRequestReview
+        check(reviewState != null && reviewState.canShowDetails) {
+            "Show details button can only be clicked in the sign request review state " +
+                    "allowing showing the details"
+        }
+
+        val context = getApplication<Application>()
+        val signMessageParams = sessionRequestSignMessageParams
+
+        if (signMessageParams is SignMessageParams.Binary) {
+            mutableEventsFlow.emit(
+                Event.ShowDetailsDialog(
+                    title = null,
+                    prettyPrintDetails = context.getString(
+                        R.string.wallet_connect_template_signature_request_details,
+                        signMessageParams.data,
+                    ),
+                )
+            )
+        } else {
+            Log.w("Nothing to show as details for ${signMessageParams::class.simpleName}")
         }
     }
 
@@ -1506,8 +1597,8 @@ private constructor(
                         context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
 
                 mutableEventsFlow.emit(
-                    Event.ShowCallDetailsDialog(
-                        method = reviewState.method,
+                    Event.ShowDetailsDialog(
+                        title = reviewState.method,
                         prettyPrintDetails = context.getString(
                             R.string.wallet_connect_template_transaction_request_details,
                             sessionRequestTransactionCost.energy.toString(),
@@ -1519,8 +1610,8 @@ private constructor(
                 Log.w("Nothing to show as details for ${accountTransactionPayload::class.simpleName}")
 
                 mutableEventsFlow.emit(
-                    Event.ShowCallDetailsDialog(
-                        method = reviewState.method,
+                    Event.ShowDetailsDialog(
+                        title = reviewState.method,
                         prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
                     )
                 )
@@ -1760,6 +1851,7 @@ private constructor(
 
             class SignRequestReview(
                 val message: String,
+                val canShowDetails: Boolean,
                 account: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
@@ -1876,8 +1968,8 @@ private constructor(
          * A dialog showing pretty print contract call details must be shown.
          * The details printout may be quite long.
          */
-        class ShowCallDetailsDialog(
-            val method: String,
+        class ShowDetailsDialog(
+            val title: String?,
             val prettyPrintDetails: String,
         ) : Event
     }

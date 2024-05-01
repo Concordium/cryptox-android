@@ -500,6 +500,8 @@
     <string name="wallet_connect_sign_transaction">Sign transaction</string>
     <string name="wallet_connect_signature_request">Signature request</string>
     <string name="wallet_connect_signature_request_message">Message</string>
+    <string name="wallet_connect_signature_request_show_details">Show details</string>
+    <string name="wallet_connect_template_signature_request_details">Binary message:\n%1$s</string>
     <string name="wallet_connect_connecting">Connecting…</string>
     <string name="wallet_connect_pending_request_notice">New WalletConnect request is waiting on the home screen</string>
 

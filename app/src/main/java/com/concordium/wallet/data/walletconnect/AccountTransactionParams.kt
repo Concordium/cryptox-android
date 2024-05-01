@@ -34,20 +34,18 @@ data class AccountTransactionParams(
     }
 
     companion object {
+        private val gson by lazy {
+            App.appCore.gson.newBuilder()
+                .registerTypeAdapter(Schema::class.java, SchemaDeserializer())
+                .create()
+        }
+
         /**
          * @return parsed [AccountTransactionParams]
          *
          * @throws JsonSyntaxException if the request params can't be parsed
          */
-        fun fromSessionRequestParams(sessionRequestParams: String): AccountTransactionParams {
-            val gson = App.appCore.gson.newBuilder()
-                .registerTypeAdapter(
-                    AccountTransactionParams::class.java,
-                    AccountTransactionParamsDeserializer()
-                )
-                .create()
-
-            return gson.fromJson(sessionRequestParams, AccountTransactionParams::class.java)
-        }
+        fun fromSessionRequestParams(sessionRequestParams: String): AccountTransactionParams =
+            gson.fromJson(sessionRequestParams, AccountTransactionParams::class.java)
     }
 }

@@ -4,7 +4,10 @@ import com.concordium.wallet.data.walletconnect.Schema
 
 data class ParameterToJsonInput(
     val parameter: String,
-    val receiveName: String,
     val schema: Schema,
-    val schemaVersion: Int?
+    val schemaVersion: Int?,
+
+    // Sometimes receive name doesn't matter,
+    // but it must follow the format.
+    val receiveName: String = "o.O",
 )
