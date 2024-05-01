@@ -1418,7 +1418,13 @@ private constructor(
                     signMessageParams.data.encodeToByteArray()
             }
 
-            // See https://github.com/Concordium/concordium-base/blob/main/mobile_wallet/src/lib.rs#L89
+            // The message signed the same way as in the Concordium browser wallet
+            // is prepended with the `account` address and 8 zero bytes.
+            // Accounts can either sign a regular transaction (in that case the prepend is
+            // `account` address and the nonce of the account which is by design >= 1)
+            // or sign a message (in that case the prepend is `account` address and 8 zero
+            // bytes). Hence, the 8 zero bytes ensure that the user does not accidentally
+            // sign a transaction. The account nonce is of type u64 (8 bytes).
             val input = SHA256.hash(
                 AccountAddress.from(sessionRequestAccount.address).bytes
                         + ByteArray(8)
