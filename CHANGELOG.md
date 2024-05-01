@@ -41,5 +41,5 @@
 - Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...1.0.0
