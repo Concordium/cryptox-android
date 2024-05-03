@@ -128,6 +128,7 @@ class WalletConnectView(
             is WalletConnectViewModel.State.SessionRequestReview.SignRequestReview -> {
                 showSignRequestReview(
                     message = state.message,
+                    canShowDetails = state.canShowDetails,
                     account = state.account,
                     appMetadata = state.appMetadata,
                 )
@@ -202,9 +203,9 @@ class WalletConnectView(
                 Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
             }
 
-            is WalletConnectViewModel.Event.ShowCallDetailsDialog -> {
+            is WalletConnectViewModel.Event.ShowDetailsDialog -> {
                 MaterialAlertDialogBuilder(activity)
-                    .setTitle(event.method)
+                    .setTitle(event.title)
                     .setMessage(event.prettyPrintDetails)
                     .setPositiveButton(R.string.dialog_ok, null)
                     .show()
@@ -431,6 +432,7 @@ class WalletConnectView(
 
     private fun showSignRequestReview(
         message: String,
+        canShowDetails: Boolean,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
@@ -439,6 +441,7 @@ class WalletConnectView(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
                 message = message,
+                canShowDetails = canShowDetails,
                 account = account,
                 appMetadata = appMetadata
             )
@@ -449,6 +452,7 @@ class WalletConnectView(
         view: FragmentWalletConnectSignRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
         message: String,
+        canShowDetails: Boolean,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) = with(view) {
@@ -473,6 +477,15 @@ class WalletConnectView(
         }
 
         messageTextView.text = message
+
+        with(showDetailsButton) {
+            isVisible = canShowDetails
+            if (canShowDetails) {
+                setOnClickListener {
+                    viewModel.onShowSignRequestDetailsClicked()
+                }
+            }
+        }
 
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()

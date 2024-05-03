@@ -1,35 +1,16 @@
 package com.concordium.wallet.data.walletconnect
 
 import android.util.Base64
-import com.concordium.wallet.data.model.TransactionType
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 
-class AccountTransactionParamsDeserializer : JsonDeserializer<AccountTransactionParams?> {
-    @Throws(JsonParseException::class)
-    override fun deserialize(
-        jElement: JsonElement,
-        typeOfT: Type?,
-        context: JsonDeserializationContext
-    ): AccountTransactionParams {
-        val jObject = jElement.asJsonObject
-
-        return AccountTransactionParams(
-            type = context.deserialize(jObject["type"], TransactionType::class.java),
-            sender = jObject["sender"]!!.asString,
-            payload = jObject["payload"]?.asString,
-            schema = getSchema(context, jObject["schema"])
-        )
-    }
-
+class SchemaDeserializer : JsonDeserializer<Schema?> {
     /**
      * Get the [Schema] from the [JsonElement]
-     * @param context [JsonDeserializationContext]
-     * @param schemaElement [JsonElement]
+     *
      * @return [Schema]
      *
      * **null** if [schemaElement] is null
@@ -38,9 +19,10 @@ class AccountTransactionParamsDeserializer : JsonDeserializer<AccountTransaction
      *
      * **null** if **type** or **value** in [Schema] are null
      */
-    private fun getSchema(
-        context: JsonDeserializationContext,
-        schemaElement: JsonElement?
+    override fun deserialize(
+        schemaElement: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext
     ): Schema? {
         if (schemaElement == null || schemaElement.isJsonNull) return null
 

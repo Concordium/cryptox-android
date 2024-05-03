@@ -500,6 +500,8 @@
     <string name="wallet_connect_sign_transaction">Sign transaction</string>
     <string name="wallet_connect_signature_request">Signature request</string>
     <string name="wallet_connect_signature_request_message">Message</string>
+    <string name="wallet_connect_signature_request_show_details">Show details</string>
+    <string name="wallet_connect_template_signature_request_details">Binary message:\n%1$s</string>
     <string name="wallet_connect_connecting">Connecting…</string>
     <string name="wallet_connect_pending_request_notice">New WalletConnect request is waiting on the home screen</string>
 
@@ -860,14 +862,14 @@
     <string name="baker_registration_confirmation_update_stake_update">Account to make validator update</string>
     <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Lowering your stake has a cool-down period, meaning it will not take effect immediately.\n\nThe validator cannot be removed and the stake cannot be changed until the cool-down is over.</string>
 
-    <string name="baker_update_intro_flow_title">Baking</string>
+    <string name="baker_update_intro_flow_title">Validating</string>
     <string name="baker_update_intro_subtitle1">Updating validator settings</string>
     <string name="baker_update_intro_subtitle2">Update validator stake</string>
     <string name="baker_update_intro_subtitle3" tools:ignore="TypographyFractions">Update pool settings (1/2)</string>
     <string name="baker_update_intro_subtitle4">Update pool settings (2/2)</string>
     <string name="baker_update_intro_subtitle5">Update validator keys</string>
 
-    <string name="baker_remove_intro_flow_title">Baking</string>
+    <string name="baker_remove_intro_flow_title">Validating</string>
     <string name="baker_remove_intro_subtitle1">Stop validating</string>
 
     <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>

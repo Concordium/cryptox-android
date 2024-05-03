@@ -1,10 +1,11 @@
 package com.concordium.wallet.ui.cis2.retrofit
 
+import com.concordium.sdk.crypto.SHA256
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.data.model.TokenMetadata
-import com.concordium.wallet.util.HashUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toHex
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -30,7 +31,7 @@ class MetadataApiInstance {
                     // If a checksum was supplied, then we verify that the body matches
                     if (checksum != null) {
                         val rawBody = response.peekBody(Long.MAX_VALUE)
-                        val hash = HashUtil.sha256(rawBody.bytes())
+                        val hash = SHA256.hash(rawBody.bytes()).toHex()
                         if (hash != checksum) {
                             throw IncorrectChecksumException()
                         }

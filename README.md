@@ -31,7 +31,11 @@ CryptoX is a Concordium wallet with an advanced set of features.
 It is based on Concordium reference wallet and can be used instead of both Concordium and Concordium Legacy wallets.
 
 ## Download
-[<img alt='Get it on Google Play' width=200 src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet&hl=en)
+| Mainnet| Testnet|
+|:------:|:------:|
+|[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet&hl=en) &#124; [GitHub](https://github.com/Concordium/cryptox-android/releases/latest)|[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet.testnet&hl=en) &#124; [GitHub](https://github.com/Concordium/cryptox-android/releases/latest)|
+
+*APKs attached to GitHub releases have signature different from the packages distributed through GooglePlay, therefore can't be installed over each other without manual uninstall.*
 
 ## Development notes
 
@@ -44,7 +48,7 @@ No Spaceseven instance
 - Mainnet (`mainnet`) – Public Concordium network, real funds and identities. Spaceseven production
 
 ### Distribution for internal testing
-Builds for internal testing tagged as QA (`-qa.X`) or release candidate (`-rc.X`) are assembled and distributed through Firebase App distribution by the [corresponding pipeline](.github/workflows/firebase_internal_testing.yml).
+Builds for internal testing tagged as QA (`-qa.X`) are assembled and distributed through Firebase App distribution by the [corresponding pipeline](.github/workflows/firebase_internal_testing.yml).
 Update the version in `main`, tag the commit with the version name and push the changes.
 
 [Track the Internal testing pipeline](https://github.com/Concordium/cryptox-android/deployments/Internal%20testing)
@@ -52,9 +56,11 @@ Update the version in `main`, tag the commit with the version name and push the 
 APKs can be downloaded from the GitHub workflow artifacts or from the Firebase console.
 
 ### Building for release
-Builds for releases tagged with semver version (`X.Y.Z`) are assembled by the [corresponding pipeline](.github/workflows/release_build.yml).
+Builds for releases tagged with semver version (`X.Y.Z`) or release candidate (`-rc.X`) 
+are assembled by the [corresponding pipeline](.github/workflows/release_build.yml). 
 Update the version in `main`, tag the commit with the version name and push the changes.
 
 [Track the Release pipeline](https://github.com/Concordium/cryptox-android/deployments/Releases)
 
-APKs signed for standalone distribution and bundles signed with the Google Play upload key can be downloaded from the GitHub workflow artifacts.
+APKs signed for standalone distribution and bundles signed with the Google Play upload key 
+can be downloaded from the GitHub workflow artifacts.
