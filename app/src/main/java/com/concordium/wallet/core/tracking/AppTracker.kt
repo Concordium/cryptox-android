@@ -13,93 +13,59 @@ class AppTracker(private val tracker: Tracker) {
             .with(tracker)
 
     fun welcomeScreen() =
-        track()
-            .screen(SCREEN_WELCOME)
-            .safelyWith(tracker)
+        trackScreenAndImpression(SCREEN_WELCOME)
 
     fun welcomeCheckBoxChecked() =
-        track()
-            .interaction(SCREEN_WELCOME, "Check box", INTERACTION_CHECKED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_WELCOME, "Check box", INTERACTION_CHECKED)
 
     fun welcomeGetStartedClicked() =
-        track()
-            .interaction(SCREEN_WELCOME, "Get started", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_WELCOME, "Get started", INTERACTION_CLICKED)
 
     fun welcomeHomeScreen() =
-        track()
-            .screen(SCREEN_WELCOME_HOME)
-            .safelyWith(tracker)
+        trackScreenAndImpression(SCREEN_WELCOME_HOME)
 
     fun welcomeHomeActivateAccountClicked() =
-        track()
-            .interaction(SCREEN_WELCOME_HOME, "Activate account", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_WELCOME_HOME, "Activate account", INTERACTION_CLICKED)
 
     fun welcomeActivateAccountDialog() =
-        track()
-            .screen(DIALOG_ACTIVATE_ACCOUNT)
-            .safelyWith(tracker)
+        trackScreenAndImpression(DIALOG_ACTIVATE_ACCOUNT)
 
     fun welcomeActivateAccountDialogCreateClicked() =
-        track()
-            .interaction(DIALOG_ACTIVATE_ACCOUNT, "Create wallet", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(DIALOG_ACTIVATE_ACCOUNT, "Create wallet", INTERACTION_CLICKED)
 
     fun welcomeActivateAccountDialogImportClicked() =
-        track()
-            .interaction(DIALOG_ACTIVATE_ACCOUNT, "Import wallet", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(DIALOG_ACTIVATE_ACCOUNT, "Import wallet", INTERACTION_CLICKED)
 
     fun welcomePasscodeScreen() =
-        track()
-            .screen(SCREEN_WELCOME_PASSCODE)
-            .safelyWith(tracker)
+        trackScreenAndImpression(SCREEN_WELCOME_PASSCODE)
 
     fun welcomePasscodeEntered() =
-        track()
-            .interaction(SCREEN_WELCOME_PASSCODE, "6-digit passcode", INTERACTION_ENTERED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_WELCOME_PASSCODE, "6-digit passcode", INTERACTION_ENTERED)
 
     fun welcomePasscodeConfirmationEntered() =
-        track()
-            .interaction(
-                SCREEN_WELCOME_PASSCODE,
-                "6-digit passcode confirmation",
-                INTERACTION_ENTERED
-            )
-            .safelyWith(tracker)
+        trackInteraction(
+            SCREEN_WELCOME_PASSCODE,
+            "6-digit passcode confirmation",
+            INTERACTION_ENTERED
+        )
 
     fun welcomePasscodeBiometricsDialog() =
-        track()
-            .screen(DIALOG_WELCOME_PASSCODE_BIOMETRICS)
-            .safelyWith(tracker)
+        trackScreenAndImpression(DIALOG_WELCOME_PASSCODE_BIOMETRICS)
 
     fun welcomePasscodeBiometricsAccepted() =
-        track()
-            .interaction(DIALOG_WELCOME_PASSCODE_BIOMETRICS, "Enable", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(DIALOG_WELCOME_PASSCODE_BIOMETRICS, "Enable", INTERACTION_CLICKED)
 
     fun welcomePasscodeBiometricsRejected() =
-        track()
-            .interaction(DIALOG_WELCOME_PASSCODE_BIOMETRICS, "Later", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(DIALOG_WELCOME_PASSCODE_BIOMETRICS, "Later", INTERACTION_CLICKED)
 
     fun welcomePhrase() =
-        track()
-            .screen(SCREEN_WELCOME_PHRASE)
-            .safelyWith(tracker)
+        trackScreenAndImpression(SCREEN_WELCOME_PHRASE)
 
     fun welcomePhraseCopyClicked() =
-        track()
-            .interaction(SCREEN_WELCOME_PHRASE, "Copy to clipboard", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_WELCOME_PHRASE, "Copy to clipboard", INTERACTION_CLICKED)
 
     fun welcomePhraseCheckboxBoxChecked() =
-        track()
-            .interaction(SCREEN_WELCOME_PHRASE, "Check box", INTERACTION_CHECKED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_WELCOME_PHRASE, "Check box", INTERACTION_CHECKED)
 
     fun identityVerificationScreen(provider: String) =
         track()
@@ -108,24 +74,16 @@ class AppTracker(private val tracker: Tracker) {
             .safelyWith(tracker)
 
     fun identityVerificationResultScreen() =
-        track()
-            .screen(SCREEN_ID_VERIFICATION_RESULT)
-            .safelyWith(tracker)
+        trackScreenAndImpression(SCREEN_ID_VERIFICATION_RESULT)
 
     fun identityVerificationResultApprovedDialog() =
-        track()
-            .screen(DIALOG_ID_VERIFICATION_APPROVED)
-            .safelyWith(tracker)
+        trackScreenAndImpression(DIALOG_ID_VERIFICATION_APPROVED)
 
     fun identityVerificationResultCreateAccountClicked() =
-        track()
-            .interaction(SCREEN_ID_VERIFICATION_RESULT, "Create account", INTERACTION_CLICKED)
-            .safelyWith(tracker)
+        trackInteraction(SCREEN_ID_VERIFICATION_RESULT, "Create account", INTERACTION_CLICKED)
 
     fun homeScreen() =
-        track()
-            .screen(SCREEN_HOME)
-            .safelyWith(tracker)
+        trackScreenAndImpression(SCREEN_HOME)
 
     private fun track() =
         TrackHelper.track()
@@ -135,6 +93,20 @@ class AppTracker(private val tracker: Tracker) {
 
     private fun TrackHelper.interaction(screen: Screen, piece: String, interaction: String) =
         interaction(screen.title, interaction).piece(piece)
+
+    private fun trackScreenAndImpression(screen: Screen) {
+        track()
+            .screen(screen)
+            .safelyWith(tracker)
+        track()
+            .impression(screen.title)
+            .safelyWith(tracker)
+    }
+
+    private fun trackInteraction(screen: Screen, piece: String, interaction: String) =
+        track()
+            .interaction(screen, piece, interaction)
+            .safelyWith(tracker)
 
     private class Screen(
         val title: String,
