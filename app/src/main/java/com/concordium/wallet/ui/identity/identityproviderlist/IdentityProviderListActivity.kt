@@ -47,6 +47,11 @@ class IdentityProviderListActivity : BaseActivity(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[IdentityProviderListViewModel::class.java]
+
+        if (showForFirstIdentity) {
+            viewModel.checkUsingV1KeyCreation()
+        }
+
         viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting || viewModel.waitingGlobalData.value!!)

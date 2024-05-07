@@ -14,6 +14,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -27,6 +28,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,6 +46,7 @@ class AccountsOverviewFragment : BaseFragment() {
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var accountAdapter: AccountAdapter
+    private lateinit var keyCreationVersion: KeyCreationVersion
 
     //region Lifecycle
     // ************************************************************
@@ -52,6 +55,7 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        keyCreationVersion = KeyCreationVersion(AuthPreferences(requireContext()))
     }
 
     override fun onCreateView(
@@ -166,10 +170,12 @@ class AccountsOverviewFragment : BaseFragment() {
         binding.createAccountButton.visibility = View.GONE
 
         binding.createIdentityButton.setOnClickListener {
+            viewModel.checkUsingV1KeyCreation()
             goToFirstIdentityCreation()
         }
 
         binding.createAccountButton.setOnClickListener {
+            viewModel.checkUsingV1KeyCreation()
             gotoCreateAccount()
         }
 
