@@ -275,4 +275,9 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             )
         }
     }
+
+    fun checkUsingV1KeyCreation() =
+        check(keyCreationVersion.useV1) {
+            "Key creation V1 (seed-based) must be used to perform this action"
+        }
 }
