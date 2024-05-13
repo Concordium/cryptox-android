@@ -12,13 +12,11 @@ import kotlinx.coroutines.launch
 
 class AccountSettingsViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var account: Account
-    var isShielded: Boolean = false
 
     val accountUpdated: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
-    fun initialize(account: Account, isShielded: Boolean) {
+    fun initialize(account: Account) {
         this.account = account
-        this.isShielded = isShielded
     }
 
     fun changeAccountName(name: String) {
