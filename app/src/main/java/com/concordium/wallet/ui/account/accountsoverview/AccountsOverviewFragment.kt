@@ -216,10 +216,6 @@ class AccountsOverviewFragment : BaseFragment() {
                 gotoAccountDetails(account, false)
             }
 
-            override fun onShieldedBalanceClicked(account: Account) {
-                gotoAccountDetails(account, true)
-            }
-
             override fun onSendClicked(account: Account) {
                 val parentActivity = requireActivity() as BaseActivity
                 val intent = Intent(parentActivity, SendTokenActivity::class.java)
