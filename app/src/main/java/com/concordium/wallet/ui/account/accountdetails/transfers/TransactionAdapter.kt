@@ -1,11 +1,9 @@
 package com.concordium.wallet.ui.account.accountdetails.transfers
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
@@ -20,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class TransactionAdapter(
-    private val context: Context,
     private var scope: CoroutineScope,
     private var accountUpdater: AccountUpdater,
     data: MutableList<AdapterItem>
@@ -129,14 +126,6 @@ class TransactionAdapter(
     override fun isHeader(itemPosition: Int): Boolean {
         val item = items[itemPosition]
         return (item.getItemType() == AdapterItem.ItemType.Header)
-    }
-
-    fun setIsShielded(shielded: Boolean) {
-        isShieldedAccount = shielded
-    }
-
-    fun setOnDecryptListener(listener: OnDecryptClickListenerInterface) {
-        decryptListener = listener
     }
 
     interface OnDecryptClickListenerInterface {

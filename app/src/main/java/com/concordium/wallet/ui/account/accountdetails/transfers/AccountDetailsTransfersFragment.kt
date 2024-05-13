@@ -51,7 +51,8 @@ class AccountDetailsTransfersFragment : Fragment() {
     }
 
     private fun initializeViewModel() {
-        accountDetailsViewModel = ViewModelProvider(requireActivity(),
+        accountDetailsViewModel = ViewModelProvider(
+            requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
 
@@ -61,8 +62,6 @@ class AccountDetailsTransfersFragment : Fragment() {
 
         accountDetailsViewModel.transferListLiveData.observe(viewLifecycleOwner) { transferList ->
             transferList?.let {
-                transactionAdapter.setIsShielded(accountDetailsViewModel.isShielded)
-
                 val filteredList = transferList.filterIndexed { index, currentItem ->
                     var result = true
                     if (currentItem.getItemType() == AdapterItem.ItemType.Header)
@@ -122,32 +121,10 @@ class AccountDetailsTransfersFragment : Fragment() {
         val item = currentItem as TransactionItem
         item.transaction?.let {
             val transaction: Transaction = it
-            if (accountDetailsViewModel.isShielded) {
-                if (!transaction.isRemoteTransaction()) {
-                    if (transaction.details != null) {
-                        if (transaction.details.type == TransactionType.TRANSFER
-                            || transaction.details.type == TransactionType.TRANSFERTOENCRYPTED
-                            || transaction.details.type == TransactionType.UPDATE) {
-                            result = false
-                        }
-                    }
-                }
-                else {
-                    if (transaction.details != null) {
-                        if (transaction.details.type != TransactionType.TRANSFERTOENCRYPTED &&
-                            transaction.details.type != TransactionType.TRANSFERTOPUBLIC &&
-                            transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFER &&
-                            transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO) {
-                            result = false
-                        }
-                    }
-                }
-            } else {
-                if (transaction.isRemoteTransaction()) {
-                    if (transaction.origin != null && transaction.details != null) {
-                        if (transaction.origin.type != TransactionOriginType.Self && (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)) {
-                            result = false
-                        }
+            if (transaction.isRemoteTransaction()) {
+                if (transaction.origin != null && transaction.details != null) {
+                    if (transaction.origin.type != TransactionOriginType.Self && (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)) {
+                        result = false
                     }
                 }
             }
@@ -164,13 +141,11 @@ class AccountDetailsTransfersFragment : Fragment() {
             accountDetailsViewModel.requestGTUDrop()
         }
 
-        transactionAdapter = TransactionAdapter(requireContext(), accountDetailsViewModel.viewModelScope, AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope), mutableListOf())
-        transactionAdapter.setOnDecryptListener(object : TransactionAdapter.OnDecryptClickListenerInterface {
-            override fun onDecrypt(ta: Transaction) {
-                accountDetailsViewModel.selectTransactionForDecryption(ta)
-
-            }
-        })
+        transactionAdapter = TransactionAdapter(
+            accountDetailsViewModel.viewModelScope,
+            AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope),
+            mutableListOf()
+        )
 
         val linearLayoutManager = LinearLayoutManager(context)
         binding.recyclerview.setHasFixedSize(true)
@@ -186,9 +161,11 @@ class AccountDetailsTransfersFragment : Fragment() {
             TransactionAdapter.OnItemClickListener {
             override fun onItemClicked(item: Transaction) {
                 val intent = Intent(activity, TransactionDetailsActivity::class.java)
-                intent.putExtra(TransactionDetailsActivity.EXTRA_ACCOUNT, accountDetailsViewModel.account)
+                intent.putExtra(
+                    TransactionDetailsActivity.EXTRA_ACCOUNT,
+                    accountDetailsViewModel.account
+                )
                 intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, item)
-                intent.putExtra(TransactionDetailsActivity.EXTRA_ISSHIELDED, accountDetailsViewModel.isShielded)
                 startActivity(intent)
             }
         })

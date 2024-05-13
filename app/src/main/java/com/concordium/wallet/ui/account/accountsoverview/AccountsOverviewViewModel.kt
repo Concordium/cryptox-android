@@ -44,7 +44,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         BigInteger.ZERO,
         BigInteger.ZERO,
         BigInteger.ZERO,
-        BigInteger.ZERO, false
+        BigInteger.ZERO,
+        false
     )
     private var _totalBalanceLiveData = MutableLiveData<TotalBalancesData>()
     val totalBalanceLiveData: LiveData<TotalBalancesData>

@@ -35,7 +35,6 @@ class TransactionDetailsActivity : BaseActivity(
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
-        const val EXTRA_ISSHIELDED = "EXTRA_ISSHIELDED"
     }
 
     private lateinit var viewModel: TransactionDetailsViewModel
@@ -52,10 +51,8 @@ class TransactionDetailsActivity : BaseActivity(
 
         val account = intent.extras?.getSerializable(EXTRA_ACCOUNT) as Account
         val transaction = intent.extras?.getSerializable(EXTRA_TRANSACTION) as Transaction
-        val isShielded = intent.getBooleanExtra(EXTRA_ISSHIELDED, false)
         initializeViewModel()
         accountUpdater = AccountUpdater(application, viewModel.viewModelScope)
-        viewModel.setIsShieldedAccount(isShielded)
         viewModel.initialize(account, transaction)
         initViews()
         viewModel.showData()

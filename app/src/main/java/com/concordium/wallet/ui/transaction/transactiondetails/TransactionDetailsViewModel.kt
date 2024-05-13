@@ -92,10 +92,6 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
         )
     }
 
-    fun setIsShieldedAccount(shielded: Boolean) {
-        isShieldedAccount = shielded
-    }
-
     fun getExplorerUrl(): String =
         BuildConfig.URL_EXPLORER_BASE +
                 "?dcount=1" +

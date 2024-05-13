@@ -63,7 +63,7 @@ class AccountSettingsActivity : BaseActivity(
             gotoTransferFilters(viewModel.account)
         }
         binding.releaseSchedule.setOnClickListener {
-            gotoAccountReleaseSchedule(viewModel.account, viewModel.isShielded)
+            gotoAccountReleaseSchedule(viewModel.account)
         }
         binding.exportKey.setOnClickListener {
             exportKey()
@@ -85,10 +85,9 @@ class AccountSettingsActivity : BaseActivity(
         startActivity(intent)
     }
 
-    private fun gotoAccountReleaseSchedule(account: Account, isShielded: Boolean) {
+    private fun gotoAccountReleaseSchedule(account: Account) {
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
         intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, isShielded)
         startActivity(intent)
     }
 
