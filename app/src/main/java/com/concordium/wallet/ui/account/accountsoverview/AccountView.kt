@@ -34,8 +34,10 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         binding.totalTextview.text =
             CurrencyUtil.formatGTU(accountWithIdentity.account.totalBalance, withGStroke = true)
 
-        binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(
-            accountWithIdentity.account.totalUnshieldedBalance,
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(
+            accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(
+                accountWithIdentity.account.totalUnshieldedBalance,
+            ),
             withGStroke = true
         )
 
