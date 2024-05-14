@@ -1518,8 +1518,6 @@ private constructor(
             val createTransferOutput = CreateTransferOutput(
                 transaction = accountTransactionOutput.transaction,
                 signatures = accountTransactionOutput.signatures,
-                addedSelfEncryptedAmount = null,
-                remaining = null,
             )
             submitTransaction(createTransferOutput)
         }
