@@ -305,20 +305,9 @@
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity"
+            android:parentActivityName=".ui.cis2.SendTokenActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.transaction.sendfunds.SendFundsActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity
-            android:name=".ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
             android:launchMode="singleTop"

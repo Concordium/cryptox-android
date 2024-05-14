@@ -22,7 +22,6 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private val recipientRepository: RecipientRepository
     lateinit var recipient: Recipient
     var editRecipientMode = false
-    private var selectRecipientMode: Boolean = false
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -33,17 +32,13 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
-    private val _gotoBackToSendFundsLiveData = MutableLiveData<Event<Boolean>>()
-    val gotoBackToSendFundsLiveData: LiveData<Event<Boolean>>
-        get() = _gotoBackToSendFundsLiveData
 
     init {
         val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
         recipientRepository = RecipientRepository(recipientDao)
     }
 
-    fun initialize(recipient: Recipient?, selectRecipientMode: Boolean) {
-        this.selectRecipientMode = selectRecipientMode
+    fun initialize(recipient: Recipient?) {
         if (recipient != null) {
             this.recipient = recipient
             editRecipientMode = true
@@ -92,10 +87,7 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
         } else {
             recipientRepository.insert(recipient)
         }
-        if (selectRecipientMode) {
-            _gotoBackToSendFundsLiveData.postValue(Event(true))
-        } else {
-            _finishScreenLiveData.postValue(Event(true))
-        }
+
+        _finishScreenLiveData.postValue(Event(true))
     }
 }
