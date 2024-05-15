@@ -192,8 +192,6 @@
     <string name="account_details_transfers_title">Activity</string>
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_send">Send</string>
-    <string name="account_details_unshield">Unshield</string>
-    <string name="account_details_shield">Shield</string>
     <string name="account_details_address">Address</string>
     <string name="account_details_earn_rewards">Earn rewards</string>
     <string name="account_details_retry_button">Retry account creation</string>
@@ -230,24 +228,9 @@
     <string name="send_funds_shield_title">Shield amount</string>
     <string name="send_funds_unshield_title">Unshield amount</string>
     <string name="send_funds_fee_info">Estimated transaction fee: %1$s</string>
-    <string name="send_funds_error_insufficient_funds">@string/insufficient_funds</string>
-    <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
-    <string name="send_funds_select_recipient_or_shield_amount">Select recipient</string>
-    <string name="send_funds_recipient_shield">Amount will be shielded</string>
-    <string name="send_funds_recipient_unshield">Amount will be unshielded</string>
     <string name="send_funds_confirm">Send amount</string>
-    <string name="send_funds_confirm_shield">Shield amount</string>
-    <string name="send_funds_confirm_unshield">Unshield amount</string>
-    <string name="send_funds_confirm_send_shielded">Send shielded amount</string>
     <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_memo">Memo: %1$s</string>
-    <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
     <!--  Send funds confirmed  -->
-    <string name="send_funds_confirmed_title">Send funds</string>
-    <string name="send_funds_confirmed_fee_info">Estimated transaction fee:\n%1$s</string>
     <string name="send_funds_confirmed_failed">Transaction error</string>
     <!-- Transaction details -->
     <string name="transaction_title">Transaction</string>
@@ -408,7 +391,6 @@
     <string name="change_password_initial_error">Data could not be decrypted</string>
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
-    <string name="plus_sign">+</string>
     <!-- Strings used for fragments for navigation -->
     <string name="network_comission">Network commission</string>
     <string name="acc_address_placeholder">%1$s (%2$s)</string>
@@ -429,7 +411,6 @@
     <string name="add_memo_confirm">Add memo to transfer</string>
 
     <string name="send_funds_optional_add_memo">Add memo</string>
-    <string name="send_funds_optional_edit_memo">Edit memo</string>
 
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_empty_warning_text">You did not provide any memoId. Continue without it?</string>
@@ -437,8 +418,6 @@
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_continue">Continue</string>
     <string name="transaction_memo_warning_ok">Okay</string>
-    <string name="memo_label">Memo:</string>
-    <string name="no_recipient_error">You need to select recipient firstly</string>
     <string name="dialog_backup_title">Back-up is important</string>
     <string name="dialog_backup_line2">It is necessary to restore your data. Please, make backup.</string>
     <string name="backup_suggestion">Please make a back-up of your wallet</string>
@@ -678,7 +657,7 @@
     <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
-    <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
+    <string name="delegation_register_delegation_amount_insufficient_error">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
@@ -686,7 +665,7 @@
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_not_enough_funds">Insufficient funds</string>
+    <string name="delegation_register_delegation_not_enough_funds">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
     <plurals name="delegation_register_delegation_confirmation_desc">
         <item quantity="one">This will lock your delegation amount. Amount is released after %d day from the time you remove or decrease your delegation.</item>
