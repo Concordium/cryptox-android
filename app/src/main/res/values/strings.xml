@@ -166,6 +166,9 @@
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
     <string name="accounts_overview_balance_at_disposal">At disposal</string>
     <string name="total_amount">Total amount</string>
+    <string name="unshielding_notice_title">Transaction Shielding is going away</string>
+    <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
+    <string name="unshielding_notice_unshield">Unshield assets</string>
     <!-- New account name -->
     <string name="new_account_name_title">Create new account</string>
     <string name="new_account_set_name">Set account name</string>

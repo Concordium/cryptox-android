@@ -19,7 +19,6 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.util.KeyCreationVersion
-import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -52,6 +51,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private var _totalBalanceLiveData = MutableLiveData<TotalBalancesData>()
     val totalBalanceLiveData: LiveData<TotalBalancesData>
         get() = _totalBalanceLiveData
+
+    private val _showUnshieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
+    val showUnshieldingNoticeLiveData: LiveData<Event<Boolean>>
+        get() = _showUnshieldingNoticeLiveData
 
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
@@ -92,15 +95,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     fun initialize() {
-        // TODO: PoC
-        viewModelScope.launch {
-            Log.d("Any accounts may need unshielding: ${anyAccountsMayNeedUnshielding()}")
-            accountRepository.getAll().forEach { account->
-                if (account.mayNeedUnshielding()) {
-                    Log.d("Account may need unshielding: ${account.address}")
-                }
-            }
-        }
+        showUnshieldingNoticeIfNeeded()
     }
 
     override fun onCleared() {
@@ -188,7 +183,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             "Key creation V1 (seed-based) must be used to perform this action"
         }
 
-    private suspend fun anyAccountsMayNeedUnshielding(): Boolean =
-        accountRepository.getAll()
+    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
+        val anyAccountsMayNeedUnshielding = accountRepository.getAllDone()
             .any(Account::mayNeedUnshielding)
+
+        if (anyAccountsMayNeedUnshielding) {
+            _showUnshieldingNoticeLiveData.postValue(Event(true))
+        }
+    }
 }
