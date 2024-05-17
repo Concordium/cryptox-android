@@ -1,8 +1,19 @@
 package com.concordium.wallet.data.room
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.concordium.wallet.App
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBaker
+import com.concordium.wallet.data.model.AccountDelegation
+import com.concordium.wallet.data.model.AccountEncryptedAmount
+import com.concordium.wallet.data.model.AccountReleaseSchedule
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
 import com.google.gson.JsonObject
 import java.io.Serializable
@@ -132,6 +143,14 @@ data class Account(
 
     fun isDelegating(): Boolean {
         return accountDelegation != null
+    }
+
+    fun mayNeedUnshielding(): Boolean {
+        val isShieldedBalanceUnknown = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
+                || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
+        val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
+                && totalShieldedBalance.signum() > 0
+        return isShieldedBalanceUnknown || isShieldedBalancePositive
     }
 
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {

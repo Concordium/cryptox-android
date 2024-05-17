@@ -13,11 +13,13 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.util.KeyCreationVersion
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -90,6 +92,15 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     fun initialize() {
+        // TODO: PoC
+        viewModelScope.launch {
+            Log.d("Any accounts may need unshielding: ${anyAccountsMayNeedUnshielding()}")
+            accountRepository.getAll().forEach { account->
+                if (account.mayNeedUnshielding()) {
+                    Log.d("Account may need unshielding: ${account.address}")
+                }
+            }
+        }
     }
 
     override fun onCleared() {
@@ -176,4 +187,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         check(keyCreationVersion.useV1) {
             "Key creation V1 (seed-based) must be used to perform this action"
         }
+
+    private suspend fun anyAccountsMayNeedUnshielding(): Boolean =
+        accountRepository.getAll()
+            .any(Account::mayNeedUnshielding)
 }
