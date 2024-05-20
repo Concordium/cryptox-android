@@ -1078,4 +1078,7 @@
     <string name="identity_proofs_membership_statement_description">This will prove that your %1$s is 1 of the following: %2$s</string>
     <string name="identity_proofs_non_membership_statement_description">This will prove that your %1$s is none of the following: %2$s</string>
     <string name="noCredentialsForThatIssuer">You do not hold any credentials from the issuer that the verifier requested.</string>
+    <string name="unshielding_accounts_title">Accounts</string>
+    <string name="unshielding_accounts_subtitle">with shielded assets</string>
+    <string name="unshielding_accounts_unshield">Unshield</string>
 </resources>

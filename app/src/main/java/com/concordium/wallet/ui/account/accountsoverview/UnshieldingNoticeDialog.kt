@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogUnshieldingNoticeBinding
+import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
 
 class UnshieldingNoticeDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
@@ -25,6 +27,10 @@ class UnshieldingNoticeDialog : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.closeButton.setOnClickListener {
+            dismiss()
+        }
+        binding.unshieldButton.setOnClickListener {
+            startActivity(Intent(requireActivity(), UnshieldingAccountsActivity::class.java))
             dismiss()
         }
     }

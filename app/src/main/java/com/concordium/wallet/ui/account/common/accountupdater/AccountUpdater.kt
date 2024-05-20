@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.account.common.accountupdater
 
 import android.app.Application
 import android.text.TextUtils
+import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.data.AccountContractRepository
@@ -11,6 +12,7 @@ import com.concordium.wallet.data.EncryptedAmountRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountEncryptedAmount
 import com.concordium.wallet.data.model.AccountSubmissionStatus
@@ -20,6 +22,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.EncryptedAmount
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
@@ -524,6 +527,50 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         }
         val stringRes = BackendErrorHandler.getExceptionStringRes(ex)
         updateListener?.onError(stringRes)
+    }
+
+    suspend fun decryptEncryptedAmounts(key: String, account: Account) {
+        account.finalizedEncryptedBalance?.let {
+            decryptAndSaveAmount(key, it.selfAmount)
+            it.incomingAmounts.forEach {
+                decryptAndSaveAmount(key, it)
+            }
+        }
+    }
+
+    suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String): String? {
+        val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+            DecryptAmountInput(
+                encryptedAmount,
+                key
+            )
+        )
+        output?.let {
+            if (lookupMappedAmount(encryptedAmount) == null) {
+                saveDecryptedAmount(encryptedAmount, it)
+            }
+        }
+        return output
+    }
+
+    suspend fun saveDecryptedAmount(key: String, amount: String?) {
+        encryptedAmountRepository.insert(EncryptedAmount(key, amount))
+    }
+
+    suspend fun decryptAllUndecryptedAmounts(secretPrivateKey: String) {
+        val list = encryptedAmountRepository.findAllUndecrypted()
+        list.forEach {
+            val secretAmount = it.encryptedkey
+            val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+                DecryptAmountInput(
+                    secretAmount,
+                    secretPrivateKey
+                )
+            )
+            output?.let {
+                saveDecryptedAmount(secretAmount, output)
+            }
+        }
     }
 
     suspend fun lookupMappedAmount(key: String):String? {
