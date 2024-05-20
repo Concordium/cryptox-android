@@ -14,6 +14,7 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
+import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -73,13 +74,12 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     fun onAuthenticated(password: String) = viewModelScope.launch(Dispatchers.IO) {
         val accountToUnshield = accountRepository.findByAddress(accountAddressToUnshield)
             ?: error("Account to unshield $accountAddressToUnshield not found")
-        decryptAndUnshield(accountToUnshield, password)
+        decryptAndGoToUnshielding(accountToUnshield, password)
     }
 
-    private suspend fun decryptAndUnshield(account: Account, password: String) {
+    private suspend fun decryptAndGoToUnshielding(account: Account, password: String) {
         _waitingLiveData.postValue(true)
 
-        // Decrypt the private data
         val storageAccountDataEncrypted = account.encryptedAccountData
         if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
             _errorLiveData.postValue(Event(R.string.app_error_general))
@@ -88,25 +88,44 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
             .decryptInBackground(password, storageAccountDataEncrypted)
-        if (decryptedJson != null) {
-            val encryptionKey =
-                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
-                    .encryptionSecretKey
 
-            accountUpdater.decryptEncryptedAmounts(
-                key = encryptionKey,
-                account = account,
-            )
-            accountUpdater.decryptAllUndecryptedAmounts(
-                secretPrivateKey = encryptionKey,
-            )
-            // TODO: Is this really needed?
-//            accountUpdater.updateForAccount(account)
-
-            _goToUnshieldingLiveData.postValue(Event(account))
-        } else {
+        if (decryptedJson == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
             _waitingLiveData.postValue(false)
+            return
         }
+
+        val encryptionKey =
+            App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+                .encryptionSecretKey
+
+        accountUpdater.decryptEncryptedAmounts(
+            key = encryptionKey,
+            account = account,
+        )
+        accountUpdater.decryptAllUndecryptedAmounts(
+            secretPrivateKey = encryptionKey,
+        )
+
+        // Go to unshielding once the balance is updated.
+        accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
+            override fun onError(stringRes: Int) {
+                _errorLiveData.postValue(Event(stringRes))
+                _waitingLiveData.postValue(false)
+            }
+
+            override fun onDone(totalBalances: TotalBalancesData) {
+                _goToUnshieldingLiveData.postValue(Event(account))
+                _waitingLiveData.postValue(false)
+            }
+
+            override fun onNewAccountFinalized(accountName: String) {}
+        })
+        accountUpdater.updateForAccount(account)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        accountUpdater.dispose()
     }
 }
