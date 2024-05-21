@@ -19,15 +19,30 @@
 
     <TextView
         android:id="@+id/balance_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textAppearance="@style/CCX_Typography_H2"
         android:textColor="@color/cryptox_white_main"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="12sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/action_barrier"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/account_name_text_view"
         tools:text="100 CCD" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/action_barrier"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="unshield_button, unshielded_text_view" />
 
     <Button
         android:id="@+id/unshield_button"
