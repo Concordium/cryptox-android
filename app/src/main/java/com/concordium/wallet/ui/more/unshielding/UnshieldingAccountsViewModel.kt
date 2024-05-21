@@ -54,21 +54,25 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     private fun findAccountsMayNeedUnshielding() = viewModelScope.launch(Dispatchers.IO) {
         _waitingLiveData.postValue(true)
 
-        val accountsMayNeedUnshielding = accountRepository.getAllDone()
-            .filter(Account::mayNeedUnshielding)
+        val allDoneAccounts = accountRepository.getAllDone()
 
-        _listItemsLiveData.postValue(accountsMayNeedUnshielding.map { account ->
-            UnshieldingAccountListItem(
-                address = account.address,
-                name = account.getAccountName(),
-                balance = unshieldedAmountsByAccount[account.address]?.let { unshieldedAmount ->
-                    getApplication<Application>().getString(
-                        R.string.amount,
-                        CurrencyUtil.formatGTU(unshieldedAmount)
-                    )
-                },
-                isUnshielded = unshieldedAmountsByAccount.containsKey(account.address),
-            )
+        // Show accounts may need unshielding and just unshielded ones.
+        _listItemsLiveData.postValue(allDoneAccounts.mapNotNull { account ->
+            if (account.mayNeedUnshielding() || unshieldedAmountsByAccount.containsKey(account.address)) {
+                UnshieldingAccountListItem(
+                    address = account.address,
+                    name = account.getAccountName(),
+                    balance = unshieldedAmountsByAccount[account.address]?.let { unshieldedAmount ->
+                        getApplication<Application>().getString(
+                            R.string.amount,
+                            CurrencyUtil.formatGTU(unshieldedAmount)
+                        )
+                    },
+                    isUnshielded = unshieldedAmountsByAccount.containsKey(account.address),
+                )
+            } else {
+                null
+            }
         })
 
         _waitingLiveData.postValue(false)

@@ -157,7 +157,6 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun onAuthenticated(password: String) = viewModelScope.launch(Dispatchers.IO) {
-        _finishWithResultLiveData.postValue(Event(UnshieldingResult(account.address, BigInteger.valueOf(10000000))))
         decryptAndUnshield(password)
     }
 
