@@ -34,6 +34,23 @@
         style="@style/CCX_Button_Primary"
         android:layout_height="44dp"
         android:text="@string/unshielding_accounts_unshield"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/unshielded_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="7dp"
+        android:text="@string/unshielding_accounts_unshielded"
+        android:textAppearance="@style/CCX_Typography_Item"
+        android:textColor="@color/cryptox_black_additional"
+        android:textSize="15sp"
+        app:drawableEndCompat="@drawable/cryptox_ico_check_16"
+        app:drawableTint="@color/cryptox_green_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

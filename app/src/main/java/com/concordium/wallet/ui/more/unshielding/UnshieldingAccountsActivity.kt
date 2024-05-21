@@ -1,18 +1,19 @@
 package com.concordium.wallet.ui.more.unshielding
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityUnshieldingAccountsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.concordium.wallet.util.Log
 
 class UnshieldingAccountsActivity : BaseActivity(
     R.layout.activity_unshielding_accounts,
@@ -23,6 +24,10 @@ class UnshieldingAccountsActivity : BaseActivity(
         ActivityUnshieldingAccountsBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
     private lateinit var viewModel: UnshieldingAccountsViewModel
+    private val unshieldingLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+        this::onUnshieldingResult,
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +66,9 @@ class UnshieldingAccountsActivity : BaseActivity(
             }
         })
 
-        viewModel.goToUnshieldingLiveData.observe(this, object : EventObserver<String>() {
+        viewModel.openUnshieldingLiveData.observe(this, object : EventObserver<String>() {
             override fun onUnhandledEvent(value: String) {
-                goToUnshielding(value)
+                openUnshielding(value)
             }
         })
     }
@@ -84,13 +89,22 @@ class UnshieldingAccountsActivity : BaseActivity(
         }
     }
 
-    private fun goToUnshielding(accountAddress: String) {
-        startActivity(
+    private fun openUnshielding(accountAddress: String) {
+        unshieldingLauncher.launch(
             Intent(this, UnshieldingActivity::class.java).putExtras(
                 UnshieldingActivity.getBundle(
                     accountAddress = accountAddress,
                 )
             )
         )
+    }
+
+    private fun onUnshieldingResult(unshieldingResult: ActivityResult) {
+        if (unshieldingResult.resultCode == Activity.RESULT_OK) {
+            val resultBundle = checkNotNull(unshieldingResult.data?.extras) {
+                "The result has no bundle"
+            }
+            viewModel.onUnshieldingResult(UnshieldingActivity.getResult(resultBundle))
+        }
     }
 }

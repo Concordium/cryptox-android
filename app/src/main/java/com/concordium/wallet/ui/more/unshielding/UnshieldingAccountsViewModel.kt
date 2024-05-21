@@ -13,10 +13,12 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 
 class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(application) {
     private val accountRepository: AccountRepository by lazy {
@@ -26,6 +28,7 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     private val accountUpdater: AccountUpdater by lazy {
         AccountUpdater(application, viewModelScope)
     }
+    private val unshieldedAmountsByAccount = mutableMapOf<String, BigInteger>()
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean> = _waitingLiveData
@@ -39,8 +42,8 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     private val _showAuthLiveData = MutableLiveData<Event<Boolean>>()
     val showAuthLiveData: LiveData<Event<Boolean>> = _showAuthLiveData
 
-    private val _goToUnshieldingLiveData = MutableLiveData<Event<String>>()
-    val goToUnshieldingLiveData: LiveData<Event<String>> = _goToUnshieldingLiveData
+    private val _openUnshieldingLiveData = MutableLiveData<Event<String>>()
+    val openUnshieldingLiveData: LiveData<Event<String>> = _openUnshieldingLiveData
 
     private lateinit var accountAddressToUnshield: String
 
@@ -58,8 +61,13 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
             UnshieldingAccountListItem(
                 address = account.address,
                 name = account.getAccountName(),
-                balance = null,
-                isUnshielded = false,
+                balance = unshieldedAmountsByAccount[account.address]?.let { unshieldedAmount ->
+                    getApplication<Application>().getString(
+                        R.string.amount,
+                        CurrencyUtil.formatGTU(unshieldedAmount)
+                    )
+                },
+                isUnshielded = unshieldedAmountsByAccount.containsKey(account.address),
             )
         })
 
@@ -115,13 +123,19 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
             }
 
             override fun onDone(totalBalances: TotalBalancesData) {
-                _goToUnshieldingLiveData.postValue(Event(account.address))
+                _openUnshieldingLiveData.postValue(Event(account.address))
                 _waitingLiveData.postValue(false)
             }
 
             override fun onNewAccountFinalized(accountName: String) {}
         })
         accountUpdater.updateForAccount(account)
+    }
+
+    fun onUnshieldingResult(unshieldingResult: UnshieldingResult) {
+        unshieldedAmountsByAccount[unshieldingResult.accountAddress] =
+            unshieldingResult.unshieldedAmount
+        findAccountsMayNeedUnshielding()
     }
 
     override fun onCleared() {

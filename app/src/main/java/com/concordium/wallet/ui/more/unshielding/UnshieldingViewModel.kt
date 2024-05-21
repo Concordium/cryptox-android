@@ -77,6 +77,9 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     private val _showAuthLiveData = MutableLiveData<Event<Boolean>>()
     val showAuthLiveData: LiveData<Event<Boolean>> = _showAuthLiveData
 
+    private val _finishWithResultLiveData = MutableLiveData<Event<UnshieldingResult>>()
+    val finishWithResultLiveData: LiveData<Event<UnshieldingResult>> = _finishWithResultLiveData
+
     fun initializeOnce(accountAddress: String) = viewModelScope.launch {
         if (isInitialized) {
             return@launch
@@ -154,11 +157,13 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun onAuthenticated(password: String) = viewModelScope.launch(Dispatchers.IO) {
+        _finishWithResultLiveData.postValue(Event(UnshieldingResult(account.address, BigInteger.valueOf(10000000))))
         decryptAndUnshield(password)
     }
 
     private suspend fun decryptAndUnshield(password: String) {
         _waitingLiveData.postValue(true)
+        _isUnshieldEnabledLiveData.postValue(false)
 
         // This method is mostly a copypaste from former SendFundsViewModel.
 
@@ -166,6 +171,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
             _errorLiveData.postValue(Event(R.string.app_error_general))
             _waitingLiveData.postValue(false)
+            _isUnshieldEnabledLiveData.postValue(true)
             return
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
@@ -174,6 +180,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         if (decryptedJson == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
             _waitingLiveData.postValue(false)
+            _isUnshieldEnabledLiveData.postValue(true)
             return
         }
 
@@ -212,6 +219,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         if (createTransferOutput == null) {
             _errorLiveData.postValue(Event(R.string.app_error_lib))
             _waitingLiveData.postValue(false)
+            _isUnshieldEnabledLiveData.postValue(true)
             return
         }
 
@@ -220,11 +228,13 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         } catch (e: Exception) {
             _errorLiveData.postValue(Event(BackendErrorHandler.getExceptionStringRes(e)))
             _waitingLiveData.postValue(false)
+            _isUnshieldEnabledLiveData.postValue(true)
             return
         }
 
         onUnshielded(createTransferOutput, credentialsOutput, amount)
 
+        _isUnshieldEnabledLiveData.postValue(true)
         _waitingLiveData.postValue(false)
     }
 
@@ -279,7 +289,14 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
 
-
+        _finishWithResultLiveData.postValue(
+            Event(
+                UnshieldingResult(
+                    unshieldedAmount = amount,
+                    accountAddress = account.address,
+                )
+            )
+        )
     }
 
     private fun getBalanceAtDisposal(): BigInteger =

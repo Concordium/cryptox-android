@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.more.unshielding
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -27,6 +29,7 @@ class UnshieldingActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         initViewModel()
+        initButtons()
 
         hideActionBarBack(isVisible = true)
     }
@@ -82,6 +85,22 @@ class UnshieldingActivity : BaseActivity(
         )
 
         viewModel.isUnshieldEnabledLiveData.observe(this, binding.unshieldButton::setEnabled)
+
+        viewModel.finishWithResultLiveData.observe(
+            this,
+            object : EventObserver<UnshieldingResult>() {
+                override fun onUnhandledEvent(value: UnshieldingResult) {
+                    setResult(Activity.RESULT_OK, Intent().putExtras(createResult(value)))
+                    finish()
+                }
+            }
+        )
+    }
+
+    private fun initButtons() {
+        binding.unshieldButton.setOnClickListener {
+            viewModel.onUnshieldClicked()
+        }
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -94,6 +113,16 @@ class UnshieldingActivity : BaseActivity(
 
     companion object {
         const val ACCOUNT_ADDRESS_EXTRA = "account_address"
+        private const val UNSHIELDED_RESULT_EXTRA = "unshielded_result"
+
+        private fun createResult(unshieldingResult: UnshieldingResult) = Bundle().apply {
+            putSerializable(UNSHIELDED_RESULT_EXTRA, unshieldingResult)
+        }
+
+        fun getResult(bundle: Bundle): UnshieldingResult =
+            checkNotNull(bundle.getSerializable(UNSHIELDED_RESULT_EXTRA) as? UnshieldingResult) {
+                "No $UNSHIELDED_RESULT_EXTRA specified"
+            }
 
         fun getBundle(accountAddress: String) = Bundle().apply {
             putString(ACCOUNT_ADDRESS_EXTRA, accountAddress)

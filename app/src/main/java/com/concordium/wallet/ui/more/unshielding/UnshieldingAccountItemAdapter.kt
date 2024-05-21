@@ -34,6 +34,8 @@ class UnshieldingAccountItemAdapter(
                 onUnshieldClicked(item)
             }
 
+            unshieldedTextView.isVisible = item.isUnshielded
+
             balanceTextView.text = item.balance ?: "*** ***"
         }
     }
