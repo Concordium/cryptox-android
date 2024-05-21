@@ -20,7 +20,11 @@ import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.TransactionCost
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -222,8 +226,9 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             return
         }
 
+        val submissionId: String
         try {
-            submitTransfer(createTransferOutput)
+            submissionId = submitTransfer(createTransferOutput)
         } catch (e: Exception) {
             _errorLiveData.postValue(Event(BackendErrorHandler.getExceptionStringRes(e)))
             _waitingLiveData.postValue(false)
@@ -231,7 +236,13 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             return
         }
 
-        onUnshielded(createTransferOutput, credentialsOutput, amount)
+        onUnshielded(
+            createTransferInput = createTransferInput,
+            createTransferOutput = createTransferOutput,
+            credentialsOutput = credentialsOutput,
+            amount = amount,
+            submissionId = submissionId
+        )
 
         _isUnshieldEnabledLiveData.postValue(true)
         _waitingLiveData.postValue(false)
@@ -249,16 +260,21 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private suspend fun onUnshielded(
+        createTransferInput: CreateTransferInput,
         createTransferOutput: CreateTransferOutput,
         credentialsOutput: StorageAccountData,
         amount: BigInteger,
+        submissionId: String,
     ) {
+        var newSelfEncryptedAmount: String? = null
+
         if (createTransferOutput.addedSelfEncryptedAmount != null) {
             account.finalizedEncryptedBalance?.let { encBalance ->
                 val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
                     createTransferOutput.addedSelfEncryptedAmount,
                     encBalance.selfAmount
                 ).toString()
+                newSelfEncryptedAmount = newEncryptedAmount
                 val oldDecryptedAmount =
                     accountUpdater.lookupMappedAmount(encBalance.selfAmount)
                 oldDecryptedAmount?.let {
@@ -269,7 +285,9 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
                 }
             }
         }
+
         if (createTransferOutput.remaining != null) {
+            newSelfEncryptedAmount = createTransferOutput.remaining
             val remainingAmount =
                 accountUpdater.decryptAndSaveAmount(
                     credentialsOutput.encryptionSecretKey,
@@ -287,6 +305,26 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
                 }
             }
         }
+
+        val newTransfer = Transfer(
+            id = 0,
+            accountId = account.id,
+            amount = amount,
+            cost = transactionCost.cost,
+            fromAddress = account.address,
+            toAddress = account.address,
+            expiry = createTransferInput.expiry,
+            memo = null,
+            createdAt = System.currentTimeMillis(),
+            submissionId = submissionId,
+            transactionStatus = TransactionStatus.RECEIVED,
+            outcome = TransactionOutcome.UNKNOWN,
+            transactionType = TransactionType.TRANSFER,
+            newSelfEncryptedAmount = newSelfEncryptedAmount,
+            newStartIndex = createTransferInput.inputEncryptedAmount?.aggIndex ?: 0,
+            nonce = accountNonce
+        )
+        transferRepository.insert(newTransfer)
 
         _finishWithResultLiveData.postValue(
             Event(
