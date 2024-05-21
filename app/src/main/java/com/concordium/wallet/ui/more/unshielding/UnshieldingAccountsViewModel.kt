@@ -39,8 +39,8 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     private val _showAuthLiveData = MutableLiveData<Event<Boolean>>()
     val showAuthLiveData: LiveData<Event<Boolean>> = _showAuthLiveData
 
-    private val _goToUnshieldingLiveData = MutableLiveData<Event<Account>>()
-    val goToUnshieldingLiveData: LiveData<Event<Account>> = _goToUnshieldingLiveData
+    private val _goToUnshieldingLiveData = MutableLiveData<Event<String>>()
+    val goToUnshieldingLiveData: LiveData<Event<String>> = _goToUnshieldingLiveData
 
     private lateinit var accountAddressToUnshield: String
 
@@ -115,7 +115,7 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
             }
 
             override fun onDone(totalBalances: TotalBalancesData) {
-                _goToUnshieldingLiveData.postValue(Event(account))
+                _goToUnshieldingLiveData.postValue(Event(account.address))
                 _waitingLiveData.postValue(false)
             }
 

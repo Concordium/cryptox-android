@@ -228,11 +228,6 @@
     <!-- ***** Transaction / Send funds ***** -->
     <!-- Send funds -->
     <string name="send_funds_title">Send Funds</string>
-    <string name="send_funds_shield_title">Shield amount</string>
-    <string name="send_funds_unshield_title">Unshield amount</string>
-    <string name="send_funds_fee_info">Estimated transaction fee: %1$s</string>
-    <string name="send_funds_confirm">Send amount</string>
-    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_failed">Transaction error</string>
     <!-- Transaction details -->
@@ -1081,4 +1076,8 @@
     <string name="unshielding_accounts_title">Accounts</string>
     <string name="unshielding_accounts_subtitle">with shielded assets</string>
     <string name="unshielding_accounts_unshield">Unshield</string>
+    <string name="unshielding_shielded_amount">Shielded amount</string>
+    <string name="unshielding_estimated_tx_fee">Estimated transaction fee:</string>
+    <string name="unshielding_unshield_funds">Unshield funds</string>
+    <string name="unshielding_insufficient_funds">Insufficient funds at disposal to pay the fee</string>
 </resources>

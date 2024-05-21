@@ -13,7 +13,6 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateCredentialOutput
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
@@ -60,6 +59,9 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>> = _errorLiveData
 
+    private val _titleLiveData = MutableLiveData<String>()
+    val titleLiveData: LiveData<String> = _titleLiveData
+
     private val _amountLiveData = MutableLiveData<BigInteger>()
     val amountLiveData: LiveData<BigInteger> = _amountLiveData
 
@@ -83,6 +85,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         account = accountRepository.findByAddress(accountAddress)
             ?: error("Requested account $accountAddress not found")
         _amountLiveData.postValue(account.totalShieldedBalance)
+        _titleLiveData.postValue(account.getAccountName())
 
         isInitialized = true
 
@@ -91,6 +94,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
 
     private suspend fun prepareForUnshielding() {
         _waitingLiveData.postValue(true)
+        _isUnshieldEnabledLiveData.postValue(false)
 
         try {
             accountNonce = getAccountNonce()

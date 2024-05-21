@@ -27,12 +27,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
 
+    <View
+        android:id="@+id/divider"
+        style="@style/CryptoX_Divider_Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="24dp"
         android:clipToPadding="false"
         android:paddingBottom="24dp"
         android:scrollbars="none"
@@ -40,7 +48,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         tools:listitem="@layout/list_item_unshielding_account"
         tools:visibility="visible" />
 

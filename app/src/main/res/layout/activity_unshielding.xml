@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toastLayoutTopError"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider"
+        style="@style/CryptoX_Divider_Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <TextView
+        android:id="@+id/shielded_amount_label_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:paddingHorizontal="18dp"
+        android:text="@string/unshielding_shielded_amount"
+        android:textAppearance="@style/CCX_Typography_Item"
+        android:textColor="@color/cryptox_black_additional"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <TextView
+        android:id="@+id/shielded_amount_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="24dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/CCX_Typography_Display"
+        android:textColor="@color/cryptox_white_main"
+        android:textSize="40sp"
+        app:autoSizeMaxTextSize="40sp"
+        app:autoSizeMinTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shielded_amount_label_text_view"
+        app:layout_constraintWidth_default="wrap"
+        tools:text="100" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="35dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:contentDescription="CCD"
+        app:layout_constraintStart_toEndOf="@id/shielded_amount_text_view"
+        app:layout_constraintTop_toTopOf="@id/shielded_amount_text_view"
+        app:srcCompat="@drawable/ccd_chip"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/fee_label_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:paddingHorizontal="18dp"
+        android:text="@string/unshielding_estimated_tx_fee"
+        android:textAppearance="@style/CCX_Typography_Item"
+        android:textColor="@color/cryptox_black_additional"
+        app:layout_constraintTop_toBottomOf="@id/shielded_amount_text_view" />
+
+    <TextView
+        android:id="@+id/fee_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingHorizontal="18dp"
+        android:textAppearance="@style/CCX_Typography_Item"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constraintTop_toBottomOf="@id/fee_label_text_view"
+        tools:text="0,33 CCD" />
+
+    <TextView
+        android:id="@+id/insufficient_funds_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="@string/unshielding_insufficient_funds"
+        android:textAppearance="@style/CCX_Typography_Caption"
+        android:textColor="@color/ccx_neutral_tint_2"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/unshield_button"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/unshield_button"
+        style="@style/CCX_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="@string/unshielding_unshield_funds"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <include
+        android:id="@+id/progress"
+        layout="@layout/progress" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

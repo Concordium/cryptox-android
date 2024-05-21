@@ -1,34 +1,32 @@
 package com.concordium.wallet.ui.more.unshielding
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.databinding.ActivityUnshieldingAccountsBinding
+import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.ActivityUnshieldingBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.concordium.wallet.util.Log
 
-class UnshieldingAccountsActivity : BaseActivity(
-    R.layout.activity_unshielding_accounts,
+class UnshieldingActivity : BaseActivity(
+    R.layout.activity_unshielding,
     R.string.accounts_overview_title
 ), AuthDelegate by AuthDelegateImpl() {
 
     private val binding by lazy {
-        ActivityUnshieldingAccountsBinding.bind(findViewById(R.id.toastLayoutTopError))
+        ActivityUnshieldingBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private lateinit var viewModel: UnshieldingAccountsViewModel
+    private lateinit var viewModel: UnshieldingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initViewModel()
-        initList()
 
         hideActionBarBack(isVisible = true)
     }
@@ -38,6 +36,12 @@ class UnshieldingAccountsActivity : BaseActivity(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
+
+        viewModel.initializeOnce(
+            accountAddress = requireNotNull(intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA)) {
+                "No $ACCOUNT_ADDRESS_EXTRA specified"
+            }
+        )
 
         viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
@@ -54,26 +58,30 @@ class UnshieldingAccountsActivity : BaseActivity(
         viewModel.showAuthLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 showAuthentication(
-                    activity = this@UnshieldingAccountsActivity,
+                    activity = this@UnshieldingActivity,
                     onCanceled = ::finish,
                     onAuthenticated = viewModel::onAuthenticated
                 )
             }
         })
 
-        viewModel.goToUnshieldingLiveData.observe(this, object : EventObserver<String>() {
-            override fun onUnhandledEvent(value: String) {
-                goToUnshielding(value)
-            }
-        })
-    }
+        viewModel.titleLiveData.observe(this, this::setActionBarTitle)
 
-    private fun initList() {
-        val adapter = UnshieldingAccountItemAdapter(
-            onUnshieldClicked = viewModel::onUnshieldClicked,
+        viewModel.amountLiveData.observe(this) { amount ->
+            binding.shieldedAmountTextView.text = CurrencyUtil.formatGTU(amount, false)
+        }
+
+        viewModel.transactionCostLiveData.observe(this) { cost ->
+            binding.feeTextView.text =
+                getString(R.string.amount, CurrencyUtil.formatGTU(cost, false))
+        }
+
+        viewModel.insufficientFundsLiveData.observe(
+            this,
+            binding.insufficientFundsTextView::isVisible::set,
         )
-        binding.recyclerview.adapter = adapter
-        viewModel.listItemsLiveData.observe(this, adapter::setData)
+
+        viewModel.isUnshieldEnabledLiveData.observe(this, binding.unshieldButton::setEnabled)
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -84,13 +92,11 @@ class UnshieldingAccountsActivity : BaseActivity(
         }
     }
 
-    private fun goToUnshielding(accountAddress: String) {
-        startActivity(
-            Intent(this, UnshieldingActivity::class.java).putExtras(
-                UnshieldingActivity.getBundle(
-                    accountAddress = accountAddress,
-                )
-            )
-        )
+    companion object {
+        const val ACCOUNT_ADDRESS_EXTRA = "account_address"
+
+        fun getBundle(accountAddress: String) = Bundle().apply {
+            putString(ACCOUNT_ADDRESS_EXTRA, accountAddress)
+        }
     }
 }
