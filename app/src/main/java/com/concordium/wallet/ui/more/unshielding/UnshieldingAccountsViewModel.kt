@@ -123,7 +123,19 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
             }
 
             override fun onDone(totalBalances: TotalBalancesData) {
-                _openUnshieldingLiveData.postValue(Event(account.address))
+                // If the shielded balance is empty,
+                // immediately show the unshielding result.
+                if (account.totalShieldedBalance.signum() > 0) {
+                    _openUnshieldingLiveData.postValue(Event(account.address))
+                } else {
+                    onUnshieldingResult(
+                        UnshieldingResult(
+                            accountAddress = account.address,
+                            unshieldedAmount = BigInteger.ZERO,
+                        )
+                    )
+                }
+
                 _waitingLiveData.postValue(false)
             }
 
