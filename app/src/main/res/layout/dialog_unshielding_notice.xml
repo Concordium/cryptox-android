@@ -28,7 +28,7 @@
         app:layout_constraintTop_toBottomOf="@id/close_button"
         app:layout_constraintWidth_max="200dp"
         app:layout_constraintWidth_percent="0.45"
-        app:srcCompat="@drawable/ccx_submitted_verification" />
+        app:srcCompat="@drawable/ccx_shielding" />
 
     <TextView
         android:id="@+id/title_text_view"
