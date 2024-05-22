@@ -11,6 +11,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -45,7 +46,7 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     private val _openUnshieldingLiveData = MutableLiveData<Event<String>>()
     val openUnshieldingLiveData: LiveData<Event<String>> = _openUnshieldingLiveData
 
-    private lateinit var accountAddressToUnshield: String
+    private lateinit var accountToUnshield: Account
 
     init {
         findAccountsMayNeedUnshielding()
@@ -59,16 +60,27 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
         // Show accounts may need unshielding and just unshielded ones.
         _listItemsLiveData.postValue(allDoneAccounts.mapNotNull { account ->
             if (account.mayNeedUnshielding() || unshieldedAmountsByAccount.containsKey(account.address)) {
+                // Show either the decrypted positive balance or the unshielded amount.
+                val balance: BigInteger? =
+                    if (account.encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
+                        && account.totalShieldedBalance.signum() > 0
+                    ) {
+                        account.totalShieldedBalance
+                    } else {
+                        unshieldedAmountsByAccount[account.address]
+                    }
+
                 UnshieldingAccountListItem(
                     address = account.address,
                     name = account.getAccountName(),
-                    balance = unshieldedAmountsByAccount[account.address]?.let { unshieldedAmount ->
+                    balance = balance?.let { unshieldedAmount ->
                         getApplication<Application>().getString(
                             R.string.amount,
                             CurrencyUtil.formatGTU(unshieldedAmount)
                         )
                     },
-                    isUnshielded = unshieldedAmountsByAccount.containsKey(account.address),
+                    isUnshielded = balance?.signum() == 0
+                            || unshieldedAmountsByAccount.containsKey(account.address),
                 )
             } else {
                 null
@@ -78,14 +90,19 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
         _waitingLiveData.postValue(false)
     }
 
-    fun onUnshieldClicked(item: UnshieldingAccountListItem) {
-        accountAddressToUnshield = item.address
-        _showAuthLiveData.postValue(Event(true))
+    fun onUnshieldClicked(item: UnshieldingAccountListItem) = viewModelScope.launch {
+        accountToUnshield = accountRepository.findByAddress(item.address)
+            ?: error("Account to unshield $accountToUnshield not found")
+
+        // Decrypt the balance if needed, otherwise immediately proceed with unshielding.
+        if (accountToUnshield.encryptedBalanceStatus != ShieldedAccountEncryptionStatus.DECRYPTED) {
+            _showAuthLiveData.postValue(Event(true))
+        } else {
+            _openUnshieldingLiveData.postValue(Event(accountToUnshield.address))
+        }
     }
 
     fun onAuthenticated(password: String) = viewModelScope.launch(Dispatchers.IO) {
-        val accountToUnshield = accountRepository.findByAddress(accountAddressToUnshield)
-            ?: error("Account to unshield $accountAddressToUnshield not found")
         decryptAndGoToUnshielding(accountToUnshield, password)
     }
 
@@ -127,6 +144,9 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
             }
 
             override fun onDone(totalBalances: TotalBalancesData) {
+                // Update the list as the balances are updated.
+                findAccountsMayNeedUnshielding()
+
                 // If the shielded balance is empty,
                 // immediately show the unshielding result.
                 if (account.totalShieldedBalance.signum() > 0) {
