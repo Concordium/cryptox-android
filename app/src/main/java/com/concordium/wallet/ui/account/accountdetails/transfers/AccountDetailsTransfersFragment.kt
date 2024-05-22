@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.model.Transaction
@@ -15,7 +14,6 @@ import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
-import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
 
@@ -141,11 +139,7 @@ class AccountDetailsTransfersFragment : Fragment() {
             accountDetailsViewModel.requestGTUDrop()
         }
 
-        transactionAdapter = TransactionAdapter(
-            accountDetailsViewModel.viewModelScope,
-            AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope),
-            mutableListOf()
-        )
+        transactionAdapter = TransactionAdapter()
 
         val linearLayoutManager = LinearLayoutManager(context)
         binding.recyclerview.setHasFixedSize(true)

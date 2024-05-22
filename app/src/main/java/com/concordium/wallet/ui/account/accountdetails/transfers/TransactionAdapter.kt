@@ -9,23 +9,14 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.databinding.ItemFooterProgressBinding
 import com.concordium.wallet.databinding.ItemTransactionBinding
-import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.TransactionViewHelper
-import com.concordium.wallet.ui.common.TransactionViewHelper.OnClickListenerInterface
 import com.concordium.wallet.uicore.recyclerview.BaseAdapter
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
-class TransactionAdapter(
-    private var scope: CoroutineScope,
-    private var accountUpdater: AccountUpdater,
-    data: MutableList<AdapterItem>
-) : BaseAdapter<AdapterItem>(data), PinnedHeaderListener {
+class TransactionAdapter :
+    BaseAdapter<AdapterItem>(mutableListOf()),
+    PinnedHeaderListener {
 
-    private lateinit var decryptListener: OnDecryptClickListenerInterface
-
-    var isShieldedAccount: Boolean = false
     private var onItemClickListener: OnItemClickListener? = null
 
     inner class ItemViewHolder(val binding: ItemTransactionBinding) :
@@ -41,29 +32,17 @@ class TransactionAdapter(
         with(holder as ItemViewHolder) {
             val transactionItem = items[position] as TransactionItem
             val transaction = transactionItem.transaction as Transaction
-            scope.launch {
-                TransactionViewHelper.show(
-                    accountUpdater,
-                    transaction,
-                    binding.titleTextview,
-                    binding.subheaderTextview,
-                    binding.totalTextview,
-                    binding.costTextview,
-                    binding.memoTextview,
-                    binding.amountTextview,
-                    binding.alertImageview,
-                    binding.statusImageview,
-                    binding.lockImageview,
-                    isShieldedAccount,
-                    decryptCallback = object : OnClickListenerInterface {
-                        override fun onDecrypt() {
-                            decryptListener.onDecrypt(transaction)
-                        }
-                    }
-                )
-            }
-
-//            binding.divider.isVisible = transactionItem.isDividerVisible
+            TransactionViewHelper.show(
+                transaction,
+                binding.titleTextview,
+                binding.subheaderTextview,
+                binding.totalTextview,
+                binding.costTextview,
+                binding.memoTextview,
+                binding.amountTextview,
+                binding.alertImageview,
+                binding.statusImageview,
+            )
 
             if (onItemClickListener != null) {
                 binding.itemRootLayout.setOnClickListener {
@@ -126,10 +105,6 @@ class TransactionAdapter(
     override fun isHeader(itemPosition: Int): Boolean {
         val item = items[itemPosition]
         return (item.getItemType() == AdapterItem.ItemType.Header)
-    }
-
-    interface OnDecryptClickListenerInterface {
-        fun onDecrypt(ta: Transaction)
     }
 
     // Header
