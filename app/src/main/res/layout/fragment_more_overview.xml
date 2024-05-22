@@ -21,6 +21,16 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
+                android:id="@+id/unshielding_layout"
+                style="@style/MoreOverviewItem">
+
+                <TextView
+                    style="@style/MoreOverviewItemTextView"
+                    android:text="@string/more_overview_item_unshielding"
+                    app:drawableStartCompat="@drawable/ccx_ico_unshield" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/identities_layout"
                 style="@style/MoreOverviewItem">
 
