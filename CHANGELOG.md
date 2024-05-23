@@ -8,6 +8,9 @@
 ### Fixed
 - A way to get into an empty wallet without confirming the seed phrase
 
+### Changed
+- Actualized End User License Terms and Privacy Policy URL
+
 ## [1.0.0] - 2022-04-24
 
 ### Added
