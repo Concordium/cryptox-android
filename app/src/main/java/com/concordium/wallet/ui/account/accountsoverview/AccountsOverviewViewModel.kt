@@ -184,6 +184,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         }
 
     private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
+        // Show the notice once.
+        if (App.appCore.session.isUnshieldingNoticeShown()) {
+            return@launch
+        }
+
         val anyAccountsMayNeedUnshielding = accountRepository.getAllDone()
             .any(Account::mayNeedUnshielding)
 

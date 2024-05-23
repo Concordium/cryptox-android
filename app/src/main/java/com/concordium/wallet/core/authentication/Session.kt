@@ -53,6 +53,14 @@ class Session {
         return filterPreferences.getHasShowFinalizationRewards(id)
     }
 
+    fun unshieldingNoticeShown() {
+        authPreferences.setUnshieldingNoticeShown(true)
+    }
+
+    fun isUnshieldingNoticeShown():Boolean {
+        return authPreferences.getUnshieldingNoticeShown()
+    }
+
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
         authPreferences.setHasSetupUser(true)
@@ -111,14 +119,6 @@ class Session {
 
     fun setBiometricAuthKeyName(resetBiometricKeyNameAppendix: String) {
         authPreferences.setAuthKeyName(resetBiometricKeyNameAppendix)
-    }
-
-    fun getTermsHashed(): Int {
-        return authPreferences.getTermsHashed()
-    }
-
-    fun setTermsHashed(key: Int) {
-        return authPreferences.setTermsHashed(key)
     }
 
     fun isAccountsBackupPossible(): Boolean {
