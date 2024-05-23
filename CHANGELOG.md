@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
+### Removed
+- Shielding – now it is only possible to unshield your balances
+
 ### Added
+- Ability to unshield your balances from the "More" screen
 - Support for WalletConnect binary messages signing
 
 ### Fixed
