@@ -286,7 +286,6 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (request in transferSubmissionStatusRequestList) {
                     try {
                         val submissionStatus = request.deferred.await()
-                        updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
 
                         request.transfer.transactionStatus = submissionStatus.status
                         request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
@@ -312,18 +311,6 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             }
         }
         Log.d("end")
-    }
-
-    fun updateEncryptedAmount(submissionStatus: TransferSubmissionStatus, submissionId: String, amount: String?) {
-        viewModelScope.launch {
-            if(submissionStatus.encryptedAmount != null){
-                val amount = lookupMappedAmount(submissionId)
-                saveDecryptedAmount(submissionStatus.encryptedAmount, amount) // for safe keeping as we do not have outgoing decrypted amount
-            }
-            else{
-                saveDecryptedAmount(submissionId, amount) // for safe keeping as we do not have outgoing decrypted amount
-            }
-        }
     }
 
     private suspend fun saveAndDeleteTransfers() {
@@ -544,30 +531,26 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     suspend fun decryptEncryptedAmounts(key: String, account: Account) {
         account.finalizedEncryptedBalance?.let {
-            decryptAndSaveAmount(key,it.selfAmount)
+            decryptAndSaveAmount(key, it.selfAmount)
             it.incomingAmounts.forEach {
                 decryptAndSaveAmount(key, it)
             }
         }
     }
 
-    suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String):String? {
-        val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(encryptedAmount,key))
+    suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String): String? {
+        val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+            DecryptAmountInput(
+                encryptedAmount,
+                key
+            )
+        )
         output?.let {
-            if(lookupMappedAmount(encryptedAmount) == null){
-                saveDecryptedAmount(encryptedAmount,it)
+            if (lookupMappedAmount(encryptedAmount) == null) {
+                saveDecryptedAmount(encryptedAmount, it)
             }
         }
         return output
-    }
-
-    suspend fun lookupMappedAmount(key: String):String? {
-        if(DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)){
-            return 0.toString()
-        }
-        val result = encryptedAmountRepository.findByAddress(key)?.amount?:null
-
-        return result
     }
 
     suspend fun saveDecryptedAmount(key: String, amount: String?) {
@@ -578,12 +561,24 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         val list = encryptedAmountRepository.findAllUndecrypted()
         list.forEach {
             val secretAmount = it.encryptedkey
-            val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(secretAmount,secretPrivateKey))
+            val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+                DecryptAmountInput(
+                    secretAmount,
+                    secretPrivateKey
+                )
+            )
             output?.let {
                 saveDecryptedAmount(secretAmount, output)
             }
         }
     }
 
+    suspend fun lookupMappedAmount(key: String):String? {
+        if(DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)){
+            return 0.toString()
+        }
+        val result = encryptedAmountRepository.findByAddress(key)?.amount?:null
 
+        return result
+    }
 }

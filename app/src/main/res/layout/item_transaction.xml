@@ -121,16 +121,6 @@
                     android:textSize="12sp"
                     tools:text="Ͼ0.059 Fee"
                     tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/lock_imageview"
-                    style="@style/Image"
-                    android:layout_width="18sp"
-                    android:layout_height="18sp"
-                    android:src="@drawable/ic_lock"
-                    android:visibility="gone"
-                    app:tint="@color/cryptox_black_additional"
-                    tools:visibility="visible" />
             </LinearLayout>
             <!-- end fee group -->
 

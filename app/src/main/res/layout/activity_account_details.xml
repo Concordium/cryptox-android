@@ -85,27 +85,9 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@string/account_details_earn_rewards"
                     android:tooltipText="@string/account_details_earn_rewards"
-                    app:layout_constraintEnd_toStartOf="@id/shield_funds_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/address_btn"
                     app:srcCompat="@drawable/cryptox_ico_earn" />
-
-                <View
-                    android:id="@+id/earn_btn_divider"
-                    style="@style/CryptoX_Divider_Vertical"
-                    android:layout_marginVertical="12dp"
-                    app:layout_constraintEnd_toStartOf="@id/shield_funds_btn"
-                    app:layout_constraintStart_toEndOf="@id/earn_btn"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/shield_funds_btn"
-                    style="@style/CryptoX_ImageButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/account_details_shield"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/earn_btn"
-                    app:srcCompat="@drawable/cryptox_ico_shielded" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

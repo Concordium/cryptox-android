@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
@@ -20,10 +19,8 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 
 class TransactionDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
-    var isShieldedAccount: Boolean = false
     private val proxyRepository = ProxyRepository()
     private val transferRepository: TransferRepository
-    private val gson = App.appCore.gson
 
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
     lateinit var account: Account
@@ -90,10 +87,6 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
                 _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
             }
         )
-    }
-
-    fun setIsShieldedAccount(shielded: Boolean) {
-        isShieldedAccount = shielded
     }
 
     fun getExplorerUrl(): String =

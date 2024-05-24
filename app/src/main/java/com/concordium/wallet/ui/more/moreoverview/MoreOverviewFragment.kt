@@ -22,6 +22,7 @@ import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
+import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.passphrase.reveal.SavedPassPhraseRevealActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
@@ -102,6 +103,14 @@ class MoreOverviewFragment : BaseFragment() {
         if (BuildConfig.INCL_DEV_OPTIONS) {
             binding.devLayout.visibility = View.VISIBLE
         }
+
+        binding.unshieldingLayout.setOnClickListener {
+            gotoUnshielding()
+        }
+        viewModel.unshieldingVisibilityLiveData.observe(
+            viewLifecycleOwner,
+            binding.unshieldingLayout::isVisible::set
+        )
 
         binding.identitiesLayout.setOnClickListener {
             gotoIdentitiesOverview()
@@ -234,6 +243,11 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun gotoDevConfig() {
         val intent = Intent(activity, DevActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun gotoUnshielding() {
+        val intent = Intent(activity, UnshieldingAccountsActivity::class.java)
         startActivity(intent)
     }
 

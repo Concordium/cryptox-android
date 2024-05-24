@@ -11,8 +11,6 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Transaction
@@ -21,11 +19,9 @@ import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityTransactionDetailsBinding
-import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.TransactionViewHelper
 import com.concordium.wallet.util.DateTimeUtil
-import kotlinx.coroutines.launch
 
 class TransactionDetailsActivity : BaseActivity(
     R.layout.activity_transaction_details,
@@ -35,14 +31,12 @@ class TransactionDetailsActivity : BaseActivity(
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
-        const val EXTRA_ISSHIELDED = "EXTRA_ISSHIELDED"
     }
 
     private lateinit var viewModel: TransactionDetailsViewModel
     private val binding by lazy {
         ActivityTransactionDetailsBinding.bind(findViewById(R.id.root_layout))
     }
-    private lateinit var accountUpdater: AccountUpdater
 
     //region Lifecycle
     // ************************************************************
@@ -52,10 +46,7 @@ class TransactionDetailsActivity : BaseActivity(
 
         val account = intent.extras?.getSerializable(EXTRA_ACCOUNT) as Account
         val transaction = intent.extras?.getSerializable(EXTRA_TRANSACTION) as Transaction
-        val isShielded = intent.getBooleanExtra(EXTRA_ISSHIELDED, false)
         initializeViewModel()
-        accountUpdater = AccountUpdater(application, viewModel.viewModelScope)
-        viewModel.setIsShieldedAccount(isShielded)
         viewModel.initialize(account, transaction)
         initViews()
         viewModel.showData()
@@ -154,23 +145,17 @@ class TransactionDetailsActivity : BaseActivity(
         val transaction = viewModel.transaction
         val transactionItem = binding.transactionItem
 
-        lifecycleScope.launch {
-            TransactionViewHelper.show(
-                accountUpdater,
-                transaction,
-                transactionItem.titleTextview,
-                transactionItem.subheaderTextview,
-                transactionItem.totalTextview,
-                transactionItem.costTextview,
-                transactionItem.memoTextview,
-                transactionItem.amountTextview,
-                transactionItem.alertImageview,
-                transactionItem.statusImageview,
-                transactionItem.lockImageview,
-                viewModel.isShieldedAccount,
-                decryptCallback = null,
-            )
-        }
+        TransactionViewHelper.show(
+            transaction,
+            transactionItem.titleTextview,
+            transactionItem.subheaderTextview,
+            transactionItem.totalTextview,
+            transactionItem.costTextview,
+            transactionItem.memoTextview,
+            transactionItem.amountTextview,
+            transactionItem.alertImageview,
+            transactionItem.statusImageview,
+        )
         // Do not show the memo in the item,
         // it is shown below with ability to copy the value.
         transactionItem.memoTextview.isVisible = false

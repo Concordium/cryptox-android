@@ -24,11 +24,19 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR =
             "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
         const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
-        const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX =
             "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX"
         const val PREFKEY_LEGACY_SEED_HEX_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
+        const val PREFKEY_UNSHIELDING_NOTICE_SHOWN = "UNSHIELDING_NOTICE_SHOWN"
+    }
+
+    fun setUnshieldingNoticeShown(value: Boolean) {
+        setBoolean(PREFKEY_UNSHIELDING_NOTICE_SHOWN, value)
+    }
+
+    fun getUnshieldingNoticeShown(): Boolean {
+        return getBoolean(PREFKEY_UNSHIELDING_NOTICE_SHOWN, false)
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -118,14 +126,6 @@ class AuthPreferences(val context: Context) :
 
     fun setAuthKeyName(key: String) {
         return setString(PREFKEY_BIOMETRIC_KEY, key)
-    }
-
-    fun getTermsHashed(): Int {
-        return getInt(PREFKEY_TERMS_HASHED, 0)
-    }
-
-    fun setTermsHashed(key: Int) {
-        return setInt(PREFKEY_TERMS_HASHED, key)
     }
 
     fun isAccountsBackedUp(): Boolean {

@@ -2,14 +2,12 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.app.Application
 import android.os.CountDownTimer
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.AccountRepository
@@ -17,8 +15,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.DecryptAmountInput
-import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.RemoteTransaction
 import com.concordium.wallet.data.model.Transaction
@@ -38,8 +34,6 @@ import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
@@ -55,7 +49,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     var hasTransactionsToDecrypt: Boolean = false
 
     lateinit var account: Account
-    var isShielded: Boolean = false
     var hasPendingDelegationTransactions: Boolean = false
     var hasPendingBakingTransactions: Boolean = false
 
@@ -109,13 +102,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val identityLiveData: MutableLiveData<Identity?>
         get() = _identityLiveData
 
-    private var _totalBalanceLiveData = MutableLiveData<Pair<BigInteger, Boolean>>()
-    val totalBalanceLiveData: LiveData<Pair<BigInteger, Boolean>>
+    private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
+    val totalBalanceLiveData: LiveData<BigInteger>
         get() = _totalBalanceLiveData
-
-    private var _selectedTransactionForDecrytionLiveData = MutableLiveData<Transaction>()
-    val selectedTransactionForDecrytionLiveData: LiveData<Transaction>
-        get() = _selectedTransactionForDecrytionLiveData
 
     private var _accountUpdatedLiveData = MutableLiveData<Boolean>()
     val accountUpdatedLiveData: LiveData<Boolean>
@@ -137,17 +126,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun initialize(account: Account, isShielded: Boolean) {
+    fun initialize(account: Account) {
         this.account = account
-        this.isShielded = isShielded
-        if (!isShielded) {
-            _totalBalanceLiveData.postValue(
-                Pair(
-                    account.totalUnshieldedBalance,
-                    false
-                )
-            )
-        }
+        _totalBalanceLiveData.postValue(account.totalUnshieldedBalance)
         getIdentityProvider()
         Log.d("Account address: ${account.address}")
     }
@@ -186,7 +167,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun updateGTUDropState() {
-        if (!BuildConfig.SHOW_GTU_DROP || isShielded) {
+        if (!BuildConfig.SHOW_GTU_DROP) {
             _showGTUDropLiveData.value = false
         } else {
             _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
@@ -256,17 +237,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 )
             }
         } else {
-            _totalBalanceLiveData.value = Pair(BigInteger.ZERO, false)
+            _totalBalanceLiveData.value = BigInteger.ZERO
         }
     }
 
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
-            override fun onDone(totalBalances: TotalBalancesData) {
-                _totalBalanceLiveData.value = Pair(
-                    if (isShielded) account.totalShieldedBalance else account.totalUnshieldedBalance,
-                    totalBalances.totalContainsEncrypted
-                )
+            override fun onDone(totalBalances: TotalBalancesData ) {
+                _totalBalanceLiveData.value = account.totalUnshieldedBalance
                 getLocalTransfers()
                 viewModelScope.launch {
                     updateAccountFromRepository()
@@ -428,62 +406,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun continueWithPassword(
-        password: String,
-        transfersOnly: Boolean = false,
-        transaction: Transaction? = null
-    ) = viewModelScope.launch {
-        _waitingLiveData.value = true
-        decryptAndContinue(password, transfersOnly, transaction)
-    }
-
-    private suspend fun decryptAndContinue(
-        password: String,
-        transfersOnly: Boolean = false,
-        transaction: Transaction? = null
-    ) {
-        // Decrypt the private data
-        val storageAccountDataEncrypted = account.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
-            _errorLiveData.value = Event(R.string.app_error_general)
-            _waitingLiveData.value = false
-            return
-        }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
-        if (decryptedJson != null) {
-            val credentialsOutput = gson.fromJson(decryptedJson, StorageAccountData::class.java)
-            decryptData(credentialsOutput.encryptionSecretKey, transfersOnly, transaction)
-        } else {
-            _errorLiveData.value = Event(R.string.app_error_encryption)
-            _waitingLiveData.value = false
-        }
-    }
-
-    private suspend fun decryptData(
-        secretKey: String,
-        transfersOnly: Boolean = false,
-        transaction: Transaction?
-    ) {
-        viewModelScope.launch {
-            if (!transfersOnly) {
-                clearTransactionListState()
-                updateAccountFromRepository()
-                accountUpdater.decryptEncryptedAmounts(secretKey, account)
-                accountUpdater.decryptAllUndecryptedAmounts(secretKey)
-                accountUpdater.updateForAccount(account)
-            } else {
-                if (transaction == null) {
-                    decryptTransactionListUnencryptedAmounts(secretKey)
-                } else {
-                    decryptTransactionUnencryptedAmounts(secretKey, transaction)
-                }
-            }
-            _totalBalanceLiveData.value = Pair(account.totalShieldedBalance, false)
-            _waitingLiveData.value = false
-        }
-    }
-
     fun initiateFrequentUpdater() {
         updater.cancel()
         updater.start()
@@ -507,111 +429,5 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             override fun onFinish() {
             }
         }
-
-    private suspend fun decryptTransactionListUnencryptedAmounts(secretKey: String) {
-        _transferListLiveData.value?.forEach {
-            if (it.getItemType() == AdapterItem.ItemType.Item) {
-                val transactionItem = it as TransactionItem
-                val transaction = transactionItem.transaction
-                decryptTransactionUnencryptedAmounts(secretKey, transaction)
-            }
-        }
-    }
-
-    private suspend fun decryptTransactionUnencryptedAmounts(
-        secretKey: String,
-        transaction: Transaction?
-    ) {
-        GlobalScope.launch(Dispatchers.IO) {
-            transaction?.let {
-                if (it.encrypted != null) {
-
-                    if (it.encrypted.encryptedAmount != null && accountUpdater.lookupMappedAmount(it.encrypted.encryptedAmount) == null) {
-
-                        if (it.encrypted.newSelfEncryptedAmount != null && it.details?.inputEncryptedAmount != null) {
-                            var newSelfAmount = 0L
-                            var inputAmount = 0L
-                            val decryptedSelfEncryptedAmount =
-                                App.appCore.cryptoLibrary.decryptEncryptedAmount(
-                                    DecryptAmountInput(
-                                        it.encrypted.newSelfEncryptedAmount,
-                                        secretKey
-                                    )
-                                )
-                            if (decryptedSelfEncryptedAmount != null) {
-                                newSelfAmount = decryptedSelfEncryptedAmount.toLong()
-                            }
-                            val decryptedEncryptedAmount =
-                                App.appCore.cryptoLibrary.decryptEncryptedAmount(
-                                    DecryptAmountInput(
-                                        it.details.inputEncryptedAmount,
-                                        secretKey
-                                    )
-                                )
-                            if (decryptedEncryptedAmount != null) {
-                                inputAmount = decryptedEncryptedAmount.toLong()
-                            }
-                            it.encrypted.encryptedAmount.let {
-                                accountUpdater.saveDecryptedAmount(
-                                    it,
-                                    (-(newSelfAmount - inputAmount)).toString()
-                                )
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    _transferListLiveData.forceRefresh()
-                                }
-                            }
-                        } else {
-                            val decryptAmount = App.appCore.cryptoLibrary.decryptEncryptedAmount(
-                                DecryptAmountInput(
-                                    it.encrypted.encryptedAmount,
-                                    secretKey
-                                )
-                            )
-                            if (decryptAmount != null) {
-                                accountUpdater.saveDecryptedAmount(
-                                    it.encrypted.encryptedAmount,
-                                    decryptAmount
-                                )
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    _transferListLiveData.forceRefresh()
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-
-    fun selectTransactionForDecryption(ta: Transaction) {
-        _selectedTransactionForDecrytionLiveData.value = ta
-    }
-
-    fun usePasscode(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().usePasscode()
-    }
-
-    fun checkForUndecryptedAmounts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            var showPadlock = false
-            _transferListLiveData.value?.forEach {
-                if (it.getItemType() == AdapterItem.ItemType.Item) {
-                    val transactionItem = it as TransactionItem
-                    val transaction = transactionItem.transaction
-                    if (transaction != null && transaction.encrypted != null && transaction.encrypted.encryptedAmount != null) {
-                        if (accountUpdater.lookupMappedAmount(transaction.encrypted.encryptedAmount) == null) {
-                            showPadlock = true
-                        }
-                    }
-                }
-            }
-            hasTransactionsToDecrypt = showPadlock
-            GlobalScope.launch(Dispatchers.Main) {
-                _showPadLockLiveData.postValue(showPadlock)
-            }
-        }
-    }
-
     // endregion
 }

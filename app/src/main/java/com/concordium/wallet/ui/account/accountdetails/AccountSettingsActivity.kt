@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.account.accountdetails
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
@@ -24,7 +23,6 @@ class AccountSettingsActivity : BaseActivity(
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
-        const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_CONTINUE_TO_SHIELD_INTRO = "EXTRA_CONTINUE_TO_SHIELD_INTRO"
     }
 
@@ -33,8 +31,7 @@ class AccountSettingsActivity : BaseActivity(
         binding = ActivityAccountSettingsBinding.bind(findViewById(R.id.root_layout))
         initializeViewModel()
         viewModel.initialize(
-            intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
-            intent.getBooleanExtra(EXTRA_SHIELDED, false)
+            account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
         )
         hideActionBarBack(isVisible = true)
         initViews()
@@ -63,7 +60,7 @@ class AccountSettingsActivity : BaseActivity(
             gotoTransferFilters(viewModel.account)
         }
         binding.releaseSchedule.setOnClickListener {
-            gotoAccountReleaseSchedule(viewModel.account, viewModel.isShielded)
+            gotoAccountReleaseSchedule(viewModel.account)
         }
         binding.exportKey.setOnClickListener {
             exportKey()
@@ -74,9 +71,6 @@ class AccountSettingsActivity : BaseActivity(
         binding.changeName.setOnClickListener {
             showChangeNameDialog()
         }
-
-        binding.transferFilter.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
-        binding.releaseSchedule.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
     }
 
     private fun gotoTransferFilters(account: Account) {
@@ -85,10 +79,9 @@ class AccountSettingsActivity : BaseActivity(
         startActivity(intent)
     }
 
-    private fun gotoAccountReleaseSchedule(account: Account, isShielded: Boolean) {
+    private fun gotoAccountReleaseSchedule(account: Account) {
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
         intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, isShielded)
         startActivity(intent)
     }
 

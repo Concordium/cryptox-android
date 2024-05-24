@@ -92,14 +92,11 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="4000" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/currency_label_bg"
-                android:padding="3dp"
-                android:text="@string/app_gstroke"
-                android:textColor="@color/cryptox_deep_blue"
-                android:textSize="12sp"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="35dp"
+                android:layout_height="16dp"
+                app:srcCompat="@drawable/ccd_chip"
+                android:contentDescription="@string/app_gstroke"
                 app:layout_constraintStart_toEndOf="@+id/total_amount_value_header"
                 app:layout_constraintTop_toTopOf="@+id/total_amount_value_header" />
 
