@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.passphrase.recover
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentPassPhraseRecoverInputBinding
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.KeyboardUtil
+import com.concordium.wallet.util.Log
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -91,7 +93,13 @@ class PassPhraseRecoverInputFragment : Fragment() {
         }
 
         arrayAdapter.setOnTextChangeListener { text ->
-            lookUp(text)
+            // Handle paste only in the first word input.
+            val splitWords = text.splitInputAsWords()
+            if (arrayAdapter.currentPosition == WordsPickedBaseListAdapter.OFFSET && splitWords.size > 1) {
+                replaceWordsAndValidate(splitWords)
+            } else {
+                lookUp(text)
+            }
         }
         arrayAdapter.also { binding.wordsListView.adapter = it }
 
@@ -108,6 +116,9 @@ class PassPhraseRecoverInputFragment : Fragment() {
             viewModel.clearWordsBelow(arrayAdapter.currentPosition)
             hideAllSuggestions()
             arrayAdapter.notifyDataSetChanged()
+        }
+        binding.pasteButton.setOnClickListener {
+            tryPasteFromClipboard()
         }
         binding.tvSuggest1.setOnClickListener {
             insertSuggestion(binding.tvSuggest1)
@@ -266,5 +277,57 @@ class PassPhraseRecoverInputFragment : Fragment() {
                 arrayAdapter.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun tryPasteFromClipboard() {
+        val clipboardSplitWords = requireContext().getSystemService(ClipboardManager::class.java)
+            ?.primaryClip
+            ?.takeIf { it.itemCount > 0 }
+            ?.getItemAt(0)
+            ?.text
+            ?.toString()
+            ?.trim()
+            ?.splitInputAsWords()
+
+        if (clipboardSplitWords.isNullOrEmpty()) {
+            Log.d("clipboard_text_blank")
+            return
+        }
+
+        replaceWordsAndValidate(
+            replacement = clipboardSplitWords,
+        )
+    }
+
+    private fun replaceWordsAndValidate(replacement: Collection<String>) {
+        // Insert as many words as possible overwriting the current input.
+        val startWordIndex = WordsPickedBaseListAdapter.OFFSET
+        var lastInsertedWordIndex = -1
+        replacement.forEachIndexed { replacementIndex, replacementWord ->
+            val wordIndex = replacementIndex + startWordIndex
+            if (wordIndex < viewModel.wordsPicked.size && viewModel.wordsPicked[wordIndex] != WordsPickedBaseListAdapter.BLANK) {
+                viewModel.wordsPicked[wordIndex] = replacementWord
+                lastInsertedWordIndex = wordIndex
+            }
+        }
+
+        // If inserted at least something, validate the input.
+        if (lastInsertedWordIndex != -1) {
+            hideAllSuggestions()
+            arrayAdapter.currentPosition = lastInsertedWordIndex
+            moveToCurrent()
+            KeyboardUtil.hideKeyboardInFragment(requireContext(), binding.wordsListView)
+            viewModel.validateInputCode()
+        }
+    }
+
+    private fun String.splitInputAsWords() =
+        split(INPUT_WORDS_SPLIT_REGEX).filter(String::isNotBlank)
+
+    private companion object {
+        /**
+         * Split the input by whitespace(s) or line break(s).
+         */
+        private val INPUT_WORDS_SPLIT_REGEX = "[\\s\\n]+".toRegex()
     }
 }

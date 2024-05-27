@@ -8,6 +8,7 @@
 ### Added
 - Ability to unshield your balances from the "More" screen
 - Support for WalletConnect binary messages signing
+- Ability to paste the phrase from the clipboard when importing a wallet
 
 ### Fixed
 - A way to get into an empty wallet without confirming the seed phrase
