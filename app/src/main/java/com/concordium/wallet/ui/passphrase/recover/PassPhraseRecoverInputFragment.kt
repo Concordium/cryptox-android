@@ -93,7 +93,13 @@ class PassPhraseRecoverInputFragment : Fragment() {
         }
 
         arrayAdapter.setOnTextChangeListener { text ->
-            lookUp(text)
+            // Handle paste only in the first word input.
+            val splitWords = text.splitInputAsWords()
+            if (arrayAdapter.currentPosition == WordsPickedBaseListAdapter.OFFSET && splitWords.size > 1) {
+                replaceWordsAndValidate(splitWords)
+            } else {
+                lookUp(text)
+            }
         }
         arrayAdapter.also { binding.wordsListView.adapter = it }
 
@@ -112,7 +118,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
             arrayAdapter.notifyDataSetChanged()
         }
         binding.pasteButton.setOnClickListener {
-            tryPaste()
+            tryPasteFromClipboard()
         }
         binding.tvSuggest1.setOnClickListener {
             insertSuggestion(binding.tvSuggest1)
@@ -273,30 +279,34 @@ class PassPhraseRecoverInputFragment : Fragment() {
         }
     }
 
-    private fun tryPaste() {
-        val clipboardText = requireContext().getSystemService(ClipboardManager::class.java)
+    private fun tryPasteFromClipboard() {
+        val clipboardSplitWords = requireContext().getSystemService(ClipboardManager::class.java)
             ?.primaryClip
             ?.takeIf { it.itemCount > 0 }
             ?.getItemAt(0)
             ?.text
             ?.toString()
             ?.trim()
-            ?.takeIf(String::isNotEmpty)
+            ?.splitInputAsWords()
 
-        if (clipboardText == null) {
+        if (clipboardSplitWords.isNullOrEmpty()) {
             Log.d("clipboard_text_blank")
             return
         }
 
-        // Split the input by whitespace(s) or line break(s).
-        val split = clipboardText.split("[\\s\\n]+".toRegex())
+        replaceWordsAndValidate(
+            replacement = clipboardSplitWords,
+        )
+    }
 
+    private fun replaceWordsAndValidate(replacement: Collection<String>) {
         // Insert as many words as possible overwriting the current input.
+        val startWordIndex = WordsPickedBaseListAdapter.OFFSET
         var lastInsertedWordIndex = -1
-        split.forEachIndexed { splitIndex, splitWord ->
-            val wordIndex = splitIndex + WordsPickedBaseListAdapter.OFFSET
+        replacement.forEachIndexed { replacementIndex, replacementWord ->
+            val wordIndex = replacementIndex + startWordIndex
             if (wordIndex < viewModel.wordsPicked.size && viewModel.wordsPicked[wordIndex] != WordsPickedBaseListAdapter.BLANK) {
-                viewModel.wordsPicked[wordIndex] = splitWord
+                viewModel.wordsPicked[wordIndex] = replacementWord
                 lastInsertedWordIndex = wordIndex
             }
         }
@@ -309,5 +319,15 @@ class PassPhraseRecoverInputFragment : Fragment() {
             KeyboardUtil.hideKeyboardInFragment(requireContext(), binding.wordsListView)
             viewModel.validateInputCode()
         }
+    }
+
+    private fun String.splitInputAsWords() =
+        split(INPUT_WORDS_SPLIT_REGEX).filter(String::isNotBlank)
+
+    private companion object {
+        /**
+         * Split the input by whitespace(s) or line break(s).
+         */
+        private val INPUT_WORDS_SPLIT_REGEX = "[\\s\\n]+".toRegex()
     }
 }
