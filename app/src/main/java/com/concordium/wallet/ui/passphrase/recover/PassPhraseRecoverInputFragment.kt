@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.passphrase.recover
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentPassPhraseRecoverInputBinding
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.KeyboardUtil
+import com.concordium.wallet.util.Log
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -108,6 +110,9 @@ class PassPhraseRecoverInputFragment : Fragment() {
             viewModel.clearWordsBelow(arrayAdapter.currentPosition)
             hideAllSuggestions()
             arrayAdapter.notifyDataSetChanged()
+        }
+        binding.pasteButton.setOnClickListener {
+            tryPaste()
         }
         binding.tvSuggest1.setOnClickListener {
             insertSuggestion(binding.tvSuggest1)
@@ -265,6 +270,44 @@ class PassPhraseRecoverInputFragment : Fragment() {
                 hideAllSuggestions()
                 arrayAdapter.notifyDataSetChanged()
             }
+        }
+    }
+
+    private fun tryPaste() {
+        val clipboardText = requireContext().getSystemService(ClipboardManager::class.java)
+            ?.primaryClip
+            ?.takeIf { it.itemCount > 0 }
+            ?.getItemAt(0)
+            ?.text
+            ?.toString()
+            ?.trim()
+            ?.takeIf(String::isNotEmpty)
+
+        if (clipboardText == null) {
+            Log.d("clipboard_text_blank")
+            return
+        }
+
+        // Split the input by whitespace(s) or line break(s).
+        val split = clipboardText.split("[\\s\\n]+".toRegex())
+
+        // Insert as many words as possible overwriting the current input.
+        var lastInsertedWordIndex = -1
+        split.forEachIndexed { splitIndex, splitWord ->
+            val wordIndex = splitIndex + WordsPickedBaseListAdapter.OFFSET
+            if (wordIndex < viewModel.wordsPicked.size && viewModel.wordsPicked[wordIndex] != WordsPickedBaseListAdapter.BLANK) {
+                viewModel.wordsPicked[wordIndex] = splitWord
+                lastInsertedWordIndex = wordIndex
+            }
+        }
+
+        // If inserted at least something, validate the input.
+        if (lastInsertedWordIndex != -1) {
+            hideAllSuggestions()
+            arrayAdapter.currentPosition = lastInsertedWordIndex
+            moveToCurrent()
+            KeyboardUtil.hideKeyboardInFragment(requireContext(), binding.wordsListView)
+            viewModel.validateInputCode()
         }
     }
 }
