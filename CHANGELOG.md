@@ -10,6 +10,9 @@
 - Support for WalletConnect binary messages signing
 - Ability to paste the phrase from the clipboard when importing a wallet
 
+### Changed
+- The "Watch video" link on the welcome screen now opens the account creation tutorial
+
 ### Fixed
 - A way to get into an empty wallet without confirming the seed phrase
 
