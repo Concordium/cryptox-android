@@ -68,7 +68,7 @@ data class Account(
     var currentEncryptedBalance: AccountEncryptedAmount?,
 
     @ColumnInfo(name = "current_balance_status")
-    var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+    var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
 
     @ColumnInfo(name = "total_staked")
     var totalStaked: BigInteger = BigInteger.ZERO,
