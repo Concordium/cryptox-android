@@ -146,6 +146,10 @@ data class Account(
     }
 
     fun mayNeedUnshielding(): Boolean {
+        if (finalizedEncryptedBalance == null || readOnly) {
+            return false
+        }
+
         val isShieldedBalanceUnknown = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
                 || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
         val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
