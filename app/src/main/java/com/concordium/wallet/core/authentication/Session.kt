@@ -30,6 +30,9 @@ class Session {
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
+    // The notice must be shown once per app start.
+    private var isUnshieldingNoticeShown = false
+
     constructor(context: Context) {
         authPreferences = AuthPreferences(context)
         hasSetupPassword = authPreferences.getHasSetupUser()
@@ -54,12 +57,11 @@ class Session {
     }
 
     fun unshieldingNoticeShown() {
-        authPreferences.setUnshieldingNoticeShown(true)
+        isUnshieldingNoticeShown = true
     }
 
-    fun isUnshieldingNoticeShown():Boolean {
-        return authPreferences.getUnshieldingNoticeShown()
-    }
+    fun isUnshieldingNoticeShown(): Boolean =
+        isUnshieldingNoticeShown
 
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
