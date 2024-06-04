@@ -29,6 +29,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -221,6 +222,10 @@ class AccountsOverviewFragment : BaseFragment() {
                 gotoAccountDetails(account)
             }
 
+            override fun onOnrampClicked(account: Account) {
+                gotoCcdOnramp(account)
+            }
+
             override fun onSendClicked(account: Account) {
                 val parentActivity = requireActivity() as BaseActivity
                 val intent = Intent(parentActivity, SendTokenActivity::class.java)
@@ -284,6 +289,16 @@ class AccountsOverviewFragment : BaseFragment() {
         val intent = Intent(activity, AccountDetailsActivity::class.java)
         intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
         startActivityForResult(intent, REQUEST_CODE_ACCOUNT_DETAILS)
+    }
+
+    private fun gotoCcdOnramp(item: Account) {
+        val intent = Intent(activity, CcdOnrampSitesActivity::class.java)
+        intent.putExtras(
+            CcdOnrampSitesActivity.getBundle(
+                accountAddress = item.address,
+            )
+        )
+        startActivity(intent)
     }
 
     private fun showWaiting(waiting: Boolean) {

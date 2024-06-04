@@ -9,6 +9,7 @@ class CcdOnrampSiteRepository {
             url = "https://swipelux.com/buy_ccd",
             logoUrl = "https://assets-global.website-files.com/64f060f3fc95f9d2081781db/65e825be9290e43f9d1bc29b_52c3517d-1bb0-4705-a952-8f0d2746b4c5.jpg",
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+            acceptsCreditCard = true,
         ),
         CcdOnrampSite(
             name = "LetsExchange",
@@ -54,9 +55,15 @@ class CcdOnrampSiteRepository {
         ),
     )
 
+    val hasSites: Boolean
+        get() = getSites().isNotEmpty()
+
     fun getSites(): List<CcdOnrampSite> =
-        when (BuildConfig.ENV_NAME) {
-            "production" -> mainnetSites
-            else -> emptyList()
+        when {
+            BuildConfig.DEBUG || BuildConfig.ENV_NAME == "production" ->
+                mainnetSites
+
+            else ->
+                emptyList()
         }
 }

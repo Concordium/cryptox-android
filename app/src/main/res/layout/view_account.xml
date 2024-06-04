@@ -109,45 +109,56 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/regular_balance_layout">
+
+        <ImageButton
+            android:id="@+id/onramp_btn"
+            style="@style/CryptoX_ImageButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/ccd_onramp_title"
+            android:tooltipText="@string/ccd_onramp_title"
+            app:srcCompat="@drawable/ccx_ico_plus_circle" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="1dp"
+            android:background="#0DEBF0F0" />
 
         <ImageButton
             android:id="@+id/send_funds_btn"
             style="@style/CryptoX_ImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:contentDescription="@string/account_details_send"
             android:tooltipText="@string/account_details_send"
-            app:layout_constraintEnd_toStartOf="@id/address_btn"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ccx_ico_send" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginVertical="1dp"
-            android:background="#0DEBF0F0"
-            app:layout_constraintEnd_toStartOf="@id/address_btn"
-            app:layout_constraintStart_toEndOf="@id/send_funds_btn"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="#0DEBF0F0" />
 
         <ImageButton
             android:id="@+id/address_btn"
             style="@style/CryptoX_ImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:contentDescription="@string/account_details_address"
             android:tooltipText="@string/account_details_address"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/send_funds_btn"
             app:srcCompat="@drawable/ccx_ico_qr" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </merge>

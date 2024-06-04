@@ -522,6 +522,11 @@
             android:name=".ui.more.unshielding.UnshieldingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.onramp.CcdOnrampSitesActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/CCX_Screen"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

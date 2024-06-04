@@ -5,6 +5,7 @@ class CcdOnrampSite(
     val url: String,
     val logoUrl: String,
     val type: Type,
+    val acceptsCreditCard: Boolean = false,
 ) {
     enum class Type {
         PAYMENT_GATEWAY,
