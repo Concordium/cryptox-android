@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
@@ -34,6 +35,7 @@ class UnshieldingAccountsActivity : BaseActivity(
 
         initViewModel()
         initList()
+        initButtons()
 
         hideActionBarBack(isVisible = true)
     }
@@ -70,6 +72,14 @@ class UnshieldingAccountsActivity : BaseActivity(
                 openUnshielding(value)
             }
         })
+
+        viewModel.isDoneButtonVisibleLiveData.observe(this, binding.doneButton::isVisible::set)
+    }
+
+    private fun initButtons() {
+        binding.doneButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun initList() {
