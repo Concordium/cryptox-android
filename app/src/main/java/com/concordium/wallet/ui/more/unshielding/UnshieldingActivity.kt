@@ -62,7 +62,6 @@ class UnshieldingActivity : BaseActivity(
             override fun onUnhandledEvent(value: Boolean) {
                 showAuthentication(
                     activity = this@UnshieldingActivity,
-                    onCanceled = ::finish,
                     onAuthenticated = viewModel::onAuthenticated
                 )
             }
