@@ -268,24 +268,6 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     ) {
         var newSelfEncryptedAmount: String? = null
 
-        if (createTransferOutput.addedSelfEncryptedAmount != null) {
-            account.finalizedEncryptedBalance?.let { encBalance ->
-                val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
-                    createTransferOutput.addedSelfEncryptedAmount,
-                    encBalance.selfAmount
-                ).toString()
-                newSelfEncryptedAmount = newEncryptedAmount
-                val oldDecryptedAmount =
-                    accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                oldDecryptedAmount?.let {
-                    accountUpdater.saveDecryptedAmount(
-                        newEncryptedAmount,
-                        (it.toBigInteger() + amount).toString()
-                    )
-                }
-            }
-        }
-
         if (createTransferOutput.remaining != null) {
             newSelfEncryptedAmount = createTransferOutput.remaining
             val remainingAmount =
