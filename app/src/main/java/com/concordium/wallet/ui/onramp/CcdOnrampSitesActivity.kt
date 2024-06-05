@@ -16,6 +16,9 @@ class CcdOnrampSitesActivity : BaseActivity(
         ActivityCcdOnrampSitesBinding.bind(findViewById(R.id.root_layout))
     }
     private lateinit var viewModel: CcdOnrampSitesViewModel
+    private val accountAddress: String? by lazy {
+        intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +40,7 @@ class CcdOnrampSitesActivity : BaseActivity(
     private fun initList() {
         val adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
-                Toast.makeText(this, item.name, Toast.LENGTH_SHORT).show()
+                item.source?.also(::onSiteClicked)
             },
             onReadDisclaimerClicked = {
                 binding.recyclerview.smoothScrollToPosition(
@@ -49,6 +52,24 @@ class CcdOnrampSitesActivity : BaseActivity(
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)
+    }
+
+    private fun onSiteClicked(site: CcdOnrampSite) {
+        val accountAddress = this.accountAddress
+        if (accountAddress != null) {
+            OpenCcdOnrampSiteWithAccountUseCase(
+                site = site,
+                accountAddress = accountAddress,
+                onAccountAddressCopied = {
+                    Toast
+                        .makeText(this, R.string.ccd_onramp_address_copied, Toast.LENGTH_SHORT)
+                        .show()
+                },
+                context = this,
+            ).invoke()
+        } else {
+            // TODO Open accounts screen
+        }
     }
 
     companion object {
