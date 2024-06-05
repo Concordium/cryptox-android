@@ -46,10 +46,18 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
     private val _openUnshieldingLiveData = MutableLiveData<Event<String>>()
     val openUnshieldingLiveData: LiveData<Event<String>> = _openUnshieldingLiveData
 
+    private val _isDoneButtonVisibleLiveData = MutableLiveData(false)
+    val isDoneButtonVisibleLiveData: LiveData<Boolean> = _isDoneButtonVisibleLiveData
+
     private lateinit var accountToUnshield: Account
 
     init {
         findAccountsMayNeedUnshielding()
+
+        _listItemsLiveData.observeForever { listItems ->
+            _isDoneButtonVisibleLiveData.value =
+                listItems.all(UnshieldingAccountListItem::isUnshielded)
+        }
     }
 
     private fun findAccountsMayNeedUnshielding() = viewModelScope.launch(Dispatchers.IO) {

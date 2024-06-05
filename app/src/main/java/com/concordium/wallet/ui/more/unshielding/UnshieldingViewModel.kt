@@ -27,6 +27,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
+import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.DateTimeUtil
@@ -243,9 +244,6 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             amount = amount,
             submissionId = submissionId
         )
-
-        _isUnshieldEnabledLiveData.postValue(true)
-        _waitingLiveData.postValue(false)
     }
 
     private suspend fun submitTransfer(
@@ -266,44 +264,13 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         amount: BigInteger,
         submissionId: String,
     ) {
-        var newSelfEncryptedAmount: String? = null
+        val newSelfEncryptedAmount: String? = createTransferOutput.remaining
 
-        if (createTransferOutput.addedSelfEncryptedAmount != null) {
-            account.finalizedEncryptedBalance?.let { encBalance ->
-                val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
-                    createTransferOutput.addedSelfEncryptedAmount,
-                    encBalance.selfAmount
-                ).toString()
-                newSelfEncryptedAmount = newEncryptedAmount
-                val oldDecryptedAmount =
-                    accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                oldDecryptedAmount?.let {
-                    accountUpdater.saveDecryptedAmount(
-                        newEncryptedAmount,
-                        (it.toBigInteger() + amount).toString()
-                    )
-                }
-            }
-        }
-
-        if (createTransferOutput.remaining != null) {
-            newSelfEncryptedAmount = createTransferOutput.remaining
-            val remainingAmount =
-                accountUpdater.decryptAndSaveAmount(
-                    credentialsOutput.encryptionSecretKey,
-                    createTransferOutput.remaining
-                )
-
-            account.finalizedEncryptedBalance?.let { encBalance ->
-                val oldDecryptedAmount =
-                    accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                oldDecryptedAmount?.let {
-                    accountUpdater.saveDecryptedAmount(
-                        createTransferOutput.remaining,
-                        remainingAmount.toString()
-                    )
-                }
-            }
+        if (newSelfEncryptedAmount != null) {
+            accountUpdater.decryptAndSaveAmount(
+                credentialsOutput.encryptionSecretKey,
+                newSelfEncryptedAmount
+            )
         }
 
         val newTransfer = Transfer(
@@ -326,14 +293,27 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         )
         transferRepository.insert(newTransfer)
 
-        _finishWithResultLiveData.postValue(
-            Event(
-                UnshieldingResult(
-                    unshieldedAmount = amount,
-                    accountAddress = account.address,
+        accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
+            override fun onError(stringRes: Int) {
+                _errorLiveData.postValue(Event(stringRes))
+                _isUnshieldEnabledLiveData.postValue(true)
+                _waitingLiveData.postValue(false)
+            }
+
+            override fun onDone(totalBalances: TotalBalancesData) {
+                _finishWithResultLiveData.postValue(
+                    Event(
+                        UnshieldingResult(
+                            unshieldedAmount = amount,
+                            accountAddress = account.address,
+                        )
+                    )
                 )
-            )
-        )
+            }
+
+            override fun onNewAccountFinalized(accountName: String) {}
+        })
+        accountUpdater.updateForAccount(account)
     }
 
     private fun getBalanceAtDisposal(): BigInteger =

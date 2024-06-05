@@ -1079,6 +1079,7 @@
     <string name="unshielding_accounts_subtitle">with shielded assets</string>
     <string name="unshielding_accounts_unshield">Unshield</string>
     <string name="unshielding_accounts_unshielded">Unshielded</string>
+    <string name="unshielding_accounts_done">Done, let\'s move on</string>
     <string name="unshielding_shielded_amount">Shielded amount</string>
     <string name="unshielding_estimated_tx_fee">Estimated transaction fee:</string>
     <string name="unshielding_unshield_funds">Unshield funds</string>
