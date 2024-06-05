@@ -527,6 +527,11 @@
             android:launchMode="singleTop"
             android:theme="@style/CCX_Screen"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.onramp.CcdOnrampAccountsActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/CCX_Screen"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

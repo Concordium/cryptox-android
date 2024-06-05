@@ -1102,4 +1102,6 @@
     </string>
     <string name="ccd_onramp_site_accepts_credit_card">Accepts credit card</string>
     <string name="ccd_onramp_address_copied">Account address copied</string>
+    <string name="ccd_onramp_accounts_title">Select Account</string>
+    <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
 </resources>

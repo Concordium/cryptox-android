@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.onramp.CcdOnrampSitesActivity">
+    tools:context=".ui.onramp.CcdOnrampAccountsActivity">
 
     <include
         android:id="@+id/toolbar_layout"
@@ -14,22 +14,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/ccd_onramp_accounts_title"
+        android:textAppearance="@style/CCX_Typography_H1"
+        android:textColor="@color/ccx_neutral_tint_1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/ccd_onramp_accounts_subtitle"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="@color/ccx_neutral_tint_2" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="16dp"
         android:clipToPadding="false"
-        android:paddingTop="16dp"
-        android:paddingBottom="36dp"
+        android:paddingTop="64dp"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
-        tools:itemCount="1"
-        tools:listitem="@layout/list_item_ccd_onramp_header"
+        tools:itemCount="4"
+        tools:listitem="@layout/list_item_ccd_onramp_account"
         tools:visibility="visible" />
 
 </LinearLayout>

@@ -16,6 +16,7 @@ class CcdOnrampSiteRepository {
             url = "https://letsexchange.io/",
             logoUrl = "https://assets-global.website-files.com/64f060f3fc95f9d2081781db/64fed810c7dd2cfc068c17cf_1680692222678%20(1).jpg",
             type = CcdOnrampSite.Type.CEX,
+            acceptsCreditCard = true,
         ),
         CcdOnrampSite(
             name = "KuCoin",

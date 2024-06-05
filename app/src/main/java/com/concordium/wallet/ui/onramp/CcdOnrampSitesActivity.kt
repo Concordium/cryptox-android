@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.onramp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +16,12 @@ class CcdOnrampSitesActivity : BaseActivity(
     private val binding: ActivityCcdOnrampSitesBinding by lazy {
         ActivityCcdOnrampSitesBinding.bind(findViewById(R.id.root_layout))
     }
-    private lateinit var viewModel: CcdOnrampSitesViewModel
+    private val viewModel: CcdOnrampSitesViewModel by lazy {
+        ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get()
+    }
     private val accountAddress: String? by lazy {
         intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA)
     }
@@ -23,18 +29,10 @@ class CcdOnrampSitesActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initViewModel()
         initList()
 
         hideActionBarBack(isVisible = true)
         setActionBarTitle("")
-    }
-
-    private fun initViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get()
     }
 
     private fun initList() {
@@ -68,7 +66,13 @@ class CcdOnrampSitesActivity : BaseActivity(
                 context = this,
             ).invoke()
         } else {
-            // TODO Open accounts screen
+            val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
+            intent.putExtras(
+                CcdOnrampAccountsActivity.getBundle(
+                    site = site,
+                )
+            )
+            startActivity(intent)
         }
     }
 
