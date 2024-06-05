@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:background="@color/ccx_egg_shell_tint_1"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/logo_image_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/simple_circle_bg"
+        android:backgroundTint="@color/ccx_neutral_tint_5"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cryptox_ico_ccd_dark" />
+
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/ccd_onramp_banner_title"
+        android:textAppearance="@style/CCX_Typography_H3"
+        android:textColor="@color/ccx_neutral_tint_7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/logo_image_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/ccd_onramp_banner_content"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="#4C4E48"
+        app:layout_constraintEnd_toEndOf="@id/title_text_view"
+        app:layout_constraintStart_toStartOf="@id/title_text_view"
+        app:layout_constraintTop_toBottomOf="@id/title_text_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

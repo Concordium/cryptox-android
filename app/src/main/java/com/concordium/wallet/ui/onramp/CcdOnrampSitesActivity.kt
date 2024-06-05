@@ -79,7 +79,7 @@ class CcdOnrampSitesActivity : BaseActivity(
     companion object {
         private const val ACCOUNT_ADDRESS_EXTRA = "account_address"
 
-        fun getBundle(accountAddress: String) = Bundle().apply {
+        fun getBundle(accountAddress: String?) = Bundle().apply {
             putString(ACCOUNT_ADDRESS_EXTRA, accountAddress)
         }
     }

@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -33,10 +34,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
 
-    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
-    val newFinalizedAccountLiveData: LiveData<String>
-        get() = _newFinalizedAccountLiveData
-
     private var _stateLiveData = MutableLiveData<State>()
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
@@ -56,11 +53,18 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val showUnshieldingNoticeLiveData: LiveData<Event<Boolean>>
         get() = _showUnshieldingNoticeLiveData
 
+    private val _listItemsLiveData = MutableLiveData<List<AccountsOverviewListItem>>()
+    val listItemsLiveData: LiveData<List<AccountsOverviewListItem>> = _listItemsLiveData
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    val accountListLiveData: LiveData<List<AccountWithIdentity>>
     private val keyCreationVersion: KeyCreationVersion
+    private val accountsObserver = Observer<List<AccountWithIdentity>> { accountsWithIdeitity ->
+        _listItemsLiveData.value =
+            listOf(AccountsOverviewListItem.CcdOnrampBanner) +
+                    accountsWithIdeitity.map(AccountsOverviewListItem::Account)
+    }
 
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT
@@ -71,7 +75,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityRepository = IdentityRepository(identityDao)
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         accountRepository = AccountRepository(accountDao)
-        accountListLiveData = accountRepository.allAccountsWithIdentity
+        accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _waitingLiveData.postValue(false)
@@ -81,7 +85,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch(Dispatchers.IO) {
                     if (App.appCore.session.isAccountsBackupPossible()) {
-                        _newFinalizedAccountLiveData.postValue(accountName)
                         App.appCore.session.setAccountsBackedUp(false)
                     }
                 }
@@ -100,6 +103,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     override fun onCleared() {
         super.onCleared()
+        accountRepository.allAccountsWithIdentity.removeObserver(accountsObserver)
         accountUpdater.dispose()
     }
 

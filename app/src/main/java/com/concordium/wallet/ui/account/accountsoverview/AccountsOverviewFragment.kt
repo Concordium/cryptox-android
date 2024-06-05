@@ -47,7 +47,6 @@ class AccountsOverviewFragment : BaseFragment() {
     private lateinit var binding: FragmentAccountsOverviewBinding
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var accountAdapter: AccountAdapter
     private lateinit var keyCreationVersion: KeyCreationVersion
 
     //region Lifecycle
@@ -151,11 +150,6 @@ class AccountsOverviewFragment : BaseFragment() {
             showTotalBalance(totalBalance.totalBalanceForAllAccounts)
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
-        viewModel.accountListLiveData.observe(viewLifecycleOwner) { accountList ->
-            accountList?.let {
-                accountAdapter.setData(it)
-            }
-        }
         viewModel.showUnshieldingNoticeLiveData.observe(viewLifecycleOwner) {
             childFragmentManager.fragments.forEach { fragment ->
                 if (fragment.tag == UnshieldingNoticeDialog.TAG && fragment is DialogFragment) {
@@ -213,40 +207,47 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun initializeList() {
-        accountAdapter = AccountAdapter()
-        binding.accountRecyclerview.setHasFixedSize(true)
-        binding.accountRecyclerview.adapter = accountAdapter
+        val adapter = AccountsOverviewItemAdapter(
+            accountViewClickListener = object : AccountView.OnItemClickListener {
+                override fun onCardClicked(account: Account) {
+                    gotoAccountDetails(account)
+                }
 
-        accountAdapter.setOnItemClickListener(object : AccountView.OnItemClickListener {
-            override fun onCardClicked(account: Account) {
-                gotoAccountDetails(account)
-            }
+                override fun onOnrampClicked(account: Account) {
+                    gotoCcdOnramp(account)
+                }
 
-            override fun onOnrampClicked(account: Account) {
-                gotoCcdOnramp(account)
-            }
+                override fun onSendClicked(account: Account) {
+                    val parentActivity = requireActivity() as BaseActivity
+                    val intent = Intent(parentActivity, SendTokenActivity::class.java)
+                    intent.putExtra(SendTokenActivity.ACCOUNT, account)
+                    intent.putExtra(
+                        SendTokenActivity.TOKEN,
+                        Token.ccd(account)
+                    )
+                    intent.putExtra(
+                        SendTokenActivity.PARENT_ACTIVITY,
+                        parentActivity::class.java.canonicalName
+                    )
+                    parentActivity.startActivityForResultAndHistoryCheck(intent)
+                }
 
-            override fun onSendClicked(account: Account) {
-                val parentActivity = requireActivity() as BaseActivity
-                val intent = Intent(parentActivity, SendTokenActivity::class.java)
-                intent.putExtra(SendTokenActivity.ACCOUNT, account)
-                intent.putExtra(
-                    SendTokenActivity.TOKEN,
-                    Token.ccd(account)
-                )
-                intent.putExtra(
-                    SendTokenActivity.PARENT_ACTIVITY,
-                    parentActivity::class.java.canonicalName
-                )
-                parentActivity.startActivityForResultAndHistoryCheck(intent)
-            }
-
-            override fun onAddressClicked(account: Account) {
-                val intent = Intent(requireContext(), AccountQRCodeActivity::class.java)
-                intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, account)
+                override fun onAddressClicked(account: Account) {
+                    val intent = Intent(requireContext(), AccountQRCodeActivity::class.java)
+                    intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, account)
+                    startActivity(intent)
+                }
+            },
+            onCcdOnrampBannerClicked = {
+                val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
+                intent.putExtras(CcdOnrampSitesActivity.getBundle(
+                    accountAddress = null,
+                ))
                 startActivity(intent)
             }
-        })
+        )
+        binding.accountRecyclerview.adapter = adapter
+        viewModel.listItemsLiveData.observe(this, adapter::setData)
 
         // Make the list height match the container height
         // to enable full hide of the header by scrolling.

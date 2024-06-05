@@ -18,20 +18,18 @@ class CcdOnrampItemAdapter(
 ) : RecyclerView.Adapter<CcdOnrampItemAdapter.ViewHolder>() {
     private var data: List<CcdOnrampListItem> = listOf()
 
-    override fun getItemViewType(position: Int): Int {
-        return when (data[position]) {
-            CcdOnrampListItem.Header ->
-                R.layout.list_item_ccd_onramp_header
+    override fun getItemViewType(position: Int): Int = when (data[position]) {
+        CcdOnrampListItem.Header ->
+            R.layout.list_item_ccd_onramp_header
 
-            is CcdOnrampListItem.Section ->
-                R.layout.list_item_ccd_onramp_section
+        is CcdOnrampListItem.Section ->
+            R.layout.list_item_ccd_onramp_section
 
-            is CcdOnrampListItem.Site ->
-                R.layout.list_item_ccd_onramp_site
+        is CcdOnrampListItem.Site ->
+            R.layout.list_item_ccd_onramp_site
 
-            CcdOnrampListItem.Disclaimer ->
-                R.layout.list_item_ccd_onramp_disclaimer
-        }
+        CcdOnrampListItem.Disclaimer ->
+            R.layout.list_item_ccd_onramp_disclaimer
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
