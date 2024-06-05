@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="30dp"
         android:contentDescription="@string/ccd_onramp_site_accepts_credit_card"
+        android:tooltipText="@string/ccd_onramp_site_accepts_credit_card"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/arrow_image_view"
         app:layout_constraintTop_toTopOf="parent"

@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import java.math.BigInteger
 
 class AccountDetailsActivity : BaseActivity(
@@ -150,6 +151,10 @@ class AccountDetailsActivity : BaseActivity(
             viewModelAccountDetails.deleteAccountAndFinish()
         }
 
+        binding.onrampBtn.setOnClickListener {
+            onOnrampClicked()
+        }
+
         binding.sendFundsBtn.setOnClickListener {
             onSendFundsClicked()
         }
@@ -159,12 +164,7 @@ class AccountDetailsActivity : BaseActivity(
         }
 
         binding.earnBtn.setOnClickListener {
-            gotoEarn(
-                this,
-                viewModelAccountDetails.account,
-                viewModelAccountDetails.hasPendingDelegationTransactions,
-                viewModelAccountDetails.hasPendingBakingTransactions
-            )
+            onEarnClicked()
         }
 
         initTabs()
@@ -180,6 +180,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun setFinalizedMode() {
+        binding.onrampBtn.isEnabled = true
         binding.sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
         binding.addressBtn.isEnabled = true
         binding.earnBtn.isEnabled = !viewModelAccountDetails.account.readOnly
@@ -232,6 +233,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun setPendingMode() {
+        binding.onrampBtn.isEnabled = false
         binding.sendFundsBtn.isEnabled = false
         binding.addressBtn.isEnabled = false
         binding.earnBtn.isEnabled = false
@@ -293,6 +295,16 @@ class AccountDetailsActivity : BaseActivity(
         )
     }
 
+    private fun onOnrampClicked() {
+        val intent = Intent(this, CcdOnrampSitesActivity::class.java)
+        intent.putExtras(
+            CcdOnrampSitesActivity.getBundle(
+                accountAddress = viewModelAccountDetails.account.address,
+            )
+        )
+        startActivity(intent)
+    }
+
     private fun onSendFundsClicked() {
         val intent = Intent(this, SendTokenActivity::class.java)
         intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
@@ -309,6 +321,15 @@ class AccountDetailsActivity : BaseActivity(
         val intent = Intent(this, AccountQRCodeActivity::class.java)
         intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
         startActivity(intent)
+    }
+
+    private fun onEarnClicked() {
+        gotoEarn(
+            this,
+            viewModelAccountDetails.account,
+            viewModelAccountDetails.hasPendingDelegationTransactions,
+            viewModelAccountDetails.hasPendingBakingTransactions
+        )
     }
 
     private fun showTokenDetailsDialog(token: Token) {
