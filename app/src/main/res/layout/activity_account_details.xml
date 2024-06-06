@@ -92,7 +92,7 @@
                     android:layout_weight="1"
                     android:contentDescription="@string/account_details_earn_rewards"
                     android:tooltipText="@string/account_details_earn_rewards"
-                    app:srcCompat="@drawable/cryptox_ico_earn" />
+                    app:srcCompat="@drawable/ccx_ico_earn" />
 
             </LinearLayout>
 
