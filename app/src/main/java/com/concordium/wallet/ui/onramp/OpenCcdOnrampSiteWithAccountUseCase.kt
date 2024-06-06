@@ -20,8 +20,8 @@ class OpenCcdOnrampSiteWithAccountUseCase(
             context.getString(R.string.account_details_address),
             accountAddress,
         )
-        clipboardManager.setPrimaryClip(clipData)
         onAccountAddressCopied()
+        clipboardManager.setPrimaryClip(clipData)
 
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(site.url))
         context.startActivity(Intent.createChooser(browserIntent, site.name))

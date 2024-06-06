@@ -60,7 +60,11 @@ class CcdOnrampSitesActivity : BaseActivity(
                 accountAddress = accountAddress,
                 onAccountAddressCopied = {
                     Toast
-                        .makeText(this, R.string.ccd_onramp_address_copied, Toast.LENGTH_SHORT)
+                        .makeText(
+                            this,
+                            getString(R.string.template_ccd_onramp_opening_site, site.name),
+                            Toast.LENGTH_SHORT
+                        )
                         .show()
                 },
                 context = this,
