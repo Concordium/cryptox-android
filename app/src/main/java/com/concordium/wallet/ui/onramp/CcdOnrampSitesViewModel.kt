@@ -20,18 +20,24 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
         val items = mutableListOf<CcdOnrampListItem>()
 
         items.add(CcdOnrampListItem.Header)
-        sites
-            .groupBy(CcdOnrampSite::type)
-            .forEach { (type, sites) ->
-                items.add(CcdOnrampListItem.Section(type))
-                items.addAll(
-                    sites.mapIndexed { i, site ->
-                        CcdOnrampListItem.Site(
-                            source = site,
-                            isDividerVisible = i < sites.size - 1,
-                        )
-                    })
-            }
+
+        if (sites.isNotEmpty()) {
+            sites
+                .groupBy(CcdOnrampSite::type)
+                .forEach { (type, sites) ->
+                    items.add(CcdOnrampListItem.Section(type))
+                    items.addAll(
+                        sites.mapIndexed { i, site ->
+                            CcdOnrampListItem.Site(
+                                source = site,
+                                isDividerVisible = i < sites.size - 1,
+                            )
+                        })
+                }
+        } else {
+            items.add(CcdOnrampListItem.NoneAvailable)
+        }
+
         items.add(CcdOnrampListItem.Disclaimer)
 
         _listItemsLiveData.postValue(items)

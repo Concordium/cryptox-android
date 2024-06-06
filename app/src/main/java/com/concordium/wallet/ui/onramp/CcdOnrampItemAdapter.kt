@@ -28,6 +28,9 @@ class CcdOnrampItemAdapter(
         is CcdOnrampListItem.Site ->
             R.layout.list_item_ccd_onramp_site
 
+        CcdOnrampListItem.NoneAvailable ->
+            R.layout.list_item_ccd_onramp_none_available
+
         CcdOnrampListItem.Disclaimer ->
             R.layout.list_item_ccd_onramp_disclaimer
     }
@@ -45,6 +48,9 @@ class CcdOnrampItemAdapter(
 
             R.layout.list_item_ccd_onramp_site ->
                 ViewHolder.Site(view)
+
+            R.layout.list_item_ccd_onramp_none_available ->
+                ViewHolder.NoneAvailable(view)
 
             R.layout.list_item_ccd_onramp_disclaimer ->
                 ViewHolder.Disclaimer(view)
@@ -91,6 +97,8 @@ class CcdOnrampItemAdapter(
                 }
             }
 
+            is ViewHolder.NoneAvailable -> {}
+
             is ViewHolder.Disclaimer -> {}
         }
     }
@@ -113,6 +121,8 @@ class CcdOnrampItemAdapter(
         class Site(itemView: View) : ViewHolder(itemView) {
             val binding = ListItemCcdOnrampSiteBinding.bind(itemView)
         }
+
+        class NoneAvailable(itemView: View) : ViewHolder(itemView)
 
         class Disclaimer(itemView: View) : ViewHolder(itemView)
     }

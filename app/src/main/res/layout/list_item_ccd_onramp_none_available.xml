@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="32dp"
+    android:gravity="center"
+    android:paddingTop="64dp"
+    android:paddingBottom="42dp"
+    android:text="@string/ccd_onramp_none_available"
+    android:textAppearance="@style/CCX_Typography_Body"
+    android:textColor="@color/ccx_neutral_tint_3" />
