@@ -19,6 +19,7 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
+import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
 import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,11 +61,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val keyCreationVersion: KeyCreationVersion
-    private val accountsObserver = Observer<List<AccountWithIdentity>> { accountsWithIdeitity ->
-        _listItemsLiveData.value =
-            listOf(AccountsOverviewListItem.CcdOnrampBanner) +
-                    accountsWithIdeitity.map(AccountsOverviewListItem::Account)
-    }
+    private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
+    private val accountsObserver: Observer<List<AccountWithIdentity>>
 
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT
@@ -75,7 +73,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityRepository = IdentityRepository(identityDao)
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         accountRepository = AccountRepository(accountDao)
-        accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _waitingLiveData.postValue(false)
@@ -95,6 +92,16 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
         })
         keyCreationVersion = KeyCreationVersion(AuthPreferences(application))
+        ccdOnrampSiteRepository = CcdOnrampSiteRepository()
+        accountsObserver = Observer { accountsWithIdentity ->
+            val items = mutableListOf<AccountsOverviewListItem>()
+            if (ccdOnrampSiteRepository.hasSites) {
+                items.add(AccountsOverviewListItem.CcdOnrampBanner)
+            }
+            items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
+            _listItemsLiveData.value = items
+        }
+        accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
     }
 
     fun initialize() {
