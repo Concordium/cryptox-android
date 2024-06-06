@@ -4,20 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
-    android:background="@color/ccx_egg_shell_tint_1"
+    android:background="@drawable/ccd_onramp_banner_background"
     android:padding="16dp">
 
     <ImageView
         android:id="@+id/logo_image_view"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:background="@drawable/simple_circle_bg"
-        android:backgroundTint="@color/ccx_neutral_tint_5"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cryptox_ico_ccd_dark" />
+        app:srcCompat="@drawable/ccx_ico_ccd_dark_filled" />
 
     <TextView
         android:id="@+id/title_text_view"
