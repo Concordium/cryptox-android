@@ -57,13 +57,28 @@ class CcdOnrampSiteRepository {
         ),
     )
 
+    val testnetSites = listOf(
+        CcdOnrampSite(
+            name = "Testnet CCD drop",
+            url = "https://radiokot.github.io/ccd-faucet/",
+            logoUrl = "https://em-content.zobj.net/source/apple/391/smiling-face-with-sunglasses_1f60e.png",
+            type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+        )
+    )
+
     val hasSites: Boolean
         get() = getSites().isNotEmpty()
 
     fun getSites(): List<CcdOnrampSite> =
         when {
-            BuildConfig.DEBUG || BuildConfig.ENV_NAME == "production" ->
+            BuildConfig.DEBUG ->
+                testnetSites + mainnetSites
+
+            BuildConfig.ENV_NAME == "production" ->
                 mainnetSites
+
+            BuildConfig.ENV_NAME == "testnet" ->
+                testnetSites
 
             else ->
                 emptyList()
