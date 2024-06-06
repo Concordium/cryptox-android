@@ -9,6 +9,7 @@
 - Ability to unshield your balances from the "More" screen
 - Support for WalletConnect binary messages signing
 - Ability to paste the phrase from the clipboard when importing a wallet
+- CCD listings – browse exchanges and services where CCD can be purchased
 
 ### Changed
 - The "Watch video" link on the welcome screen now opens the account creation tutorial
