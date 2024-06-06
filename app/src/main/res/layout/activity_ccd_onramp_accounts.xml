@@ -42,6 +42,7 @@
         android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:paddingTop="64dp"
+        android:paddingBottom="20dp"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
