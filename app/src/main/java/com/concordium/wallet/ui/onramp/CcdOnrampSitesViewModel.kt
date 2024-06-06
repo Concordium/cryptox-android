@@ -4,15 +4,41 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.room.WalletDatabase
+import kotlinx.coroutines.launch
 
 class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(application) {
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository by lazy(::CcdOnrampSiteRepository)
+    private val accountRepository: AccountRepository by lazy {
+        val accountDao = WalletDatabase.getDatabase(application).accountDao()
+        AccountRepository(accountDao)
+    }
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
 
+    var accountAddress: String? = null
+        private set
+
     init {
         postItems()
+    }
+
+    fun initialize(accountAddress: String?) {
+        // Use the provided account address or, if none provided,
+        // the only one if there is one account.
+        if (accountAddress != null) {
+            this.accountAddress = accountAddress
+        } else {
+            viewModelScope.launch {
+                val allDoneAccounts = accountRepository.getAllDone()
+                if (allDoneAccounts.size == 1) {
+                    this@CcdOnrampSitesViewModel.accountAddress = allDoneAccounts.first().address
+                }
+            }
+        }
     }
 
     private fun postItems() {

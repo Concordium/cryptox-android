@@ -22,13 +22,13 @@ class CcdOnrampSitesActivity : BaseActivity(
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
     }
-    private val accountAddress: String? by lazy {
-        intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel.initialize(
+            accountAddress = intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA),
+        )
         initList()
 
         hideActionBarBack(isVisible = true)
@@ -53,7 +53,8 @@ class CcdOnrampSitesActivity : BaseActivity(
     }
 
     private fun onSiteClicked(site: CcdOnrampSite) {
-        val accountAddress = this.accountAddress
+        val accountAddress = viewModel.accountAddress
+
         if (accountAddress != null) {
             OpenCcdOnrampSiteWithAccountUseCase(
                 site = site,
