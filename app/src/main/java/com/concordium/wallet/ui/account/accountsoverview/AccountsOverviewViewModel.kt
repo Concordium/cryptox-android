@@ -94,12 +94,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         keyCreationVersion = KeyCreationVersion(AuthPreferences(application))
         ccdOnrampSiteRepository = CcdOnrampSiteRepository()
         accountsObserver = Observer { accountsWithIdentity ->
-            val items = mutableListOf<AccountsOverviewListItem>()
-            if (ccdOnrampSiteRepository.hasSites) {
-                items.add(AccountsOverviewListItem.CcdOnrampBanner)
-            }
-            items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
-            _listItemsLiveData.value = items
+            postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
     }
@@ -206,5 +201,21 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         if (anyAccountsMayNeedUnshielding) {
             _showUnshieldingNoticeLiveData.postValue(Event(true))
         }
+    }
+
+    private fun postListItems(accountsWithIdentity: List<AccountWithIdentity>) {
+        val items = mutableListOf<AccountsOverviewListItem>()
+
+        // Only show the onramp banner if has sites and there are finalized accounts.
+        if (ccdOnrampSiteRepository.hasSites
+            && accountsWithIdentity.any { it.account.transactionStatus == TransactionStatus.FINALIZED }
+        ) {
+            items.add(AccountsOverviewListItem.CcdOnrampBanner)
+        }
+
+        items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
+
+        _listItemsLiveData.value = items
+
     }
 }
