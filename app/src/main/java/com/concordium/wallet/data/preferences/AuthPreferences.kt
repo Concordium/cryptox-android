@@ -28,15 +28,6 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX =
             "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX"
         const val PREFKEY_LEGACY_SEED_HEX_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
-        const val PREFKEY_UNSHIELDING_NOTICE_SHOWN = "UNSHIELDING_NOTICE_SHOWN"
-    }
-
-    fun setUnshieldingNoticeShown(value: Boolean) {
-        setBoolean(PREFKEY_UNSHIELDING_NOTICE_SHOWN, value)
-    }
-
-    fun getUnshieldingNoticeShown(): Boolean {
-        return getBoolean(PREFKEY_UNSHIELDING_NOTICE_SHOWN, false)
     }
 
     fun setHasSetupUser(value: Boolean) {

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+- CCD listings – browse exchanges and services where CCD can be purchased
+
+## [1.1.0] - 2024-06-07
+
 ### Removed
 - Shielding – now it is only possible to unshield your balances
 
@@ -9,7 +14,6 @@
 - Ability to unshield your balances from the "More" screen
 - Support for WalletConnect binary messages signing
 - Ability to paste the phrase from the clipboard when importing a wallet
-- CCD listings – browse exchanges and services where CCD can be purchased
 
 ### Changed
 - The "Watch video" link on the welcome screen now opens the account creation tutorial
@@ -20,7 +24,7 @@
 ### Changed
 - Actualized End User License Terms and Privacy Policy URL
 
-## [1.0.0] - 2022-04-24
+## [1.0.0] - 2024-04-24
 
 ### Added
 - Setting up and updating validator pool commission rates
@@ -61,5 +65,6 @@
 - Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/Concordium/cryptox-android/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...1.0.0

@@ -8,14 +8,13 @@ With CryptoX Wallet, you can:
 - Create digital identities and your initial account via an identity provider (IDP)
 - Create additional accounts with your digital identities
 - Send and receive CCD
-- Check your account balances, both public and private
-- Transfer CCD between your balances (from public to private and from private to public)
+- Check your account balances
 - Manage CCD validation and delegation
 - Check your CCD release schedule (only for buyers)
 - Manage your addresses in the address book for fast and easy transactions
 - Export and import backups of your accounts, identities, address book, and keys
 - Import both phrase- and file-based wallets
-- Manage CIS-2 tokens
+- Send, receive and view CIS-2 tokens
 - Browse owned NFTs from [Spaceseven](https://spaceseven.com/marketplace)
 - Connect to Concordium dApps with WalletConnect
 
