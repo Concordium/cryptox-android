@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.0] - 2024-06-07
 
 ### Removed
 - Shielding – now it is only possible to unshield your balances
@@ -19,7 +19,7 @@
 ### Changed
 - Actualized End User License Terms and Privacy Policy URL
 
-## [1.0.0] - 2022-04-24
+## [1.0.0] - 2024-04-24
 
 ### Added
 - Setting up and updating validator pool commission rates
@@ -60,5 +60,6 @@
 - Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/Concordium/cryptox-android/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...1.0.0
