@@ -319,8 +319,8 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
     // WalletConnect
-    implementation "com.walletconnect:android-core:1.5.0"
-    implementation "com.walletconnect:sign:2.3.0"
+    implementation "com.walletconnect:android-core:1.32.0"
+    implementation "com.walletconnect:sign:2.32.0"
 
     // Scarlet Gson adapter required for Spaceseven wallet connection.
     implementation("com.tinder.scarlet:message-adapter-gson:0.1.12") {

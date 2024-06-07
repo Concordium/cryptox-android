@@ -326,15 +326,16 @@ private constructor(
 
     override fun onSessionProposal(
         sessionProposal: Sign.Model.SessionProposal,
+        verifyContext: Sign.Model.VerifyContext,
     ) = viewModelScope.launch {
-        defaultWalletDelegate.onSessionProposal(sessionProposal)
+        defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
 
         // Find a single allowed namespace and chain.
         val singleNamespaceEntry =
             sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
-                namespace.chains.any { chain ->
+                namespace.chains?.any { chain ->
                     allowedChains.contains(chain)
-                }
+                } == true
             }
         val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
             allowedChains.contains(chain)
@@ -432,7 +433,6 @@ private constructor(
                         accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,
-                        extensions = null,
                     )
                 ),
             )
@@ -570,8 +570,11 @@ private constructor(
         )
     }
 
-    override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
-        defaultWalletDelegate.onSessionRequest(sessionRequest)
+    override fun onSessionRequest(
+        sessionRequest: Sign.Model.SessionRequest,
+        verifyContext: Sign.Model.VerifyContext,
+    ) {
+        defaultWalletDelegate.onSessionRequest(sessionRequest, verifyContext)
 
         val sessionRequestPeerMetadata: Core.Model.AppMetaData? = sessionRequest.peerMetaData
         if (sessionRequestPeerMetadata == null) {

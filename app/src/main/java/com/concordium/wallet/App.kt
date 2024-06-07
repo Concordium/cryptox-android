@@ -42,7 +42,7 @@ class App : Application() {
     }
 
     private fun initWalletConnect() {
-        println("LC -> CALL INIT")
+        println("WalletConnect -> CALL INIT")
 
         // Account - oleg.koretsky, project – CryptoX Android
         val projectId = "f6dea1cab6223d05f64c0c418527368b"
@@ -59,12 +59,18 @@ class App : Application() {
             relayServerUrl = relayServerUrl,
             connectionType = ConnectionType.AUTOMATIC,
             application = this,
-            metaData = appMetaData
+            metaData = appMetaData,
+            onError = { error ->
+                println("WalletConnect -> CORE ERROR ${error.throwable.stackTraceToString()}")
+            }
         )
 
-        SignClient.initialize(Sign.Params.Init(core = CoreClient)) { modelError ->
-            println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
-        }
+        SignClient.initialize(
+            init = Sign.Params.Init(core = CoreClient),
+            onError = { error ->
+                println("WalletConnect -> SIGN ERROR ${error.throwable.stackTraceToString()}")
+            }
+        )
     }
 
     private fun initFirebase() {

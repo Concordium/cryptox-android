@@ -1,7 +1,11 @@
 package com.concordium.wallet.ui.recipient.recipientlist
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -19,7 +23,7 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
 
     private val allRecipientsLiveData: LiveData<List<Recipient>>
     val recipientListLiveData: LiveData<List<Recipient>>
-        get() = Transformations.switchMap(allRecipientsLiveData) { allRecipients ->
+        get() = allRecipientsLiveData.switchMap { allRecipients ->
             val filteredRecipientsLiveData = MutableLiveData<List<Recipient>>()
             val recipientsToShowLiveData = when {
                 selectRecipientMode -> {
