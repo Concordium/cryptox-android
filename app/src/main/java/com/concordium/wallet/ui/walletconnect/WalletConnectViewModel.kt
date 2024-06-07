@@ -324,11 +324,8 @@ private constructor(
         mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
     }
 
-    override fun onSessionProposal(
-        sessionProposal: Sign.Model.SessionProposal,
-        verifyContext: Sign.Model.VerifyContext,
-    ) = viewModelScope.launch {
-        defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
+    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) = viewModelScope.launch {
+        defaultWalletDelegate.onSessionProposal(sessionProposal)
 
         // Find a single allowed namespace and chain.
         val singleNamespaceEntry =
@@ -570,11 +567,8 @@ private constructor(
         )
     }
 
-    override fun onSessionRequest(
-        sessionRequest: Sign.Model.SessionRequest,
-        verifyContext: Sign.Model.VerifyContext,
-    ) {
-        defaultWalletDelegate.onSessionRequest(sessionRequest, verifyContext)
+    override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
+        defaultWalletDelegate.onSessionRequest(sessionRequest)
 
         val sessionRequestPeerMetadata: Core.Model.AppMetaData? = sessionRequest.peerMetaData
         if (sessionRequestPeerMetadata == null) {
