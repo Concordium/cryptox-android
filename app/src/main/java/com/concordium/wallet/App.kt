@@ -9,8 +9,10 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
+import com.walletconnect.android.relay.NetworkClientTimeout
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
 
@@ -58,6 +60,7 @@ class App : Application() {
         CoreClient.initialize(
             relayServerUrl = relayServerUrl,
             connectionType = ConnectionType.AUTOMATIC,
+            networkClientTimeout = NetworkClientTimeout(40, TimeUnit.SECONDS),
             application = this,
             metaData = appMetaData,
             onError = { error ->
