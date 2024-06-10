@@ -437,7 +437,7 @@
     <string name="wallet_connect_database_cleared">Database cleared</string>
     <string name="wallet_connect_clear_data_warning_ok">Okay</string>
     <string name="wallet_connect_clear_data_warning_cancel">Cancel</string>
-    <string name="wallet_connect_error_connection_failed">Could not connect to dApp</string>
+    <string name="wallet_connect_error_connection_failed">dApp connection failed. Please, refresh the page and try again</string>
     <string name="wallet_connect_error_invalid_request">The WalletConnect request is invalid</string>
     <string name="wallet_connect_error_cryptography_failed">Unexpected cryptography error</string>
     <string name="wallet_connect_error_loading_failed">Could not load the required data</string>
