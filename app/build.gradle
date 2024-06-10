@@ -23,8 +23,8 @@ android {
     def versionMajor = 1
     def versionMinor = 1
     def versionPatch = 1
-    def versionMeta = "-qa.1"
-    def versionCodeIncremental = 1382
+    def versionMeta = "-rc.1"
+    def versionCodeIncremental = 1383
 
     compileSdkVersion 34
 
