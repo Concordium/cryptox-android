@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- Increased WalletConnect pairing timeout to reduce the number of "Could not connect" errors
+
 ## [1.1.0] - 2024-06-07
 
 ### Removed
