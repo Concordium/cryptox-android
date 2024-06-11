@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.1] - 2024-06-11
 
 ### Changed
 - Increased WalletConnect pairing timeout to reduce the number of "Could not connect" errors
@@ -65,6 +65,7 @@
 - Identity data tab on the account details screen is no longer shown for accounts without revealed attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.1.1...HEAD
+[1.1.1]: https://github.com/Concordium/cryptox-android/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/Concordium/cryptox-android/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/Concordium/cryptox-android/compare/0.6.1-qa.5...1.0.0
