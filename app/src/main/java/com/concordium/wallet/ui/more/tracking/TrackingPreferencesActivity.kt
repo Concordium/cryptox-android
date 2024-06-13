@@ -43,4 +43,8 @@ class TrackingPreferencesActivity : BaseActivity(
             viewModel.onAllowClicked()
         }
     }
+
+    override fun loggedOut() {
+        // No need to show auth, there is no wallet-related logic on this screen.
+    }
 }
