@@ -522,6 +522,10 @@
             android:name=".ui.more.unshielding.UnshieldingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.more.tracking.TrackingPreferencesActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

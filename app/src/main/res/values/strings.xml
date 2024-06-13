@@ -1085,4 +1085,10 @@
     <string name="unshielding_estimated_tx_fee">Estimated transaction fee:</string>
     <string name="unshielding_unshield_funds">Unshield funds</string>
     <string name="unshielding_insufficient_funds">Insufficient funds at disposal to pay the fee</string>
+    <string name="tracking_preferences_title">Analytics</string>
+    <string name="tracking_preferences_allow_title">Allow activity tracking</string>
+    <string name="tracking_preferences_allow_summary">
+        To improve the experience, we would like to track your activity in the app (but never your crypto).
+        Of course, it is completely anonymous.
+    </string>
 </resources>

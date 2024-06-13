@@ -18,6 +18,7 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewViewModel
+import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
 import com.concordium.wallet.ui.passphrase.reveal.SavedPassPhraseRevealActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -58,7 +59,7 @@ class WelcomePromoMoreFragment : Fragment() {
 
     private fun initializeViews() {
         viewModel.seedPhraseRevealVisibilityLiveData.observe(
-            this,
+            viewLifecycleOwner,
             binding.seedPhraseRevealLayout::isVisible::set
         )
         binding.seedPhraseRevealLayout.setOnClickListener {
@@ -66,11 +67,15 @@ class WelcomePromoMoreFragment : Fragment() {
         }
 
         viewModel.passwordAlterVisibilityLiveData.observe(
-            this,
+            viewLifecycleOwner,
             binding.alterLayout::isVisible::set
         )
         binding.alterLayout.setOnClickListener {
             alterPassword()
+        }
+
+        binding.trackingLayout.setOnClickListener {
+            openTrackingPreferences()
         }
 
         binding.aboutLayout.setOnClickListener {
@@ -127,6 +132,11 @@ class WelcomePromoMoreFragment : Fragment() {
             }
             .setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel), null)
             .show()
+    }
+
+    private fun openTrackingPreferences() {
+        val intent  = Intent(activity, TrackingPreferencesActivity::class.java)
+        startActivity(intent)
     }
 
     private fun about() {

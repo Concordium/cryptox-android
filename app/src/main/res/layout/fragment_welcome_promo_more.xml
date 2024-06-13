@@ -57,7 +57,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/analytics_item"
+        android:id="@+id/tracking_layout"
         style="@style/MoreOverviewItem">
 
         <TextView
