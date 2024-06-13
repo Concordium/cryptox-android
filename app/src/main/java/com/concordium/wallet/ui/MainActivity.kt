@@ -24,7 +24,6 @@ import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
-import com.concordium.wallet.ui.welcome.WelcomePromoActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
@@ -88,8 +87,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             builder.setCancelable(false)
             builder.create().show()
         } else {
-            if (viewModel.shouldShowAuthentication()) {
-                showAuthenticationOrContinueSetup()
+            if (viewModel.shouldShowPasswordSetup() || viewModel.shouldShowInitialSetup()) {
+                finishAffinity()
+                startActivity(Intent(this, WelcomeActivity::class.java))
+            } else if (viewModel.shouldShowAuthentication()) {
+                val intent = Intent(this, AuthLoginActivity::class.java)
+                startActivity(intent)
             } else {
                 viewModel.setInitialStateIfNotSet()
 
@@ -216,19 +219,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     //region Control/UI
     // ************************************************************
-
-    private fun showAuthenticationOrContinueSetup() {
-        if (viewModel.shouldShowPasswordSetup()) {
-            finishAffinity()
-            startActivity(Intent(this, WelcomeActivity::class.java))
-        } else if (viewModel.shouldShowInitialSetup()) {
-            finishAffinity()
-            startActivity(Intent(this, WelcomePromoActivity::class.java))
-        } else {
-            val intent = Intent(this, AuthLoginActivity::class.java)
-            startActivity(intent)
-        }
-    }
 
     override fun loggedOut() {
     }

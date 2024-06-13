@@ -32,6 +32,7 @@ import com.concordium.wallet.data.room.IdentityDao
 import com.concordium.wallet.data.room.IdentityWithAccounts
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -331,8 +332,13 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     totalShieldedBalance = BigInteger.ZERO,
                     finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
-                    encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount ?: BigInteger.ZERO,
+                    encryptedBalanceStatus =
+                    if (accountBalance.finalizedBalance.accountEncryptedAmount.isDefaultEmpty())
+                        ShieldedAccountEncryptionStatus.DECRYPTED
+                    else
+                        ShieldedAccountEncryptionStatus.ENCRYPTED,
+                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount
+                        ?: BigInteger.ZERO,
                     totalAtDisposal = BigInteger.ZERO,
                     readOnly = false,
                     finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,

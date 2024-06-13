@@ -21,9 +21,9 @@ android {
     // https://semver.org/
     def versionMajor = 1
     def versionMinor = 1
-    def versionPatch = 0
-    def versionMeta = "-qa.1"
-    def versionCodeIncremental = 1373
+    def versionPatch = 1
+    def versionMeta = ""
+    def versionCodeIncremental = 1384
 
     compileSdkVersion 34
 
@@ -186,6 +186,7 @@ android {
             excludes += ['META-INF/DEPENDENCIES']
             excludes += ['META-INF/LICENSE.md']
             excludes += ['META-INF/NOTICE.md']
+            excludes += ['META-INF/versions/**']
         }
     }
     buildFeatures {
@@ -313,9 +314,12 @@ dependencies {
     // Generate QR
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
 
-    // WalletConnect
-    implementation "com.walletconnect:android-core:1.5.0"
-    implementation "com.walletconnect:sign:2.3.0"
+    // WalletConnect.
+    // Further updates require regression testing.
+    // Update to 1.32.0+2.32.0 requires fixing
+    // opening links from a mobile browser and request spam prevention.
+    implementation "com.walletconnect:android-core:1.13.0"
+    implementation "com.walletconnect:sign:2.11.0"
 
     // Scarlet Gson adapter required for Spaceseven wallet connection.
     implementation("com.tinder.scarlet:message-adapter-gson:0.1.12") {

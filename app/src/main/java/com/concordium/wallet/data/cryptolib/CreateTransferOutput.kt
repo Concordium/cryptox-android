@@ -8,7 +8,7 @@ import java.io.Serializable
 data class CreateTransferOutput(
     @JsonAdapter(RawJsonTypeAdapter::class)
     val signatures: RawJson,
-    val addedSelfEncryptedAmount: String?,
-    val remaining: String?,
-    val transaction: String
+    val transaction: String,
+    val addedSelfEncryptedAmount: String? = null,
+    val remaining: String? = null,
 ) : Serializable

@@ -42,7 +42,6 @@ import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.toBigInteger
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -463,43 +462,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             waiting.postValue(false)
         } else {
             sendTokenData.createTransferOutput = output
-
-            viewModelScope.launch {
-                if (output.addedSelfEncryptedAmount != null) {
-                    sendTokenData.account!!.finalizedEncryptedBalance?.let { encBalance ->
-                        val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
-                            output.addedSelfEncryptedAmount,
-                            encBalance.selfAmount
-                        ).toString()
-                        sendTokenData.newSelfEncryptedAmount = newEncryptedAmount
-                        val oldDecryptedAmount =
-                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                        oldDecryptedAmount?.let {
-                            accountUpdater.saveDecryptedAmount(
-                                newEncryptedAmount,
-                                (it.toBigInteger() + amount).toString()
-                            )
-                        }
-                    }
-                }
-                if (output.remaining != null) {
-                    sendTokenData.newSelfEncryptedAmount = output.remaining
-                    val remainingAmount =
-                        accountUpdater.decryptAndSaveAmount(encryptionSecretKey, output.remaining)
-
-                    sendTokenData.account!!.finalizedEncryptedBalance?.let { encBalance ->
-                        val oldDecryptedAmount =
-                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                        oldDecryptedAmount?.let {
-                            accountUpdater.saveDecryptedAmount(
-                                output.remaining,
-                                remainingAmount.toString()
-                            )
-                        }
-                    }
-                }
-                submitTransaction(output)
-            }
+            submitTransaction(output)
         }
     }
 
@@ -548,8 +511,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 } else {
                     val createTransferOutput = CreateTransferOutput(
                         accountTransactionOutput.signatures,
-                        "",
-                        "",
                         accountTransactionOutput.transaction
                     )
                     submitTransaction(createTransferOutput)

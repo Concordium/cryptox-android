@@ -11,7 +11,6 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -19,7 +18,6 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
 
     companion object {
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
-        const val EXTRA_SELECT_RECIPIENT_MODE = "EXTRA_SELECT_RECIPIENT_MODE"
         const val EXTRA_GOTO_SCAN_QR = "EXTRA_GOTO_SCAN_QR"
         const val REQUEST_CODE_SCAN_QR = 2000
     }
@@ -36,10 +34,9 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
         super.onCreate(savedInstanceState)
 
         val recipient = intent.getSerializableExtra(EXTRA_RECIPIENT) as Recipient?
-        val selectRecipientMode = intent.getBooleanExtra(EXTRA_SELECT_RECIPIENT_MODE, false)
 
         initializeViewModel()
-        viewModel.initialize(recipient, selectRecipientMode)
+        viewModel.initialize(recipient)
         initViews()
 
         val gotoScanQR = intent.getBooleanExtra(EXTRA_GOTO_SCAN_QR, false)
@@ -89,13 +86,6 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
                     finish()
-                }
-            }
-        })
-        viewModel.gotoBackToSendFundsLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-                    goBackToSendFunds(viewModel.recipient)
                 }
             }
         })
@@ -159,13 +149,6 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
             binding.saveButton.isEnabled = false
             KeyboardUtil.hideKeyboard(this)
         }
-    }
-
-    private fun goBackToSendFunds(recipient: Recipient) {
-        val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, recipient)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
     }
 
     private fun gotoScanBarCode() {

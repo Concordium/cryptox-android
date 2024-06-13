@@ -154,10 +154,6 @@ class RecipientListActivity :
 
     private fun gotoNewRecipient() {
         val intent = Intent(this, RecipientActivity::class.java)
-        intent.putExtra(
-            RecipientActivity.EXTRA_SELECT_RECIPIENT_MODE,
-            viewModel.selectRecipientMode
-        )
         startActivity(intent)
     }
 

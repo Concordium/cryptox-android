@@ -164,10 +164,11 @@
     <string name="accounts_overview_create_account">Create account</string>
     <string name="accounts_overview_wallet_total">Wallet total</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
-    <string name="accounts_overview_balance">Balance</string>
-    <string name="accounts_overview_balance_at_disposal">Balance (at disposal):</string>
-    <string name="accounts_overview_shielded_balance">Shielded Balance</string>
+    <string name="accounts_overview_balance_at_disposal">At disposal</string>
     <string name="total_amount">Total amount</string>
+    <string name="unshielding_notice_title">Transaction Shielding is going away</string>
+    <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
+    <string name="unshielding_notice_unshield">Unshield assets</string>
     <!-- New account name -->
     <string name="new_account_name_title">Create new account</string>
     <string name="new_account_set_name">Set account name</string>
@@ -194,8 +195,6 @@
     <string name="account_details_transfers_title">Activity</string>
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_send">Send</string>
-    <string name="account_details_unshield">Unshield</string>
-    <string name="account_details_shield">Shield</string>
     <string name="account_details_address">Address</string>
     <string name="account_details_earn_rewards">Earn rewards</string>
     <string name="account_details_retry_button">Retry account creation</string>
@@ -211,7 +210,6 @@
     <string name="account_baking_pending">Configure validator</string>
     <string name="account_smart_contract_update_pending">Invoke smart contract</string>
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
-    <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
@@ -230,27 +228,7 @@
     <!-- ***** Transaction / Send funds ***** -->
     <!-- Send funds -->
     <string name="send_funds_title">Send Funds</string>
-    <string name="send_funds_shield_title">Shield amount</string>
-    <string name="send_funds_unshield_title">Unshield amount</string>
-    <string name="send_funds_fee_info">Estimated transaction fee: %1$s</string>
-    <string name="send_funds_error_insufficient_funds">@string/insufficient_funds</string>
-    <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
-    <string name="send_funds_select_recipient_or_shield_amount">Select recipient</string>
-    <string name="send_funds_recipient_shield">Amount will be shielded</string>
-    <string name="send_funds_recipient_unshield">Amount will be unshielded</string>
-    <string name="send_funds_confirm">Send amount</string>
-    <string name="send_funds_confirm_shield">Shield amount</string>
-    <string name="send_funds_confirm_unshield">Unshield amount</string>
-    <string name="send_funds_confirm_send_shielded">Send shielded amount</string>
-    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
-    <string name="send_funds_confirmation_memo">Memo: %1$s</string>
-    <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
     <!--  Send funds confirmed  -->
-    <string name="send_funds_confirmed_title">Send funds</string>
-    <string name="send_funds_confirmed_fee_info">Estimated transaction fee:\n%1$s</string>
     <string name="send_funds_confirmed_failed">Transaction error</string>
     <!-- Transaction details -->
     <string name="transaction_title">Transaction</string>
@@ -273,6 +251,7 @@
     <!-- ***** More ***** -->
     <!-- More overview -->
     <string name="more_overview_title">More</string>
+    <string name="more_overview_item_unshielding">Funds to Unshield</string>
     <string name="more_overview_item_identities">Identities</string>
     <string name="more_overview_item_address_book">Address Book</string>
     <string name="more_overview_item_export">Export</string>
@@ -411,7 +390,6 @@
     <string name="change_password_initial_error">Data could not be decrypted</string>
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
-    <string name="plus_sign">+</string>
     <!-- Strings used for fragments for navigation -->
     <string name="network_comission">Network commission</string>
     <string name="acc_address_placeholder">%1$s (%2$s)</string>
@@ -432,7 +410,6 @@
     <string name="add_memo_confirm">Add memo to transfer</string>
 
     <string name="send_funds_optional_add_memo">Add memo</string>
-    <string name="send_funds_optional_edit_memo">Edit memo</string>
 
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_empty_warning_text">You did not provide any memoId. Continue without it?</string>
@@ -440,8 +417,6 @@
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_continue">Continue</string>
     <string name="transaction_memo_warning_ok">Okay</string>
-    <string name="memo_label">Memo:</string>
-    <string name="no_recipient_error">You need to select recipient firstly</string>
     <string name="dialog_backup_title">Back-up is important</string>
     <string name="dialog_backup_line2">It is necessary to restore your data. Please, make backup.</string>
     <string name="backup_suggestion">Please make a back-up of your wallet</string>
@@ -462,7 +437,7 @@
     <string name="wallet_connect_database_cleared">Database cleared</string>
     <string name="wallet_connect_clear_data_warning_ok">Okay</string>
     <string name="wallet_connect_clear_data_warning_cancel">Cancel</string>
-    <string name="wallet_connect_error_connection_failed">Could not connect to dApp</string>
+    <string name="wallet_connect_error_connection_failed">dApp connection failed. Please, refresh the page and try again</string>
     <string name="wallet_connect_error_invalid_request">The WalletConnect request is invalid</string>
     <string name="wallet_connect_error_cryptography_failed">Unexpected cryptography error</string>
     <string name="wallet_connect_error_loading_failed">Could not load the required data</string>
@@ -584,6 +559,7 @@
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>
     <string name="pass_phrase_try_another_word">Please try another word</string>
+    <string name="pass_phrase_recover_input_paste">Paste your seed phrase</string>
 
     <string name="pass_phrase_recover_process_title">Recover your accounts(s)</string>
     <string name="pass_phrase_recover_process_subtitle">Recover your accounts and identities to connect them to your wallet</string>
@@ -681,7 +657,7 @@
     <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
-    <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
+    <string name="delegation_register_delegation_amount_insufficient_error">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
@@ -689,7 +665,7 @@
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_not_enough_funds">Insufficient funds</string>
+    <string name="delegation_register_delegation_not_enough_funds">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
     <plurals name="delegation_register_delegation_confirmation_desc">
         <item quantity="one">This will lock your delegation amount. Amount is released after %d day from the time you remove or decrease your delegation.</item>
@@ -975,7 +951,7 @@
     <string name="welcome_get_started">Get started</string>
     <string name="welcome_consent">I have read and accept
         <a href="#terms">Terms and Conditions</a>
-        and <a href="https://pioneeringtechventures.com/privacy-policy">Privacy policy</a></string>
+        and <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
     <string name="welcome_promo_activate_and_get">Activate your account and get access to all the features</string>
     <string name="welcome_promo_watch_video">Watch video</string>
@@ -1099,4 +1075,13 @@
     <string name="identity_proofs_membership_statement_description">This will prove that your %1$s is 1 of the following: %2$s</string>
     <string name="identity_proofs_non_membership_statement_description">This will prove that your %1$s is none of the following: %2$s</string>
     <string name="noCredentialsForThatIssuer">You do not hold any credentials from the issuer that the verifier requested.</string>
+    <string name="unshielding_accounts_title">Accounts</string>
+    <string name="unshielding_accounts_subtitle">with shielded assets</string>
+    <string name="unshielding_accounts_unshield">Unshield</string>
+    <string name="unshielding_accounts_unshielded">Unshielded</string>
+    <string name="unshielding_accounts_done">Done, let\'s move on</string>
+    <string name="unshielding_shielded_amount">Shielded amount</string>
+    <string name="unshielding_estimated_tx_fee">Estimated transaction fee:</string>
+    <string name="unshielding_unshield_funds">Unshield funds</string>
+    <string name="unshielding_insufficient_funds">Insufficient funds at disposal to pay the fee</string>
 </resources>

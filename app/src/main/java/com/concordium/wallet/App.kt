@@ -7,8 +7,10 @@ import com.concordium.wallet.util.Log
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
+import com.walletconnect.android.relay.NetworkClientTimeout
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
     companion object {
@@ -39,7 +41,7 @@ class App : Application() {
     }
 
     private fun initWalletConnect() {
-        println("LC -> CALL INIT")
+        println("WalletConnect -> CALL INIT")
 
         // Account - oleg.koretsky, project – CryptoX Android
         val projectId = "f6dea1cab6223d05f64c0c418527368b"
@@ -55,12 +57,19 @@ class App : Application() {
         CoreClient.initialize(
             relayServerUrl = relayServerUrl,
             connectionType = ConnectionType.AUTOMATIC,
+            networkClientTimeout = NetworkClientTimeout(40, TimeUnit.SECONDS),
             application = this,
-            metaData = appMetaData
+            metaData = appMetaData,
+            onError = { error ->
+                println("WalletConnect -> CORE ERROR ${error.throwable.stackTraceToString()}")
+            }
         )
 
-        SignClient.initialize(Sign.Params.Init(core = CoreClient)) { modelError ->
-            println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
-        }
+        SignClient.initialize(
+            init = Sign.Params.Init(core = CoreClient),
+            onError = { error ->
+                println("WalletConnect -> SIGN ERROR ${error.throwable.stackTraceToString()}")
+            }
+        )
     }
 }

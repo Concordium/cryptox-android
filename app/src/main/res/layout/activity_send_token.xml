@@ -164,9 +164,9 @@
                 style="@style/CryptoX_Typography_Body_Medium"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/send_funds_fee_info"
                 android:textColor="@color/cryptox_grey_main"
                 android:visibility="gone"
+                tools:text="@string/cis_estimated_fee"
                 tools:visibility="visible" />
 
             <LinearLayout

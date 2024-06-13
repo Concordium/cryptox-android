@@ -566,7 +566,7 @@ class ImportViewModel(application: Application) :
             totalShieldedBalance = BigInteger.ZERO,
             finalizedEncryptedBalance = null,
             currentEncryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
             totalStaked = BigInteger.ZERO,
             totalAtDisposal = BigInteger.ZERO,
             readOnly = false,

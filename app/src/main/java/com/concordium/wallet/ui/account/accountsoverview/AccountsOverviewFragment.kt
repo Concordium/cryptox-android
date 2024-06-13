@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -27,6 +29,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,6 +47,7 @@ class AccountsOverviewFragment : BaseFragment() {
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var accountAdapter: AccountAdapter
+    private lateinit var keyCreationVersion: KeyCreationVersion
 
     //region Lifecycle
     // ************************************************************
@@ -52,6 +56,7 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        keyCreationVersion = KeyCreationVersion(AuthPreferences(requireContext()))
     }
 
     override fun onCreateView(
@@ -142,19 +147,23 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
         viewModel.totalBalanceLiveData.observe(viewLifecycleOwner) { totalBalance ->
-            showTotalBalance(
-                totalBalance.totalBalanceForAllAccounts,
-                totalBalance.totalContainsEncrypted
-            )
-            showDisposalBalance(
-                totalBalance.totalAtDisposalForAllAccounts,
-                totalBalance.totalContainsEncrypted
-            )
+            showTotalBalance(totalBalance.totalBalanceForAllAccounts)
+            showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
         viewModel.accountListLiveData.observe(viewLifecycleOwner) { accountList ->
             accountList?.let {
                 accountAdapter.setData(it)
             }
+        }
+        viewModel.showUnshieldingNoticeLiveData.observe(viewLifecycleOwner) {
+            childFragmentManager.fragments.forEach { fragment ->
+                if (fragment.tag == UnshieldingNoticeDialog.TAG && fragment is DialogFragment) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
+
+            UnshieldingNoticeDialog()
+                .show(childFragmentManager, UnshieldingNoticeDialog.TAG)
         }
     }
 
@@ -166,10 +175,12 @@ class AccountsOverviewFragment : BaseFragment() {
         binding.createAccountButton.visibility = View.GONE
 
         binding.createIdentityButton.setOnClickListener {
+            viewModel.checkUsingV1KeyCreation()
             goToFirstIdentityCreation()
         }
 
         binding.createAccountButton.setOnClickListener {
+            viewModel.checkUsingV1KeyCreation()
             gotoCreateAccount()
         }
 
@@ -207,11 +218,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
         accountAdapter.setOnItemClickListener(object : AccountView.OnItemClickListener {
             override fun onCardClicked(account: Account) {
-                gotoAccountDetails(account, false)
-            }
-
-            override fun onShieldedBalanceClicked(account: Account) {
-                gotoAccountDetails(account, true)
+                gotoAccountDetails(account)
             }
 
             override fun onSendClicked(account: Account) {
@@ -273,10 +280,9 @@ class AccountsOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    private fun gotoAccountDetails(item: Account, isShielded: Boolean) {
+    private fun gotoAccountDetails(item: Account) {
         val intent = Intent(activity, AccountDetailsActivity::class.java)
         intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, isShielded)
         startActivityForResult(intent, REQUEST_CODE_ACCOUNT_DETAILS)
     }
 
@@ -327,11 +333,11 @@ class AccountsOverviewFragment : BaseFragment() {
         binding.createAccountButton.visibility = state
     }
 
-    private fun showTotalBalance(totalBalance: BigInteger, containsEncryptedAmount: Boolean) {
+    private fun showTotalBalance(totalBalance: BigInteger) {
         binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
     }
 
-    private fun showDisposalBalance(atDisposal: BigInteger, containsEncryptedAmount: Boolean) {
+    private fun showDisposalBalance(atDisposal: BigInteger) {
         binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
     }
 

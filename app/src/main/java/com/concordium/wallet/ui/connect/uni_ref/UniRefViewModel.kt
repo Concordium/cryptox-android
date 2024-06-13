@@ -45,7 +45,6 @@ import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
-import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -392,8 +391,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
 
         return CreateTransferOutput(
             accountTransactionOutput.signatures,
-            null,
-            null,
             accountTransactionOutput.transaction
         )
     }
@@ -512,11 +509,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             proxyRepository.getTransferSubmissionStatus(submissionId,
                 {
                     tempData.transferSubmissionStatus = it
-                    accountUpdater.updateEncryptedAmount(
-                        it,
-                        submissionId,
-                        getAmount().toString()
-                    )
                     finishTransferCreation()
                     // Do not disable waiting state yet
                 },

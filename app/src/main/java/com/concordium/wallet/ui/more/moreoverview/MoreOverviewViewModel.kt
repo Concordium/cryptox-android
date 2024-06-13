@@ -6,16 +6,25 @@ import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.system.exitProcess
 
 class MoreOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
     private val authPreferences = AuthPreferences(application)
+    private val accountRepository: AccountRepository by lazy {
+        val accountDao = WalletDatabase.getDatabase(application).accountDao()
+        AccountRepository(accountDao)
+    }
 
     private val _seedRecoveryVisibilityLiveData = MutableLiveData<Boolean>()
     val seedRecoveryVisibilityLiveData: LiveData<Boolean> = _seedRecoveryVisibilityLiveData
@@ -25,6 +34,8 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     val seedPhraseRevealVisibilityLiveData: LiveData<Boolean> = _seedPhraseRevealVisibilityLiveData
     private val _walletEraseVisibilityLiveData = MutableLiveData<Boolean>()
     val walletEraseVisibilityLiveData: LiveData<Boolean> = _walletEraseVisibilityLiveData
+    private val _unshieldingVisibilityLiveData = MutableLiveData(false)
+    val unshieldingVisibilityLiveData: LiveData<Boolean> = _unshieldingVisibilityLiveData
     private val _waitingLiveData = MutableLiveData<Boolean>()
     private val _passwordAlterVisibilityLiveData = MutableLiveData<Boolean>()
     val passwordAlterVisibilityLiveData: LiveData<Boolean> = _passwordAlterVisibilityLiveData
@@ -37,7 +48,7 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
         updateOptionsVisibility()
     }
 
-    fun updateOptionsVisibility() {
+    fun updateOptionsVisibility() = viewModelScope.launch {
         // Seed recovery is visible when there is a seed.
         _seedRecoveryVisibilityLiveData.postValue(authPreferences.hasEncryptedSeed())
         // File import and export are visible if the backup is possible.
@@ -48,6 +59,10 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
         _walletEraseVisibilityLiveData.postValue(App.appCore.session.hasCompletedInitialSetup)
         // Password alter is visible if it is set up.
         _passwordAlterVisibilityLiveData.postValue(authPreferences.getHasSetupUser())
+        // Unshielding is visible if may be required.
+        _unshieldingVisibilityLiveData.postValue(
+            accountRepository.getAllDone().any(Account::mayNeedUnshielding)
+        )
     }
 
     fun deleteWCDatabaseAndExit() {

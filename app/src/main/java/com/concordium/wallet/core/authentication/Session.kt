@@ -30,6 +30,9 @@ class Session {
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
+    // The notice must be shown once per app start.
+    private var isUnshieldingNoticeShown = false
+
     constructor(context: Context) {
         authPreferences = AuthPreferences(context)
         hasSetupPassword = authPreferences.getHasSetupUser()
@@ -52,6 +55,13 @@ class Session {
     fun getHasShowFinalizationRewards(id: Int): Boolean {
         return filterPreferences.getHasShowFinalizationRewards(id)
     }
+
+    fun unshieldingNoticeShown() {
+        isUnshieldingNoticeShown = true
+    }
+
+    fun isUnshieldingNoticeShown(): Boolean =
+        isUnshieldingNoticeShown
 
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
@@ -111,14 +121,6 @@ class Session {
 
     fun setBiometricAuthKeyName(resetBiometricKeyNameAppendix: String) {
         authPreferences.setAuthKeyName(resetBiometricKeyNameAppendix)
-    }
-
-    fun getTermsHashed(): Int {
-        return authPreferences.getTermsHashed()
-    }
-
-    fun setTermsHashed(key: Int) {
-        return authPreferences.setTermsHashed(key)
     }
 
     fun isAccountsBackupPossible(): Boolean {

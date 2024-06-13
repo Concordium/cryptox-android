@@ -12,10 +12,13 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
+import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -42,16 +45,22 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         BigInteger.ZERO,
         BigInteger.ZERO,
         BigInteger.ZERO,
-        BigInteger.ZERO, false
+        BigInteger.ZERO,
+        false
     )
     private var _totalBalanceLiveData = MutableLiveData<TotalBalancesData>()
     val totalBalanceLiveData: LiveData<TotalBalancesData>
         get() = _totalBalanceLiveData
 
+    private val _showUnshieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
+    val showUnshieldingNoticeLiveData: LiveData<Event<Boolean>>
+        get() = _showUnshieldingNoticeLiveData
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     val accountListLiveData: LiveData<List<AccountWithIdentity>>
+    private val keyCreationVersion: KeyCreationVersion
 
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT
@@ -82,9 +91,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.postValue(Event(stringRes))
             }
         })
+        keyCreationVersion = KeyCreationVersion(AuthPreferences(application))
     }
 
     fun initialize() {
+        showUnshieldingNoticeIfNeeded()
     }
 
     override fun onCleared() {
@@ -165,5 +176,24 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
         }
         return false
+    }
+
+    fun checkUsingV1KeyCreation() =
+        check(keyCreationVersion.useV1) {
+            "Key creation V1 (seed-based) must be used to perform this action"
+        }
+
+    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
+        // Show the notice once.
+        if (App.appCore.session.isUnshieldingNoticeShown()) {
+            return@launch
+        }
+
+        val anyAccountsMayNeedUnshielding = accountRepository.getAllDone()
+            .any(Account::mayNeedUnshielding)
+
+        if (anyAccountsMayNeedUnshielding) {
+            _showUnshieldingNoticeLiveData.postValue(Event(true))
+        }
     }
 }

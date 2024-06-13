@@ -2,20 +2,19 @@
 
 Use CryptoX Concordium Wallet to get started with the open-source, privacy-centric and public Concordium Blockchain. 
 
-![Screenshots](https://github.com/Concordium/cryptox-android/assets/5675681/1e95cd50-bf59-4484-b59a-134ec7952d89)
+![Screenshots](screens.png)
 
 With CryptoX Wallet, you can:
 - Create digital identities and your initial account via an identity provider (IDP)
 - Create additional accounts with your digital identities
-- Send and receive CCD, both via regular and shielded transfers
-- Check your account balances, both public and private
-- Transfer CCD between your balances (from public to private and from private to public)
+- Send and receive CCD
+- Check your account balances
 - Manage CCD validation and delegation
 - Check your CCD release schedule (only for buyers)
 - Manage your addresses in the address book for fast and easy transactions
 - Export and import backups of your accounts, identities, address book, and keys
-- Import both phrase and file-based wallets
-- Manage CIS-2 tokens
+- Import both phrase- and file-based wallets
+- Send, receive and view CIS-2 tokens
 - Browse owned NFTs from [Spaceseven](https://spaceseven.com/marketplace)
 - Connect to Concordium dApps with WalletConnect
 
