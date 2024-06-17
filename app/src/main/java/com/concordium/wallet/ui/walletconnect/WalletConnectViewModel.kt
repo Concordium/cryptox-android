@@ -324,17 +324,15 @@ private constructor(
         mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
     }
 
-    override fun onSessionProposal(
-        sessionProposal: Sign.Model.SessionProposal,
-    ) = viewModelScope.launch {
+    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) = viewModelScope.launch {
         defaultWalletDelegate.onSessionProposal(sessionProposal)
 
         // Find a single allowed namespace and chain.
         val singleNamespaceEntry =
             sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
-                namespace.chains.any { chain ->
+                namespace.chains?.any { chain ->
                     allowedChains.contains(chain)
-                }
+                } == true
             }
         val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
             allowedChains.contains(chain)
@@ -432,7 +430,6 @@ private constructor(
                         accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,
-                        extensions = null,
                     )
                 ),
             )

@@ -200,7 +200,15 @@ class WalletConnectView(
                         R.string.wallet_connect_error_not_seed_phrase_wallet
                 }
 
-                Toast.makeText(activity, errorRes, Toast.LENGTH_SHORT).show()
+                val duration = when (event.error) {
+                    WalletConnectViewModel.Error.ConnectionFailed ->
+                        Toast.LENGTH_LONG
+                    
+                    else ->
+                        Toast.LENGTH_SHORT
+                }
+
+                Toast.makeText(activity, errorRes, duration).show()
             }
 
             is WalletConnectViewModel.Event.ShowDetailsDialog -> {
