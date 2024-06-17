@@ -67,6 +67,14 @@
         <item name="android:textColor">@color/ccx_neutral_tint_1</item>
         <item name="android:paddingStart">16dp</item>
     </style>
+
+
+    <style name="CCX_CompoundButton_Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="trackTint">@color/ccx_switch_track_color</item>
+    </style>
+
     <!-- endregion Compound buttons-->
 
     <!-- region Dialogs -->

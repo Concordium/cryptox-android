@@ -37,10 +37,9 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/allow_switch"
-            style="@style/Widget.AppCompat.CompoundButton.Switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end" />
+            style="@style/CCX_CompoundButton_Switch"
+            android:layout_gravity="end"
+            android:checked="true" />
     </LinearLayout>
 
     <TextView
