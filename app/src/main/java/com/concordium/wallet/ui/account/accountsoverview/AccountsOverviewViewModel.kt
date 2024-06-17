@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -18,6 +19,7 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
+import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
 import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,10 +34,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
-
-    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
-    val newFinalizedAccountLiveData: LiveData<String>
-        get() = _newFinalizedAccountLiveData
 
     private var _stateLiveData = MutableLiveData<State>()
     val stateLiveData: LiveData<State>
@@ -56,11 +54,15 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val showUnshieldingNoticeLiveData: LiveData<Event<Boolean>>
         get() = _showUnshieldingNoticeLiveData
 
+    private val _listItemsLiveData = MutableLiveData<List<AccountsOverviewListItem>>()
+    val listItemsLiveData: LiveData<List<AccountsOverviewListItem>> = _listItemsLiveData
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    val accountListLiveData: LiveData<List<AccountWithIdentity>>
     private val keyCreationVersion: KeyCreationVersion
+    private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
+    private val accountsObserver: Observer<List<AccountWithIdentity>>
 
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT
@@ -71,7 +73,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityRepository = IdentityRepository(identityDao)
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         accountRepository = AccountRepository(accountDao)
-        accountListLiveData = accountRepository.allAccountsWithIdentity
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _waitingLiveData.postValue(false)
@@ -81,7 +82,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch(Dispatchers.IO) {
                     if (App.appCore.session.isAccountsBackupPossible()) {
-                        _newFinalizedAccountLiveData.postValue(accountName)
                         App.appCore.session.setAccountsBackedUp(false)
                     }
                 }
@@ -92,6 +92,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
         })
         keyCreationVersion = KeyCreationVersion(AuthPreferences(application))
+        ccdOnrampSiteRepository = CcdOnrampSiteRepository()
+        accountsObserver = Observer { accountsWithIdentity ->
+            postListItems(accountsWithIdentity)
+        }
+        accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
     }
 
     fun initialize() {
@@ -100,6 +105,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     override fun onCleared() {
         super.onCleared()
+        accountRepository.allAccountsWithIdentity.removeObserver(accountsObserver)
         accountUpdater.dispose()
     }
 
@@ -195,5 +201,21 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         if (anyAccountsMayNeedUnshielding) {
             _showUnshieldingNoticeLiveData.postValue(Event(true))
         }
+    }
+
+    private fun postListItems(accountsWithIdentity: List<AccountWithIdentity>) {
+        val items = mutableListOf<AccountsOverviewListItem>()
+
+        // Only show the onramp banner if has sites and there are finalized accounts.
+        if (ccdOnrampSiteRepository.hasSites
+            && accountsWithIdentity.any { it.account.transactionStatus == TransactionStatus.FINALIZED }
+        ) {
+            items.add(AccountsOverviewListItem.CcdOnrampBanner)
+        }
+
+        items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
+
+        _listItemsLiveData.value = items
+
     }
 }

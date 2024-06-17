@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- CCD listings – browse exchanges and services where CCD can be purchased
+
 ## [1.1.1] - 2024-06-11
 
 ### Changed

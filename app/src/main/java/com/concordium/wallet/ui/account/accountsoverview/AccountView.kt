@@ -43,6 +43,8 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
         binding.accountNameArea.setData(accountWithIdentity)
 
+        binding.onrampBtn.isEnabled =
+            accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
         binding.sendFundsBtn.isEnabled = !accountWithIdentity.account.readOnly
                 && accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
     }
@@ -52,6 +54,10 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         if (onItemClickListener != null && account != null) {
             binding.root.setOnClickListener {
                 onItemClickListener.onCardClicked(account)
+            }
+
+            binding.onrampBtn.setOnClickListener {
+                onItemClickListener.onOnrampClicked(account)
             }
 
             binding.sendFundsBtn.setOnClickListener {
@@ -66,6 +72,7 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
     interface OnItemClickListener {
         fun onCardClicked(account: Account)
+        fun onOnrampClicked(account: Account)
         fun onSendClicked(account: Account)
         fun onAddressClicked(account: Account)
     }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="51dp">
+
+    <TextView
+        android:id="@+id/account_name_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/CCX_Typography_H3"
+        android:textColor="@color/ccx_neutral_tint_1"
+        app:layout_constraintBottom_toTopOf="@id/identity_name_text_view"
+        app:layout_constraintEnd_toStartOf="@id/balance_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintWidth_min="128dp"
+        tools:text="Account with long name" />
+
+    <TextView
+        android:id="@+id/identity_name_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/CCX_Typography_Caption"
+        android:textColor="@color/ccx_neutral_tint_3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/arrow_image_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/account_name_text_view"
+        tools:text="Identity with long name" />
+
+    <TextView
+        android:id="@+id/balance_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/CCX_Typography_H3"
+        android:textColor="@color/ccx_neutral_tint_1"
+        app:layout_constraintEnd_toStartOf="@id/ccd_text_view"
+        app:layout_constraintStart_toEndOf="@id/account_name_text_view"
+        app:layout_constraintTop_toTopOf="@id/account_name_text_view"
+        app:layout_constraintWidth_default="wrap"
+        tools:text="100,000,00.00" />
+
+    <TextView
+        android:id="@+id/ccd_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/app_gstroke"
+        android:textAppearance="@style/CCX_Typography_Caption"
+        android:textColor="@color/ccx_neutral_tint_3"
+        app:layout_constraintBaseline_toBaselineOf="@id/balance_text_view"
+        app:layout_constraintEnd_toStartOf="@id/arrow_image_view" />
+
+    <ImageView
+        android:id="@+id/arrow_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cryptox_ico_chevron_right"
+        app:tint="@color/ccx_neutral_tint_3" />
+
+    <View
+        android:id="@+id/divider"
+        style="@style/CryptoX_Divider_Horizontal"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

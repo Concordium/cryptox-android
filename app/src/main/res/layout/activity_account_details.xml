@@ -34,62 +34,67 @@
                 android:id="@+id/wallet_info_card"
                 layout="@layout/wallet_info_card" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/buttonsBlock"
                 style="@style/CryptoX_Container_TextCard"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/onramp_btn"
+                    style="@style/CryptoX_ImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/ccd_onramp_title"
+                    android:tooltipText="@string/ccd_onramp_title"
+                    app:srcCompat="@drawable/ccx_ico_plus_circle" />
+
+                <View
+                    style="@style/CryptoX_Divider_Vertical"
+                    android:layout_marginVertical="12dp" />
 
                 <ImageButton
                     android:id="@+id/send_funds_btn"
                     style="@style/CryptoX_ImageButton"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:contentDescription="@string/account_details_send"
                     android:tooltipText="@string/account_details_send"
-                    app:layout_constraintEnd_toStartOf="@id/address_btn"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/cryptox_ico_share" />
+                    app:srcCompat="@drawable/ccx_ico_send" />
 
                 <View
                     style="@style/CryptoX_Divider_Vertical"
-                    android:layout_marginVertical="12dp"
-                    app:layout_constraintEnd_toStartOf="@id/address_btn"
-                    app:layout_constraintStart_toEndOf="@id/send_funds_btn"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginVertical="12dp" />
 
                 <ImageButton
                     android:id="@+id/address_btn"
                     style="@style/CryptoX_ImageButton"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:contentDescription="@string/account_details_address"
                     android:tooltipText="@string/account_details_address"
-                    app:layout_constraintEnd_toStartOf="@id/earn_btn"
-                    app:layout_constraintStart_toEndOf="@id/send_funds_btn"
-                    app:srcCompat="@drawable/cryptox_ico_qr" />
+                    app:srcCompat="@drawable/ccx_ico_qr" />
 
                 <View
                     style="@style/CryptoX_Divider_Vertical"
-                    android:layout_marginVertical="12dp"
-                    app:layout_constraintEnd_toStartOf="@id/earn_btn"
-                    app:layout_constraintStart_toEndOf="@id/address_btn"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginVertical="12dp" />
 
                 <ImageButton
                     android:id="@+id/earn_btn"
                     style="@style/CryptoX_ImageButton"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:contentDescription="@string/account_details_earn_rewards"
                     android:tooltipText="@string/account_details_earn_rewards"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/address_btn"
-                    app:srcCompat="@drawable/cryptox_ico_earn" />
+                    app:srcCompat="@drawable/ccx_ico_earn" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/account_details_pager"
