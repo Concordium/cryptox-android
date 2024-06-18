@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.TrackingPreferences
 import com.concordium.wallet.databinding.DialogTrackingPermissionBinding
 
 class TrackingPermissionDialog : AppCompatDialogFragment() {
@@ -15,8 +15,8 @@ class TrackingPermissionDialog : AppCompatDialogFragment() {
 
     private lateinit var binding: DialogTrackingPermissionBinding
 
-    private val authPreferences: AuthPreferences by lazy {
-        AuthPreferences(requireContext())
+    private val trackingPreferences: TrackingPreferences by lazy {
+        TrackingPreferences(requireContext())
     }
 
     override fun onCreateView(
@@ -34,12 +34,14 @@ class TrackingPermissionDialog : AppCompatDialogFragment() {
         }
 
         binding.denyButton.setOnClickListener {
-            authPreferences.setTrackingEnabled(false)
+            trackingPreferences.isTrackingEnabled = false
+            trackingPreferences.hasDecidedOnPermission = true
             dismiss()
         }
 
         binding.allowButton.setOnClickListener {
-            authPreferences.setTrackingEnabled(true)
+            trackingPreferences.isTrackingEnabled = true
+            trackingPreferences.hasDecidedOnPermission = true
             dismiss()
         }
     }

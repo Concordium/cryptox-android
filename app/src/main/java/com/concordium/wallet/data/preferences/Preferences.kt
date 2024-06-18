@@ -2,6 +2,7 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlin.reflect.KProperty
 
 open class Preferences {
 
@@ -16,6 +17,22 @@ open class Preferences {
 
     interface Listener {
         fun onChange()
+    }
+
+    protected inner class BooleanPreference(
+        private val key: String,
+        private val def: Boolean,
+    ) {
+        operator fun getValue(
+            preferences: Preferences,
+            property: KProperty<*>
+        ): Boolean = getBoolean(key, def)
+
+        operator fun setValue(
+            preferences: Preferences,
+            property: KProperty<*>,
+            arg: Boolean
+        ) = setBoolean(key, arg)
     }
 
     constructor(context: Context, preferenceName: String, preferenceMode: Int) {

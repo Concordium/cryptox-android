@@ -28,15 +28,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX =
             "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX"
         const val PREFKEY_LEGACY_SEED_HEX_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
-        const val PREFKEY_TRACKING_ENABLED = "TRACKING_ENABLED"
     }
-
-    fun setTrackingEnabled(value: Boolean) {
-        setBoolean(PREFKEY_TRACKING_ENABLED, value)
-    }
-
-    fun isTrackingEnabled() =
-        getBoolean(PREFKEY_TRACKING_ENABLED, false)
 
     fun setHasSetupUser(value: Boolean) {
         setBoolean(PREFKEY_HAS_SETUP_USER, value)
