@@ -1087,10 +1087,15 @@
     <string name="unshielding_insufficient_funds">Insufficient funds at disposal to pay the fee</string>
     <string name="tracking_preferences_title">Analytics</string>
     <string name="tracking_preferences_allow_title">Allow activity tracking</string>
-    <string name="tracking_preferences_allow_summary">
+    <string name="tracking_motivation">
         To improve the experience, we would like to track your activity in the app (but never your crypto).
         Of course, it is completely anonymous.
     </string>
+    <string name="tracking_preferences_allow_summary">@string/tracking_motivation</string>
+    <string name="tracking_permission_title">Help us improve</string>
+    <string name="tracking_permission_message">@string/tracking_motivation</string>
+    <string name="tracking_permission_allow">Allow activity tracking</string>
+    <string name="tracking_permission_deny">Ask not to track</string>
     <string name="ccd_onramp_title">CCD Listings</string>
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>

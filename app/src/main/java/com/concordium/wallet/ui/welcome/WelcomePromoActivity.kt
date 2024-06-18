@@ -17,7 +17,7 @@ import com.concordium.wallet.ui.passphrase.setup.OneStepSetupWalletActivity
 class WelcomePromoActivity :
     BaseActivity(R.layout.activity_welcome_promo),
     WelcomeAccountActivationLauncher,
-    WelcomeNotificationPermissionDialogListener {
+    WelcomeNotificationPermissionDialog.Listener {
 
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

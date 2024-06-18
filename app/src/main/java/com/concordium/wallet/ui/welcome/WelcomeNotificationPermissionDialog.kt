@@ -68,8 +68,12 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
         )
 
         dismiss()
-        (requireActivity() as? WelcomeNotificationPermissionDialogListener)
+        (requireActivity() as? Listener)
             ?.onNotificationPermissionDialogDismissed(isGranted)
+    }
+
+    interface Listener {
+        fun onNotificationPermissionDialogDismissed(isGranted: Boolean)
     }
 
     companion object {
