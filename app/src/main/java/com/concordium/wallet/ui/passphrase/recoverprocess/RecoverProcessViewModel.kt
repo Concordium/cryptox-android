@@ -32,7 +32,6 @@ import com.concordium.wallet.data.room.IdentityDao
 import com.concordium.wallet.data.room.IdentityWithAccounts
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -352,7 +351,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 if (accountRepository.findByAddress(account.address) == null) {
                     accountRepository.insert(account)
                     if (recipientRepository.getRecipientByAddress(account.address) == null) {
-                        recipientRepository.insert(Recipient(0, account.name, account.address))
+                        recipientRepository.insert(Recipient(account))
                     }
                     defaultFungibleTokensManager.addForAccount(account.address)
 

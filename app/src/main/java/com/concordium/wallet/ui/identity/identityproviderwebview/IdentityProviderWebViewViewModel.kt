@@ -278,7 +278,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             credNumber = nextCredNumber
         )
         accountRepository.insert(account)
-        recipientRepository.insert(Recipient(0, account.name, account.address))
+        recipientRepository.insert(Recipient(account))
     }
 
     private fun getIdentityObjectFromProvider(request: IdentityRequest) {

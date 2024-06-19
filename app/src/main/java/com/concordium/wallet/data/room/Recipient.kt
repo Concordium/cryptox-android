@@ -12,11 +12,12 @@ data class Recipient(
     var name: String,
     var address: String
 ) : Serializable {
-    fun displayName(): String {
-        if (name.isNullOrEmpty()) {
-            return address
-        } else {
-            return name
-        }
-    }
+    constructor(
+        account: Account,
+        id: Int = 0,
+    ) : this(
+        id = id,
+        name = account.getAccountName(),
+        address = account.address,
+    )
 }

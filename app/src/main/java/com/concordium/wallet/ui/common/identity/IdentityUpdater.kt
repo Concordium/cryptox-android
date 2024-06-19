@@ -126,13 +126,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                                             updateListener?.onNewAccountFinalized(account.name)
 
                                             // Add it to the recipient list.
-                                            recipientRepository.insert(
-                                                Recipient(
-                                                    0,
-                                                    account.name,
-                                                    account.address
-                                                )
-                                            )
+                                            recipientRepository.insert(Recipient(account))
 
                                             // Add default CIS-2 fungible tokens for it.
                                             defaultFungibleTokensManager.addForAccount(account.address)
