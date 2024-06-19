@@ -4,6 +4,7 @@
 
 ### Added
 - CCD listings – browse exchanges and services where CCD can be purchased
+- Optional anonymous analytics powered by Matomo
 
 ## [1.1.1] - 2024-06-11
 
