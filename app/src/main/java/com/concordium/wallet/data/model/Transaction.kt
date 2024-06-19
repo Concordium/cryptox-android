@@ -3,7 +3,7 @@ package com.concordium.wallet.data.model
 import com.concordium.wallet.util.CBORUtil
 import java.io.Serializable
 import java.math.BigInteger
-import java.util.*
+import java.util.Date
 
 
 data class Transaction(
@@ -28,10 +28,6 @@ data class Transaction(
     val details: TransactionDetails?,
     val encrypted: TransactionEncrypted?
 ) : Serializable {
-
-    fun isSameAccount() : Boolean {
-        return fromAddress == toAddress
-    }
 
     fun isRemoteTransaction(): Boolean {
         return transactionStatus == TransactionStatus.FINALIZED
@@ -79,27 +75,11 @@ data class Transaction(
         return total
     }
 
-    fun getTotalAmountForShielded() : BigInteger {
-        if(subtotal == null)
-            return BigInteger.ZERO
-        else{
-            return -subtotal
-        }
-    }
-
-    fun isReward(): Boolean {
-        return origin?.type == TransactionOriginType.Reward
-    }
-
-    fun isFinalizedReward(): Boolean {
-        return details?.type == TransactionType.FINALIZATIONREWARD && isReward()
-    }
-
     fun getDecryptedMemo(): String{
         return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
     }
 
     fun hasMemo(): Boolean{
-        return details != null && details.memo != null && details.memo.length > 0
+        return details?.memo?.isNotEmpty() == true
     }
 }
