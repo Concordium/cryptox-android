@@ -7,6 +7,7 @@
 
 ### Fixed
 - Visually increasing the balance after sending CCD instead of decreasing it
+- Adding newly created accounts to the address book with a blank name
 
 ## [1.1.1] - 2024-06-11
 

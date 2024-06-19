@@ -26,7 +26,12 @@ import com.concordium.wallet.data.export.AccountExport
 import com.concordium.wallet.data.export.EncryptedExportData
 import com.concordium.wallet.data.export.ExportData
 import com.concordium.wallet.data.export.IdentityExport
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.model.PossibleAccount
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
@@ -457,9 +462,7 @@ class ImportViewModel(application: Application) :
                     existingRecipient.address == it.address
                 }
             }
-            .map {
-                Recipient(0, name = it.address.substring(0, 8), address = it.address)
-            }
+            .map(::Recipient)
         recipientRepository.insertAll(readOnlyRecipients)
 
         // Add default fungible tokens for the accounts.

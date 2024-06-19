@@ -402,7 +402,7 @@ open class NewAccountViewModel(application: Application) :
         val accountId = accountRepository.insert(account)
         account.id = accountId.toInt()
         // Also save a recipient representing this account
-        recipientRepository.insert(Recipient(0, account.name, account.address))
+        recipientRepository.insert(Recipient(account))
         _gotoAccountCreatedLiveData.postValue(Event(account))
     }
 }

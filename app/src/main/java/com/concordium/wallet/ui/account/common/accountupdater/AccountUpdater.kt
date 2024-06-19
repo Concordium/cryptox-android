@@ -218,13 +218,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                             updateListener?.onNewAccountFinalized(request.account.name)
 
                             // Add it to the recipient list.
-                            recipientRepository.insert(
-                                Recipient(
-                                    0,
-                                    request.account.name,
-                                    request.account.address
-                                )
-                            )
+                            recipientRepository.insert(Recipient(request.account))
 
                             // Add default CIS-2 fungible tokens for it.
                             defaultFungibleTokensManager.addForAccount(request.account.address)
