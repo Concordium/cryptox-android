@@ -183,12 +183,15 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("start")
         supervisorScope {
             try {
-                val accountListCloned = accountList.toMutableList() // prevent ConcurrentModificationException
+                val accountListCloned =
+                    accountList.toMutableList() // prevent ConcurrentModificationException
                 for (account in accountListCloned) {
                     if ((account.transactionStatus == TransactionStatus.COMMITTED
                                 || account.transactionStatus == TransactionStatus.RECEIVED
                                 || account.transactionStatus == TransactionStatus.UNKNOWN
-                                || account.transactionStatus == TransactionStatus.ABSENT) && !TextUtils.isEmpty(account.submissionId)
+                                || account.transactionStatus == TransactionStatus.ABSENT) && !TextUtils.isEmpty(
+                            account.submissionId
+                        )
                     ) {
                         val deferred = async {
                             proxyRepository.getAccountSubmissionStatusSuspended(account.submissionId)
@@ -201,7 +204,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                val accountSubmissionStatusRequestListCloned = accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
+                val accountSubmissionStatusRequestListCloned =
+                    accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
                 for (request in accountSubmissionStatusRequestListCloned) {
                     Log.d("AccountSubmissionStatus Loop item start")
                     val submissionStatus = request.deferred.await()
@@ -283,13 +287,14 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         val submissionStatus = request.deferred.await()
 
                         request.transfer.transactionStatus = submissionStatus.status
-                        request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
+                        request.transfer.outcome =
+                            submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
                         if (submissionStatus.cost != null) {
                             request.transfer.cost = submissionStatus.cost
                         }
 
-                        //IF GTU Drop we set cost to 0
-                        if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
+                        // IF GTU Drop we set cost to 0
+                        if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress) {
                             request.transfer.cost = BigInteger.ZERO
                         }
 
@@ -339,42 +344,48 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                val accountBalanceRequestListCloned = accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
+                val accountBalanceRequestListCloned =
+                    accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
                 for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
-                    request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: BigInteger.ZERO
-                    request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: BigInteger.ZERO
+                    request.account.finalizedBalance =
+                        accountBalance.finalizedBalance?.getAmount() ?: BigInteger.ZERO
+                    request.account.currentBalance =
+                        accountBalance.currentBalance?.getAmount() ?: BigInteger.ZERO
                     request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
-                    request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
+                    request.account.accountDelegation =
+                        accountBalance.currentBalance?.accountDelegation
                     request.account.accountBaker = accountBalance.currentBalance?.accountBaker
 
-                    request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
+                    request.account.finalizedAccountReleaseSchedule =
+                        accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
 
-                        if(it.accountBaker != null){
+                        if (it.accountBaker != null) {
                             request.account.totalStaked = it.accountBaker.stakedAmount
-                        }
-                        else{
+                        } else {
                             request.account.totalStaked = BigInteger.ZERO
                         }
 
-                        if(it.accountBaker?.bakerId != null){
-                            request.account.bakerId=it.accountBaker.bakerId.toLong()
-                        }
-                        else{
+                        if (it.accountBaker?.bakerId != null) {
+                            request.account.bakerId = it.accountBaker.bakerId.toLong()
+                        } else {
                             request.account.bakerId = null
                         }
                     }
 
-                    if(areValuesDecrypted(request.account.finalizedEncryptedBalance)){
-                        request.account.encryptedBalanceStatus = ShieldedAccountEncryptionStatus.DECRYPTED
-                        request.account.finalizedEncryptedBalance = accountBalance.finalizedBalance?.getEncryptedAmount()
-                        request.account.currentEncryptedBalance = accountBalance.currentBalance?.getEncryptedAmount()
-                    }
-                    else{
-                        request.account.encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED
+                    if (areValuesDecrypted(request.account.finalizedEncryptedBalance)) {
+                        request.account.encryptedBalanceStatus =
+                            ShieldedAccountEncryptionStatus.DECRYPTED
+                        request.account.finalizedEncryptedBalance =
+                            accountBalance.finalizedBalance?.getEncryptedAmount()
+                        request.account.currentEncryptedBalance =
+                            accountBalance.currentBalance?.getEncryptedAmount()
+                    } else {
+                        request.account.encryptedBalanceStatus =
+                            ShieldedAccountEncryptionStatus.ENCRYPTED
                     }
 
                     Log.d("AccountBalance Loop item end - ${request.account.submissionId} ${accountBalance.currentBalance}")
@@ -388,13 +399,13 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     }
 
     private suspend fun areValuesDecrypted(finalizedEncryptedBalance: AccountEncryptedAmount?): Boolean {
-        if(finalizedEncryptedBalance != null){
+        if (finalizedEncryptedBalance != null) {
             val selfAmountDecrypted = lookupMappedAmount(finalizedEncryptedBalance.selfAmount)
-            if(selfAmountDecrypted == null){
+            if (selfAmountDecrypted == null) {
                 return false
             }
             finalizedEncryptedBalance.incomingAmounts.forEach {
-                if(lookupMappedAmount(it) == null){
+                if (lookupMappedAmount(it) == null) {
                     return false
                 }
             }
@@ -417,7 +428,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
             var accountShieldedBalance: BigInteger = BigInteger.ZERO
 
-            //Calculate unshielded
+            // Calculate unshielded
             var accountUnshieldedBalance: BigInteger = account.finalizedBalance
 
             for (transfer in transferList) {
@@ -428,66 +439,76 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                     if (transfer.outcome != TransactionOutcome.Reject) {
 
-                        //Unshielding
-                        if(transfer.transactionType == TransactionType.TRANSFER){
-                            accountUnshieldedBalance += transfer.amount
-                            accountShieldedBalance -= transfer.amount
-                        }
-                        //Shielding
-                        if(transfer.transactionType == TransactionType.TRANSFERTOENCRYPTED){
-                            accountUnshieldedBalance -= transfer.amount
-                            accountShieldedBalance += transfer.amount
-                        }
-                        //Plain transfer to other account
-                        if(transfer.transactionType == TransactionType.TRANSFERTOPUBLIC){
-                            accountUnshieldedBalance -= transfer.amount
-                        }
-                        //Encrypted transfer to other account
-                        if(transfer.transactionType == TransactionType.ENCRYPTEDAMOUNTTRANSFER){
-                            accountShieldedBalance -= transfer.amount
+                        when (transfer.transactionType) {
+
+                            // Plain transfer to other account
+                            TransactionType.TRANSFER -> {
+                                accountUnshieldedBalance -= transfer.amount
+                            }
+
+                            // Shielding
+                            TransactionType.TRANSFERTOENCRYPTED -> {
+                                accountUnshieldedBalance -= transfer.amount
+                                accountShieldedBalance += transfer.amount
+                            }
+
+                            // Unshielding
+                            TransactionType.TRANSFERTOPUBLIC -> {
+                                accountUnshieldedBalance += transfer.amount
+                                accountShieldedBalance -= transfer.amount
+                            }
+
+                            // Encrypted transfer to other account
+                            TransactionType.ENCRYPTEDAMOUNTTRANSFER -> {
+                                accountShieldedBalance -= transfer.amount
+                            }
+
+                            // Balance effects of other types
+                            // are either missing or not important
+                            else -> {}
                         }
                     }
                 }
-                transfer.transactionType
             }
 
-            //Calculate shielded
+            // Calculate shielded
             account.finalizedEncryptedBalance?.let {
                 val amount = lookupMappedAmount(it.selfAmount)
-                if(amount != null){
+                if (amount != null) {
                     accountShieldedBalance += amount.toBigInteger()
-                }
-                else{
+                } else {
                     containsEncrypted = ShieldedAccountEncryptionStatus.ENCRYPTED
                 }
                 it.incomingAmounts.forEach {
                     val amount = lookupMappedAmount(it)
-                    if(amount != null){
+                    if (amount != null) {
                         accountShieldedBalance += amount.toBigInteger()
-                    }
-                    else{
-                        if(containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED){
+                    } else {
+                        if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
                             containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
                         }
                     }
                 }
             }
 
-            //Calculate totals for account
+            // Calculate totals for account
             account.totalBalance = accountUnshieldedBalance + accountShieldedBalance
             account.totalUnshieldedBalance = accountUnshieldedBalance
             account.totalShieldedBalance = accountShieldedBalance
             account.encryptedBalanceStatus = containsEncrypted
 
-            //Calculate totals for all accounts
+            // Calculate totals for all accounts
             totalBalanceForAllAccounts += account.totalUnshieldedBalance
-            if(!account.readOnly){
-                totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+            if (!account.readOnly) {
+                totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(
+                    account.totalUnshieldedBalance
+                )
                 totalStakedForAllAccounts += account.totalStaked
-                totalDelegatingForAllAccounts += account.accountDelegation?.stakedAmount ?: BigInteger.ZERO
+                totalDelegatingForAllAccounts += account.accountDelegation?.stakedAmount
+                    ?: BigInteger.ZERO
             }
 
-            if(containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED){
+            if (containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED) {
                 totalContainsEncrypted = true
             }
 
