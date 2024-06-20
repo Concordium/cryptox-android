@@ -12,6 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.more.tracking.TrackingPermissionDialog
 import com.concordium.wallet.ui.passphrase.setup.OneStepSetupWalletActivity
 
@@ -53,8 +54,8 @@ class WelcomePromoActivity :
                 TrackingPermissionDialog()
                     .show(supportFragmentManager, TrackingPermissionDialog.TAG)
             } else if (viewModel.shouldShowNotificationPermissionDialog) {
-                WelcomeNotificationPermissionDialog()
-                    .show(supportFragmentManager, WelcomeNotificationPermissionDialog.TAG)
+                NotificationsPermissionDialog()
+                    .show(supportFragmentManager, NotificationsPermissionDialog.TAG)
             }
 
             App.appCore.tracker.welcomeHomeScreen()

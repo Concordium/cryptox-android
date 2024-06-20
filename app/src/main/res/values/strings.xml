@@ -961,11 +961,11 @@
     <string name="welcome_promo_ask_ai">Ask our AI assistant anything</string>
     <string name="welcome_promo_ask_ai_example">e.g “How do I stake my CCDs?”</string>
     <string name="welcome_promo_ai_prompt_hint">Type your prompt here…</string>
-    <string name="welcome_notification_permission_title">Keep up with everything that\'s happening here</string>
-    <string name="welcome_notification_permission_details">Find out when you get or receive payment requests.
+    <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
+    <string name="notifications_permission_details">Find out when you get or receive payment requests.
         Get updates on new features, discount and promo</string>
-    <string name="welcome_notification_permission_allow">Allow notifications</string>
-    <string name="welcome_notification_permission_deny">Not now</string>
+    <string name="notifications_permission_allow">Allow notifications</string>
+    <string name="notifications_permission_deny">Not now</string>
     <string name="welcome_activate_bottom_sheet_title">Activate account</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE WALLET</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_details">You have to complete 3 easy steps to create your wallet:</string>

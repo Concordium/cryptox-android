@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.welcome
+package com.concordium.wallet.ui.more.notifications
 
 import android.Manifest
 import android.os.Build
@@ -13,15 +13,15 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.R
 import com.concordium.wallet.data.preferences.NotificationsPreferences
-import com.concordium.wallet.databinding.DialogWelcomeNotificationPermissionBinding
+import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
 
-class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
+class NotificationsPermissionDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
         R.style.CCX_Dialog
 
-    private lateinit var binding: DialogWelcomeNotificationPermissionBinding
+    private lateinit var binding: DialogNotificationsPermissionBinding
 
     private val notificationsPreferences: NotificationsPreferences by lazy {
         NotificationsPreferences(requireContext())
@@ -40,7 +40,7 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogWelcomeNotificationPermissionBinding.inflate(inflater, container, false)
+        binding = DialogNotificationsPermissionBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -79,6 +79,8 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
             "received_result:" +
                     "\nisGranted=$isGranted"
         )
+
+        notificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
 
         dismiss()
     }

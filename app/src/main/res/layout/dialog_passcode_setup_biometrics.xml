@@ -9,7 +9,7 @@
         android:id="@+id/close_button"
         style="@style/CryptoX_ImageButton"
         android:layout_margin="8dp"
-        android:contentDescription="@string/welcome_notification_permission_deny"
+        android:contentDescription="@string/notifications_permission_deny"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

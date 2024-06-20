@@ -14,9 +14,9 @@ class NotificationsPreferences(context: Context) :
     var areCis2TxNotificationsEnabled: Boolean
             by BooleanPreference(PREFKEY_ARE_CIS2_TX_NOTIFICATIONS_ENABLED, false)
 
-    fun enableAll() {
-        areCcdTxNotificationsEnabled = true
-        areCis2TxNotificationsEnabled = true
+    fun enableAll(areNotificationsEnabled: Boolean) {
+        areCcdTxNotificationsEnabled = areNotificationsEnabled
+        areCis2TxNotificationsEnabled = areNotificationsEnabled
     }
 
     private companion object {
