@@ -27,6 +27,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
     init {
+        App.appCore.tracker.welcomePhrase()
         generatePhrase()
     }
 

@@ -30,9 +30,13 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             }
         }
         binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                App.appCore.tracker.welcomeCheckBoxChecked()
+            }
             binding.getStartedButton.isEnabled = isChecked
         }
         binding.getStartedButton.setOnClickListener {
+            App.appCore.tracker.welcomeGetStartedClicked()
             goToStart()
         }
 
@@ -40,6 +44,8 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         // hence we can skip this screen if the user has ever visited the next one.
         if (savedInstanceState == null && !App.appCore.session.hasCompletedInitialSetup) {
             goToStart()
+        } else if (savedInstanceState == null){
+            App.appCore.tracker.welcomeScreen()
         }
     }
 

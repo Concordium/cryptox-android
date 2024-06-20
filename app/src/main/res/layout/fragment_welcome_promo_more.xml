@@ -57,6 +57,16 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/tracking_layout"
+        style="@style/MoreOverviewItem">
+
+        <TextView
+            style="@style/MoreOverviewItemTextView"
+            android:text="@string/more_overview_item_analytics"
+            app:drawableStartCompat="@drawable/ccx_ico_chart_donut" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/about_layout"
         style="@style/MoreOverviewItem">
 

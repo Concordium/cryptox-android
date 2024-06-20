@@ -25,6 +25,9 @@ class PasscodeSetupViewModel(application: Application) : AndroidViewModel(applic
     val passcodeLength = 6
     private var createdPasscode: String? = null
 
+    init {
+        App.appCore.tracker.welcomePasscodeScreen()
+    }
 
     fun onPasscodeEntered(passcode: String) {
         require(passcode.length == passcodeLength) {
@@ -33,12 +36,14 @@ class PasscodeSetupViewModel(application: Application) : AndroidViewModel(applic
 
         when (state) {
             is State.Create -> {
+                App.appCore.tracker.welcomePasscodeEntered()
                 createdPasscode = passcode
                 mutableStateFlow.tryEmit(State.Repeat)
             }
 
             State.Repeat -> {
                 if (passcode == createdPasscode) {
+                    App.appCore.tracker.welcomePasscodeConfirmationEntered()
                     proceedWithConfirmedCreatedPasscode()
                 } else {
                     mutableStateFlow.tryEmit(

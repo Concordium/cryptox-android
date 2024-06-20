@@ -14,6 +14,7 @@ import androidx.core.text.toSpannable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWelcomePromoAccountsBinding
@@ -71,6 +72,7 @@ class WelcomePromoAccountsFragment : Fragment() {
             CurrencyUtil.formatGTU(promoViewModel.accountActivationReward, false)
 
         binding.activateButton.setOnClickListener {
+            App.appCore.tracker.welcomeHomeActivateAccountClicked()
             (activity as? WelcomeAccountActivationLauncher)
                 ?.proceedWithAccountActivation()
         }

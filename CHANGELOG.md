@@ -4,6 +4,7 @@
 
 ### Added
 - CCD listings – browse exchanges and services where CCD can be purchased
+- Optional anonymous analytics powered by Matomo
 
 ### Fixed
 - Visually increasing the balance after sending CCD instead of decreasing it

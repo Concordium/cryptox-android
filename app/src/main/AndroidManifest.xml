@@ -523,15 +523,19 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.more.tracking.TrackingPreferencesActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.onramp.CcdOnrampSitesActivity"
             android:launchMode="singleTop"
-            android:theme="@style/CCX_Screen"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.onramp.CcdOnrampAccountsActivity"
             android:launchMode="singleTop"
-            android:theme="@style/CCX_Screen"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
     </application>
 
 </manifest>

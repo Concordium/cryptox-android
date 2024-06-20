@@ -7,16 +7,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.more.tracking.TrackingPermissionDialog
 import com.concordium.wallet.ui.passphrase.setup.OneStepSetupWalletActivity
 
 class WelcomePromoActivity :
     BaseActivity(R.layout.activity_welcome_promo),
-    WelcomeAccountActivationLauncher,
-    WelcomeNotificationPermissionDialogListener {
+    WelcomeAccountActivationLauncher {
 
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -48,10 +49,15 @@ class WelcomePromoActivity :
         if (savedInstanceState == null) {
             showAccounts()
 
-            if (viewModel.shouldShowNotificationPermissionDialog) {
+            if (viewModel.shouldShowTrackingPermissionDialog) {
+                TrackingPermissionDialog()
+                    .show(supportFragmentManager, TrackingPermissionDialog.TAG)
+            } else if (viewModel.shouldShowNotificationPermissionDialog) {
                 WelcomeNotificationPermissionDialog()
                     .show(supportFragmentManager, WelcomeNotificationPermissionDialog.TAG)
             }
+
+            App.appCore.tracker.welcomeHomeScreen()
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
@@ -125,9 +131,6 @@ class WelcomePromoActivity :
         disallowAddToBackStack()
         replace(R.id.fragment_container, WelcomePromoMoreFragment())
     }
-
-    override fun onNotificationPermissionDialogDismissed(isGranted: Boolean) =
-        viewModel.onNotificationPermissionDialogDismissed()
 
     override fun loggedOut() {
         // do nothing as we are one of the root activities
