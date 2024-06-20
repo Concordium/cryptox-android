@@ -14,5 +14,4 @@ data class RemoteTransaction(
     val energy: Long?,
     val details: TransactionDetails,
     val encrypted: TransactionEncrypted?
-
 )

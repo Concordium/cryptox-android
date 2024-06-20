@@ -5,6 +5,9 @@
 ### Added
 - CCD listings – browse exchanges and services where CCD can be purchased
 
+### Fixed
+- Visually increasing the balance after sending CCD instead of decreasing it
+
 ## [1.1.1] - 2024-06-11
 
 ### Changed
