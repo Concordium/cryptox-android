@@ -22,6 +22,7 @@ import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
+import com.concordium.wallet.ui.more.notifications.NotificationsPreferencesActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
@@ -119,6 +120,10 @@ class MoreOverviewFragment : BaseFragment() {
 
         binding.addressBookLayout.setOnClickListener {
             gotoAddressBook()
+        }
+
+        binding.notificationsLayout.setOnClickListener {
+            openNotificationsPreferences()
         }
 
         binding.exportLayout.setOnClickListener {
@@ -288,7 +293,12 @@ class MoreOverviewFragment : BaseFragment() {
     }
 
     private fun openTrackingPreferences() {
-        val intent  = Intent(activity, TrackingPreferencesActivity::class.java)
+        val intent = Intent(activity, TrackingPreferencesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openNotificationsPreferences() {
+        val intent = Intent(activity, NotificationsPreferencesActivity::class.java)
         startActivity(intent)
     }
 

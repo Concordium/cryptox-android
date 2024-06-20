@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.NotificationPreferences
+import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.databinding.DialogWelcomeNotificationPermissionBinding
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
@@ -23,8 +23,8 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
 
     private lateinit var binding: DialogWelcomeNotificationPermissionBinding
 
-    private val notificationPreferences: NotificationPreferences by lazy {
-        NotificationPreferences(requireContext())
+    private val notificationsPreferences: NotificationsPreferences by lazy {
+        NotificationsPreferences(requireContext())
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -70,7 +70,7 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
         // Track showing the dialog once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
-            notificationPreferences.hasEverShownPermissionDialog = true
+            notificationsPreferences.hasEverShownPermissionDialog = true
         }
     }
 

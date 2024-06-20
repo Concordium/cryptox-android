@@ -536,6 +536,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.more.notifications.NotificationsPreferencesActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
