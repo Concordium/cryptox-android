@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
@@ -20,6 +19,7 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
@@ -29,6 +29,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
@@ -150,15 +151,24 @@ class AccountsOverviewFragment : BaseFragment() {
             showTotalBalance(totalBalance.totalBalanceForAllAccounts)
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
-        viewModel.showUnshieldingNoticeLiveData.observe(viewLifecycleOwner) {
-            childFragmentManager.fragments.forEach { fragment ->
-                if (fragment.tag == UnshieldingNoticeDialog.TAG && fragment is DialogFragment) {
-                    fragment.dismissAllowingStateLoss()
+        viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
+            when (event.contentIfNotHandled) {
+                AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
+                    UnshieldingNoticeDialog().showSingle(
+                        childFragmentManager,
+                        UnshieldingNoticeDialog.TAG
+                    )
                 }
-            }
 
-            UnshieldingNoticeDialog()
-                .show(childFragmentManager, UnshieldingNoticeDialog.TAG)
+                AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
+                    NotificationsPermissionDialog().showSingle(
+                        childFragmentManager,
+                        NotificationsPermissionDialog.TAG,
+                    )
+                }
+
+                null -> {}
+            }
         }
     }
 
@@ -240,14 +250,16 @@ class AccountsOverviewFragment : BaseFragment() {
             },
             onCcdOnrampBannerClicked = {
                 val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
-                intent.putExtras(CcdOnrampSitesActivity.getBundle(
-                    accountAddress = null,
-                ))
+                intent.putExtras(
+                    CcdOnrampSitesActivity.getBundle(
+                        accountAddress = null,
+                    )
+                )
                 startActivity(intent)
             }
         )
         binding.accountRecyclerview.adapter = adapter
-        viewModel.listItemsLiveData.observe(this, adapter::setData)
+        viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
 
         // Make the list height match the container height
         // to enable full hide of the header by scrolling.
