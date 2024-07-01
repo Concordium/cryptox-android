@@ -13,6 +13,7 @@ import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPermissionDialog
+import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.passphrase.setup.OneStepSetupWalletActivity
 
 class WelcomePromoActivity :
@@ -64,6 +65,11 @@ class WelcomePromoActivity :
             when (item.itemId) {
                 R.id.menuitem_accounts -> {
                     showAccounts()
+                    true
+                }
+
+                R.id.menuitem_news -> {
+                    showNews()
                     true
                 }
 
@@ -126,6 +132,11 @@ class WelcomePromoActivity :
             disallowAddToBackStack()
             replace(R.id.fragment_container, WelcomePromoAccountsFragment())
         }
+
+    private fun showNews() = supportFragmentManager.commit {
+        disallowAddToBackStack()
+        replace(R.id.fragment_container, NewsOverviewFragment())
+    }
 
     private fun showMore() = supportFragmentManager.commit {
         disallowAddToBackStack()

@@ -6,6 +6,11 @@
         android:title="@string/app_menu_item_accounts" />
 
     <item
+        android:id="@+id/menuitem_news"
+        android:icon="@drawable/ccx_ico_lightning"
+        android:title="@string/app_menu_item_news" />
+
+    <item
         android:id="@+id/menuitem_tokens"
         android:icon="@drawable/ccx_ico_nft"
         android:title="@string/app_menu_item_tokens" />

@@ -37,9 +37,9 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     private val _unshieldingVisibilityLiveData = MutableLiveData(false)
     val unshieldingVisibilityLiveData: LiveData<Boolean> = _unshieldingVisibilityLiveData
     private val _waitingLiveData = MutableLiveData<Boolean>()
+    val waitingLiveData: LiveData<Boolean> = _waitingLiveData
     private val _passwordAlterVisibilityLiveData = MutableLiveData<Boolean>()
     val passwordAlterVisibilityLiveData: LiveData<Boolean> = _passwordAlterVisibilityLiveData
-    val waitingLiveData: LiveData<Boolean> = _waitingLiveData
     private val mutableEventsFlow =
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow

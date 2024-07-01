@@ -20,6 +20,7 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
+import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
@@ -202,8 +203,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun replaceFragment(state: MainViewModel.State) {
         val fragment = when (state) {
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
-            MainViewModel.State.More -> MoreOverviewFragment()
+            MainViewModel.State.NewsOverview -> NewsOverviewFragment()
             MainViewModel.State.TokensOverview -> ProvidersOverviewFragment()
+            MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment)
     }
