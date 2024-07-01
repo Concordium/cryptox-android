@@ -9,6 +9,7 @@
         android:id="@+id/btnClearAll"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="4dp"
         android:gravity="start"
         android:padding="12dp"
@@ -24,6 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginEnd="16dp"
         android:gravity="end"
         android:padding="12dp"
         android:text="@string/pass_phrase_recover_input_clear_below"
@@ -37,6 +39,7 @@
         android:id="@+id/words_list_view"
         android:layout_width="0dp"
         android:layout_height="190dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="-1dp"
         android:background="@null"
@@ -70,6 +73,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="-1dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/words_list_view"
         app:layout_constraintEnd_toEndOf="parent"
@@ -131,6 +135,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         android:drawablePadding="6sp"
         android:fontFamily="@font/w400"
         android:text="@string/pass_phrase_try_another_word"
@@ -145,6 +150,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/error_text_view"
         style="@style/CryptoX_Container_Error.TextView"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
         android:text="@string/pass_phrase_incorrect"
         android:textAppearance="@style/CCX_Typography_Body"
@@ -153,21 +159,25 @@
         app:layout_constraintTop_toBottomOf="@id/words_list_view"
         tools:visibility="visible" />
 
-    <TextView
+    <FrameLayout
         android:id="@+id/paste_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        app:layout_goneMarginTop="24dp"
-        android:drawablePadding="6dp"
-        android:gravity="start"
-        android:padding="12dp"
-        android:text="@string/pass_phrase_recover_input_paste"
-        android:textAppearance="@style/CCX_Typography_Button_M"
-        android:textColor="@color/ccx_neutral_tint_1"
-        app:drawableStartCompat="@drawable/ccx_ico_notepad_16"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/error_text_view" />
+        android:background="#14181D"
+        android:paddingVertical="2dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="4dp"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="@string/pass_phrase_recover_input_paste"
+            android:textAppearance="@style/CCX_Typography_Button_M"
+            android:textColor="@color/ccx_neutral_tint_1"
+            app:drawableStartCompat="@drawable/ccx_ico_notepad_16" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

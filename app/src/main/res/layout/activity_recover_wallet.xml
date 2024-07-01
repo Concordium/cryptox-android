@@ -37,7 +37,6 @@
         android:name="com.concordium.wallet.ui.passphrase.recover.PassPhraseRecoverInputFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp" />
 
 </LinearLayout>

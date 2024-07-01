@@ -10,6 +10,10 @@
 - Visually increasing the balance after sending CCD instead of decreasing it
 - Adding newly created accounts to the address book with a blank name
 
+### Changed
+- The paste button on the recovery phrase input screen is now attached
+to the top of the keyboard hence remains always visible
+
 ## [1.1.1] - 2024-06-11
 
 ### Changed
