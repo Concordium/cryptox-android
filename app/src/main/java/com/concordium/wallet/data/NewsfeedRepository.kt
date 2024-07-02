@@ -4,7 +4,7 @@ import com.concordium.wallet.data.model.NewsfeedEntry
 import java.util.Date
 
 class NewsfeedRepository {
-    suspend fun getEntries(): List<NewsfeedEntry> {
+    suspend fun getArticles(): List<NewsfeedEntry.Article> {
         return listOf(
             NewsfeedEntry.Article(
                 title = "Concordium Becomes First Overseas Blockchain Platform to Join Japan Blockchain Association",

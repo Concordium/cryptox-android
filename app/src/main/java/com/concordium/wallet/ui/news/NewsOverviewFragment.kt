@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.news
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.NewsfeedEntry
 import com.concordium.wallet.databinding.FragmentNewsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -56,6 +59,19 @@ class NewsOverviewFragment : BaseFragment() {
 
     private fun initializeViews() {
         mainViewModel.setTitle(getString(R.string.news_overview_title))
+
+        val adapter = NewsfeedArticleItemAdapter(
+            onItemClicked = { item: NewsfeedArticleListItem ->
+                item.source?.also(::onArticleClicked)
+            },
+        )
+        binding.recyclerview.adapter = adapter
+        viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
+    }
+
+    private fun onArticleClicked(article: NewsfeedEntry.Article) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
+        startActivity(Intent.createChooser(browserIntent, article.title))
     }
 
     private fun showWaiting(waiting: Boolean) {
