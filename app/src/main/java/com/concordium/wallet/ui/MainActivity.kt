@@ -194,8 +194,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
-            R.id.menuitem_more -> MainViewModel.State.More
+            R.id.menuitem_news -> MainViewModel.State.NewsOverview
             R.id.menuitem_tokens -> MainViewModel.State.TokensOverview
+            R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
     }
