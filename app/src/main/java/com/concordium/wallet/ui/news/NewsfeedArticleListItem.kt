@@ -5,7 +5,7 @@ import java.util.Date
 
 class NewsfeedArticleListItem(
     val title: String,
-    val thumbnailUrl: String,
+    val thumbnailUrl: String?,
     val description: String?,
     val date: Date,
     val source: NewsfeedEntry.Article?,

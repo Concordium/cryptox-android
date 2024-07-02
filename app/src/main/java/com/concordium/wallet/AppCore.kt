@@ -14,6 +14,8 @@ import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.airdrop.AirDropBackend
 import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
+import com.concordium.wallet.data.backend.news.NewsfeedRssBackend
+import com.concordium.wallet.data.backend.news.NewsfeedRssBackendConfig
 import com.concordium.wallet.data.backend.tokens.TokensBackend
 import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.model.RawJson
@@ -31,6 +33,7 @@ class AppCore(val context: Context) {
     val proxyBackendConfig = ProxyBackendConfig(gson)
     private val tokenBackendConfig = TokensBackendConfig(gson)
     private val airdropBackendConfig = AirDropBackendConfig(gson)
+    private val newsfeedRssBackendConfig: NewsfeedRssBackendConfig by lazy(::NewsfeedRssBackendConfig)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
 
     private val trackingPreferences = TrackingPreferences(context)
@@ -55,6 +58,10 @@ class AppCore(val context: Context) {
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric
     private var authenticationManager: AuthenticationManager = authenticationManagerGeneric
     private var resetBiometricKeyNameAppendix: String = ""
+
+    fun getNewsfeedRssBackend(): NewsfeedRssBackend {
+        return newsfeedRssBackendConfig.backend
+    }
 
     fun getTokensBackend(): TokensBackend {
         return tokenBackendConfig.backend

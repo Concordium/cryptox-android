@@ -37,11 +37,18 @@ class NewsfeedArticleItemAdapter(
         with(holder.binding) {
             titleTextView.text = item.title
 
-            Glide.with(thumbnailImageView.context)
-                .load(item.thumbnailUrl)
-                .placeholder(R.color.ccx_neutral_tint_4)
-                .centerCrop()
-                .into(thumbnailImageView)
+            if (item.thumbnailUrl != null) {
+                thumbnailImageView.isVisible = true
+                Glide.with(thumbnailImageView.context)
+                    .load(item.thumbnailUrl)
+                    .placeholder(R.color.ccx_neutral_tint_5)
+                    .centerCrop()
+                    .into(thumbnailImageView)
+            } else {
+                thumbnailImageView.isVisible = false
+                Glide.with(thumbnailImageView.context)
+                    .clear(thumbnailImageView)
+            }
 
             if (item.description != null) {
                 descriptionTextView.isVisible = true
