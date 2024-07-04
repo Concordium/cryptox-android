@@ -26,6 +26,9 @@ constructor(
         val description: String,
         @JsonProperty("thumbnail", namespace = "media")
         val thumbnail: Thumbnail?,
+        /**
+         * RFC-822 (RFC-1123) date.
+         */
         @JsonProperty("pubDate")
         val pubDate: String,
     ) {
