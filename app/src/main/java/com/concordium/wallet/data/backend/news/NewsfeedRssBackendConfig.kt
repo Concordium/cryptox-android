@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.backend.news
 
 import com.concordium.wallet.AppConfig
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
 import com.concordium.wallet.data.backend.OfflineMockInterceptor
 import com.ctc.wstx.stax.WstxInputFactory
@@ -19,8 +20,7 @@ class NewsfeedRssBackendConfig {
 
     init {
         backend = NewsfeedRssBackend(
-            // TODO: Move to build config
-            articlesFeedUrl = "https://concordium-4926ab-5553023-28e7dbd644046.webflow.io/article/rss.xml",
+            articlesFeedUrl = BuildConfig.URL_NEWSFEED_ARTICLES_RSS,
             okHttpClient = initializeOkkHttp(),
             xmlMapper = initializeXmlMapper(),
         )
