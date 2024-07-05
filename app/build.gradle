@@ -41,7 +41,7 @@ android {
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
-        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://concordium-4926ab-5553023-28e7dbd644046.webflow.io/article/rss.xml\"")
+        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://www.concordium.com/test-collection-for-oleg/rss.xml\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
