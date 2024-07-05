@@ -1122,4 +1122,6 @@
     <string name="ccd_onramp_banner_title">Where is CCD available?</string>
     <string name="ccd_onramp_banner_content">CCD is listed in the following exchanges and services. <u>See more</u></string>
     <string name="news_overview_title">Concordium News</string>
+    <string name="reload_data">Reload</string>
+    <string name="news_loading_failed">Failed loading news</string>
 </resources>

@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.backend.news.NewsfeedRepository
+import com.concordium.wallet.util.Log
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NewsOverviewViewModel(application: Application) : AndroidViewModel(application) {
@@ -18,18 +20,36 @@ class NewsOverviewViewModel(application: Application) : AndroidViewModel(applica
     val waitingLiveData: LiveData<Boolean> = _waitingLiveData
     private val _listItemsLiveData = MutableLiveData<List<NewsfeedArticleListItem>>()
     val listItemsLiveData: LiveData<List<NewsfeedArticleListItem>> = _listItemsLiveData
+    private val _isLoadingFailedVisibleLiveData = MutableLiveData(false)
+    val isLoadingFailedVisibleLiveData: LiveData<Boolean> = _isLoadingFailedVisibleLiveData
 
     init {
         loadNews()
     }
 
     private fun loadNews() = viewModelScope.launch {
-        val articles = newsfeedRepository.getArticles(
-            limit = ARTICLES_LIMIT
-        )
+        _waitingLiveData.postValue(true)
+        _isLoadingFailedVisibleLiveData.postValue(false)
 
-        _listItemsLiveData.postValue(articles.map(::NewsfeedArticleListItem))
+        try {
+            val articles = newsfeedRepository.getArticles(
+                limit = ARTICLES_LIMIT
+            )
+
+            _listItemsLiveData.postValue(articles.map(::NewsfeedArticleListItem))
+            _isLoadingFailedVisibleLiveData.postValue(false)
+        } catch (e: Exception) {
+            Log.e("Failed loading news", e)
+
+            _isLoadingFailedVisibleLiveData.postValue(true)
+        }
+
         _waitingLiveData.postValue(false)
+    }
+
+
+    fun onReloadClicked() {
+        loadNews()
     }
 
     private companion object {

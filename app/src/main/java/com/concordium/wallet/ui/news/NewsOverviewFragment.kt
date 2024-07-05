@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
@@ -55,6 +56,11 @@ class NewsOverviewFragment : BaseFragment() {
                 showWaiting(waiting)
             }
         }
+
+        viewModel.isLoadingFailedVisibleLiveData.observe(viewLifecycleOwner) { isLoadingFailedVisible ->
+            binding.reloadButton.isVisible = isLoadingFailedVisible
+            binding.loadingFailedTextView.isVisible = isLoadingFailedVisible
+        }
     }
 
     private fun initializeViews() {
@@ -67,6 +73,10 @@ class NewsOverviewFragment : BaseFragment() {
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
+
+        binding.reloadButton.setOnClickListener {
+            viewModel.onReloadClicked()
+        }
     }
 
     private fun onArticleClicked(article: NewsfeedEntry.Article) {
