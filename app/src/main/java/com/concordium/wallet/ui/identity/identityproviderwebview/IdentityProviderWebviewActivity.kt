@@ -244,7 +244,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
 
     fun initViews() {
         val title =
-            viewModel.identityCreationData.identityProvider.ipInfo.ipDescription.name + " " +
+            viewModel.identityCreationData.identityProvider.displayName + " " +
                     getString(R.string.identity_provider_webview_title)
         setActionBarTitle(title)
     }

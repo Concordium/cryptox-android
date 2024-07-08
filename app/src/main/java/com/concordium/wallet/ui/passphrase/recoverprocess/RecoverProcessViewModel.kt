@@ -176,7 +176,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 }
             } else {
                 if (!recoverResponsePair.first)
-                    recoverProcessData.noResponseFrom.add(identityProvider.ipInfo.ipDescription.name)
+                    recoverProcessData.noResponseFrom.add(identityProvider.displayName)
                 increaseIdentityGap(identityProvider.ipInfo.ipDescription.url)
             }
         } else {

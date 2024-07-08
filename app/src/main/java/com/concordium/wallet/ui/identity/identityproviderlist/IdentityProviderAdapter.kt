@@ -35,8 +35,7 @@ class IdentityProviderAdapter(
             val image = getImageBitmap(identityProvider.metadata.icon)
             binding.logoImageview.setImageBitmap(image)
         }
-        val description = identityProvider.ipInfo.ipDescription
-        binding.headerTextview.text = description.name
+        binding.headerTextview.text = identityProvider.displayName
 
         // Click
         if (onItemClickListener != null) {
