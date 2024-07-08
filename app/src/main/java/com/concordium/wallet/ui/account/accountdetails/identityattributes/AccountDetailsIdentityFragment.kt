@@ -43,7 +43,7 @@ class AccountDetailsIdentityFragment : BaseFragment() {
 
         viewModel.identityLiveData.observe(viewLifecycleOwner) { identity ->
             identity?.let {
-                initIdentityAttributeList(identity.identityProvider.ipInfo.ipDescription.name)
+                initIdentityAttributeList(identity.identityProvider.displayName)
             }
         }
     }

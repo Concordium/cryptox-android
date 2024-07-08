@@ -6,4 +6,7 @@ data class IdentityProvider(
     val ipInfo: IdentityProviderInfo,
     val arsInfos: Map<String, ArsInfo>,
     val metadata: IdentityProviderMetaData
-) : Serializable
+) : Serializable {
+    val displayName: String
+        get() = metadata.display ?: ipInfo.ipDescription.name
+}
