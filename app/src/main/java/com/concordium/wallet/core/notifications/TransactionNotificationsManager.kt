@@ -9,6 +9,7 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -31,6 +32,9 @@ class TransactionNotificationsManager(
         get() = notificationsManager.areNotificationsEnabled()
 
     private val areCcdTxNotificationsEnabled: Boolean
+        get() = areNotificationsEnabled && notificationsPreferences.areCcdTxNotificationsEnabled
+
+    private val areCis2TxNotificationsEnabled: Boolean
         get() = areNotificationsEnabled && notificationsPreferences.areCcdTxNotificationsEnabled
 
     @SuppressLint("MissingPermission")
@@ -71,6 +75,51 @@ class TransactionNotificationsManager(
             .build()
 
         if (areCcdTxNotificationsEnabled) {
+            notificationsManager.notify(reference.hashCode(), notification)
+        } else {
+            Log.d("Skip notify as disabled")
+        }
+
+        return notification
+    }
+
+    @SuppressLint("MissingPermission")
+    fun notifyCis2Transaction(
+        receivedAmount: BigInteger,
+        token: Token,
+        reference: Any,
+        account: Account,
+    ): Notification {
+        ensureChannel()
+
+        val notification = NotificationCompat.Builder(
+            context,
+            CHANNEL_ID
+        )
+            .setContentTitle(
+                context.getString(
+                    R.string.template_transaction_received_notification_title,
+                    "${CurrencyUtil.formatGTU(receivedAmount, token)} ${token.symbol}"
+                )
+            )
+            .setContentText(context.getString(R.string.transaction_received_notification_text))
+            // White icon is used for Android 5 compatibility.
+            .setSmallIcon(R.drawable.cryptox_ico_ccd_light) // TODO: Must be a proper icon
+            .setAutoCancel(true)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    Intent(context, AccountDetailsActivity::class.java)
+                        .putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+                        .putExtra(AccountDetailsActivity.EXTRA_OPEN_TOKENS, true)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+            )
+            .build()
+
+        if (areCis2TxNotificationsEnabled) {
             notificationsManager.notify(reference.hashCode(), notification)
         } else {
             Log.d("Skip notify as disabled")
