@@ -52,7 +52,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         Log.d("TOKEN : ${viewModel.tokenData}")
         Log.d("ACCOUNT : ${viewModel.tokenData.account}")
 
-        val tokenName = viewModel.tokenData.selectedToken?.tokenMetadata?.name
+        val tokenName = viewModel.tokenData.selectedToken?.metadata?.name
         setActionBarTitle(
             getString(
                 R.string.cis_token_details_title,
@@ -85,7 +85,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             setBalance(token)
-            token.tokenMetadata?.let { tokenMetadata ->
+            token.metadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
                 setOwnership(token, tokenMetadata)
@@ -119,7 +119,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
     }
 
     private fun setBalance(token: Token) {
-        binding.tokenAmount.text = CurrencyUtil.formatGTU(token.totalBalance, token)
+        binding.tokenAmount.text = CurrencyUtil.formatGTU(token.balance, token)
     }
 
     private fun setTokenId(tokenId: String) {
@@ -140,7 +140,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         if (tokenMetadata.unique == true) {
             binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
             binding.includeAbout.ownership.text =
-                if (token.totalBalance != BigInteger.ZERO)
+                if (token.balance != BigInteger.ZERO)
                     getString(R.string.cis_owned)
                 else
                     getString(R.string.cis_not_owned)

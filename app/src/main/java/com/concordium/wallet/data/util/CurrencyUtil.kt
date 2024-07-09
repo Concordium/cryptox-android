@@ -25,8 +25,8 @@ object CurrencyUtil {
         var decimals = 0
         var withGStroke = true
         token?.let {
-            withGStroke = it.isCCDToken
-            it.tokenMetadata?.decimals?.let { tokenDecimals ->
+            withGStroke = it.isCcdToken
+            it.metadata?.decimals?.let { tokenDecimals ->
                 decimals = tokenDecimals
             }
         }
@@ -76,7 +76,7 @@ object CurrencyUtil {
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? {
         var decimals = 0
         token?.let {
-            it.tokenMetadata?.decimals?.let { tokenDecimals ->
+            it.metadata?.decimals?.let { tokenDecimals ->
                 decimals = tokenDecimals
             }
         }

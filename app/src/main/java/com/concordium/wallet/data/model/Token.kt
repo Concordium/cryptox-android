@@ -10,17 +10,19 @@ import java.math.BigInteger
 data class Token(
     val id: String = "",
     var token: String = "",
-    val totalSupply: String = "",
-    var tokenMetadata: TokenMetadata? = null,
-    var isSelected: Boolean = false,
+    var metadata: TokenMetadata? = null,
     var contractIndex: String = "",
     var subIndex: String = "0",
-    var isCCDToken: Boolean = false,
-    var totalBalance: BigInteger = BigInteger.ZERO,
-    var atDisposal: BigInteger = BigInteger.ZERO,
     var contractName: String = "",
-    var symbol: String = "",
+    var balance: BigInteger = BigInteger.ZERO,
+    var isSelected: Boolean = false,
 ) : Serializable {
+
+    val symbol: String
+        get() = metadata?.symbol ?: ""
+
+    val isCcdToken: Boolean
+        get() = symbol == "CCD"
 
     constructor(
         contractToken: ContractToken,
@@ -28,10 +30,9 @@ data class Token(
     ) : this(
         id = contractToken.tokenId,
         token = contractToken.tokenId,
-        tokenMetadata = contractToken.tokenMetadata,
+        metadata = contractToken.tokenMetadata,
         contractIndex = contractToken.contractIndex,
         contractName = contractToken.contractName,
-        symbol = contractToken.tokenMetadata?.symbol ?: "",
         isSelected = isSelected,
     )
 
@@ -47,8 +48,7 @@ data class Token(
             return Token(
                 id = "",
                 token = "CCD",
-                symbol = "CCD",
-                tokenMetadata = TokenMetadata(
+                metadata = TokenMetadata(
                     symbol = "CCD",
                     decimals = 6,
                     unique = false,
@@ -57,13 +57,10 @@ data class Token(
                     thumbnail = null,
                     display = null,
                 ),
-                isCCDToken = true,
+                balance = atDisposal,
                 isSelected = false,
-                totalSupply = "",
                 contractIndex = "",
                 subIndex = "",
-                totalBalance = totalUnshieldedBalance,
-                atDisposal = atDisposal,
                 contractName = "",
             )
         }

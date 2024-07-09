@@ -45,7 +45,7 @@ class SendTokenReceiptActivity : BaseActivity(
 
     private fun initViews() {
         binding.transactionTitle.setText(
-            if (viewModel.sendTokenData.token!!.isCCDToken)
+            if (viewModel.sendTokenData.token!!.isCcdToken)
                 R.string.cis_transaction_send_funds
             else
                 R.string.cis_transaction_send_tokens
@@ -54,7 +54,7 @@ class SendTokenReceiptActivity : BaseActivity(
             .plus("\n\n")
             .plus(viewModel.sendTokenData.account?.address)
         binding.amountTitle.text =
-            if (viewModel.sendTokenData.token?.tokenMetadata?.unique == true)
+            if (viewModel.sendTokenData.token?.metadata?.unique == true)
                 getString(R.string.cis_token_quantity)
             else
                 getString(R.string.cis_amount)
@@ -84,14 +84,14 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.finish.setOnClickListener {
             onFinish()
         }
-        if (viewModel.sendTokenData.token!!.isCCDToken) {
+        if (viewModel.sendTokenData.token!!.isCcdToken) {
             binding.tokenTitle.visibility = View.GONE
             binding.token.visibility = View.GONE
         } else {
-            if (viewModel.sendTokenData.token?.tokenMetadata?.unique == true) {
-                binding.token.text = viewModel.sendTokenData.token?.tokenMetadata?.name
+            if (viewModel.sendTokenData.token?.metadata?.unique == true) {
+                binding.token.text = viewModel.sendTokenData.token?.metadata?.name
             } else {
-                val symbol: String = viewModel.sendTokenData.token!!.tokenMetadata?.symbol ?: ""
+                val symbol: String = viewModel.sendTokenData.token!!.metadata?.symbol ?: ""
                 if (symbol.isNotBlank())
                     binding.token.text = symbol
                 else {

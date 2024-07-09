@@ -69,15 +69,15 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
-        if (token.isCCDToken) {
+        if (token.isCcdToken) {
             holder.binding.title.text =
-                "${CurrencyUtil.formatGTU(token.totalBalance, true)} CCD"
+                "${CurrencyUtil.formatGTU(token.balance, true)} CCD"
 
             Glide.with(context)
                 .load(R.drawable.cryptox_ico_ccd_light_40)
                 .into(holder.binding.tokenIcon)
         } else {
-            token.tokenMetadata?.let { tokenMetadata ->
+            token.metadata?.let { tokenMetadata ->
                 if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
                     Glide.with(context)
                         .load(tokenMetadata.thumbnail.url)
@@ -92,14 +92,14 @@ class TokensAccountDetailsAdapter(
                     holder.binding.title.text = tokenMetadata.name
                     holder.binding.subtitle.isVisible = true
                     holder.binding.subtitle.text =
-                        if (token.totalBalance > BigInteger.ZERO)
+                        if (token.balance > BigInteger.ZERO)
                             context.getString(R.string.cis_owned)
                         else
                             context.getString(R.string.cis_not_owned)
                 } else {
                     holder.binding.title.text = "${
                         CurrencyUtil.formatGTU(
-                            token.totalBalance,
+                            token.balance,
                             token,
                         )
                     } ${token.symbol}"
@@ -109,7 +109,7 @@ class TokensAccountDetailsAdapter(
         }
 
         holder.binding.content.setOnClickListener {
-            if (!token.isCCDToken || !showManageButton)
+            if (!token.isCcdToken || !showManageButton)
                 tokenClickListener?.onRowClick(token)
         }
     }
