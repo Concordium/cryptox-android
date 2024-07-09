@@ -550,6 +550,13 @@
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
+    <string name="cis_newly_received_notice_title">You received a new token</string>
+    <string name="template_cis_newly_received_notice_message">
+        %1$s has not been listed in your wallet till this transaction.
+        You can accept it or remove it from the list.
+    </string>
+    <string name="cis_newly_received_notice_keep_token">Keep it</string>
+    <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
 
     <string name="pass_phrase_title">Your seed phrase</string>
     <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
