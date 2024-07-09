@@ -211,7 +211,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun loadTokensMetadata(tokensToUpdate: List<Token>) {
         val tokensByContract: Map<String, List<Token>> = tokensToUpdate
-            .filterNot(Token::isCcdToken)
+            .filterNot(Token::isCcd)
             .groupBy(Token::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
@@ -281,7 +281,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         accountAddress: String,
     ) {
         val tokensByContract: Map<String, List<Token>> = tokensToUpdate
-            .filterNot(Token::isCcdToken)
+            .filterNot(Token::isCcd)
             .groupBy(Token::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
@@ -443,7 +443,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                 contractIndex = selectedToken.contractIndex,
                                 contractName = selectedToken.contractName,
                                 accountAddress = account.address,
-                                isFungible = !(selectedToken.metadata?.unique ?: false),
+                                isFungible = !selectedToken.isUnique,
                                 tokenMetadata = selectedToken.metadata,
                             )
                         )

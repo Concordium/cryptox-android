@@ -20,9 +20,18 @@ data class Token(
 
     val symbol: String
         get() = metadata?.symbol ?: ""
+    
+    val name: String?
+        get() = metadata?.name
+    
+    val decimals: Int
+        get() = metadata?.decimals ?: 0
 
-    val isCcdToken: Boolean
-        get() = symbol == "CCD"
+    val isUnique: Boolean
+        get() = metadata?.unique == true
+    
+    val isCcd: Boolean
+        get() = id == "CCD"
 
     constructor(
         contractToken: ContractToken,
@@ -46,8 +55,7 @@ data class Token(
             val atDisposal = account.getAtDisposalWithoutStakedOrScheduled(totalUnshieldedBalance)
 
             return Token(
-                id = "",
-                token = "CCD",
+                id = "CCD",
                 metadata = TokenMetadata(
                     symbol = "CCD",
                     decimals = 6,
@@ -58,10 +66,6 @@ data class Token(
                     display = null,
                 ),
                 balance = atDisposal,
-                isSelected = false,
-                contractIndex = "",
-                subIndex = "",
-                contractName = "",
             )
         }
     }

@@ -69,7 +69,7 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
-        if (token.isCcdToken) {
+        if (token.isCcd) {
             holder.binding.title.text =
                 "${CurrencyUtil.formatGTU(token.balance, true)} CCD"
 
@@ -77,39 +77,39 @@ class TokensAccountDetailsAdapter(
                 .load(R.drawable.cryptox_ico_ccd_light_40)
                 .into(holder.binding.tokenIcon)
         } else {
-            token.metadata?.let { tokenMetadata ->
-                if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
-                    Glide.with(context)
-                        .load(tokenMetadata.thumbnail.url)
-                        .override(iconSize)
-                        .placeholder(ThemedCircularProgressDrawable(context))
-                        .fitCenter()
-                        .into(holder.binding.tokenIcon)
-                } else {
-                    holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
-                }
-                if (tokenMetadata.unique == true) {
-                    holder.binding.title.text = tokenMetadata.name
-                    holder.binding.subtitle.isVisible = true
-                    holder.binding.subtitle.text =
-                        if (token.balance > BigInteger.ZERO)
-                            context.getString(R.string.cis_owned)
-                        else
-                            context.getString(R.string.cis_not_owned)
-                } else {
-                    holder.binding.title.text = "${
-                        CurrencyUtil.formatGTU(
-                            token.balance,
-                            token,
-                        )
-                    } ${token.symbol}"
-                    holder.binding.subtitle.isVisible = false
-                }
+            val tokenMetadata = token.metadata
+            if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
+                Glide.with(context)
+                    .load(tokenMetadata.thumbnail.url)
+                    .override(iconSize)
+                    .placeholder(ThemedCircularProgressDrawable(context))
+                    .fitCenter()
+                    .into(holder.binding.tokenIcon)
+            } else {
+                holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
+            }
+
+            if (token.isUnique) {
+                holder.binding.title.text = token.name
+                holder.binding.subtitle.isVisible = true
+                holder.binding.subtitle.text =
+                    if (token.balance > BigInteger.ZERO)
+                        context.getString(R.string.cis_owned)
+                    else
+                        context.getString(R.string.cis_not_owned)
+            } else {
+                holder.binding.title.text = "${
+                    CurrencyUtil.formatGTU(
+                        token.balance,
+                        token,
+                    )
+                } ${token.symbol}"
+                holder.binding.subtitle.isVisible = false
             }
         }
 
         holder.binding.content.setOnClickListener {
-            if (!token.isCcdToken || !showManageButton)
+            if (!token.isCcd || !showManageButton)
                 tokenClickListener?.onRowClick(token)
         }
     }
