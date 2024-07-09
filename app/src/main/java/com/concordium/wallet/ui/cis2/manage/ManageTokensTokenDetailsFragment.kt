@@ -46,7 +46,7 @@ class ManageTokensTokenDetailsFragment : Fragment() {
         _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
-            token.tokenMetadata?.let { tokenMetadata ->
+            token.metadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
                 setDescription(tokenMetadata)

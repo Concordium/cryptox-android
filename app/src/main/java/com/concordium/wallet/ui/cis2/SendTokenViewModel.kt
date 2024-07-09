@@ -114,7 +114,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         chooseToken.observeForever { token ->
             sendTokenData.token = token
-            sendTokenData.max = if (token.isCCDToken) null else token.totalBalance
+            sendTokenData.max = if (token.isCcd) null else token.balance
             sendTokenData.fee = null
             sendTokenData.amount = BigInteger.ZERO
             feeReady.value = null
@@ -142,26 +142,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             sendTokenData.account?.let { account ->
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
-                    val tokens = contractTokensRepository.getTokens(
+                    val contractTokens = contractTokensRepository.getTokens(
                         accountAddress,
                         accountContract.contractIndex
                     )
-                    tokensFound.addAll(tokens.map {
-                        Token(
-                            it.tokenId,
-                            it.tokenId,
-                            "",
-                            it.tokenMetadata,
-                            false,
-                            it.contractIndex,
-                            "0",
-                            false,
-                            BigInteger.ZERO,
-                            BigInteger.ZERO,
-                            it.contractName,
-                            it.tokenMetadata?.symbol ?: ""
-                        )
-                    })
+                    tokensFound.addAll(contractTokens.map(::Token))
                 }
             }
             waiting.postValue(false)
@@ -240,7 +225,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             sendTokenData.receiver = input
 
             // Fee should be updated only when sending CIS-2.
-            if (sendTokenData.token?.isCCDToken == false) {
+            if (sendTokenData.token?.isCcd == false) {
                 loadTransactionFee()
             }
         } else {
@@ -256,7 +241,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         if (sendTokenData.token == null)
             return
 
-        if (sendTokenData.token!!.isCCDToken) {
+        if (sendTokenData.token!!.isCcd) {
             waiting.postValue(true)
             viewModelScope.launch {
                 getTransferCostCCD()
@@ -298,11 +283,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
         }
 
-        return if (sendTokenData.token!!.isCCDToken) {
+        return if (sendTokenData.token!!.isCcd) {
             atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
         } else {
             atDisposal >= (sendTokenData.fee
-                ?: BigInteger.ZERO) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
+                ?: BigInteger.ZERO) && sendTokenData.token!!.balance >= sendTokenData.amount
         }
     }
 
@@ -397,7 +382,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 sendTokenData.receiverPublicKey = it.accountEncryptionKey
                 sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
-                if (sendTokenData.token!!.isCCDToken)
+                if (sendTokenData.token!!.isCcd)
                     viewModelScope.launch {
                         createTransactionCCD(
                             credentialsOutput.accountKeys,
@@ -552,7 +537,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
         val createdAt = Date().time
-        val isCCDTransfer = sendTokenData.token!!.isCCDToken
+        val isCCDTransfer = sendTokenData.token!!.isCcd
 
         val amount = if (isCCDTransfer) sendTokenData.amount else BigInteger.ZERO
 

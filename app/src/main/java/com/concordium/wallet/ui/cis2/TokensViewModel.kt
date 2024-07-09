@@ -26,7 +26,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.math.BigInteger
 
 data class TokenData(
     var account: Account? = null,
@@ -112,18 +111,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             }
             tokens.addAll(contractTokens.map {
                 Token(
-                    it.tokenId,
-                    it.tokenId,
-                    "",
-                    it.tokenMetadata,
-                    true,
-                    it.contractIndex,
-                    tokenData.subIndex,
-                    false,
-                    BigInteger.ZERO,
-                    BigInteger.ZERO,
-                    it.contractName,
-                    it.tokenMetadata?.symbol ?: ""
+                    contractToken = it,
+                    isSelected = true,
                 )
             })
             waiting.postValue(false)
@@ -208,7 +197,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             tokenPageCursor = pageTokens.lastOrNull()?.id
 
             loadTokensMetadata(pageTokens)
-            val tokensWithMetadata = pageTokens.filter { it.tokenMetadata != null }
+            val tokensWithMetadata = pageTokens.filter { it.metadata != null }
             loadTokensBalances(
                 tokensToUpdate = tokensWithMetadata,
                 accountAddress = accountAddress,
@@ -222,7 +211,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun loadTokensMetadata(tokensToUpdate: List<Token>) {
         val tokensByContract: Map<String, List<Token>> = tokensToUpdate
-            .filterNot(Token::isCCDToken)
+            .filterNot(Token::isCcd)
             .groupBy(Token::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
@@ -257,7 +246,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                         val correspondingToken = contractTokens.first {
                                             it.token == metadataItem.tokenId
                                         }
-                                        correspondingToken.tokenMetadata = verifiedMetadata
+                                        correspondingToken.metadata = verifiedMetadata
                                         correspondingToken.contractName =
                                             ciS2TokensMetadata.contractName
                                     } catch (e: IncorrectChecksumException) {
@@ -292,8 +281,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         accountAddress: String,
     ) {
         val tokensByContract: Map<String, List<Token>> = tokensToUpdate
-            .filterNot { it.totalSupply == "0" }
-            .filterNot(Token::isCCDToken)
+            .filterNot(Token::isCcd)
             .groupBy(Token::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
@@ -318,7 +306,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             val correspondingToken = contractTokens.first {
                                 it.token == balanceItem.tokenId
                             }
-                            correspondingToken.totalBalance = balanceItem.balance.toBigInteger()
+                            correspondingToken.balance = balanceItem.balance.toBigInteger()
                         }
                     } catch (e: Throwable) {
                         Log.e(
@@ -368,7 +356,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     },
                 )
 
-                if (apparentToken.tokenMetadata != null) {
+                if (apparentToken.metadata != null) {
                     everFoundExactTokens.add(apparentToken)
                     exactToken = apparentToken
                     lookForExactToken.postValue(TOKENS_OK)
@@ -455,8 +443,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                 contractIndex = selectedToken.contractIndex,
                                 contractName = selectedToken.contractName,
                                 accountAddress = account.address,
-                                isFungible = !(selectedToken.tokenMetadata?.unique ?: false),
-                                tokenMetadata = selectedToken.tokenMetadata,
+                                isFungible = !selectedToken.isUnique,
+                                tokenMetadata = selectedToken.metadata,
                             )
                         )
 

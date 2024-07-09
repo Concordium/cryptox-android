@@ -128,8 +128,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         binding.sendAllButton.setOnClickListener {
             var decimals = 6
             viewModel.sendTokenData.token?.let { token ->
-                if (!token.isCCDToken)
-                    decimals = token.tokenMetadata?.decimals ?: 0
+                if (!token.isCcd)
+                    decimals = token.decimals
             }
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
@@ -250,19 +250,19 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             selectTokenBottomSheet?.dismiss()
             selectTokenBottomSheet = null
             binding.balanceTitle.text =
-                if (token.tokenMetadata?.unique == true)
+                if (token.isUnique)
                     getString(R.string.cis_token_quantity)
                 else
                     getString(R.string.cis_token_balance, token.symbol).trim()
-            val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
+            val decimals = token.decimals
             binding.balance.text =
-                CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
+                CurrencyUtil.formatGTU(token.balance, token.isCcd, decimals)
             binding.token.text =
-                if (token.tokenMetadata?.unique == true)
-                    token.tokenMetadata?.name
+                if (token.isUnique)
+                    token.name
                 else
                     token.symbol
-            if (token.tokenMetadata?.unique == true && token.totalBalance.signum() > 0) {
+            if (token.isUnique && token.balance.signum() > 0) {
                 // For owned NFTs, prefill the amount (quantity) which is 1
                 // for smoother experience.
                 binding.amount.setText("1")
@@ -272,9 +272,9 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             }
             binding.amount.decimals = decimals
             // For non-CCD tokens Max is always available.
-            binding.sendAllButton.isEnabled = !token.isCCDToken
+            binding.sendAllButton.isEnabled = !token.isCcd
 
-            if (!token.isCCDToken) {
+            if (!token.isCcd) {
                 binding.addMemo.visibility = View.GONE
             } else {
                 binding.addMemo.visibility = View.VISIBLE
