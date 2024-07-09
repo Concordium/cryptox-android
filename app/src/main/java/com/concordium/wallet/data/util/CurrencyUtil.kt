@@ -22,14 +22,8 @@ object CurrencyUtil {
         formatGTU(value.toBigInteger(), withGStroke, decimals)
 
     fun formatGTU(value: BigInteger, token: Token?): String {
-        var decimals = 0
-        var withGStroke = true
-        token?.let {
-            withGStroke = it.isCCDToken
-            it.tokenMetadata?.decimals?.let { tokenDecimals ->
-                decimals = tokenDecimals
-            }
-        }
+        val decimals = token?.decimals ?: 0
+        val withGStroke = token == null || token.isCcd
         return formatGTU(value, withGStroke, decimals)
     }
 
@@ -76,7 +70,7 @@ object CurrencyUtil {
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? {
         var decimals = 0
         token?.let {
-            it.tokenMetadata?.decimals?.let { tokenDecimals ->
+            it.metadata?.decimals?.let { tokenDecimals ->
                 decimals = tokenDecimals
             }
         }

@@ -43,7 +43,7 @@ class ManageTokensSelectionAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val token = dataSet[position]
-        val tokenMetadata = token.tokenMetadata
+        val tokenMetadata = token.metadata
 
         val thumbnailUrl = tokenMetadata?.thumbnail?.url?.takeUnless(String::isBlank)
         if (thumbnailUrl != null) {
@@ -63,24 +63,24 @@ class ManageTokensSelectionAdapter(
         holder.binding.title.text =
             tokenMetadata?.name ?: context.getString(R.string.cis_loading_metadata_progress)
 
-        if (token.tokenMetadata?.unique == true) {
+        if (token.metadata?.unique == true) {
             holder.binding.subtitle.text =
-                if (token.totalBalance != BigInteger.ZERO)
+                if (token.balance != BigInteger.ZERO)
                     context.getString(R.string.cis_owned)
                 else
                     context.getString(R.string.cis_not_owned)
         } else {
             val tokenBalance = CurrencyUtil.formatGTU(
-                token.totalBalance,
+                token.balance,
                 false,
-                token.tokenMetadata?.decimals ?: 0
+                token.metadata?.decimals ?: 0
             )
             holder.binding.subtitle.text =
                 context.getString(R.string.cis_search_balance, tokenBalance)
         }
 
         // Only allow selection when the metadata is loaded.
-        holder.binding.selection.isVisible = token.tokenMetadata != null
+        holder.binding.selection.isVisible = token.metadata != null
         holder.binding.selection.isChecked = token.isSelected
 
         holder.binding.root.setOnClickListener {
