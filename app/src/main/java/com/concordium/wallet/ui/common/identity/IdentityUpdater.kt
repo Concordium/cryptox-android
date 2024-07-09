@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.common.identity
 import android.app.Application
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -47,10 +46,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
         recipientRepository = RecipientRepository(recipientDao)
 
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }

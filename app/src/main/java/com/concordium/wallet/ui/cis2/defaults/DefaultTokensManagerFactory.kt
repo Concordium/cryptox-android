@@ -1,12 +1,10 @@
 package com.concordium.wallet.ui.cis2.defaults
 
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.ContractTokensRepository
 
 class DefaultTokensManagerFactory(
     private val contractTokensRepository: ContractTokensRepository,
-    private val accountContractRepository: AccountContractRepository,
 ) {
     private val testnetDefaultFungibleTokens: List<DefaultFungibleToken> = listOf(
         DefaultFungibleToken(
@@ -143,6 +141,5 @@ class DefaultTokensManagerFactory(
                 else -> emptyList()
             },
             contractTokensRepository = contractTokensRepository,
-            accountContractRepository = accountContractRepository,
         )
 }

@@ -5,7 +5,6 @@ import android.text.TextUtils
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.ErrorParser
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.EncryptedAmountRepository
@@ -90,10 +89,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         recipientRepository = RecipientRepository(recipientDao)
 
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }

@@ -4,13 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
@@ -61,7 +59,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
@@ -69,11 +67,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     private val contractTokensRepository: ContractTokensRepository by lazy {
         ContractTokensRepository(
             WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-        )
-    }
-    private val accountContractRepository: AccountContractRepository by lazy {
-        AccountContractRepository(
-            WalletDatabase.getDatabase(getApplication()).accountContractDao()
         )
     }
 
@@ -86,29 +79,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     ) {
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
-            val accountContracts = accountContractRepository.find(accountAddress)
-            val contractTokens = mutableListOf<ContractToken>()
-            accountContracts.forEach { accountContract ->
-                contractTokens.addAll(
-                    if (isFungible != null)
-                        contractTokensRepository.getTokens(
-                            accountAddress,
-                            accountContract.contractIndex,
-                            isFungible
-                        )
-                    else
-                        contractTokensRepository.getTokens(
-                            accountAddress,
-                            accountContract.contractIndex,
-                        )
-                )
-
-            }
             tokens.clear()
             if (isFungible == true) {
                 // On fungible tab we add CCD as default at the top
                 tokens.add(getCCDDefaultToken(accountAddress))
             }
+            val contractTokens = contractTokensRepository.getTokens(
+                accountAddress = accountAddress,
+                isFungible = isFungible,
+            )
             tokens.addAll(contractTokens.map {
                 Token(
                     contractToken = it,
@@ -385,15 +364,17 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             .forEach { it.isSelected = isSelectedNow }
     }
 
-    fun hasExistingTokens() {
-        tokenData.account?.let { account ->
-            viewModelScope.launch {
-                val existingAccountContract =
-                    accountContractRepository.find(account.address, tokenData.contractIndex)
-                hasExistingAccountContract.postValue(existingAccountContract != null)
+    fun checkExistingTokens() = viewModelScope.launch(Dispatchers.IO) {
+        tokenData.account.also { account ->
+            if (account != null) {
+                hasExistingTokens.postValue(
+                    contractTokensRepository.getTokens(
+                        accountAddress = account.address,
+                    ).isNotEmpty()
+                )
+            } else {
+                hasExistingTokens.postValue(false)
             }
-        } ?: run {
-            hasExistingAccountContract.postValue(false)
         }
     }
 
@@ -407,24 +388,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 var anyChanges = false
 
                 val selectedTokens = loadedTokens.filter(Token::isSelected)
-
-                // Ensure we have an AccountContract
-                // when there are potential tokens to add.
-                if (selectedTokens.isNotEmpty()) {
-                    val accountContract =
-                        accountContractRepository.find(account.address, tokenData.contractIndex)
-                    if (accountContract == null) {
-                        accountContractRepository.insert(
-                            AccountContract(
-                                id = 0,
-                                accountAddress = account.address,
-                                contractIndex = tokenData.contractIndex,
-                            )
-                        )
-
-                        anyChanges = true
-                    }
-                }
 
                 // Add each selected token if missing.
                 selectedTokens.forEach { selectedToken ->
@@ -462,28 +425,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
                 // Delete each loaded not selected token.
                 loadedNotSelectedTokenIds.forEach { loadedNotSelectedTokenId ->
-                    contractTokensRepository.find(
-                        account.address,
-                        tokenData.contractIndex,
-                        loadedNotSelectedTokenId
-                    )?.also {
-                        contractTokensRepository.delete(it)
-                        anyChanges = true
-                    }
-                }
-
-                // If there were tokens but all of them got deleted,
-                // delete the AccountContract as well.
-                val existingContractTokens =
-                    contractTokensRepository.getTokens(account.address, tokenData.contractIndex)
-                if (existingContractTokens.isNotEmpty()
-                    && loadedNotSelectedTokenIds.size == existingContractTokens.size
-                ) {
-                    accountContractRepository.find(account.address, tokenData.contractIndex)
-                        ?.also {
-                            accountContractRepository.delete(it)
-                            anyChanges = true
-                        }
+                    contractTokensRepository.delete(
+                        accountAddress = account.address,
+                        contractIndex = tokenData.contractIndex,
+                        tokenId = loadedNotSelectedTokenId
+                    )
+                    anyChanges = true
                 }
 
                 updateWithSelectedTokensDone.postValue(anyChanges)
@@ -522,23 +469,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) =
         viewModelScope.launch(Dispatchers.IO) {
-            val existingContractTokens =
-                contractTokensRepository.getTokens(accountAddress, contractIndex)
-
-            contractTokensRepository.find(accountAddress, contractIndex, tokenId)
-                ?.let { existingNotSelectedContractToken ->
-                    contractTokensRepository.delete(existingNotSelectedContractToken)
-
-                    if (existingContractTokens.size == 1) {
-                        val existingAccountContract =
-                            accountContractRepository.find(accountAddress, contractIndex)
-                        if (existingAccountContract == null) {
-                            nonSelected.postValue(true)
-                        } else {
-                            accountContractRepository.delete(existingAccountContract)
-                        }
-                    }
-                }
+            contractTokensRepository.delete(accountAddress, contractIndex, tokenId)
         }
 
     fun onFindTokensDialogDismissed() {

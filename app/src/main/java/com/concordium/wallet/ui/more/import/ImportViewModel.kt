@@ -13,7 +13,6 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.security.EncryptionException
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -106,10 +105,8 @@ class ImportViewModel(application: Application) :
         recipientRepository = RecipientRepository(recipientDao)
 
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }

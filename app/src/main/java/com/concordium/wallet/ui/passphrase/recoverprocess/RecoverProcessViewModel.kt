@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -95,10 +94,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
         recipientRepository = RecipientRepository(recipientDao)
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
