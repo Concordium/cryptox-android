@@ -26,7 +26,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.math.BigInteger
 
 data class TokenData(
     var account: Account? = null,
@@ -112,18 +111,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             }
             tokens.addAll(contractTokens.map {
                 Token(
-                    it.tokenId,
-                    it.tokenId,
-                    "",
-                    it.tokenMetadata,
-                    true,
-                    it.contractIndex,
-                    tokenData.subIndex,
-                    false,
-                    BigInteger.ZERO,
-                    BigInteger.ZERO,
-                    it.contractName,
-                    it.tokenMetadata?.symbol ?: ""
+                    contractToken = it,
+                    isSelected = true,
                 )
             })
             waiting.postValue(false)

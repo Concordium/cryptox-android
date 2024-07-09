@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.model
 
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.ContractToken
 import java.io.Serializable
 import java.math.BigInteger
 
@@ -13,13 +14,26 @@ data class Token(
     var tokenMetadata: TokenMetadata? = null,
     var isSelected: Boolean = false,
     var contractIndex: String = "",
-    var subIndex: String = "",
+    var subIndex: String = "0",
     var isCCDToken: Boolean = false,
     var totalBalance: BigInteger = BigInteger.ZERO,
     var atDisposal: BigInteger = BigInteger.ZERO,
     var contractName: String = "",
-    var symbol: String = ""
+    var symbol: String = "",
 ) : Serializable {
+
+    constructor(
+        contractToken: ContractToken,
+        isSelected: Boolean = false,
+    ) : this(
+        id = contractToken.tokenId,
+        token = contractToken.tokenId,
+        tokenMetadata = contractToken.tokenMetadata,
+        contractIndex = contractToken.contractIndex,
+        contractName = contractToken.contractName,
+        symbol = contractToken.tokenMetadata?.symbol ?: "",
+        isSelected = isSelected,
+    )
 
     companion object {
         /**
