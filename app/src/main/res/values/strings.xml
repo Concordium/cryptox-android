@@ -545,8 +545,8 @@
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_no_collectibles_added">No tokens have been added to this account yet</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
-    <string name="cis_delete_dialog_title">Confirm Delete!</string>
-    <string name="cis_delete_dialog_content">Delete Token from wallet?</string>
+    <string name="cis_delete_dialog_title">Confirm removal</string>
+    <string name="cis_delete_dialog_content">Delete this from wallet?</string>
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>

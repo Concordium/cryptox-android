@@ -13,6 +13,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -92,6 +93,11 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
+            }
+            if (token.isNewlyReceived) {
+                showNewlyReceivedNotice(
+                    tokenName = token.name ?: token.symbol
+                )
             }
         }
     }
@@ -206,9 +212,27 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         }
     }
 
+    private fun showNewlyReceivedNotice(tokenName: String) {
+        NewlyReceivedTokenNoticeDialog.newInstance(
+            NewlyReceivedTokenNoticeDialog.getBundle(
+                tokenName = tokenName,
+            )
+        ).showSingle(supportFragmentManager, NewlyReceivedTokenNoticeDialog.TAG)
+    }
+
     private fun initObservers() {
         viewModel.waiting.observe(this) { waiting ->
             showWaiting(waiting)
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            NewlyReceivedTokenNoticeDialog.ACTION_REQUEST,
+            this,
+        ) {_, bundle ->
+            val isKeepingToken = NewlyReceivedTokenNoticeDialog.getResult(bundle)
+            if (!isKeepingToken) {
+                showDeleteDialog()
+            }
         }
     }
 
