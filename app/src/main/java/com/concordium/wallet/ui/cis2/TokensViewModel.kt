@@ -408,6 +408,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                 accountAddress = account.address,
                                 isFungible = !selectedToken.isUnique,
                                 tokenMetadata = selectedToken.metadata,
+                                isNewlyReceived = false,
                             )
                         )
 

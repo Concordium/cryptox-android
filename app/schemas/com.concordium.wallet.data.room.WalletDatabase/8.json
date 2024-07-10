@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "41a23daf4e51ff54e438c904bfabc404",
+    "identityHash": "02cfe48a4a5d4a1ac9c8ce5e4784ac62",
     "entities": [
       {
         "tableName": "identity_table",
@@ -445,7 +445,7 @@
       },
       {
         "tableName": "contract_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `token_id` TEXT NOT NULL, `account_address` TEXT, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `contract_name` TEXT NOT NULL DEFAULT '')",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `contract_name` TEXT NOT NULL DEFAULT '', `token_id` TEXT NOT NULL, `account_address` TEXT, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `is_newly_received` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -458,6 +458,13 @@
             "columnName": "contract_index",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "contractName",
+            "columnName": "contract_name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "tokenId",
@@ -484,11 +491,11 @@
             "notNull": false
           },
           {
-            "fieldPath": "contractName",
-            "columnName": "contract_name",
-            "affinity": "TEXT",
+            "fieldPath": "isNewlyReceived",
+            "columnName": "is_newly_received",
+            "affinity": "INTEGER",
             "notNull": true,
-            "defaultValue": "''"
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -516,7 +523,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41a23daf4e51ff54e438c904bfabc404')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '02cfe48a4a5d4a1ac9c8ce5e4784ac62')"
     ]
   }
 }
