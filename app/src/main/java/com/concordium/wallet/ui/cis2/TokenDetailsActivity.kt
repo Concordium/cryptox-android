@@ -30,7 +30,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
     companion object {
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
-        const val DELETED = "DELETED"
+        const val CHANGED = "CHANGED"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +69,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenData.account)
             intent.putExtra(SendTokenActivity.TOKEN, viewModel.tokenData.selectedToken)
-            intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, AccountDetailsActivity::class.java.canonicalName)
+            intent.putExtra(
+                SendTokenActivity.PARENT_ACTIVITY,
+                AccountDetailsActivity::class.java.canonicalName
+            )
             startActivityForResultAndHistoryCheck(intent)
         }
         binding.includeButtons.receive.setOnClickListener {
@@ -95,11 +98,24 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
                 setDecimals(tokenMetadata)
             }
             if (token.isNewlyReceived) {
-                showNewlyReceivedNotice(
-                    tokenName = token.name ?: token.symbol
-                )
+                handleNewlyReceivedToken(token)
             }
         }
+    }
+
+    private fun handleNewlyReceivedToken(token: Token) {
+        showNewlyReceivedNotice(
+            tokenName = token.name ?: token.symbol
+        )
+        viewModel.unmarkNewlyReceivedToken(
+            viewModel.tokenData.account!!.address,
+            viewModel.tokenData.selectedToken!!.contractIndex,
+            viewModel.tokenData.selectedToken!!.id
+        )
+        setResult(
+            Activity.RESULT_OK,
+            Intent().putExtra(CHANGED, true)
+        )
     }
 
     private fun showDeleteDialog() {
@@ -113,9 +129,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
                 viewModel.tokenData.selectedToken!!.contractIndex,
                 viewModel.tokenData.selectedToken!!.id
             )
-            val intent = Intent()
-            intent.putExtra(DELETED, true)
-            setResult(Activity.RESULT_OK, intent)
+            setResult(
+                Activity.RESULT_OK,
+                Intent().putExtra(CHANGED, true)
+            )
             finish()
         }
         builder.setNegativeButton(getString(R.string.cis_delete_dialog_cancel)) { dialog, _ ->
@@ -228,7 +245,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         supportFragmentManager.setFragmentResultListener(
             NewlyReceivedTokenNoticeDialog.ACTION_REQUEST,
             this,
-        ) {_, bundle ->
+        ) { _, bundle ->
             val isKeepingToken = NewlyReceivedTokenNoticeDialog.getResult(bundle)
             if (!isKeepingToken) {
                 showDeleteDialog()

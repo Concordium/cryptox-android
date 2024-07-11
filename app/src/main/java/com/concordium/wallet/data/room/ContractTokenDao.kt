@@ -28,4 +28,7 @@ interface ContractTokenDao {
 
     @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :tokenId AND account_address = :accountAddress")
     suspend fun find(accountAddress: String, contractIndex: String, tokenId: String): ContractToken?
+
+    @Query("UPDATE contract_token_table SET is_newly_received = 0 WHERE contract_index = :contractIndex AND token_id = :tokenId AND account_address = :accountAddress")
+    suspend fun unmarkNewlyReceived(accountAddress: String, contractIndex: String, tokenId: String)
 }

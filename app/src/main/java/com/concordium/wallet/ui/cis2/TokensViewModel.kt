@@ -473,6 +473,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             contractTokensRepository.delete(accountAddress, contractIndex, tokenId)
         }
 
+    fun unmarkNewlyReceivedToken(accountAddress: String, contractIndex: String, tokenId: String) =
+        viewModelScope.launch {
+            contractTokensRepository.unmarkNewlyReceived(accountAddress, contractIndex, tokenId)
+        }
+
     fun onFindTokensDialogDismissed() {
         resetLookForTokens()
     }

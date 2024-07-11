@@ -351,10 +351,10 @@ class AccountDetailsActivity : BaseActivity(
     private val showTokenDetails =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getBooleanExtra(TokenDetailsActivity.DELETED, false)?.let { isDeleted ->
-                    if (isDeleted) {
-                        viewModelTokens.updateWithSelectedTokensDone.postValue(true)
-                    }
+                val isChanged =
+                    it.data?.getBooleanExtra(TokenDetailsActivity.CHANGED, false) == true
+                if (isChanged) {
+                    viewModelTokens.updateWithSelectedTokensDone.postValue(true)
                 }
             }
         }

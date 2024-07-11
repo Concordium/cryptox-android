@@ -33,4 +33,8 @@ class ContractTokensRepository(private val contractTokenDao: ContractTokenDao) {
     suspend fun delete(accountAddress: String, contractIndex: String, tokenId: String) {
         contractTokenDao.delete(accountAddress, contractIndex, tokenId)
     }
+
+    suspend fun unmarkNewlyReceived(accountAddress: String, contractIndex: String, tokenId: String) {
+        contractTokenDao.unmarkNewlyReceived(accountAddress, contractIndex, tokenId)
+    }
 }
