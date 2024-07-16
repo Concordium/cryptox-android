@@ -8,6 +8,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
@@ -60,6 +61,8 @@ class WelcomePromoActivity :
             App.appCore.tracker.welcomeHomeScreen()
         }
 
+        binding.bottomNavigationView.menu.findItem(R.id.menuitem_news).isVisible =
+            BuildConfig.SHOW_NEWSFEED
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menuitem_accounts -> {

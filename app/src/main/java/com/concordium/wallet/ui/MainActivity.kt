@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
@@ -161,6 +162,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun initializeViews() {
+        binding.bottomNavigationView.menu.findItem(R.id.menuitem_news).isVisible =
+            BuildConfig.SHOW_NEWSFEED
         binding.bottomNavigationView.setOnItemSelectedListener {
             onNavigationItemSelected(it)
         }
