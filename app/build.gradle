@@ -41,7 +41,7 @@ android {
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
-        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://www.concordium.com/test-collection-for-oleg/rss.xml\"")
+        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://www.concordium.com/cryptox-news/rss.xml\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
