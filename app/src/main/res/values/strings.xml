@@ -148,6 +148,11 @@
     <string name="identity_attribute_doc_expires_at">ID valid to</string>
     <string name="identity_attribute_national_id_no">National ID number</string>
     <string name="identity_attribute_tax_id_no">Tax ID number</string>
+    <string name="identity_attribute_lei">LEI-code</string>
+    <string name="identity_attribute_legal_name">Legal name</string>
+    <string name="identity_attribute_legal_country">Legal jurisdiction country</string>
+    <string name="identity_attribute_business_no">Business Number</string>
+    <string name="identity_attribute_registration_auth">Registration authority</string>
     <string name="identity_attribute_sex_not_known">Not known</string>
     <string name="identity_attribute_sex_male">Male</string>
     <string name="identity_attribute_sex_female">Female</string>
