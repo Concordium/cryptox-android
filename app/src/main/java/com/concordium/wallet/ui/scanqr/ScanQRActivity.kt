@@ -17,6 +17,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
+import com.google.zxing.client.android.Intents
 import com.google.zxing.integration.android.IntentIntegrator
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
@@ -58,7 +59,9 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         binding.scannerView.initializeFromIntent(
             IntentIntegrator(this)
                 .setBeepEnabled(false)
-                .setDesiredBarcodeFormats(listOf(BarcodeFormat.QR_CODE.name))
+                .setDesiredBarcodeFormats(BarcodeFormat.QR_CODE.name)
+                // Mixed scan enables both normal and inverted QR codes.
+                .addExtra(Intents.Scan.SCAN_TYPE, Intents.Scan.MIXED_SCAN)
                 .createScanIntent()
         )
         binding.scannerView.statusView.isVisible = false
