@@ -360,6 +360,11 @@
             android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.recipient.scanqr.NewScanQRActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.cis2.TokenDetailsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

@@ -31,7 +31,7 @@ import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.connect.ConnectActivity
-import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
+import com.concordium.wallet.ui.recipient.scanqr.NewScanQRActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.popup.Popup
@@ -222,9 +222,9 @@ abstract class BaseActivity(
     private val scanQrResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val qrData = data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)
-                val isAddContact = data?.getBooleanExtra(EXTRA_ADD_CONTACT, false)
+                val data = result.data?.extras
+                val qrData = data?.let(NewScanQRActivity.Companion::getScannedQrContent)
+                val isAddContact = data?.let(NewScanQRActivity.Companion::isAddContact)
                 if (qrData?.startsWith(Constants.QRPrefix.AIR_DROP) == true) { // airdrop://stage.spaceseven.cloud/api/v2/airdrop/register-wallet/3446112874593
                     Intent(applicationContext, AirdropActivity::class.java).also {
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -243,7 +243,7 @@ abstract class BaseActivity(
         }
 
     private fun startQrScanner() {
-        val intent = Intent(applicationContext, ScanQRActivity::class.java)
+        val intent = Intent(applicationContext, NewScanQRActivity::class.java)
         intent.putExtra(EXTRA_QR_CONNECT, true)
         scanQrResult.launch(intent)
     }

@@ -36,7 +36,7 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         // intent request code to handle updating play services if needed.
         private const val RC_HANDLE_GMS = 9001
         private const val INVALID_QR_STATE_TIMER = 500L
-        const val EXTRA_BARCODE = "EXTRA_BARCODE"
+        private const val EXTRA_BARCODE = "EXTRA_BARCODE"
         const val CURRENT_ACTION = "CURRENT_ACTION"
     }
 
