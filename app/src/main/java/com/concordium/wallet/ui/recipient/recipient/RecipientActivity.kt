@@ -10,7 +10,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.recipient.scanqr.NewScanQRActivity
+import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -53,7 +53,7 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
         if (requestCode == REQUEST_CODE_SCAN_QR) {
             if (resultCode == Activity.RESULT_OK) {
                 data?.extras
-                    ?.let(NewScanQRActivity::getScannedQrContent)
+                    ?.let(ScanQRActivity::getScannedQrContent)
                     ?.also { scannedQrContent ->
                         showAddress(scannedQrContent)
                     }
@@ -154,7 +154,7 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
     }
 
     private fun gotoScanBarCode() {
-        val intent = Intent(this, NewScanQRActivity::class.java)
+        val intent = Intent(this, ScanQRActivity::class.java)
         intent.putExtra("add_contact", true)
         startActivityForResult(intent, REQUEST_CODE_SCAN_QR)
     }

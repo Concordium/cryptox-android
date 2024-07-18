@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.recipient.scanqr
+package com.concordium.wallet.ui.scanqr
 
 import android.Manifest
 import android.app.Activity
@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ActivityNewScanQrBinding
+import com.concordium.wallet.databinding.ActivityScanQrBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.google.zxing.BarcodeFormat
@@ -24,9 +24,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class NewScanQRActivity : BaseActivity(R.layout.activity_new_scan_qr, R.string.scan_qr_title) {
+class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_title) {
 
-    private lateinit var binding: ActivityNewScanQrBinding
+    private lateinit var binding: ActivityScanQrBinding
     private var hasCameraPermission: Boolean = false
     private var qrScanIsRequired: Boolean = false
     private val isQrConnect: Boolean by lazy {
@@ -45,7 +45,7 @@ class NewScanQRActivity : BaseActivity(R.layout.activity_new_scan_qr, R.string.s
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityNewScanQrBinding.bind(findViewById(R.id.toastLayoutTopError))
+        binding = ActivityScanQrBinding.bind(findViewById(R.id.toastLayoutTopError))
 
         initQrScanner()
         cameraPermissionRequestLauncher.launch(Unit)

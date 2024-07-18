@@ -22,7 +22,7 @@ import com.concordium.wallet.databinding.ActivitySendTokenBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
-import com.concordium.wallet.ui.recipient.scanqr.NewScanQRActivity
+import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.KeyboardUtil
@@ -163,7 +163,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initializeScanQrCode() {
         binding.scanQr.setOnClickListener {
-            val intent = Intent(this, NewScanQRActivity::class.java)
+            val intent = Intent(this, ScanQRActivity::class.java)
             intent.putExtra(Constants.Extras.EXTRA_ADD_CONTACT, true)
             getResultScanQr.launch(intent)
         }
@@ -204,7 +204,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             result
                 .takeIf { it.resultCode == Activity.RESULT_OK }
                 ?.data?.extras
-                ?.let(NewScanQRActivity::getScannedQrContent)
+                ?.let(ScanQRActivity::getScannedQrContent)
                 ?.also { scannedQrContent ->
                     binding.receiver.setText(scannedQrContent)
                 }

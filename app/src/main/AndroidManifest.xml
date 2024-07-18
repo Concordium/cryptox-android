@@ -355,12 +355,7 @@
             android:parentActivityName=".ui.recipient.recipientlist.RecipientListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.recipient.scanqr.ScanQRActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.recipient.scanqr.NewScanQRActivity"
+            android:name=".ui.scanqr.ScanQRActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
             android:screenOrientation="portrait" />
