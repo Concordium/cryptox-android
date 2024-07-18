@@ -29,12 +29,9 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
 
     private lateinit var binding: ActivityScanQrBinding
     private var hasCameraPermission: Boolean = false
-    private var qrScanIsRequired: Boolean = false
+    private var isDecodingRequired: Boolean = false
     private val isQrConnect: Boolean by lazy {
         intent.getBooleanExtra(Constants.Extras.EXTRA_QR_CONNECT, false)
-    }
-    private val isAddContact: Boolean by lazy {
-        intent.getBooleanExtra(Constants.Extras.EXTRA_ADD_CONTACT, false)
     }
     private val cameraPermissionRequestLauncher =
         registerForActivityResult(
@@ -48,14 +45,15 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
 
         binding = ActivityScanQrBinding.bind(findViewById(R.id.toastLayoutTopError))
 
-        initQrScanner()
+        initScanner()
         cameraPermissionRequestLauncher.launch(Unit)
 
         hideActionBarBack(isVisible = true)
     }
 
-    private fun initQrScanner() {
-        qrScanIsRequired = true
+    private fun initScanner() {
+        isDecodingRequired = true
+
         binding.scannerView.initializeFromIntent(
             IntentIntegrator(this)
                 .setBeepEnabled(false)
@@ -67,23 +65,23 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         binding.scannerView.statusView.isVisible = false
     }
 
-    private fun resumeQrPreviewIfAllowed() {
+    private fun resumePreviewIfAllowed() {
         if (hasCameraPermission) {
             binding.scannerView.resume()
         }
     }
 
-    private fun resumeQrScanIfRequired() {
-        if (!qrScanIsRequired) {
-            Log.i("resumeQrScanIfRequired: not required")
+    private fun resumeDecodingIfRequired() {
+        if (!isDecodingRequired) {
+            Log.i("resumeDecodingIfRequired: not required")
             return
         }
 
-        Log.i("resumeQrScanIfRequired: resuming")
+        Log.i("resumeDecodingIfRequired: resuming")
 
         binding.scannerView.decodeSingle(object : BarcodeCallback {
             override fun barcodeResult(result: BarcodeResult) {
-                handleQrCodeContent(result.text)
+                handleDecodedContent(result.text)
             }
 
             override fun possibleResultPoints(resultPoints: MutableList<ResultPoint>?) {
@@ -92,40 +90,41 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         })
     }
 
-    fun handleQrCodeContent(content: String) {
-        qrScanIsRequired = false
+    fun handleDecodedContent(content: String) {
+        isDecodingRequired = false
 
-        lifecycleScope.launch {
-            Log.d("handleQrCodeContent: $content")
+        Log.d("handleDecodedContent: $content")
 
-            when {
-                // Whatever the connection screen wants.
-                isQrConnect ->
-                    goBackWithQrCodeContent(content)
+        when {
+            // Whatever the connection screen wants.
+            isQrConnect ->
+                finishWithResult(content)
 
-                // Valid account address.
-                App.appCore.cryptoLibrary.checkAccountAddress(content) ->
-                    goBackWithQrCodeContent(content)
+            // Valid account address.
+            App.appCore.cryptoLibrary.checkAccountAddress(content) ->
+                finishWithResult(content)
 
-                else ->
-                    showQrScanErrorAndRetry(getString(R.string.scan_qr_error_invalid_qr_code))
-            }
+            else ->
+                showDecodingErrorAndRetry(getString(R.string.scan_qr_error_invalid_qr_code))
         }
     }
 
-    private fun goBackWithQrCodeContent(content: String) {
-        Log.i("goBackWithQrCodeContent: $content")
+    private fun finishWithResult(content: String) {
+        Log.i("finishWithResult: $content")
 
         setResult(
             Activity.RESULT_OK,
             Intent()
-                .putExtra(Constants.Extras.EXTRA_ADD_CONTACT, isAddContact)
+                .putExtra(
+                    Constants.Extras.EXTRA_ADD_CONTACT,
+                    intent.getBooleanExtra(Constants.Extras.EXTRA_ADD_CONTACT, false)
+                )
                 .putExtra(Constants.Extras.EXTRA_SCANNED_QR_CONTENT, content)
         )
         finish()
     }
 
-    private fun goBackWithError(error: String) {
+    private fun finishWithError(error: String) {
         Toast.makeText(
             this,
             error,
@@ -134,26 +133,25 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         finish()
     }
 
-    private var retryQrScanJob: Job? = null
-    private fun showQrScanErrorAndRetry(error: String) {
-        Log.i("showQrScanErrorAndRetry")
+    private var retryDecodingJob: Job? = null
+    private fun showDecodingErrorAndRetry(error: String) {
+        Log.i("showDecodingErrorAndRetry")
 
-        retryQrScanJob?.cancel()
+        retryDecodingJob?.cancel()
 
         showError(error)
 
-        retryQrScanJob = lifecycleScope.launch {
-            delay(2000)
-
-            qrScanIsRequired = true
-            resumeQrScanIfRequired()
+        retryDecodingJob = lifecycleScope.launch {
+            delay(ERROR_TIMEOUT_MS)
+            isDecodingRequired = true
+            resumeDecodingIfRequired()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        resumeQrPreviewIfAllowed()
-        resumeQrScanIfRequired()
+        resumePreviewIfAllowed()
+        resumeDecodingIfRequired()
     }
 
     override fun onPause() {
@@ -163,13 +161,15 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
 
     private fun onCameraPermissionResult(isGranted: Boolean) {
         hasCameraPermission = isGranted
-        resumeQrPreviewIfAllowed()
+        resumePreviewIfAllowed()
         if (!isGranted) {
-            goBackWithError(getString(R.string.scan_qr_permission_camera_rationale))
+            finishWithError(getString(R.string.scan_qr_permission_camera_rationale))
         }
     }
 
     companion object {
+        private const val ERROR_TIMEOUT_MS = 2000L
+
         fun getScannedQrContent(result: Bundle) =
             checkNotNull(result.getString(Constants.Extras.EXTRA_SCANNED_QR_CONTENT)) {
                 "No scanned QR content in the result"
