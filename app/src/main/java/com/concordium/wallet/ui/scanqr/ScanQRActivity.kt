@@ -162,10 +162,9 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
     }
 
     private fun onCameraPermissionResult(isGranted: Boolean) {
-        hasCameraPermission = true
-        if (isGranted) {
-            resumeQrPreviewIfAllowed()
-        } else {
+        hasCameraPermission = isGranted
+        resumeQrPreviewIfAllowed()
+        if (!isGranted) {
             goBackWithError(getString(R.string.scan_qr_permission_camera_rationale))
         }
     }
