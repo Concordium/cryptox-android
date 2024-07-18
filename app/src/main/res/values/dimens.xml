@@ -9,7 +9,6 @@
     <dimen name="compact_layout_width">300dp</dimen>
 
     <!-- List items -->
-    <dimen name="list_item_horizontal_margin">16dp</dimen>
 
     <!-- Bottom navigation override to have more space between icon and text -->
     <dimen name="design_bottom_navigation_height" override="true">62dp</dimen>
@@ -19,7 +18,6 @@
 
     <!--Account details -->
     <dimen name="section_gtu_drop">16dp</dimen>
-    <dimen name="account_card_vertical_margin_half">4dp</dimen>
 
     <!--Transaction details -->
     <dimen name="account_release_schedule_inner_list_padding_top_bottom">8dp</dimen>
