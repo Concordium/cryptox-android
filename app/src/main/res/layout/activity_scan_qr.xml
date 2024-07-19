@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root_layout"
+    android:id="@+id/toastLayoutTopError"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,25 +14,13 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.concordium.wallet.ui.qr.CodeScannerView
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/scanner_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-        android:id="@+id/scanner_view"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:autoFocusButtonColor="@android:color/white"
-        app:autoFocusButtonVisible="false"
-        app:flashButtonColor="@android:color/white"
-        app:flashButtonVisible="false"
-        app:frameColor="@android:color/white"
-        app:frameCornersSize="50dp"
-        app:frameCornersRadius="0dp"
-        app:frameAspectRatioWidth="1"
-        app:frameAspectRatioHeight="1"
-        app:frameSize="0.75"
-        app:frameThickness="2dp"
-        app:maskColor="#77000000"/>
+        android:layout_height="0dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

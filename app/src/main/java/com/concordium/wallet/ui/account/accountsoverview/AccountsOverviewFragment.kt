@@ -247,7 +247,7 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         )
         binding.accountRecyclerview.adapter = adapter
-        viewModel.listItemsLiveData.observe(this, adapter::setData)
+        viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
 
         // Make the list height match the container height
         // to enable full hide of the header by scrolling.

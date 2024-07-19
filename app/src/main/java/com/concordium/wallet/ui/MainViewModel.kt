@@ -19,6 +19,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class State {
         AccountOverview,
+        NewsOverview,
         TokensOverview,
         More,
         ;
@@ -107,10 +108,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun stopIdentityUpdate() {
         identityUpdater.stop()
-    }
-
-    private fun isFirst(identityCount: Int): Boolean {
-        // If we are in the process of creating the first identity, there will be one identity saved at this point
-        return (identityCount <= 1)
     }
 }
