@@ -10,7 +10,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
+import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -52,9 +52,11 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
 
         if (requestCode == REQUEST_CODE_SCAN_QR) {
             if (resultCode == Activity.RESULT_OK) {
-                data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
-                    showAddress(barcode)
-                }
+                data?.extras
+                    ?.let(ScanQRActivity::getScannedQrContent)
+                    ?.also { scannedQrContent ->
+                        showAddress(scannedQrContent)
+                    }
             }
         }
     }

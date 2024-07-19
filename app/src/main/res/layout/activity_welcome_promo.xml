@@ -22,7 +22,7 @@
         android:background="#0DEBF0F0"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <com.concordium.wallet.uicore.view.NoBoldBottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

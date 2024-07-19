@@ -121,21 +121,6 @@
         <item name="android:background">@drawable/cryptox_bottom_sheet_background</item>
     </style>
 
-    <declare-styleable name="CodeScannerView">
-        <attr name="maskColor" format="color" />
-        <attr name="frameColor" format="color" />
-        <attr name="autoFocusButtonColor" format="color" />
-        <attr name="flashButtonColor" format="color" />
-        <attr name="autoFocusButtonVisible" format="boolean" />
-        <attr name="flashButtonVisible" format="boolean" />
-        <attr name="frameThickness" format="dimension" />
-        <attr name="frameCornersSize" format="dimension" />
-        <attr name="frameCornersRadius" format="dimension" />
-        <attr name="frameAspectRatioWidth" format="float" />
-        <attr name="frameAspectRatioHeight" format="float" />
-        <attr name="frameSize" format="float" />
-    </declare-styleable>
-
     <style name="MoreOverviewItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

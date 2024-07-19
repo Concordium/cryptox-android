@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
@@ -20,6 +21,7 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
+import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
@@ -160,6 +162,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun initializeViews() {
+        binding.bottomNavigationView.menu.findItem(R.id.menuitem_news).isVisible =
+            BuildConfig.SHOW_NEWSFEED
         binding.bottomNavigationView.setOnItemSelectedListener {
             onNavigationItemSelected(it)
         }
@@ -193,8 +197,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
-            R.id.menuitem_more -> MainViewModel.State.More
+            R.id.menuitem_news -> MainViewModel.State.NewsOverview
             R.id.menuitem_tokens -> MainViewModel.State.TokensOverview
+            R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
     }
@@ -202,8 +207,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun replaceFragment(state: MainViewModel.State) {
         val fragment = when (state) {
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
-            MainViewModel.State.More -> MoreOverviewFragment()
+            MainViewModel.State.NewsOverview -> NewsOverviewFragment()
             MainViewModel.State.TokensOverview -> ProvidersOverviewFragment()
+            MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment)
     }

@@ -25,13 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="barcode" />
-
         <activity
             android:name=".ui.connect.add_wallet.AddWalletNftActivity"
             android:exported="true"
@@ -362,7 +355,7 @@
             android:parentActivityName=".ui.recipient.recipientlist.RecipientListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.recipient.scanqr.ScanQRActivity"
+            android:name=".ui.scanqr.ScanQRActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
             android:screenOrientation="portrait" />
