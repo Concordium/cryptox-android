@@ -3,6 +3,7 @@
     <!-- App -->
     <string name="app_name">CryptoX Wallet</string>
     <string name="app_menu_item_accounts">Accounts</string>
+    <string name="app_menu_item_news">News</string>
     <string name="app_menu_item_tokens">NFT</string>
     <string name="app_menu_item_more">More</string>
     <string name="app_error_general">Unexpected error</string>
@@ -1120,4 +1121,7 @@
     <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
     <string name="ccd_onramp_banner_title">Where is CCD available?</string>
     <string name="ccd_onramp_banner_content">CCD is listed in the following exchanges and services. <u>See more</u></string>
+    <string name="news_overview_title">Concordium News</string>
+    <string name="reload_data">Reload</string>
+    <string name="news_loading_failed">Failed loading news</string>
 </resources>

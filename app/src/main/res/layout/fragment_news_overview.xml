@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.concordium.wallet.uicore.view.FadingEdgeRecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fadingEdge="vertical"
+        android:paddingBottom="16dp"
+        android:requiresFadingEdge="vertical"
+        android:scrollbars="none"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="2"
+        tools:listitem="@layout/list_item_newsfeed_article"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/progress"
+            layout="@layout/progress" />
+
+        <TextView
+            android:id="@+id/loading_failed_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:gravity="center"
+            android:text="@string/news_loading_failed"
+            android:textAppearance="@style/CCX_Typography_Body"
+            android:textColor="@color/ccx_neutral_tint_2" />
+
+        <TextView
+            android:id="@+id/reload_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/reload_data"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/CCX_Typography_Button_M"
+            android:textColor="@color/ccx_neutral_tint_1" />
+
+    </LinearLayout>
+</FrameLayout>

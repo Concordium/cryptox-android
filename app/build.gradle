@@ -41,6 +41,8 @@ android {
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
+        buildConfigField("boolean", "SHOW_NEWSFEED", "true")
+        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://www.concordium.com/cryptox-news/rss.xml\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -337,6 +339,10 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.1'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.10.1'
+
+    // Jackson XML
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.1'
+    implementation 'javax.xml.stream:stax-api:1.0-2'
 
     // Matomo analytics
     implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
