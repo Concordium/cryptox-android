@@ -21,7 +21,6 @@
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
     <string name="app_error_backend_account_does_not_exist">The account does not exist.</string>
     <string name="app_error_backend_unknown">Unknown backend error.</string>
-    <string name="app_version">Version %1$s</string>
     <string name="app_gstroke">CCD</string>
     <!-- Dialogs -->
     <string name="dialog_ok">OK</string>
@@ -356,10 +355,7 @@
     <string name="recipient_error_invalid_address">Invalid Address</string>
     <!-- Scan QR code -->
     <string name="scan_qr_title">Scan QR Code</string>
-    <string name="scan_qr_permission_camera_rationale_title">Permission</string>
     <string name="scan_qr_permission_camera_rationale">Permission to use the camera is necessary to scan QR codes</string>
-    <string name="scan_qr_error_no_camera_permission_title">Information</string>
-    <string name="scan_qr_error_no_camera_permission">The app does not have permission to use the camera and therefore cannot scan QR codes</string>
     <string name="scan_qr_error_invalid_qr_code">Invalid QR code</string>
     <string name="valid_special_chars_error_text"><![CDATA[The name can only contain letters, numbers, and these special characters: \"-\", \"_\", \",\", \".\", \"!\", \"?\". The name cannot be empty, or start or end with a space.]]></string>
     <string name="valid_special_chars_for_names"><![CDATA[-_, .!?]]></string>
@@ -1077,7 +1073,6 @@
     <string name="identity_proofs_membership_statement_description">This will prove that your %1$s is 1 of the following: %2$s</string>
     <string name="identity_proofs_non_membership_statement_description">This will prove that your %1$s is none of the following: %2$s</string>
     <string name="noCredentialsForThatIssuer">You do not hold any credentials from the issuer that the verifier requested.</string>
-    <string name="unshielding_accounts_title">Accounts</string>
     <string name="unshielding_accounts_subtitle">with shielded assets</string>
     <string name="unshielding_accounts_unshield">Unshield</string>
     <string name="unshielding_accounts_unshielded">Unshielded</string>
