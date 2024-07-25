@@ -338,6 +338,9 @@ dependencies {
 
     // Matomo analytics
     implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
+
+    // Push notifications
+    implementation 'com.google.firebase:firebase-messaging:24.0.0'
 }
 
 task printVersionName {
