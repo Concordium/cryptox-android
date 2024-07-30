@@ -60,7 +60,7 @@ class TransactionNotificationsManager(
             )
             .setContentText(context.getString(R.string.transaction_received_notification_text))
             // White icon is used for Android 5 compatibility.
-            .setSmallIcon(R.drawable.cryptox_ico_ccd_light) // TODO: Must be a proper icon
+            .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
             .setContentIntent(
                 PendingIntent.getActivity(
@@ -104,7 +104,7 @@ class TransactionNotificationsManager(
             )
             .setContentText(context.getString(R.string.transaction_received_notification_text))
             // White icon is used for Android 5 compatibility.
-            .setSmallIcon(R.drawable.cryptox_ico_ccd_light) // TODO: Must be a proper icon
+            .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
             .setContentIntent(
                 PendingIntent.getActivity(
@@ -135,12 +135,13 @@ class TransactionNotificationsManager(
                 NotificationManagerCompat.IMPORTANCE_DEFAULT
             )
                 .setName(context.getString(R.string.transaction_notifications_channel_name))
-                .setDescription(context.getString(R.string.transaction_notifications_channel_description))
                 .build()
         )
     }
 
-    private companion object {
+    companion object {
         private const val CHANNEL_ID = "transactions"
+        const val TYPE_CCD_TX = "ccd-tx"
+        const val TYPE_CIS2_TX = "cis2-tx"
     }
 }

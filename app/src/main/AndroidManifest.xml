@@ -25,6 +25,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="announcements">
+            <!-- See AnnouncementNotificationManager-->
+        </meta-data>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+
         <service
             android:name=".core.notifications.FcmNotificationsService"
             android:exported="false">
