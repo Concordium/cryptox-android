@@ -42,7 +42,7 @@ android {
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
         buildConfigField("boolean", "SHOW_NEWSFEED", "true")
-        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://www.concordium.com/cryptox-news/rss.xml\"")
+        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://concordium-new.webflow.io/cryptox-news-articles/rss.xml\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
