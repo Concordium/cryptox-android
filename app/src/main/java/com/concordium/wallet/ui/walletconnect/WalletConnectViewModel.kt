@@ -4,7 +4,6 @@ import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.concordium.sdk.crypto.SHA256
 import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
 import com.concordium.sdk.crypto.ed25519.ED25519SecretKey
 import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
@@ -20,6 +19,7 @@ import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
 import com.concordium.sdk.transactions.CredentialRegistrationId
+import com.concordium.sdk.transactions.MessageSigningDigest
 import com.concordium.sdk.types.AccountAddress
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
@@ -324,92 +324,93 @@ private constructor(
         mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
     }
 
-    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) = viewModelScope.launch {
-        defaultWalletDelegate.onSessionProposal(sessionProposal)
+    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) =
+        viewModelScope.launch {
+            defaultWalletDelegate.onSessionProposal(sessionProposal)
 
-        // Find a single allowed namespace and chain.
-        val singleNamespaceEntry =
-            sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
-                namespace.chains?.any { chain ->
-                    allowedChains.contains(chain)
-                } == true
+            // Find a single allowed namespace and chain.
+            val singleNamespaceEntry =
+                sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
+                    namespace.chains?.any { chain ->
+                        allowedChains.contains(chain)
+                    } == true
+                }
+            val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
+                allowedChains.contains(chain)
             }
-        val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
-            allowedChains.contains(chain)
-        }
 
-        val proposerPublicKey = sessionProposal.proposerPublicKey
+            val proposerPublicKey = sessionProposal.proposerPublicKey
 
-        if (singleNamespaceEntry == null || singleNamespaceChain == null) {
-            Log.e("cant_find_supported_chain")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.NoSupportedChains
+            if (singleNamespaceEntry == null || singleNamespaceChain == null) {
+                Log.e("cant_find_supported_chain")
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.NoSupportedChains
+                    )
+                )
+                rejectSession(
+                    proposerPublicKey,
+                    "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
+                )
+                return@launch
+            }
+
+            // Check if the proposer requests unsupported methods, and reject the session proposal
+            // if that is the case.
+            val requestedMethods = singleNamespaceEntry.value.methods
+            if (!allowedRequestMethods.containsAll(requestedMethods)) {
+                Log.e("Received an unsupported request method: $requestedMethods")
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.UnsupportedMethod
+                    )
+                )
+                rejectSession(
+                    proposerPublicKey,
+                    "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
+                )
+                return@launch
+            }
+
+            Log.d("loading_accounts")
+
+            val accounts = getAvailableAccounts()
+            if (accounts.isEmpty()) {
+                Log.d("there_are_no_accounts")
+                mutableEventsFlow.tryEmit(
+                    Event.ShowFloatingError(
+                        Error.NoAccounts
+                    )
+                )
+                rejectSession(
+                    proposerPublicKey,
+                    "The wallet does not contain any accounts to open a session for"
+                )
+                return@launch
+            }
+
+            this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
+            this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
+            this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
+            this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
+
+            // Initially select the account with the biggest balance.
+            val initiallySelectedAccount = accounts.maxBy { account ->
+                account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+            }
+
+            Log.d(
+                "handling_session_proposal:" +
+                        "\ninitiallySelectedAccountId=${initiallySelectedAccount.id}"
+            )
+
+            mutableStateFlow.tryEmit(
+                State.SessionProposalReview(
+                    selectedAccount = initiallySelectedAccount,
+                    appMetadata = AppMetadata(sessionProposal),
                 )
             )
-            rejectSession(
-                proposerPublicKey,
-                "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
-            )
-            return@launch
-        }
-
-        // Check if the proposer requests unsupported methods, and reject the session proposal
-        // if that is the case.
-        val requestedMethods = singleNamespaceEntry.value.methods
-        if (!allowedRequestMethods.containsAll(requestedMethods)) {
-            Log.e("Received an unsupported request method: $requestedMethods")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.UnsupportedMethod
-                )
-            )
-            rejectSession(
-                proposerPublicKey,
-                "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
-            )
-            return@launch
-        }
-
-        Log.d("loading_accounts")
-
-        val accounts = getAvailableAccounts()
-        if (accounts.isEmpty()) {
-            Log.d("there_are_no_accounts")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.NoAccounts
-                )
-            )
-            rejectSession(
-                proposerPublicKey,
-                "The wallet does not contain any accounts to open a session for"
-            )
-            return@launch
-        }
-
-        this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
-        this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
-        this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
-        this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
-
-        // Initially select the account with the biggest balance.
-        val initiallySelectedAccount = accounts.maxBy { account ->
-            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
-        }
-
-        Log.d(
-            "handling_session_proposal:" +
-                    "\ninitiallySelectedAccountId=${initiallySelectedAccount.id}"
-        )
-
-        mutableStateFlow.tryEmit(
-            State.SessionProposalReview(
-                selectedAccount = initiallySelectedAccount,
-                appMetadata = AppMetadata(sessionProposal),
-            )
-        )
-    }.let { /* Return nothing */ }
+        }.let { /* Return nothing */ }
 
     private suspend fun getAvailableAccounts(): List<Account> =
         accountRepository.getAllDone()
@@ -1415,17 +1416,9 @@ private constructor(
                     signMessageParams.data.encodeToByteArray()
             }
 
-            // The message signed the same way as in the Concordium browser wallet
-            // is prepended with the `account` address and 8 zero bytes.
-            // Accounts can either sign a regular transaction (in that case the prepend is
-            // `account` address and the nonce of the account which is by design >= 1)
-            // or sign a message (in that case the prepend is `account` address and 8 zero
-            // bytes). Hence, the 8 zero bytes ensure that the user does not accidentally
-            // sign a transaction. The account nonce is of type u64 (8 bytes).
-            val input = SHA256.hash(
-                AccountAddress.from(sessionRequestAccount.address).bytes
-                        + ByteArray(8)
-                        + message
+            val input = MessageSigningDigest.from(
+                AccountAddress.from(sessionRequestAccount.address),
+                message
             )
 
             ED25519SecretKey.from(signKeyHex)
