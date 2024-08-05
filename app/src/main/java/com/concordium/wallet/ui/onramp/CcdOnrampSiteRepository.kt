@@ -53,6 +53,12 @@ class CcdOnrampSiteRepository {
             logoUrl = "https://assets-global.website-files.com/64f060f3fc95f9d2081781db/660ef2975d8736c5529f54b9_LCX.jpg",
             type = CcdOnrampSite.Type.CEX,
         ),
+        CcdOnrampSite(
+            name = "Gate.io",
+            url = "https://www.gate.io/trade/CCD_USDT",
+            logoUrl = "https://cdn.prod.website-files.com/64f060f3fc95f9d2081781db/668529303de2213473aa1be0_1654851660739235057_downlod_gate1.svg",
+            type = CcdOnrampSite.Type.CEX,
+        ),
     )
 
     val testnetSites = listOf(
