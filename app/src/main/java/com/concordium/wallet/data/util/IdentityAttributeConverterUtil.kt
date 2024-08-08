@@ -7,34 +7,49 @@ import java.util.Locale
 
 object IdentityAttributeConverterUtil {
 
-    val visibleIdentityAttributes =
-        arrayListOf("countryOfResidence", "nationality", "idDocType", "idDocIssuer")
-
     fun convertAttribute(
         context: Context,
         attribute: Pair<String, String>
     ): Pair<String, String> {
-        return Pair(convertAttributeTag(context, attribute.first), convertAttributeValue(context, attribute.first, attribute.second))
+        return Pair(
+            convertAttributeTag(context, attribute.first),
+            convertAttributeValue(context, attribute.first, attribute.second)
+        )
     }
 
-    fun convertAttributeValue(context: Context, attributeTag: String, attributeValue: String): String {
+    fun convertAttributeValue(
+        context: Context,
+        attributeTag: String,
+        attributeValue: String
+    ): String {
         return when (attributeTag) {
             "sex" ->
-                    convertSex(context, attributeValue)
+                convertSex(context, attributeValue)
+
             "dob" ->
-                    DateTimeUtil.convertLongDate(attributeValue)
+                DateTimeUtil.convertLongDate(attributeValue)
+
             "countryOfResidence" ->
-                    getCountryName(attributeValue)
+                getCountryName(attributeValue)
+
             "nationality" ->
-                    getCountryName(attributeValue)
+                getCountryName(attributeValue)
+
             "idDocType" ->
-                    getDocType(context, attributeValue)
+                getDocType(context, attributeValue)
+
             "idDocIssuer" ->
-                    getCountryName(attributeValue)
+                getCountryName(attributeValue)
+
             "idDocIssuedAt" ->
-                    DateTimeUtil.convertLongDate(attributeValue)
+                DateTimeUtil.convertLongDate(attributeValue)
+
             "idDocExpiresAt" ->
-                    DateTimeUtil.convertLongDate(attributeValue)
+                DateTimeUtil.convertLongDate(attributeValue)
+
+            "legalCountry" ->
+                getCountryName(attributeValue)
+
             else ->
                 attributeValue
                     .ifEmpty {
@@ -45,32 +60,64 @@ object IdentityAttributeConverterUtil {
 
     fun convertAttributeTag(context: Context, tag: String): String {
         return when (tag) {
+            // Person:
+
             "firstName" ->
                 context.getString(R.string.identity_attribute_first_name)
+
             "lastName" ->
                 context.getString(R.string.identity_attribute_last_name)
+
             "sex" ->
                 context.getString(R.string.identity_attribute_sex)
+
             "dob" ->
                 context.getString(R.string.identity_attribute_birth_date)
+
             "countryOfResidence" ->
                 context.getString(R.string.identity_attribute_country_residence)
+
             "nationality" ->
                 context.getString(R.string.identity_attribute_nationality)
+
             "idDocType" ->
                 context.getString(R.string.identity_attribute_doc_type)
+
             "idDocNo" ->
                 context.getString(R.string.identity_attribute_doc_no)
+
             "idDocIssuer" ->
                 context.getString(R.string.identity_attribute_doc_issuer)
+
             "idDocIssuedAt" ->
                 context.getString(R.string.identity_attribute_doc_issued_at)
+
             "idDocExpiresAt" ->
                 context.getString(R.string.identity_attribute_doc_expires_at)
+
             "nationalIdNo" ->
                 context.getString(R.string.identity_attribute_national_id_no)
+
             "taxIdNo" ->
                 context.getString(R.string.identity_attribute_tax_id_no)
+
+            // Company:
+
+            "lei" ->
+                context.getString(R.string.identity_attribute_lei)
+
+            "legalName" ->
+                context.getString(R.string.identity_attribute_legal_name)
+
+            "legalCountry" ->
+                context.getString(R.string.identity_attribute_legal_country)
+
+            "businessNumber" ->
+                context.getString(R.string.identity_attribute_business_no)
+
+            "registrationAuth" ->
+                context.getString(R.string.identity_attribute_registration_auth)
+
             else -> tag
         }
     }
