@@ -11,7 +11,7 @@
 ### Fixed
 - Visually increasing the balance after sending CCD instead of decreasing it
 - Adding newly created accounts to the address book with a blank name
-- Fix incorrect text colors in dark theme
+- Incorrect text colors in dark theme
 
 ### Changed
 - The paste button on the recovery phrase input screen is now attached
