@@ -19,6 +19,7 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:navigationBarColor">@color/cryptox_gradient_main_start</item>
         <item name="android:statusBarColor">@color/cryptox_gradient_main_end</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 
     <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">

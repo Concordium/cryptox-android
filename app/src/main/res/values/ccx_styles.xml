@@ -179,6 +179,7 @@
             #0D0E12
         </item>
         <item name="android:windowBackground">@drawable/ccx_main_background</item>
+        <item name="android:forceDarkAllowed">false</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
     </style>
