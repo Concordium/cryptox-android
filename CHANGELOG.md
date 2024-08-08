@@ -6,6 +6,7 @@
 - CCD listings – browse exchanges and services where CCD can be purchased
 - Optional anonymous analytics powered by Matomo
 - Concordium newsfeed
+- Support for company identities created with Global FinReg
 
 ### Fixed
 - Visually increasing the balance after sending CCD instead of decreasing it
