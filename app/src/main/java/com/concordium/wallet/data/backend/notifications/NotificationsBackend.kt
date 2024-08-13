@@ -1,8 +1,15 @@
 package com.concordium.wallet.data.backend.notifications
 
+import retrofit2.http.Body
 import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface NotificationsBackend {
     @PUT("v1/device/{token}/subscription")
-    fun updateSubscription(request: UpdateSubscriptionRequest): Any
+    suspend fun updateSubscription(
+        @Path("token")
+        fcmToken: String,
+        @Body
+        request: UpdateSubscriptionRequest,
+    ): Any
 }

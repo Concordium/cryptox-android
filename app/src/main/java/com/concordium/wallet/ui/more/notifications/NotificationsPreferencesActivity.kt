@@ -72,7 +72,7 @@ class NotificationsPreferencesActivity : BaseActivity(
         }
 
         cis2TxTextView.setOnClickListener {
-            ccdTxSwitch.callOnClick()
+            cis2TxSwitch.callOnClick()
         }
 
         cis2TxSwitch.setOnClickListener {

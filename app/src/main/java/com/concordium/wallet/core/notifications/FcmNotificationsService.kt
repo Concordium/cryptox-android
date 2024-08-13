@@ -32,12 +32,24 @@ class FcmNotificationsService : FirebaseMessagingService() {
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
         ContractTokensRepository(contractTokenDao)
     }
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
 
-    override fun onNewToken(token: String) {
+    override fun onNewToken(token: String) = runBlocking(serviceCoroutineContext) {
         Log.d(
-            "token_generated:" +
+            "updating_subscriptions_with_new_token:" +
                     "\ntoken=$token"
         )
+
+        try {
+            updateNotificationsSubscriptionUseCase()
+        } catch (error: Exception){
+            Log.e(
+                "failed_updating_subscriptions",
+                error
+            )
+        }
     }
 
     override fun onMessageReceived(message: RemoteMessage) = runBlocking(serviceCoroutineContext) {
@@ -75,6 +87,9 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         notificationBody = notificationBody,
                         messageId = message.messageId,
                     )
+
+                else ->
+                    error("Unsupported message")
             }
 
             Log.d(
