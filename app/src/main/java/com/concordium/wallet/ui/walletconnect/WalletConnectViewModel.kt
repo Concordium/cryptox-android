@@ -25,13 +25,10 @@ import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
-import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
-import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.cryptolib.SignMessageOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
@@ -39,7 +36,6 @@ import com.concordium.wallet.data.cryptolib.X0
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountDataKeys
 import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
@@ -47,11 +43,9 @@ import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.data.util.TransactionCostCalculator
 import com.concordium.wallet.data.walletconnect.AccountTransactionParams
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.data.walletconnect.SignMessageParams
-import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
@@ -59,7 +53,6 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.R
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
-import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.concordium.wallet.util.toHex
@@ -69,16 +62,12 @@ import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import com.walletconnect.util.hexToBytes
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.math.BigInteger
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * A view model that handles WalletConnect pairing, session proposals and requests.
@@ -191,6 +180,19 @@ private constructor(
         isBusyFlow.combine(stateFlow) { isBusy, state ->
             !isBusy && state is State.SessionRequestReview && state.canApprove
         }
+
+    private val signTransactionRequestHandler: WalletConnectSignTransactionRequestHandler by lazy {
+        WalletConnectSignTransactionRequestHandler(
+            allowedAccountTransactionTypes = allowedAccountTransactionTypes,
+            respondSuccess = ::respondSuccess,
+            respondError = ::respondError,
+            emitEvent = mutableEventsFlow::tryEmit,
+            emitState = mutableStateFlow::tryEmit,
+            setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
+            proxyRepository = proxyRepository,
+            context = application,
+        )
+    }
 
     init {
         stateFlow.collect(viewModelScope) { state ->
@@ -622,77 +624,6 @@ private constructor(
         }
     }
 
-    private fun handleSignTransactionRequest(params: String) {
-        val sessionRequestAccountTransactionParams: AccountTransactionParams = try {
-            AccountTransactionParams.fromSessionRequestParams(params).also { parsedParams ->
-                check(parsedParams.type in allowedAccountTransactionTypes) {
-                    "Transaction type '${parsedParams.type}' is not supported"
-                }
-            }
-        } catch (error: Exception) {
-            Log.e(
-                "failed_parsing_session_request_params:" +
-                        "\nparams=$params",
-                error
-            )
-
-            respondError(
-                message = "Failed parse the request: $error"
-            )
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
-                )
-            )
-            return
-        }
-
-        val sessionRequestAccountTransactionPayload: AccountTransactionPayload? =
-            sessionRequestAccountTransactionParams.parsePayload()
-        if (sessionRequestAccountTransactionPayload == null) {
-            Log.e(
-                "failed_parsing_session_request_params_payload:" +
-                        "\npayload=${sessionRequestAccountTransactionParams.payload}"
-            )
-
-            respondError(
-                message = "Failed parsing the request params payload"
-            )
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
-                )
-            )
-            return
-        }
-
-        val senderAccountAddress = sessionRequestAccountTransactionParams.sender
-        if (senderAccountAddress != sessionRequestAccount.address) {
-            Log.e("Received a request to sign an account transaction for a different account than the one connected in the session: $senderAccountAddress")
-            respondError(message = "The request was for a different account than the one connected.")
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.AccountMismatch
-                )
-            )
-            return
-        }
-
-        this@WalletConnectViewModel.sessionRequestAccountTransactionParams =
-            sessionRequestAccountTransactionParams
-        this@WalletConnectViewModel.sessionRequestAccountTransactionPayload =
-            sessionRequestAccountTransactionPayload
-
-        Log.d(
-            "handling_session_request:" +
-                    "\nparams=$sessionRequestAccountTransactionParams"
-        )
-
-        onSignAndSendTransactionRequested()
-    }
-
     private fun handleSignMessage(params: String) = viewModelScope.launch {
         try {
             val signMessageParams = SignMessageParams.fromSessionRequestParams(
@@ -946,7 +877,13 @@ private constructor(
         this@WalletConnectViewModel.sessionRequestAccount = account
 
         when (method) {
-            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION -> handleSignTransactionRequest(params)
+            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
+                signTransactionRequestHandler.prepareReview(
+                    params = params,
+                    account = sessionRequestAccount,
+                    appMetadata = sessionRequestAppMetadata,
+                )
+
             REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
             REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
                 if (initializeProofRequestSession(params))
@@ -1015,143 +952,6 @@ private constructor(
             params = pendingRequest.params,
             peerMetadata = peerMetaData,
         )
-    }
-
-    private fun onSignAndSendTransactionRequested() {
-        loadTransactionRequestDataAndReview()
-    }
-
-    private fun loadTransactionRequestDataAndReview() = viewModelScope.launch {
-        val accountNonce: AccountNonce
-        val transactionCost: TransactionCost
-
-        Log.d("loading_data")
-
-        try {
-            accountNonce = try {
-                getSessionRequestAccountNonce()
-            } catch (error: Exception) {
-                Log.e("failed_loading_transaction_nonce", error)
-                throw error
-            }
-
-            transactionCost = try {
-                getSessionRequestTransactionCost()
-            } catch (error: Exception) {
-                Log.e("failed_loading_transaction_cost", error)
-                throw error
-            }
-        } catch (error: Exception) {
-            respondError(
-                message = "Failed loading transaction data: $error"
-            )
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.LoadingFailed
-                )
-            )
-
-            return@launch
-        }
-
-        Log.d(
-            "data_loaded:" +
-                    "\ncost=$transactionCost," +
-                    "\nnonce=$accountNonce"
-        )
-
-        val accountAtDisposalBalance =
-            sessionRequestAccount.getAtDisposalWithoutStakedOrScheduled(
-                sessionRequestAccount.totalUnshieldedBalance
-            )
-        val accountTransactionPayload = sessionRequestAccountTransactionPayload
-        sessionRequestTransactionCost = transactionCost
-        sessionRequestTransactionNonce = accountNonce
-
-        val reviewState = when (accountTransactionPayload) {
-            is AccountTransactionPayload.Transfer ->
-                State.SessionRequestReview.TransactionRequestReview(
-                    method = getApplication<Application>().getString(R.string.transaction_type_transfer),
-                    receiver = accountTransactionPayload.toAddress,
-                    amount = accountTransactionPayload.amount,
-                    estimatedFee = sessionRequestTransactionCost.cost,
-                    account = sessionRequestAccount,
-                    canShowDetails = false,
-                    isEnoughFunds = accountTransactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
-                    appMetadata = sessionRequestAppMetadata,
-                )
-
-            is AccountTransactionPayload.Update ->
-                State.SessionRequestReview.TransactionRequestReview(
-                    method = accountTransactionPayload.receiveName,
-                    receiver = accountTransactionPayload.address.run { "$index, $subIndex" },
-                    amount = accountTransactionPayload.amount,
-                    estimatedFee = sessionRequestTransactionCost.cost,
-                    account = sessionRequestAccount,
-                    canShowDetails = true,
-                    isEnoughFunds = accountTransactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
-                    appMetadata = sessionRequestAppMetadata,
-                )
-        }
-        mutableStateFlow.tryEmit(reviewState)
-    }
-
-    private suspend fun getSessionRequestTransactionCost(): TransactionCost =
-        when (val accountTransactionPayload = sessionRequestAccountTransactionPayload) {
-            is AccountTransactionPayload.Transfer ->
-                getSimpleTransferCost()
-
-            is AccountTransactionPayload.Update -> {
-                val chainParameters: ChainParameters =
-                    checkNotNull(proxyRepository.getChainParametersSuspended().body()) {
-                        "Failed loading chain parameters"
-                    }
-
-                val maxEnergy: Long =
-                    if (accountTransactionPayload.maxEnergy != null) {
-                        // Use the legacy total value if provided.
-                        accountTransactionPayload.maxEnergy
-                    } else if (accountTransactionPayload.maxContractExecutionEnergy != null) {
-                        // Calculate the total value locally if only the execution energy provided.
-                        // Max energy = contract execution energy + base transaction energy.
-                        accountTransactionPayload.maxContractExecutionEnergy +
-                                TransactionCostCalculator.getBaseCostEnergy(
-                                    transactionSize = TransactionCostCalculator.getContractTransactionSize(
-                                        receiveName = accountTransactionPayload.receiveName,
-                                        message = accountTransactionPayload.message,
-                                    ),
-                                )
-                    } else {
-                        error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
-                    }
-
-                TransactionCost(
-                    energy = maxEnergy,
-                    euroPerEnergy = chainParameters.euroPerEnergy,
-                    microGTUPerEuro = chainParameters.microGtuPerEuro,
-                )
-            }
-        }
-
-    private suspend fun getSimpleTransferCost(
-    ): TransactionCost = suspendCancellableCoroutine { continuation ->
-        val backendRequest = proxyRepository.getTransferCost(
-            type = ProxyRepository.SIMPLE_TRANSFER,
-            success = continuation::resume,
-            failure = continuation::resumeWithException,
-        )
-        continuation.invokeOnCancellation { backendRequest.dispose() }
-    }
-
-    private suspend fun getSessionRequestAccountNonce()
-            : AccountNonce = suspendCancellableCoroutine { continuation ->
-        val backendRequest = proxyRepository.getAccountNonce(
-            accountAddress = sessionRequestAccount.address,
-            success = continuation::resume,
-            failure = continuation::resumeWithException,
-        )
-        continuation.invokeOnCancellation { backendRequest.dispose() }
     }
 
     fun rejectSessionRequest() {
@@ -1241,7 +1041,7 @@ private constructor(
                     signRequestedMessage(accountKeys)
 
                 is State.SessionRequestReview.TransactionRequestReview ->
-                    signAndSubmitRequestedTransaction(accountKeys)
+                    signTransactionRequestHandler.signAndSubmitReviewedTransaction(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
                     val attributeRandomness = HashMap<String, AttributeRandomness?>()
@@ -1473,85 +1273,6 @@ private constructor(
         }
     }
 
-    private suspend fun signAndSubmitRequestedTransaction(accountKeys: AccountData) {
-        val accountTransactionPayload = sessionRequestAccountTransactionPayload
-
-        val accountTransactionInput = CreateAccountTransactionInput(
-            expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000,
-            from = sessionRequestAccount.address,
-            keys = accountKeys,
-            nonce = sessionRequestTransactionNonce.nonce,
-            payload = accountTransactionPayload,
-            type = when (accountTransactionPayload) {
-                is AccountTransactionPayload.Transfer ->
-                    "Transfer"
-
-                is AccountTransactionPayload.Update ->
-                    "Update"
-            },
-        )
-
-        val accountTransactionOutput =
-            App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
-        if (accountTransactionOutput == null) {
-            Log.e("failed_creating_transaction")
-            respondError(
-                message = "Failed creating transaction: crypto library internal error"
-            )
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.CryptographyFailed
-                )
-            )
-        } else {
-            val createTransferOutput = CreateTransferOutput(
-                transaction = accountTransactionOutput.transaction,
-                signatures = accountTransactionOutput.signatures,
-            )
-            submitTransaction(createTransferOutput)
-        }
-    }
-
-    private var submitTransactionRequest: BackendRequest<*>? = null
-    private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
-        mutableIsSubmittingTransactionFlow.tryEmit(true)
-
-        submitTransactionRequest?.dispose()
-        submitTransactionRequest = proxyRepository.submitTransfer(createTransferOutput,
-            { submissionData ->
-                Log.d(
-                    "transaction_submitted:" +
-                            "\nsubmissionId=${submissionData.submissionId}"
-                )
-                respondSuccess(
-                    result = Gson().toJson(TransactionSuccess(submissionData.submissionId))
-                )
-
-                mutableIsSubmittingTransactionFlow.tryEmit(false)
-                mutableStateFlow.tryEmit(
-                    State.TransactionSubmitted(
-                        submissionId = submissionData.submissionId,
-                        estimatedFee = sessionRequestTransactionCost.cost,
-                    )
-                )
-            },
-            { error ->
-                Log.e("failed_submitting_transaction", error)
-                respondError(
-                    message = "Failed submitting transaction: $error"
-                )
-
-                mutableIsSubmittingTransactionFlow.tryEmit(false)
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.TransactionSubmitFailed
-                    )
-                )
-            }
-        )
-    }
-
     fun onShowTransactionRequestDetailsClicked() {
         val reviewState = state as? State.SessionRequestReview.TransactionRequestReview
         check(reviewState != null && reviewState.canShowDetails) {
@@ -1559,51 +1280,8 @@ private constructor(
                     "allowing showing the details"
         }
 
-        val context = getApplication<Application>()
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val accountTransactionPayload = sessionRequestAccountTransactionPayload
-            val accountTransactionParamsSchema = sessionRequestAccountTransactionParams.schema
-
-            if (accountTransactionPayload is AccountTransactionPayload.Update) {
-                val prettyPrintParams =
-                    if (accountTransactionParamsSchema != null)
-                        App.appCore.cryptoLibrary
-                            .parameterToJson(
-                                ParameterToJsonInput(
-                                    parameter = accountTransactionPayload.message,
-                                    receiveName = accountTransactionPayload.receiveName,
-                                    schema = accountTransactionParamsSchema,
-                                    schemaVersion = accountTransactionParamsSchema.version,
-                                )
-                            )
-                            ?.prettyPrint()
-                            ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
-                    else if (accountTransactionPayload.message == "")
-                        context.getString(R.string.wallet_connect_transaction_request_no_parameters)
-                    else
-                        context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
-
-                mutableEventsFlow.emit(
-                    Event.ShowDetailsDialog(
-                        title = reviewState.method,
-                        prettyPrintDetails = context.getString(
-                            R.string.wallet_connect_template_transaction_request_details,
-                            sessionRequestTransactionCost.energy.toString(),
-                            prettyPrintParams,
-                        ),
-                    )
-                )
-            } else {
-                Log.w("Nothing to show as details for ${accountTransactionPayload::class.simpleName}")
-
-                mutableEventsFlow.emit(
-                    Event.ShowDetailsDialog(
-                        title = reviewState.method,
-                        prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
-                    )
-                )
-            }
+        viewModelScope.launch {
+            signTransactionRequestHandler.showReviewingTransactionDetails()
         }
     }
 
