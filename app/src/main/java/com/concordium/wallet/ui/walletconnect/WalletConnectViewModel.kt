@@ -5,7 +5,6 @@ import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
-import com.concordium.sdk.crypto.ed25519.ED25519SecretKey
 import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
@@ -19,8 +18,6 @@ import com.concordium.sdk.crypto.wallet.web3Id.Web3IdProofInput
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
 import com.concordium.sdk.transactions.CredentialRegistrationId
-import com.concordium.sdk.transactions.MessageSigningDigest
-import com.concordium.sdk.types.AccountAddress
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -29,23 +26,14 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
-import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
-import com.concordium.wallet.data.cryptolib.SignMessageOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.cryptolib.X0
 import com.concordium.wallet.data.model.AccountData
-import com.concordium.wallet.data.model.AccountDataKeys
-import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.data.walletconnect.AccountTransactionParams
-import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
-import com.concordium.wallet.data.walletconnect.SignMessageParams
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
@@ -54,14 +42,11 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.PrettyPrint.prettyPrint
-import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
-import com.walletconnect.util.hexToBytes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -147,13 +132,8 @@ private constructor(
 
     private var sessionRequestId: Long = 0L
     private lateinit var sessionRequestTopic: String
-    private lateinit var sessionRequestAccountTransactionParams: AccountTransactionParams
-    private lateinit var sessionRequestAccountTransactionPayload: AccountTransactionPayload
     private lateinit var sessionRequestAccount: Account
     private lateinit var sessionRequestAppMetadata: AppMetadata
-    private lateinit var sessionRequestTransactionCost: TransactionCost
-    private lateinit var sessionRequestTransactionNonce: AccountNonce
-    private lateinit var sessionRequestSignMessageParams: SignMessageParams
     private lateinit var sessionRequestIdentityRequest: UnqualifiedRequest
     private lateinit var sessionRequestIdentityProofAccounts: MutableList<Account>
     private lateinit var sessionRequestIdentityProofIdentities: MutableMap<Int, Identity>
@@ -190,6 +170,16 @@ private constructor(
             emitState = mutableStateFlow::tryEmit,
             setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
             proxyRepository = proxyRepository,
+            context = application,
+        )
+    }
+
+    private val signMessageRequestHandler: WalletConnectSignMessageRequestHandler by lazy {
+        WalletConnectSignMessageRequestHandler(
+            respondSuccess = ::respondSuccess,
+            respondError = ::respondError,
+            emitEvent = mutableEventsFlow::tryEmit,
+            emitState = mutableStateFlow::tryEmit,
             context = application,
         )
     }
@@ -624,59 +614,6 @@ private constructor(
         }
     }
 
-    private fun handleSignMessage(params: String) = viewModelScope.launch {
-        try {
-            val signMessageParams = SignMessageParams.fromSessionRequestParams(
-                if (params.startsWith('{'))
-                    params
-                else
-                    "{$params}"
-            )
-            this@WalletConnectViewModel.sessionRequestSignMessageParams = signMessageParams
-
-            mutableStateFlow.tryEmit(
-                when (signMessageParams) {
-                    is SignMessageParams.Binary ->
-                        State.SessionRequestReview.SignRequestReview(
-                            message = App.appCore.cryptoLibrary
-                                .parameterToJson(
-                                    ParameterToJsonInput(
-                                        parameter = signMessageParams.data,
-                                        schema = signMessageParams.schema,
-                                        schemaVersion = null,
-                                    )
-                                )
-                                ?.prettyPrint()
-                                ?: error("Failed to deserialize the raw binary data"),
-                            canShowDetails = true,
-                            account = sessionRequestAccount,
-                            appMetadata = sessionRequestAppMetadata,
-                        )
-
-                    is SignMessageParams.Text ->
-                        State.SessionRequestReview.SignRequestReview(
-                            message = signMessageParams.data,
-                            canShowDetails = false,
-                            account = sessionRequestAccount,
-                            appMetadata = sessionRequestAppMetadata,
-                        )
-                }
-            )
-        } catch (error: Exception) {
-            Log.e("Failed to parse sign message parameters: $params", error)
-
-            respondError(
-                message = "Failed parse the request: $error"
-            )
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
-                )
-            )
-        }
-    }
-
     private fun onInvalidRequest(responseMessage: String, e: Exception? = null) {
         if (e == null) Log.e(responseMessage) else Log.e(responseMessage, e)
         mutableEventsFlow.tryEmit(
@@ -884,7 +821,13 @@ private constructor(
                     appMetadata = sessionRequestAppMetadata,
                 )
 
-            REQUEST_METHOD_SIGN_MESSAGE -> handleSignMessage(params)
+            REQUEST_METHOD_SIGN_MESSAGE ->
+                signMessageRequestHandler.prepareReview(
+                    params = params,
+                    account = sessionRequestAccount,
+                    appMetadata = sessionRequestAppMetadata,
+                )
+
             REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
                 if (initializeProofRequestSession(params))
                     mutableStateFlow.tryEmit(
@@ -1200,51 +1143,7 @@ private constructor(
     }
 
     private fun signRequestedMessage(accountKeys: AccountData) {
-        val signatureHex = try {
-            val signKeyHex =
-                App.appCore.gson.fromJson(accountKeys.keys.json, AccountDataKeys::class.java)
-                    .level0
-                    .keys
-                    .keys
-                    .signKey
-
-            val message = when (val signMessageParams = sessionRequestSignMessageParams) {
-                is SignMessageParams.Binary ->
-                    signMessageParams.data.hexToBytes()
-
-                is SignMessageParams.Text ->
-                    signMessageParams.data.encodeToByteArray()
-            }
-
-            val input = MessageSigningDigest.from(
-                AccountAddress.from(sessionRequestAccount.address),
-                message
-            )
-
-            ED25519SecretKey.from(signKeyHex)
-                .sign(input)
-                .toHex()
-        } catch (e: Exception) {
-            Log.e("failed_signing_message", e)
-
-            respondError(
-                message = "Failed signing message: $e"
-            )
-
-            mutableEventsFlow.tryEmit(
-                Event.ShowFloatingError(
-                    Error.CryptographyFailed
-                )
-            )
-
-            return
-        }
-
-        respondSuccess(
-            result = App.appCore.gson.toJson(SignMessageOutput(X0(signatureHex)))
-        )
-
-        mutableStateFlow.tryEmit(State.Idle)
+        signMessageRequestHandler.signReviewedMessage(accountKeys)
         handleNextOldestPendingSessionRequest()
     }
 
@@ -1255,34 +1154,17 @@ private constructor(
                     "allowing showing the details"
         }
 
-        val context = getApplication<Application>()
-        val signMessageParams = sessionRequestSignMessageParams
-
-        if (signMessageParams is SignMessageParams.Binary) {
-            mutableEventsFlow.emit(
-                Event.ShowDetailsDialog(
-                    title = null,
-                    prettyPrintDetails = context.getString(
-                        R.string.wallet_connect_template_signature_request_details,
-                        signMessageParams.data,
-                    ),
-                )
-            )
-        } else {
-            Log.w("Nothing to show as details for ${signMessageParams::class.simpleName}")
-        }
+        signMessageRequestHandler.showReviewingMessageDetails()
     }
 
-    fun onShowTransactionRequestDetailsClicked() {
+    fun onShowTransactionRequestDetailsClicked() = viewModelScope.launch {
         val reviewState = state as? State.SessionRequestReview.TransactionRequestReview
         check(reviewState != null && reviewState.canShowDetails) {
             "Show details button can only be clicked in the transaction request review state " +
                     "allowing showing the details"
         }
 
-        viewModelScope.launch {
-            signTransactionRequestHandler.showReviewingTransactionDetails()
-        }
+        signTransactionRequestHandler.showReviewingTransactionDetails()
     }
 
     fun onDialogCancelled() {
