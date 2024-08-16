@@ -62,11 +62,16 @@ abstract class StatusActivity(
         binding.statusTextView.text = getString(res)
     }
 
-    fun addContent(titleRes: Int, text: String) {
-        addContent(getString(titleRes), text)
+    fun addContent(titleRes: Int, text: String, visibleDivider: Boolean = true) {
+        addContent(title = getString(titleRes), text = text, visibleDivider = visibleDivider)
     }
 
-    fun addContent(title: String, text: String, titleTextColor: Int? = null) {
+    fun addContent(
+        title: String,
+        text: String,
+        titleTextColor: Int? = null,
+        visibleDivider: Boolean = true
+    ) {
         binding.statusEmptyTextView.visibility = View.GONE
         binding.statusListContainer.visibility = View.VISIBLE
 
@@ -78,13 +83,19 @@ abstract class StatusActivity(
             titleTextColor?.let {
                 delegationBakerStatusBinding.statusItemTitle.setTextColor(getColor(it))
             }
+            delegationBakerStatusBinding.divider.visibility = View.GONE
         } else
             delegationBakerStatusBinding.statusItemTitle.visibility = View.GONE
 
-        if (text.isNotEmpty())
+        if (text.isNotEmpty()) {
             delegationBakerStatusBinding.statusItemContent.text = text
-        else
+            if (visibleDivider)
+                delegationBakerStatusBinding.divider.visibility = View.VISIBLE
+            else
+                delegationBakerStatusBinding.divider.visibility = View.GONE
+        } else {
             delegationBakerStatusBinding.statusItemContent.visibility = View.GONE
+        }
 
         binding.statusListContainer.addView(delegationBakerStatusBinding.root)
     }

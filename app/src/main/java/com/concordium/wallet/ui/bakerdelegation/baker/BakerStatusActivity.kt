@@ -47,7 +47,11 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
         setContentTitle(R.string.baker_status_baker_registered_title)
 
-        addContent(R.string.baker_status_baker_account, account.getAccountName() + "\n\n" + account.address)
+        addContent(
+            titleRes = R.string.baker_status_baker_account,
+            text = account.getAccountName() + "\n\n" + account.address,
+            visibleDivider = false
+        )
         addContent(
             R.string.baker_status_baker_stake,
             CurrencyUtil.formatGTU(accountBaker.stakedAmount, true)
@@ -87,15 +91,15 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             )
         }
 
-        accountBaker.pendingChange?.let { pendingChange ->
-            addPendingChange(
-                pendingChange,
-                R.string.baker_status_baker_effective_time,
-                R.string.baker_status_baker_take_effect_on,
-                R.string.baker_status_baker_effective_remove,
-                R.string.baker_status_baker_stake_lowered_to
-            )
-        }
+//        accountBaker.pendingChange?.let { pendingChange ->
+//            addPendingChange(
+//                pendingChange,
+//                R.string.baker_status_baker_effective_time,
+//                R.string.baker_status_baker_take_effect_on,
+//                R.string.baker_status_baker_effective_remove,
+//                R.string.baker_status_baker_stake_lowered_to
+//            )
+//        }
 
         binding.statusButtonBottom.setOnClickListener {
             openChangeBakerStatusBottomSheet()

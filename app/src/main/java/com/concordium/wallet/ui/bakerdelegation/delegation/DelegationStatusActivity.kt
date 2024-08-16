@@ -74,7 +74,8 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
 
         addContent(
             R.string.delegation_status_content_delegating_account,
-            account.getAccountName() + "\n\n" + account.address
+            account.getAccountName() + "\n\n" + account.address,
+            false
         )
         addContent(
             R.string.delegation_status_content_delegation_amount,

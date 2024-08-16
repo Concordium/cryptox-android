@@ -371,6 +371,7 @@
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Delegating:</string>
+    <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">…</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
@@ -634,6 +635,9 @@
     <string name="delegation_status_content_rewards_will_be">Rewards will be</string>
     <string name="delegation_status_content_take_effect_on">The following changes will take effect on</string>
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
+    <string name="delegation_status_content_inactive_stake">Inactive Stake</string>
+    <string name="delegation_status_content_inactive_stake_description">You don’t receive rewards from this part of stake now, this amount will be at disposal after cooldown period.</string>
+    <string name="delegation_status_content_cooldown_time">Cooldown time:</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
