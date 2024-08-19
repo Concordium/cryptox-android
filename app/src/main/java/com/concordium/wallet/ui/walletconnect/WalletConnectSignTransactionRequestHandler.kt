@@ -35,6 +35,7 @@ class WalletConnectSignTransactionRequestHandler(
     private val respondError: (message: String) -> Unit,
     private val emitEvent: (event: Event) -> Unit,
     private val emitState: (state: State) -> Unit,
+    private val onFinish: () -> Unit,
     private val setIsSubmittingTransaction: (isSubmitting: Boolean) -> Unit,
     private val proxyRepository: ProxyRepository,
     private val context: Context,
@@ -45,7 +46,7 @@ class WalletConnectSignTransactionRequestHandler(
     private lateinit var transactionCost: TransactionCost
     private lateinit var transactionNonce: AccountNonce
 
-    suspend fun prepareReview(
+    suspend fun start(
         params: String,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -71,6 +72,8 @@ class WalletConnectSignTransactionRequestHandler(
                 )
             )
 
+            onFinish()
+
             return
         }
 
@@ -90,6 +93,8 @@ class WalletConnectSignTransactionRequestHandler(
                 )
             )
 
+            onFinish()
+
             return
         }
 
@@ -105,17 +110,14 @@ class WalletConnectSignTransactionRequestHandler(
                 )
             )
 
+            onFinish()
+
             return
         }
 
         this.account = account
         this.transactionParams = transactionParams
         this.transactionPayload = transactionPayload
-
-        Log.d(
-            "handling_session_request:" +
-                    "\nparams=$transactionParams"
-        )
 
         loadDataAndPresentReview(appMetadata)
     }
@@ -150,6 +152,8 @@ class WalletConnectSignTransactionRequestHandler(
                     Error.LoadingFailed
                 )
             )
+
+            onFinish()
 
             return
         }
@@ -255,7 +259,7 @@ class WalletConnectSignTransactionRequestHandler(
         continuation.invokeOnCancellation { backendRequest.dispose() }
     }
 
-    suspend fun signAndSubmitReviewedTransaction(
+    suspend fun onAuthorizedForApproval(
         accountKeys: AccountData,
     ) {
         val accountTransactionPayload = this.transactionPayload
@@ -377,6 +381,14 @@ class WalletConnectSignTransactionRequestHandler(
                 )
             )
         }
+    }
+
+    fun onTransactionSubmittedFinishClicked(){
+        onFinish()
+    }
+
+    fun onTransactionSubmittedViewClosed() {
+        onFinish()
     }
 
     private fun getTransactionMethodName(transactionPayload: AccountTransactionPayload) =

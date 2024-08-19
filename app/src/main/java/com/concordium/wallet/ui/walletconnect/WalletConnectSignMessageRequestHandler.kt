@@ -26,109 +26,109 @@ class WalletConnectSignMessageRequestHandler(
     private val respondError: (message: String) -> Unit,
     private val emitEvent: (event: Event) -> Unit,
     private val emitState: (state: State) -> Unit,
+    private val onFinish: () -> Unit,
     private val context: Context,
 ) {
     private lateinit var account: Account
     private lateinit var signMessageParams: SignMessageParams
 
-    suspend fun prepareReview(
+    suspend fun start(
         params: String,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
-    ) {
-        try {
-            val signMessageParams = SignMessageParams.fromSessionRequestParams(
-                if (params.startsWith('{'))
-                    params
-                else
-                    "{$params}"
-            )
-            this.account = account
-            this.signMessageParams = signMessageParams
+    ) = try {
+        val signMessageParams = SignMessageParams.fromSessionRequestParams(
+            if (params.startsWith('{'))
+                params
+            else
+                "{$params}"
+        )
 
-            emitState(
-                when (signMessageParams) {
-                    is SignMessageParams.Binary ->
-                        State.SessionRequestReview.SignRequestReview(
-                            message = App.appCore.cryptoLibrary
-                                .parameterToJson(
-                                    ParameterToJsonInput(
-                                        parameter = signMessageParams.data,
-                                        schema = signMessageParams.schema,
-                                        schemaVersion = null,
-                                    )
-                                )
-                                ?.prettyPrint()
-                                ?: error("Failed to deserialize the raw binary data"),
-                            canShowDetails = true,
-                            account = account,
-                            appMetadata = appMetadata,
+        this.account = account
+        this.signMessageParams = signMessageParams
+
+        val reviewState = when (signMessageParams) {
+            is SignMessageParams.Binary ->
+                State.SessionRequestReview.SignRequestReview(
+                    message = App.appCore.cryptoLibrary
+                        .parameterToJson(
+                            ParameterToJsonInput(
+                                parameter = signMessageParams.data,
+                                schema = signMessageParams.schema,
+                                schemaVersion = null,
+                            )
                         )
-
-                    is SignMessageParams.Text ->
-                        State.SessionRequestReview.SignRequestReview(
-                            message = signMessageParams.data,
-                            canShowDetails = false,
-                            account = account,
-                            appMetadata = appMetadata,
-                        )
-                }
-            )
-        } catch (error: Exception) {
-            Log.e("Failed to parse sign message parameters: $params", error)
-
-            respondError("Failed parse the request: $error")
-
-            emitEvent(
-                Event.ShowFloatingError(
-                    Error.InvalidRequest
+                        ?.prettyPrint()
+                        ?: error("Failed to deserialize the raw binary data"),
+                    canShowDetails = true,
+                    account = account,
+                    appMetadata = appMetadata,
                 )
-            )
+
+            is SignMessageParams.Text ->
+                State.SessionRequestReview.SignRequestReview(
+                    message = signMessageParams.data,
+                    canShowDetails = false,
+                    account = account,
+                    appMetadata = appMetadata,
+                )
         }
+
+        emitState(reviewState)
+    } catch (error: Exception) {
+        Log.e("Failed to parse sign message parameters: $params", error)
+
+        respondError("Failed parse the request: $error")
+
+        emitEvent(
+            Event.ShowFloatingError(
+                Error.InvalidRequest
+            )
+        )
+
+        onFinish()
     }
 
-    fun signReviewedMessage(accountKeys: AccountData) {
-        val signatureHex = try {
-            val signKeyHex =
-                App.appCore.gson.fromJson(accountKeys.keys.json, AccountDataKeys::class.java)
-                    .level0
-                    .keys
-                    .keys
-                    .signKey
+    fun onAuthorizedForApproval(
+        accountKeys: AccountData,
+    ) = try {
+        val signKeyHex =
+            App.appCore.gson.fromJson(accountKeys.keys.json, AccountDataKeys::class.java)
+                .level0
+                .keys
+                .keys
+                .signKey
 
-            val message = when (val signMessageParams = this.signMessageParams) {
-                is SignMessageParams.Binary ->
-                    signMessageParams.data.hexToBytes()
+        val message = when (val signMessageParams = this.signMessageParams) {
+            is SignMessageParams.Binary ->
+                signMessageParams.data.hexToBytes()
 
-                is SignMessageParams.Text ->
-                    signMessageParams.data.encodeToByteArray()
-            }
-
-            val input = MessageSigningDigest.from(
-                AccountAddress.from(account.address),
-                message
-            )
-
-            ED25519SecretKey.from(signKeyHex)
-                .sign(input)
-                .toHex()
-        } catch (e: Exception) {
-            Log.e("failed_signing_message", e)
-
-            respondError("Failed signing message: $e")
-
-            emitEvent(
-                Event.ShowFloatingError(
-                    Error.CryptographyFailed
-                )
-            )
-
-            return
+            is SignMessageParams.Text ->
+                signMessageParams.data.encodeToByteArray()
         }
 
-        respondSuccess(App.appCore.gson.toJson(SignMessageOutput(X0(signatureHex))))
+        val input = MessageSigningDigest.from(
+            AccountAddress.from(account.address),
+            message
+        )
 
-        emitState(State.Idle)
+        val signatureHex = ED25519SecretKey.from(signKeyHex)
+            .sign(input)
+            .toHex()
+
+        respondSuccess(App.appCore.gson.toJson(SignMessageOutput(X0(signatureHex))))
+    } catch (e: Exception) {
+        Log.e("failed_signing_message", e)
+
+        respondError("Failed signing message: $e")
+
+        emitEvent(
+            Event.ShowFloatingError(
+                Error.CryptographyFailed
+            )
+        )
+    } finally {
+        onFinish()
     }
 
     fun showReviewingMessageDetails() {

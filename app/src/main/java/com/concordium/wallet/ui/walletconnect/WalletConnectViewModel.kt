@@ -27,7 +27,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.preferences.AuthPreferences
@@ -168,6 +167,7 @@ private constructor(
             respondError = ::respondError,
             emitEvent = mutableEventsFlow::tryEmit,
             emitState = mutableStateFlow::tryEmit,
+            onFinish = ::onSessionRequestHandlingFinished,
             setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
             proxyRepository = proxyRepository,
             context = application,
@@ -180,6 +180,7 @@ private constructor(
             respondError = ::respondError,
             emitEvent = mutableEventsFlow::tryEmit,
             emitState = mutableStateFlow::tryEmit,
+            onFinish = ::onSessionRequestHandlingFinished,
             context = application,
         )
     }
@@ -815,14 +816,14 @@ private constructor(
 
         when (method) {
             REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
-                signTransactionRequestHandler.prepareReview(
+                signTransactionRequestHandler.start(
                     params = params,
                     account = sessionRequestAccount,
                     appMetadata = sessionRequestAppMetadata,
                 )
 
             REQUEST_METHOD_SIGN_MESSAGE ->
-                signMessageRequestHandler.prepareReview(
+                signMessageRequestHandler.start(
                     params = params,
                     account = sessionRequestAccount,
                     appMetadata = sessionRequestAppMetadata,
@@ -847,6 +848,11 @@ private constructor(
                 )
             }
         }
+    }
+
+    private fun onSessionRequestHandlingFinished() {
+        mutableStateFlow.tryEmit(State.Idle)
+        handleNextOldestPendingSessionRequest()
     }
 
     private fun handleNextOldestPendingSessionRequest() {
@@ -902,8 +908,7 @@ private constructor(
 
         respondError("Rejected by user")
 
-        mutableStateFlow.tryEmit(State.Idle)
-        handleNextOldestPendingSessionRequest()
+        onSessionRequestHandlingFinished()
     }
 
     fun approveSessionRequest() {
@@ -981,10 +986,10 @@ private constructor(
 
             when (reviewState) {
                 is State.SessionRequestReview.SignRequestReview ->
-                    signRequestedMessage(accountKeys)
+                    signMessageRequestHandler.onAuthorizedForApproval(accountKeys)
 
                 is State.SessionRequestReview.TransactionRequestReview ->
-                    signTransactionRequestHandler.signAndSubmitReviewedTransaction(accountKeys)
+                    signTransactionRequestHandler.onAuthorizedForApproval(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
                     val attributeRandomness = HashMap<String, AttributeRandomness?>()
@@ -1114,8 +1119,7 @@ private constructor(
                 )
                 respondSuccess(result = Gson().toJson(wrappedProof))
 
-                mutableStateFlow.tryEmit(State.Idle)
-                handleNextOldestPendingSessionRequest()
+                onSessionRequestHandlingFinished()
             } catch (e: Exception) {
                 Log.e("failed_creating_verifiable_presentation", e)
                 respondError(
@@ -1140,11 +1144,6 @@ private constructor(
 
     fun getIdentity(account: Account): Identity? {
         return sessionRequestIdentityProofIdentities[account.identityId]
-    }
-
-    private fun signRequestedMessage(accountKeys: AccountData) {
-        signMessageRequestHandler.signReviewedMessage(accountKeys)
-        handleNextOldestPendingSessionRequest()
     }
 
     fun onShowSignRequestDetailsClicked() = viewModelScope.launch {
@@ -1195,14 +1194,13 @@ private constructor(
             }
 
             is State.TransactionSubmitted -> {
-                onTransactionSubmittedViewClosed()
+                signTransactionRequestHandler.onTransactionSubmittedViewClosed()
             }
         }
     }
 
-    fun onTransactionSubmittedFinishClicked() {
-        onTransactionSubmittedViewClosed()
-    }
+    fun onTransactionSubmittedFinishClicked() =
+        signTransactionRequestHandler.onTransactionSubmittedFinishClicked()
 
     /**
      * @return true if the system back pressed handling must be intercepted.
@@ -1229,11 +1227,6 @@ private constructor(
             else ->
                 false
         }
-
-    private fun onTransactionSubmittedViewClosed() {
-        mutableStateFlow.tryEmit(State.Idle)
-        handleNextOldestPendingSessionRequest()
-    }
 
     private fun respondSuccess(result: String) {
         handledRequests += sessionRequestId
