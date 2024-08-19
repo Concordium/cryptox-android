@@ -106,7 +106,10 @@ interface ProxyBackend {
     fun getIdentityProviderInfo(): Call<ArrayList<IdentityProvider>>
 
     @GET("v1/ip_info")
-    fun getV1IdentityProviderInfo(): Call<ArrayList<IdentityProvider>>
+    fun getV1IdentityProviderInfo(
+        @Query("company")
+        includeCompanyId: Boolean = true,
+    ): Call<ArrayList<IdentityProvider>>
 
     @GET("v0/global")
     fun getGlobalInfo(): Call<GlobalParamsWrapper>
