@@ -49,7 +49,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         else
             Network.TESTNET
 
-    private lateinit var account: Account
+//    private lateinit var account: Account
     private lateinit var appMetadata: WalletConnectViewModel.AppMetadata
     private lateinit var identityProofRequest: UnqualifiedRequest
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
@@ -93,7 +93,6 @@ class WalletConnectVerifiablePresentationRequestHandler(
             return
         }
 
-        this.account = account
         this.appMetadata = appMetadata
 
         try {
@@ -221,7 +220,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 val statementAccount = accountIterator.next()
                 val attributeRandomness =
                     attributeRandomnessByAccount.getValue(statementAccount.address)
-                val statementIdentity = identitiesById.getValue(statementAccount.identityId)
+                val statementIdentity = getIdentity(statementAccount)!!
                 val identityProviderIndex = statementIdentity.identityProviderId
                 val randomness: MutableMap<AttributeType, String> = mutableMapOf()
                 val attributeValues: MutableMap<AttributeType, String> = mutableMapOf()
@@ -253,12 +252,11 @@ class WalletConnectVerifiablePresentationRequestHandler(
         }
 
         val qualifiedRequest = try {
+            val accountIterator = accountsPerStatement.iterator()
             identityProofRequest.qualify { stat ->
-                val accountIterator = accountsPerStatement.iterator()
-                stat.qualify(
-                    CredentialRegistrationId.from(accountIterator.next().credential!!.getCredId()!!),
-                    network
-                )
+                val credId =
+                    CredentialRegistrationId.from(accountIterator.next().credential!!.getCredId()!!)
+                stat.qualify(credId, network)
             }
         } catch (e: Exception) {
             Log.e("Failed to qualify request", e)
@@ -355,7 +353,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         )
     }
 
-    fun getIdentity(account: Account)=
+    fun getIdentity(account: Account) =
         identitiesById[account.identityId]
 
     private fun isValidIdentityForStatement(
@@ -384,7 +382,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         currentStatementIndex: Int,
     ): State.SessionRequestReview =
         State.SessionRequestReview.IdentityProofRequestReview(
-            connectedAccount = account,
+            connectedAccount = accountsPerStatement.first(),
             appMetadata = appMetadata,
             request = identityProofRequest,
             chosenAccounts = accountsPerStatement,
