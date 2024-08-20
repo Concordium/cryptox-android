@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
@@ -586,17 +587,20 @@ class WalletConnectView(
             getIdentity = viewModel::getIdentity,
             onChangeAccountClicked = viewModel::onChangeIdentityProofAccountClicked,
         )
+        fun updatePrimaryActionButton() {
+            val currentPosition = proofView.currentItem
+            approveButton.isInvisible = currentPosition < statements.size - 1
+            nextButton.isVisible = approveButton.isInvisible
+        }
         this.proofView.adapter = adapter
         this.proofView.setCurrentItem(currentStatement, false)
         this.proofView.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                if (position == statements.size - 1) {
-                    this@with.approveButton.visibility = VISIBLE
-                    this@with.nextButton.visibility = GONE
-                }
+                updatePrimaryActionButton()
             }
         })
+
+        updatePrimaryActionButton()
 
         // Connect tab dots to the proofView pager
         TabLayoutMediator(pagerDots, this.proofView) { _, _ -> }.attach()
