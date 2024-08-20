@@ -203,7 +203,7 @@ class WalletConnectView(
                 val duration = when (event.error) {
                     WalletConnectViewModel.Error.ConnectionFailed ->
                         Toast.LENGTH_LONG
-                    
+
                     else ->
                         Toast.LENGTH_SHORT
                 }
@@ -581,10 +581,11 @@ class WalletConnectView(
         }
 
         val adapter = CredentialStatementAdapter(
-            statements, accounts, viewModel::getIdentity
-        ) {
-            viewModel.onChooseAccountIdentityProof(it)
-        }
+            statements = statements,
+            accounts = accounts,
+            getIdentity = viewModel::getIdentity,
+            onChangeAccountClicked = viewModel::onChangeIdentityProofAccountClicked,
+        )
         this.proofView.adapter = adapter
         this.proofView.setCurrentItem(currentStatement, false)
         this.proofView.registerOnPageChangeCallback(object : OnPageChangeCallback() {

@@ -338,7 +338,7 @@ class WalletConnectSignTransactionRequestHandler(
         )
     }
 
-    suspend fun showReviewingTransactionDetails() {
+    suspend fun onShowDetailsClicked() {
         val accountTransactionPayload = this.transactionPayload
         val accountTransactionParamsSchema = this.transactionParams.schema
 
