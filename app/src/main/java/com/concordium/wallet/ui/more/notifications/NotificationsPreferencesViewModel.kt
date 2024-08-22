@@ -28,9 +28,9 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     val requestNotificationPermissionLiveData: LiveData<Event<Boolean>> =
         _requestNotificationPermissionLiveData
 
-    private val _isCcdSwitchEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isCcdSwitchEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
     val isCcdSwitchEnabledLiveData: LiveData<Boolean> = _isCcdSwitchEnabledLiveData
-    private val _isCis2SwitchEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isCis2SwitchEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
     val isCis2SwitchEnabledLiveData: LiveData<Boolean> = _isCis2SwitchEnabledLiveData
 
     init {

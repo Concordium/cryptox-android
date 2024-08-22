@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
@@ -50,12 +51,14 @@ class NotificationsPreferencesActivity : BaseActivity(
         }
         viewModel.isCcdSwitchEnabledLiveData.observe(this) {
             binding.ccdTxSwitch.isEnabled = it
+            binding.progress.progressBar.isVisible = it.not()
         }
         viewModel.areCis2TxNotificationsEnabledLiveData.observe(this) {
             binding.cis2TxSwitch.isChecked = it
         }
         viewModel.isCis2SwitchEnabledLiveData.observe(this) {
             binding.cis2TxSwitch.isEnabled = it
+            binding.progress.progressBar.isVisible = it.not()
         }
         viewModel.requestNotificationPermissionLiveData.observe(this) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
