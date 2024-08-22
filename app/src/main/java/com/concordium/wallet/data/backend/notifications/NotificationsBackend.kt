@@ -11,5 +11,5 @@ interface NotificationsBackend {
         fcmToken: String,
         @Body
         request: UpdateSubscriptionRequest,
-    ): Any
+    ): Result<Boolean>
 }

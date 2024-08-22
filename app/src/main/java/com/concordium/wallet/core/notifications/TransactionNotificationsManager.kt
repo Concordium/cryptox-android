@@ -106,6 +106,8 @@ class TransactionNotificationsManager(
             // White icon is used for Android 5 compatibility.
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(Notification.DEFAULT_ALL)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,

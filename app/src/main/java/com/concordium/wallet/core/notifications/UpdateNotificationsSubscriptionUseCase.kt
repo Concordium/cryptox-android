@@ -25,15 +25,27 @@ class UpdateNotificationsSubscriptionUseCase(
         notificationsBackend = App.appCore.getNotificationsBackend(),
     )
 
-    suspend operator fun invoke() {
+    suspend operator fun invoke(
+        isCcdTxEnabled: Boolean? = null,
+        isCis2TxEnabled: Boolean? = null
+    ): Boolean {
         val fcmToken = FirebaseMessaging.getInstance().token.await()
         val accounts = accountRepository.getAllDone()
+
         val topics: Set<NotificationsTopic> = buildSet {
-            if (notificationsPreferences.areCcdTxNotificationsEnabled) {
-                add(NotificationsTopic.CCD_TRANSACTIONS)
+            isCcdTxEnabled?.let {
+                if (it) add(NotificationsTopic.CCD_TRANSACTIONS)
+            } ?: run {
+                if (notificationsPreferences.areCcdTxNotificationsEnabled) {
+                    add(NotificationsTopic.CCD_TRANSACTIONS)
+                }
             }
-            if (notificationsPreferences.areCis2TxNotificationsEnabled) {
-                add(NotificationsTopic.CIS2_TRANSACTIONS)
+            isCis2TxEnabled?.let {
+                if (it) add(NotificationsTopic.CIS2_TRANSACTIONS)
+            } ?: run {
+                if (notificationsPreferences.areCis2TxNotificationsEnabled) {
+                    add(NotificationsTopic.CIS2_TRANSACTIONS)
+                }
             }
         }
         val request: UpdateSubscriptionRequest
@@ -62,8 +74,12 @@ class UpdateNotificationsSubscriptionUseCase(
             )
         }
 
-        notificationsBackend.updateSubscription(fcmToken, request)
-
-        Log.d("subscription_updated_successfully")
+        return try {
+            Log.d("attempt_to_update_subscription")
+            notificationsBackend.updateSubscription(fcmToken, request).isSuccess
+        } catch (e: Exception) {
+            Log.e("failed_to_update_subscription", e)
+            false
+        }
     }
 }

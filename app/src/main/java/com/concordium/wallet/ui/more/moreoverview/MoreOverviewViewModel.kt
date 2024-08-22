@@ -12,6 +12,8 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.util.Log
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -88,6 +90,7 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     private fun eraseWalletAndGoToWelcome() {
         try {
+            clearNotificationToken()
             with(getApplication<App>()) {
                 dataDir.deleteRecursively()
                 filesDir.deleteRecursively()
@@ -104,6 +107,17 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
             }
         } catch (ex: Exception) {
             println(ex.stackTraceToString())
+        }
+    }
+
+
+    private fun clearNotificationToken() {
+        viewModelScope.launch {
+            try {
+                FirebaseMessaging.getInstance().deleteToken()
+            } catch (error: Exception) {
+                Log.e("failed_deleting_notification_token", error)
+            }
         }
     }
 

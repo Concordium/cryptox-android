@@ -45,14 +45,18 @@ class NotificationsPreferencesActivity : BaseActivity(
     }
 
     private fun initViewModel() {
-        viewModel.areCcdTxNotificationsEnabledLiveData.observe(
-            this,
-            binding.ccdTxSwitch::setChecked
-        )
-        viewModel.areCis2TxNotificationsEnabledLiveData.observe(
-            this,
-            binding.cis2TxSwitch::setChecked
-        )
+        viewModel.areCcdTxNotificationsEnabledLiveData.observe(this) {
+            binding.ccdTxSwitch.isChecked = it
+        }
+        viewModel.isCcdSwitchEnabledLiveData.observe(this) {
+            binding.ccdTxSwitch.isEnabled = it
+        }
+        viewModel.areCis2TxNotificationsEnabledLiveData.observe(this) {
+            binding.cis2TxSwitch.isChecked = it
+        }
+        viewModel.isCis2SwitchEnabledLiveData.observe(this) {
+            binding.cis2TxSwitch.isEnabled = it
+        }
         viewModel.requestNotificationPermissionLiveData.observe(this) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationPermissionLauncher.launch(Unit)
@@ -64,7 +68,7 @@ class NotificationsPreferencesActivity : BaseActivity(
 
     private fun initViews() = with(binding) {
         ccdTxTextView.setOnClickListener {
-            ccdTxSwitch.callOnClick()
+            ccdTxSwitch.performClick()
         }
 
         ccdTxSwitch.setOnClickListener {
@@ -72,7 +76,7 @@ class NotificationsPreferencesActivity : BaseActivity(
         }
 
         cis2TxTextView.setOnClickListener {
-            cis2TxSwitch.callOnClick()
+            cis2TxSwitch.performClick()
         }
 
         cis2TxSwitch.setOnClickListener {

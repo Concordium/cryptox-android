@@ -44,11 +44,9 @@ class FcmNotificationsService : FirebaseMessagingService() {
 
         try {
             updateNotificationsSubscriptionUseCase()
+            Log.d("trying update subscriptions with new token")
         } catch (error: Exception){
-            Log.e(
-                "failed_updating_subscriptions",
-                error
-            )
+            Log.e("failed_updating_subscriptions", error)
         }
     }
 
