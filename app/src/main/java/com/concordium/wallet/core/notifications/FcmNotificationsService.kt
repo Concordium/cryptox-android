@@ -1,7 +1,9 @@
 package com.concordium.wallet.core.notifications
 
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.UrlHolder
@@ -163,15 +165,16 @@ class FcmNotificationsService : FirebaseMessagingService() {
         val recipientAccount = accountRepository.findByAddress(recipientAccountAddress)
             ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
 
-        val contractIndex = data["contract_index"]
-            ?: error("Contract index is missing")
+        val contractAddress: ContractAddress = data["contract_address"]
+            ?.let { App.appCore.gson.fromJson(it, ContractAddress::class.java) }
+            ?: error("Contract address is missing")
 
         val tokenId = data["token_id"]
             ?: error("Token ID is missing")
 
         val existingContractToken = contractTokensRepository.find(
             accountAddress = recipientAccountAddress,
-            contractIndex = contractIndex,
+            contractIndex = contractAddress.index.toString(),
             tokenId = tokenId,
         )
         val token: Token
@@ -179,7 +182,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         if (existingContractToken == null) {
             Log.d(
                 "adding_newly_received_token:" +
-                        "\ncontractIndex=$contractIndex," +
+                        "\ncontractAddress=$contractAddress," +
                         "\ntokenId=$tokenId"
             )
 
@@ -194,8 +197,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
                     tokenId = tokenId,
                     accountAddress = recipientAccountAddress,
                     isFungible = !isTokenUnique,
-                    contractIndex = data["contract_index"]
-                        ?: error("Contract index is missing"),
+                    contractIndex = contractAddress.index.toString(),
                     contractName = data["contract_name"]
                         ?: error("Contract name is missing"),
                     tokenMetadata = TokenMetadata(
@@ -221,7 +223,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         } else {
             Log.d(
                 "token_exists:" +
-                        "\ncontractIndex=$contractIndex," +
+                        "\ncontractAddress=$contractAddress," +
                         "\ntokenId=$tokenId"
             )
 
