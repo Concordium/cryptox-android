@@ -49,7 +49,6 @@ class WalletConnectVerifiablePresentationRequestHandler(
         else
             Network.TESTNET
 
-//    private lateinit var account: Account
     private lateinit var appMetadata: WalletConnectViewModel.AppMetadata
     private lateinit var identityProofRequest: UnqualifiedRequest
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState

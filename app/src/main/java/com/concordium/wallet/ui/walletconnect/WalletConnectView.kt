@@ -25,7 +25,7 @@ import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBi
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectProgressBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectSessionProposalReviewBinding
-import com.concordium.wallet.databinding.FragmentWalletConnectSignRequestReviewBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectSignMessageReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionSubmittedFragmentBinding
 import com.concordium.wallet.extension.collect
@@ -445,7 +445,7 @@ class WalletConnectView(
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
-        getShownBottomSheet().showSignRequestReview { (view, lifecycleOwner) ->
+        getShownBottomSheet().showSignMessageReview { (view, lifecycleOwner) ->
             initSignRequestReviewView(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
@@ -458,7 +458,7 @@ class WalletConnectView(
     }
 
     private fun initSignRequestReviewView(
-        view: FragmentWalletConnectSignRequestReviewBinding,
+        view: FragmentWalletConnectSignMessageReviewBinding,
         lifecycleOwner: LifecycleOwner,
         message: String,
         canShowDetails: Boolean,
