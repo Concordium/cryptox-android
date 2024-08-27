@@ -81,10 +81,10 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
         }
     }
 
-    fun showSignRequestReview(
-        onShown: (createdView: WalletConnectSignRequestReviewFragment.CreatedView) -> Unit
+    fun showSignMessageReview(
+        onShown: (createdView: WalletConnectSignMessageReviewFragment.CreatedView) -> Unit
     ) {
-        val fragment: WalletConnectSignRequestReviewFragment =
+        val fragment: WalletConnectSignMessageReviewFragment =
             getShownFragment(SIGN_REQUEST_REVIEW_TAG)
 
         fragment.createdView.observe(this) { createdView ->
