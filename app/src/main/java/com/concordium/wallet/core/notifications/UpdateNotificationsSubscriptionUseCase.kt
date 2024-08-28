@@ -61,6 +61,7 @@ class UpdateNotificationsSubscriptionUseCase(
             request = UpdateSubscriptionRequest(
                 preferences = topics,
                 accounts = accounts.map(Account::address).toSet(),
+                fcmToken = fcmToken,
             )
         } else {
             Log.d(
@@ -71,12 +72,13 @@ class UpdateNotificationsSubscriptionUseCase(
             request = UpdateSubscriptionRequest(
                 preferences = emptySet(),
                 accounts = emptySet(),
+                fcmToken = fcmToken
             )
         }
 
         return try {
             Log.d("attempt_to_update_subscription")
-            notificationsBackend.updateSubscription(fcmToken, request).isSuccess
+            notificationsBackend.updateSubscription(request).isSuccess
         } catch (e: Exception) {
             Log.e("failed_to_update_subscription", e)
             false

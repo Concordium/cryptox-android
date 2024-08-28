@@ -7,5 +7,7 @@ class UpdateSubscriptionRequest(
     @SerializedName("preferences")
     val preferences: Set<NotificationsTopic>,
     @SerializedName("accounts")
-    val accounts: Set<String>
+    val accounts: Set<String>,
+    @SerializedName("device_token")
+    val fcmToken: String
 )
