@@ -37,8 +37,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/ccd_tx_switch"
             style="@style/CCX_CompoundButton_Switch"
-            android:layout_gravity="end"
-            android:checked="true" />
+            android:layout_gravity="end" />
     </LinearLayout>
 
     <LinearLayout
@@ -61,8 +60,7 @@
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/cis2_tx_switch"
             style="@style/CCX_CompoundButton_Switch"
-            android:layout_gravity="end"
-            android:checked="true" />
+            android:layout_gravity="end"/>
     </LinearLayout>
 
     <include
