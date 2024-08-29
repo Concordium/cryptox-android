@@ -88,7 +88,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         _waitingLiveData.value = true
         identityProviderInfoRequest?.dispose()
         identityProviderInfoRequest = repository.getIdentityProviderInfo(
-            useV1 = keyCreationVersion.useV1,
+            useLegacy = !keyCreationVersion.useV1,
             {
                 _identityProviderList.value = it
                 _waitingLiveData.value = false

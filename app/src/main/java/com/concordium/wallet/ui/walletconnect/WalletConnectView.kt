@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
@@ -24,7 +25,7 @@ import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBi
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectProgressBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectSessionProposalReviewBinding
-import com.concordium.wallet.databinding.FragmentWalletConnectSignRequestReviewBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectSignMessageReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionSubmittedFragmentBinding
 import com.concordium.wallet.extension.collect
@@ -203,7 +204,7 @@ class WalletConnectView(
                 val duration = when (event.error) {
                     WalletConnectViewModel.Error.ConnectionFailed ->
                         Toast.LENGTH_LONG
-                    
+
                     else ->
                         Toast.LENGTH_SHORT
                 }
@@ -444,7 +445,7 @@ class WalletConnectView(
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
-        getShownBottomSheet().showSignRequestReview { (view, lifecycleOwner) ->
+        getShownBottomSheet().showSignMessageReview { (view, lifecycleOwner) ->
             initSignRequestReviewView(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
@@ -457,7 +458,7 @@ class WalletConnectView(
     }
 
     private fun initSignRequestReviewView(
-        view: FragmentWalletConnectSignRequestReviewBinding,
+        view: FragmentWalletConnectSignMessageReviewBinding,
         lifecycleOwner: LifecycleOwner,
         message: String,
         canShowDetails: Boolean,
@@ -581,21 +582,25 @@ class WalletConnectView(
         }
 
         val adapter = CredentialStatementAdapter(
-            statements, accounts, viewModel::getIdentity
-        ) {
-            viewModel.onChooseAccountIdentityProof(it)
+            statements = statements,
+            accounts = accounts,
+            getIdentity = viewModel::getIdentity,
+            onChangeAccountClicked = viewModel::onChangeIdentityProofAccountClicked,
+        )
+        fun updatePrimaryActionButton() {
+            val currentPosition = proofView.currentItem
+            approveButton.isInvisible = currentPosition < statements.size - 1
+            nextButton.isVisible = approveButton.isInvisible
         }
         this.proofView.adapter = adapter
         this.proofView.setCurrentItem(currentStatement, false)
         this.proofView.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                if (position == statements.size - 1) {
-                    this@with.approveButton.visibility = VISIBLE
-                    this@with.nextButton.visibility = GONE
-                }
+                updatePrimaryActionButton()
             }
         })
+
+        updatePrimaryActionButton()
 
         // Connect tab dots to the proofView pager
         TabLayoutMediator(pagerDots, this.proofView) { _, _ -> }.attach()

@@ -1093,8 +1093,8 @@
     <string name="tracking_preferences_title">Analytics</string>
     <string name="tracking_preferences_allow_title">Allow activity tracking</string>
     <string name="tracking_motivation">
-        To improve the experience, we would like to track your activity in the app (but never your crypto).
-        Of course, it is completely anonymous.
+        To enhance your experience, we would like to track your app usage.
+        But rest assured, we will not capture or track funds, transactions or any other personal data.
     </string>
     <string name="tracking_preferences_allow_summary">@string/tracking_motivation</string>
     <string name="tracking_permission_title">Help us improve</string>

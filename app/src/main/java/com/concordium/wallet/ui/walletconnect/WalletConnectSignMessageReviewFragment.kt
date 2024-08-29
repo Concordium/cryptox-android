@@ -6,10 +6,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.FragmentWalletConnectSignRequestReviewBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectSignMessageReviewBinding
 
-class WalletConnectSignRequestReviewFragment :
-    Fragment(R.layout.fragment_wallet_connect_sign_request_review) {
+class WalletConnectSignMessageReviewFragment :
+    Fragment(R.layout.fragment_wallet_connect_sign_message_review) {
 
     val createdView: MutableLiveData<CreatedView> = MutableLiveData()
 
@@ -17,14 +17,14 @@ class WalletConnectSignRequestReviewFragment :
         super.onViewCreated(view, savedInstanceState)
         createdView.postValue(
             CreatedView(
-                view = FragmentWalletConnectSignRequestReviewBinding.bind(view),
+                view = FragmentWalletConnectSignMessageReviewBinding.bind(view),
                 lifecycleOwner = viewLifecycleOwner
             )
         )
     }
 
     data class CreatedView(
-        val view: FragmentWalletConnectSignRequestReviewBinding,
+        val view: FragmentWalletConnectSignMessageReviewBinding,
         val lifecycleOwner: LifecycleOwner,
     )
 }
