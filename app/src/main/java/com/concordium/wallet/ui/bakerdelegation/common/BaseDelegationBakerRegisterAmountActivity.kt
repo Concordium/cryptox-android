@@ -51,7 +51,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
     }
 
     protected fun moreThan95Percent(amountToStake: BigInteger): Boolean {
-        return amountToStake.toBigDecimal() > (viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO).toBigDecimal() * BigDecimal(0.95)
+        return amountToStake.toBigDecimal() > (viewModel.bakerDelegationData.account?.balance ?: BigInteger.ZERO).toBigDecimal() * BigDecimal(0.95)
     }
 
     protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {

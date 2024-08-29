@@ -324,13 +324,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     encryptedAccountData = encryptedAccountData,
                     revealedAttributes = listOf(),
                     credential = createCredentialOutput.credential,
-                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
-                    currentBalance = accountBalance.currentBalance?.accountAmount.toBigInteger(),
-                    totalBalance = BigInteger.ZERO,
-                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
-                    totalShieldedBalance = BigInteger.ZERO,
-                    finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
-                    currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
+                    balance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
+                    shieldedBalance = BigInteger.ZERO,
+                    encryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     encryptedBalanceStatus =
                     if (accountBalance.finalizedBalance.accountEncryptedAmount.isDefaultEmpty())
                         ShieldedAccountEncryptionStatus.DECRYPTED
@@ -338,9 +334,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         ShieldedAccountEncryptionStatus.ENCRYPTED,
                     totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount
                         ?: BigInteger.ZERO,
-                    totalAtDisposal = BigInteger.ZERO,
                     readOnly = false,
-                    finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
+                    releaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
                     bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
                     accountDelegation = accountBalance.finalizedBalance.accountDelegation,
                     accountBaker = accountBalance.finalizedBalance.accountBaker,

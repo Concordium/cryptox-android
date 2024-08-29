@@ -343,17 +343,15 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
-                    request.account.finalizedBalance =
+                    request.account.balance =
                         accountBalance.finalizedBalance?.getAmount() ?: BigInteger.ZERO
-                    request.account.currentBalance =
-                        accountBalance.currentBalance?.getAmount() ?: BigInteger.ZERO
                     request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
                     request.account.accountDelegation =
-                        accountBalance.currentBalance?.accountDelegation
-                    request.account.accountBaker = accountBalance.currentBalance?.accountBaker
+                        accountBalance.finalizedBalance?.accountDelegation
+                    request.account.accountBaker = accountBalance.finalizedBalance?.accountBaker
 
-                    request.account.finalizedAccountReleaseSchedule =
+                    request.account.releaseSchedule =
                         accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
 
@@ -370,19 +368,17 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         }
                     }
 
-                    if (areValuesDecrypted(request.account.finalizedEncryptedBalance)) {
+                    if (areValuesDecrypted(request.account.encryptedBalance)) {
                         request.account.encryptedBalanceStatus =
                             ShieldedAccountEncryptionStatus.DECRYPTED
-                        request.account.finalizedEncryptedBalance =
+                        request.account.encryptedBalance =
                             accountBalance.finalizedBalance?.getEncryptedAmount()
-                        request.account.currentEncryptedBalance =
-                            accountBalance.currentBalance?.getEncryptedAmount()
                     } else {
                         request.account.encryptedBalanceStatus =
                             ShieldedAccountEncryptionStatus.ENCRYPTED
                     }
 
-                    Log.d("AccountBalance Loop item end - ${request.account.submissionId} ${accountBalance.currentBalance}")
+                    Log.d("AccountBalance Loop item end - ${request.account.submissionId} ${accountBalance.finalizedBalance}")
                 }
             } catch (e: Exception) {
                 Log.e("AccountBalance failed", e)
@@ -410,7 +406,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     private suspend fun calculateTotalBalances(): TotalBalancesData {
         var totalBalanceForAllAccounts = BigInteger.ZERO
-        var totalAtDisposalWithoutStakedOrScheduledForAllAccounts = BigInteger.ZERO
+        var totalAtDisposalForAllAccounts = BigInteger.ZERO
         var totalStakedForAllAccounts = BigInteger.ZERO
         var totalDelegatingForAllAccounts = BigInteger.ZERO
         var totalContainsEncrypted = false
@@ -423,7 +419,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             var accountShieldedBalance: BigInteger = BigInteger.ZERO
 
             // Calculate unshielded
-            var accountUnshieldedBalance: BigInteger = account.finalizedBalance
+            var accountUnshieldedBalance: BigInteger = account.balance
 
             for (transfer in transferList) {
 
@@ -466,7 +462,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             }
 
             // Calculate shielded
-            account.finalizedEncryptedBalance?.let {
+            account.encryptedBalance?.let {
                 val amount = lookupMappedAmount(it.selfAmount)
                 if (amount != null) {
                     accountShieldedBalance += amount.toBigInteger()
@@ -486,17 +482,13 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             }
 
             // Calculate totals for account
-            account.totalBalance = accountUnshieldedBalance + accountShieldedBalance
-            account.totalUnshieldedBalance = accountUnshieldedBalance
-            account.totalShieldedBalance = accountShieldedBalance
+            account.shieldedBalance = accountShieldedBalance
             account.encryptedBalanceStatus = containsEncrypted
 
             // Calculate totals for all accounts
-            totalBalanceForAllAccounts += account.totalUnshieldedBalance
+            totalBalanceForAllAccounts += account.balance
             if (!account.readOnly) {
-                totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(
-                    account.totalUnshieldedBalance
-                )
+                totalAtDisposalForAllAccounts += account.balanceAtDisposal()
                 totalStakedForAllAccounts += account.totalStaked
                 totalDelegatingForAllAccounts += account.accountDelegation?.stakedAmount
                     ?: BigInteger.ZERO
@@ -509,7 +501,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         }
         return TotalBalancesData(
             totalBalanceForAllAccounts,
-            totalAtDisposalWithoutStakedOrScheduledForAllAccounts,
+            totalAtDisposalForAllAccounts,
             totalStakedForAllAccounts,
             totalDelegatingForAllAccounts,
             totalContainsEncrypted
@@ -540,7 +532,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     }
 
     suspend fun decryptEncryptedAmounts(key: String, account: Account) {
-        account.finalizedEncryptedBalance?.let {
+        account.encryptedBalance?.let {
             decryptAndSaveAmount(key, it.selfAmount)
             it.incomingAmounts.forEach {
                 decryptAndSaveAmount(key, it)

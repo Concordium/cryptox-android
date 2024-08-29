@@ -80,7 +80,7 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
                 )
                 row.accountNameTextView.text = account.getAccountName()
                 row.balanceTextView.text =
-                    getString(R.string.amount, CurrencyUtil.formatGTU(account.finalizedBalance))
+                    getString(R.string.amount, CurrencyUtil.formatGTU(account.balance))
             }
 
             // Empty row instead of accounts.

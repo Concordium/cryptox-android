@@ -71,9 +71,9 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
                 // Show either the decrypted positive balance or the unshielded amount.
                 val balance: BigInteger? =
                     if (account.encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
-                        && account.totalShieldedBalance.signum() > 0
+                        && account.shieldedBalance.signum() > 0
                     ) {
-                        account.totalShieldedBalance
+                        account.shieldedBalance
                     } else {
                         unshieldedAmountsByAccount[account.address]
                     }
@@ -157,7 +157,7 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
 
                 // If the shielded balance is empty,
                 // immediately show the unshielding result.
-                if (account.totalShieldedBalance.signum() > 0) {
+                if (account.shieldedBalance.signum() > 0) {
                     _openUnshieldingLiveData.postValue(Event(account.address))
                 } else {
                     onUnshieldingResult(

@@ -3,7 +3,9 @@ package com.concordium.wallet.ui.airdrop
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.*
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Base64
@@ -214,7 +216,7 @@ class AirdropActivity : BaseActivity() {
         wallets.forEach { acc ->
             val v = layoutInflater.inflate(R.layout.account_info_row, null)
             v.findViewById<TextView>(R.id.accAddress).text = getString(R.string.acc_address_placeholder, acc.name, acc.address)
-            val balance = formatGTU(acc.totalUnshieldedBalance)
+            val balance = formatGTU(acc.balance)
             v.findViewById<TextView>(R.id.accBalance).text = getString(R.string.acc_balance_placeholder, balance)
             binding?.accountsPool?.addView(v)
             v.setOnClickListener {

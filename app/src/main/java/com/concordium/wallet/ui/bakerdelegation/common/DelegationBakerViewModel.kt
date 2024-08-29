@@ -203,7 +203,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         bakerDelegationData.account?.accountBaker?.let {
             staked = it.stakedAmount
         }
-        return (bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO) - staked
+        return (bakerDelegationData.account?.balance ?: BigInteger.ZERO) - staked
     }
 
     fun selectBakerPool() {
@@ -769,9 +769,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return null
     }
 
-    fun getAvailableBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
-        bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
-    ) ?: BigInteger.ZERO
+    fun getAvailableBalance(): BigInteger =
+        bakerDelegationData.account?.balanceAtDisposal() ?: BigInteger.ZERO
 
     fun setSelectedCommissionRates(
         transactionRate: Double?,

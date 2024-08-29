@@ -268,9 +268,8 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
-                    selectedAccount.getAtDisposalWithoutStakedOrScheduled(
-                        selectedAccount.totalUnshieldedBalance
-                    ), true
+                    selectedAccount.balanceAtDisposal(),
+                    true
                 )
             )
         }
@@ -362,9 +361,8 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
-                    account.getAtDisposalWithoutStakedOrScheduled(
-                        account.totalUnshieldedBalance
-                    ), true
+                    account.balanceAtDisposal(),
+                    true
                 )
             )
         }
@@ -478,9 +476,8 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
-                    account.getAtDisposalWithoutStakedOrScheduled(
-                        account.totalUnshieldedBalance
-                    ), true
+                    account.balanceAtDisposal(),
+                    true
                 )
             )
         }
@@ -587,6 +584,7 @@ class WalletConnectView(
             getIdentity = viewModel::getIdentity,
             onChangeAccountClicked = viewModel::onChangeIdentityProofAccountClicked,
         )
+
         fun updatePrimaryActionButton() {
             val currentPosition = proofView.currentItem
             approveButton.isInvisible = currentPosition < statements.size - 1

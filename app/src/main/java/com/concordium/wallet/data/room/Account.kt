@@ -47,25 +47,17 @@ data class Account(
     var credential: CredentialWrapper?,
 
     @ColumnInfo(name = "finalized_balance")
-    var finalizedBalance: BigInteger = BigInteger.ZERO,
+    var balance: BigInteger = BigInteger.ZERO,
 
-    @ColumnInfo(name = "current_balance")
-    var currentBalance: BigInteger = BigInteger.ZERO,
-
-    @ColumnInfo(name = "total_balance")
-    var totalBalance: BigInteger = BigInteger.ZERO,
-
-    @ColumnInfo(name = "total_unshielded_balance")
-    var totalUnshieldedBalance: BigInteger = BigInteger.ZERO,
+    // TODO bind in to accountAtDisposal and remove balanceAtDisposal() method
+//    @ColumnInfo(name = "balance_at_disposal")
+//    var balanceAtDisposal: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_shielded_balance")
-    var totalShieldedBalance: BigInteger = BigInteger.ZERO,
+    var shieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "finalized_encrypted_balance")
-    var finalizedEncryptedBalance: AccountEncryptedAmount?,
-
-    @ColumnInfo(name = "current_encrypted_balance")
-    var currentEncryptedBalance: AccountEncryptedAmount?,
+    var encryptedBalance: AccountEncryptedAmount?,
 
     @ColumnInfo(name = "current_balance_status")
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
@@ -73,14 +65,11 @@ data class Account(
     @ColumnInfo(name = "total_staked")
     var totalStaked: BigInteger = BigInteger.ZERO,
 
-    @ColumnInfo(name = "total_at_disposal")
-    var totalAtDisposal: BigInteger = BigInteger.ZERO,
-
     @ColumnInfo(name = "read_only")
     var readOnly: Boolean = false,
 
     @ColumnInfo(name = "finalized_account_release_schedule")
-    var finalizedAccountReleaseSchedule: AccountReleaseSchedule?,
+    var releaseSchedule: AccountReleaseSchedule?,
 
     @ColumnInfo(name = "baker_id")
     var bakerId: Long? = null,
@@ -146,21 +135,21 @@ data class Account(
     }
 
     fun mayNeedUnshielding(): Boolean {
-        if (finalizedEncryptedBalance == null || readOnly) {
+        if (encryptedBalance == null || readOnly) {
             return false
         }
 
         val isShieldedBalanceUnknown = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
                 || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
         val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
-                && totalShieldedBalance.signum() > 0
+                && shieldedBalance.signum() > 0
         return isShieldedBalanceUnknown || isShieldedBalancePositive
     }
 
-    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {
+    fun balanceAtDisposal(): BigInteger {
         val stakedAmount: BigInteger = accountDelegation?.stakedAmount
             ?: accountBaker?.stakedAmount ?: BigInteger.ZERO
-        val scheduledTotal: BigInteger = finalizedAccountReleaseSchedule?.total ?: BigInteger.ZERO
+        val scheduledTotal: BigInteger = releaseSchedule?.total ?: BigInteger.ZERO
         val subtract: BigInteger = if (stakedAmount in BigInteger.ONE..scheduledTotal)
             scheduledTotal
         else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
@@ -169,6 +158,6 @@ data class Account(
             scheduledTotal
         else
             BigInteger.ZERO
-        return BigInteger.ZERO.max(totalBalance - subtract)
+        return BigInteger.ZERO.max(balance - subtract)
     }
 }

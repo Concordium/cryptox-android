@@ -92,7 +92,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
 
         account = accountRepository.findByAddress(accountAddress)
             ?: error("Requested account $accountAddress not found")
-        _amountLiveData.postValue(account.totalShieldedBalance)
+        _amountLiveData.postValue(account.shieldedBalance)
         _titleLiveData.postValue(account.getAccountName())
 
         isInitialized = true
@@ -192,7 +192,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
         // Expiry should me now + 10 minutes (in seconds)
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
-        val amount = account.totalShieldedBalance
+        val amount = account.shieldedBalance
         val createTransferInput = CreateTransferInput(
             from = account.address,
             keys = credentialsOutput.accountKeys,
@@ -317,7 +317,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private fun getBalanceAtDisposal(): BigInteger =
-        account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+        account.balanceAtDisposal()
 
     override fun onCleared() {
         super.onCleared()

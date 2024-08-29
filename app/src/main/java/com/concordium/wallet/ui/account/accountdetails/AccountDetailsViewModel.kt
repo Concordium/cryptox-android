@@ -128,7 +128,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     fun initialize(account: Account) {
         this.account = account
-        _totalBalanceLiveData.postValue(account.totalUnshieldedBalance)
+        _totalBalanceLiveData.postValue(account.balance)
         getIdentityProvider()
         Log.d("Account address: ${account.address}")
     }
@@ -244,7 +244,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData ) {
-                _totalBalanceLiveData.value = account.totalUnshieldedBalance
+                _totalBalanceLiveData.value = account.balance
                 getLocalTransfers()
                 viewModelScope.launch {
                     updateAccountFromRepository()

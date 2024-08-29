@@ -1,7 +1,11 @@
 package com.concordium.wallet.ui.connect.add_wallet
 
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.bumptech.glide.Glide
@@ -9,14 +13,13 @@ import com.concordium.wallet.Constants
 import com.concordium.wallet.R
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.ws.WsTransport
+import com.concordium.wallet.data.model.AccountInfo
 import com.concordium.wallet.data.model.WsConnectionInfo
 import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.data.model.AccountInfo
-import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.base.BaseActivity
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -83,7 +86,7 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
             val toSend = mutableListOf<AccountInfo.WalletInfo>()
             val wallet = AccountInfo.WalletInfo(
                 selectedAccount!!.address,
-                "${selectedAccount!!.totalUnshieldedBalance}"
+                "${selectedAccount!!.balance}"
             )
             toSend.add(wallet)
             finish()
@@ -108,8 +111,7 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
                         getString(R.string.acc_address_placeholder, name, acc.address)
                     else
                         acc.address
-                val atDisposalBalance =
-                    acc.getAtDisposalWithoutStakedOrScheduled(acc.totalUnshieldedBalance)
+                val atDisposalBalance = acc.balanceAtDisposal()
                 v.findViewById<TextView>(R.id.accBalance).text = getString(
                     R.string.acc_balance_placeholder,
                     CurrencyUtil.formatGTU(atDisposalBalance, true)

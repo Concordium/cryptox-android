@@ -379,7 +379,7 @@ private constructor(
 
             // Initially select the account with the biggest balance.
             val initiallySelectedAccount = accounts.maxBy { account ->
-                account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+                account.balanceAtDisposal()
             }
 
             Log.d(

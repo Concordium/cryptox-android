@@ -290,7 +290,7 @@ class AccountDetailsActivity : BaseActivity(
     private fun showTotalBalance(totalBalance: BigInteger) {
         binding.walletInfoCard.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
         binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
-            viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance),
+            viewModelAccountDetails.account.balanceAtDisposal(),
             true
         )
     }

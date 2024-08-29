@@ -1,7 +1,11 @@
 package com.concordium.wallet.data.room
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
@@ -29,7 +33,8 @@ public abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        const val VERSION_NUMBER = 7
+        // TODO migration for Account
+        const val VERSION_NUMBER = 8
 
         // Singleton prevents multiple instances of database opening at the same time.
         @Volatile

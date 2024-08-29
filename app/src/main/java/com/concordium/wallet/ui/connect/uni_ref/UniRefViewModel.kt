@@ -153,8 +153,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
                     WalletData(
                         savedAcc.getAccountName(),
                         savedAcc.address,
-                        // Use currentBalance because totalBalance contains shielded amount.
-                        savedAcc.getAtDisposalWithoutStakedOrScheduled(savedAcc.currentBalance)
+                        savedAcc.balanceAtDisposal()
                     )
                 )
             )
@@ -167,7 +166,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun checkBalance(min: BigInteger = 5500000.toBigInteger()): Boolean {
-        return account.getAtDisposalWithoutStakedOrScheduled(account.currentBalance) > min
+        return account.balanceAtDisposal() > min
     }
 
     fun initialize(

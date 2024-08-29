@@ -83,7 +83,7 @@ class AccountReleaseScheduleActivity : BaseActivity(
         viewModel.scheduledReleasesLiveData.observe(this) { list ->
 
             binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
-                viewModel.account.finalizedAccountReleaseSchedule?.total ?: BigInteger.ZERO,
+                viewModel.account.releaseSchedule?.total ?: BigInteger.ZERO,
                 true
             )
 
