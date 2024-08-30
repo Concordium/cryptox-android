@@ -279,7 +279,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         var atDisposal: BigInteger = BigInteger.ZERO
         sendTokenData.account?.let { account ->
-            atDisposal = account.balanceAtDisposal()
+            atDisposal = account.balanceAtDisposal
         }
 
         return if (sendTokenData.token!!.isCcd) {
@@ -299,7 +299,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 sendTokenData.fee = it.cost
                 sendTokenData.account?.let { account ->
                     sendTokenData.max =
-                        account.balanceAtDisposal() - (sendTokenData.fee ?: BigInteger.ZERO)
+                        account.balanceAtDisposal - (sendTokenData.fee ?: BigInteger.ZERO)
                 }
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)

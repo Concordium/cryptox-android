@@ -16,7 +16,7 @@ class CcdOnrampAccountListItem(
     ) : this(
         accountName = source.account.getAccountName(),
         identityName = source.identity.name,
-        balance = source.account.balanceAtDisposal(),
+        balance = source.account.balanceAtDisposal,
         isDividerVisible = isDividerVisible,
         source = source,
     )

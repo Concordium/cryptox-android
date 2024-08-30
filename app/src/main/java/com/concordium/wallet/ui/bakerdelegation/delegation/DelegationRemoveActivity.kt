@@ -72,7 +72,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
             showNotEnoughFunds()
         } else {
             if (viewModel.bakerDelegationData.isBakerPool) {
-                viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
+                viewModel.bakerDelegationData.account?.delegation?.delegationTarget?.bakerId?.let {
                     viewModel.setPoolID(it.toString())
                 }
             }

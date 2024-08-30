@@ -153,7 +153,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
                     WalletData(
                         savedAcc.getAccountName(),
                         savedAcc.address,
-                        savedAcc.balanceAtDisposal()
+                        savedAcc.balanceAtDisposal
                     )
                 )
             )
@@ -166,7 +166,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun checkBalance(min: BigInteger = 5500000.toBigInteger()): Boolean {
-        return account.balanceAtDisposal() > min
+        return account.balanceAtDisposal > min
     }
 
     fun initialize(

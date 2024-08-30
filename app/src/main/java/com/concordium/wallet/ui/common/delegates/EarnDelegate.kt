@@ -28,7 +28,7 @@ class EarnDelegateImpl : EarnDelegate {
         hasPendingBakingTransactions: Boolean
     ) {
         val intent: Intent
-        if (account.accountDelegation != null || hasPendingDelegationTransactions) {
+        if (account.delegation != null || hasPendingDelegationTransactions) {
             intent = Intent(activity, DelegationStatusActivity::class.java)
             intent.putExtra(
                 DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
@@ -38,7 +38,7 @@ class EarnDelegateImpl : EarnDelegate {
                     type = ProxyRepository.UPDATE_DELEGATION
                 )
             )
-        } else if (account.accountBaker != null || hasPendingBakingTransactions) {
+        } else if (account.baker != null || hasPendingBakingTransactions) {
             intent = Intent(activity, BakerStatusActivity::class.java)
             intent.putExtra(
                 DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,

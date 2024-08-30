@@ -165,7 +165,7 @@ class WalletConnectSignTransactionRequestHandler(
         )
 
         val method = getTransactionMethodName(transactionPayload)
-        val accountAtDisposalBalance = account.balanceAtDisposal()
+        val accountAtDisposalBalance = account.balanceAtDisposal
         this.transactionCost = transactionCost
         this.transactionNonce = accountNonce
 

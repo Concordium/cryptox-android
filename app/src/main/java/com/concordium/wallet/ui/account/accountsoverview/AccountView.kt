@@ -35,7 +35,7 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             CurrencyUtil.formatGTU(accountWithIdentity.account.balance, withGStroke = true)
 
         binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(
-            accountWithIdentity.account.balanceAtDisposal(),
+            accountWithIdentity.account.balanceAtDisposal,
             withGStroke = true
         )
 

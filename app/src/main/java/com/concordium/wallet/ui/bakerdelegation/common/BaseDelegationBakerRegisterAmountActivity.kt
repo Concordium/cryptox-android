@@ -23,9 +23,9 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
 
     protected fun initReStakeOptionsView(reStakeOptions: SegmentedControlView) {
         val initiallyReStake = if (viewModel.bakerDelegationData.isBakerFlow()) {
-            viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == null
+            viewModel.bakerDelegationData.account?.baker?.restakeEarnings == true || viewModel.bakerDelegationData.account?.baker?.restakeEarnings == null
         } else {
-            viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == null
+            viewModel.bakerDelegationData.account?.delegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.delegation?.restakeEarnings == null
         }
         viewModel.bakerDelegationData.restake = initiallyReStake
 

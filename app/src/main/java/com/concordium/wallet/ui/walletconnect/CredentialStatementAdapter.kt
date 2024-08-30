@@ -47,7 +47,7 @@ class CredentialStatementAdapter(
             accBalance.text = root.context.getString(
                 com.concordium.wallet.R.string.acc_balance_placeholder,
                 com.concordium.wallet.data.util.CurrencyUtil.formatGTU(
-                    account.balanceAtDisposal(),
+                    account.balanceAtDisposal,
                     true
                 )
             )

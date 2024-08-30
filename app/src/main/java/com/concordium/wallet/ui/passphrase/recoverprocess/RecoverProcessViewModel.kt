@@ -37,7 +37,6 @@ import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -324,7 +323,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     encryptedAccountData = encryptedAccountData,
                     revealedAttributes = listOf(),
                     credential = createCredentialOutput.credential,
-                    balance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
+                    balance = accountBalance.finalizedBalance.accountAmount,
+                    balanceAtDisposal = accountBalance.finalizedBalance.accountAtDisposal,
                     shieldedBalance = BigInteger.ZERO,
                     encryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     encryptedBalanceStatus =
@@ -336,10 +336,11 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         ?: BigInteger.ZERO,
                     readOnly = false,
                     releaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
+                    cooldowns = accountBalance.finalizedBalance.accountCooldowns,
                     bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
-                    accountDelegation = accountBalance.finalizedBalance.accountDelegation,
-                    accountBaker = accountBalance.finalizedBalance.accountBaker,
-                    accountIndex = accountBalance.finalizedBalance.accountIndex,
+                    delegation = accountBalance.finalizedBalance.accountDelegation,
+                    baker = accountBalance.finalizedBalance.accountBaker,
+                    index = accountBalance.finalizedBalance.accountIndex,
                     credNumber = credNumber
                 )
 

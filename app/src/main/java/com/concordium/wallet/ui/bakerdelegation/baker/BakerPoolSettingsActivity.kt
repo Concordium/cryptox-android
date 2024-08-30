@@ -36,7 +36,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
         super.onCreate(savedInstanceState)
         binding = ActivityBakerSettingsBinding.bind(findViewById(R.id.root_layout))
         viewModel.bakerDelegationData.oldCommissionRates =
-            viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates
+            viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.commissionRates
 
         viewModel.loadChainParameters()
         initViews()
@@ -104,7 +104,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
                 progress = getSliderDefaultProgressValue(
                     transactionRange.max,
                     viewModel.bakerDelegationData.oldCommissionRates?.transactionCommission
-                        ?: viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.transactionCommission
+                        ?: viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.commissionRates?.transactionCommission
                 )
                 transactionFeeValue.setText(getPercentageFromProgress(progress))
 
@@ -180,7 +180,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
                 progress = getSliderDefaultProgressValue(
                     bakingRange.max,
                     viewModel.bakerDelegationData.oldCommissionRates?.bakingCommission
-                        ?: viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.bakingCommission
+                        ?: viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.commissionRates?.bakingCommission
                 )
                 bakingValue.setText(getPercentageFromProgress(progress))
 

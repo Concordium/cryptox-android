@@ -217,7 +217,7 @@ class AccountDetailsActivity : BaseActivity(
                 View.VISIBLE
             binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
                 CurrencyUtil.formatGTU(
-                    viewModelAccountDetails.account.accountDelegation?.stakedAmount
+                    viewModelAccountDetails.account.delegation?.stakedAmount
                         ?: BigInteger.ZERO
                 )
         } else {
@@ -290,7 +290,7 @@ class AccountDetailsActivity : BaseActivity(
     private fun showTotalBalance(totalBalance: BigInteger) {
         binding.walletInfoCard.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
         binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
-            viewModelAccountDetails.account.balanceAtDisposal(),
+            viewModelAccountDetails.account.balanceAtDisposal,
             true
         )
     }

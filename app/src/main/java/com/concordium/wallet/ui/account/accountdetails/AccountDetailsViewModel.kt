@@ -227,7 +227,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 updateAccountFromRepository()
                 accountUpdater.updateForAccount(account)
                 val type =
-                    if (account.accountDelegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
+                    if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
                 EventBus.getDefault().post(
                     BakerDelegationData(
                         account,

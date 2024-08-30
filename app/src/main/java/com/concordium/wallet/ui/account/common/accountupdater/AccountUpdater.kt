@@ -342,43 +342,48 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
                 for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
-                    val accountBalance = request.deferred.await()
-                    request.account.balance =
-                        accountBalance.finalizedBalance?.getAmount() ?: BigInteger.ZERO
-                    request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
-                    request.account.accountDelegation =
-                        accountBalance.finalizedBalance?.accountDelegation
-                    request.account.accountBaker = accountBalance.finalizedBalance?.accountBaker
+                    val accountFinalizedBalance = request.deferred.await()
+                        .finalizedBalance
+                    checkNotNull(accountFinalizedBalance) {
+                        "Finalized account must have finalized balance"
+                    }
 
-                    request.account.releaseSchedule =
-                        accountBalance.finalizedBalance?.accountReleaseSchedule
-                    accountBalance.finalizedBalance?.let {
+                    request.account.balance = accountFinalizedBalance.accountAmount
+                    request.account.balanceAtDisposal = accountFinalizedBalance.accountAtDisposal
+                    request.account.index = accountFinalizedBalance.accountIndex
 
-                        if (it.accountBaker != null) {
-                            request.account.totalStaked = it.accountBaker.stakedAmount
-                        } else {
-                            request.account.totalStaked = BigInteger.ZERO
-                        }
+                    request.account.delegation = accountFinalizedBalance.accountDelegation
+                    request.account.baker = accountFinalizedBalance.accountBaker
 
-                        if (it.accountBaker?.bakerId != null) {
-                            request.account.bakerId = it.accountBaker.bakerId.toLong()
-                        } else {
-                            request.account.bakerId = null
-                        }
+                    request.account.releaseSchedule = accountFinalizedBalance.accountReleaseSchedule
+                    request.account.cooldowns = accountFinalizedBalance.accountCooldowns
+
+                    if (accountFinalizedBalance.accountBaker != null) {
+                        request.account.totalStaked =
+                            accountFinalizedBalance.accountBaker.stakedAmount
+                    } else {
+                        request.account.totalStaked = BigInteger.ZERO
+                    }
+
+                    if (accountFinalizedBalance.accountBaker?.bakerId != null) {
+                        request.account.bakerId =
+                            accountFinalizedBalance.accountBaker.bakerId.toLong()
+                    } else {
+                        request.account.bakerId = null
                     }
 
                     if (areValuesDecrypted(request.account.encryptedBalance)) {
                         request.account.encryptedBalanceStatus =
                             ShieldedAccountEncryptionStatus.DECRYPTED
                         request.account.encryptedBalance =
-                            accountBalance.finalizedBalance?.getEncryptedAmount()
+                            accountFinalizedBalance.accountEncryptedAmount
                     } else {
                         request.account.encryptedBalanceStatus =
                             ShieldedAccountEncryptionStatus.ENCRYPTED
                     }
 
-                    Log.d("AccountBalance Loop item end - ${request.account.submissionId} ${accountBalance.finalizedBalance}")
+                    Log.d("AccountBalance Loop item end - ${request.account.submissionId} $accountFinalizedBalance")
                 }
             } catch (e: Exception) {
                 Log.e("AccountBalance failed", e)
@@ -488,9 +493,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             // Calculate totals for all accounts
             totalBalanceForAllAccounts += account.balance
             if (!account.readOnly) {
-                totalAtDisposalForAllAccounts += account.balanceAtDisposal()
+                totalAtDisposalForAllAccounts += account.balanceAtDisposal
                 totalStakedForAllAccounts += account.totalStaked
-                totalDelegatingForAllAccounts += account.accountDelegation?.stakedAmount
+                totalDelegatingForAllAccounts += account.delegation?.stakedAmount
                     ?: BigInteger.ZERO
             }
 

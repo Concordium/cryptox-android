@@ -145,10 +145,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
             viewModel.bakerDelegationData.oldRestake =
-                viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings
+                viewModel.bakerDelegationData.account?.delegation?.restakeEarnings
             viewModel.bakerDelegationData.oldDelegationIsBaker = viewModel.isBakerPool()
             viewModel.bakerDelegationData.oldDelegationTargetPoolId =
-                viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId
+                viewModel.bakerDelegationData.account?.delegation?.delegationTarget?.bakerId
             if (viewModel.isBakerPool()) {
                 viewModel.selectBakerPool()
                 binding.existingPoolId.text = getString(
@@ -194,7 +194,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
     }
 
     private fun getExistingPoolIdText(): String {
-        viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
+        viewModel.bakerDelegationData.account?.delegation?.delegationTarget?.bakerId?.let {
             return it.toString()
         }
         return ""

@@ -62,7 +62,7 @@ data class Token(
                     thumbnail = null,
                     display = null,
                 ),
-                balance = account.balanceAtDisposal(),
+                balance = account.balanceAtDisposal,
             )
     }
 }

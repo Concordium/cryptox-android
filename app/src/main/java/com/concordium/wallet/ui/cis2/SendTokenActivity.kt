@@ -65,7 +65,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private fun initViews() {
         binding.amount.hint = CurrencyUtil.formatGTU(BigInteger.ZERO, false)
         binding.atDisposal.text = CurrencyUtil.formatGTU(
-            viewModel.sendTokenData.account?.balanceAtDisposal() ?: BigInteger.ZERO,
+            viewModel.sendTokenData.account?.balanceAtDisposal ?: BigInteger.ZERO,
             true
         )
         initializeAmount()

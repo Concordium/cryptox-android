@@ -46,12 +46,12 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         if (viewModel.bakerDelegationData.isUpdateBaker()) {
             setActionBarTitle(R.string.baker_registration_update_amount_title)
             viewModel.bakerDelegationData.oldStakedAmount =
-                viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
+                viewModel.bakerDelegationData.account?.baker?.stakedAmount
             viewModel.bakerDelegationData.oldRestake =
-                viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings
+                viewModel.bakerDelegationData.account?.baker?.restakeEarnings
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
+                    viewModel.bakerDelegationData.account?.baker?.stakedAmount
                         ?: BigInteger.ZERO,
                     true
                 )
@@ -61,7 +61,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
 
         binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
         binding.bakerAmount.text = CurrencyUtil.formatGTU(
-            viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: BigInteger.ZERO,
+            viewModel.bakerDelegationData.account?.baker?.stakedAmount ?: BigInteger.ZERO,
             true
         )
 
@@ -167,7 +167,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             else -> viewModel.loadTransactionFee(
                 true,
                 requestId = SINGLE_FEE,
-                metadataSizeForced = viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.length
+                metadataSizeForced = viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.metadataUrl?.length
             )
         }
     }
@@ -181,9 +181,9 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             atDisposal = viewModel.atDisposal(),
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             poolLimit = null,
-            previouslyStakedInPool = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
+            previouslyStakedInPool = viewModel.bakerDelegationData.account?.delegation?.stakedAmount,
             isInCoolDown = viewModel.isInCoolDown(),
-            oldPoolId = viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
+            oldPoolId = viewModel.bakerDelegationData.account?.delegation?.delegationTarget?.bakerId,
             newPoolId = viewModel.bakerDelegationData.poolId
         )
     }

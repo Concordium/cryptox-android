@@ -46,7 +46,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         clearState()
 
         val account = viewModel.bakerDelegationData.account
-        val accountDelegation = account?.accountDelegation
+        val accountDelegation = account?.delegation
 
         binding.statusButtonBottom.text = getString(R.string.delegation_status_update)
 
@@ -100,7 +100,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
             getString(R.string.delegation_status_at_disposal)
         )
 
-        viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
+        viewModel.bakerDelegationData.account?.delegation?.pendingChange?.let { pendingChange ->
             addPendingChange(
                 pendingChange,
                 R.string.delegation_status_effective_time,

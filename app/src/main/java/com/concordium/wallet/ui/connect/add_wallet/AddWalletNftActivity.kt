@@ -111,7 +111,7 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
                         getString(R.string.acc_address_placeholder, name, acc.address)
                     else
                         acc.address
-                val atDisposalBalance = acc.balanceAtDisposal()
+                val atDisposalBalance = acc.balanceAtDisposal
                 v.findViewById<TextView>(R.id.accBalance).text = getString(
                     R.string.acc_balance_placeholder,
                     CurrencyUtil.formatGTU(atDisposalBalance, true)

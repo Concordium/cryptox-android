@@ -317,7 +317,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private fun getBalanceAtDisposal(): BigInteger =
-        account.balanceAtDisposal()
+        account.balanceAtDisposal
 
     override fun onCleared() {
         super.onCleared()

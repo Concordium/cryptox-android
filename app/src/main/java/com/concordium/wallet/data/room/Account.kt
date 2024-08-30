@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.AccountBaker
+import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.AccountDelegation
 import com.concordium.wallet.data.model.AccountEncryptedAmount
 import com.concordium.wallet.data.model.AccountReleaseSchedule
@@ -49,9 +50,8 @@ data class Account(
     @ColumnInfo(name = "finalized_balance")
     var balance: BigInteger = BigInteger.ZERO,
 
-    // TODO bind in to accountAtDisposal and remove balanceAtDisposal() method
-//    @ColumnInfo(name = "balance_at_disposal")
-//    var balanceAtDisposal: BigInteger = BigInteger.ZERO,
+    @ColumnInfo(name = "balance_at_disposal")
+    var balanceAtDisposal: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_shielded_balance")
     var shieldedBalance: BigInteger = BigInteger.ZERO,
@@ -69,19 +69,22 @@ data class Account(
     var readOnly: Boolean = false,
 
     @ColumnInfo(name = "finalized_account_release_schedule")
-    var releaseSchedule: AccountReleaseSchedule?,
+    var releaseSchedule: AccountReleaseSchedule? = null,
+
+    @ColumnInfo(name = "cooldowns")
+    var cooldowns: List<AccountCooldown> = emptyList(),
 
     @ColumnInfo(name = "baker_id")
     var bakerId: Long? = null,
 
     @ColumnInfo(name = "account_delegation")
-    var accountDelegation: AccountDelegation? = null,
+    var delegation: AccountDelegation? = null,
 
     @ColumnInfo(name = "account_baker")
-    var accountBaker: AccountBaker? = null,
+    var baker: AccountBaker? = null,
 
     @ColumnInfo(name = "accountIndex")
-    var accountIndex: Int? = null,
+    var index: Int? = null,
 
     @ColumnInfo(name = "cred_number")
     var credNumber: Int
@@ -123,7 +126,7 @@ data class Account(
     }
 
     fun isBaking(): Boolean {
-        return accountBaker != null
+        return baker != null
     }
 
     fun isBaker(): Boolean {
@@ -131,7 +134,7 @@ data class Account(
     }
 
     fun isDelegating(): Boolean {
-        return accountDelegation != null
+        return delegation != null
     }
 
     fun mayNeedUnshielding(): Boolean {
@@ -144,20 +147,5 @@ data class Account(
         val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
                 && shieldedBalance.signum() > 0
         return isShieldedBalanceUnknown || isShieldedBalancePositive
-    }
-
-    fun balanceAtDisposal(): BigInteger {
-        val stakedAmount: BigInteger = accountDelegation?.stakedAmount
-            ?: accountBaker?.stakedAmount ?: BigInteger.ZERO
-        val scheduledTotal: BigInteger = releaseSchedule?.total ?: BigInteger.ZERO
-        val subtract: BigInteger = if (stakedAmount in BigInteger.ONE..scheduledTotal)
-            scheduledTotal
-        else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
-            stakedAmount
-        else if (stakedAmount.signum() == 0 && scheduledTotal.signum() > 0)
-            scheduledTotal
-        else
-            BigInteger.ZERO
-        return BigInteger.ZERO.max(balance - subtract)
     }
 }

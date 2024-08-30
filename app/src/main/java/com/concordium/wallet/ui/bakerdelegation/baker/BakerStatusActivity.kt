@@ -21,7 +21,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         clearState()
 
         val account = viewModel.bakerDelegationData.account
-        val accountBaker = account?.accountBaker
+        val accountBaker = account?.baker
 
         binding.statusButtonBottom.text = getString(R.string.baker_status_change_baking_status)
 
