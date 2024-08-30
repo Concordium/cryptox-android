@@ -30,7 +30,6 @@ import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.IdentityAttribute
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.model.PossibleAccount
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -47,7 +46,6 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.math.BigInteger
 import javax.crypto.SecretKey
 
 class ImportViewModel(application: Application) :
@@ -553,7 +551,6 @@ class ImportViewModel(application: Application) :
         accountDataEncrypted: String
     ): Account {
         return Account(
-            id = 0,
             identityId = identityId.toInt(),
             name = accountExport.name,
             address = accountExport.address,
@@ -562,13 +559,6 @@ class ImportViewModel(application: Application) :
             encryptedAccountData = accountDataEncrypted,
             revealedAttributes = mapRevealedAttributes(accountExport.revealedAttributes),
             credential = accountExport.credential,
-            balance = BigInteger.ZERO,
-            shieldedBalance = BigInteger.ZERO,
-            encryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
-            totalStaked = BigInteger.ZERO,
-            readOnly = false,
-            releaseSchedule = null,
             credNumber = credNumber,
         )
     }
@@ -578,22 +568,14 @@ class ImportViewModel(application: Application) :
         identityId: Long
     ): Account {
         return Account(
-            id = 0,
             identityId = identityId.toInt(),
-            name = "",
+            name = Account.getDefaultName(possibleAccount.accountAddress),
             address = possibleAccount.accountAddress,
             submissionId = "",
             transactionStatus = TransactionStatus.FINALIZED,
             encryptedAccountData = "",
-            revealedAttributes = emptyList(),
             credential = null,
-            balance = BigInteger.ZERO,
-            shieldedBalance = BigInteger.ZERO,
-            encryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-            totalStaked = BigInteger.ZERO,
             readOnly = true,
-            releaseSchedule = null,
             credNumber = 0,
         )
     }

@@ -24,13 +24,15 @@ import java.math.BigInteger
 @TypeConverters(AccountTypeConverters::class)
 data class Account(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Int = 0,
 
     @ColumnInfo(name = "identity_id")
     val identityId: Int,
 
+    @ColumnInfo("name")
     var name: String,
 
+    @ColumnInfo("address")
     var address: String,
 
     @ColumnInfo(name = "submission_id")
@@ -42,10 +44,14 @@ data class Account(
     @ColumnInfo(name = "encrypted_account_data")
     var encryptedAccountData: String,
 
-    @ColumnInfo(name = "revealed_attributes")
-    var revealedAttributes: List<IdentityAttribute>,
-
+    @ColumnInfo("credential")
     var credential: CredentialWrapper?,
+
+    @ColumnInfo(name = "cred_number")
+    var credNumber: Int,
+
+    @ColumnInfo(name = "revealed_attributes")
+    var revealedAttributes: List<IdentityAttribute> = emptyList(),
 
     @ColumnInfo(name = "finalized_balance")
     var balance: BigInteger = BigInteger.ZERO,
@@ -57,7 +63,7 @@ data class Account(
     var shieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "finalized_encrypted_balance")
-    var encryptedBalance: AccountEncryptedAmount?,
+    var encryptedBalance: AccountEncryptedAmount? = null,
 
     @ColumnInfo(name = "current_balance_status")
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
@@ -85,9 +91,6 @@ data class Account(
 
     @ColumnInfo(name = "accountIndex")
     var index: Int? = null,
-
-    @ColumnInfo(name = "cred_number")
-    var credNumber: Int
 ) : Serializable {
 
     companion object {

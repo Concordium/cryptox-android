@@ -258,7 +258,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         val nextCredNumber = accountRepository.nextCredNumber(identityId)
 
         val account = Account(
-            id = 0,
             identityId = identityId,
             name = accountName,
             address = accountAddress,
@@ -267,16 +266,8 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             // This is just a temp state, it will be updated to finalized or absent based on the identity poll response
             transactionStatus = TransactionStatus.COMMITTED,
             encryptedAccountData = encryptedAccountData,
-            revealedAttributes = emptyList(),
             // Temp data - the actual data will be returned together with the identityObject for the identity
             credential = null,
-            balance = BigInteger.ZERO,
-            shieldedBalance = BigInteger.ZERO,
-            encryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-            totalStaked = BigInteger.ZERO,
-            readOnly = false,
-            releaseSchedule = null,
             credNumber = nextCredNumber,
         )
         accountRepository.insert(account)

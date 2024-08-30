@@ -314,18 +314,15 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 ProxyRepository().getAccountBalanceSuspended(createCredentialOutput.accountAddress)
             if (accountBalance.finalizedBalance != null) {
                 val account = Account(
-                    id = 0,
                     identityId = identity.id,
                     name = Account.getDefaultName(createCredentialOutput.accountAddress),
                     address = createCredentialOutput.accountAddress,
                     submissionId = "",
                     transactionStatus = TransactionStatus.FINALIZED,
                     encryptedAccountData = encryptedAccountData,
-                    revealedAttributes = listOf(),
                     credential = createCredentialOutput.credential,
                     balance = accountBalance.finalizedBalance.accountAmount,
                     balanceAtDisposal = accountBalance.finalizedBalance.accountAtDisposal,
-                    shieldedBalance = BigInteger.ZERO,
                     encryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     encryptedBalanceStatus =
                     if (accountBalance.finalizedBalance.accountEncryptedAmount.isDefaultEmpty())
@@ -334,7 +331,6 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         ShieldedAccountEncryptionStatus.ENCRYPTED,
                     totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount
                         ?: BigInteger.ZERO,
-                    readOnly = false,
                     releaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
                     cooldowns = accountBalance.finalizedBalance.accountCooldowns,
                     bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
