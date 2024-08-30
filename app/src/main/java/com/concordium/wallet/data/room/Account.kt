@@ -68,9 +68,6 @@ data class Account(
     @ColumnInfo(name = "current_balance_status")
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
 
-    @ColumnInfo(name = "total_staked")
-    var totalStaked: BigInteger = BigInteger.ZERO,
-
     @ColumnInfo(name = "read_only")
     var readOnly: Boolean = false,
 
@@ -79,9 +76,6 @@ data class Account(
 
     @ColumnInfo(name = "cooldowns")
     var cooldowns: List<AccountCooldown> = emptyList(),
-
-    @ColumnInfo(name = "baker_id")
-    var bakerId: Long? = null,
 
     @ColumnInfo(name = "account_delegation")
     var delegation: AccountDelegation? = null,
@@ -101,6 +95,15 @@ data class Account(
             return address
         }
     }
+
+    val stakedAmount: BigInteger
+        get() = baker?.stakedAmount ?: BigInteger.ZERO
+
+    val delegatedAmount: BigInteger
+        get() = delegation?.stakedAmount ?: BigInteger.ZERO
+
+    val cooldownAmount: BigInteger
+        get() = cooldowns.sumOf(AccountCooldown::amount)
 
     fun isInitial(): Boolean {
         if (readOnly || isBaking() || isDelegating()) {
@@ -130,10 +133,6 @@ data class Account(
 
     fun isBaking(): Boolean {
         return baker != null
-    }
-
-    fun isBaker(): Boolean {
-        return bakerId != null
     }
 
     fun isDelegating(): Boolean {

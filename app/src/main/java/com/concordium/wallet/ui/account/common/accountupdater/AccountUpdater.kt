@@ -359,20 +359,6 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.releaseSchedule = accountFinalizedBalance.accountReleaseSchedule
                     request.account.cooldowns = accountFinalizedBalance.accountCooldowns
 
-                    if (accountFinalizedBalance.accountBaker != null) {
-                        request.account.totalStaked =
-                            accountFinalizedBalance.accountBaker.stakedAmount
-                    } else {
-                        request.account.totalStaked = BigInteger.ZERO
-                    }
-
-                    if (accountFinalizedBalance.accountBaker?.bakerId != null) {
-                        request.account.bakerId =
-                            accountFinalizedBalance.accountBaker.bakerId.toLong()
-                    } else {
-                        request.account.bakerId = null
-                    }
-
                     if (areValuesDecrypted(request.account.encryptedBalance)) {
                         request.account.encryptedBalanceStatus =
                             ShieldedAccountEncryptionStatus.DECRYPTED
@@ -494,9 +480,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             totalBalanceForAllAccounts += account.balance
             if (!account.readOnly) {
                 totalAtDisposalForAllAccounts += account.balanceAtDisposal
-                totalStakedForAllAccounts += account.totalStaked
-                totalDelegatingForAllAccounts += account.delegation?.stakedAmount
-                    ?: BigInteger.ZERO
+                totalStakedForAllAccounts += account.stakedAmount
+                totalDelegatingForAllAccounts += account.delegatedAmount
             }
 
             if (containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED) {

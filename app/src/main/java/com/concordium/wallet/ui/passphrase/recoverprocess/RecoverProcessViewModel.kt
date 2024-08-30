@@ -44,7 +44,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
-import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 
 data class RecoverProcessData(
@@ -329,11 +328,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         ShieldedAccountEncryptionStatus.DECRYPTED
                     else
                         ShieldedAccountEncryptionStatus.ENCRYPTED,
-                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount
-                        ?: BigInteger.ZERO,
                     releaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
                     cooldowns = accountBalance.finalizedBalance.accountCooldowns,
-                    bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
                     delegation = accountBalance.finalizedBalance.accountDelegation,
                     baker = accountBalance.finalizedBalance.accountBaker,
                     index = accountBalance.finalizedBalance.accountIndex,

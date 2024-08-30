@@ -190,22 +190,21 @@ class AccountDetailsActivity : BaseActivity(
         binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
         binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
         binding.walletInfoCard.divider.visibility = View.VISIBLE
-        if (viewModelAccountDetails.account.isBaker()) {
+        if (viewModelAccountDetails.account.isBaking()) {
             binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
             binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
-                viewModelAccountDetails.account.bakerId.toString()
+                viewModelAccountDetails.account.baker?.bakerId.toString()
             binding.walletInfoCard.bakerIdLabel.visibility = View.VISIBLE
         } else {
             binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.GONE
             binding.walletInfoCard.bakerIdLabel.visibility = View.GONE
         }
 
-        val totalStaked = viewModelAccountDetails.account.totalStaked
-        if (totalStaked.signum() > 0) {
+        if (viewModelAccountDetails.account.isBaking()) {
             binding.walletInfoCard.stakedLabel.visibility = View.VISIBLE
             binding.walletInfoCard.accountsOverviewTotalDetailsStaked.visibility = View.VISIBLE
             binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text =
-                CurrencyUtil.formatGTU(viewModelAccountDetails.account.totalStaked)
+                CurrencyUtil.formatGTU(viewModelAccountDetails.account.stakedAmount)
         } else {
             binding.walletInfoCard.stakedLabel.visibility = View.GONE
             binding.walletInfoCard.accountsOverviewTotalDetailsStaked.visibility = View.GONE
@@ -216,10 +215,7 @@ class AccountDetailsActivity : BaseActivity(
             binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.visibility =
                 View.VISIBLE
             binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
-                CurrencyUtil.formatGTU(
-                    viewModelAccountDetails.account.delegation?.stakedAmount
-                        ?: BigInteger.ZERO
-                )
+                CurrencyUtil.formatGTU(viewModelAccountDetails.account.delegatedAmount)
         } else {
             binding.walletInfoCard.delegatingLabel.visibility = View.GONE
             binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.visibility = View.GONE
