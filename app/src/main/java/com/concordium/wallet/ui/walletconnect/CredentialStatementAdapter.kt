@@ -10,10 +10,10 @@ import com.concordium.wallet.databinding.IdentityProofContainerBinding
 import com.concordium.wallet.util.Log
 
 class CredentialStatementAdapter(
-    private val requests: List<RequestStatement>,
+    private val statements: List<RequestStatement>,
     private val accounts: List<Account>,
     private val getIdentity: (account: Account) -> Identity?,
-    private val onChangeAccount: (index: Int) -> Unit
+    private val onChangeAccountClicked: (index: Int) -> Unit
 ): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
         class ViewHolder(val containerBinding: IdentityProofContainerBinding): RecyclerView.ViewHolder(containerBinding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,7 +23,7 @@ class CredentialStatementAdapter(
     }
 
     override fun getItemCount(): Int {
-        return requests.size
+        return statements.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -35,7 +35,7 @@ class CredentialStatementAdapter(
             return
         }
 
-        holder.containerBinding.statements.setStatement(requests[position], identity)
+        holder.containerBinding.statements.setStatement(statements[position], identity)
         with(holder.containerBinding.selectedAccountInclude) {
             accAddress.text = account.getAccountName()
             // TODO do we want to show amount here or identity?
@@ -49,7 +49,7 @@ class CredentialStatementAdapter(
             )
         }
         holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
-            onChangeAccount(position)
+            onChangeAccountClicked(position)
         }
     }
 }
