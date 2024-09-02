@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -190,36 +191,31 @@ class AccountDetailsActivity : BaseActivity(
         binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
         binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
         binding.walletInfoCard.divider.visibility = View.VISIBLE
-        if (viewModelAccountDetails.account.isBaking()) {
-            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
-            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
-                viewModelAccountDetails.account.baker?.bakerId.toString()
-            binding.walletInfoCard.bakerIdLabel.visibility = View.VISIBLE
-        } else {
-            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.GONE
-            binding.walletInfoCard.bakerIdLabel.visibility = View.GONE
-        }
 
-        if (viewModelAccountDetails.account.isBaking()) {
-            binding.walletInfoCard.stakedLabel.visibility = View.VISIBLE
-            binding.walletInfoCard.accountsOverviewTotalDetailsStaked.visibility = View.VISIBLE
-            binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text =
-                CurrencyUtil.formatGTU(viewModelAccountDetails.account.stakedAmount)
-        } else {
-            binding.walletInfoCard.stakedLabel.visibility = View.GONE
-            binding.walletInfoCard.accountsOverviewTotalDetailsStaked.visibility = View.GONE
+        viewModelAccountDetails.account.isBaking().also { isBaking ->
+            binding.walletInfoCard.stakedLabel.isVisible = isBaking
+            binding.walletInfoCard.accountsOverviewTotalDetailsStaked.isVisible = isBaking
+            binding.walletInfoCard.bakerIdLabel.isVisible = isBaking
+            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.isVisible = isBaking
         }
+        binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text =
+            CurrencyUtil.formatGTU(viewModelAccountDetails.account.stakedAmount)
+        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
+            viewModelAccountDetails.account.baker?.bakerId?.toString()
 
-        if (viewModelAccountDetails.account.isDelegating()) {
-            binding.walletInfoCard.delegatingLabel.visibility = View.VISIBLE
-            binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.visibility =
-                View.VISIBLE
-            binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
-                CurrencyUtil.formatGTU(viewModelAccountDetails.account.delegatedAmount)
-        } else {
-            binding.walletInfoCard.delegatingLabel.visibility = View.GONE
-            binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.visibility = View.GONE
+        viewModelAccountDetails.account.isDelegating().also { isDelegating ->
+            binding.walletInfoCard.delegatingLabel.isVisible = isDelegating
+            binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.isVisible = isDelegating
         }
+        binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
+            CurrencyUtil.formatGTU(viewModelAccountDetails.account.delegatedAmount)
+
+        viewModelAccountDetails.account.hasCooldowns().also { hasCooldowns ->
+            binding.walletInfoCard.cooldownLabel.isVisible = hasCooldowns
+            binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.isVisible = hasCooldowns
+        }
+        binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text =
+            CurrencyUtil.formatGTU(viewModelAccountDetails.account.cooldownAmount)
     }
 
     private fun setErrorMode() {
@@ -284,11 +280,10 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.walletInfoCard.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
-        binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
-            viewModelAccountDetails.account.balanceAtDisposal,
-            true
-        )
+        binding.walletInfoCard.totalBalanceTextview.text =
+            CurrencyUtil.formatGTU(totalBalance)
+        binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text =
+            CurrencyUtil.formatGTU(viewModelAccountDetails.account.balanceAtDisposal)
     }
 
     private fun onOnrampClicked() {

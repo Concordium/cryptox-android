@@ -122,22 +122,22 @@ data class Account(
         return false
     }
 
-    fun getAccountName(): String {
-        return if (readOnly) {
+    fun getAccountName(): String =
+        if (readOnly) {
             getDefaultName(address)
         } else {
             name.takeUnless(String::isEmpty)
                 ?: getDefaultName(address)
         }
-    }
 
-    fun isBaking(): Boolean {
-        return baker != null
-    }
+    fun isBaking(): Boolean =
+        baker != null
 
-    fun isDelegating(): Boolean {
-        return delegation != null
-    }
+    fun isDelegating(): Boolean =
+        delegation != null
+
+    fun hasCooldowns(): Boolean =
+        cooldowns.isNotEmpty()
 
     fun mayNeedUnshielding(): Boolean {
         if (encryptedBalance == null || readOnly) {
