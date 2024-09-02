@@ -3,13 +3,13 @@ package com.concordium.wallet.ui.more.notifications
 import android.app.Application
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NotificationsPreferencesViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,32 +17,32 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     private val updateNotificationsSubscriptionUseCase =
         UpdateNotificationsSubscriptionUseCase(application)
 
-    private val _areCcdTxNotificationsEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    val areCcdTxNotificationsEnabledLiveData: LiveData<Boolean> =
-        _areCcdTxNotificationsEnabledLiveData
-    private val _areCis2TxNotificationsEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    val areCis2TxNotificationsEnabledLiveData: LiveData<Boolean> =
-        _areCis2TxNotificationsEnabledLiveData
-    private val _requestNotificationPermissionLiveData: MutableLiveData<Event<Boolean>> =
-        MutableLiveData()
-    val requestNotificationPermissionLiveData: LiveData<Event<Boolean>> =
-        _requestNotificationPermissionLiveData
+    private val _areCcdTxNotificationsEnabledFlow = MutableStateFlow(false)
+    val areCcdTxNotificationsEnabledFlow = _areCcdTxNotificationsEnabledFlow.asStateFlow()
 
-    private val _isCcdSwitchEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
-    val isCcdSwitchEnabledLiveData: LiveData<Boolean> = _isCcdSwitchEnabledLiveData
-    private val _isCis2SwitchEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData(true)
-    val isCis2SwitchEnabledLiveData: LiveData<Boolean> = _isCis2SwitchEnabledLiveData
+    private val _areCis2TxNotificationsEnabledFlow = MutableStateFlow(false)
+    val areCis2TxNotificationsEnabledFlow = _areCis2TxNotificationsEnabledFlow.asStateFlow()
+
+    private val _requestNotificationPermissionFlow = MutableStateFlow(Event(false))
+    val requestNotificationPermissionFlow = _requestNotificationPermissionFlow.asStateFlow()
+
+    private val _isCcdSwitchEnabledFlow = MutableStateFlow(true)
+    val isCcdSwitchEnabledFlow = _isCcdSwitchEnabledFlow.asStateFlow()
+
+    private val _isCis2SwitchEnabledFlow = MutableStateFlow(true)
+    val isCis2SwitchEnabledFlow = _isCis2SwitchEnabledFlow.asStateFlow()
 
     init {
-        _areCcdTxNotificationsEnabledLiveData.postValue(notificationsPreferences.areCcdTxNotificationsEnabled)
-        _areCis2TxNotificationsEnabledLiveData.postValue(notificationsPreferences.areCis2TxNotificationsEnabled)
+        _areCcdTxNotificationsEnabledFlow.value = notificationsPreferences.areCcdTxNotificationsEnabled
+        _areCis2TxNotificationsEnabledFlow.value = notificationsPreferences.areCis2TxNotificationsEnabled
     }
 
     fun onCcdTxClicked() {
-        _isCcdSwitchEnabledLiveData.postValue(false)
-        _isCis2SwitchEnabledLiveData.postValue(false)
-        val areCcdTxNotificationsEnabled = _areCcdTxNotificationsEnabledLiveData.value != true
-        _areCcdTxNotificationsEnabledLiveData.postValue(!areCcdTxNotificationsEnabled)
+        _isCcdSwitchEnabledFlow.value = false
+        _isCis2SwitchEnabledFlow.value = false
+
+        val areCcdTxNotificationsEnabled = _areCcdTxNotificationsEnabledFlow.value.not()
+        _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled.not()
         if (areCcdTxNotificationsEnabled) {
             requestNotificationPermissionIfNeeded()
         }
@@ -50,21 +50,22 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
             val success = updateNotificationsSubscription(isCcdTxEnabled = areCcdTxNotificationsEnabled)
             Log.d("success: $success")
             if (success) {
-                _areCcdTxNotificationsEnabledLiveData.postValue(areCcdTxNotificationsEnabled)
+                _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled
                 notificationsPreferences.areCcdTxNotificationsEnabled = areCcdTxNotificationsEnabled
             } else {
-                _areCcdTxNotificationsEnabledLiveData.postValue(!areCcdTxNotificationsEnabled)
+                _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled.not()
             }
-            _isCcdSwitchEnabledLiveData.postValue(true)
-            _isCis2SwitchEnabledLiveData.postValue(true)
+            _isCcdSwitchEnabledFlow.value = true
+            _isCis2SwitchEnabledFlow.value = true
         }
     }
 
     fun onCis2TxClicked() {
-        _isCis2SwitchEnabledLiveData.postValue(false)
-        _isCcdSwitchEnabledLiveData.postValue(false)
-        val areCis2TxNotificationsEnabled = _areCis2TxNotificationsEnabledLiveData.value != true
-        _areCis2TxNotificationsEnabledLiveData.postValue(!areCis2TxNotificationsEnabled)
+        _isCcdSwitchEnabledFlow.value = false
+        _isCis2SwitchEnabledFlow.value = false
+
+        val areCis2TxNotificationsEnabled = _areCis2TxNotificationsEnabledFlow.value.not()
+        _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled.not()
         if (areCis2TxNotificationsEnabled) {
             requestNotificationPermissionIfNeeded()
         }
@@ -72,20 +73,20 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
             val success = updateNotificationsSubscription(isCis2TxEnabled = areCis2TxNotificationsEnabled)
             Log.d("success: $success")
             if (success) {
-                _areCis2TxNotificationsEnabledLiveData.postValue(areCis2TxNotificationsEnabled)
+                _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled
                 notificationsPreferences.areCis2TxNotificationsEnabled = areCis2TxNotificationsEnabled
             } else {
-                _areCis2TxNotificationsEnabledLiveData.postValue(!areCis2TxNotificationsEnabled)
+                _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled.not()
             }
-            _isCis2SwitchEnabledLiveData.postValue(true)
-            _isCcdSwitchEnabledLiveData.postValue(true)
+            _isCis2SwitchEnabledFlow.value = true
+            _isCcdSwitchEnabledFlow.value = true
         }
     }
 
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             Log.d("requesting_permission")
-            _requestNotificationPermissionLiveData.postValue(Event(true))
+            _requestNotificationPermissionFlow.value = Event(true)
         } else {
             Log.d("no_need_to_request")
         }
