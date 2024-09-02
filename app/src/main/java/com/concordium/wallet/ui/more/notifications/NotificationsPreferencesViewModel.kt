@@ -33,8 +33,10 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     val isCis2SwitchEnabledFlow = _isCis2SwitchEnabledFlow.asStateFlow()
 
     init {
-        _areCcdTxNotificationsEnabledFlow.value = notificationsPreferences.areCcdTxNotificationsEnabled
-        _areCis2TxNotificationsEnabledFlow.value = notificationsPreferences.areCis2TxNotificationsEnabled
+        _areCcdTxNotificationsEnabledFlow.value =
+            notificationsPreferences.areCcdTxNotificationsEnabled
+        _areCis2TxNotificationsEnabledFlow.value =
+            notificationsPreferences.areCis2TxNotificationsEnabled
     }
 
     fun onCcdTxClicked() {
@@ -47,7 +49,11 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
             requestNotificationPermissionIfNeeded()
         }
         viewModelScope.launch {
-            val success = updateNotificationsSubscription(isCcdTxEnabled = areCcdTxNotificationsEnabled)
+            val success =
+                updateNotificationsSubscription(
+                    isCcdTxEnabled = areCcdTxNotificationsEnabled,
+                    isCis2TxEnabled = _areCis2TxNotificationsEnabledFlow.value
+                )
             Log.d("success: $success")
             if (success) {
                 _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled
@@ -70,11 +76,16 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
             requestNotificationPermissionIfNeeded()
         }
         viewModelScope.launch {
-            val success = updateNotificationsSubscription(isCis2TxEnabled = areCis2TxNotificationsEnabled)
+            val success =
+                updateNotificationsSubscription(
+                    isCcdTxEnabled = _areCcdTxNotificationsEnabledFlow.value,
+                    isCis2TxEnabled = areCis2TxNotificationsEnabled
+                )
             Log.d("success: $success")
             if (success) {
                 _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled
-                notificationsPreferences.areCis2TxNotificationsEnabled = areCis2TxNotificationsEnabled
+                notificationsPreferences.areCis2TxNotificationsEnabled =
+                    areCis2TxNotificationsEnabled
             } else {
                 _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled.not()
             }
@@ -93,8 +104,8 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     }
 
     private suspend fun updateNotificationsSubscription(
-        isCcdTxEnabled: Boolean? = null,
-        isCis2TxEnabled: Boolean? = null
+        isCcdTxEnabled: Boolean,
+        isCis2TxEnabled: Boolean
     ): Boolean {
         Log.d("updating_subscriptions")
         return updateNotificationsSubscriptionUseCase(

@@ -12,7 +12,6 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
@@ -84,10 +83,6 @@ open class NewAccountViewModel(application: Application) :
     private val _gotoFailedLiveData = MutableLiveData<Event<Pair<Boolean, BackendError?>>>()
     val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
         get() = _gotoFailedLiveData
-
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
 
     open fun initialize(accountName: String, identity: Identity) {
         this.accountName = accountName
@@ -408,7 +403,6 @@ open class NewAccountViewModel(application: Application) :
         account.id = accountId.toInt()
         // Also save a recipient representing this account
         recipientRepository.insert(Recipient(account))
-        updateNotificationsSubscriptionUseCase()
         _gotoAccountCreatedLiveData.postValue(Event(account))
     }
 }

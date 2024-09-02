@@ -12,6 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.backend.BackendErrorException
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
@@ -95,6 +96,10 @@ class ImportViewModel(application: Application) :
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
+
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
 
     init {
         val identityDao = WalletDatabase.getDatabase(application).identityDao()
@@ -354,6 +359,7 @@ class ImportViewModel(application: Application) :
                     accountList.forEach { account ->
                         defaultFungibleTokensManager.addForAccount(account.address)
                     }
+                    updateNotificationsSubscriptionUseCase()
                 }
                 // Read-only accounts - even though there are no accounts in the import file, there can be accounts from other devices
                 // The account list used to check for existing account must include the ones that was just added for this identity
@@ -466,6 +472,7 @@ class ImportViewModel(application: Application) :
         readOnlyAccountList.forEach { account ->
             defaultFungibleTokensManager.addForAccount(account.address)
         }
+        updateNotificationsSubscriptionUseCase()
     }
 
     @Suppress("SENSELESS_COMPARISON")

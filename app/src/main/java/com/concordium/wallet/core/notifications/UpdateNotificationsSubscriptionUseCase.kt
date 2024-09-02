@@ -26,26 +26,18 @@ class UpdateNotificationsSubscriptionUseCase(
     )
 
     suspend operator fun invoke(
-        isCcdTxEnabled: Boolean? = null,
-        isCis2TxEnabled: Boolean? = null
+        isCcdTxEnabled: Boolean = notificationsPreferences.areCcdTxNotificationsEnabled,
+        isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled
     ): Boolean {
         val fcmToken = FirebaseMessaging.getInstance().token.await()
         val accounts = accountRepository.getAllDone()
 
         val topics: Set<NotificationsTopic> = buildSet {
-            isCcdTxEnabled?.let {
-                if (it) add(NotificationsTopic.CCD_TRANSACTIONS)
-            } ?: run {
-                if (notificationsPreferences.areCcdTxNotificationsEnabled) {
-                    add(NotificationsTopic.CCD_TRANSACTIONS)
-                }
+            if (isCcdTxEnabled) {
+                add(NotificationsTopic.CCD_TRANSACTIONS)
             }
-            isCis2TxEnabled?.let {
-                if (it) add(NotificationsTopic.CIS2_TRANSACTIONS)
-            } ?: run {
-                if (notificationsPreferences.areCis2TxNotificationsEnabled) {
-                    add(NotificationsTopic.CIS2_TRANSACTIONS)
-                }
+            if (isCis2TxEnabled) {
+                add(NotificationsTopic.CIS2_TRANSACTIONS)
             }
         }
         val request: UpdateSubscriptionRequest

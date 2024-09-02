@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityNotificationsPreferencesBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
@@ -50,39 +51,31 @@ class NotificationsPreferencesActivity : BaseActivity(
     }
 
     private fun initViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.areCcdTxNotificationsEnabledFlow.collect {
-                        binding.ccdTxSwitch.isChecked = it
-                    }
-                }
-                launch {
-                    viewModel.isCcdSwitchEnabledFlow.collect {
-                        binding.ccdTxSwitch.isEnabled = it
-                        binding.progress.progressBar.isVisible = it.not()
-                    }
-                }
-                launch {
-                    viewModel.areCis2TxNotificationsEnabledFlow.collect {
-                        binding.cis2TxSwitch.isChecked = it
-                    }
-                }
-                launch {
-                    viewModel.isCis2SwitchEnabledFlow.collect {
-                        binding.cis2TxSwitch.isEnabled = it
-                        binding.progress.progressBar.isVisible = it.not()
-                    }
-                }
-                launch {
-                    viewModel.requestNotificationPermissionFlow.collect {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            notificationPermissionLauncher.launch(Unit)
-                        } else {
-                            Log.w("requesting_permission_on_unsupported_version")
-                        }
-                    }
-                }
+        viewModel.areCcdTxNotificationsEnabledFlow.collectWhenStarted(this) {
+            binding.ccdTxSwitch.isChecked = it
+        }
+        viewModel.isCcdSwitchEnabledFlow.collectWhenStarted(this) {
+            binding.apply {
+                ccdTxSwitch.isEnabled = it
+                ccdTxTextView.isClickable = it
+                progress.progressBar.isVisible = it.not()
+            }
+        }
+        viewModel.areCis2TxNotificationsEnabledFlow.collectWhenStarted(this) {
+            binding.cis2TxSwitch.isChecked = it
+        }
+        viewModel.isCis2SwitchEnabledFlow.collectWhenStarted(this) {
+            binding.apply {
+                cis2TxSwitch.isEnabled = it
+                cis2TxTextView.isClickable = it
+                progress.progressBar.isVisible = it.not()
+            }
+        }
+        viewModel.requestNotificationPermissionFlow.collectWhenStarted(this) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notificationPermissionLauncher.launch(Unit)
+            } else {
+                Log.w("requesting_permission_on_unsupported_version")
             }
         }
     }

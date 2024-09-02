@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Notification service 
+- Indication and notice for automatically added CIS-2 tokens
+- Notifications type preferences 
+
 ## [1.2.0] - 2024-08-27
 
 ### Added

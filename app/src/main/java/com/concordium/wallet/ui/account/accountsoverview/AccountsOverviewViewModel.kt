@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
@@ -66,6 +67,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountsObserver: Observer<List<AccountWithIdentity>>
     private val notificationsPreferences: NotificationsPreferences
 
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
+
     enum class State {
         NO_IDENTITIES,
         NO_ACCOUNTS,
@@ -109,6 +114,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
         notificationsPreferences = NotificationsPreferences(application)
+        updateNotificationSubscription()
     }
 
     fun initialize() {
@@ -235,5 +241,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
 
         _listItemsLiveData.value = items
+    }
+
+    private fun updateNotificationSubscription() {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateNotificationsSubscriptionUseCase()
+        }
     }
 }

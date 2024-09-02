@@ -4,10 +4,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
-import com.concordium.wallet.data.cryptolib.NotificationTokenMetadata
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.TokenMetadata
-import com.concordium.wallet.data.model.UrlHolder
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
@@ -15,6 +12,7 @@ import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -214,20 +212,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
                     contractIndex = contractAddress.index.toString(),
                     contractName = data["contract_name"]
                         ?: error("Contract name is missing"),
-                    tokenMetadata = TokenMetadata(
-                        decimals = verifiedMetadata.decimals
-                            ?: error("Token decimals is missing or invalid"),
-                        name = verifiedMetadata.name
-                            ?: error("Token name is missing"),
-                        symbol = verifiedMetadata.symbol
-                            ?: error("Token symbol is missing"),
-                        unique = isTokenUnique,
-                        thumbnail = verifiedMetadata.thumbnail?.url
-                            ?.let(::UrlHolder),
-                        display = verifiedMetadata.display?.url
-                            ?.let(::UrlHolder),
-                        description = verifiedMetadata.description
-                    )
+                    tokenMetadata = verifiedMetadata
                 )
 
             contractTokensRepository.insert(newlyReceivedContractToken)
@@ -255,4 +240,11 @@ class FcmNotificationsService : FirebaseMessagingService() {
         super.onDestroy()
         serviceCoroutineContext.cancel()
     }
+
+    private data class NotificationTokenMetadata(
+        @SerializedName("url")
+        val url: String,
+        @SerializedName("hash")
+        val hash: String?
+    )
 }
