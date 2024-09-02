@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.R
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
@@ -25,6 +26,10 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
     private val notificationsPreferences: NotificationsPreferences by lazy {
         NotificationsPreferences(requireContext())
+    }
+
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(requireActivity().application)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -82,7 +87,15 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
         notificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
 
-        dismiss()
+        if(isGranted) {
+            lifecycleScope.launchWhenStarted {
+                val success = updateNotificationsSubscriptionUseCase()
+                Log.d("success: $success")
+                dismiss()
+            }
+        } else {
+            dismiss()
+        }
     }
 
     companion object {

@@ -4,11 +4,13 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
+import com.concordium.wallet.data.cryptolib.NotificationTokenMetadata
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.UrlHolder
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -172,6 +174,11 @@ class FcmNotificationsService : FirebaseMessagingService() {
         val tokenId = data["token_id"]
             ?: error("Token ID is missing")
 
+        val tokenMetadata: NotificationTokenMetadata = data["token_metadata"]
+            ?.let { App.appCore.gson.fromJson(it, NotificationTokenMetadata::class.java) }
+            ?: error("tokenMetadata is missing or invalid")
+        Log.d("tokenMetadata: $tokenMetadata")
+
         val existingContractToken = contractTokensRepository.find(
             accountAddress = recipientAccountAddress,
             contractIndex = contractAddress.index.toString(),
@@ -188,7 +195,14 @@ class FcmNotificationsService : FirebaseMessagingService() {
 
             val isTokenUnique = data["token_is_unique"]
                 ?.let { it == "true" }
-                ?: error("Token unique flag is missing")
+                ?: false
+
+            val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
+                url = tokenMetadata.url,
+                checksum = tokenMetadata.hash
+            ).getOrThrow()
+
+            Log.d("verifiedMetadata: $verifiedMetadata")
 
             val newlyReceivedContractToken =
                 ContractToken(
@@ -201,19 +215,18 @@ class FcmNotificationsService : FirebaseMessagingService() {
                     contractName = data["contract_name"]
                         ?: error("Contract name is missing"),
                     tokenMetadata = TokenMetadata(
-                        decimals = data["token_decimals"]
-                            ?.toIntOrNull()
+                        decimals = verifiedMetadata.decimals
                             ?: error("Token decimals is missing or invalid"),
-                        name = data["token_name"]
+                        name = verifiedMetadata.name
                             ?: error("Token name is missing"),
-                        symbol = data["token_symbol"]
+                        symbol = verifiedMetadata.symbol
                             ?: error("Token symbol is missing"),
                         unique = isTokenUnique,
-                        thumbnail = data["token_thumbnail_url"]
+                        thumbnail = verifiedMetadata.thumbnail?.url
                             ?.let(::UrlHolder),
-                        display = data["token_display_url"]
+                        display = verifiedMetadata.display?.url
                             ?.let(::UrlHolder),
-                        description = null,
+                        description = verifiedMetadata.description
                     )
                 )
 

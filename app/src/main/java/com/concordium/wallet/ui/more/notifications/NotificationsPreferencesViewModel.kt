@@ -40,6 +40,7 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
 
     fun onCcdTxClicked() {
         _isCcdSwitchEnabledLiveData.postValue(false)
+        _isCis2SwitchEnabledLiveData.postValue(false)
         val areCcdTxNotificationsEnabled = _areCcdTxNotificationsEnabledLiveData.value != true
         _areCcdTxNotificationsEnabledLiveData.postValue(!areCcdTxNotificationsEnabled)
         if (areCcdTxNotificationsEnabled) {
@@ -55,11 +56,13 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
                 _areCcdTxNotificationsEnabledLiveData.postValue(!areCcdTxNotificationsEnabled)
             }
             _isCcdSwitchEnabledLiveData.postValue(true)
+            _isCis2SwitchEnabledLiveData.postValue(true)
         }
     }
 
     fun onCis2TxClicked() {
         _isCis2SwitchEnabledLiveData.postValue(false)
+        _isCcdSwitchEnabledLiveData.postValue(false)
         val areCis2TxNotificationsEnabled = _areCis2TxNotificationsEnabledLiveData.value != true
         _areCis2TxNotificationsEnabledLiveData.postValue(!areCis2TxNotificationsEnabled)
         if (areCis2TxNotificationsEnabled) {
@@ -75,6 +78,7 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
                 _areCis2TxNotificationsEnabledLiveData.postValue(!areCis2TxNotificationsEnabled)
             }
             _isCis2SwitchEnabledLiveData.postValue(true)
+            _isCcdSwitchEnabledLiveData.postValue(true)
         }
     }
 
