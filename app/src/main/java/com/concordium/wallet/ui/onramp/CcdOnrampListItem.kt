@@ -17,6 +17,9 @@ sealed interface CcdOnrampListItem {
 
                 CcdOnrampSite.Type.CEX ->
                     R.string.ccd_onramp_site_type_cex
+
+                CcdOnrampSite.Type.DEX ->
+                    R.string.ccd_onramp_site_type_dex
             }
         )
     }
