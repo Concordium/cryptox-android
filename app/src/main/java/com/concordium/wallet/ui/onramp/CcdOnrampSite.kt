@@ -12,6 +12,7 @@ class CcdOnrampSite(
     enum class Type {
         PAYMENT_GATEWAY,
         CEX,
+        DEX
         ;
     }
 }
