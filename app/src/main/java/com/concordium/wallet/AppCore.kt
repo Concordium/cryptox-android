@@ -16,6 +16,8 @@ import com.concordium.wallet.data.backend.airdrop.AirDropBackend
 import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
 import com.concordium.wallet.data.backend.news.NewsfeedRssBackend
 import com.concordium.wallet.data.backend.news.NewsfeedRssBackendConfig
+import com.concordium.wallet.data.backend.notifications.NotificationsBackend
+import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
 import com.concordium.wallet.data.backend.tokens.TokensBackend
 import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.model.RawJson
@@ -34,6 +36,8 @@ class AppCore(val context: Context) {
     private val tokenBackendConfig = TokensBackendConfig(gson)
     private val airdropBackendConfig = AirDropBackendConfig(gson)
     private val newsfeedRssBackendConfig: NewsfeedRssBackendConfig by lazy(::NewsfeedRssBackendConfig)
+    private val notificationsBackendConfig: NotificationsBackendConfig =
+        NotificationsBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
 
     private val trackingPreferences = TrackingPreferences(context)
@@ -58,6 +62,10 @@ class AppCore(val context: Context) {
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric
     private var authenticationManager: AuthenticationManager = authenticationManagerGeneric
     private var resetBiometricKeyNameAppendix: String = ""
+
+    fun getNotificationsBackend(): NotificationsBackend {
+        return notificationsBackendConfig.backend
+    }
 
     fun getNewsfeedRssBackend(): NewsfeedRssBackend {
         return newsfeedRssBackendConfig.backend

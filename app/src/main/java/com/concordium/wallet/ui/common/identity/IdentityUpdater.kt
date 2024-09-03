@@ -3,7 +3,7 @@ package com.concordium.wallet.ui.common.identity
 import android.app.Application
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -34,6 +34,9 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     private val accountRepository: AccountRepository
     private val recipientRepository: RecipientRepository
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
 
     private var updateListener: UpdateListener? = null
     private var run = true
@@ -47,10 +50,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
         recipientRepository = RecipientRepository(recipientDao)
 
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -130,6 +131,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
 
                                             // Add default CIS-2 fungible tokens for it.
                                             defaultFungibleTokensManager.addForAccount(account.address)
+                                            updateNotificationsSubscriptionUseCase()
                                         }
                                         account.transactionStatus = TransactionStatus.FINALIZED
                                     } else if (identityTokenContainer.status == IdentityStatus.ERROR) {

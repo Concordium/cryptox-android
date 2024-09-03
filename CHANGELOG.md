@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Notifications for CCD and CIS-2 token transactions
+
 ## [1.2.0] - 2024-08-27
 
 ### Added

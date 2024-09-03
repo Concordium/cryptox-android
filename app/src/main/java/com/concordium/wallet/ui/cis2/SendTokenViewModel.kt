@@ -9,7 +9,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.crypto.CryptoLibrary
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
@@ -34,7 +33,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
-import com.concordium.wallet.data.walletconnect.ContractAddress
+import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsPreferences
@@ -131,24 +130,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun loadTokens(accountAddress: String) {
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
             val contractTokensRepository = ContractTokensRepository(
                 WalletDatabase.getDatabase(getApplication()).contractTokenDao()
             )
             val tokensFound = mutableListOf<Token>()
             tokensFound.add(getCCDDefaultToken(accountAddress))
-            sendTokenData.account?.let { account ->
-                val accountContracts = accountContractRepository.find(account.address)
-                accountContracts.forEach { accountContract ->
-                    val contractTokens = contractTokensRepository.getTokens(
-                        accountAddress,
-                        accountContract.contractIndex
-                    )
-                    tokensFound.addAll(contractTokens.map(::Token))
-                }
-            }
+            val contractTokens = contractTokensRepository.getTokens(
+                accountAddress = accountAddress,
+            )
+            tokensFound.addAll(contractTokens.map(::Token))
             waiting.postValue(false)
             tokens.postValue(tokensFound)
         }
