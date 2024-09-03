@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.welcome
+package com.concordium.wallet.ui.more.notifications
 
 import android.Manifest
 import android.os.Build
@@ -12,19 +12,24 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.NotificationPreferences
-import com.concordium.wallet.databinding.DialogWelcomeNotificationPermissionBinding
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
+import com.concordium.wallet.data.preferences.NotificationsPreferences
+import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
 
-class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
+class NotificationsPermissionDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
         R.style.CCX_Dialog
 
-    private lateinit var binding: DialogWelcomeNotificationPermissionBinding
+    private lateinit var binding: DialogNotificationsPermissionBinding
 
-    private val notificationPreferences: NotificationPreferences by lazy {
-        NotificationPreferences(requireContext())
+    private val notificationsPreferences: NotificationsPreferences by lazy {
+        NotificationsPreferences(requireContext())
+    }
+
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(requireActivity().application)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -40,7 +45,7 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogWelcomeNotificationPermissionBinding.inflate(inflater, container, false)
+        binding = DialogNotificationsPermissionBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -70,7 +75,7 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
         // Track showing the dialog once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
-            notificationPreferences.hasEverShownPermissionDialog = true
+            notificationsPreferences.hasEverShownPermissionDialog = true
         }
     }
 
@@ -80,7 +85,17 @@ class WelcomeNotificationPermissionDialog : AppCompatDialogFragment() {
                     "\nisGranted=$isGranted"
         )
 
-        dismiss()
+        notificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
+
+        if(isGranted) {
+            lifecycleScope.launchWhenStarted {
+                val success = updateNotificationsSubscriptionUseCase()
+                Log.d("success: $success")
+                dismiss()
+            }
+        } else {
+            dismiss()
+        }
     }
 
     companion object {

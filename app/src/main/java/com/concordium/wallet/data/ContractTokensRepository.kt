@@ -8,23 +8,33 @@ class ContractTokensRepository(private val contractTokenDao: ContractTokenDao) {
         contractTokenDao.insert(contractToken)
     }
 
-    suspend fun delete(contractToken: ContractToken) {
-        contractTokenDao.delete(contractToken)
-    }
-
-    fun find(accountAddress: String, contractIndex: String, tokenId: String): ContractToken? {
-        return contractTokenDao.find(accountAddress, contractIndex, tokenId)
-    }
-
-    fun getTokens(accountAddress: String, contractIndex: String): List<ContractToken> {
+    suspend fun getTokens(accountAddress: String, contractIndex: String): List<ContractToken> {
         return contractTokenDao.getTokens(accountAddress, contractIndex)
     }
 
-    fun getTokens(
+    suspend fun getTokens(
+        accountAddress: String,
+        isFungible: Boolean? = null,
+    ): List<ContractToken> {
+        return if (isFungible != null)
+            contractTokenDao.getTokens(accountAddress, isFungible)
+        else
+            contractTokenDao.getTokens(accountAddress)
+    }
+
+    suspend fun find(
         accountAddress: String,
         contractIndex: String,
-        isFungible: Boolean,
-    ): List<ContractToken> {
-        return contractTokenDao.getTokens(accountAddress, contractIndex, isFungible)
+        tokenId: String
+    ): ContractToken? {
+        return contractTokenDao.find(accountAddress, contractIndex, tokenId)
+    }
+
+    suspend fun delete(accountAddress: String, contractIndex: String, tokenId: String) {
+        contractTokenDao.delete(accountAddress, contractIndex, tokenId)
+    }
+
+    suspend fun unmarkNewlyReceived(accountAddress: String, contractIndex: String, tokenId: String) {
+        contractTokenDao.unmarkNewlyReceived(accountAddress, contractIndex, tokenId)
     }
 }

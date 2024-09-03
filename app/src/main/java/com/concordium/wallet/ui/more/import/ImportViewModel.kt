@@ -12,8 +12,8 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.backend.BackendErrorException
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.core.security.EncryptionException
-import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -97,6 +97,10 @@ class ImportViewModel(application: Application) :
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
 
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
+
     init {
         val identityDao = WalletDatabase.getDatabase(application).identityDao()
         identityRepository = IdentityRepository(identityDao)
@@ -106,10 +110,8 @@ class ImportViewModel(application: Application) :
         recipientRepository = RecipientRepository(recipientDao)
 
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -357,6 +359,9 @@ class ImportViewModel(application: Application) :
                     accountList.forEach { account ->
                         defaultFungibleTokensManager.addForAccount(account.address)
                     }
+                    if (accountList.isNotEmpty()) {
+                        updateNotificationsSubscriptionUseCase()
+                    }
                 }
                 // Read-only accounts - even though there are no accounts in the import file, there can be accounts from other devices
                 // The account list used to check for existing account must include the ones that was just added for this identity
@@ -468,6 +473,9 @@ class ImportViewModel(application: Application) :
         // Add default fungible tokens for the accounts.
         readOnlyAccountList.forEach { account ->
             defaultFungibleTokensManager.addForAccount(account.address)
+        }
+        if (readOnlyAccountList.isNotEmpty()) {
+            updateNotificationsSubscriptionUseCase()
         }
     }
 

@@ -25,11 +25,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="announcements">
+            <!-- See AnnouncementNotificationManager-->
+        </meta-data>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+
+        <service
+            android:name=".core.notifications.FcmNotificationsService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".ui.connect.add_wallet.AddWalletNftActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.airdrop.AirdropActivity"
             android:exported="true"
@@ -529,6 +546,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
+        <activity
+            android:name=".ui.more.notifications.NotificationsPreferencesActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

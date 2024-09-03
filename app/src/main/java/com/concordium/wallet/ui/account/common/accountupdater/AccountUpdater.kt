@@ -5,7 +5,7 @@ import android.text.TextUtils
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.ErrorParser
-import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.EncryptedAmountRepository
@@ -79,6 +79,10 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     private var transferList: MutableList<Transfer> = ArrayList()
     private var transfersToDeleteList: MutableList<Transfer> = ArrayList()
 
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
+
     init {
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         accountRepository = AccountRepository(accountDao)
@@ -90,10 +94,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         recipientRepository = RecipientRepository(recipientDao)
 
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -222,9 +224,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                             // Add default CIS-2 fungible tokens for it.
                             defaultFungibleTokensManager.addForAccount(request.account.address)
+                            updateNotificationsSubscriptionUseCase()
                         }
                     }
-
                     request.account.transactionStatus = submissionStatus.status
                     Log.d("AccountSubmissionStatus Loop item end - ${request.account.submissionId} ${submissionStatus.status}")
                 }
