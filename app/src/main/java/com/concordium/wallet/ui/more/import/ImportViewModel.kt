@@ -359,7 +359,9 @@ class ImportViewModel(application: Application) :
                     accountList.forEach { account ->
                         defaultFungibleTokensManager.addForAccount(account.address)
                     }
-                    updateNotificationsSubscriptionUseCase()
+                    if (accountList.isNotEmpty()) {
+                        updateNotificationsSubscriptionUseCase()
+                    }
                 }
                 // Read-only accounts - even though there are no accounts in the import file, there can be accounts from other devices
                 // The account list used to check for existing account must include the ones that was just added for this identity
@@ -472,7 +474,9 @@ class ImportViewModel(application: Application) :
         readOnlyAccountList.forEach { account ->
             defaultFungibleTokensManager.addForAccount(account.address)
         }
-        updateNotificationsSubscriptionUseCase()
+        if (readOnlyAccountList.isNotEmpty()) {
+            updateNotificationsSubscriptionUseCase()
+        }
     }
 
     @Suppress("SENSELESS_COMPARISON")
