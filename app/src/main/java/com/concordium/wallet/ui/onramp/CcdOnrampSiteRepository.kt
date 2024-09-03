@@ -12,6 +12,14 @@ class CcdOnrampSiteRepository {
             acceptsCreditCard = true,
         ),
         CcdOnrampSite(
+            name = "Wert",
+            url = "https://wert.io/try-wert",
+//            logoUrl = "https://wert.io/_next/static/media/logo.0cf3ee93.svg",
+            logoUrl = "https://partner.wert.io/icons/apple-touch-icon.png",
+            type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+            acceptsCreditCard = true,
+        ),
+        CcdOnrampSite(
             name = "LetsExchange",
             url = "https://letsexchange.io/",
             logoUrl = "https://assets-global.website-files.com/64f060f3fc95f9d2081781db/64fed810c7dd2cfc068c17cf_1680692222678%20(1).jpg",
@@ -58,6 +66,12 @@ class CcdOnrampSiteRepository {
             url = "https://www.gate.io/trade/CCD_USDT",
             logoUrl = "https://cdn.prod.website-files.com/64f060f3fc95f9d2081781db/668529303de2213473aa1be0_1654851660739235057_downlod_gate1.svg",
             type = CcdOnrampSite.Type.CEX,
+        ),
+        CcdOnrampSite(
+            name = "Concordex",
+            url = "https://app.concordex.io/trade?mode=simple",
+            logoUrl = "https://cdn.prod.website-files.com/64f060f3fc95f9d2081781db/64f0d420d065ec0e03a694b9_logo-favicon-concordex.png",
+            type = CcdOnrampSite.Type.DEX,
         ),
     )
 
