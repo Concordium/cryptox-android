@@ -14,7 +14,6 @@ class CcdOnrampSiteRepository {
         CcdOnrampSite(
             name = "Wert",
             url = "https://wert.io/try-wert",
-//            logoUrl = "https://wert.io/_next/static/media/logo.0cf3ee93.svg",
             logoUrl = "https://partner.wert.io/icons/apple-touch-icon.png",
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
             acceptsCreditCard = true,
