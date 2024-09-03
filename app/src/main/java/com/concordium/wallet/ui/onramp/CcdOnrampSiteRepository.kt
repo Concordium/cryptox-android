@@ -80,6 +80,12 @@ class CcdOnrampSiteRepository {
             url = "https://radiokot.github.io/ccd-faucet/",
             logoUrl = "https://em-content.zobj.net/source/apple/391/smiling-face-with-sunglasses_1f60e.png",
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+        ),
+        CcdOnrampSite(
+            name = "Concordex Testnet",
+            url = "https://testnet.concordex.io/trade?mode=simple",
+            logoUrl = "https://cdn.prod.website-files.com/64f060f3fc95f9d2081781db/64f0d420d065ec0e03a694b9_logo-favicon-concordex.png",
+            type = CcdOnrampSite.Type.DEX,
         )
     )
 
