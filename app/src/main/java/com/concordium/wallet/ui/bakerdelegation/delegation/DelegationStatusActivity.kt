@@ -112,6 +112,9 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
+        viewModel.bakerDelegationData.account?.cooldowns
+            ?.also(::addCooldowns)
+
         binding.statusButtonTop.visibility = View.VISIBLE
         binding.statusButtonTop.text = getString(R.string.delegation_status_stop)
 

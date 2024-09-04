@@ -5,6 +5,7 @@
     style="@style/CryptoX_Container_TextCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:paddingHorizontal="20dp"
     android:paddingVertical="16dp">
 
@@ -67,14 +68,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         tools:text="9 days left" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:layout_width="match_parent"
-        style="@style/CryptoX_Progress_Horizontal"
-        android:progress="50"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/inactive_stake_cooldown_time"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

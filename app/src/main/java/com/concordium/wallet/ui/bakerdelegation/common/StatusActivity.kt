@@ -4,17 +4,21 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
 import com.concordium.wallet.databinding.DelegationbakerStatusBinding
+import com.concordium.wallet.databinding.InactiveStakeStatusBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 abstract class StatusActivity(
     titleId: Int = R.string.app_name
@@ -145,6 +149,30 @@ abstract class StatusActivity(
         binding.statusButtonBottom.isEnabled = false
         setContentTitle(contentTitleStringId)
         setEmptyState(getString(emptyStateStringId))
+    }
+
+    protected fun addCooldowns(cooldowns: Collection<AccountCooldown>) {
+        binding.cooldownListContainer.removeAllViews()
+
+        cooldowns.forEach { cooldown ->
+            InactiveStakeStatusBinding.inflate(
+                layoutInflater,
+                binding.cooldownListContainer,
+                true
+            ).apply {
+                inactiveStakeAmount.text = CurrencyUtil.formatGTU(cooldown.amount)
+
+                val daysLeft = (cooldown.timestamp - System.currentTimeMillis())
+                    .toDuration(DurationUnit.MILLISECONDS)
+                    .inWholeDays
+                    .toInt()
+                inactiveStakeCooldownTimeAmount.text = resources.getQuantityString(
+                    R.plurals.days_left,
+                    daysLeft,
+                    daysLeft
+                )
+            }
+        }
     }
 
     abstract fun initView()
