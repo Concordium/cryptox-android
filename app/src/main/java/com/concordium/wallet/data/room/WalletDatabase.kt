@@ -34,7 +34,7 @@ public abstract class WalletDatabase : RoomDatabase() {
     companion object {
 
         // TODO migration for Account
-        const val VERSION_NUMBER = 8
+        const val VERSION_NUMBER = 9
 
         // Singleton prevents multiple instances of database opening at the same time.
         @Volatile
