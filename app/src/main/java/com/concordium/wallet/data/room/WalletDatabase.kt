@@ -11,6 +11,7 @@ import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
 import com.concordium.wallet.data.room.migrations.MIGRATION_7_8
+import com.concordium.wallet.data.room.migrations.MIGRATION_8_9
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
@@ -40,7 +41,6 @@ public abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        // TODO migration for Account
         const val VERSION_NUMBER = 9
 
         // Singleton prevents multiple instances of database opening at the same time.
@@ -65,6 +65,7 @@ public abstract class WalletDatabase : RoomDatabase() {
                         MIGRATION_4_5,
                         MIGRATION_5_6,
                         MIGRATION_7_8,
+                        MIGRATION_8_9,
                     )
                     .build()
                 INSTANCE = instance
