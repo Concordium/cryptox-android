@@ -16,6 +16,7 @@ data class Token(
     var contractName: String = "",
     var balance: BigInteger = BigInteger.ZERO,
     var isSelected: Boolean = false,
+    var isNewlyReceived: Boolean = false,
 ) : Serializable {
 
     val symbol: String
@@ -42,6 +43,7 @@ data class Token(
         metadata = contractToken.tokenMetadata,
         contractIndex = contractToken.contractIndex,
         contractName = contractToken.contractName,
+        isNewlyReceived = contractToken.isNewlyReceived,
         isSelected = isSelected,
     )
 

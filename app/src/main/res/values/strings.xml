@@ -263,6 +263,7 @@
     <string name="more_overview_item_import">Import</string>
     <string name="more_overview_item_about">About</string>
     <string name="more_overview_item_analytics">Analytics</string>
+    <string name="more_overview_item_notifications">Notifications</string>
     <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="more_overview_item_developer_options">Developer Options</string>
     <string name="more_overview_item_clear_wallet_connect">Clear WalletConnect</string>
@@ -547,11 +548,18 @@
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_no_collectibles_added">No tokens have been added to this account yet</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
-    <string name="cis_delete_dialog_title">Confirm Delete!</string>
-    <string name="cis_delete_dialog_content">Delete Token from wallet?</string>
+    <string name="cis_delete_dialog_title">Confirm removal</string>
+    <string name="cis_delete_dialog_content">Delete this from wallet?</string>
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
+    <string name="cis_newly_received_notice_title">You received a new token</string>
+    <string name="template_cis_newly_received_notice_message">
+        %1$s has not been listed in your wallet till this transaction.
+        You can accept it or remove it from the list.
+    </string>
+    <string name="cis_newly_received_notice_keep_token">Keep it</string>
+    <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
 
     <string name="pass_phrase_title">Your seed phrase</string>
     <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
@@ -966,11 +974,11 @@
     <string name="welcome_promo_ask_ai">Ask our AI assistant anything</string>
     <string name="welcome_promo_ask_ai_example">e.g “How do I stake my CCDs?”</string>
     <string name="welcome_promo_ai_prompt_hint">Type your prompt here…</string>
-    <string name="welcome_notification_permission_title">Keep up with everything that\'s happening here</string>
-    <string name="welcome_notification_permission_details">Find out when you get or receive payment requests.
+    <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
+    <string name="notifications_permission_details">Find out when you get or receive payment requests.
         Get updates on new features, discount and promo</string>
-    <string name="welcome_notification_permission_allow">Allow notifications</string>
-    <string name="welcome_notification_permission_deny">Not now</string>
+    <string name="notifications_permission_allow">Allow notifications</string>
+    <string name="notifications_permission_deny">Not now</string>
     <string name="welcome_activate_bottom_sheet_title">Activate account</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE WALLET</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_details">You have to complete 3 easy steps to create your wallet:</string>
@@ -1106,6 +1114,7 @@
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
     <string name="ccd_onramp_site_type_cex">CEX</string>
+    <string name="ccd_onramp_site_type_dex">DEX</string>
     <string name="ccd_onramp_disclaimer_title">Disclaimer</string>
     <string name="ccd_onramp_disclaimer_content">
         The information regarding the CCD on any Concordium website does not constitute an offer or solicitation to purchase CCDs.
@@ -1125,6 +1134,13 @@
     <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
     <string name="ccd_onramp_banner_title">Where is CCD available?</string>
     <string name="ccd_onramp_banner_content">CCD is listed in the following exchanges and services. <u>See more</u></string>
+    <string name="notifications_preferences_title">Notifications</string>
+    <string name="notifications_preferences_ccd_transactions">CCD transactions</string>
+    <string name="notifications_preferences_cis2_transactions">CIS-2 token transactions</string>
+    <string name="transaction_notifications_channel_name">Transactions</string>
+    <string name="announcements_notification_channel_name">Announcements</string>
+    <string name="template_transaction_received_notification_title">You received %1$s</string>
+    <string name="transaction_received_notification_text">See the transaction details in your wallet</string>
     <string name="news_overview_title">Concordium News</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>

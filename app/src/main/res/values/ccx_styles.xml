@@ -81,6 +81,7 @@
     <style name="CCX_Dialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="dialogCornerRadius">@dimen/ccx_modal_corner_radius</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <!-- The background @drawable/ccx_dialog_background must be set
         as the background of the content layout -->
     </style>
@@ -191,6 +192,7 @@
         <item name="android:windowBackground">@drawable/ccx_welcome_background</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
     <style name="CCX_WelcomePromoScreen" parent="Theme.AppCompat.NoActionBar">
@@ -200,6 +202,7 @@
         <item name="android:windowBackground">@drawable/ccx_main_background</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
     <!-- endregion -->

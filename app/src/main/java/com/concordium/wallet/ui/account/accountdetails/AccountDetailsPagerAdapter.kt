@@ -18,11 +18,10 @@ class AccountDetailsPagerAdapter(
     fragmentManager: FragmentManager,
     val account: Account,
     val context: Context
-) :
-    FragmentPagerAdapter(
-        fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
-
+) : FragmentPagerAdapter(
+    fragmentManager,
+    BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> getFirstPositionFragment()
@@ -77,4 +76,7 @@ class AccountDetailsPagerAdapter(
             else -> context.getString(R.string.account_details_identity_data_title)
         }
     }
+
+    // The position is fixed for now, but it may change in the future.
+    fun getTokensPagePosition() = 1
 }

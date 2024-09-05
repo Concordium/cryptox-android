@@ -52,6 +52,7 @@
 
     <style name="AppTheme.NoActionBar.Launcher">
         <item name="android:windowBackground">@drawable/app_launcher_screen</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
     <style name="CircularProgress" parent="Theme.AppCompat.Light">

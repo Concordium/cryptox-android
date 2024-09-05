@@ -10,10 +10,12 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -50,9 +52,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val totalBalanceLiveData: LiveData<TotalBalancesData>
         get() = _totalBalanceLiveData
 
-    private val _showUnshieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
-    val showUnshieldingNoticeLiveData: LiveData<Event<Boolean>>
-        get() = _showUnshieldingNoticeLiveData
+    private val _showDialogLiveData = MutableLiveData<Event<DialogToShow>>()
+    val showDialogLiveData: LiveData<Event<DialogToShow>>
+        get() = _showDialogLiveData
 
     private val _listItemsLiveData = MutableLiveData<List<AccountsOverviewListItem>>()
     val listItemsLiveData: LiveData<List<AccountsOverviewListItem>> = _listItemsLiveData
@@ -63,9 +65,23 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val keyCreationVersion: KeyCreationVersion
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
+    private val notificationsPreferences: NotificationsPreferences
+
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
 
     enum class State {
-        NO_IDENTITIES, NO_ACCOUNTS, DEFAULT
+        NO_IDENTITIES,
+        NO_ACCOUNTS,
+        DEFAULT,
+        ;
+    }
+
+    enum class DialogToShow {
+        UNSHIELDING,
+        NOTIFICATIONS_PERMISSION,
+        ;
     }
 
     init {
@@ -97,10 +113,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
+        notificationsPreferences = NotificationsPreferences(application)
+        updateNotificationSubscription()
     }
 
     fun initialize() {
-        showUnshieldingNoticeIfNeeded()
+        showSingleDialogIfNeeded()
     }
 
     override fun onCleared() {
@@ -157,7 +175,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         updater.cancel()
     }
 
-    var updater =
+    private var updater =
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
@@ -189,17 +207,24 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             "Key creation V1 (seed-based) must be used to perform this action"
         }
 
-    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
-        // Show the notice once.
-        if (App.appCore.session.isUnshieldingNoticeShown()) {
-            return@launch
+    private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
+        val dialogsToShow = linkedSetOf<DialogToShow>()
+
+        // Show unshielding notice if never shown and some accounts may need unshielding.
+        if (!App.appCore.session.isUnshieldingNoticeShown()
+            && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
+        ) {
+            dialogsToShow += DialogToShow.UNSHIELDING
         }
 
-        val anyAccountsMayNeedUnshielding = accountRepository.getAllDone()
-            .any(Account::mayNeedUnshielding)
+        // Show notifications permission if never shown.
+        if (!notificationsPreferences.hasEverShownPermissionDialog) {
+            dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
+        }
 
-        if (anyAccountsMayNeedUnshielding) {
-            _showUnshieldingNoticeLiveData.postValue(Event(true))
+        // Show a single dialog if needed.
+        if (dialogsToShow.isNotEmpty()) {
+            _showDialogLiveData.postValue(Event(dialogsToShow.first()))
         }
     }
 
@@ -216,6 +241,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
 
         _listItemsLiveData.value = items
+    }
 
+    private fun updateNotificationSubscription() {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateNotificationsSubscriptionUseCase()
+        }
     }
 }

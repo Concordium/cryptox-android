@@ -47,7 +47,7 @@ class ManageTokensSelectionFragment : Fragment() {
         if (!firstTime)
             selectionAdapter.notifyDataSetChanged()
         firstTime = false
-        _viewModel.hasExistingTokens()
+        _viewModel.checkExistingTokens()
         binding.nonSelected.visibility = View.INVISIBLE
     }
 
@@ -149,8 +149,8 @@ class ManageTokensSelectionFragment : Fragment() {
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
         }
-        _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
-            if (hasExistingAccountContract)
+        _viewModel.hasExistingTokens.observe(viewLifecycleOwner) { hasExistingTokens ->
+            if (hasExistingTokens)
                 binding.updateWithTokens.text = getString(R.string.cis_update_tokens)
             else
                 binding.updateWithTokens.text = getString(R.string.cis_add_tokens)

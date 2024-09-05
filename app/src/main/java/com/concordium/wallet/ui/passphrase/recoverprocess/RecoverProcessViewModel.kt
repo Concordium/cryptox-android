@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -77,6 +77,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private var identityProviders: ArrayList<IdentityProvider>? = null
     private val identityGapMutex = Mutex()
     private val accountGapMutex = Mutex()
+    private val updateNotificationsSubscriptionUseCase by lazy {
+        UpdateNotificationsSubscriptionUseCase(application)
+    }
 
     val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -93,10 +96,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
         recipientRepository = RecipientRepository(recipientDao)
         val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        val accountContractDao = WalletDatabase.getDatabase(application).accountContractDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(contractTokenDao),
-            accountContractRepository = AccountContractRepository(accountContractDao),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -342,6 +343,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         recipientRepository.insert(Recipient(account))
                     }
                     defaultFungibleTokensManager.addForAccount(account.address)
+                    updateNotificationsSubscriptionUseCase()
 
                     val iWithAFound =
                         identitiesWithAccountsFound.firstOrNull { it.identity.identityProviderId == identity.identityProviderId && it.identity.identityIndex == identity.identityIndex }

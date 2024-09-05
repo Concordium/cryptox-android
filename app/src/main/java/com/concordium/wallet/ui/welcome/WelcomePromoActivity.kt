@@ -53,9 +53,6 @@ class WelcomePromoActivity :
             if (viewModel.shouldShowTrackingPermissionDialog) {
                 TrackingPermissionDialog()
                     .show(supportFragmentManager, TrackingPermissionDialog.TAG)
-            } else if (viewModel.shouldShowNotificationPermissionDialog) {
-                WelcomeNotificationPermissionDialog()
-                    .show(supportFragmentManager, WelcomeNotificationPermissionDialog.TAG)
             }
 
             App.appCore.tracker.welcomeHomeScreen()

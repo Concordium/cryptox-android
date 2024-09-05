@@ -10,10 +10,18 @@ import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
+import com.concordium.wallet.data.room.migrations.MIGRATION_7_8
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
-    entities = [Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class, AccountContract::class, ContractToken::class],
+    entities = [
+        Identity::class,
+        Account::class,
+        Transfer::class,
+        Recipient::class,
+        EncryptedAmount::class,
+        ContractToken::class,
+    ],
     version = VERSION_NUMBER,
     exportSchema = true,
     autoMigrations = [
@@ -28,7 +36,6 @@ public abstract class WalletDatabase : RoomDatabase() {
     abstract fun transferDao(): TransferDao
     abstract fun recipientDao(): RecipientDao
     abstract fun encryptedAmountDao(): EncryptedAmountDao
-    abstract fun accountContractDao(): AccountContractDao
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
@@ -57,6 +64,7 @@ public abstract class WalletDatabase : RoomDatabase() {
                         MIGRATION_3_4,
                         MIGRATION_4_5,
                         MIGRATION_5_6,
+                        MIGRATION_7_8,
                     )
                     .build()
                 INSTANCE = instance

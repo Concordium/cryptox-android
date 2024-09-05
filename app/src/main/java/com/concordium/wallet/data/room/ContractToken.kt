@@ -1,6 +1,10 @@
 package com.concordium.wallet.data.room
 
-import  androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.typeconverter.ContractTypeConverters
 import java.io.Serializable
@@ -15,6 +19,8 @@ data class ContractToken(
     var id: Int,
     @ColumnInfo(name = "contract_index")
     val contractIndex: String,
+    @ColumnInfo(name = "contract_name", defaultValue = "")
+    val contractName: String,
     @ColumnInfo(name = "token_id")
     val tokenId: String,
     @ColumnInfo(name = "account_address")
@@ -23,6 +29,6 @@ data class ContractToken(
     val isFungible: Boolean,
     @ColumnInfo(name = "token_metadata")
     val tokenMetadata: TokenMetadata?,
-    @ColumnInfo(name = "contract_name", defaultValue = "")
-    val contractName: String
+    @ColumnInfo(name = "is_newly_received", defaultValue = "0")
+    val isNewlyReceived: Boolean,
 ) : Serializable

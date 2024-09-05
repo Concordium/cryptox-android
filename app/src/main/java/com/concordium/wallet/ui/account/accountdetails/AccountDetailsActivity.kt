@@ -43,8 +43,13 @@ class AccountDetailsActivity : BaseActivity(
     lateinit var viewModelTokens: TokensViewModel
         private set
 
+    private val shouldOpenTokens: Boolean by lazy {
+        intent.getBooleanExtra(EXTRA_OPEN_TOKENS, false)
+    }
+
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
+        const val EXTRA_OPEN_TOKENS = "EXTRA_OPEN_TOKENS"
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
     }
 
@@ -258,6 +263,10 @@ class AccountDetailsActivity : BaseActivity(
                 }
             }
         }
+
+        if (shouldOpenTokens) {
+            binding.accountDetailsPager.setCurrentItem(adapter.getTokensPagePosition(), false)
+        }
     }
 
     //endregion
@@ -333,10 +342,10 @@ class AccountDetailsActivity : BaseActivity(
     private val showTokenDetails =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getBooleanExtra(TokenDetailsActivity.DELETED, false)?.let { isDeleted ->
-                    if (isDeleted) {
-                        viewModelTokens.updateWithSelectedTokensDone.postValue(true)
-                    }
+                val isChanged =
+                    it.data?.getBooleanExtra(TokenDetailsActivity.CHANGED, false) == true
+                if (isChanged) {
+                    viewModelTokens.updateWithSelectedTokensDone.postValue(true)
                 }
             }
         }
