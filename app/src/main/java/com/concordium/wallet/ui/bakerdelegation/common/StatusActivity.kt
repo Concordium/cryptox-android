@@ -166,20 +166,22 @@ abstract class StatusActivity(
             ).apply {
                 inactiveStakeAmount.text = CurrencyUtil.formatGTU(cooldown.amount)
 
-                val daysLeft = (cooldown.timestamp - System.currentTimeMillis())
+                val dayLeftCount = (cooldown.timestamp - System.currentTimeMillis())
                     .toDuration(DurationUnit.MILLISECONDS)
                     .inWholeDays
+                    // If less than 1 day left, keep showing “1 day left”.
+                    .coerceAtLeast(1)
                     .toInt()
                 val daysLeftString = resources.getQuantityString(
                     R.plurals.days_left,
-                    daysLeft,
-                    daysLeft
+                    dayLeftCount,
+                    dayLeftCount
                 )
-                val daysNumberIndex = daysLeftString.indexOf(daysLeft.toString())
+                val dayLeftCountIndex = daysLeftString.indexOf(dayLeftCount.toString())
                 inactiveStakeCooldownTimeAmount.text = SpannableString(daysLeftString).apply {
                     set(
-                        daysNumberIndex,
-                        daysNumberIndex + daysLeft.toString().length,
+                        dayLeftCountIndex,
+                        dayLeftCountIndex + dayLeftCount.toString().length,
                         ForegroundColorSpan(
                             ContextCompat.getColor(
                                 this@StatusActivity,
