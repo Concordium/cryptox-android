@@ -91,15 +91,8 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             )
         }
 
-//        accountBaker.pendingChange?.let { pendingChange ->
-//            addPendingChange(
-//                pendingChange,
-//                R.string.baker_status_baker_effective_time,
-//                R.string.baker_status_baker_take_effect_on,
-//                R.string.baker_status_baker_effective_remove,
-//                R.string.baker_status_baker_stake_lowered_to
-//            )
-//        }
+        viewModel.bakerDelegationData.account?.cooldowns
+            ?.also(::addCooldowns)
 
         binding.statusButtonBottom.setOnClickListener {
             openChangeBakerStatusBottomSheet()

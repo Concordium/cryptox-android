@@ -1128,4 +1128,8 @@
     <string name="news_overview_title">Concordium News</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
+    <plurals name="days_left">
+        <item quantity="one">%1$d day left</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
 </resources>

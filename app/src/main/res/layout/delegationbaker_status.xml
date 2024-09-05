@@ -64,14 +64,27 @@
         app:layout_constraintTop_toBottomOf="@id/balance_layout">
 
         <LinearLayout
-            android:id="@+id/status_list_container"
-            style="@style/CryptoX_Container_Stroked"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="12dp" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/status_list_container"
+                style="@style/CryptoX_Container_Stroked"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp" />
+
+            <LinearLayout
+                android:id="@+id/cooldown_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:orientation="vertical" />
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
