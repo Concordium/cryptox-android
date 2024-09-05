@@ -13,8 +13,10 @@
         android:id="@+id/inactive_stake_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
         android:text="@string/delegation_status_content_inactive_stake"
         android:textColor="@color/cryptox_grey_additional"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,6 +28,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/delegation_status_content_inactive_stake_description"
         android:textColor="@color/ccx_neutral_tint_8"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inactive_stake_label" />
@@ -56,6 +59,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/delegation_status_content_cooldown_time"
         android:textColor="@color/cryptox_black_additional"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider" />
 
@@ -64,7 +68,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-medium"
         android:textColor="@color/cryptox_black_additional"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         tools:text="9 days left" />

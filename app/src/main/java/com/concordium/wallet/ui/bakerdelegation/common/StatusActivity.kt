@@ -1,7 +1,11 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.text.set
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AccountCooldown
@@ -166,11 +170,24 @@ abstract class StatusActivity(
                     .toDuration(DurationUnit.MILLISECONDS)
                     .inWholeDays
                     .toInt()
-                inactiveStakeCooldownTimeAmount.text = resources.getQuantityString(
+                val daysLeftString = resources.getQuantityString(
                     R.plurals.days_left,
                     daysLeft,
                     daysLeft
                 )
+                val daysNumberIndex = daysLeftString.indexOf(daysLeft.toString())
+                inactiveStakeCooldownTimeAmount.text = SpannableString(daysLeftString).apply {
+                    set(
+                        daysNumberIndex,
+                        daysNumberIndex + daysLeft.toString().length,
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(
+                                this@StatusActivity,
+                                R.color.cryptox_white_main
+                            )
+                        )
+                    )
+                }
             }
         }
     }
