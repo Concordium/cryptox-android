@@ -51,7 +51,7 @@ class ManageTokensTokenDetailsFragment : Fragment() {
                 setImage(tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
-                setDecimals(tokenMetadata)
+                setDecimals(token)
             }
         }
     }
@@ -125,10 +125,10 @@ class ManageTokensTokenDetailsFragment : Fragment() {
         }
     }
 
-    private fun setDecimals(tokenMetadata: TokenMetadata) {
-        if (tokenMetadata.unique != true) {
+    private fun setDecimals(token: Token) {
+        if (!token.isUnique) {
             binding.details.decimalsHolder.visibility = View.VISIBLE
-            binding.details.decimals.text = tokenMetadata.decimals.toString()
+            binding.details.decimals.text = token.decimals.toString()
         }
     }
 }
