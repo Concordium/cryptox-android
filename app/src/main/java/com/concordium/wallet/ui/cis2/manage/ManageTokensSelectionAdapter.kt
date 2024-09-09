@@ -73,7 +73,7 @@ class ManageTokensSelectionAdapter(
             val tokenBalance = CurrencyUtil.formatGTU(
                 token.balance,
                 false,
-                token.metadata?.decimals ?: 0
+                token.decimals
             )
             holder.binding.subtitle.text =
                 context.getString(R.string.cis_search_balance, tokenBalance)
