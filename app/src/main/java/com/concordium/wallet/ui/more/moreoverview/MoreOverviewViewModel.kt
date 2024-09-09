@@ -112,12 +112,10 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
 
     private fun clearNotificationToken() {
-        viewModelScope.launch {
-            try {
-                FirebaseMessaging.getInstance().deleteToken()
-            } catch (error: Exception) {
-                Log.e("failed_deleting_notification_token", error)
-            }
+        try {
+            FirebaseMessaging.getInstance().deleteToken()
+        } catch (error: Exception) {
+            Log.e("failed_deleting_notification_token", error)
         }
     }
 
