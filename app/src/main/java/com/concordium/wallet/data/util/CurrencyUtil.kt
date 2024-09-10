@@ -67,15 +67,8 @@ object CurrencyUtil {
         return strBuilder.toString().removeSuffix(separator.toString())
     }
 
-    fun toGTUValue(stringValue: String, token: Token?): BigInteger? {
-        var decimals = 0
-        token?.let {
-            it.metadata?.decimals?.let { tokenDecimals ->
-                decimals = tokenDecimals
-            }
-        }
-        return toGTUValue(stringValue, decimals)
-    }
+    fun toGTUValue(stringValue: String, token: Token?): BigInteger? =
+        toGTUValue(stringValue, token?.decimals ?: 0)
 
     fun toGTUValue(stringValue: String, decimals: Int = 6): BigInteger? {
         var str = stringValue.replace("Ͼ", "")
