@@ -560,12 +560,13 @@
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
 
-    <string name="pass_phrase_title">Your seed phrase</string>
+    <string name="your_wallet_private_key">Your wallet private key</string>
+    <string name="your_seed_phrase">Your seed phrase</string>
     <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
 
     <string name="copied">Copied</string>
 
-    <string name="pass_phrase_recover_title">Your seed phrase</string>
+    <string name="pass_phrase_recover_title">@string/your_seed_phrase</string>
     <string name="pass_phrase_recover_input_explain">Manually enter all your 24 words in order as it was presented to you</string>
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>
@@ -999,7 +1000,7 @@
     <string name="setup_wallet_continue">Continue</string>
     <string name="setup_wallet_seed_phrase_consent">I have kept it somewhere safe</string>
     <string name="setup_wallet_seed_phrase_copy">Copy to clipboard</string>
-    <string name="setup_wallet_seed_phrase_title">Your seed phrase</string>
+    <string name="setup_wallet_seed_phrase_title">@string/your_seed_phrase</string>
     <string name="setup_wallet_seed_phrase_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
     <string name="setup_wallet_seed_phrase_transcribe">Transcribe</string>
     <string name="setup_wallet_seed_phrase_digital_copy">Digital copy</string>
@@ -1008,12 +1009,20 @@
     <string name="setup_wallet_failed">Failed to set up the wallet, please contact \nsupport@concordium.software.com</string>
     <string name="saved_pass_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
     <string name="saved_pass_phrase_reveal_seed_phrase_show">Show seed phrase</string>
-    <string name="saved_pass_phrase_reveal_title">Your seed phrase</string>
+    <string name="saved_pass_phrase_reveal_title">@string/your_seed_phrase</string>
     <string name="saved_pass_phrase_reveal_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
     <string name="saved_pass_phrase_reveal_transcribe">Transcribe</string>
     <string name="saved_pass_phrase_reveal_digital_copy">Digital copy</string>
     <string name="saved_pass_phrase_reveal_screenshot">Screenshot</string>
     <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_reveal_seed_copy">Copy to clipboard</string>
+    <string name="saved_seed_reveal_seed_show">Show wallet private key</string>
+    <string name="saved_seed_reveal_title">@string/your_wallet_private_key</string>
+    <string name="saved_seed_reveal_details">Your wallet private key is the access key to all the funds in your wallet. Copy it and keep it safe. To avoid mistakes, do not write it down manually.</string>
+    <string name="saved_seed_reveal_transcribe">Transcribe</string>
+    <string name="saved_seed_reveal_copy_and_keep">Copy and keep safe</string>
+    <string name="saved_seed_reveal_screenshot">Screenshot</string>
+    <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.software.com</string>
 
     <!-- Identity proofs in WalletConnect -->
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>

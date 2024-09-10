@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/saved_pass_phrase_reveal_title"
+                android:text="@string/saved_seed_reveal_title"
                 android:textAppearance="@style/CCX_Typography_H1"
                 android:textColor="@color/ccx_neutral_tint_1"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -49,14 +49,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:text="@string/saved_pass_phrase_reveal_details"
+                android:text="@string/saved_seed_reveal_details"
                 android:textAppearance="@style/CCX_Typography_Body"
                 android:textColor="@color/ccx_neutral_tint_2" />
 
             <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="16dp"
                 app:flexDirection="row"
                 app:flexWrap="wrap"
@@ -66,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
-                    android:text="@string/saved_pass_phrase_reveal_transcribe"
+                    android:text="@string/saved_seed_reveal_copy_and_keep"
                     android:textAppearance="@style/CCX_Typography_Caption"
                     android:textColor="@color/ccx_neutral_tint_1"
                     app:drawableStartCompat="@drawable/ccx_ico_approved" />
@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
-                    android:text="@string/saved_pass_phrase_reveal_digital_copy"
+                    android:text="@string/saved_seed_reveal_transcribe"
                     android:textAppearance="@style/CCX_Typography_Caption"
                     android:textColor="@color/ccx_neutral_tint_1"
                     app:drawableStartCompat="@drawable/ccx_ico_declined" />
@@ -84,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
-                    android:text="@string/saved_pass_phrase_reveal_screenshot"
+                    android:text="@string/saved_seed_reveal_screenshot"
                     android:textAppearance="@style/CCX_Typography_Caption"
                     android:textColor="@color/ccx_neutral_tint_1"
                     app:drawableStartCompat="@drawable/ccx_ico_declined" />
@@ -97,18 +97,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp">
 
-                <com.google.android.flexbox.FlexboxLayout
+                <FrameLayout
                     android:id="@+id/content_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/ccx_card_dark_16_background"
-                    android:padding="6dp"
-                    app:flexDirection="row"
-                    app:flexWrap="wrap"
-                    app:justifyContent="center"
-                    tools:layout_height="64dp">
-                    <!-- Words are added programmatically -->
-                </com.google.android.flexbox.FlexboxLayout>
+                    app:justifyContent="center">
+
+                    <TextView
+                        android:id="@+id/seed_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:background="@drawable/cryptox_container_stroked_background_8"
+                        android:padding="12dp"
+                        android:textIsSelectable="true"
+                        tools:text="575f0f919c99ed4b7d858df2aea68112292da4eae98e2e69410cd5283f3c727b282caeba754f815dc876d8b84d3339c6f74c4127f238a391891dd23c74892943" />
+                </FrameLayout>
 
                 <eightbitlab.com.blurview.BlurView
                     android:id="@+id/blur_view"
@@ -122,7 +127,7 @@
                         android:layout_gravity="center"
                         android:importantForAccessibility="no"
                         app:srcCompat="@drawable/ccx_locked"
-                        app:tint="@color/ccx_mineral_blue_tint_1" />
+                        app:tint="@color/ccx_neutral_tint_2" />
                 </eightbitlab.com.blurview.BlurView>
             </FrameLayout>
 
@@ -134,7 +139,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:paddingHorizontal="20dp"
-                android:text="@string/saved_pass_phrase_reveal_seed_phrase_copy"
+                android:text="@string/saved_seed_reveal_seed_copy"
                 android:textAppearance="@style/CCX_Typography_Button_M"
                 android:textColor="@color/ccx_neutral_tint_1"
                 app:drawableEndCompat="@drawable/cryptox_ico_copy"
@@ -148,7 +153,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:paddingHorizontal="20dp"
-                android:text="@string/saved_pass_phrase_reveal_seed_phrase_show"
+                android:text="@string/saved_seed_reveal_seed_show"
                 android:textAppearance="@style/CCX_Typography_Button_M"
                 android:textColor="@color/ccx_neutral_tint_1"
                 app:drawableEndCompat="@drawable/ccx_ico_eye_open"

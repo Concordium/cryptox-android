@@ -524,6 +524,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
         <activity
+            android:name=".ui.passphrase.reveal.SavedSeedRevealActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
+        <activity
             android:name=".ui.more.unshielding.UnshieldingAccountsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"

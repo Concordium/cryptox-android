@@ -77,7 +77,7 @@ class OneStepSetupWalletActivity :
             val clipboardManager: ClipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(
-                getString(R.string.pass_phrase_title),
+                getString(R.string.your_seed_phrase),
                 viewModel.phraseString,
             )
             clipboardManager.setPrimaryClip(clipData)
