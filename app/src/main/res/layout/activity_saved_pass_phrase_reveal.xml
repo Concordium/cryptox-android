@@ -116,14 +116,13 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/ccx_card_16_blur_background">
 
-                    <ImageView
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_margin="16dp"
                         android:importantForAccessibility="no"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ccx_locked" />
+                        app:srcCompat="@drawable/ccx_locked"
+                        app:tint="@color/ccx_mineral_blue_tint_1" />
                 </eightbitlab.com.blurview.BlurView>
             </FrameLayout>
 
