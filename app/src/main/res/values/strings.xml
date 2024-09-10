@@ -276,7 +276,8 @@
     </string>
     <string name="more_overview_erase_wallet_continue">@string/dialog_yes</string>
     <string name="more_overview_erase_wallet_erased">The wallet has been successfully erased</string>
-    <string name="more_overview_reveal_seed_phrase">Show My Seed Phrase</string>
+    <string name="more_overview_reveal_seed_phrase">Seed Phrase</string>
+    <string name="more_overview_reveal_seed">Wallet Private Key</string>
     <!-- Export -->
     <string name="export_title">Export</string>
     <string name="export_confirm">Export</string>

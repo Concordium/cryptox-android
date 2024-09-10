@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.passphrase.reveal
 
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -43,13 +42,18 @@ class SavedSeedRevealActivity :
         initButtons()
 
         subscribeToEvents()
-        subscribeToState()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun initSeed(
-    ) = viewModel.seedFlow.collectWhenStarted(this) { seedHex ->
-        binding.seedTextView.text = seedHex
+    private fun initSeed() {
+        viewModel.seedFlow.collectWhenStarted(this) { seedHex ->
+            binding.seedTextView.text = seedHex
+        }
+
+        viewModel.stateFlow.collectWhenStarted(this) { state ->
+            // Do not allow selection through blur,
+            // even though the content is not the actual seed until it is revealed.
+            binding.seedTextView.setTextIsSelectable(state is SavedSeedRevealViewModel.State.Revealed)
+        }
     }
 
     private fun initBlur() = with(binding.blurView) {
@@ -58,6 +62,11 @@ class SavedSeedRevealActivity :
 
         outlineProvider = ViewOutlineProvider.BACKGROUND
         clipToOutline = true
+
+        viewModel.stateFlow.collectWhenStarted(this@SavedSeedRevealActivity) { state ->
+            isVisible = state is SavedSeedRevealViewModel.State.Hidden
+            setBlurEnabled(isVisible)
+        }
     }
 
     private fun initButtons() {
@@ -82,6 +91,11 @@ class SavedSeedRevealActivity :
                 null,
             )
         }
+
+        viewModel.stateFlow.collectWhenStarted(this) { state ->
+            binding.copyButton.isVisible = state is SavedSeedRevealViewModel.State.Revealed
+            binding.showButton.isVisible = state is SavedSeedRevealViewModel.State.Hidden
+        }
     }
 
     private fun subscribeToEvents(
@@ -99,18 +113,6 @@ class SavedSeedRevealActivity :
                 showError(R.string.saved_seed_reveal_failed)
             }
         }
-    }
-
-    private fun subscribeToState(
-    ) = viewModel.stateFlow.collectWhenStarted(this) { state ->
-
-        with(binding.blurView) {
-            isVisible = state is SavedSeedRevealViewModel.State.Hidden
-            setBlurEnabled(isVisible)
-        }
-
-        binding.copyButton.isVisible = state is SavedSeedRevealViewModel.State.Revealed
-        binding.showButton.isVisible = state is SavedSeedRevealViewModel.State.Hidden
     }
 
     override fun loggedOut() {

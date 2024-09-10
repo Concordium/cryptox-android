@@ -101,6 +101,16 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/seed_reveal_layout"
+                style="@style/MoreOverviewItem">
+
+                <TextView
+                    style="@style/MoreOverviewItemTextView"
+                    android:text="@string/more_overview_reveal_seed"
+                    app:drawableStartCompat="@drawable/ccx_ico_eye_open" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/alter_layout"
                 style="@style/MoreOverviewItem">
 
