@@ -41,6 +41,7 @@ class AnnouncementNotificationManager(
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
