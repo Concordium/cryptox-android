@@ -64,6 +64,7 @@ class TransactionNotificationsManager(
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
@@ -110,6 +111,7 @@ class TransactionNotificationsManager(
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
