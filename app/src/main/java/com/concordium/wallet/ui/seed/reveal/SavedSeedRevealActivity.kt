@@ -1,6 +1,5 @@
-package com.concordium.wallet.ui.passphrase.reveal
+package com.concordium.wallet.ui.seed.reveal
 
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -9,23 +8,23 @@ import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ActivitySavedPassPhraseRevealBinding
-import com.concordium.wallet.databinding.ItemCcxSeedPhraseWordBinding
+import com.concordium.wallet.databinding.ActivitySavedSeedRevealBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 
-class SavedPassPhraseRevealActivity :
-    BaseActivity(R.layout.activity_saved_pass_phrase_reveal),
+class SavedSeedRevealActivity :
+    BaseActivity(R.layout.activity_saved_seed_reveal),
     AuthDelegate by AuthDelegateImpl() {
 
-    private val binding: ActivitySavedPassPhraseRevealBinding by lazy {
-        ActivitySavedPassPhraseRevealBinding.bind(findViewById(R.id.toastLayoutTopError))
+    private val binding: ActivitySavedSeedRevealBinding by lazy {
+        ActivitySavedSeedRevealBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private lateinit var viewModel: SavedPassPhraseRevealViewModel
+    private lateinit var viewModel: SavedSeedRevealViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,29 +32,27 @@ class SavedPassPhraseRevealActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[SavedPassPhraseRevealViewModel::class.java]
+        ).get()
 
         setActionBarTitle("")
         hideActionBarBack(isVisible = true)
 
-        initWords()
+        initSeed()
         initBlur()
         initButtons()
 
         subscribeToEvents()
-        subscribeToState()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun initWords(
-    ) = viewModel.phraseFlow.collectWhenStarted(this) { words ->
-        binding.contentLayout.removeAllViews()
+    private fun initSeed() {
+        viewModel.seedFlow.collectWhenStarted(this) { seedHex ->
+            binding.seedTextView.text = seedHex
+        }
 
-        words.forEachIndexed { index, word ->
-            val wordView = ItemCcxSeedPhraseWordBinding
-                .inflate(layoutInflater, binding.contentLayout, true)
-            wordView.numberTextView.text = (index + 1).toString()
-            wordView.wordTextView.text = word
+        viewModel.stateFlow.collectWhenStarted(this) { state ->
+            // Do not allow selection through blur,
+            // even though the content is not the actual seed until it is revealed.
+            binding.seedTextView.setTextIsSelectable(state is SavedSeedRevealViewModel.State.Revealed)
         }
     }
 
@@ -65,19 +62,24 @@ class SavedPassPhraseRevealActivity :
 
         outlineProvider = ViewOutlineProvider.BACKGROUND
         clipToOutline = true
+
+        viewModel.stateFlow.collectWhenStarted(this@SavedSeedRevealActivity) { state ->
+            isVisible = state is SavedSeedRevealViewModel.State.Hidden
+            setBlurEnabled(isVisible)
+        }
     }
 
     private fun initButtons() {
         binding.showButton.setOnClickListener {
-            viewModel.onShowPhraseClicked()
+            viewModel.onShowSeedClicked()
         }
 
         binding.copyButton.setOnClickListener {
             val clipboardManager: ClipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(
-                getString(R.string.your_seed_phrase),
-                viewModel.phraseString,
+                getString(R.string.your_wallet_private_key),
+                viewModel.seedString,
             )
             clipboardManager.setPrimaryClip(clipData)
 
@@ -89,35 +91,28 @@ class SavedPassPhraseRevealActivity :
                 null,
             )
         }
+
+        viewModel.stateFlow.collectWhenStarted(this) { state ->
+            binding.copyButton.isVisible = state is SavedSeedRevealViewModel.State.Revealed
+            binding.showButton.isVisible = state is SavedSeedRevealViewModel.State.Hidden
+        }
     }
 
     private fun subscribeToEvents(
     ) = viewModel.eventsFlow.collect(this) { event ->
 
         when (event) {
-            SavedPassPhraseRevealViewModel.Event.Authenticate -> {
+            SavedSeedRevealViewModel.Event.Authenticate -> {
                 showAuthentication(
                     activity = this,
                     onAuthenticated = viewModel::onAuthenticated
                 )
             }
 
-            SavedPassPhraseRevealViewModel.Event.ShowFatalError -> {
-                showError(R.string.saved_pass_phrase_reveal_failed)
+            SavedSeedRevealViewModel.Event.ShowFatalError -> {
+                showError(R.string.saved_seed_reveal_failed)
             }
         }
-    }
-
-    private fun subscribeToState(
-    ) = viewModel.stateFlow.collectWhenStarted(this) { state ->
-
-        with (binding.blurView) {
-            isVisible = state is SavedPassPhraseRevealViewModel.State.Hidden
-            setBlurEnabled(isVisible)
-        }
-
-        binding.copyButton.isVisible = state is SavedPassPhraseRevealViewModel.State.Revealed
-        binding.showButton.isVisible = state is SavedPassPhraseRevealViewModel.State.Hidden
     }
 
     override fun loggedOut() {

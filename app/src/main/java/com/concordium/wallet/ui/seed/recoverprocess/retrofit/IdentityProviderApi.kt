@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess.retrofit
+package com.concordium.wallet.ui.seed.recoverprocess.retrofit
 
 import com.concordium.wallet.data.model.RecoverResponse
 import retrofit2.Response

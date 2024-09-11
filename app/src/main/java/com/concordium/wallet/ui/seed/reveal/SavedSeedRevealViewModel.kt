@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.reveal
+package com.concordium.wallet.ui.seed.reveal
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -11,17 +11,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class SavedPassPhraseRevealViewModel(application: Application) : AndroidViewModel(application) {
-    // The initial value is a random phrase to be shown under a blur.
-    // The following phrase(s) is guaranteed to be randomly generated 7 years ago.
-    private val mutablePhraseFlow: MutableStateFlow<List<String>> = MutableStateFlow(
-        ("tonight fat have keen intact happy social powder tired shaft length cram " +
-                "buyer need midnight amateur mix jungle top odor mouse exotic master strong")
-            .split(SEED_PHRASE_WORDS_DELIMITER)
+class SavedSeedRevealViewModel(application: Application) : AndroidViewModel(application) {
+    // The initial value is a random seed to be shown under a blur.
+    private val mutableSeedFlow: MutableStateFlow<String> = MutableStateFlow(
+        "575f0f919c99ed4b7d858df2aea68112292da4eae98e2e69410cd5283f3c727b282caeba754f815dc876d8b84d3339c6f74c4127f238a391891dd23c74892943"
     )
-    val phraseFlow: Flow<List<String>> = mutablePhraseFlow
-    val phraseString: String
-        get() = mutablePhraseFlow.value.joinToString(" ")
+    val seedFlow: Flow<String> = mutableSeedFlow
+    val seedString: String
+        get() = mutableSeedFlow.value
 
     private val mutableStateFlow: MutableStateFlow<State> = MutableStateFlow(State.Hidden)
     val stateFlow: Flow<State> = mutableStateFlow
@@ -32,25 +29,25 @@ class SavedPassPhraseRevealViewModel(application: Application) : AndroidViewMode
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
-    fun onShowPhraseClicked() {
+    fun onShowSeedClicked() {
         mutableEventsFlow.tryEmit(Event.Authenticate)
     }
 
     fun onAuthenticated(password: String) {
-        decryptAndRevealPhrase(password)
+        decryptAndRevealSeed(password)
     }
 
-    private fun decryptAndRevealPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {
-        val seedPhrase = try {
-            AuthPreferences(getApplication()).getSeedPhrase(password)
+    private fun decryptAndRevealSeed(password: String) = viewModelScope.launch(Dispatchers.IO) {
+        val seedHex = try {
+            AuthPreferences(getApplication()).getSeedHex(password)
         } catch (e: Exception) {
-            Log.e("phrase_decrypt_failed", e)
+            Log.e("seed_decrypt_failed", e)
 
             mutableEventsFlow.emit(Event.ShowFatalError)
             return@launch
         }
 
-        mutablePhraseFlow.emit(seedPhrase.split(SEED_PHRASE_WORDS_DELIMITER))
+        mutableSeedFlow.emit(seedHex)
         mutableStateFlow.emit(State.Revealed)
     }
 
@@ -62,9 +59,5 @@ class SavedPassPhraseRevealViewModel(application: Application) : AndroidViewMode
     sealed interface Event {
         object Authenticate : Event
         object ShowFatalError : Event
-    }
-
-    private companion object {
-        private const val SEED_PHRASE_WORDS_DELIMITER = ' '
     }
 }

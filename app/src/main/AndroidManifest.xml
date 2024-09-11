@@ -389,13 +389,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.passphrase.recover.RecoverWalletActivity"
+            android:name=".ui.seed.recover.RecoverWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
-            android:name=".ui.passphrase.recoverprocess.RecoverProcessActivity"
+            android:name=".ui.seed.recoverprocess.RecoverProcessActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
@@ -514,17 +514,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
         <activity
-            android:name=".ui.passphrase.setup.OneStepSetupWalletActivity"
+            android:name=".ui.seed.setup.OneStepSetupWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
         <activity
-            android:name=".ui.passphrase.reveal.SavedPassPhraseRevealActivity"
+            android:name=".ui.seed.reveal.SavedSeedPhraseRevealActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
         <activity
-            android:name=".ui.passphrase.reveal.SavedSeedRevealActivity"
+            android:name=".ui.seed.reveal.SavedSeedRevealActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />

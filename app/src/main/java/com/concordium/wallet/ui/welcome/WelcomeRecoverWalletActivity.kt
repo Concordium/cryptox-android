@@ -6,7 +6,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
-import com.concordium.wallet.ui.passphrase.recover.RecoverWalletActivity
+import com.concordium.wallet.ui.seed.recover.RecoverWalletActivity
 
 class WelcomeRecoverWalletActivity : BaseActivity(
     R.layout.activity_welcome_recover_wallet,

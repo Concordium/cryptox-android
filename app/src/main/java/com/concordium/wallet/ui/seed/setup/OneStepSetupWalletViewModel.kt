@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.setup
+package com.concordium.wallet.ui.seed.setup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

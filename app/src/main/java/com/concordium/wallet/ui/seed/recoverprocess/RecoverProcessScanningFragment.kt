@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess
+package com.concordium.wallet.ui.seed.recoverprocess
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentRecoverProcessScanningBinding
-import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
+import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
 
 class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
     private var _binding: FragmentRecoverProcessScanningBinding? = null
@@ -43,7 +43,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
         super.onResume()
         _viewModel.recoverIdentitiesAndAccounts(
             _password,
-            getString(R.string.pass_phrase_recover_process_identity_name_prefix)
+            getString(R.string.seed_phrase_recover_process_identity_name_prefix)
         )
     }
 

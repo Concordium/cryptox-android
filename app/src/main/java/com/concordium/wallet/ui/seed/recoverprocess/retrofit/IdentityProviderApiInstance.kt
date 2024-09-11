@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess.retrofit
+package com.concordium.wallet.ui.seed.recoverprocess.retrofit
 
 import android.net.Uri
 import com.concordium.wallet.BuildConfig

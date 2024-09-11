@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.common
+package com.concordium.wallet.ui.seed.common
 
 import android.content.Context
 import android.widget.BaseAdapter

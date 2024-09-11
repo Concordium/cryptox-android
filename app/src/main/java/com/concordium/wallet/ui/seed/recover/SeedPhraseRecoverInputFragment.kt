@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recover
+package com.concordium.wallet.ui.seed.recover
 
 import android.content.ClipboardManager
 import android.content.Context
@@ -15,17 +15,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.FragmentPassPhraseRecoverInputBinding
-import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
+import com.concordium.wallet.databinding.FragmentSeedPhraseRecoverInputBinding
+import com.concordium.wallet.ui.seed.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.Log
 import java.util.Timer
 import kotlin.concurrent.schedule
 
-class PassPhraseRecoverInputFragment : Fragment() {
-    private var _binding: FragmentPassPhraseRecoverInputBinding? = null
+class SeedPhraseRecoverInputFragment : Fragment() {
+    private var _binding: FragmentSeedPhraseRecoverInputBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: PassPhraseRecoverViewModel
+    private val viewModel: SeedPhraseRecoverViewModel
         get() = (requireActivity() as RecoverWalletActivity).viewModel
 
     private lateinit var arrayAdapter: WordsPickedRecoverListAdapter
@@ -45,7 +45,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPassPhraseRecoverInputBinding.inflate(inflater, container, false)
+        _binding = FragmentSeedPhraseRecoverInputBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -250,7 +250,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
         if (tvSuggestion.visibility != View.VISIBLE)
             return
 
-        if (arrayAdapter.currentPosition < PassPhraseRecoverViewModel.WORD_COUNT + WordsPickedBaseListAdapter.OFFSET) {
+        if (arrayAdapter.currentPosition < SeedPhraseRecoverViewModel.WORD_COUNT + WordsPickedBaseListAdapter.OFFSET) {
             viewModel.wordsPicked[arrayAdapter.currentPosition] = tvSuggestion.text.toString()
             hideAllSuggestions()
             moveDown()
@@ -259,7 +259,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
     }
 
     private fun moveDown() {
-        if (arrayAdapter.currentPosition <= PassPhraseRecoverViewModel.WORD_COUNT)
+        if (arrayAdapter.currentPosition <= SeedPhraseRecoverViewModel.WORD_COUNT)
             arrayAdapter.currentPosition++
         moveToCurrent()
     }

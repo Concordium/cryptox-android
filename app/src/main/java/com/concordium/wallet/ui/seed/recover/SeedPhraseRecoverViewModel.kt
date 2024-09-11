@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recover
+package com.concordium.wallet.ui.seed.recover
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -11,13 +11,13 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
+import com.concordium.wallet.ui.seed.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application) {
+class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(application) {
     var allWords = listOf<String>()
     val wordsPicked: Array<String?> =
         (WORD_COUNT + WordsPickedBaseListAdapter.OFFSET * 2).let { arraySize ->

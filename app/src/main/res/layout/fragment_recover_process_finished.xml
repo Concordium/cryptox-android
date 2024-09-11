@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/pass_phrase_recover_process_finished"
+            android:text="@string/seed_phrase_recover_process_finished"
             android:textAppearance="@style/CCX_Typography_Body"
             android:textColor="@color/ccx_neutral_tint_2" />
 
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/pass_phrase_recover_process_recovered"
+            android:text="@string/seed_phrase_recover_process_recovered"
             android:textAppearance="@style/CCX_Typography_Body"
             android:textColor="@color/ccx_neutral_tint_2" />
     </LinearLayout>
@@ -36,7 +36,7 @@
         android:id="@+id/partial_layout"
         style="@style/CryptoX_Container_Error.TextView"
         android:layout_marginTop="20dp"
-        android:text="@string/pass_phrase_recover_process_partial_description"
+        android:text="@string/seed_phrase_recover_process_partial_description"
         android:textAppearance="@style/CCX_Typography_Body"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

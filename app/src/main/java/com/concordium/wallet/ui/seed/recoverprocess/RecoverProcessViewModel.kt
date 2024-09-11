@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess
+package com.concordium.wallet.ui.seed.recoverprocess
 
 import android.app.Application
 import android.net.Uri
@@ -35,7 +35,7 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
+import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonArray

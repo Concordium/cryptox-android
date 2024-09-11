@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recover
+package com.concordium.wallet.ui.seed.recover
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.databinding.ListItemWordsPickedRecoverBinding
-import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
+import com.concordium.wallet.ui.seed.common.WordsPickedBaseListAdapter
 import kotlin.math.abs
 
 class WordsPickedRecoverListAdapter(

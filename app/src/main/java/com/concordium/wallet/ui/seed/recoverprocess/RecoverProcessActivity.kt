@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess
+package com.concordium.wallet.ui.seed.recoverprocess
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,7 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 
 class RecoverProcessActivity : BaseActivity(
     R.layout.activity_recover_process,
-    R.string.pass_phrase_recover_process_title,
+    R.string.seed_phrase_recover_process_title,
 ), AuthDelegate by AuthDelegateImpl() {
     private val binding by lazy {
         ActivityRecoverProcessBinding.bind(findViewById(R.id.toastLayoutTopError))
@@ -98,11 +98,11 @@ class RecoverProcessActivity : BaseActivity(
         binding.continueButton.visibility = View.VISIBLE
         if (viewModel.recoverProcessData.noResponseFrom.size > 0) {
             binding.tryAgainButton.visibility = View.VISIBLE
-            binding.continueButton.text = getString(R.string.pass_phrase_recover_process_continue)
+            binding.continueButton.text = getString(R.string.seed_phrase_recover_process_continue)
         } else {
             binding.tryAgainButton.visibility = View.GONE
             binding.continueButton.text =
-                getString(R.string.pass_phrase_recover_process_continue_to_wallet)
+                getString(R.string.seed_phrase_recover_process_continue_to_wallet)
         }
     }
 

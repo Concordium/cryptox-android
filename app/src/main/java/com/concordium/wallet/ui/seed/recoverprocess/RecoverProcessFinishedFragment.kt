@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess
+package com.concordium.wallet.ui.seed.recoverprocess
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentRecoverProcessFinishedBinding
 import com.concordium.wallet.databinding.ItemIdentityWithAccountsAccountBinding
 import com.concordium.wallet.databinding.ItemIdentityWithAccountsBinding
-import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
+import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
 
 class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
     private var _binding: FragmentRecoverProcessFinishedBinding? = null
@@ -45,17 +45,17 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
             binding.partialLayout.visibility = View.VISIBLE
             binding.providerNames.visibility = View.VISIBLE
             binding.providerNames.text = recoverProcessData.noResponseFrom.joinToString("\n") { it }
-            binding.titleTextView.text = getString(R.string.pass_phrase_recover_process_partial)
+            binding.titleTextView.text = getString(R.string.seed_phrase_recover_process_partial)
         } else {
             binding.partialLayout.visibility = View.GONE
             binding.providerNames.visibility = View.GONE
-            binding.titleTextView.text = getString(R.string.pass_phrase_recover_process_finished)
+            binding.titleTextView.text = getString(R.string.seed_phrase_recover_process_finished)
             if (recoverProcessData.identitiesWithAccounts.isNotEmpty())
                 binding.subtitleTextView.text =
-                    getString(R.string.pass_phrase_recover_process_recovered)
+                    getString(R.string.seed_phrase_recover_process_recovered)
             else
                 binding.subtitleTextView.text =
-                    getString(R.string.pass_phrase_recover_process_nothing_new)
+                    getString(R.string.seed_phrase_recover_process_nothing_new)
         }
 
         val layoutInflater = LayoutInflater.from(context)
@@ -68,7 +68,7 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
                 )
             itemIdentityWithAccounts.identityName.text = identityWithAccounts.identity.name
             itemIdentityWithAccounts.identityAccountsCount.text = getString(
-                R.string.pass_phrase_recover_process_finished_accounts_count,
+                R.string.seed_phrase_recover_process_finished_accounts_count,
                 identityWithAccounts.accounts.size
             )
 
@@ -91,7 +91,7 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
                     true
                 )
                 row.accountNameTextView.text =
-                    getString(R.string.pass_phrase_recover_process_finished_no_accounts)
+                    getString(R.string.seed_phrase_recover_process_finished_no_accounts)
             }
         }
     }

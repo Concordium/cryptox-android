@@ -1,8 +1,8 @@
-package com.concordium.wallet.ui.passphrase.recoverprocess
+package com.concordium.wallet.ui.seed.recoverprocess
 
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
+import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
 
 abstract class RecoverProcessBaseFragment : Fragment() {
     protected lateinit var recoverProcessData: RecoverProcessData

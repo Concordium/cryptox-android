@@ -33,7 +33,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
+import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken

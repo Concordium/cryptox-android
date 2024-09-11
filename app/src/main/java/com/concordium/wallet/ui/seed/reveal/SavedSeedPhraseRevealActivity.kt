@@ -1,32 +1,32 @@
-package com.concordium.wallet.ui.passphrase.setup
+package com.concordium.wallet.ui.seed.reveal
 
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
+import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
+import androidx.lifecycle.get
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ActivityOneStepSetupWalletBinding
+import com.concordium.wallet.databinding.ActivitySavedSeedPhraseRevealBinding
 import com.concordium.wallet.databinding.ItemCcxSeedPhraseWordBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 
-class OneStepSetupWalletActivity :
-    BaseActivity(R.layout.activity_one_step_setup_wallet),
+class SavedSeedPhraseRevealActivity :
+    BaseActivity(R.layout.activity_saved_seed_phrase_reveal),
     AuthDelegate by AuthDelegateImpl() {
 
-    private val binding: ActivityOneStepSetupWalletBinding by lazy {
-        ActivityOneStepSetupWalletBinding.bind(findViewById(R.id.toastLayoutTopError))
+    private val binding: ActivitySavedSeedPhraseRevealBinding by lazy {
+        ActivitySavedSeedPhraseRevealBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private lateinit var viewModel: OneStepSetupWalletViewModel
+    private lateinit var viewModel: SavedSeedPhraseRevealViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,46 +34,46 @@ class OneStepSetupWalletActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[OneStepSetupWalletViewModel::class.java]
+        ).get()
+
+        setActionBarTitle("")
+        hideActionBarBack(isVisible = true)
 
         initWords()
+        initBlur()
         initButtons()
 
         subscribeToEvents()
+        subscribeToState()
     }
 
     @SuppressLint("SetTextI18n")
     private fun initWords(
     ) = viewModel.phraseFlow.collectWhenStarted(this) { words ->
-        binding.wordsLayout.removeAllViews()
-
-        if (words == null) {
-            return@collectWhenStarted
-        }
+        binding.contentLayout.removeAllViews()
 
         words.forEachIndexed { index, word ->
             val wordView = ItemCcxSeedPhraseWordBinding
-                .inflate(layoutInflater, binding.wordsLayout, true)
+                .inflate(layoutInflater, binding.contentLayout, true)
             wordView.numberTextView.text = (index + 1).toString()
             wordView.wordTextView.text = word
         }
     }
 
-    private fun initButtons() {
-        binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                App.appCore.tracker.welcomePhraseCheckboxBoxChecked()
-            }
-            binding.continueButton.isEnabled = isChecked
-        }
+    private fun initBlur() = with(binding.blurView) {
+        setupWith(binding.wordsRootLayout)
+        setBlurRadius(2f)
 
-        binding.continueButton.setOnClickListener {
-            viewModel.onContinueClicked()
+        outlineProvider = ViewOutlineProvider.BACKGROUND
+        clipToOutline = true
+    }
+
+    private fun initButtons() {
+        binding.showButton.setOnClickListener {
+            viewModel.onShowPhraseClicked()
         }
 
         binding.copyButton.setOnClickListener {
-            App.appCore.tracker.welcomePhraseCopyClicked()
-
             val clipboardManager: ClipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(
@@ -94,29 +94,34 @@ class OneStepSetupWalletActivity :
 
     private fun subscribeToEvents(
     ) = viewModel.eventsFlow.collect(this) { event ->
+
         when (event) {
-            OneStepSetupWalletViewModel.Event.Authenticate -> {
+            SavedSeedPhraseRevealViewModel.Event.Authenticate -> {
                 showAuthentication(
                     activity = this,
                     onAuthenticated = viewModel::onAuthenticated
                 )
             }
 
-            OneStepSetupWalletViewModel.Event.ShowFatalError -> {
-                showError(R.string.setup_wallet_failed)
-            }
-
-            OneStepSetupWalletViewModel.Event.GoToIdentityCreation -> {
-                goToIdentityCreation()
+            SavedSeedPhraseRevealViewModel.Event.ShowFatalError -> {
+                showError(R.string.saved_seed_phrase_reveal_failed)
             }
         }
     }
 
-    private fun goToIdentityCreation() {
-        finishAffinity()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(MainActivity.EXTRA_CREATE_FIRST_IDENTITY, true)
-        startActivity(intent)
+    private fun subscribeToState(
+    ) = viewModel.stateFlow.collectWhenStarted(this) { state ->
+
+        with (binding.blurView) {
+            isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
+            setBlurEnabled(isVisible)
+        }
+
+        binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
+        binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
+    }
+
+    override fun loggedOut() {
+        // No need to show auth, as it is anyway requested further.
     }
 }
