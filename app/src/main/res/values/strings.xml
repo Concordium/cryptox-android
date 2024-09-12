@@ -46,10 +46,14 @@
     <!-- Welcome recover wallet-->
     <string name="welcome_recover_title">Import Wallet</string>
     <string name="welcome_recover_details">Select a way to import your wallet</string>
-    <string name="welcome_recover_use_phrase">Use seed phrase</string>
-    <string name="welcome_recover_use_phrase_details">Manually enter all your 24 words in order as it was presented to you</string>
-    <string name="welcome_recover_use_file">Use exported file</string>
+    <string name="welcome_recover_use_phrase">Seed phrase wallet</string>
+    <string name="welcome_recover_use_phrase_details">Manually enter or paste all your 24 words in order as it was presented to you</string>
+    <string name="welcome_recover_import_via_seed_phrase">Import via seed phrase</string>
+    <string name="welcome_recover_import_via_private_key">Import via wallet private key</string>
+    <string name="welcome_recover_import_via_backup_file">Import via backup file</string>
+    <string name="welcome_recover_use_file">File wallet</string>
     <string name="welcome_recover_use_file_details">Use your exported backup file from your device</string>
+    <string name="welcome_recover_file_wallet_aware_text">Be aware that you can not create new accounts or identities in your file wallet.</string>
     <!-- ***** Auth ***** -->
     <!-- Auth -->
     <string name="auth_password">Password</string>
@@ -1150,4 +1154,5 @@
     <string name="news_overview_title">Concordium News</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
+    <string name="info_icon">info icon</string>
 </resources>
