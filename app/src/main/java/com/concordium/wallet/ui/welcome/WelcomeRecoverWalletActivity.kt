@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.seed.recover.RecoverWalletActivity
 
 class WelcomeRecoverWalletActivity : BaseActivity(
@@ -26,20 +26,19 @@ class WelcomeRecoverWalletActivity : BaseActivity(
     }
 
     private fun initViews() {
-        binding.usePhraseLayout.setOnClickListener {
+        binding.importSeedPhraseButton.setOnClickListener {
             goToPhraseRecovery()
         }
 
-        binding.useFileLayout.setOnClickListener {
-            goToImport()
+        binding.importBackupFileButton.setOnClickListener {
+            showImportFileWalletDialog()
         }
     }
 
-    private fun goToImport() {
-        startActivity(
-            Intent(this, ImportActivity::class.java).apply {
-                putExtra(ImportActivity.EXTRA_GO_TO_ACCOUNTS_OVERVIEW_ON_SUCCESS, true)
-            }
+    private fun showImportFileWalletDialog() {
+        ImportFileWalletDialog().showSingle(
+            supportFragmentManager,
+            ImportFileWalletDialog.TAG
         )
     }
 
