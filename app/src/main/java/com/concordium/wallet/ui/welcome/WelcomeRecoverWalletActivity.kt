@@ -33,12 +33,34 @@ class WelcomeRecoverWalletActivity : BaseActivity(
         binding.importBackupFileButton.setOnClickListener {
             showImportFileWalletDialog()
         }
+
+        binding.fileWalletInfoIcon.setOnClickListener {
+            showImportFileInfo()
+        }
+
+        binding.seedPhraseInfoIcon.setOnClickListener {
+            showImportSeedPhraseInfo()
+        }
     }
 
     private fun showImportFileWalletDialog() {
         ImportFileWalletDialog().showSingle(
             supportFragmentManager,
             ImportFileWalletDialog.TAG
+        )
+    }
+
+    private fun showImportFileInfo() {
+        ImportBackupFileInfoBottomSheet().showSingle(
+            supportFragmentManager,
+            ImportBackupFileInfoBottomSheet.TAG
+        )
+    }
+
+    private fun showImportSeedPhraseInfo() {
+        ImportSeedPhraseInfoBottomSheet().show(
+            supportFragmentManager,
+            ImportSeedPhraseInfoBottomSheet.TAG
         )
     }
 
