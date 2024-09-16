@@ -95,7 +95,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
                 setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
-                setDecimals(tokenMetadata)
+                setDecimals(token)
             }
             if (token.isNewlyReceived) {
                 handleNewlyReceivedToken(token)
@@ -222,10 +222,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         }
     }
 
-    private fun setDecimals(tokenMetadata: TokenMetadata) {
-        if (tokenMetadata.unique != true) {
+    private fun setDecimals(token: Token) {
+        if (!token.isUnique) {
             binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
-            binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
+            binding.includeAbout.decimals.text = token.decimals.toString()
         }
     }
 

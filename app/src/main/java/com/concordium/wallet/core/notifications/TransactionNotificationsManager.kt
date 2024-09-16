@@ -49,6 +49,7 @@ class TransactionNotificationsManager(
             context,
             CHANNEL_ID
         )
+            .setDefaults(Notification.DEFAULT_ALL)
             .setContentTitle(
                 context.getString(
                     R.string.template_transaction_received_notification_title,
@@ -62,6 +63,8 @@ class TransactionNotificationsManager(
             // White icon is used for Android 5 compatibility.
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
@@ -96,6 +99,7 @@ class TransactionNotificationsManager(
             context,
             CHANNEL_ID
         )
+            .setDefaults(Notification.DEFAULT_ALL)
             .setContentTitle(
                 context.getString(
                     R.string.template_transaction_received_notification_title,
@@ -106,8 +110,8 @@ class TransactionNotificationsManager(
             // White icon is used for Android 5 compatibility.
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setDefaults(Notification.DEFAULT_ALL)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
@@ -134,7 +138,7 @@ class TransactionNotificationsManager(
         notificationsManager.createNotificationChannel(
             NotificationChannelCompat.Builder(
                 CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT
+                NotificationManagerCompat.IMPORTANCE_MAX
             )
                 .setName(context.getString(R.string.transaction_notifications_channel_name))
                 .build()

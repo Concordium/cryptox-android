@@ -34,13 +34,14 @@ class AnnouncementNotificationManager(
             context,
             CHANNEL_ID
         )
+            .setDefaults(Notification.DEFAULT_ALL)
             .setContentTitle(title)
             .setContentText(text)
             // White icon is used for Android 5 compatibility.
-            .setSmallIcon(R.drawable.ic_notification) // TODO: Must be a proper icon
+            .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setDefaults(Notification.DEFAULT_ALL)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
             .setContentIntent(
                 PendingIntent.getActivity(
                     context,
@@ -65,7 +66,7 @@ class AnnouncementNotificationManager(
         notificationsManager.createNotificationChannel(
             NotificationChannelCompat.Builder(
                 CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_HIGH
+                NotificationManagerCompat.IMPORTANCE_DEFAULT
             )
                 .setName(context.getString(R.string.announcements_notification_channel_name))
                 .build()
