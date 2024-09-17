@@ -15,6 +15,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentImportBackupFileBottomSheetBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ImportBackupFileInfoBottomSheet : BottomSheetDialogFragment() {
@@ -34,6 +36,7 @@ class ImportBackupFileInfoBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
         binding.okButton.setOnClickListener { dismiss() }
     }
 

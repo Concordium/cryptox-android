@@ -389,7 +389,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.seed.recover.RecoverWalletActivity"
+            android:name=".ui.seed.recover.RecoverSeedPhraseWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+        <activity
+            android:name=".ui.seed.recover.private_key.RecoverPrivateKeyWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen"

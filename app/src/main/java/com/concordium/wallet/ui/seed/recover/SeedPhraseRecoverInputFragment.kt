@@ -26,7 +26,7 @@ class SeedPhraseRecoverInputFragment : Fragment() {
     private var _binding: FragmentSeedPhraseRecoverInputBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SeedPhraseRecoverViewModel
-        get() = (requireActivity() as RecoverWalletActivity).viewModel
+        get() = (requireActivity() as RecoverSeedPhraseWalletActivity).viewModel
 
     private lateinit var arrayAdapter: WordsPickedRecoverListAdapter
     private var snapTimer: Timer? = null

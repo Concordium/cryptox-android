@@ -6,7 +6,8 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.seed.recover.RecoverWalletActivity
+import com.concordium.wallet.ui.seed.recover.RecoverSeedPhraseWalletActivity
+import com.concordium.wallet.ui.seed.recover.private_key.RecoverPrivateKeyWalletActivity
 
 class WelcomeRecoverWalletActivity : BaseActivity(
     R.layout.activity_welcome_recover_wallet,
@@ -28,6 +29,10 @@ class WelcomeRecoverWalletActivity : BaseActivity(
     private fun initViews() {
         binding.importSeedPhraseButton.setOnClickListener {
             goToPhraseRecovery()
+        }
+
+        binding.importPrivateKeyButton.setOnClickListener {
+            goToPrivateKeyRecovery()
         }
 
         binding.importBackupFileButton.setOnClickListener {
@@ -58,13 +63,17 @@ class WelcomeRecoverWalletActivity : BaseActivity(
     }
 
     private fun showImportSeedPhraseInfo() {
-        ImportSeedPhraseInfoBottomSheet().show(
+        ImportSeedPhraseInfoBottomSheet().showSingle(
             supportFragmentManager,
             ImportSeedPhraseInfoBottomSheet.TAG
         )
     }
 
     private fun goToPhraseRecovery() {
-        startActivity(Intent(this, RecoverWalletActivity::class.java))
+        startActivity(Intent(this, RecoverSeedPhraseWalletActivity::class.java))
+    }
+
+    private fun goToPrivateKeyRecovery() {
+        startActivity(Intent(this, RecoverPrivateKeyWalletActivity::class.java))
     }
 }

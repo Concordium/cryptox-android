@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="24dp"
         android:gravity="center"
         android:text="@string/welcome_recover_import_via_backup_file"
         android:textAppearance="@style/CCX_Typography_H1"
@@ -55,14 +55,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginTop="12dp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/example_file_up_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_gravity="end"
             android:contentDescription="@string/info_icon"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ccx_ico_file_shield_4" />
@@ -102,7 +101,6 @@
             android:id="@+id/example_file_down_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_gravity="end"
             android:contentDescription="@string/info_icon"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ccx_ico_file_shield_4" />
@@ -112,7 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:text="@string/import_wallet_example_file_name_down"
             android:textAppearance="@style/CCX_Typography_Body"
             android:textColor="@color/ccx_mineral_blue_tint_4" />

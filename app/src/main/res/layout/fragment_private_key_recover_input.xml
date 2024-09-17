@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ccx_card_import_private_key_background"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/CCX_Typography_Button_L"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/import_wallet_private_key"
+        android:textColor="@color/cryptox_white_main" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ccx_import_private_key_input_background">
+
+        <TextView
+            android:id="@+id/import_input_action_button"
+            android:layout_width="58dp"
+            android:layout_height="32dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/ccx_import_private_key_action_background"
+            android:gravity="center"
+            tools:text="Paste"
+            android:textColor="@color/ccx_neutral_tint_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@null"
+            android:inputType="textMultiLine"
+            android:maxLength="128"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_2"
+            android:hint="@string/private_key_recover_input_hint"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/import_input_action_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Wallet private key here" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

@@ -579,6 +579,13 @@
     <string name="seed_phrase_try_another_word">Please try another word</string>
     <string name="seed_phrase_recover_input_paste">Paste your seed phrase</string>
 
+    <string name="private_key_recover_title">@string/your_wallet_private_key</string>
+    <string name="private_key_recover_input_explain">Please enter your wallet private key exactly how it was presented to you</string>
+    <string name="private_key_recover_input_hint">Wallet private key here</string>
+    <string name="private_key_recover_continue">Continue</string>
+    <string name="private_key_recover_paste">Paste</string>
+    <string name="private_key_recover_clear">Clear</string>
+
     <string name="seed_phrase_recover_process_title">Recover your accounts(s)</string>
     <string name="seed_phrase_recover_process_subtitle">Recover your accounts and identities to connect them to your wallet</string>
     <string name="seed_phrase_recover_process_scanning">Scanning the Concordium blockchain. Hang on while we find your accounts and identities.</string>
