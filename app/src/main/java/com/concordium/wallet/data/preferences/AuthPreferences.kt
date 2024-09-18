@@ -146,6 +146,21 @@ class AuthPreferences(val context: Context) :
         return setStringWithResult(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX, encryptedEntropyHex)
     }
 
+    /**
+     * Saves the seed in HEX. This method is **only** to be used in case of
+     * recovering a wallet from a seed (Wallet private key).
+     * In other situation, like creation of a new wallet or recovering it from a seed phrase,
+     * [tryToSetEncryptedSeedPhrase] must be used instead.
+     *
+     * @see getSeedHex
+     */
+    suspend fun tryToSetEncryptedSeedHex(seedHex: String, password: String): Boolean {
+        val encryptedSeedHex = App.appCore.getCurrentAuthenticationManager()
+            .encryptInBackground(password, seedHex)
+            ?: return false
+        return setStringWithResult(PREFKEY_LEGACY_SEED_HEX_ENCRYPTED, encryptedSeedHex)
+    }
+
     suspend fun getSeedHex(password: String): String {
         val authenticationManager = App.appCore.getOriginalAuthenticationManager()
 
@@ -163,7 +178,7 @@ class AuthPreferences(val context: Context) :
         error("Failed to get the seed")
     }
 
-    suspend fun getSeedHex(decryptKey: SecretKey): String? {
+    suspend fun getSeedHex(decryptKey: SecretKey): String {
         val authenticationManager = App.appCore.getOriginalAuthenticationManager()
 
         // Try the encrypted entropy hex.
@@ -177,7 +192,7 @@ class AuthPreferences(val context: Context) :
             ?.let { authenticationManager.decryptInBackground(decryptKey, it) }
             ?.let { return it }
 
-        return null
+        error("Failed to get the seed")
     }
 
     /**

@@ -4,9 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.more.import.ImportActivity
-import com.concordium.wallet.ui.passphrase.recover.RecoverWalletActivity
+import com.concordium.wallet.ui.seed.recover.RecoverSeedPhraseWalletActivity
+import com.concordium.wallet.ui.seed.recover.seed.RecoverSeedWalletActivity
 
 class WelcomeRecoverWalletActivity : BaseActivity(
     R.layout.activity_welcome_recover_wallet,
@@ -26,24 +27,53 @@ class WelcomeRecoverWalletActivity : BaseActivity(
     }
 
     private fun initViews() {
-        binding.usePhraseLayout.setOnClickListener {
+        binding.importSeedPhraseButton.setOnClickListener {
             goToPhraseRecovery()
         }
 
-        binding.useFileLayout.setOnClickListener {
-            goToImport()
+        binding.importSeedButton.setOnClickListener {
+            goToSeedRecovery()
+        }
+
+        binding.importBackupFileButton.setOnClickListener {
+            showImportFileWalletDialog()
+        }
+
+        binding.fileWalletInfoIcon.setOnClickListener {
+            showImportFileInfo()
+        }
+
+        binding.seedPhraseInfoIcon.setOnClickListener {
+            showImportSeedPhraseInfo()
         }
     }
 
-    private fun goToImport() {
-        startActivity(
-            Intent(this, ImportActivity::class.java).apply {
-                putExtra(ImportActivity.EXTRA_GO_TO_ACCOUNTS_OVERVIEW_ON_SUCCESS, true)
-            }
+    private fun showImportFileWalletDialog() {
+        ImportFileWalletDialog().showSingle(
+            supportFragmentManager,
+            ImportFileWalletDialog.TAG
+        )
+    }
+
+    private fun showImportFileInfo() {
+        ImportBackupFileInfoBottomSheet().showSingle(
+            supportFragmentManager,
+            ImportBackupFileInfoBottomSheet.TAG
+        )
+    }
+
+    private fun showImportSeedPhraseInfo() {
+        ImportSeedPhraseInfoBottomSheet().showSingle(
+            supportFragmentManager,
+            ImportSeedPhraseInfoBottomSheet.TAG
         )
     }
 
     private fun goToPhraseRecovery() {
-        startActivity(Intent(this, RecoverWalletActivity::class.java))
+        startActivity(Intent(this, RecoverSeedPhraseWalletActivity::class.java))
+    }
+
+    private fun goToSeedRecovery() {
+        startActivity(Intent(this, RecoverSeedWalletActivity::class.java))
     }
 }

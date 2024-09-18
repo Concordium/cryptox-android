@@ -46,10 +46,15 @@
     <!-- Welcome recover wallet-->
     <string name="welcome_recover_title">Import Wallet</string>
     <string name="welcome_recover_details">Select a way to import your wallet</string>
-    <string name="welcome_recover_use_phrase">Use seed phrase</string>
-    <string name="welcome_recover_use_phrase_details">Manually enter all your 24 words in order as it was presented to you</string>
-    <string name="welcome_recover_use_file">Use exported file</string>
+    <string name="welcome_recover_use_phrase">Seed phrase wallet</string>
+    <string name="welcome_recover_use_phrase_details">Manually enter or paste all your 24 words in order as it was presented to you</string>
+    <string name="welcome_recover_import_via_seed_phrase">Import via seed phrase</string>
+    <string name="welcome_recover_import_via_seed_or_private_key">Import via seed phrase or wallet private key</string>
+    <string name="welcome_recover_import_via_seed">Import via wallet private key</string>
+    <string name="welcome_recover_import_via_backup_file">Import via backup file</string>
+    <string name="welcome_recover_use_file">File wallet</string>
     <string name="welcome_recover_use_file_details">Use your exported backup file from your device</string>
+    <string name="welcome_recover_file_wallet_aware_text">Be aware that you can not create new accounts or identities in your file wallet.</string>
     <!-- ***** Auth ***** -->
     <!-- Auth -->
     <string name="auth_password">Password</string>
@@ -276,7 +281,8 @@
     </string>
     <string name="more_overview_erase_wallet_continue">@string/dialog_yes</string>
     <string name="more_overview_erase_wallet_erased">The wallet has been successfully erased</string>
-    <string name="more_overview_reveal_seed_phrase">Show My Seed Phrase</string>
+    <string name="more_overview_reveal_seed_phrase">Seed Phrase</string>
+    <string name="more_overview_reveal_seed">Wallet Private Key</string>
     <!-- Export -->
     <string name="export_title">Export</string>
     <string name="export_confirm">Export</string>
@@ -560,34 +566,42 @@
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
 
-    <string name="pass_phrase_title">Your seed phrase</string>
-    <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
+    <string name="your_wallet_seed">Your wallet private key</string>
+    <string name="your_seed_phrase">Your seed phrase</string>
+    <string name="seed_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
 
     <string name="copied">Copied</string>
 
-    <string name="pass_phrase_recover_title">Your seed phrase</string>
-    <string name="pass_phrase_recover_input_explain">Manually enter all your 24 words in order as it was presented to you</string>
-    <string name="pass_phrase_recover_input_clear_all">Clear all</string>
-    <string name="pass_phrase_recover_input_clear_below">Clear below</string>
-    <string name="pass_phrase_try_another_word">Please try another word</string>
-    <string name="pass_phrase_recover_input_paste">Paste your seed phrase</string>
+    <string name="seed_phrase_recover_title">@string/your_seed_phrase</string>
+    <string name="seed_phrase_recover_input_explain">Manually enter all your 24 words in order as it was presented to you</string>
+    <string name="seed_phrase_recover_input_clear_all">Clear all</string>
+    <string name="seed_phrase_recover_input_clear_below">Clear below</string>
+    <string name="seed_phrase_try_another_word">Please try another word</string>
+    <string name="seed_phrase_recover_input_paste">Paste your seed phrase</string>
 
-    <string name="pass_phrase_recover_process_title">Recover your accounts(s)</string>
-    <string name="pass_phrase_recover_process_subtitle">Recover your accounts and identities to connect them to your wallet</string>
-    <string name="pass_phrase_recover_process_scanning">Scanning the Concordium blockchain. Hang on while we find your accounts and identities.</string>
-    <string name="pass_phrase_recover_process_continue">Recover</string>
-    <string name="pass_phrase_recover_process_continue_to_wallet">Continue to wallet</string>
-    <string name="pass_phrase_recover_process_finished">Recovery finished</string>
-    <string name="pass_phrase_recover_process_partial">Recovery may be partial</string>
-    <string name="pass_phrase_recover_process_partial_description">There was a problem contacting some identity providers. This means that some identities and accounts may not have been recovered. If you can see that something is missing, you can try to restart the recovery process, or you can try again later by starting the recovery process from the settings menu. The affected identity providers:</string>
-    <string name="pass_phrase_recover_process_recovered">You have successfully recovered:</string>
-    <string name="pass_phrase_recover_process_nothing_new">Nothing new was found.</string>
-    <string name="pass_phrase_recover_process_try_again">Try again</string>
-    <string name="pass_phrase_recover_process_identities">Identities</string>
-    <string name="pass_phrase_recover_process_accounts">Accounts</string>
-    <string name="pass_phrase_recover_process_identity_name_prefix">Identity</string>
-    <string name="pass_phrase_recover_process_finished_no_accounts">No accounts</string>
-    <string name="pass_phrase_recover_process_finished_accounts_count">ACCOUNTS: %1$d</string>
+    <string name="seed_recover_title">@string/your_wallet_seed</string>
+    <string name="seed_recover_input_explain">Please enter your wallet private key exactly how it was presented to you</string>
+    <string name="seed_recover_input_hint">Wallet private key here</string>
+    <string name="seed_recover_continue">Continue</string>
+    <string name="seed_recover_paste">Paste</string>
+    <string name="seed_recover_clear">Clear</string>
+
+    <string name="seed_phrase_recover_process_title">Recover your accounts(s)</string>
+    <string name="seed_phrase_recover_process_subtitle">Recover your accounts and identities to connect them to your wallet</string>
+    <string name="seed_phrase_recover_process_scanning">Scanning the Concordium blockchain. Hang on while we find your accounts and identities.</string>
+    <string name="seed_phrase_recover_process_continue">Recover</string>
+    <string name="seed_phrase_recover_process_continue_to_wallet">Continue to wallet</string>
+    <string name="seed_phrase_recover_process_finished">Recovery finished</string>
+    <string name="seed_phrase_recover_process_partial">Recovery may be partial</string>
+    <string name="seed_phrase_recover_process_partial_description">There was a problem contacting some identity providers. This means that some identities and accounts may not have been recovered. If you can see that something is missing, you can try to restart the recovery process, or you can try again later by starting the recovery process from the settings menu. The affected identity providers:</string>
+    <string name="seed_phrase_recover_process_recovered">You have successfully recovered:</string>
+    <string name="seed_phrase_recover_process_nothing_new">Nothing new was found.</string>
+    <string name="seed_phrase_recover_process_try_again">Try again</string>
+    <string name="seed_phrase_recover_process_identities">Identities</string>
+    <string name="seed_phrase_recover_process_accounts">Accounts</string>
+    <string name="seed_phrase_recover_process_identity_name_prefix">Identity</string>
+    <string name="seed_phrase_recover_process_finished_no_accounts">No accounts</string>
+    <string name="seed_phrase_recover_process_finished_accounts_count">ACCOUNTS: %1$d</string>
 
     <string name="earn_title">Earning rewards</string>
     <string name="earn_subtitle">Below are two options for earning rewards on CryptoX Wallet:</string>
@@ -975,6 +989,28 @@
         Get updates on new features, discount and promo</string>
     <string name="notifications_permission_allow">Allow notifications</string>
     <string name="notifications_permission_deny">Not now</string>
+    <string name="import_file_wallet_title">Importing a file wallet</string>
+    <string name="import_file_wallet_details">Be aware that you can not create new accounts or identities in your file wallet. But after the import you will be able to connect a new or existing Concordium seed phrase wallet which has full functionality. After connecting you will be able to switch between your seed phrase wallet and your file wallet.</string>
+    <string name="import_file_wallet_import_button">Import</string>
+    <string name="import_file_wallet_go_back_button">Go back</string>
+    <string name="import_wallet_okay_button">Okay</string>
+    <string name="import_wallet_backup_file">Backup file</string>
+    <string name="import_wallet_backup_file_description">• A file that can be exported and imported \n• Grants access to all connected accounts \n• Can be used to recover a file wallet \n• Used in older Concordium wallets</string>
+    <string name="import_wallet_example">Example</string>
+    <string name="import_wallet_example_file_name">exported_file.concordiumwallet</string>
+    <string name="import_wallet_example_file_name_up">dunno_what.png</string>
+    <string name="import_wallet_example_file_name_down">groceries.txt</string>
+    <string name="import_wallet_example_seed_1">badge</string>
+    <string name="import_wallet_example_seed_2">skin</string>
+    <string name="import_wallet_example_seed_3">off</string>
+    <string name="import_wallet_example_seed_4">combine</string>
+    <string name="import_wallet_example_seed_5">certain</string>
+    <string name="import_wallet_example_seed_6">trim</string>
+    <string name="import_wallet_example_seed">hrs12thsmplcdf99hw4scrtkycldlklk81wthdffrntwrdshrs12thsmplcdf99hw4scrtkycldlklk81wthdffrntwrds</string>
+    <string name="import_wallet_seed_phrase">Seed phrase</string>
+    <string name="import_wallet_seed_phrase_description">• Consists of 24 words \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet</string>
+    <string name="import_wallet_seed">Wallet private key</string>
+    <string name="import_wallet_seed_description">• Consists of 128 characters long hexadecimal string \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet \n• Used in older Concordium wallets</string>
     <string name="welcome_activate_bottom_sheet_title">Activate account</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE WALLET</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_details">You have to complete 3 easy steps to create your wallet:</string>
@@ -999,21 +1035,29 @@
     <string name="setup_wallet_continue">Continue</string>
     <string name="setup_wallet_seed_phrase_consent">I have kept it somewhere safe</string>
     <string name="setup_wallet_seed_phrase_copy">Copy to clipboard</string>
-    <string name="setup_wallet_seed_phrase_title">Your seed phrase</string>
+    <string name="setup_wallet_seed_phrase_title">@string/your_seed_phrase</string>
     <string name="setup_wallet_seed_phrase_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
     <string name="setup_wallet_seed_phrase_transcribe">Transcribe</string>
     <string name="setup_wallet_seed_phrase_digital_copy">Digital copy</string>
     <string name="setup_wallet_seed_phrase_screenshot">Screenshot</string>
     <string name="setup_wallet_seed_phrase_copied">@string/copied</string>
     <string name="setup_wallet_failed">Failed to set up the wallet, please contact \nsupport@concordium.software.com</string>
-    <string name="saved_pass_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
-    <string name="saved_pass_phrase_reveal_seed_phrase_show">Show seed phrase</string>
-    <string name="saved_pass_phrase_reveal_title">Your seed phrase</string>
-    <string name="saved_pass_phrase_reveal_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
-    <string name="saved_pass_phrase_reveal_transcribe">Transcribe</string>
-    <string name="saved_pass_phrase_reveal_digital_copy">Digital copy</string>
-    <string name="saved_pass_phrase_reveal_screenshot">Screenshot</string>
-    <string name="saved_pass_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
+    <string name="saved_seed_phrase_reveal_seed_phrase_show">Show seed phrase</string>
+    <string name="saved_seed_phrase_reveal_title">@string/your_seed_phrase</string>
+    <string name="saved_seed_phrase_reveal_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
+    <string name="saved_seed_phrase_reveal_transcribe">Transcribe</string>
+    <string name="saved_seed_phrase_reveal_digital_copy">Digital copy</string>
+    <string name="saved_seed_phrase_reveal_screenshot">Screenshot</string>
+    <string name="saved_seed_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_reveal_seed_copy">Copy to clipboard</string>
+    <string name="saved_seed_reveal_seed_show">Show wallet private key</string>
+    <string name="saved_seed_reveal_title">@string/your_wallet_seed</string>
+    <string name="saved_seed_reveal_details">Your wallet private key is the access key to all the funds in your wallet. Copy it and keep it safe. To avoid mistakes, do not write it down manually.</string>
+    <string name="saved_seed_reveal_transcribe">Transcribe</string>
+    <string name="saved_seed_reveal_copy_and_keep">Copy and keep safe</string>
+    <string name="saved_seed_reveal_screenshot">Screenshot</string>
+    <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.software.com</string>
 
     <!-- Identity proofs in WalletConnect -->
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
@@ -1140,4 +1184,5 @@
     <string name="news_overview_title">Concordium News</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
+    <string name="learn_more_icon">Learn more</string>
 </resources>

@@ -34,6 +34,8 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     val fileImportExportVisibilityLiveData: LiveData<Boolean> = _fileImportExportVisibilityLiveData
     private val _seedPhraseRevealVisibilityLiveData = MutableLiveData<Boolean>()
     val seedPhraseRevealVisibilityLiveData: LiveData<Boolean> = _seedPhraseRevealVisibilityLiveData
+    private val _seedRevealVisibilityLiveData = MutableLiveData<Boolean>()
+    val seedRevealVisibilityLiveData: LiveData<Boolean> = _seedRevealVisibilityLiveData
     private val _walletEraseVisibilityLiveData = MutableLiveData<Boolean>()
     val walletEraseVisibilityLiveData: LiveData<Boolean> = _walletEraseVisibilityLiveData
     private val _unshieldingVisibilityLiveData = MutableLiveData(false)
@@ -57,6 +59,11 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
         _fileImportExportVisibilityLiveData.postValue(App.appCore.session.isAccountsBackupPossible())
         // Seed phrase reveal is visible when there is an encrypted saved version of it.
         _seedPhraseRevealVisibilityLiveData.postValue(authPreferences.hasEncryptedSeedPhrase())
+        // Seed reveal is visible when there is an encrypted saved version of it,
+        // while the phrase is not available.
+        _seedRevealVisibilityLiveData.postValue(
+            authPreferences.hasEncryptedSeed() && !authPreferences.hasEncryptedSeedPhrase()
+        )
         // Wallet erase is visible if the initial setup is completed.
         _walletEraseVisibilityLiveData.postValue(App.appCore.session.hasCompletedInitialSetup)
         // Password alter is visible if it is set up.
