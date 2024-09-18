@@ -10,6 +10,10 @@
   having no ability to reveal the seed phrase
 - Ability to use Wallet private key to restore a wallet
 
+### Fixed
+
+- Inability to configure a validator closed for delegation
+
 ## [1.2.0] - 2024-08-27
 
 ### Added
