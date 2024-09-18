@@ -7,6 +7,10 @@
 - Notifications for CCD and CIS-2 token transactions
 - Concordex exchange and Wert service where CCD can be purchased
 
+### Fixed
+
+- Inability to configure a validator closed for delegation
+
 ## [1.2.0] - 2024-08-27
 
 ### Added
