@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.recover.private_key
+package com.concordium.wallet.ui.seed.recover.seed
 
 import android.content.ClipboardManager
 import android.os.Bundle
@@ -8,52 +8,51 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.FragmentPrivateKeyRecoverInputBinding
+import com.concordium.wallet.databinding.FragmentSeedRecoverInputBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.flow.update
 
-class PrivateKeyRecoverInputFragment : Fragment() {
-    private var _binding: FragmentPrivateKeyRecoverInputBinding? = null
+class SeedRecoverInputFragment : Fragment() {
+    private var _binding: FragmentSeedRecoverInputBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: PrivateKeyRecoverViewModel
-        get() = (requireActivity() as RecoverPrivateKeyWalletActivity).viewModel
+    private val viewModel: SeedRecoverViewModel
+        get() = (requireActivity() as RecoverSeedWalletActivity).viewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPrivateKeyRecoverInputBinding.inflate(inflater, container, false)
+        _binding = FragmentSeedRecoverInputBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updateViews()
-        observePrivateKey()
+        observeSeed()
     }
 
     private fun updateViews() {
         binding.etTitle.doOnTextChanged { text, _, _, _ ->
-            viewModel.privateKey.value = text.toString()
-            viewModel.validatePrivateKey()
+            viewModel.seed.value = text.toString()
+            viewModel.validateSeed()
         }
         binding.importInputActionButton.setOnClickListener {
-            if (viewModel.privateKey.value.isEmpty()) {
+            if (viewModel.seed.value.isEmpty()) {
                 pasteFromClipboard()
             } else {
-                viewModel.clearPrivateKey()
+                viewModel.clearSeed()
                 binding.etTitle.setText("")
             }
         }
     }
 
-    private fun observePrivateKey() {
-        viewModel.privateKey.collectWhenStarted(viewLifecycleOwner) {
+    private fun observeSeed() {
+        viewModel.seed.collectWhenStarted(viewLifecycleOwner) {
             binding.importInputActionButton.text =
-                if (it.isEmpty()) getString(R.string.private_key_recover_paste)
-                else getString(R.string.private_key_recover_clear)
+                if (it.isEmpty()) getString(R.string.seed_recover_paste)
+                else getString(R.string.seed_recover_clear)
         }
     }
 
@@ -71,10 +70,9 @@ class PrivateKeyRecoverInputFragment : Fragment() {
         }
 
         binding.etTitle.setText(clipboard)
-        viewModel.privateKey.value = clipboard
-        viewModel.validatePrivateKey()
+        viewModel.seed.value = clipboard
+        viewModel.validateSeed()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -21,5 +21,5 @@
     <color name="ccx_neutral_tint_7">#101414</color>
     <color name="ccx_neutral_tint_8">#33EBF0F0</color>
 
-    <color name="ccx_import_private_key_background">#14181D</color>
+    <color name="ccx_import_seed_background">#14181D</color>
 </resources>

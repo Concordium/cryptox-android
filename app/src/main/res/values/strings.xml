@@ -50,7 +50,7 @@
     <string name="welcome_recover_use_phrase_details">Manually enter or paste all your 24 words in order as it was presented to you</string>
     <string name="welcome_recover_import_via_seed_phrase">Import via seed phrase</string>
     <string name="welcome_recover_import_via_seed_or_private_key">Import via seed phrase or wallet private key</string>
-    <string name="welcome_recover_import_via_private_key">Import via wallet private key</string>
+    <string name="welcome_recover_import_via_seed">Import via wallet private key</string>
     <string name="welcome_recover_import_via_backup_file">Import via backup file</string>
     <string name="welcome_recover_use_file">File wallet</string>
     <string name="welcome_recover_use_file_details">Use your exported backup file from your device</string>
@@ -566,7 +566,7 @@
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
 
-    <string name="your_wallet_private_key">Your wallet private key</string>
+    <string name="your_wallet_seed">Your wallet private key</string>
     <string name="your_seed_phrase">Your seed phrase</string>
     <string name="seed_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
 
@@ -579,12 +579,12 @@
     <string name="seed_phrase_try_another_word">Please try another word</string>
     <string name="seed_phrase_recover_input_paste">Paste your seed phrase</string>
 
-    <string name="private_key_recover_title">@string/your_wallet_private_key</string>
-    <string name="private_key_recover_input_explain">Please enter your wallet private key exactly how it was presented to you</string>
-    <string name="private_key_recover_input_hint">Wallet private key here</string>
-    <string name="private_key_recover_continue">Continue</string>
-    <string name="private_key_recover_paste">Paste</string>
-    <string name="private_key_recover_clear">Clear</string>
+    <string name="seed_recover_title">@string/your_wallet_seed</string>
+    <string name="seed_recover_input_explain">Please enter your wallet private key exactly how it was presented to you</string>
+    <string name="seed_recover_input_hint">Wallet private key here</string>
+    <string name="seed_recover_continue">Continue</string>
+    <string name="seed_recover_paste">Paste</string>
+    <string name="seed_recover_clear">Clear</string>
 
     <string name="seed_phrase_recover_process_title">Recover your accounts(s)</string>
     <string name="seed_phrase_recover_process_subtitle">Recover your accounts and identities to connect them to your wallet</string>
@@ -1006,11 +1006,11 @@
     <string name="import_wallet_example_seed_4">combine</string>
     <string name="import_wallet_example_seed_5">certain</string>
     <string name="import_wallet_example_seed_6">trim</string>
-    <string name="import_wallet_example_private_key">hrs12thsmplcdf99hw4scrtkycldlklk81wthdffrntwrdshrs12thsmplcdf99hw4scrtkycldlklk81wthdffrntwrds</string>
+    <string name="import_wallet_example_seed">hrs12thsmplcdf99hw4scrtkycldlklk81wthdffrntwrdshrs12thsmplcdf99hw4scrtkycldlklk81wthdffrntwrds</string>
     <string name="import_wallet_seed_phrase">Seed phrase</string>
     <string name="import_wallet_seed_phrase_description">• Consists of 24 words \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet</string>
-    <string name="import_wallet_private_key">Wallet private key</string>
-    <string name="import_wallet_private_key_description">• Consists of 128 characters long hexadecimal string \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet \n• Used in older Concordium wallets</string>
+    <string name="import_wallet_seed">Wallet private key</string>
+    <string name="import_wallet_seed_description">• Consists of 128 characters long hexadecimal string \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet \n• Used in older Concordium wallets</string>
     <string name="welcome_activate_bottom_sheet_title">Activate account</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE WALLET</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_details">You have to complete 3 easy steps to create your wallet:</string>
@@ -1052,7 +1052,7 @@
     <string name="saved_seed_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
     <string name="saved_seed_reveal_seed_copy">Copy to clipboard</string>
     <string name="saved_seed_reveal_seed_show">Show wallet private key</string>
-    <string name="saved_seed_reveal_title">@string/your_wallet_private_key</string>
+    <string name="saved_seed_reveal_title">@string/your_wallet_seed</string>
     <string name="saved_seed_reveal_details">Your wallet private key is the access key to all the funds in your wallet. Copy it and keep it safe. To avoid mistakes, do not write it down manually.</string>
     <string name="saved_seed_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_reveal_copy_and_keep">Copy and keep safe</string>
@@ -1184,5 +1184,5 @@
     <string name="news_overview_title">Concordium News</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
-    <string name="info_icon">info icon</string>
+    <string name="learn_more_icon">Learn more</string>
 </resources>

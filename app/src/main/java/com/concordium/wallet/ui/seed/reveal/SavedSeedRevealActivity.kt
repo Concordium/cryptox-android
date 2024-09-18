@@ -78,7 +78,7 @@ class SavedSeedRevealActivity :
             val clipboardManager: ClipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(
-                getString(R.string.your_wallet_private_key),
+                getString(R.string.your_wallet_seed),
                 viewModel.seedString,
             )
             clipboardManager.setPrimaryClip(clipData)

@@ -62,7 +62,7 @@
             android:id="@+id/example_file_up_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:contentDescription="@string/info_icon"
+            android:contentDescription="@string/learn_more_icon"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ccx_ico_file_shield_4" />
 
@@ -101,7 +101,7 @@
             android:id="@+id/example_file_down_icon"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:contentDescription="@string/info_icon"
+            android:contentDescription="@string/learn_more_icon"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ccx_ico_file_shield_4" />
 

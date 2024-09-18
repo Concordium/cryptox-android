@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.recover.private_key
+package com.concordium.wallet.ui.seed.recover.seed
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ActivityRecoverPrivateKeyWalletBinding
+import com.concordium.wallet.databinding.ActivityRecoverSeedWalletBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -15,15 +15,15 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.util.KeyboardUtil
 
-class RecoverPrivateKeyWalletActivity :
-    BaseActivity(R.layout.activity_recover_private_key_wallet, R.string.private_key_recover_title),
+class RecoverSeedWalletActivity :
+    BaseActivity(R.layout.activity_recover_seed_wallet, R.string.seed_recover_title),
     AuthDelegate by AuthDelegateImpl() {
 
     private val binding by lazy {
-        ActivityRecoverPrivateKeyWalletBinding.bind(findViewById(R.id.toastLayoutTopError))
+        ActivityRecoverSeedWalletBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
 
-    val viewModel: PrivateKeyRecoverViewModel by lazy {
+    val viewModel: SeedRecoverViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
@@ -41,7 +41,7 @@ class RecoverPrivateKeyWalletActivity :
             binding.toolbarLayout.toolbarTitle.isClickable = true
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
                 showAuthentication(this) { password ->
-                    viewModel.setPredefinedKeyForTesting(password)
+                    viewModel.setPredefinedSeedForTesting(password)
                 }
             }
         }
@@ -52,7 +52,7 @@ class RecoverPrivateKeyWalletActivity :
     private fun initViews() {
         binding.continueButton.setOnClickListener {
             showAuthentication(this) { password ->
-                viewModel.setPrivateKey(viewModel.privateKey.value, password)
+                viewModel.setSeed(viewModel.seed.value, password)
             }
         }
     }
@@ -62,7 +62,7 @@ class RecoverPrivateKeyWalletActivity :
             binding.continueButton.isVisible = validateSuccess
         }
 
-        viewModel.saveKeySuccess.collectWhenStarted(this) { saveSuccess ->
+        viewModel.saveSeedSuccess.collectWhenStarted(this) { saveSuccess ->
             if (saveSuccess) {
                 finish()
                 startActivity(Intent(this, RecoverProcessActivity::class.java))
