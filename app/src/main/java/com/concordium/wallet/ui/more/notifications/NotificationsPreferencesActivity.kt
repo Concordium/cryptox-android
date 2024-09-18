@@ -7,17 +7,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityNotificationsPreferencesBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.launch
 
 class NotificationsPreferencesActivity : BaseActivity(
     R.layout.activity_notifications_preferences,
@@ -86,6 +82,7 @@ class NotificationsPreferencesActivity : BaseActivity(
         }
 
         ccdTxSwitch.setOnClickListener {
+            ccdTxSwitch.isChecked = !ccdTxSwitch.isChecked
             viewModel.onCcdTxClicked()
         }
 
@@ -94,6 +91,7 @@ class NotificationsPreferencesActivity : BaseActivity(
         }
 
         cis2TxSwitch.setOnClickListener {
+            cis2TxSwitch.isChecked = !cis2TxSwitch.isChecked
             viewModel.onCis2TxClicked()
         }
     }
