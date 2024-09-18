@@ -6,7 +6,9 @@
 
     <color name="ccx_mineral_blue_tint_1">#B6DADF</color>
     <color name="ccx_mineral_blue_tint_2">#2B6168</color>
-    
+    <color name="ccx_mineral_blue_tint_3">#6F9696</color>
+    <color name="ccx_mineral_blue_tint_4">#435E63</color>
+
     <color name="ccx_egg_shell_tint_1">#FFFDE4</color>
     <color name="ccx_egg_shell_tint_2">#FFFCD6</color>
     
@@ -17,4 +19,7 @@
     <color name="ccx_neutral_tint_5">#1B2323</color>
     <color name="ccx_neutral_tint_6">#141A1A</color>
     <color name="ccx_neutral_tint_7">#101414</color>
+    <color name="ccx_neutral_tint_8">#33EBF0F0</color>
+
+    <color name="ccx_import_seed_background">#14181D</color>
 </resources>

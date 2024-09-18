@@ -164,7 +164,9 @@ class AlterPasswordViewModel(application: Application) :
             if (authPreferences.hasEncryptedSeed()) {
                 try {
                     decryptedSeedHex = authPreferences.getSeedHex(decryptKey)
-                    decryptedSeedPhrase = authPreferences.getSeedPhrase(decryptKey)
+                    if (authPreferences.hasEncryptedSeedPhrase()) {
+                        decryptedSeedPhrase = authPreferences.getSeedPhrase(decryptKey)
+                    }
 
                     // The phrase may not be there, but the seed is a must.
                     if (decryptedSeedHex == null) {

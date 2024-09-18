@@ -19,7 +19,7 @@ import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewViewModel
 import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
-import com.concordium.wallet.ui.passphrase.reveal.SavedPassPhraseRevealActivity
+import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class WelcomePromoMoreFragment : Fragment() {
@@ -115,7 +115,7 @@ class WelcomePromoMoreFragment : Fragment() {
     }
 
     private fun revealSeedPhrase() {
-        val intent = Intent(activity, SavedPassPhraseRevealActivity::class.java)
+        val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
         startActivity(intent)
     }
 

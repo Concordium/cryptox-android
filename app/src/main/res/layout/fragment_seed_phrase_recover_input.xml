@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/btnClearAll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="4dp"
+        android:gravity="start"
+        android:padding="12dp"
+        android:text="@string/seed_phrase_recover_input_clear_all"
+        android:textAppearance="@style/CCX_Typography_Button_M"
+        android:textColor="@color/ccx_neutral_tint_1"
+        app:layout_constraintEnd_toStartOf="@id/btnClearBelow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btnClearBelow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:padding="12dp"
+        android:text="@string/seed_phrase_recover_input_clear_below"
+        android:textAppearance="@style/CCX_Typography_Button_M"
+        android:textColor="@color/ccx_neutral_tint_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnClearAll"
+        app:layout_constraintTop_toTopOf="@id/btnClearAll" />
+
+    <ListView
+        android:id="@+id/words_list_view"
+        android:layout_width="0dp"
+        android:layout_height="190dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="-1dp"
+        android:background="@null"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toStartOf="@id/lines_image_view"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="157"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnClearAll"
+        tools:listitem="@layout/list_item_words_picked_recover" />
+
+    <ImageView
+        android:id="@+id/lines_image_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/cryptox_phrase_input_lines_4"
+        app:layout_constraintBottom_toBottomOf="@id/words_list_view"
+        app:layout_constraintEnd_toStartOf="@id/suggestions_layout"
+        app:layout_constraintHorizontal_weight="42"
+        app:layout_constraintStart_toEndOf="@id/words_list_view"
+        app:layout_constraintTop_toTopOf="@id/words_list_view" />
+
+    <LinearLayout
+        android:id="@+id/suggestions_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-1dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/words_list_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="140"
+        app:layout_constraintStart_toEndOf="@id/lines_image_view"
+        app:layout_constraintTop_toTopOf="@id/words_list_view">
+
+        <TextView
+            android:id="@+id/tvSuggest1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/ccx_card_dark_20_background"
+            android:gravity="center_vertical|start"
+            android:paddingHorizontal="16dp"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_2"
+            tools:text="reflect" />
+
+        <TextView
+            android:id="@+id/tvSuggest2"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ccx_card_dark_20_background"
+            android:gravity="center_vertical|start"
+            android:paddingHorizontal="16dp"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_2"
+            tools:text="tennis" />
+
+        <TextView
+            android:id="@+id/tvSuggest3"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ccx_card_dark_20_background"
+            android:gravity="center_vertical|start"
+            android:paddingHorizontal="16dp"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_2"
+            tools:text="jaguar" />
+
+        <TextView
+            android:id="@+id/tvSuggest4"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ccx_card_dark_20_background"
+            android:gravity="center_vertical|start"
+            android:paddingHorizontal="16dp"
+            android:textAppearance="@style/CCX_Typography_Item"
+            android:textColor="@color/ccx_neutral_tint_2"
+            tools:text="elephant" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/word_error_text_view"
+        style="@style/CryptoX_Typography_Body_Medium.Error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:drawablePadding="6sp"
+        android:fontFamily="@font/w400"
+        android:text="@string/seed_phrase_try_another_word"
+        android:textColor="@color/cryptox_white_main"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/words_list_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/words_list_view"
+        app:layout_constraintTop_toTopOf="@id/words_list_view"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/error_text_view"
+        style="@style/CryptoX_Container_Error.TextView"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/seed_phrase_incorrect"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/words_list_view"
+        tools:visibility="visible" />
+
+    <FrameLayout
+        android:id="@+id/paste_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#14181D"
+        android:paddingVertical="2dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="4dp"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="@string/seed_phrase_recover_input_paste"
+            android:textAppearance="@style/CCX_Typography_Button_M"
+            android:textColor="@color/ccx_neutral_tint_1"
+            app:drawableStartCompat="@drawable/ccx_ico_notepad_16" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

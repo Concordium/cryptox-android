@@ -25,8 +25,9 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPreferencesActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
-import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
-import com.concordium.wallet.ui.passphrase.reveal.SavedPassPhraseRevealActivity
+import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
+import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
+import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -156,6 +157,14 @@ class MoreOverviewFragment : BaseFragment() {
         viewModel.seedPhraseRevealVisibilityLiveData.observe(
             viewLifecycleOwner,
             binding.seedPhraseRevealLayout::isVisible::set
+        )
+
+        binding.seedRevealLayout.setOnClickListener {
+            revealSeed()
+        }
+        viewModel.seedRevealVisibilityLiveData.observe(
+            viewLifecycleOwner,
+            binding.seedRevealLayout::isVisible::set
         )
 
         binding.trackingLayout.setOnClickListener {
@@ -288,7 +297,12 @@ class MoreOverviewFragment : BaseFragment() {
     }
 
     private fun revealSeedPhrase() {
-        val intent = Intent(activity, SavedPassPhraseRevealActivity::class.java)
+        val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun revealSeed() {
+        val intent = Intent(activity, SavedSeedRevealActivity::class.java)
         startActivity(intent)
     }
 

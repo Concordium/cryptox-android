@@ -14,7 +14,7 @@ import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPermissionDialog
-import com.concordium.wallet.ui.passphrase.setup.OneStepSetupWalletActivity
+import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 
 class WelcomePromoActivity :
     BaseActivity(R.layout.activity_welcome_promo),
