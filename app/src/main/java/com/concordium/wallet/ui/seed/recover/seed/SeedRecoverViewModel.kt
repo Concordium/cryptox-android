@@ -36,22 +36,16 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun validateSeed() {
-        var success = false
-
-        val seedHex = seed.value.trim().lowercase(Locale.ROOT)
-        val hexPattern = Regex("^[0-9a-fA-F]+$")
-
-        if (seedHex.length == SEED_LENGTH && seedHex.contains(" ").not()) {
-            if (hexPattern.matches(seedHex)) {
-                try {
-                    val decodedBytes = hexStringToByteArray(seedHex)
-                    if (decodedBytes.size == 64) {
-                        success = true
-                    }
-                } catch (e: IllegalArgumentException) {
-                    Log.e("Invalid hex string: ${e.message}")
-                }
+        val hexPattern = Regex("^[0-9a-fA-F]{128}$")
+        val success = if (hexPattern.matches(seed.value)) {
+            try {
+                val decodedBytes = hexStringToByteArray(seed.value)
+                decodedBytes.size == 64
+            } catch (e: IllegalArgumentException) {
+                false
             }
+        } else {
+            false
         }
 
         _validate.value = success
@@ -71,9 +65,4 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
     fun clearSeed() {
         seed.value = ""
     }
-
-    companion object {
-        const val SEED_LENGTH = 128
-    }
-
 }
