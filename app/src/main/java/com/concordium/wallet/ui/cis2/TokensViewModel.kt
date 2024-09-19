@@ -62,6 +62,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val tokenContractIndex: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {

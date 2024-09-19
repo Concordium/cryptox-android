@@ -119,6 +119,7 @@ class TransactionNotificationsManager(
                     Intent(context, AccountDetailsActivity::class.java)
                         .putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
                         .putExtra(AccountDetailsActivity.EXTRA_OPEN_TOKENS, true)
+                        .putExtra(AccountDetailsActivity.EXTRA_TOKEN_CONTRACT_INDEX, token.contractIndex)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                 )
