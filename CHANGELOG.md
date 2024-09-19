@@ -28,6 +28,8 @@
 - Visually increasing the balance after sending CCD instead of decreasing it
 - Adding newly created accounts to the address book with a blank name
 - Incorrect text colors in dark theme on Xiaomi
+- CIS-2 tokens empty state
+- CIS-2 tokens notification destination route
 
 ### Changed
 
