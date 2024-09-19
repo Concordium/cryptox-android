@@ -62,8 +62,8 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
             ) {
                 true
             } else {
-                viewModel.bakerDelegationData.oldCommissionRates?.transactionCommission != viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate ||
-                        viewModel.bakerDelegationData.oldCommissionRates?.bakingCommission != viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
+                viewModel.bakerDelegationData.oldCommissionRates?.transactionCommission != viewModel.bakerDelegationData.transactionCommissionRate ||
+                        viewModel.bakerDelegationData.oldCommissionRates?.bakingCommission != viewModel.bakerDelegationData.bakingCommissionRate
             }
         if (gotoNextPage) gotoNextPage()
         else showNoChange()

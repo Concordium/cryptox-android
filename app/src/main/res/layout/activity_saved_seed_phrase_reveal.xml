@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toastLayoutTopError"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.seed.setup.OneStepSetupWalletActivity">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="60dp"
+        android:fadingEdge="vertical"
+        android:fillViewport="true"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/saved_seed_phrase_reveal_title"
+                android:textAppearance="@style/CCX_Typography_H1"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/saved_seed_phrase_reveal_details"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="space_evenly">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:text="@string/saved_seed_phrase_reveal_transcribe"
+                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:drawableStartCompat="@drawable/ccx_ico_approved" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:text="@string/saved_seed_phrase_reveal_digital_copy"
+                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:drawableStartCompat="@drawable/ccx_ico_declined" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:text="@string/saved_seed_phrase_reveal_screenshot"
+                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textColor="@color/ccx_neutral_tint_1"
+                    app:drawableStartCompat="@drawable/ccx_ico_declined" />
+
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <FrameLayout
+                android:id="@+id/words_root_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp">
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/content_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ccx_card_dark_16_background"
+                    android:padding="6dp"
+                    app:flexDirection="row"
+                    app:flexWrap="wrap"
+                    app:justifyContent="center"
+                    tools:layout_height="64dp">
+                    <!-- Words are added programmatically -->
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/blur_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ccx_card_16_blur_background">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ccx_locked"
+                        app:tint="@color/ccx_mineral_blue_tint_1" />
+                </eightbitlab.com.blurview.BlurView>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/copy_button"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:paddingHorizontal="20dp"
+                android:text="@string/saved_seed_phrase_reveal_seed_phrase_copy"
+                android:textAppearance="@style/CCX_Typography_Button_M"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:drawableEndCompat="@drawable/cryptox_ico_copy"
+                app:drawableTint="@color/ccx_neutral_tint_1" />
+
+            <TextView
+                android:id="@+id/show_button"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:paddingHorizontal="20dp"
+                android:text="@string/saved_seed_phrase_reveal_seed_phrase_show"
+                android:textAppearance="@style/CCX_Typography_Button_M"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:drawableEndCompat="@drawable/ccx_ico_eye_open"
+                app:drawableTint="@color/ccx_neutral_tint_1" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

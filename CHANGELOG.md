@@ -6,6 +6,13 @@
 
 - Notifications for CCD and CIS-2 token transactions
 - Concordex exchange and Wert service where CCD can be purchased
+- Ability to reveal the wallet private key for those 
+  having no ability to reveal the seed phrase
+- Ability to use Wallet private key to restore a wallet
+
+### Fixed
+
+- Inability to configure a validator closed for delegation
 
 ## [1.2.0] - 2024-08-27
 

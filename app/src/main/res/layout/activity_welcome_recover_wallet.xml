@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.welcome.WelcomeRecoverWalletActivity">
 
     <include
         android:id="@+id/toolbar_layout"
         layout="@layout/app_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/root_layout"
+        app:layout_constraintStart_toStartOf="@id/root_layout"
+        app:layout_constraintTop_toTopOf="@id/root_layout" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:fadingEdge="vertical"
-        android:requiresFadingEdge="vertical">
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/bottom_aware_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:orientation="vertical">
@@ -52,24 +58,47 @@
                 android:background="@drawable/ccx_card_dark_20_background"
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
-                android:paddingVertical="24dp">
+                android:paddingTop="16dp"
+                android:paddingBottom="6dp">
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/simple_circle_bg"
-                    android:backgroundTint="@color/ccx_neutral_tint_5"
-                    android:importantForAccessibility="no"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ccx_seed_phrase" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="start"
+                        android:background="@drawable/simple_circle_bg"
+                        android:backgroundTint="@color/ccx_neutral_tint_5"
+                        android:importantForAccessibility="no"
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ccx_seed_phrase"
+                        app:tint="@color/ccx_mineral_blue_tint_3" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/seed_phrase_info_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="end"
+                        android:contentDescription="@string/learn_more_icon"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ccx_ico_information_circle_contained"
+                        app:tint="@color/cryptox_grey_secondary" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="@string/welcome_recover_use_phrase"
                     android:textAppearance="@style/CCX_Typography_H2"
                     android:textColor="@color/ccx_neutral_tint_1" />
@@ -79,9 +108,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="@string/welcome_recover_use_phrase_details"
                     android:textColor="@color/ccx_neutral_tint_2" />
+
+                <View
+                    style="@style/CryptoX_Divider_Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/import_seed_phrase_button"
+                    style="@style/CCX_Typography_Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:gravity="start"
+                    android:text="@string/welcome_recover_import_via_seed_phrase"
+                    android:textColor="@color/cryptox_white_main"
+                    app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
+                    app:drawableTint="@color/ccx_neutral_tint_1" />
+
+                <View
+                    style="@style/CryptoX_Divider_Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
+                <TextView
+                    android:id="@+id/import_seed_button"
+                    style="@style/CCX_Typography_Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:gravity="start"
+                    android:text="@string/welcome_recover_import_via_seed"
+                    android:textColor="@color/cryptox_white_main"
+                    app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
+                    app:drawableTint="@color/ccx_neutral_tint_1" />
             </LinearLayout>
 
             <LinearLayout
@@ -92,24 +156,48 @@
                 android:background="@drawable/ccx_card_dark_20_background"
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
-                android:paddingVertical="24dp">
+                android:paddingTop="16dp"
+                android:paddingBottom="6dp">
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/simple_circle_bg"
-                    android:backgroundTint="@color/ccx_neutral_tint_5"
-                    android:importantForAccessibility="no"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ccx_exported_file" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_gravity="start"
+                        android:background="@drawable/simple_circle_bg"
+                        android:backgroundTint="@color/ccx_neutral_tint_5"
+                        android:importantForAccessibility="no"
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ccx_exported_file"
+                        app:tint="@color/ccx_mineral_blue_tint_3" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/file_wallet_info_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="end"
+                        android:contentDescription="@string/learn_more_icon"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ccx_ico_information_circle_contained"
+                        app:tint="@color/cryptox_grey_secondary" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="@string/welcome_recover_use_file"
                     android:textAppearance="@style/CCX_Typography_H2"
                     android:textColor="@color/ccx_neutral_tint_1" />
@@ -119,9 +207,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="@string/welcome_recover_use_file_details"
                     android:textColor="@color/ccx_neutral_tint_2" />
+
+                <View
+                    style="@style/CryptoX_Divider_Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/import_backup_file_button"
+                    style="@style/CCX_Typography_Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:gravity="start"
+                    android:text="@string/welcome_recover_import_via_backup_file"
+                    android:textColor="@color/cryptox_white_main"
+                    app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
+                    app:drawableTint="@color/ccx_neutral_tint_1" />
             </LinearLayout>
 
             <Space
@@ -131,4 +237,30 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/bottom_aware_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            style="@style/CryptoX_Divider_Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            style="@style/CCX_Typography_Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="10dp"
+            android:gravity="start"
+            android:text="@string/welcome_recover_file_wallet_aware_text"
+            android:textColor="@color/cryptox_black_additional" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

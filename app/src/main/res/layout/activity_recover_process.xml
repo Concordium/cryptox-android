@@ -19,7 +19,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="@string/pass_phrase_recover_process_title"
+        android:text="@string/seed_phrase_recover_process_title"
         android:textAppearance="@style/CCX_Typography_H1"
         android:textColor="@color/ccx_neutral_tint_1"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
@@ -31,7 +31,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="@string/pass_phrase_recover_process_subtitle"
+        android:text="@string/seed_phrase_recover_process_subtitle"
         android:textAppearance="@style/CCX_Typography_Body"
         android:textColor="@color/ccx_neutral_tint_2"
         app:layout_constraintTop_toBottomOf="@id/title_text_view" />
@@ -74,7 +74,7 @@
             android:layout_marginEnd="4dp"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:text="@string/pass_phrase_recover_process_try_again"
+            android:text="@string/seed_phrase_recover_process_try_again"
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -84,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_marginStart="4dp"
             android:layout_weight="0.5"
-            android:text="@string/pass_phrase_recover_process_continue" />
+            android:text="@string/seed_phrase_recover_process_continue" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

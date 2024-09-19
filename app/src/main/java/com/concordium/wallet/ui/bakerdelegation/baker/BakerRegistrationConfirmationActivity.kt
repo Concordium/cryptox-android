@@ -216,21 +216,21 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         }
 
         binding.apply {
-            if (viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate != null) {
+            if (viewModel.bakerDelegationData.transactionCommissionRate != null) {
                 transactionFeeTitle.visibility = View.VISIBLE
                 transactionFeeStatus.visibility = View.VISIBLE
                 transactionFeeStatus.text =
-                    percentFormat.format(viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate)
+                    percentFormat.format(viewModel.bakerDelegationData.transactionCommissionRate)
             } else {
                 transactionFeeTitle.visibility = View.GONE
                 transactionFeeStatus.visibility = View.GONE
             }
 
-            if (viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate != null) {
+            if (viewModel.bakerDelegationData.bakingCommissionRate != null) {
                 bakingTitle.visibility = View.VISIBLE
                 bakingStatus.visibility = View.VISIBLE
                 bakingStatus.text =
-                    percentFormat.format(viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate)
+                    percentFormat.format(viewModel.bakerDelegationData.bakingCommissionRate)
             } else {
                 bakingTitle.visibility = View.GONE
                 bakingStatus.visibility = View.GONE
