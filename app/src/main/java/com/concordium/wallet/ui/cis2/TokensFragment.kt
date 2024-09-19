@@ -63,11 +63,14 @@ class TokensFragment : Fragment() {
         tokensAccountDetailsAdapter.setManageButtonClickListener {
             showFindTokensDialog()
         }
+        binding.noItemsManageTokens.setOnClickListener {
+            showFindTokensDialog()
+        }
     }
 
     private fun initObservers() {
         viewModel.waiting.observe(viewLifecycleOwner) {
-            binding.noItems.isVisible = viewModel.tokens.isEmpty()
+            binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
             tokensAccountDetailsAdapter.dataSet = viewModel.tokens.toTypedArray()
             tokensAccountDetailsAdapter.notifyDataSetChanged()
             viewModel.loadTokensBalances()
