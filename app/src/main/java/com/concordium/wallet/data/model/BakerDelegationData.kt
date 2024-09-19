@@ -30,7 +30,16 @@ data class BakerDelegationData(
     var energy: Long? = null
     var accountNonce: AccountNonce? = null
     var amount: BigInteger? = null
+    var finalizationCommissionRate: Double? = null
+    var bakingCommissionRate: Double? = null
+    var transactionCommissionRate: Double? = null
     var chainParameters: ChainParameters? = null
+        set(value) {
+            field = value
+            finalizationCommissionRate = value?.finalizationCommissionRange?.max
+            bakingCommissionRate = value?.bakingCommissionRange?.max
+            transactionCommissionRate = value?.transactionCommissionRange?.max
+        }
     var bakerPoolStatus: BakerPoolStatus? = null
     var passiveDelegation: PassiveDelegation? = null
     var cost: BigInteger? = null
