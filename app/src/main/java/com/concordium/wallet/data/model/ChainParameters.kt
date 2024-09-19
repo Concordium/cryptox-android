@@ -17,9 +17,7 @@ data class ChainParameters(
     val accountCreationLimit: Int,
     val minimumEquityCapital: BigInteger,
     val bakingCommissionRange: BakingCommissionRange,
-    val bakingCommissionRate: Double? = null,
     val transactionCommissionRange: TransactionCommissionRange,
-    val transactionCommissionRate: Double? = null,
     val finalizationCommissionRange: FinalizationCommissionRange,
     val euroPerEnergy: SimpleFraction,
     @SerializedName("microGTUPerEuro")
