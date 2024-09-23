@@ -23,12 +23,12 @@ interface ContractTokenDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg contractToken: ContractToken)
 
-    @Query("DELETE FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :tokenId AND account_address = :accountAddress")
-    suspend fun delete(accountAddress: String, contractIndex: String, tokenId: String)
+    @Query("DELETE FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :token AND account_address = :accountAddress")
+    suspend fun delete(accountAddress: String, contractIndex: String, token: String)
 
-    @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :tokenId AND account_address = :accountAddress")
-    suspend fun find(accountAddress: String, contractIndex: String, tokenId: String): ContractToken?
+    @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :token AND account_address = :accountAddress")
+    suspend fun find(accountAddress: String, contractIndex: String, token: String): ContractToken?
 
-    @Query("UPDATE contract_token_table SET is_newly_received = 0 WHERE contract_index = :contractIndex AND token_id = :tokenId AND account_address = :accountAddress")
-    suspend fun unmarkNewlyReceived(accountAddress: String, contractIndex: String, tokenId: String)
+    @Query("UPDATE contract_token_table SET is_newly_received = 0 WHERE id = :tokenUid")
+    suspend fun unmarkNewlyReceived(tokenUid: String)
 }
