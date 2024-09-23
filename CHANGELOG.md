@@ -8,11 +8,12 @@
 - Concordex exchange and Wert service where CCD can be purchased
 - Ability to reveal the wallet private key for those 
   having no ability to reveal the seed phrase
-- Ability to use Wallet private key to restore a wallet
+- Ability to use the wallet private key to restore the wallet
 
 ### Fixed
 
 - Inability to configure a validator closed for delegation
+- Incorrect state of the account tokens page when there are no tokens
 
 ## [1.2.0] - 2024-08-27
 
@@ -28,8 +29,6 @@
 - Visually increasing the balance after sending CCD instead of decreasing it
 - Adding newly created accounts to the address book with a blank name
 - Incorrect text colors in dark theme on Xiaomi
-- CIS-2 tokens empty state
-- CIS-2 tokens notification destination route
 
 ### Changed
 
