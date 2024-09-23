@@ -58,13 +58,23 @@ class TokensAccountDetailsAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position == itemCount - 1 && showManageButton) {
-            holder.binding.manageTokens.visibility = View.VISIBLE
-            holder.binding.content.visibility = View.GONE
-            return
-        } else {
-            holder.binding.manageTokens.visibility = View.GONE
-            holder.binding.content.visibility = View.VISIBLE
+        when {
+            dataSet.isEmpty() -> {
+                holder.binding.manageTokens.visibility = View.GONE
+                holder.binding.content.visibility = View.GONE
+                return
+            }
+
+            (position == itemCount - 1 && showManageButton) -> {
+                holder.binding.manageTokens.visibility = View.VISIBLE
+                holder.binding.content.visibility = View.GONE
+                return
+            }
+
+            else -> {
+                holder.binding.manageTokens.visibility = View.GONE
+                holder.binding.content.visibility = View.VISIBLE
+            }
         }
 
         val token = dataSet[position]

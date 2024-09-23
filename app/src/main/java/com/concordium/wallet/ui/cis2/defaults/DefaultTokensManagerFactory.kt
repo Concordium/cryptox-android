@@ -15,7 +15,7 @@ class DefaultTokensManagerFactory(
             description = "EUROe is a modern European stablecoin - a digital representation of fiat Euros",
             thumbnailUrl = "https://dev.euroe.com/persistent/token-icon/png/128x128.png",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "wCCD",
@@ -25,7 +25,7 @@ class DefaultTokensManagerFactory(
             description = "A CIS2 token wrapping the Concordium native token (CCD)",
             thumbnailUrl = "https://developer.concordium.software/en/mainnet/_images/wCCD.svg",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "USDT.eth",
@@ -35,7 +35,7 @@ class DefaultTokensManagerFactory(
             description = "Tether USD (Arabella Bridge)",
             thumbnailUrl = "https://cdn.moralis.io/eth/0xdac17f958d2ee523a2206206994597c13d831ec7.png",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "USDC.eth",
@@ -45,7 +45,7 @@ class DefaultTokensManagerFactory(
             description = "Circle USD (Arabella Bridge)",
             thumbnailUrl = "https://cdn.moralis.io/eth/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "ETH.eth",
@@ -55,7 +55,7 @@ class DefaultTokensManagerFactory(
             description = "Ethereum (Arabella Bridge)",
             thumbnailUrl = "https://cdn.moralis.io/eth/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
             decimals = 18,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "WBTC.eth",
@@ -65,7 +65,7 @@ class DefaultTokensManagerFactory(
             description = "Wrapped Bitcoin (Arabella Bridge)",
             thumbnailUrl = "https://cdn.moralis.io/eth/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png",
             decimals = 8,
-            tokenId = "",
+            token = "",
         ),
     )
 
@@ -78,7 +78,7 @@ class DefaultTokensManagerFactory(
             description = "EUROe is a modern European stablecoin - a digital representation of fiat Euros",
             thumbnailUrl = "https://dev.euroe.com/persistent/token-icon/png/128x128.png",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "wCCD",
@@ -88,7 +88,7 @@ class DefaultTokensManagerFactory(
             description = "A CIS2 token wrapping the Concordium native token (CCD)",
             thumbnailUrl = "https://developer.concordium.software/en/mainnet/_images/wCCD.svg",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "USDT.eth",
@@ -98,7 +98,7 @@ class DefaultTokensManagerFactory(
             description = "USDT token bridged from Ethereum",
             thumbnailUrl = "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=025",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "USDC.eth",
@@ -108,7 +108,7 @@ class DefaultTokensManagerFactory(
             description = "USDC token bridged from Ethereum",
             thumbnailUrl = "https://cryptologos.cc/logos/usd-coin-usdc-logo.svg?v=024",
             decimals = 6,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "ETH.eth",
@@ -118,7 +118,7 @@ class DefaultTokensManagerFactory(
             description = "Bridged native Ethereum token",
             thumbnailUrl = "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=025",
             decimals = 18,
-            tokenId = "",
+            token = "",
         ),
         DefaultFungibleToken(
             symbol = "WBTC.eth",
@@ -128,7 +128,7 @@ class DefaultTokensManagerFactory(
             description = "WBTC token bridged from Ethereum",
             thumbnailUrl = "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.svg?v=025",
             decimals = 8,
-            tokenId = "",
+            token = "",
         ),
     )
 

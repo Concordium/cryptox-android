@@ -180,7 +180,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         val existingContractToken = contractTokensRepository.find(
             accountAddress = recipientAccountAddress,
             contractIndex = contractAddress.index.toString(),
-            tokenId = tokenId,
+            token = tokenId,
         )
         val token: Token
 
@@ -206,7 +206,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
                 ContractToken(
                     id = 0,
                     isNewlyReceived = true,
-                    tokenId = tokenId,
+                    token = tokenId,
                     accountAddress = recipientAccountAddress,
                     isFungible = !isTokenUnique,
                     contractIndex = contractAddress.index.toString(),
