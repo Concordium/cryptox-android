@@ -119,7 +119,13 @@ class TransactionNotificationsManager(
                     Intent(context, AccountDetailsActivity::class.java)
                         .putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
                         .putExtra(AccountDetailsActivity.EXTRA_OPEN_TOKENS, true)
-                        .putExtra(AccountDetailsActivity.EXTRA_TOKEN_CONTRACT_INDEX, token.contractIndex)
+                        .apply {
+                            // In case the token is already in the wallet,
+                            // open its details page.
+                            if (!token.isNewlyReceived) {
+                                putExtra(AccountDetailsActivity.EXTRA_TOKEN_TO_OPEN_UID, token.uid)
+                            }
+                        }
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                 )

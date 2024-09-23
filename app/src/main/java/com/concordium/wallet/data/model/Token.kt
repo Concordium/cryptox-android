@@ -2,13 +2,24 @@ package com.concordium.wallet.data.model
 
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 import java.math.BigInteger
 
 // The class must have default value for each field,
 // otherwise Gson fails to use defaults and sets not-nullable fields to null.
 data class Token(
-    val id: String = "",
+    /**
+     * A unique identifier of this token.
+     * Either a wallet-proxy id or a local [ContractToken.id] from the local DB.
+     * **wallet-proxy "tokenId" is [token]**
+     */
+    @JsonProperty("id")
+    val uid: String = "",
+    /**
+     * An identifier of this token **within its contract**,
+     * either an empty string or a hex counter.
+     */
     var token: String = "",
     var metadata: TokenMetadata? = null,
     var contractIndex: String = "",
@@ -21,25 +32,25 @@ data class Token(
 
     val symbol: String
         get() = metadata?.symbol ?: ""
-    
+
     val name: String?
         get() = metadata?.name
-    
+
     val decimals: Int
         get() = metadata?.decimals ?: 0
 
     val isUnique: Boolean
         get() = metadata?.unique == true
-    
+
     val isCcd: Boolean
-        get() = id == "CCD"
+        get() = uid == "CCD"
 
     constructor(
         contractToken: ContractToken,
         isSelected: Boolean = false,
     ) : this(
-        id = contractToken.tokenId,
-        token = contractToken.tokenId,
+        uid = contractToken.id.toString(),
+        token = contractToken.token,
         metadata = contractToken.tokenMetadata,
         contractIndex = contractToken.contractIndex,
         contractName = contractToken.contractName,
@@ -57,7 +68,7 @@ data class Token(
             val atDisposal = account.getAtDisposalWithoutStakedOrScheduled(totalUnshieldedBalance)
 
             return Token(
-                id = "CCD",
+                uid = "CCD",
                 metadata = TokenMetadata(
                     symbol = "CCD",
                     decimals = 6,

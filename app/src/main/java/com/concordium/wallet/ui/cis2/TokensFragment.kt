@@ -24,7 +24,6 @@ class TokensFragment : Fragment() {
     private var isFungible: Boolean? = null
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
     private var manageTokensBottomSheet: ManageTokensBottomSheet? = null
-    private var currentContractIndex: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,14 +80,6 @@ class TokensFragment : Fragment() {
         }
         viewModel.tokenBalances.observe(viewLifecycleOwner) {
             tokensAccountDetailsAdapter.notifyDataSetChanged()
-
-            currentContractIndex?.let {
-                val token = viewModel.tokens.find { it.contractIndex == currentContractIndex }
-                token?.let {
-                    viewModel.tokenContractIndex.postValue(null)
-                    viewModel.chooseToken.postValue(it)
-                }
-            }
         }
         viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) {
             viewModel.loadTokens(accountAddress, isFungible)
@@ -111,10 +102,6 @@ class TokensFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
             }
-        }
-
-        viewModel.tokenContractIndex.observe(viewLifecycleOwner) {
-            currentContractIndex = if (it != currentContractIndex) it else null
         }
     }
 

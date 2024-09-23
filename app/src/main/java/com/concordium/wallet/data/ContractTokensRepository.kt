@@ -25,16 +25,16 @@ class ContractTokensRepository(private val contractTokenDao: ContractTokenDao) {
     suspend fun find(
         accountAddress: String,
         contractIndex: String,
-        tokenId: String
+        token: String
     ): ContractToken? {
-        return contractTokenDao.find(accountAddress, contractIndex, tokenId)
+        return contractTokenDao.find(accountAddress, contractIndex, token)
     }
 
-    suspend fun delete(accountAddress: String, contractIndex: String, tokenId: String) {
-        contractTokenDao.delete(accountAddress, contractIndex, tokenId)
+    suspend fun delete(accountAddress: String, contractIndex: String, token: String) {
+        contractTokenDao.delete(accountAddress, contractIndex, token)
     }
 
-    suspend fun unmarkNewlyReceived(accountAddress: String, contractIndex: String, tokenId: String) {
-        contractTokenDao.unmarkNewlyReceived(accountAddress, contractIndex, tokenId)
+    suspend fun unmarkNewlyReceived(tokenUid: String) {
+        contractTokenDao.unmarkNewlyReceived(tokenUid)
     }
 }

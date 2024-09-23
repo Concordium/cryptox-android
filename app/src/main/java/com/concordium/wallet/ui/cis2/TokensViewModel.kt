@@ -62,7 +62,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val tokenContractIndex: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
@@ -118,7 +117,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val existingContractTokens =
             contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
         val selectedTokenIds =
-            existingContractTokens.mapTo(mutableSetOf(), ContractToken::tokenId) +
+            existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
                     everFoundExactTokens.asSequence()
                         .filter(Token::isSelected)
                         .mapTo(mutableSetOf(), Token::token)
@@ -174,7 +173,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             }
 
             isLastTokenPage = pageTokens.size < limit
-            tokenPageCursor = pageTokens.lastOrNull()?.id
+            tokenPageCursor = pageTokens.lastOrNull()?.uid
 
             loadTokensMetadata(pageTokens)
             val tokensWithMetadata = pageTokens.filter { it.metadata != null }
@@ -311,7 +310,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
             val selectedTokenIds =
-                existingContractTokens.mapTo(mutableSetOf(), ContractToken::tokenId) +
+                existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
                         (tokens.asSequence() + everFoundExactTokens.asSequence())
                             .filter(Token::isSelected)
                             .mapTo(mutableSetOf(), Token::token)
@@ -403,7 +402,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         contractTokensRepository.insert(
                             ContractToken(
                                 id = 0,
-                                tokenId = selectedToken.token,
+                                token = selectedToken.token,
                                 contractIndex = selectedToken.contractIndex,
                                 contractName = selectedToken.contractName,
                                 accountAddress = account.address,
@@ -421,16 +420,16 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 // we must only delete the unselected ones among loaded.
                 // Therefore, if there is an existing token but the user haven't scrolled to it
                 // in the search results, it won't be deleted.
-                val loadedNotSelectedTokenIds = loadedTokens
+                val loadedNotSelectedTokens = loadedTokens
                     .filterNot(Token::isSelected)
                     .mapTo(mutableSetOf(), Token::token)
 
                 // Delete each loaded not selected token.
-                loadedNotSelectedTokenIds.forEach { loadedNotSelectedTokenId ->
+                loadedNotSelectedTokens.forEach { loadedNotSelectedToken ->
                     contractTokensRepository.delete(
                         accountAddress = account.address,
                         contractIndex = tokenData.contractIndex,
-                        tokenId = loadedNotSelectedTokenId
+                        token = loadedNotSelectedToken,
                     )
                     anyChanges = true
                 }
@@ -469,15 +468,19 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) =
-        viewModelScope.launch(Dispatchers.IO) {
-            contractTokensRepository.delete(accountAddress, contractIndex, tokenId)
-        }
+    fun deleteSelectedToken() = viewModelScope.launch {
+        contractTokensRepository.delete(
+            accountAddress = tokenData.account!!.address,
+            contractIndex = tokenData.selectedToken!!.contractIndex,
+            token = tokenData.selectedToken!!.token,
+        )
+    }
 
-    fun unmarkNewlyReceivedToken(accountAddress: String, contractIndex: String, tokenId: String) =
-        viewModelScope.launch {
-            contractTokensRepository.unmarkNewlyReceived(accountAddress, contractIndex, tokenId)
-        }
+    fun unmarkNewlyReceivedSelectedToken() = viewModelScope.launch {
+        contractTokensRepository.unmarkNewlyReceived(
+            tokenUid = tokenData.selectedToken!!.uid,
+        )
+    }
 
     fun onFindTokensDialogDismissed() {
         resetLookForTokens()
