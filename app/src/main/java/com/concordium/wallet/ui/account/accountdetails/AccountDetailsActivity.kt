@@ -9,6 +9,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -46,9 +47,13 @@ class AccountDetailsActivity : BaseActivity(
     private val shouldOpenTokens: Boolean by lazy {
         intent.getBooleanExtra(EXTRA_OPEN_TOKENS, false)
     }
+    private val tokenToOpenUid: String? by lazy {
+        intent.getStringExtra(EXTRA_TOKEN_TO_OPEN_UID)
+    }
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
+        const val EXTRA_TOKEN_TO_OPEN_UID = "EXTRA_TOKEN_TO_OPEN_UID"
         const val EXTRA_OPEN_TOKENS = "EXTRA_OPEN_TOKENS"
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
     }
@@ -130,6 +135,18 @@ class AccountDetailsActivity : BaseActivity(
         viewModelTokens.chooseToken.observe(this) { token ->
             showTokenDetailsDialog(token)
         }
+
+        viewModelTokens.tokenBalances.observe(this, object : Observer<Boolean> {
+            override fun onChanged(t: Boolean) {
+                // Open the requested token once, when balances are loaded.
+                if (tokenToOpenUid != null) {
+                    viewModelTokens.tokenBalances.removeObserver(this)
+                    viewModelTokens.tokens
+                        .find { it.uid == tokenToOpenUid }
+                        ?.also(viewModelTokens.chooseToken::postValue)
+                }
+            }
+        })
     }
 
     private fun initViews() {

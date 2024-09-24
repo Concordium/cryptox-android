@@ -104,13 +104,9 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
     }
 
     private fun handleNewlyReceivedToken(token: Token) {
+        viewModel.unmarkNewlyReceivedSelectedToken()
         showNewlyReceivedNotice(
             tokenName = token.name ?: token.symbol
-        )
-        viewModel.unmarkNewlyReceivedToken(
-            viewModel.tokenData.account!!.address,
-            viewModel.tokenData.selectedToken!!.contractIndex,
-            viewModel.tokenData.selectedToken!!.id
         )
         setResult(
             Activity.RESULT_OK,
@@ -124,11 +120,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         builder.setMessage(getString(R.string.cis_delete_dialog_content))
         builder.setPositiveButton(getString(R.string.cis_delete_dialog_confirm)) { dialog, _ ->
             dialog.dismiss()
-            viewModel.deleteSingleToken(
-                viewModel.tokenData.account!!.address,
-                viewModel.tokenData.selectedToken!!.contractIndex,
-                viewModel.tokenData.selectedToken!!.id
-            )
+            viewModel.deleteSelectedToken()
             setResult(
                 Activity.RESULT_OK,
                 Intent().putExtra(CHANGED, true)

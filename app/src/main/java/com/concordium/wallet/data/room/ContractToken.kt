@@ -22,7 +22,7 @@ data class ContractToken(
     @ColumnInfo(name = "contract_name", defaultValue = "")
     val contractName: String,
     @ColumnInfo(name = "token_id")
-    val tokenId: String,
+    val token: String,
     @ColumnInfo(name = "account_address")
     val accountAddress: String?,
     @ColumnInfo(name = "is_fungible")

@@ -7,8 +7,8 @@ import com.concordium.wallet.data.room.ContractToken
 class DefaultFungibleToken(
     val symbol: String,
     val contractIndex: String,
-    val tokenId: String,
     val contractName: String,
+    val token: String,
     val name: String,
     val description: String,
     val thumbnailUrl: String?,
@@ -17,7 +17,7 @@ class DefaultFungibleToken(
     fun toContractToken(accountAddress: String) = ContractToken(
         id = 0,
         contractIndex = contractIndex,
-        tokenId = tokenId,
+        token = token,
         accountAddress = accountAddress,
         isFungible = true,
         contractName = contractName,
