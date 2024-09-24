@@ -165,10 +165,7 @@ class WalletConnectSignTransactionRequestHandler(
         )
 
         val method = getTransactionMethodName(transactionPayload)
-        val accountAtDisposalBalance =
-            account.getAtDisposalWithoutStakedOrScheduled(
-                account.totalUnshieldedBalance
-            )
+        val accountAtDisposalBalance = account.balanceAtDisposal
         this.transactionCost = transactionCost
         this.transactionNonce = accountNonce
 
@@ -383,7 +380,7 @@ class WalletConnectSignTransactionRequestHandler(
         }
     }
 
-    fun onTransactionSubmittedFinishClicked(){
+    fun onTransactionSubmittedFinishClicked() {
         onFinish()
     }
 

@@ -63,11 +63,8 @@ data class Token(
          * @return CCD as if it was a fungible token,
          * with the [account]'s at disposal balance.
          */
-        fun ccd(account: Account): Token {
-            val totalUnshieldedBalance = account.totalUnshieldedBalance
-            val atDisposal = account.getAtDisposalWithoutStakedOrScheduled(totalUnshieldedBalance)
-
-            return Token(
+        fun ccd(account: Account) =
+            Token(
                 uid = "CCD",
                 metadata = TokenMetadata(
                     symbol = "CCD",
@@ -78,8 +75,7 @@ data class Token(
                     thumbnail = null,
                     display = null,
                 ),
-                balance = atDisposal,
+                balance = account.balanceAtDisposal,
             )
-        }
     }
 }

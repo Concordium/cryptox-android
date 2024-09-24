@@ -22,6 +22,19 @@ class AccountTypeConverters {
     }
 
     @TypeConverter
+    fun jsonToCooldownList(value: String): List<AccountCooldown> {
+        val gson = App.appCore.gson
+        val listType: Type = object : TypeToken<ArrayList<AccountCooldown>>() {}.type
+        return gson.fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun cooldownListToJson(list: List<AccountCooldown>): String {
+        val gson = App.appCore.gson
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
     fun jsonToAccountDelegation(value: String?): AccountDelegation? {
         if (value == null) {
             return null

@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.AccountBaker
+import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.AccountDelegation
 import com.concordium.wallet.data.model.AccountEncryptedAmount
 import com.concordium.wallet.data.model.AccountReleaseSchedule
@@ -23,13 +24,15 @@ import java.math.BigInteger
 @TypeConverters(AccountTypeConverters::class)
 data class Account(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Int = 0,
 
     @ColumnInfo(name = "identity_id")
     val identityId: Int,
 
+    @ColumnInfo("name")
     var name: String,
 
+    @ColumnInfo("address")
     var address: String,
 
     @ColumnInfo(name = "submission_id")
@@ -41,61 +44,47 @@ data class Account(
     @ColumnInfo(name = "encrypted_account_data")
     var encryptedAccountData: String,
 
-    @ColumnInfo(name = "revealed_attributes")
-    var revealedAttributes: List<IdentityAttribute>,
-
+    @ColumnInfo("credential")
     var credential: CredentialWrapper?,
 
+    @ColumnInfo(name = "cred_number")
+    var credNumber: Int,
+
+    @ColumnInfo(name = "revealed_attributes")
+    var revealedAttributes: List<IdentityAttribute> = emptyList(),
+
     @ColumnInfo(name = "finalized_balance")
-    var finalizedBalance: BigInteger = BigInteger.ZERO,
+    var balance: BigInteger = BigInteger.ZERO,
 
-    @ColumnInfo(name = "current_balance")
-    var currentBalance: BigInteger = BigInteger.ZERO,
-
-    @ColumnInfo(name = "total_balance")
-    var totalBalance: BigInteger = BigInteger.ZERO,
-
-    @ColumnInfo(name = "total_unshielded_balance")
-    var totalUnshieldedBalance: BigInteger = BigInteger.ZERO,
+    @ColumnInfo(name = "balance_at_disposal")
+    var balanceAtDisposal: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_shielded_balance")
-    var totalShieldedBalance: BigInteger = BigInteger.ZERO,
+    var shieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "finalized_encrypted_balance")
-    var finalizedEncryptedBalance: AccountEncryptedAmount?,
-
-    @ColumnInfo(name = "current_encrypted_balance")
-    var currentEncryptedBalance: AccountEncryptedAmount?,
+    var encryptedBalance: AccountEncryptedAmount? = null,
 
     @ColumnInfo(name = "current_balance_status")
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
-
-    @ColumnInfo(name = "total_staked")
-    var totalStaked: BigInteger = BigInteger.ZERO,
-
-    @ColumnInfo(name = "total_at_disposal")
-    var totalAtDisposal: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "read_only")
     var readOnly: Boolean = false,
 
     @ColumnInfo(name = "finalized_account_release_schedule")
-    var finalizedAccountReleaseSchedule: AccountReleaseSchedule?,
+    var releaseSchedule: AccountReleaseSchedule? = null,
 
-    @ColumnInfo(name = "baker_id")
-    var bakerId: Long? = null,
+    @ColumnInfo(name = "cooldowns")
+    var cooldowns: List<AccountCooldown> = emptyList(),
 
     @ColumnInfo(name = "account_delegation")
-    var accountDelegation: AccountDelegation? = null,
+    var delegation: AccountDelegation? = null,
 
     @ColumnInfo(name = "account_baker")
-    var accountBaker: AccountBaker? = null,
+    var baker: AccountBaker? = null,
 
     @ColumnInfo(name = "accountIndex")
-    var accountIndex: Int? = null,
-
-    @ColumnInfo(name = "cred_number")
-    var credNumber: Int
+    var index: Int? = null,
 ) : Serializable {
 
     companion object {
@@ -106,6 +95,15 @@ data class Account(
             return address
         }
     }
+
+    val stakedAmount: BigInteger
+        get() = baker?.stakedAmount ?: BigInteger.ZERO
+
+    val delegatedAmount: BigInteger
+        get() = delegation?.stakedAmount ?: BigInteger.ZERO
+
+    val cooldownAmount: BigInteger
+        get() = cooldowns.sumOf(AccountCooldown::amount)
 
     fun isInitial(): Boolean {
         if (readOnly || isBaking() || isDelegating()) {
@@ -124,51 +122,32 @@ data class Account(
         return false
     }
 
-    fun getAccountName(): String {
-        return if (readOnly) {
+    fun getAccountName(): String =
+        if (readOnly) {
             getDefaultName(address)
         } else {
             name.takeUnless(String::isEmpty)
                 ?: getDefaultName(address)
         }
-    }
 
-    fun isBaking(): Boolean {
-        return accountBaker != null
-    }
+    fun isBaking(): Boolean =
+        baker != null
 
-    fun isBaker(): Boolean {
-        return bakerId != null
-    }
+    fun isDelegating(): Boolean =
+        delegation != null
 
-    fun isDelegating(): Boolean {
-        return accountDelegation != null
-    }
+    fun hasCooldowns(): Boolean =
+        cooldowns.isNotEmpty()
 
     fun mayNeedUnshielding(): Boolean {
-        if (finalizedEncryptedBalance == null || readOnly) {
+        if (encryptedBalance == null || readOnly) {
             return false
         }
 
         val isShieldedBalanceUnknown = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
                 || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
         val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
-                && totalShieldedBalance.signum() > 0
+                && shieldedBalance.signum() > 0
         return isShieldedBalanceUnknown || isShieldedBalancePositive
-    }
-
-    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {
-        val stakedAmount: BigInteger = accountDelegation?.stakedAmount
-            ?: accountBaker?.stakedAmount ?: BigInteger.ZERO
-        val scheduledTotal: BigInteger = finalizedAccountReleaseSchedule?.total ?: BigInteger.ZERO
-        val subtract: BigInteger = if (stakedAmount in BigInteger.ONE..scheduledTotal)
-            scheduledTotal
-        else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
-            stakedAmount
-        else if (stakedAmount.signum() == 0 && scheduledTotal.signum() > 0)
-            scheduledTotal
-        else
-            BigInteger.ZERO
-        return BigInteger.ZERO.max(totalBalance - subtract)
     }
 }

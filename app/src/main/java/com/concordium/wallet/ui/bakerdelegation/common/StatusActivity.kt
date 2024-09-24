@@ -1,20 +1,28 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.text.set
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
 import com.concordium.wallet.databinding.DelegationbakerStatusBinding
+import com.concordium.wallet.databinding.InactiveStakeStatusBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 abstract class StatusActivity(
     titleId: Int = R.string.app_name
@@ -62,11 +70,16 @@ abstract class StatusActivity(
         binding.statusTextView.text = getString(res)
     }
 
-    fun addContent(titleRes: Int, text: String) {
-        addContent(getString(titleRes), text)
+    fun addContent(titleRes: Int, text: String, visibleDivider: Boolean = true) {
+        addContent(title = getString(titleRes), text = text, visibleDivider = visibleDivider)
     }
 
-    fun addContent(title: String, text: String, titleTextColor: Int? = null) {
+    fun addContent(
+        title: String,
+        text: String,
+        titleTextColor: Int? = null,
+        visibleDivider: Boolean = true
+    ) {
         binding.statusEmptyTextView.visibility = View.GONE
         binding.statusListContainer.visibility = View.VISIBLE
 
@@ -78,13 +91,19 @@ abstract class StatusActivity(
             titleTextColor?.let {
                 delegationBakerStatusBinding.statusItemTitle.setTextColor(getColor(it))
             }
+            delegationBakerStatusBinding.divider.visibility = View.GONE
         } else
             delegationBakerStatusBinding.statusItemTitle.visibility = View.GONE
 
-        if (text.isNotEmpty())
+        if (text.isNotEmpty()) {
             delegationBakerStatusBinding.statusItemContent.text = text
-        else
+            if (visibleDivider)
+                delegationBakerStatusBinding.divider.visibility = View.VISIBLE
+            else
+                delegationBakerStatusBinding.divider.visibility = View.GONE
+        } else {
             delegationBakerStatusBinding.statusItemContent.visibility = View.GONE
+        }
 
         binding.statusListContainer.addView(delegationBakerStatusBinding.root)
     }
@@ -134,6 +153,45 @@ abstract class StatusActivity(
         binding.statusButtonBottom.isEnabled = false
         setContentTitle(contentTitleStringId)
         setEmptyState(getString(emptyStateStringId))
+    }
+
+    protected fun addCooldowns(cooldowns: Collection<AccountCooldown>) {
+        binding.cooldownListContainer.removeAllViews()
+
+        cooldowns.forEach { cooldown ->
+            InactiveStakeStatusBinding.inflate(
+                layoutInflater,
+                binding.cooldownListContainer,
+                true
+            ).apply {
+                inactiveStakeAmount.text = CurrencyUtil.formatGTU(cooldown.amount)
+
+                val dayLeftCount = (cooldown.timestamp - System.currentTimeMillis())
+                    .toDuration(DurationUnit.MILLISECONDS)
+                    .inWholeDays
+                    // If less than 1 day left, keep showing “1 day left”.
+                    .coerceAtLeast(1)
+                    .toInt()
+                val daysLeftString = resources.getQuantityString(
+                    R.plurals.days_left,
+                    dayLeftCount,
+                    dayLeftCount
+                )
+                val dayLeftCountIndex = daysLeftString.indexOf(dayLeftCount.toString())
+                inactiveStakeCooldownTimeAmount.text = SpannableString(daysLeftString).apply {
+                    set(
+                        dayLeftCountIndex,
+                        dayLeftCountIndex + dayLeftCount.toString().length,
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(
+                                this@StatusActivity,
+                                R.color.cryptox_white_main
+                            )
+                        )
+                    )
+                }
+            }
+        }
     }
 
     abstract fun initView()

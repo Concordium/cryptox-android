@@ -37,7 +37,6 @@ import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +44,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
-import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 
 data class RecoverProcessData(
@@ -316,36 +314,26 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 ProxyRepository().getAccountBalanceSuspended(createCredentialOutput.accountAddress)
             if (accountBalance.finalizedBalance != null) {
                 val account = Account(
-                    id = 0,
                     identityId = identity.id,
                     name = Account.getDefaultName(createCredentialOutput.accountAddress),
                     address = createCredentialOutput.accountAddress,
                     submissionId = "",
                     transactionStatus = TransactionStatus.FINALIZED,
                     encryptedAccountData = encryptedAccountData,
-                    revealedAttributes = listOf(),
                     credential = createCredentialOutput.credential,
-                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
-                    currentBalance = accountBalance.currentBalance?.accountAmount.toBigInteger(),
-                    totalBalance = BigInteger.ZERO,
-                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
-                    totalShieldedBalance = BigInteger.ZERO,
-                    finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
-                    currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
+                    balance = accountBalance.finalizedBalance.accountAmount,
+                    balanceAtDisposal = accountBalance.finalizedBalance.accountAtDisposal,
+                    encryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     encryptedBalanceStatus =
                     if (accountBalance.finalizedBalance.accountEncryptedAmount.isDefaultEmpty())
                         ShieldedAccountEncryptionStatus.DECRYPTED
                     else
                         ShieldedAccountEncryptionStatus.ENCRYPTED,
-                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount
-                        ?: BigInteger.ZERO,
-                    totalAtDisposal = BigInteger.ZERO,
-                    readOnly = false,
-                    finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
-                    bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
-                    accountDelegation = accountBalance.finalizedBalance.accountDelegation,
-                    accountBaker = accountBalance.finalizedBalance.accountBaker,
-                    accountIndex = accountBalance.finalizedBalance.accountIndex,
+                    releaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
+                    cooldowns = accountBalance.finalizedBalance.accountCooldowns,
+                    delegation = accountBalance.finalizedBalance.accountDelegation,
+                    baker = accountBalance.finalizedBalance.accountBaker,
+                    index = accountBalance.finalizedBalance.accountIndex,
                     credNumber = credNumber
                 )
 

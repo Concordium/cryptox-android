@@ -28,9 +28,9 @@ class BakerUpdatePoolSettingsActivity : BaseDelegationBakerActivity(
         super.initViews()
 
         viewModel.bakerDelegationData.oldOpenStatus =
-            viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus
+            viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.openStatus
 
-        viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.let {
+        viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.let {
             viewModel.selectOpenStatus(it)
         }
 
@@ -43,9 +43,9 @@ class BakerUpdatePoolSettingsActivity : BaseDelegationBakerActivity(
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
             },
-            viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
+            viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
         )
-        if (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus != OPEN_STATUS_CLOSED_FOR_ALL) {
+        if (viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.openStatus != OPEN_STATUS_CLOSED_FOR_ALL) {
             binding.poolOptions.addControl(
                 getString(R.string.baker_update_pool_settings_option_close_for_new),
                 object : SegmentedControlView.OnItemClickListener {
@@ -53,7 +53,7 @@ class BakerUpdatePoolSettingsActivity : BaseDelegationBakerActivity(
                         viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_NEW))
                     }
                 },
-                viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW
+                viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW
             )
         }
         binding.poolOptions.addControl(
@@ -63,10 +63,10 @@ class BakerUpdatePoolSettingsActivity : BaseDelegationBakerActivity(
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
             },
-            viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
+            viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
         )
 
-        when (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus) {
+        when (viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.openStatus) {
             OPEN_STATUS_OPEN_FOR_ALL -> binding.poolSettingsCurrentStatus.text =
                 getString(R.string.baker_update_pool_settings_current_status_open)
 

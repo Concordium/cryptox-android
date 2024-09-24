@@ -44,7 +44,7 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?) :
         binding.identityTextview.text = accountWithIdentity.identity.name
 
         binding.statusReadOnly.isVisible = accountWithIdentity.account.readOnly
-        binding.statusBaker.isVisible = accountWithIdentity.account.isBaker()
+        binding.statusBaker.isVisible = accountWithIdentity.account.isBaking()
         binding.statusDelegating.isVisible = accountWithIdentity.account.isDelegating()
     }
 }

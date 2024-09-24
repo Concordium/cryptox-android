@@ -44,8 +44,7 @@ class ChooseAccountListAdapter(private val context: Context, var arrayList: List
                 )
             else
                 account.address
-        val atDisposalBalance =
-            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+        val atDisposalBalance = account.balanceAtDisposal
         holder.binding.accBalance.text = context.getString(
             R.string.acc_balance_placeholder,
             CurrencyUtil.formatGTU(atDisposalBalance, true)

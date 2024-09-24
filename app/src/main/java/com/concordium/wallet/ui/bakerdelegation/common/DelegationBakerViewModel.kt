@@ -166,11 +166,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isBakerPool(): Boolean {
-        return bakerDelegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER
+        return bakerDelegationData.account?.delegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER
     }
 
     fun isLPool(): Boolean {
-        return bakerDelegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL
+        return bakerDelegationData.account?.delegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL
     }
 
     fun isOpenBaker(): Boolean {
@@ -178,7 +178,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isUpdatingDelegation(): Boolean {
-        bakerDelegationData.account?.accountDelegation?.let { return it.stakedAmount != BigInteger.ZERO }
+        bakerDelegationData.account?.delegation?.let { return it.stakedAmount != BigInteger.ZERO }
         return false
     }
 
@@ -191,18 +191,18 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isInCoolDown(): Boolean {
-        return bakerDelegationData.account?.accountDelegation?.pendingChange != null || bakerDelegationData.account?.accountBaker?.pendingChange != null
+        return bakerDelegationData.account?.delegation?.pendingChange != null || bakerDelegationData.account?.baker?.pendingChange != null
     }
 
     fun atDisposal(): BigInteger {
         var staked: BigInteger = BigInteger.ZERO
-        bakerDelegationData.account?.accountDelegation?.let {
+        bakerDelegationData.account?.delegation?.let {
             staked = it.stakedAmount
         }
-        bakerDelegationData.account?.accountBaker?.let {
+        bakerDelegationData.account?.baker?.let {
             staked = it.stakedAmount
         }
-        return (bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO) - staked
+        return (bakerDelegationData.account?.balance ?: BigInteger.ZERO) - staked
     }
 
     fun selectBakerPool() {
@@ -264,7 +264,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                     bakerDelegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
                     val stakedAmount: Long =
-                        bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
+                        bakerDelegationData.account?.delegation?.stakedAmount?.toLong() ?: 0
                     val delegatedCapital: Long =
                         bakerDelegationData.bakerPoolStatus?.delegatedCapital?.toLong() ?: 0
                     val delegatedCapitalCap: Long =
@@ -404,7 +404,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerDelegationData.type != REGISTER_BAKER) {
                 tasks.add(async(Dispatchers.IO) {
                     val response =
-                        proxyRepository.getBakerPoolSuspended(bakerDelegationData.account?.accountBaker?.bakerId.toString())
+                        proxyRepository.getBakerPoolSuspended(bakerDelegationData.account?.baker?.bakerId.toString())
                     if (response.isSuccessful) {
                         response.body()?.let {
                             bakerDelegationData.bakerPoolStatus = it
@@ -760,7 +760,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun bakerKeysJson(): String? {
         _bakerKeysLiveData.value?.let { bakerKeys ->
-            bakerKeys.bakerId = bakerDelegationData.account?.accountIndex
+            bakerKeys.bakerId = bakerDelegationData.account?.index
             return if (bakerKeys.toString()
                     .isNotEmpty()
             ) App.appCore.gson.toJson(bakerKeys) else null
@@ -768,9 +768,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return null
     }
 
-    fun getAvailableBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
-        bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
-    ) ?: BigInteger.ZERO
+    fun getAvailableBalance(): BigInteger =
+        bakerDelegationData.account?.balanceAtDisposal ?: BigInteger.ZERO
 
     fun setSelectedCommissionRates(
         transactionRate: Double?,

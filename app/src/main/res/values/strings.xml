@@ -378,6 +378,7 @@
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Delegating:</string>
+    <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">…</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
@@ -608,7 +609,7 @@
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
     <string name="earn_delegation_title">Delegation</string>
-    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other bakers. There is no minimum amount of CCD required when delegating.</string>
+    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other validators. There is no minimum amount of CCD required when delegating.</string>
     <string name="earn_delegation_button">Continue to delegation setup</string>
     <string name="earn_baker_button">Continue to validator setup</string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
@@ -620,15 +621,15 @@
     <string name="delegation_intro_subtitle3">Validator pools</string>
     <string name="delegation_intro_subtitle4">Passive delegation</string>
     <string name="delegation_intro_subtitle5">Pay days</string>
-    <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
+    <string name="delegation_intro_subtitle6">Lock-in and cooldowns</string>
     <string name="delegation_intro_subtitle7">The status page</string>
 
     <string name="delegation_update_subtitle1">Updating your delegation</string>
     <string name="delegation_update_subtitle2">Pay day updates</string>
-    <string name="delegation_update_subtitle3">Updates with longer cool-downs</string>
+    <string name="delegation_update_subtitle3">Cooldowns</string>
 
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
-    <string name="delegation_remove_subtitle2">Update during the cool-down period</string>
+    <string name="delegation_remove_subtitle2">Update during the cooldown period</string>
 
     <string name="delegation_status_title">Delegation status</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
@@ -656,6 +657,9 @@
     <string name="delegation_status_content_rewards_will_be">Rewards will be</string>
     <string name="delegation_status_content_take_effect_on">The following changes will take effect on</string>
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
+    <string name="delegation_status_content_inactive_stake">Inactive Stake</string>
+    <string name="delegation_status_content_inactive_stake_description">You don’t receive rewards from this part of stake now, this amount will be at disposal after cooldown period.</string>
+    <string name="delegation_status_content_cooldown_time">Cooldown time:</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
@@ -697,8 +701,8 @@
         <item quantity="other">This will lock your delegation amount. Amount is released after %d days from the time you remove or decrease your delegation.</item>
     </plurals>
     <plurals name="delegation_register_delegation_confirmation_desc_update">
-        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day and the delegation amount cannot be changed during this period of time.</item>
-        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time.</item>
+        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day, during this period the stake cannot be spent or transferred.</item>
+        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days, during this period the stake cannot be spent or transferred.</item>
     </plurals>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
@@ -706,7 +710,7 @@
     <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
-    <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool-down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool-down is over.</string>
+    <string name="delegation_register_delegation_reduce_warning_content">Reducing your stake is subject to a cooldown period, in which the stake cannot be spent or transferred</string>
     <string name="delegation_register_delegation_reduce_warning_cancel">Let me change my amount</string>
     <string name="delegation_register_delegation_reduce_warning_ok">That’s fine</string>
 
@@ -741,18 +745,18 @@
     <string name="delegation_notice_title">Notice</string>
     <string name="delegation_notice_message">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
     <plurals name="delegation_notice_message_decrease">
-        <item quantity="one">Your decrease of the delegation amount will take effect at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the delegation status screen.</item>
-        <item quantity="other">Your decrease of the delegation amount will take effect at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the delegation status screen.</item>
+        <item quantity="one">Your decrease of the delegation amount will take effect at the next pay day after a cooldown of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the delegation status screen.</item>
+        <item quantity="other">Your decrease of the delegation amount will take effect at the next pay day after a cooldown of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the delegation status screen.</item>
     </plurals>
     <string name="delegation_notice_message_locked">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
     <plurals name="delegation_notice_message_remove">
-        <item quantity="one">Your delegation will stop at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the delegation status screen.</item>
-        <item quantity="other">Your delegation will stop at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the delegation status screen.</item>
+        <item quantity="one">Your delegation will stop at the next pay day after a cooldown of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the delegation status screen.</item>
+        <item quantity="other">Your delegation will stop at the next pay day after a cooldown of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the delegation status screen.</item>
     </plurals>
     <string name="delegation_notice_ok">Okay</string>
 
     <string name="delegation_amount_too_large_notice_title">Current delegation amount too large</string>
-    <string name="delegation_amount_too_large_notice_message">Your current delegation amount will breach the new pool’s limits. To delegate to this pool you must first lower or stop your delegation and then wait for the cool-down to pass.</string>
+    <string name="delegation_amount_too_large_notice_message">Your current delegation amount will breach the new pool’s limits. To delegate to this pool you must first lower or stop your delegation and then wait for the cooldown to pass.</string>
     <string name="delegation_amount_too_large_notice_cancel">Cancel</string>
     <string name="delegation_amount_too_large_notice_stop">Stop current delegation</string>
     <string name="delegation_amount_too_large_notice_lower">Lower delegation amount and stay with current pool</string>
@@ -765,7 +769,7 @@
     <string name="baker_intro_subtitle3">Opening a pool</string>
 
     <string name="baker_registration_title">Register validator</string>
-    <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to it.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
     <string name="baker_pool_settings_explain">When you open your validator as a pool, you earn commissions of stake delegated to your pool from other accounts:</string>
     <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
     <string name="baker_pool_settings_baking_explain">Block reward commission</string>
@@ -831,7 +835,7 @@
     <string name="baker_update_enter_new_stake">Enter your new total validator stake</string>
 
     <string name="baker_registration_confirmation_title">Register validator</string>
-    <string name="baker_registration_confirmation_explain">You are about to submit a register validator transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cool-down period.</string>
+    <string name="baker_registration_confirmation_explain">You are about to submit a register validator transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>
     <string name="baker_register_confirmation_receipt_title">Transaction: Register validator</string>
     <string name="baker_register_confirmation_receipt_account_to_bake_from">Account to register as validator</string>
     <string name="baker_register_confirmation_receipt_amount_to_bake">Validator stake</string>
@@ -861,7 +865,7 @@
     <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update validator stake</string>
     <string name="baker_registration_confirmation_update_affected_account">Affected validator account</string>
     <string name="baker_registration_confirmation_update_stake_update">Account to make validator update</string>
-    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Lowering your stake has a cool-down period, meaning it will not take effect immediately.\n\nThe validator cannot be removed and the stake cannot be changed until the cool-down is over.</string>
+    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Reducing your stake is subject to a cooldown period, in which the stake cannot be spent or transferred</string>
 
     <string name="baker_update_intro_flow_title">Validating</string>
     <string name="baker_update_intro_subtitle1">Updating validator settings</string>
@@ -895,14 +899,14 @@
     <string name="baker_notice_message">Once your transaction has successfully finalized, the validator registration will take effect from the next pay day.\n\nRemember to restart your node with the validator keys.</string>
     <string name="baker_notice_message_update_increase">Once your transaction has successfully finalized, the validator update will take effect from the next pay day.</string>
     <plurals name="baker_notice_message_update_decrease">
-        <item quantity="one">Your decrease of the validator stake will take effect at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the validator status screen.</item>
-        <item quantity="other">Your decrease of the validator stake will take effect at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the validator status screen.</item>
+        <item quantity="one">Your decrease of the validator stake will take effect at the next pay day after a cooldown of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the validator status screen.</item>
+        <item quantity="other">Your decrease of the validator stake will take effect at the next pay day after a cooldown of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the validator status screen.</item>
     </plurals>
     <string name="baker_notice_message_update_pool">Once your transaction has successfully finalized, the pool settings update will take effect from the next pay day.</string>
     <string name="baker_notice_message_update_keys">Once your transaction has successfully finalized, the new validator keys will take effect from the next pay day.\n\nThis means the node should be restarted with the new keys, as close to the next pay day as possible.</string>
     <plurals name="baker_notice_message_remove">
-        <item quantity="one">Your validator will stop at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the validator status screen.</item>
-        <item quantity="other">Your validator will stop at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the validator status screen.</item>
+        <item quantity="one">Your validator will stop at the next pay day after a cooldown of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the validator status screen.</item>
+        <item quantity="other">Your validator will stop at the next pay day after a cooldown of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the validator status screen.</item>
     </plurals>
     <string name="baker_notice_ok">Okay</string>
 
@@ -1184,5 +1188,9 @@
     <string name="news_overview_title">Concordium News</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
+    <plurals name="days_left">
+        <item quantity="one">%1$d day left</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
     <string name="learn_more_icon">Learn more</string>
 </resources>

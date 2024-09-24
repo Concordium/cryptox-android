@@ -28,7 +28,6 @@ import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.PossibleAccount
 import com.concordium.wallet.data.model.RawJson
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.AuthPreferences
@@ -43,7 +42,6 @@ import com.concordium.wallet.util.Log
 import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.math.BigInteger
 
 open class NewAccountViewModel(application: Application) :
     AndroidViewModel(application) {
@@ -372,27 +370,13 @@ open class NewAccountViewModel(application: Application) :
         }
 
         val newAccount = Account(
-            id = 0,
             identityId = identity.id,
             name = accountName,
             address = accountAddress,
             submissionId = submissionId,
             transactionStatus = submissionStatus,
             encryptedAccountData = encryptedAccountData,
-            revealedAttributes = emptyList(),
             credential = credential,
-            finalizedBalance = BigInteger.ZERO,
-            currentBalance = BigInteger.ZERO,
-            totalBalance = BigInteger.ZERO,
-            totalUnshieldedBalance = BigInteger.ZERO,
-            totalShieldedBalance = BigInteger.ZERO,
-            finalizedEncryptedBalance = null,
-            currentEncryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-            totalStaked = BigInteger.ZERO,
-            totalAtDisposal = BigInteger.ZERO,
-            readOnly = false,
-            finalizedAccountReleaseSchedule = null,
             credNumber = tempData.nextCredNumber ?: 0,
         )
         saveNewAccount(newAccount)

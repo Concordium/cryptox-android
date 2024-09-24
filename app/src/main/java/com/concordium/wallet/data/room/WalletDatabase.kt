@@ -6,10 +6,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
 import com.concordium.wallet.data.room.migrations.MIGRATION_7_8
+import com.concordium.wallet.data.room.migrations.MIGRATION_8_9
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
@@ -21,7 +23,7 @@ import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
         EncryptedAmount::class,
         ContractToken::class,
     ],
-    version = 8,
+    version = VERSION_NUMBER,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 6, to = 7),
@@ -38,6 +40,9 @@ public abstract class WalletDatabase : RoomDatabase() {
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
+
+        const val VERSION_NUMBER = 9
+
         // Singleton prevents multiple instances of database opening at the same time.
         @Volatile
         private var INSTANCE: WalletDatabase? = null
@@ -60,6 +65,7 @@ public abstract class WalletDatabase : RoomDatabase() {
                         MIGRATION_4_5,
                         MIGRATION_5_6,
                         MIGRATION_7_8,
+                        MIGRATION_8_9,
                     )
                     .build()
                 INSTANCE = instance

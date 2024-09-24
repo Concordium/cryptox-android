@@ -153,6 +153,30 @@
             tools:text="8025"
             tools:visibility="visible" />
 
+        <TextView
+            android:id="@+id/cooldown_label"
+            style="@style/CryptoX_Typography_Caption"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/accounts_overview_total_details_cooldown"
+            android:textColor="@color/cryptox_deep_blue"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/baker_id_label"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/accounts_overview_total_details_cooldown"
+            style="@style/CryptoX_Typography_Caption"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/cryptox_deep_blue"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accounts_overview_total_details_baker_id"
+            tools:text="2000"
+            tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
