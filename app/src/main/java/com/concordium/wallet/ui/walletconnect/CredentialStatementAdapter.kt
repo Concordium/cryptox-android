@@ -14,11 +14,16 @@ class CredentialStatementAdapter(
     private val accounts: List<Account>,
     private val getIdentity: (account: Account) -> Identity?,
     private val onChangeAccountClicked: (index: Int) -> Unit
-): RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
-        class ViewHolder(val containerBinding: IdentityProofContainerBinding): RecyclerView.ViewHolder(containerBinding.root)
+) : RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
+    class ViewHolder(val containerBinding: IdentityProofContainerBinding) :
+        RecyclerView.ViewHolder(containerBinding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = IdentityProofContainerBinding.inflate(LayoutInflater.from(parent.context))
-        binding.root.layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,RecyclerView.LayoutParams.MATCH_PARENT)
+        binding.root.layoutParams = RecyclerView.LayoutParams(
+            RecyclerView.LayoutParams.MATCH_PARENT,
+            RecyclerView.LayoutParams.MATCH_PARENT
+        )
         return ViewHolder(binding)
     }
 
@@ -42,9 +47,8 @@ class CredentialStatementAdapter(
             accBalance.text = root.context.getString(
                 com.concordium.wallet.R.string.acc_balance_placeholder,
                 com.concordium.wallet.data.util.CurrencyUtil.formatGTU(
-                    account.getAtDisposalWithoutStakedOrScheduled(
-                        account.totalUnshieldedBalance
-                    ), true
+                    account.balanceAtDisposal,
+                    true
                 )
             )
         }

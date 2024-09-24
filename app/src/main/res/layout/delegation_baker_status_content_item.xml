@@ -7,6 +7,16 @@
     android:paddingTop="@dimen/account_release_schedule_inner_list_padding_top_bottom"
     android:paddingBottom="@dimen/account_release_schedule_inner_list_padding_top_bottom">
 
+    <View
+        android:id="@+id/divider"
+        style="@style/CryptoX_Divider_Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
+
     <TextView
         android:id="@+id/status_item_title"
         style="@style/CryptoX_Typography_Body_Medium"

@@ -128,7 +128,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     fun initialize(account: Account) {
         this.account = account
-        _totalBalanceLiveData.postValue(account.totalUnshieldedBalance)
+        _totalBalanceLiveData.postValue(account.balance)
         getIdentityProvider()
         Log.d("Account address: ${account.address}")
     }
@@ -227,7 +227,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 updateAccountFromRepository()
                 accountUpdater.updateForAccount(account)
                 val type =
-                    if (account.accountDelegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
+                    if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
                 EventBus.getDefault().post(
                     BakerDelegationData(
                         account,
@@ -244,7 +244,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData ) {
-                _totalBalanceLiveData.value = account.totalUnshieldedBalance
+                _totalBalanceLiveData.value = account.balance
                 getLocalTransfers()
                 viewModelScope.launch {
                     updateAccountFromRepository()

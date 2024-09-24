@@ -13,7 +13,6 @@ class DelegationRemoveIntroFlowActivity :
     override fun getTitles(): IntArray {
         return intArrayOf(
             R.string.delegation_remove_subtitle1,
-            R.string.delegation_remove_subtitle2
         )
     }
 

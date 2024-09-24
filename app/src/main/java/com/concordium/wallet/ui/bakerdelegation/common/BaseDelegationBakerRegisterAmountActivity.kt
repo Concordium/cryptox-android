@@ -23,9 +23,9 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
 
     protected fun initReStakeOptionsView(reStakeOptions: SegmentedControlView) {
         val initiallyReStake = if (viewModel.bakerDelegationData.isBakerFlow()) {
-            viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == null
+            viewModel.bakerDelegationData.account?.baker?.restakeEarnings == true || viewModel.bakerDelegationData.account?.baker?.restakeEarnings == null
         } else {
-            viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == null
+            viewModel.bakerDelegationData.account?.delegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.delegation?.restakeEarnings == null
         }
         viewModel.bakerDelegationData.restake = initiallyReStake
 
@@ -51,7 +51,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
     }
 
     protected fun moreThan95Percent(amountToStake: BigInteger): Boolean {
-        return amountToStake.toBigDecimal() > (viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO).toBigDecimal() * BigDecimal(0.95)
+        return amountToStake.toBigDecimal() > (viewModel.bakerDelegationData.account?.balance ?: BigInteger.ZERO).toBigDecimal() * BigDecimal(0.95)
     }
 
     protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {

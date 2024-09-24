@@ -9,6 +9,7 @@
 - Ability to reveal the wallet private key for those 
   having no ability to reveal the seed phrase
 - Ability to use the wallet private key to restore the wallet
+- Support for Protocol 7 – reducing validation/delegation stake no longer locks the whole amount
 
 ### Fixed
 

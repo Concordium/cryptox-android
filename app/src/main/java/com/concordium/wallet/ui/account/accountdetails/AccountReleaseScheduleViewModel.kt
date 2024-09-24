@@ -54,7 +54,7 @@ class AccountReleaseScheduleViewModel(application: Application) : AndroidViewMod
     fun populateScheduledReleaseList() {
         _waitingLiveData.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            _scheduledReleasesLiveData.postValue(account.finalizedAccountReleaseSchedule?.schedule ?: ArrayList())
+            _scheduledReleasesLiveData.postValue(account.releaseSchedule?.schedule ?: ArrayList())
             _waitingLiveData.postValue(false)
         }
     }

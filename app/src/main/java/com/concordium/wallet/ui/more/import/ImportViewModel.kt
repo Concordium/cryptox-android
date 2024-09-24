@@ -30,7 +30,6 @@ import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.IdentityAttribute
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.model.PossibleAccount
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -47,7 +46,6 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.math.BigInteger
 import javax.crypto.SecretKey
 
 class ImportViewModel(application: Application) :
@@ -561,7 +559,6 @@ class ImportViewModel(application: Application) :
         accountDataEncrypted: String
     ): Account {
         return Account(
-            id = 0,
             identityId = identityId.toInt(),
             name = accountExport.name,
             address = accountExport.address,
@@ -570,18 +567,6 @@ class ImportViewModel(application: Application) :
             encryptedAccountData = accountDataEncrypted,
             revealedAttributes = mapRevealedAttributes(accountExport.revealedAttributes),
             credential = accountExport.credential,
-            finalizedBalance = BigInteger.ZERO,
-            currentBalance = BigInteger.ZERO,
-            totalBalance = BigInteger.ZERO,
-            totalUnshieldedBalance = BigInteger.ZERO,
-            totalShieldedBalance = BigInteger.ZERO,
-            finalizedEncryptedBalance = null,
-            currentEncryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.DECRYPTED,
-            totalStaked = BigInteger.ZERO,
-            totalAtDisposal = BigInteger.ZERO,
-            readOnly = false,
-            finalizedAccountReleaseSchedule = null,
             credNumber = credNumber,
         )
     }
@@ -591,27 +576,14 @@ class ImportViewModel(application: Application) :
         identityId: Long
     ): Account {
         return Account(
-            id = 0,
             identityId = identityId.toInt(),
-            name = "",
+            name = Account.getDefaultName(possibleAccount.accountAddress),
             address = possibleAccount.accountAddress,
             submissionId = "",
             transactionStatus = TransactionStatus.FINALIZED,
             encryptedAccountData = "",
-            revealedAttributes = emptyList(),
             credential = null,
-            finalizedBalance = BigInteger.ZERO,
-            currentBalance = BigInteger.ZERO,
-            totalBalance = BigInteger.ZERO,
-            totalUnshieldedBalance = BigInteger.ZERO,
-            totalShieldedBalance = BigInteger.ZERO,
-            finalizedEncryptedBalance = null,
-            currentEncryptedBalance = null,
-            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-            totalStaked = BigInteger.ZERO,
-            totalAtDisposal = BigInteger.ZERO,
             readOnly = true,
-            finalizedAccountReleaseSchedule = null,
             credNumber = 0,
         )
     }

@@ -83,10 +83,10 @@ interface ProxyBackend {
     @GET("v0/passiveDelegation")
     suspend fun passiveDelegationSuspended(): Response<PassiveDelegation>
 
-    @GET("v0/accBalance/{accountAddress}")
+    @GET("v1/accBalance/{accountAddress}")
     fun accountBalance(@Path("accountAddress") accountAddress: String): Call<AccountBalance>
 
-    @GET("v0/accBalance/{accountAddress}")
+    @GET("v1/accBalance/{accountAddress}")
     suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
 
     @GET("v1/accTransactions/{accountAddress}")

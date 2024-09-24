@@ -82,7 +82,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
             UPDATE_BAKER_KEYS -> {
                 viewModel.bakerDelegationData.amount =
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
+                    viewModel.bakerDelegationData.account?.baker?.stakedAmount
                 updateViewsUpdateBakerKeys()
             }
 
