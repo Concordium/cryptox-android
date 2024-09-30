@@ -12,6 +12,8 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
+import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
@@ -40,7 +42,6 @@ class UpdateNotificationsSubscriptionUseCase(
                 add(NotificationsTopic.CIS2_TRANSACTIONS)
             }
         }
-        val request: UpdateSubscriptionRequest
 
         if (topics.isNotEmpty()) {
             Log.d(
@@ -50,30 +51,42 @@ class UpdateNotificationsSubscriptionUseCase(
                         "\naccounts=${accounts.size}"
             )
 
-            request = UpdateSubscriptionRequest(
+            val request = UpdateSubscriptionRequest(
                 preferences = topics,
                 accounts = accounts.map(Account::address).toSet(),
                 fcmToken = fcmToken,
             )
+
+            return try {
+                Log.d("attempt_to_update_subscription")
+                notificationsBackend.updateSubscription(request).isSuccess
+            } catch (e: Exception) {
+                Log.e("failed_to_update_subscription", e)
+                false
+            }
         } else {
             Log.d(
                 "clearing_subscription:" +
                         "\ntoken=$fcmToken"
             )
 
-            request = UpdateSubscriptionRequest(
-                preferences = emptySet(),
-                accounts = emptySet(),
+            val request = UpdateSubscriptionRequest(
                 fcmToken = fcmToken
             )
-        }
 
-        return try {
-            Log.d("attempt_to_update_subscription")
-            notificationsBackend.updateSubscription(request).isSuccess
-        } catch (e: Exception) {
-            Log.e("failed_to_update_subscription", e)
-            false
+            return try {
+                Log.d("attempt_to_unsubscribe")
+                notificationsBackend.unsubscribe(request).isSuccess
+            } catch (e: Exception) {
+                if (e is HttpException && e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                    // Not found is expected when already unsubscribed.
+                    Log.d("already_unsubscribed")
+                    true
+                } else {
+                    Log.e("failed_to_unsubscribe", e)
+                    false
+                }
+            }
         }
     }
 }
