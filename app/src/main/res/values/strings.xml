@@ -1033,7 +1033,7 @@
     <string name="passcode_biometrics_button">Use biometrics</string>
     <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.software.com</string>
     <string name="passcode_create_setup_biometrics_title">Enable biometrics for next time?</string>
-    <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sin in faster when you come back</string>
+    <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sign in faster when you come back</string>
     <string name="passcode_create_setup_biometrics_allow">Enable biometrics</string>
     <string name="passcode_create_setup_biometrics_deny">Set up later in Settings</string>
     <string name="setup_wallet_continue">Continue</string>
