@@ -1,11 +1,7 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.core.text.set
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AccountCooldown
@@ -14,15 +10,12 @@ import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
 import com.concordium.wallet.databinding.DelegationbakerStatusBinding
-import com.concordium.wallet.databinding.InactiveStakeStatusBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 abstract class StatusActivity(
     titleId: Int = R.string.app_name
@@ -157,40 +150,15 @@ abstract class StatusActivity(
 
     protected fun addCooldowns(cooldowns: Collection<AccountCooldown>) {
         binding.cooldownListContainer.removeAllViews()
-
         cooldowns.forEach { cooldown ->
-            InactiveStakeStatusBinding.inflate(
-                layoutInflater,
-                binding.cooldownListContainer,
-                true
-            ).apply {
-                inactiveStakeAmount.text = CurrencyUtil.formatGTU(cooldown.amount)
-
-                val dayLeftCount = (cooldown.timestamp - System.currentTimeMillis())
-                    .toDuration(DurationUnit.MILLISECONDS)
-                    .inWholeDays
-                    // If less than 1 day left, keep showing “1 day left”.
-                    .coerceAtLeast(1)
-                    .toInt()
-                val daysLeftString = resources.getQuantityString(
-                    R.plurals.days_left,
-                    dayLeftCount,
-                    dayLeftCount
-                )
-                val dayLeftCountIndex = daysLeftString.indexOf(dayLeftCount.toString())
-                inactiveStakeCooldownTimeAmount.text = SpannableString(daysLeftString).apply {
-                    set(
-                        dayLeftCountIndex,
-                        dayLeftCountIndex + dayLeftCount.toString().length,
-                        ForegroundColorSpan(
-                            ContextCompat.getColor(
-                                this@StatusActivity,
-                                R.color.cryptox_white_main
-                            )
-                        )
-                    )
-                }
-            }
+            val cooldownView =
+                layoutInflater.inflate(
+                    R.layout.item_cooldown,
+                    binding.cooldownListContainer,
+                    false
+                ) as CooldownView
+            cooldownView.setCooldown(cooldown)
+            binding.cooldownListContainer.addView(cooldownView)
         }
     }
 

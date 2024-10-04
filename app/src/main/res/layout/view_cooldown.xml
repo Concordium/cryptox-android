@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/CryptoX_Container_TextCard"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:paddingHorizontal="20dp"
-    android:paddingVertical="16dp">
+    tools:layout_height="wrap_content"
+    tools:layout_width="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    tools:style="@style/CryptoX_Container_TextCard">
 
     <TextView
         android:id="@+id/inactive_stake_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/delegation_status_content_inactive_stake"
         android:textColor="@color/cryptox_grey_additional"
@@ -25,6 +25,7 @@
         android:id="@+id/inactive_stake_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
         android:text="@string/delegation_status_content_inactive_stake_description"
         android:textColor="@color/ccx_neutral_tint_8"
@@ -38,6 +39,7 @@
         style="@style/CryptoX_Typography_TitleMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inactive_stake_description"
@@ -48,6 +50,7 @@
         style="@style/CryptoX_Divider_Horizontal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inactive_stake_amount" />
@@ -56,10 +59,13 @@
         android:id="@+id/inactive_stake_cooldown_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/delegation_status_content_cooldown_time"
         android:textColor="@color/cryptox_black_additional"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider" />
 
@@ -67,12 +73,15 @@
         android:id="@+id/inactive_stake_cooldown_time_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/cryptox_black_additional"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         tools:text="9 days left" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
