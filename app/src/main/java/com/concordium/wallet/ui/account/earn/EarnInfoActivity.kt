@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityEarnInfoBinding
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
+import com.concordium.wallet.ui.bakerdelegation.common.CooldownView
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -57,6 +59,7 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
             )
             startActivityForResultAndHistoryCheck(intent)
         }
+        addCooldowns(account.cooldowns)
     }
 
     private fun initObservers() {
@@ -82,9 +85,25 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[EarnViewModel::class.java]
+
+        viewModel
     }
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
+    }
+
+    private fun addCooldowns(cooldowns: Collection<AccountCooldown>) {
+        binding.cooldownListContainer.removeAllViews()
+        cooldowns.forEach { cooldown ->
+            val cooldownView =
+                layoutInflater.inflate(
+                    R.layout.item_cooldown,
+                    binding.cooldownListContainer,
+                    false
+                ) as CooldownView
+            cooldownView.setCooldown(cooldown)
+            binding.cooldownListContainer.addView(cooldownView)
+        }
     }
 }
