@@ -1,9 +1,12 @@
 package com.concordium.wallet.ui.onramp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.webkit.WebSettings
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,10 +14,13 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ListItemCcdOnrampHeaderBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSectionBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSiteBinding
+import com.concordium.wallet.databinding.ListItemCcdOnrampWidgetBinding
 
 class CcdOnrampItemAdapter(
     private val onReadDisclaimerClicked: () -> Unit,
     private val onSiteClicked: (item: CcdOnrampListItem.Site) -> Unit,
+    private val chromeClient: SwipeluxWebChromeClient,
+    private val context: Context
 ) : RecyclerView.Adapter<CcdOnrampItemAdapter.ViewHolder>() {
     private var data: List<CcdOnrampListItem> = listOf()
 
@@ -33,6 +39,9 @@ class CcdOnrampItemAdapter(
 
         CcdOnrampListItem.Disclaimer ->
             R.layout.list_item_ccd_onramp_disclaimer
+
+        CcdOnrampListItem.SwipeluxWidget ->
+            R.layout.list_item_ccd_onramp_widget
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,6 +63,9 @@ class CcdOnrampItemAdapter(
 
             R.layout.list_item_ccd_onramp_disclaimer ->
                 ViewHolder.Disclaimer(view)
+
+            R.layout.list_item_ccd_onramp_widget ->
+                ViewHolder.SwipeluxWidget(view)
 
             else ->
                 error("Unknown view type $viewType")
@@ -100,6 +112,32 @@ class CcdOnrampItemAdapter(
             is ViewHolder.NoneAvailable -> {}
 
             is ViewHolder.Disclaimer -> {}
+
+            is ViewHolder.SwipeluxWidget -> {
+                holder.binding.root.setOnFocusChangeListener { v, hasFocus ->
+                    if (hasFocus) {
+                        // Request the keyboard if focus is gained
+                        val inputMethodManager =
+                            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
+                    }
+                }
+
+                val webSettings = holder.binding.swipeluxWidgetLayout.settings
+
+                with(webSettings) {
+                    javaScriptEnabled = true
+                    domStorageEnabled = true
+                    allowFileAccess = true
+                    allowContentAccess = true
+                    javaScriptCanOpenWindowsAutomatically = true
+                    mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                }
+
+                holder.binding.swipeluxWidgetLayout.webChromeClient = chromeClient
+                holder.binding.swipeluxWidgetLayout.isNestedScrollingEnabled = true
+                holder.binding.swipeluxWidgetLayout.loadUrl("${SwipeluxWebChromeClient.BASE_URL}/?specificSettings=${chromeClient.specificSettings}")
+            }
         }
     }
 
@@ -120,6 +158,10 @@ class CcdOnrampItemAdapter(
 
         class Site(itemView: View) : ViewHolder(itemView) {
             val binding = ListItemCcdOnrampSiteBinding.bind(itemView)
+        }
+
+        class SwipeluxWidget(itemView: View) : ViewHolder(itemView) {
+            val binding = ListItemCcdOnrampWidgetBinding.bind(itemView)
         }
 
         class NoneAvailable(itemView: View) : ViewHolder(itemView)

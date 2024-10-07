@@ -3,6 +3,8 @@ package com.concordium.wallet.ui.onramp
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
@@ -23,6 +25,14 @@ class CcdOnrampSitesActivity : BaseActivity(
         ).get()
     }
 
+    private lateinit var chromeClient: SwipeluxWebChromeClient
+
+    private val filePickerLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            chromeClient.handleFileChooserResult(result.resultCode, data)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,6 +46,7 @@ class CcdOnrampSitesActivity : BaseActivity(
     }
 
     private fun initList() {
+        chromeClient = SwipeluxWebChromeClient(filePickerLauncher)
         val adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
                 item.source?.also(::onSiteClicked)
@@ -46,7 +57,9 @@ class CcdOnrampSitesActivity : BaseActivity(
                         CcdOnrampListItem.Disclaimer
                     )
                 )
-            }
+            },
+            chromeClient = chromeClient,
+            context = this@CcdOnrampSitesActivity
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)

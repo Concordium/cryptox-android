@@ -46,4 +46,6 @@ sealed interface CcdOnrampListItem {
     object NoneAvailable : CcdOnrampListItem
 
     object Disclaimer : CcdOnrampListItem
+
+    object SwipeluxWidget : CcdOnrampListItem
 }

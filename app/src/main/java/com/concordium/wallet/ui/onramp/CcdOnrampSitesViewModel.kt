@@ -45,7 +45,8 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
         val sites = ccdOnrampSiteRepository.getSites()
         val items = mutableListOf<CcdOnrampListItem>()
 
-        items.add(CcdOnrampListItem.Header)
+//        items.add(CcdOnrampListItem.Header)
+        items.add(CcdOnrampListItem.SwipeluxWidget)
 
         if (sites.isNotEmpty()) {
             sites
