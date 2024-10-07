@@ -2,7 +2,10 @@ package com.concordium.wallet.core.security
 
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.UnsupportedEncodingException
 import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
@@ -27,6 +30,9 @@ object EncryptionHelper {
     private const val CIPHER_TRANSFORMATION =
         "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_CBC}/PKCS7Padding"
 
+    private const val AES_GCM =
+        "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/NoPadding"
+
     /**
      * @exception EncryptionException
      */
@@ -49,6 +55,7 @@ object EncryptionHelper {
                     Log.d("$t: Failed creating encryption data", e)
                     throw EncryptionException(e)
                 }
+
                 else -> throw e
             }
         }
@@ -94,6 +101,7 @@ object EncryptionHelper {
                     Log.d("Failed to create key", e)
                     throw EncryptionException(e)
                 }
+
                 else -> throw e
             }
         }
@@ -129,6 +137,7 @@ object EncryptionHelper {
                     Log.d("Failed to encrypt data", e)
                     throw EncryptionException(e)
                 }
+
                 else -> throw e
             }
         }
@@ -162,6 +171,7 @@ object EncryptionHelper {
                     Log.d("Failed to decrypt data", e)
                     throw EncryptionException(e)
                 }
+
                 else -> throw e
             }
         }
@@ -192,5 +202,74 @@ object EncryptionHelper {
     ): String {
         val key = generateKey(password, salt)
         return decrypt(key, iv, toBeDecrypted)
+    }
+
+    /**
+     * Encrypts given [data] with the given [key] using the best suitable cipher.
+     *
+     * @return [EncryptedData] with a unique IV.
+     */
+    @Throws(EncryptionException::class)
+    suspend fun encrypt(
+        key: ByteArray,
+        data: ByteArray,
+    ): EncryptedData = withContext(Dispatchers.Default) {
+        try {
+            val cipher = Cipher.getInstance(AES_GCM)
+            cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, cipher.algorithm))
+            EncryptedData(
+                ciphertext = cipher.doFinal(data),
+                transformation = cipher.algorithm,
+                iv = cipher.iv,
+            )
+        } catch (e: Exception) {
+            when (e) {
+                is NoSuchAlgorithmException,
+                is NoSuchPaddingException,
+                is InvalidAlgorithmParameterException,
+                is InvalidKeyException,
+                is UnsupportedEncodingException,
+                is BadPaddingException,
+                is IllegalBlockSizeException -> {
+                    Log.d("Failed to encrypt data", e)
+                    throw EncryptionException(e)
+                }
+
+                else -> throw e
+            }
+        }
+    }
+
+    @Throws(EncryptionException::class)
+    suspend fun decrypt(
+        key: ByteArray,
+        encryptedData: EncryptedData,
+    ): ByteArray = withContext(Dispatchers.Default) {
+        try {
+            val cipherText = encryptedData.decodeCipherText()
+            val iv = encryptedData.decodeIv()
+            val cipher = Cipher.getInstance(encryptedData.transformation)
+            cipher.init(
+                Cipher.DECRYPT_MODE,
+                SecretKeySpec(key, cipher.algorithm),
+                IvParameterSpec(iv)
+            )
+            cipher.doFinal(cipherText)
+        } catch (e: Exception) {
+            when (e) {
+                is NoSuchAlgorithmException,
+                is NoSuchPaddingException,
+                is InvalidAlgorithmParameterException,
+                is InvalidKeyException,
+                is UnsupportedEncodingException,
+                is BadPaddingException,
+                is IllegalBlockSizeException -> {
+                    Log.d("Failed to decrypt data", e)
+                    throw EncryptionException(e)
+                }
+
+                else -> throw e
+            }
+        }
     }
 }
