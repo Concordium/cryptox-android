@@ -42,7 +42,8 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().getBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -55,24 +56,33 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun checkLogin(password: String) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val res = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(password)
+        val res = App.appCore.getCurrentAuthenticationManager().checkPassword(password)
         if (res) {
             loginSuccess()
         } else {
             _passwordErrorLiveData.value =
-                Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
+                Event(
+                    if (App.appCore.getCurrentAuthenticationManager()
+                            .usePasscode()
+                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                )
             _waitingLiveData.value = false
         }
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password = App.appCore.getCurrentAuthenticationManager()
+            .decryptPasswordWithBiometricsCipher(cipher)
         if (password != null) {
             loginSuccess()
         } else {
             _passwordErrorLiveData.value =
-                Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
+                Event(
+                    if (App.appCore.getCurrentAuthenticationManager()
+                            .usePasscode()
+                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                )
             _waitingLiveData.value = false
         }
     }

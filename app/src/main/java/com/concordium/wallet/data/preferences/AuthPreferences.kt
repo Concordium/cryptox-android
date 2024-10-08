@@ -7,7 +7,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.walletconnect.util.hexToBytes
-import javax.crypto.SecretKey
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE) {
@@ -17,19 +16,13 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_HAS_COMPLETED_INITIAL_SETUP = "PREFKEY_HAS_COMPLETED_INITIAL_SETUP"
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
-        const val PREFKEY_PASSWORD_CHECK = "PREFKEY_PASSWORD_CHECK"
-        const val PREFKEY_PASSWORD_CHECK_ENCRYPTED = "PREFKEY_PASSWORD_CHECK_ENCRYPTED"
-        const val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
-        const val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
-        const val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
-        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR =
-            "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
-        const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
+        const val PREFKEY_PASSWORD_KEY_SALT_HEX = "PREFKEY_PASSWORD_KEY_SALT"
+        const val PREFKEY_ENCRYPTED_PASSWORD_JSON = "PREFKEY_ENCRYPTED_PASSWORD_JSON"
+        const val PREFKEY_AUTH_KEY = "PREFKEY_BIOMETRIC_KEY"
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
-        const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX =
-            "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX"
-        const val PREFKEY_LEGACY_SEED_HEX_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
-        const val PREFKEY_ENCRYPTED_MASTER_KEY_JSON = "ENCRYPTED_MASTER_KEY_JSON"
+        const val PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON = "PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON"
+        const val PREFKEY_ENCRYPTED_SEED_JSON = "PREFKEY_ENCRYPTED_SEED_JSON"
+        const val PREFKEY_ENCRYPTED_MASTER_KEY_JSON = "PREFKEY_ENCRYPTED_MASTER_KEY_JSON"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -65,52 +58,24 @@ class AuthPreferences(val context: Context) :
         return getBoolean(PREFKEY_USE_BIOMETRICS + appendix)
     }
 
-    fun setPasswordCheck(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_CHECK + appendix, value)
+    fun setPasswordKeySalt(appendix: String, value: ByteArray) {
+        setString(PREFKEY_PASSWORD_KEY_SALT_HEX + appendix, value.toHex())
     }
 
-    fun getPasswordCheck(appendix: String): String? {
-        return getString(PREFKEY_PASSWORD_CHECK + appendix)
+    fun getPasswordKeySalt(appendix: String): ByteArray {
+        return getString(PREFKEY_PASSWORD_KEY_SALT_HEX + appendix, "").hexToBytes()
     }
 
-    fun setPasswordCheckEncrypted(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_CHECK_ENCRYPTED + appendix, value)
+    fun setEncryptedPassword(appendix: String, value: EncryptedData) {
+        setString(
+            PREFKEY_ENCRYPTED_PASSWORD_JSON + appendix,
+            App.appCore.gson.toJson(value)
+        )
     }
 
-    fun getPasswordCheckEncrypted(appendix: String): String {
-        return getString(PREFKEY_PASSWORD_CHECK_ENCRYPTED + appendix, "")
-    }
-
-    fun setPasswordEncryptionSalt(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_ENCRYPTION_SALT + appendix, value)
-    }
-
-    fun getPasswordEncryptionSalt(appendix: String): String {
-        return getString(PREFKEY_PASSWORD_ENCRYPTION_SALT + appendix, "")
-    }
-
-    fun setPasswordEncryptionInitVector(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR + appendix, value)
-    }
-
-    fun getPasswordEncryptionInitVector(appendix: String): String {
-        return getString(PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR + appendix, "")
-    }
-
-    fun setEncryptedPassword(appendix: String, value: String) {
-        setString(PREFKEY_ENCRYPTED_PASSWORD + appendix, value)
-    }
-
-    fun getEncryptedPassword(appendix: String): String {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD + appendix, "")
-    }
-
-    fun setEncryptedPasswordDerivedKeyInitVector(appendix: String, value: String) {
-        setString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR + appendix, value)
-    }
-
-    fun getBiometricsKeyEncryptionInitVector(appendix: String): String {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR + appendix, "")
+    fun getEncryptedPassword(appendix: String): EncryptedData {
+        return getString(PREFKEY_ENCRYPTED_PASSWORD_JSON + appendix, "")
+            .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
     }
 
     fun setEncryptedMasterKey(appendix: String, value: EncryptedData) {
@@ -126,11 +91,11 @@ class AuthPreferences(val context: Context) :
     }
 
     fun getAuthKeyName(): String {
-        return getString(PREFKEY_BIOMETRIC_KEY, "default_key")
+        return getString(PREFKEY_AUTH_KEY, "default_key")
     }
 
     fun setAuthKeyName(key: String) {
-        return setString(PREFKEY_BIOMETRIC_KEY, key)
+        return setString(PREFKEY_AUTH_KEY, key)
     }
 
     fun isAccountsBackedUp(): Boolean {
@@ -153,11 +118,15 @@ class AuthPreferences(val context: Context) :
      * @see getSeedPhrase
      */
     suspend fun tryToSetEncryptedSeedPhrase(seedPhraseString: String, password: String): Boolean {
-        val entropyHex = Mnemonics.MnemonicCode(seedPhraseString).toEntropy().toHex()
-        val encryptedEntropyHex = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(password, entropyHex)
-            ?: return false
-        return setStringWithResult(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX, encryptedEntropyHex)
+        val entropy = Mnemonics.MnemonicCode(seedPhraseString).toEntropy()
+        val encryptedEntropy = App.appCore.getCurrentAuthenticationManager().encrypt(
+            password = password,
+            data = entropy,
+        ) ?: return false
+        return setStringWithResult(
+            PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON,
+            App.appCore.gson.toJson(encryptedEntropy)
+        )
     }
 
     /**
@@ -169,42 +138,31 @@ class AuthPreferences(val context: Context) :
      * @see getSeedHex
      */
     suspend fun tryToSetEncryptedSeedHex(seedHex: String, password: String): Boolean {
-        val encryptedSeedHex = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(password, seedHex)
-            ?: return false
-        return setStringWithResult(PREFKEY_LEGACY_SEED_HEX_ENCRYPTED, encryptedSeedHex)
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encrypt(
+            password = password,
+            data = seedHex.hexToBytes(),
+        ) ?: return false
+        return setStringWithResult(
+            PREFKEY_ENCRYPTED_SEED_JSON,
+            App.appCore.gson.toJson(encryptedSeed)
+        )
     }
 
     suspend fun getSeedHex(password: String): String {
         val authenticationManager = App.appCore.getOriginalAuthenticationManager()
 
-        // Try the encrypted entropy hex.
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX)
-            ?.let { authenticationManager.decryptInBackground(password, it) }
-            ?.let { Mnemonics.MnemonicCode(it.hexToBytes()).toSeed().toHex() }
+        // Try the encrypted entropy.
+        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
+            ?.let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+            ?.let { authenticationManager.decrypt(password, it) }
+            ?.let { Mnemonics.MnemonicCode(it).toSeed().toHex() }
             ?.let { return it }
 
-        // Try the legacy encrypted seed hex.
-        getString(PREFKEY_LEGACY_SEED_HEX_ENCRYPTED)
-            ?.let { authenticationManager.decryptInBackground(password, it) }
-            ?.let { return it }
-
-        error("Failed to get the seed")
-    }
-
-    suspend fun getSeedHex(decryptKey: SecretKey): String {
-        val authenticationManager = App.appCore.getOriginalAuthenticationManager()
-
-        // Try the encrypted entropy hex.
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX)
-            ?.let { authenticationManager.decryptInBackground(decryptKey, it) }
-            ?.let { Mnemonics.MnemonicCode(it.hexToBytes()).toSeed().toHex() }
-            ?.let { return it }
-
-        // Try the legacy encrypted seed hex.
-        getString(PREFKEY_LEGACY_SEED_HEX_ENCRYPTED)
-            ?.let { authenticationManager.decryptInBackground(decryptKey, it) }
-            ?.let { return it }
+        // Try the encrypted seed.
+        getString(PREFKEY_ENCRYPTED_SEED_JSON)
+            ?.let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+            ?.let { authenticationManager.decrypt(password, it) }
+            ?.let { return it.toHex() }
 
         error("Failed to get the seed")
     }
@@ -213,45 +171,20 @@ class AuthPreferences(val context: Context) :
      * @see hasEncryptedSeedPhrase
      */
     suspend fun getSeedPhrase(password: String): String =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX)
+        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
+            ?.let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+            ?.let { App.appCore.getOriginalAuthenticationManager().decrypt(password, it) }
             ?.let {
-                App.appCore.getOriginalAuthenticationManager().decryptInBackground(password, it)
-            }
-            ?.let {
-                Mnemonics.MnemonicCode(it.hexToBytes()).words.joinToString(
+                Mnemonics.MnemonicCode(it).words.joinToString(
                     separator = " ",
                     transform = CharArray::concatToString
                 )
             }
             ?: error("Failed to get the seed phrase")
-
-    /**
-     * @see hasEncryptedSeedPhrase
-     */
-    suspend fun getSeedPhrase(decryptKey: SecretKey): String =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX)
-            ?.let {
-                App.appCore.getOriginalAuthenticationManager().decryptInBackground(decryptKey, it)
-            }
-            ?.let {
-                Mnemonics.MnemonicCode(it.hexToBytes()).words.joinToString(
-                    separator = " ",
-                    transform = CharArray::concatToString
-                )
-            }
-            ?: error("Failed to get the seed phrase")
-
-    fun updateEncryptedSeedHex(encryptedSeedHex: String): Boolean {
-        return setStringWithResult(PREFKEY_LEGACY_SEED_HEX_ENCRYPTED, encryptedSeedHex)
-    }
-
-    fun updateEncryptedSeedEntropyHex(encryptedSeedEntropyHex: String): Boolean {
-        return setStringWithResult(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX, encryptedSeedEntropyHex)
-    }
 
     fun hasEncryptedSeed(): Boolean =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX) != null
-                || getString(PREFKEY_LEGACY_SEED_HEX_ENCRYPTED) != null
+        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
+                || getString(PREFKEY_ENCRYPTED_SEED_JSON) != null
 
     /**
      * The seed phrase can be restored only if it has been saved as an entropy.
@@ -259,5 +192,5 @@ class AuthPreferences(val context: Context) :
      * @see getSeedPhrase
      */
     fun hasEncryptedSeedPhrase(): Boolean =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX) != null
+        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
 }
