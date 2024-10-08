@@ -4,6 +4,7 @@ import android.content.Context
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.walletconnect.util.hexToBytes
 import javax.crypto.SecretKey
@@ -28,6 +29,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX =
             "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX"
         const val PREFKEY_LEGACY_SEED_HEX_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
+        const val PREFKEY_ENCRYPTED_MASTER_KEY_JSON = "ENCRYPTED_MASTER_KEY_JSON"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -109,6 +111,18 @@ class AuthPreferences(val context: Context) :
 
     fun getBiometricsKeyEncryptionInitVector(appendix: String): String {
         return getString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR + appendix, "")
+    }
+
+    fun setEncryptedMasterKey(appendix: String, value: EncryptedData) {
+        setString(
+            PREFKEY_ENCRYPTED_MASTER_KEY_JSON + appendix,
+            App.appCore.gson.toJson(value)
+        )
+    }
+
+    fun getEncryptedMasterKey(appendix: String): EncryptedData {
+        return getString(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + appendix, "-")
+            .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
     }
 
     fun getAuthKeyName(): String {
