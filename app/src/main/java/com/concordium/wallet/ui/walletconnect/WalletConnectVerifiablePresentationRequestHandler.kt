@@ -81,7 +81,15 @@ class WalletConnectVerifiablePresentationRequestHandler(
         try {
             val wrappedParams =
                 App.appCore.gson.fromJson(params, WalletConnectParamsWrapper::class.java)
-            this.identityProofRequest = UnqualifiedRequest.fromJson(wrappedParams.paramsJson)
+            this.identityProofRequest = UnqualifiedRequest.fromJson(wrappedParams.paramsJson).also {
+                // Manual checks required because the JSON mapper doesn't care.
+                checkNotNull(it.credentialStatements) {
+                    "Credential statements can't be null"
+                }
+                checkNotNull(it.challenge) {
+                    "Challenge can't be null"
+                }
+            }
         } catch (e: Exception) {
             onInvalidRequest("Failed to parse identity proof request parameters: $params", e)
             return
