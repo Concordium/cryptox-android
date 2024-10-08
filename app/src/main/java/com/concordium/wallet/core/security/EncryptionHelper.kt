@@ -25,25 +25,28 @@ object EncryptionHelper {
 
     private val t = this.javaClass.simpleName
 
-    private const val DEFAULT_ITERATION_COUNT = 10000
-    private const val KEY_LENGTH = 256
-    private const val CIPHER_TRANSFORMATION =
-        "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_CBC}/PKCS7Padding"
+    private const val KDF = "PBKDF2WithHmacSHA256"
+    private const val KDF_ITERATION_COUNT = 10000
+    private const val KDF_SALT_SIZE_BYTES = 32
 
-    private const val AES_GCM =
+    private const val ENCRYPTION_KEY_SIZE_BITS = 256
+    private const val ENCRYPTION_KEY_ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
+    private const val NEW_CIPHER_TRANSFORMATION =
         "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/NoPadding"
+    private const val LEGACY_CIPHER_TRANSFORMATION =
+        "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_CBC}/PKCS7Padding"
 
     /**
      * @exception EncryptionException
      */
     fun createEncryptionData(): Pair<ByteArray, ByteArray> {
-        val saltLength = KEY_LENGTH / 8 // same size as key output
+        val saltLength = ENCRYPTION_KEY_SIZE_BITS / 8 // same size as key output
         val random = SecureRandom()
         val salt = ByteArray(saltLength)
         random.nextBytes(salt)
 
         try {
-            val cipher = Cipher.getInstance(CIPHER_TRANSFORMATION)
+            val cipher = Cipher.getInstance(LEGACY_CIPHER_TRANSFORMATION)
             val iv = ByteArray(cipher.blockSize)
             random.nextBytes(iv)
 
@@ -68,7 +71,7 @@ object EncryptionHelper {
     fun generateKey(
         password: String,
         salt: ByteArray,
-        iterationCount: Int = DEFAULT_ITERATION_COUNT
+        iterationCount: Int = KDF_ITERATION_COUNT
     ): SecretKey {
         Log.i("$t: generateKey. Params --> password: $password, salt: $salt")
         val keyBytes = generateKeyAsByteArray(password, salt, iterationCount)
@@ -82,14 +85,14 @@ object EncryptionHelper {
     private fun generateKeyAsByteArray(
         password: String,
         salt: ByteArray,
-        iterationCount: Int = DEFAULT_ITERATION_COUNT
+        iterationCount: Int = KDF_ITERATION_COUNT
     ): ByteArray {
         try {
             val keySpec: KeySpec =
                 PBEKeySpec(
                     password.toCharArray(), salt,
                     iterationCount,
-                    KEY_LENGTH
+                    ENCRYPTION_KEY_SIZE_BITS
                 )
             val keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
             val keyBytes = keyFactory.generateSecret(keySpec).encoded
@@ -118,7 +121,7 @@ object EncryptionHelper {
     ): String {
         try {
             val toBeEncryptedByteArray = toBeEncrypted.toByteArray(charset("UTF-8"))
-            val cipher = Cipher.getInstance(CIPHER_TRANSFORMATION)
+            val cipher = Cipher.getInstance(LEGACY_CIPHER_TRANSFORMATION)
             val ivParams = IvParameterSpec(iv)
             cipher.init(Cipher.ENCRYPT_MODE, key, ivParams)
             val cipherText = cipher.doFinal(toBeEncryptedByteArray)
@@ -152,7 +155,7 @@ object EncryptionHelper {
         toBeDecrypted: ByteArray
     ): String {
         try {
-            val cipher = Cipher.getInstance(CIPHER_TRANSFORMATION)
+            val cipher = Cipher.getInstance(LEGACY_CIPHER_TRANSFORMATION)
             val ivParams = IvParameterSpec(iv)
             cipher.init(Cipher.DECRYPT_MODE, key, ivParams)
             val plainText = cipher.doFinal(toBeDecrypted)
@@ -215,7 +218,7 @@ object EncryptionHelper {
         data: ByteArray,
     ): EncryptedData = withContext(Dispatchers.Default) {
         try {
-            val cipher = Cipher.getInstance(AES_GCM)
+            val cipher = Cipher.getInstance(NEW_CIPHER_TRANSFORMATION)
             cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(key, cipher.algorithm))
             EncryptedData(
                 ciphertext = cipher.doFinal(data),
@@ -270,6 +273,48 @@ object EncryptionHelper {
 
                 else -> throw e
             }
+        }
+    }
+
+    @Throws(EncryptionException::class)
+    suspend fun generateMasterKey(): ByteArray = withContext(Dispatchers.Default) {
+        try {
+            val generator = KeyGenerator.getInstance(ENCRYPTION_KEY_ALGORITHM)
+            generator.init(ENCRYPTION_KEY_SIZE_BITS)
+            generator.generateKey().encoded
+        } catch (e: Exception) {
+            Log.d("Failed to generate master key", e)
+            throw EncryptionException(e)
+        }
+    }
+
+    @Throws(EncryptionException::class)
+    suspend fun generatePasswordKeySalt(): ByteArray = withContext(Dispatchers.Default) {
+        try {
+            SecureRandom().generateSeed(KDF_SALT_SIZE_BYTES)
+        } catch (e: Exception){
+            Log.d("Failed to generate password key salt", e)
+            throw EncryptionException(e)
+        }
+    }
+
+    @Throws(EncryptionException::class)
+    suspend fun generatePasswordKey(
+        password: CharArray,
+        salt: ByteArray,
+    ): ByteArray = withContext(Dispatchers.Default) {
+        try {
+            val keySpec: KeySpec = PBEKeySpec(
+                password,
+                salt,
+                KDF_ITERATION_COUNT,
+                ENCRYPTION_KEY_SIZE_BITS,
+            )
+            val keyFactory = SecretKeyFactory.getInstance(KDF)
+            keyFactory.generateSecret(keySpec).encoded
+        } catch (e: Exception) {
+            Log.d("Failed to generate password key", e)
+            throw EncryptionException(e)
         }
     }
 }

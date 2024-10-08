@@ -1,6 +1,7 @@
 package com.concordium.wallet.core.security
 
 import com.concordium.wallet.data.model.EncryptedData
+import com.concordium.wallet.util.toHex
 import com.walletconnect.util.hexToBytes
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -140,5 +141,91 @@ class EncryptionHelperTest {
                 encryptedData = ed,
             )
         }
+    }
+
+    @Test
+    fun generateMasterKeySuccessfully() {
+        val (mc1, mc2) = runBlocking {
+            List(2) {
+                EncryptionHelper.generateMasterKey().toHex().also(::println)
+            }
+        }
+
+        Assert.assertNotEquals(
+            "Generated keys must not be repeated",
+            mc1, mc2
+        )
+        Assert.assertEquals(
+            "Generated key size must remain constant",
+            mc1.length, mc2.length
+        )
+        Assert.assertTrue(
+            "Generated keys must be strong",
+            mc1.length >= 64,
+        )
+    }
+
+    @Test
+    fun generatePasswordKeySaltSuccessfully() {
+        val (s1, s2) = runBlocking {
+            List(2) {
+                EncryptionHelper.generatePasswordKeySalt().toHex().also(::println)
+            }
+        }
+
+        Assert.assertNotEquals(
+            "Generated salt must not be repeated",
+            s1, s2
+        )
+    }
+
+    @Test
+    fun generatePasswordKeySuccessfully() {
+        val p1 = "123456".toCharArray()
+        val p2 = "qwe123".toCharArray()
+        val s1 = "7804836792fbecf04961fe286e8ec950d2e105448e61a290262711154ec59026".hexToBytes()
+        val s2 = "ac6e5196afd67b0e69c42fcba198420391b79a6ba9a916fa76a905f09017acc5".hexToBytes()
+
+        val (k1, k2) = runBlocking {
+            List(2) {
+                EncryptionHelper.generatePasswordKey(
+                    password = p1,
+                    salt = s1,
+                ).toHex().also(::println)
+            }
+        }
+
+        Assert.assertEquals(
+            "Generated keys must remain constant if the inputs are constant",
+            k1, k2
+        )
+        Assert.assertTrue(
+            "Generated keys must be strong",
+            k1.length >= 64
+        )
+
+        val k1s2 = runBlocking {
+            EncryptionHelper.generatePasswordKey(
+                password = p1,
+                salt = s2,
+            ).toHex()
+        }
+
+        Assert.assertNotEquals(
+            "Keys generated with the same password but different salt must be different",
+            k1, k1s2
+        )
+
+        val k2s1 = runBlocking {
+            EncryptionHelper.generatePasswordKey(
+                password = p2,
+                salt = s1,
+            ).toHex()
+        }
+
+        Assert.assertNotEquals(
+            "Keys generated with the same salt but different passwords must be different",
+            k1, k2s1
+        )
     }
 }
