@@ -1,9 +1,9 @@
 package com.concordium.wallet.ui.onramp
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -26,12 +26,26 @@ class CcdOnrampSitesActivity : BaseActivity(
     }
 
     private lateinit var chromeClient: SwipeluxWebChromeClient
+    private lateinit var permissionManager: PermissionManager
 
-    private val filePickerLauncher: ActivityResultLauncher<Intent> =
+    private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val data: Intent? = result.data
-            chromeClient.handleFileChooserResult(result.resultCode, data)
+            chromeClient.handleFileChooserResult(result.resultCode, result.data)
         }
+
+    private val permissionResultLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted =
+            permissions[Manifest.permission.CAMERA] == true && permissions[Manifest.permission.RECORD_AUDIO] == true
+        if (!granted) {
+            Toast.makeText(
+                this,
+                "Camera and microphone permissions are required",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +53,25 @@ class CcdOnrampSitesActivity : BaseActivity(
         viewModel.initialize(
             accountAddress = intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA),
         )
+        permissionManager = PermissionManager(this, permissionResultLauncher)
         initList()
 
         hideActionBarBack(isVisible = true)
-        setActionBarTitle("")
+        hideDisclaimer(
+            isVisible = true,
+            listener = {
+                binding.recyclerview.smoothScrollToPosition(
+                    viewModel.listItemsLiveData.value!!.indexOf(
+                        CcdOnrampListItem.Disclaimer
+                    )
+                )
+            }
+        )
     }
 
     private fun initList() {
-        chromeClient = SwipeluxWebChromeClient(filePickerLauncher)
+        chromeClient = SwipeluxWebChromeClient(this, filePickerLauncher, permissionManager)
+
         val adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
                 item.source?.also(::onSiteClicked)

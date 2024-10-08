@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.webkit.WebSettings
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -130,13 +129,13 @@ class CcdOnrampItemAdapter(
                     domStorageEnabled = true
                     allowFileAccess = true
                     allowContentAccess = true
+                    mediaPlaybackRequiresUserGesture = false
                     javaScriptCanOpenWindowsAutomatically = true
-                    mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                 }
 
                 holder.binding.swipeluxWidgetLayout.webChromeClient = chromeClient
                 holder.binding.swipeluxWidgetLayout.isNestedScrollingEnabled = true
-                holder.binding.swipeluxWidgetLayout.loadUrl("${SwipeluxWebChromeClient.BASE_URL}/?specificSettings=${chromeClient.specificSettings}")
+                holder.binding.swipeluxWidgetLayout.loadUrl("${SwipeluxWebChromeClient.BASE_URL}/?specificSettings=${chromeClient.getWidgetSettings()}")
             }
         }
     }

@@ -1153,13 +1153,14 @@
     <string name="tracking_permission_message">@string/tracking_motivation</string>
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
-    <string name="ccd_onramp_title">CCD Listings</string>
+    <string name="ccd_onramp_title">Get CCD</string>
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
     <string name="ccd_onramp_site_type_cex">CEX</string>
     <string name="ccd_onramp_site_type_dex">DEX</string>
     <string name="ccd_onramp_disclaimer_title">Disclaimer</string>
+    <string name="ccd_onramp_disclaimer_button"><u>Disclaimer</u></string>
     <string name="ccd_onramp_disclaimer_content">
         The information regarding the CCD on any Concordium website does not constitute an offer or solicitation to purchase CCDs.
         The information on the CCD on this website is only directed to persons in countries other than the United States.

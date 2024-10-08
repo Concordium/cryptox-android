@@ -57,6 +57,7 @@ abstract class BaseActivity(
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
     protected var searchView: SearchView? = null
+    private var disclaimerBtn: TextView? = null
 
     private var toastLayoutTopError: ViewGroup? = null
 
@@ -84,6 +85,7 @@ abstract class BaseActivity(
         closeBtn = toolbar?.findViewById(R.id.toolbar_close_btn)
         deleteBtn = toolbar?.findViewById(R.id.toolbar_delete_btn)
         settingsBtn = toolbar?.findViewById(R.id.toolbar_settings_btn)
+        disclaimerBtn = toolbar?.findViewById(R.id.toolbar_disclaimer_btn)
 
         setupActionBar(this, titleId)
 
@@ -213,6 +215,11 @@ abstract class BaseActivity(
     fun hideSettings(isVisible: Boolean, listener: View.OnClickListener? = null) {
         settingsBtn?.isVisible = isVisible
         settingsBtn?.setOnClickListener(listener)
+    }
+
+    fun hideDisclaimer(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        disclaimerBtn?.isVisible = isVisible
+        disclaimerBtn?.setOnClickListener(listener)
     }
 //    fun hideClose(isVisible: Boolean) {
 //        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE

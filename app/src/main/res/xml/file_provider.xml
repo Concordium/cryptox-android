@@ -3,4 +3,10 @@
     <files-path
         name="files"
         path="." />
+    <external-files-path
+        name="images"
+        path="Pictures/" />
+    <external-path
+        name="external_storage"
+        path="." />
 </paths>
