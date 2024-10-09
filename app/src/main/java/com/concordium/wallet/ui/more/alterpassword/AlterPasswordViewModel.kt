@@ -8,9 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,27 +15,15 @@ import kotlinx.coroutines.launch
 class AlterPasswordViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    private var database: WalletDatabase = WalletDatabase.getDatabase(application)
     private var decryptedMasterKey: ByteArray? = null
-
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
 
-    private val _checkAccountsIdentitiesDoneLiveData = MutableLiveData<Boolean>()
-    val checkAccountsIdentitiesDoneLiveData: LiveData<Boolean>
-        get() = _checkAccountsIdentitiesDoneLiveData
-
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
-
-    private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
-    val showAuthenticationLiveData: LiveData<Event<Boolean>>
-        get() = _showAuthenticationLiveData
 
     // Final encryption flow
     private val _doneFinalChangePasswordLiveData = MutableLiveData<Event<Boolean>>()
@@ -57,13 +42,6 @@ class AlterPasswordViewModel(application: Application) :
     private val _errorInitialAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
     val errorInitialAuthenticationLiveData: LiveData<Event<Boolean>>
         get() = _errorInitialAuthenticationLiveData
-
-    init {
-        val identityDao = database.identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = database.accountDao()
-        accountRepository = AccountRepository(accountDao)
-    }
 
     fun initialize() {
     }
@@ -120,9 +98,5 @@ class AlterPasswordViewModel(application: Application) :
         } finally {
             _waitingLiveData.postValue(false)
         }
-    }
-
-    fun checkAndStartPasscodeChange() = viewModelScope.launch(Dispatchers.IO) {
-        _checkAccountsIdentitiesDoneLiveData.postValue((identityRepository.getNonDoneCount() + accountRepository.getNonDoneCount()) == 0)
     }
 }

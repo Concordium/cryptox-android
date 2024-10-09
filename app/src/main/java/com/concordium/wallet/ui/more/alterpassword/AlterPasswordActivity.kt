@@ -42,22 +42,10 @@ class AlterPasswordActivity : BaseActivity(
         showWaiting(false)
 
         binding.confirmButton.setOnClickListener {
-            viewModel.checkAndStartPasscodeChange()
-        }
-
-        viewModel.checkAccountsIdentitiesDoneLiveData.observe(this) { success ->
-            if (success) {
-                showAuthentication(
-                    activity = this@AlterPasswordActivity,
-                    onAuthenticated = viewModel::checkLogin
-                )
-            } else {
-                Toast.makeText(
-                    this,
-                    getString(R.string.alterpassword_non_finalised_items),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            showAuthentication(
+                activity = this@AlterPasswordActivity,
+                onAuthenticated = viewModel::checkLogin
+            )
         }
 
         viewModel.waitingLiveData.observe(this) { waiting ->
