@@ -12,10 +12,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogAuthenticationContainerBinding
 import com.concordium.wallet.uicore.afterTextChanged
+import kotlinx.coroutines.launch
 
 class AuthenticationDialogFragment : AppCompatDialogFragment(),
     TextView.OnEditorActionListener {
@@ -99,7 +101,7 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
         this.callback = callback
     }
 
-    private fun verifyPassword() {
+    private fun verifyPassword() = viewLifecycleOwner.lifecycleScope.launch {
         val passwordIsValid = App.appCore.getCurrentAuthenticationManager()
             .checkPassword(binding.authenticationContent.passwordEdittext.text.toString())
         if (passwordIsValid) {
