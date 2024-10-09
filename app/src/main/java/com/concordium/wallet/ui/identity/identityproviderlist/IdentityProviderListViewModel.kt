@@ -14,6 +14,7 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutput
 import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.IdentityCreationData
@@ -65,10 +66,10 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         var globalParams: GlobalParams? = null
         var identityProvider: IdentityProvider? = null
         var idObjectRequest: RawJson? = null
-        var privateIdObjectDataEncrypted: String? = null
+        var privateIdObjectDataEncrypted: EncryptedData? = null
         var identityIndex = 0
         var identityName = ""
-        var encryptedAccountData: String? = null
+        var encryptedAccountData: EncryptedData? = null
         var accountAddress: String? = null
     }
 
@@ -141,15 +142,14 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             // Create and encrypt the private data in the legacy way.
             val output = createIdRequestAndPrivateData()
             if (output != null) {
-                val tempCurrentPrivateIdObjectDataJson =
-                    gson.toJson(output.privateIdObjectData.value)
-                val encodedEncrypted =
-                    App.appCore.getCurrentAuthenticationManager().encryptInBackground(
-                        password,
-                        tempCurrentPrivateIdObjectDataJson
+                val privateIdObjectDataJson = gson.toJson(output.privateIdObjectData.value)
+                val encryptedPrivateIdObjectData = App.appCore.getCurrentAuthenticationManager()
+                    .encrypt(
+                        password = password,
+                        data = privateIdObjectDataJson.toByteArray(),
                     )
-                if (encodedEncrypted != null && encryptAccountData(password, output)) {
-                    tempData.privateIdObjectDataEncrypted = encodedEncrypted
+                if (encryptedPrivateIdObjectData != null && encryptAccountData(password, output)) {
+                    tempData.privateIdObjectDataEncrypted = encryptedPrivateIdObjectData
                     tempData.idObjectRequest = output.idObjectRequest
                     tempData.accountAddress = output.initialAccountData.accountAddress
                     _gotoIdentityProviderWebView.postValue(Event(true))
@@ -166,12 +166,14 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         output: IdRequestAndPrivateDataOutput
     ): Boolean {
         // Encrypt account data for later when saving account
-        val initialAccountData = output.initialAccountData
-        val jsonToBeEncrypted = gson.toJson(initialAccountData)
-        val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(password, jsonToBeEncrypted)
-        if (storageAccountDataEncrypted != null) {
-            tempData.encryptedAccountData = storageAccountDataEncrypted
+        val initialAccountDataJson = gson.toJson(output.initialAccountData)
+        val encryptedInitialAccountData = App.appCore.getCurrentAuthenticationManager()
+            .encrypt(
+                password = password,
+                data = initialAccountDataJson.toByteArray(),
+            )
+        if (encryptedInitialAccountData != null) {
+            tempData.encryptedAccountData = encryptedInitialAccountData
             return true
         }
         return false

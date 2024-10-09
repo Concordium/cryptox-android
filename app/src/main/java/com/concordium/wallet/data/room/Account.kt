@@ -12,6 +12,7 @@ import com.concordium.wallet.data.model.AccountDelegation
 import com.concordium.wallet.data.model.AccountEncryptedAmount
 import com.concordium.wallet.data.model.AccountReleaseSchedule
 import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.IdentityAttribute
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionStatus
@@ -42,7 +43,7 @@ data class Account(
     var transactionStatus: TransactionStatus,
 
     @ColumnInfo(name = "encrypted_account_data")
-    var encryptedAccountData: String,
+    var encryptedAccountData: EncryptedData?,
 
     @ColumnInfo("credential")
     var credential: CredentialWrapper?,

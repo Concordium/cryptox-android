@@ -17,6 +17,7 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.model.AttributeList
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.model.IdentityObject
@@ -26,7 +27,6 @@ import com.concordium.wallet.data.model.PreIdentityContainer
 import com.concordium.wallet.data.model.PreIdentityObject
 import com.concordium.wallet.data.model.PubInfoForIp
 import com.concordium.wallet.data.model.RawJson
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -39,7 +39,6 @@ import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.math.BigInteger
 
 class IdentityProviderWebViewViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -151,11 +150,11 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
 
     private fun saveNewIdentity(identityObject: IdentityObject) {
         val identityCreationData = identityCreationData
-        val privateIdObjectDataEncrypted =
+        val privateIdObjectDataEncrypted: EncryptedData? =
             if (identityCreationData is IdentityCreationData.V0)
                 identityCreationData.privateIdObjectDataEncrypted
             else
-                ""
+                null
         val identity = Identity(
             0,
             identityCreationData.identityName,
@@ -200,11 +199,11 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 idObjectRequest.value.idCredPub
             )
         val identityCreationData = identityCreationData
-        val privateIdObjectDataEncrypted =
+        val privateIdObjectDataEncrypted: EncryptedData? =
             if (identityCreationData is IdentityCreationData.V0)
                 identityCreationData.privateIdObjectDataEncrypted
             else
-                ""
+                null
         val identity = Identity(
             0,
             identityCreationData.identityName,

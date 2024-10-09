@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +12,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
@@ -33,7 +33,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
-import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsPreferences
@@ -345,16 +344,21 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private suspend fun decryptAndContinue(password: String) {
         sendTokenData.account?.let { account ->
             val storageAccountDataEncrypted = account.encryptedAccountData
-            if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+            if (storageAccountDataEncrypted == null) {
                 errorInt.postValue(R.string.app_error_general)
                 waiting.postValue(false)
                 return
             }
             val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-                .decryptInBackground(password, storageAccountDataEncrypted)
-            val credentialsOutput =
-                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+                .decrypt(
+                    password = password,
+                    encryptedData = storageAccountDataEncrypted
+                )
+                ?.let(::String)
+
             if (decryptedJson != null) {
+                val credentialsOutput =
+                    App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 getAccountEncryptedKey(credentialsOutput)
             } else {
                 errorInt.postValue(R.string.app_error_encryption)

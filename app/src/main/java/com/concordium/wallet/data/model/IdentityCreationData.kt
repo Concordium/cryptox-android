@@ -12,9 +12,9 @@ sealed class IdentityCreationData(
     val identityIndex: Int,
 ) : Serializable {
     class V0(
-        val privateIdObjectDataEncrypted: String,
+        val privateIdObjectDataEncrypted: EncryptedData,
         val accountName: String,
-        val encryptedAccountData: String,
+        val encryptedAccountData: EncryptedData,
         val accountAddress: String,
         identityProvider: IdentityProvider,
         idObjectRequest: RawJson,

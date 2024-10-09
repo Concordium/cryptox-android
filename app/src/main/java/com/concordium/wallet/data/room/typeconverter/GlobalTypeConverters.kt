@@ -1,6 +1,8 @@
 package com.concordium.wallet.data.room.typeconverter
 
 import androidx.room.TypeConverter
+import com.concordium.wallet.App
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -80,5 +82,17 @@ class GlobalTypeConverters {
     @TypeConverter
     fun stringToBigInteger(value: String?): BigInteger? {
         return value?.toBigInteger()
+    }
+
+    @TypeConverter
+    fun encryptedDataToJson(value: EncryptedData?): String? {
+        return value?.let { App.appCore.gson.toJson(it) }
+    }
+
+    @TypeConverter
+    fun jsonToEncryptedData(value: String?): EncryptedData? {
+        return value?.takeIf(String::isNotEmpty)?.let {
+            App.appCore.gson.fromJson(it, EncryptedData::class.java)
+        }
     }
 }

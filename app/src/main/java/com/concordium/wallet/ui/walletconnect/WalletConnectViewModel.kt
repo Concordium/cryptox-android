@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
@@ -810,7 +809,7 @@ private constructor(
         }
 
         val storageAccountDataEncrypted = sessionRequestAccount.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             Log.e("account_has_no_encrypted_data")
 
             mutableEventsFlow.tryEmit(
@@ -822,7 +821,11 @@ private constructor(
             return@launch
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+            .decrypt(
+                password = password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
 
         if (decryptedJson != null) {
             val storageAccountData =

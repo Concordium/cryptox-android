@@ -24,6 +24,7 @@ import com.concordium.wallet.data.cryptolib.GenerateAccountsInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.PossibleAccount
@@ -91,7 +92,7 @@ open class NewAccountViewModel(application: Application) :
         var globalParams: GlobalParams? = null
         var submissionId: String? = null
         var accountAddress: String? = null
-        var encryptedAccountData: String? = null
+        var encryptedAccountData: EncryptedData? = null
         var credential: CredentialWrapper? = null
         var nextCredNumber: Int? = null
     }
@@ -159,15 +160,18 @@ open class NewAccountViewModel(application: Application) :
             createCredentials(password, null, globalParams)
         } else {
             // Decrypt the private data.
-            val privateIdObjectDataEncrypted = identity.privateIdObjectDataEncrypted
+            val privateIdObjectDataEncrypted = identity.privateIdObjectDataEncrypted!!
             if (globalParams == null) {
                 _errorLiveData.postValue(Event(R.string.app_error_general))
                 _waitingLiveData.postValue(false)
                 return
             }
-            val decryptedJson =
-                App.appCore.getCurrentAuthenticationManager()
-                    .decryptInBackground(password, privateIdObjectDataEncrypted)
+            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+                .decrypt(
+                    password = password,
+                    encryptedData = privateIdObjectDataEncrypted,
+                )
+                ?.let(::String)
             if (decryptedJson != null) {
                 val privateIdObjectData = gson.fromJson(decryptedJson, RawJson::class.java)
                 createCredentials(password, privateIdObjectData, globalParams)
@@ -256,7 +260,10 @@ open class NewAccountViewModel(application: Application) :
             )
 
             val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager()
-                .encryptInBackground(password, jsonToBeEncrypted)
+                .encrypt(
+                    password=password,
+                    data = jsonToBeEncrypted.toByteArray()
+                )
             if (storageAccountDataEncrypted != null) {
                 tempData.encryptedAccountData = storageAccountDataEncrypted
                 tempData.credential = output.credential

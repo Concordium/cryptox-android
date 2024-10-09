@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.more.unshielding
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -118,13 +117,17 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
         _waitingLiveData.postValue(true)
 
         val storageAccountDataEncrypted = account.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             _errorLiveData.postValue(Event(R.string.app_error_general))
             _waitingLiveData.postValue(false)
             return
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+            .decrypt(
+                password=password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
 
         if (decryptedJson == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))

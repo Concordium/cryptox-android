@@ -249,7 +249,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             0,
             identityProvider,
             identityObject,
-            "",
+            null,
             identityProvider.ipInfo.ipIdentity,
             identityIndex
         )
@@ -306,7 +306,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             )
         )
         val encryptedAccountData = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(password, jsonToBeEncrypted)
+            .encrypt(
+                password=password,
+                data = jsonToBeEncrypted.toByteArray(),
+            )
             ?: return
 
         try {

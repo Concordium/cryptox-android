@@ -4,10 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.util.BiometricsUtil
+import kotlinx.coroutines.launch
 
 class AuthSetupViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -39,9 +41,15 @@ class AuthSetupViewModel(application: Application) : AndroidViewModel(applicatio
         return (password.length == 6)
     }
 
-    fun setupPassword(password: String, continueFlow: Boolean) {
-        val res = App.appCore.getCurrentAuthenticationManager().createPasswordCheck(password)
-        if (res) {
+    fun setupPassword(password: String, continueFlow: Boolean) = viewModelScope.launch {
+        val isSetUpSuccessfully =
+            runCatching {
+                App.appCore
+                    .getCurrentAuthenticationManager()
+                    .initPasswordAuth(password)
+            }.isSuccess
+
+        if (isSetUpSuccessfully) {
             // Setting up password is done, so login screen should be shown next time app is opened
             session.hasSetupPassword(true)
             if (BiometricsUtil.isBiometricsAvailable()) {

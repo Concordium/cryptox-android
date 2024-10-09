@@ -192,8 +192,16 @@ class WalletConnectVerifiablePresentationRequestHandler(
         val attributeRandomnessByAccount: Map<String, AttributeRandomness> = try {
             accountsPerStatement.associateBy(Account::address) { account ->
                 val storageAccountDataEncrypted = account.encryptedAccountData
+                    ?: error("Account has no encrypted data")
+
                 val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-                    .decryptInBackground(password, storageAccountDataEncrypted)
+                    .decrypt(
+                        password = password,
+                        encryptedData = storageAccountDataEncrypted
+                    )
+                    ?.let(::String)
+                    ?: error("Failed to decrypt the account data")
+
                 val storageAccountData =
                     App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
 

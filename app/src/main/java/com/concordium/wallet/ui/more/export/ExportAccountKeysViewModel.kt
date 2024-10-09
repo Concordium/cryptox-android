@@ -59,12 +59,16 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
 
     private suspend fun decryptAndContinue(password: String) {
         val storageAccountDataEncrypted = account.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             textResourceInt.postValue(R.string.app_error_general)
             return
         }
         val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+            .decrypt(
+                password = password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
         if (decryptedJson != null) {
             val credentialsOutput =
                 App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)

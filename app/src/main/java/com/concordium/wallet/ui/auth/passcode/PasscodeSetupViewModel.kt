@@ -2,12 +2,14 @@ package com.concordium.wallet.ui.auth.passcode
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.util.BiometricsUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class PasscodeSetupViewModel(application: Application) : AndroidViewModel(application) {
     private val session: Session = App.appCore.session
@@ -29,7 +31,7 @@ class PasscodeSetupViewModel(application: Application) : AndroidViewModel(applic
         App.appCore.tracker.welcomePasscodeScreen()
     }
 
-    fun onPasscodeEntered(passcode: String) {
+    fun onPasscodeEntered(passcode: String) = viewModelScope.launch {
         require(passcode.length == passcodeLength) {
             "The entered passcode doesn't have the required length"
         }
@@ -54,16 +56,19 @@ class PasscodeSetupViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    private fun proceedWithConfirmedCreatedPasscode() {
+    private suspend fun proceedWithConfirmedCreatedPasscode() {
         val confirmedPasscode = checkNotNull(createdPasscode) {
             "The passcode must be created at this point"
         }
 
         session.startPasswordSetup(confirmedPasscode)
 
-        val isSetUpSuccessfully = App.appCore
-            .getCurrentAuthenticationManager()
-            .createPasswordCheck(confirmedPasscode)
+        val isSetUpSuccessfully =
+            runCatching {
+                App.appCore
+                    .getCurrentAuthenticationManager()
+                    .initPasswordAuth(confirmedPasscode)
+            }.isSuccess
 
         if (isSetUpSuccessfully) {
             onSetUpSuccessfully(usedPasscode = true)
