@@ -11,7 +11,7 @@ class EncryptedData(
     /**
      * Base64-encoded ciphertext.
      *
-     * @see decodeCipherText
+     * @see decodeCiphertext
      */
     @SerializedName("ct")
     val ciphertext: String,
@@ -46,14 +46,14 @@ class EncryptedData(
         iv = Base64.encodeToString(iv, BASE64_FLAGS)
     )
 
-    fun decodeCipherText(): ByteArray =
+    fun decodeCiphertext(): ByteArray =
         Base64.decode(ciphertext, BASE64_FLAGS)
 
     fun decodeIv(): ByteArray =
         Base64.decode(iv, BASE64_FLAGS)
 
     override fun toString(): String {
-        return "EncryptedData(cipherText='$ciphertext', transformation='$transformation', iv='$iv')"
+        return "EncryptedData(ciphertext='$ciphertext', transformation='$transformation', iv='$iv')"
     }
 
     private companion object {

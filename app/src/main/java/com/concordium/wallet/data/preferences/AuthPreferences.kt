@@ -74,7 +74,7 @@ class AuthPreferences(val context: Context) :
     }
 
     fun getEncryptedPassword(appendix: String): EncryptedData {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD_JSON + appendix, "")
+        return getString(PREFKEY_ENCRYPTED_PASSWORD_JSON + appendix)!!
             .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
     }
 
@@ -86,7 +86,7 @@ class AuthPreferences(val context: Context) :
     }
 
     fun getEncryptedMasterKey(appendix: String): EncryptedData {
-        return getString(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + appendix, "-")
+        return getString(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + appendix)!!
             .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
     }
 

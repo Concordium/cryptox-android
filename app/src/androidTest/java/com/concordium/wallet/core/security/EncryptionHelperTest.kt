@@ -49,7 +49,7 @@ class EncryptionHelperTest {
 
         Assert.assertEquals(
             "Only the 128 bit tag must be present in the cipher text",
-            128 / 8, ed.decodeCipherText().size
+            128 / 8, ed.decodeCiphertext().size
         )
     }
 
@@ -144,10 +144,10 @@ class EncryptionHelperTest {
     }
 
     @Test
-    fun generateMasterKeySuccessfully() {
+    fun generateKeySuccessfully() {
         val (mc1, mc2) = runBlocking {
             List(2) {
-                EncryptionHelper.generateMasterKey().toHex().also(::println)
+                EncryptionHelper.generateKey().toHex().also(::println)
             }
         }
 

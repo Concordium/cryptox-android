@@ -8,6 +8,8 @@ import com.concordium.wallet.core.security.KeystoreHelper
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.IllegalBlockSizeException
@@ -84,16 +86,15 @@ class AuthenticationManager(
         }
     }
 
-    suspend fun decryptPasswordWithBiometricsCipher(cipher: Cipher): String? {
-        val encryptedPassword = authPreferences.getEncryptedPassword(authKeyName)
-        val decryptedPassword = runCatching { cipher.doFinal(encryptedPassword.decodeCipherText()) }
+    suspend fun decryptPasswordWithBiometricsCipher(
+        cipher: Cipher,
+    ): String? = withContext(Dispatchers.Default) {
+        runCatching {
+            val encryptedPassword = authPreferences.getEncryptedPassword(authKeyName)
+            cipher.doFinal(encryptedPassword.decodeCiphertext())
+        }
             .getOrNull()
             ?.let(::String)
-        return if (decryptedPassword != null && checkPassword(decryptedPassword)) {
-            decryptedPassword
-        } else {
-            null
-        }
     }
 
     //endregion
@@ -102,7 +103,7 @@ class AuthenticationManager(
     suspend fun initPasswordAuth(password: String) =
         initPasswordAuth(
             password = password,
-            masterKey = EncryptionHelper.generateMasterKey(),
+            masterKey = EncryptionHelper.generateKey(),
         )
 
     @Throws(EncryptionException::class)
