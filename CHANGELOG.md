@@ -16,6 +16,7 @@
 - Inability to configure a validator closed for delegation
 - Incorrect state of the account tokens page when there are no tokens
 - Crash caused by a malformed WalletConnect verifiable presentation request
+- Validation/delegation text notices
 
 ## [1.2.0] - 2024-08-27
 
