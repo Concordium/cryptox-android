@@ -627,7 +627,7 @@
     <string name="delegation_update_subtitle1">Updating your delegation</string>
     <string name="delegation_update_subtitle2">Pay day updates</string>
     <string name="delegation_update_subtitle3">Cooldowns</string>
-
+  
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
     <string name="delegation_remove_subtitle2">Update during the cooldown period</string>
 
@@ -701,8 +701,8 @@
         <item quantity="other">This will lock your delegation amount. Amount is released after %d days from the time you remove or decrease your delegation.</item>
     </plurals>
     <plurals name="delegation_register_delegation_confirmation_desc_update">
-        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day, during this period the stake cannot be spent or transferred.</item>
-        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days, during this period the stake cannot be spent or transferred.</item>
+        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day.</item>
+        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days.</item>
     </plurals>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
