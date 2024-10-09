@@ -152,8 +152,19 @@ class AuthenticationManager(
         data: ByteArray,
     ): EncryptedData? =
         runCatching {
+            encrypt(
+                masterKey = getMasterKey(password),
+                data = data,
+            )
+        }.getOrNull()
+
+    suspend fun encrypt(
+        masterKey: ByteArray,
+        data: ByteArray,
+    ): EncryptedData? =
+        runCatching {
             EncryptionHelper.encrypt(
-                key = getMasterKey(password),
+                key = masterKey,
                 data = data,
             )
         }.getOrNull()
@@ -163,9 +174,20 @@ class AuthenticationManager(
         encryptedData: EncryptedData,
     ): ByteArray? =
         runCatching {
+            decrypt(
+                masterKey = getMasterKey(password),
+                encryptedData = encryptedData,
+            )
+        }.getOrNull()
+
+    suspend fun decrypt(
+        masterKey: ByteArray,
+        encryptedData: EncryptedData,
+    ): ByteArray? =
+        runCatching {
             EncryptionHelper.decrypt(
-                key = getMasterKey(password),
-                encryptedData = encryptedData
+                key = masterKey,
+                encryptedData = encryptedData,
             )
         }.getOrNull()
 
