@@ -92,9 +92,7 @@ class AlterPasswordActivity : BaseActivity(
 
         if (requestCode == REQUESTCODE_AUTH_RESET) {
             if (resultCode == Activity.RESULT_OK) {
-                App.appCore.session.tempPassword?.let {
-                    viewModel.finishPasswordChange(it)
-                }
+                viewModel.finishPasswordChange()
             }
         }
     }

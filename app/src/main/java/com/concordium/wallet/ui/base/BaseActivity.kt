@@ -269,8 +269,8 @@ abstract class BaseActivity(
     }
 
     fun showAuthentication(text: String = authenticateText(), callback: AuthenticationCallback) {
-        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
-        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
+        val useBiometrics = App.appCore.authManager.useBiometrics()
+        val usePasscode = App.appCore.authManager.usePasscode()
         if (useBiometrics) {
             showBiometrics(text, usePasscode, callback)
         } else {
@@ -343,8 +343,8 @@ abstract class BaseActivity(
     }
 
     fun authenticateText(): String {
-        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
-        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
+        val useBiometrics = App.appCore.authManager.useBiometrics()
+        val usePasscode = App.appCore.authManager.usePasscode()
         return when {
             useBiometrics -> getString(R.string.auth_login_biometrics_dialog_subtitle)
             usePasscode -> getString(R.string.auth_login_biometrics_dialog_cancel_passcode)

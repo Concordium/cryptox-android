@@ -9,7 +9,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.security.KeystoreEncryptionException
-import com.concordium.wallet.util.Log
 import javax.crypto.Cipher
 
 class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(application) {
@@ -25,7 +24,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
 
     fun initialize() {
 
-        val generated = App.appCore.getCurrentAuthenticationManager().generateBiometricsSecretKey()
+        val generated = App.appCore.authManager.generateBiometricsSecretKey()
         if (!generated) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
         }
@@ -33,7 +32,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().getBiometricsCipherForEncryption()
+            val cipher = App.appCore.authManager.getBiometricsCipherForEncryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -44,17 +43,15 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
         }
     }
 
-    fun setupBiometricWithPassword(cipher: Cipher) {
-        val password = session.tempPassword
-        if (password != null) {
-            val setupDone = App.appCore.getCurrentAuthenticationManager().initBiometricAuth(password, cipher)
-            if (setupDone) {
-                _finishScreenLiveData.value = Event(true)
-            } else {
-                _errorLiveData.value = Event(R.string.app_error_keystore)
-            }
+    fun proceedWithSetup(cipher: Cipher) {
+        val password = session.getPasswordToSetUp()
+            ?: error("Setting up biometrics when there is no password to set up")
+
+        val setupDone = App.appCore.authManager.initBiometricAuth(password, cipher)
+        if (setupDone) {
+            _finishScreenLiveData.value = Event(true)
         } else {
-            Log.e("Temp password has been removed before biometrics was setup")
+            _errorLiveData.value = Event(R.string.app_error_keystore)
         }
     }
 }

@@ -312,7 +312,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             _errorLiveData.value = Event(R.string.app_error_general)
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+        val decryptedJson = App.appCore.authManager
             .decrypt(
                 password = password,
                 encryptedData = storageAccountDataEncrypted,

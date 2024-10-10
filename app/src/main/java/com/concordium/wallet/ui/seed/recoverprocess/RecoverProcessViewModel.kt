@@ -305,7 +305,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 commitmentsRandomness = createCredentialOutput.commitmentsRandomness
             )
         )
-        val encryptedAccountData = App.appCore.getCurrentAuthenticationManager()
+        val encryptedAccountData = App.appCore.authManager
             .encrypt(
                 password=password,
                 data = jsonToBeEncrypted.toByteArray(),

@@ -166,7 +166,7 @@ open class NewAccountViewModel(application: Application) :
                 _waitingLiveData.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+            val decryptedJson = App.appCore.authManager
                 .decrypt(
                     password = password,
                     encryptedData = privateIdObjectDataEncrypted,
@@ -259,7 +259,7 @@ open class NewAccountViewModel(application: Application) :
                 )
             )
 
-            val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager()
+            val storageAccountDataEncrypted = App.appCore.authManager
                 .encrypt(
                     password=password,
                     data = jsonToBeEncrypted.toByteArray()

@@ -65,9 +65,7 @@ class PasscodeSetupViewModel(application: Application) : AndroidViewModel(applic
 
         val isSetUpSuccessfully =
             runCatching {
-                App.appCore
-                    .getCurrentAuthenticationManager()
-                    .initPasswordAuth(confirmedPasscode)
+                App.appCore.authManager.initPasswordAuth(confirmedPasscode)
             }.isSuccess
 
         if (isSetUpSuccessfully) {

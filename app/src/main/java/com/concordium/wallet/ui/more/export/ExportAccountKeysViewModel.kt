@@ -63,7 +63,7 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
             textResourceInt.postValue(R.string.app_error_general)
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+        val decryptedJson = App.appCore.authManager
             .decrypt(
                 password = password,
                 encryptedData = storageAccountDataEncrypted,

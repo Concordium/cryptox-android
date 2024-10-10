@@ -465,7 +465,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 _waitingLiveData.value = false
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+            val decryptedJson = App.appCore.authManager
                 .decrypt(
                     password = password,
                     encryptedData = storageAccountDataEncrypted,

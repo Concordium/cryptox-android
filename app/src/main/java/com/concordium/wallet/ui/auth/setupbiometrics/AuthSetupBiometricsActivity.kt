@@ -108,7 +108,7 @@ class AuthSetupBiometricsActivity : BaseActivity(
 
         val callback = object : BiometricPromptCallback() {
             override fun onAuthenticationSucceeded(cipher: Cipher) {
-                viewModel.setupBiometricWithPassword(cipher)
+                viewModel.proceedWithSetup(cipher)
             }
         }
 

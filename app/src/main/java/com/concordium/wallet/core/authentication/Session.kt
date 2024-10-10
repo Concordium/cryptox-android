@@ -17,8 +17,7 @@ class Session {
     var hasSetupPassword = false
         private set
 
-    var tempPassword: String? = null
-        private set
+    private var tempPassword: String? = null
 
     /**
      * The value is positive at the fresh app start until the setup start screen is visited.
@@ -66,7 +65,7 @@ class Session {
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
         authPreferences.setHasSetupUser(true)
-        App.appCore.getCurrentAuthenticationManager().setUsePassCode(passcodeUsed)
+        App.appCore.authManager.setUsePassCode(passcodeUsed)
         hasSetupPassword = true
     }
 
@@ -115,12 +114,12 @@ class Session {
             }
         }
 
-    fun getBiometricAuthKeyName(): String {
-        return authPreferences.getAuthKeyName()
+    fun getCurrentAuthSlot(): String {
+        return authPreferences.getCurrentAuthSlot()
     }
 
-    fun setBiometricAuthKeyName(resetBiometricKeyNameAppendix: String) {
-        authPreferences.setAuthKeyName(resetBiometricKeyNameAppendix)
+    fun setCurrentAuthSlot(resetBiometricKeyNameAppendix: String) {
+        authPreferences.setCurrentAuthSlot(resetBiometricKeyNameAppendix)
     }
 
     fun isAccountsBackupPossible(): Boolean {

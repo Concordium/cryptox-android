@@ -158,7 +158,7 @@ class ImportViewModel(application: Application) :
     private suspend fun handleAuthPassword(password: String) {
         // Decrypt the master key
         val decryptedMasterKey = runCatching {
-            App.appCore.getCurrentAuthenticationManager().getMasterKey(password)
+            App.appCore.authManager.getMasterKey(password)
         }.getOrNull()
         if (decryptedMasterKey == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
@@ -486,7 +486,7 @@ class ImportViewModel(application: Application) :
         masterKey: ByteArray
     ): Identity? {
         val privateIdObjectDataJson = gson.toJson(identityExport.privateIdObjectData)
-        val privateIdObjectDataEncrypted = App.appCore.getCurrentAuthenticationManager()
+        val privateIdObjectDataEncrypted = App.appCore.authManager
             .encrypt(
                 masterKey = masterKey,
                 data = privateIdObjectDataJson.toByteArray(),
@@ -516,7 +516,7 @@ class ImportViewModel(application: Application) :
                 accountExport.encryptionSecretKey
             )
         )
-        val accountDataEncrypted = App.appCore.getCurrentAuthenticationManager()
+        val accountDataEncrypted = App.appCore.authManager
             .encrypt(
                 masterKey = masterKey,
                 data = accountDataJson.toByteArray(),

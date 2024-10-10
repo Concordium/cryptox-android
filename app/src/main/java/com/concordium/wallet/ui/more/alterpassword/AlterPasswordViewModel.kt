@@ -54,7 +54,7 @@ class AlterPasswordViewModel(application: Application) :
     private suspend fun handleAuthPassword(password: String) {
         // Decrypt the master key
         this.decryptedMasterKey = runCatching {
-            App.appCore.getCurrentAuthenticationManager().getMasterKey(password)
+            App.appCore.authManager.getMasterKey(password)
         }.getOrNull()
 
         if (decryptedMasterKey == null) {
@@ -63,36 +63,38 @@ class AlterPasswordViewModel(application: Application) :
             return
         }
 
-        Log.d("starting_reset_auth_flow")
+        Log.d("starting_auth_reset")
 
-        App.appCore.startResetAuthFlow()
+        App.appCore.beginAuthReset()
 
         _doneInitialAuthenticationLiveData.postValue(Event(true))
         _waitingLiveData.postValue(false)
     }
 
-    fun finishPasswordChange(newPassword: String) = viewModelScope.launch {
+    fun finishPasswordChange() = viewModelScope.launch {
         _waitingLiveData.postValue(true)
 
         Log.d("trying_reinit_password_auth")
 
         try {
-            App.appCore.getCurrentAuthenticationManager().initPasswordAuth(
-                password = newPassword,
+            App.appCore.authManager.initPasswordAuth(
+                password = App.appCore.session.getPasswordToSetUp()
+                    ?: error("Finishing password change while there is no password to set up"),
                 masterKey = decryptedMasterKey
                     ?: error("Finishing password change while there is no decrypted master key")
             )
 
-            App.appCore.finalizeResetAuthFlow()
+            App.appCore.commitAuthReset()
 
             _doneFinalChangePasswordLiveData.postValue(Event(true))
 
-            Log.d("finalized_reset_auth_flow")
+            Log.d("committed_auth_reset")
         } catch (e: Exception) {
             Log.e("failed_to_reinit_password_auth", e)
-            Log.d("cancelling_reset_auth_flow")
 
-            App.appCore.cancelResetAuthFlow()
+            App.appCore.cancelAuthReset()
+
+            Log.d("cancelled_auth_reset")
 
             _errorFinalChangePasswordLiveData.postValue(Event(true))
         } finally {

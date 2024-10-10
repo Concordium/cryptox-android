@@ -820,7 +820,7 @@ private constructor(
 
             return@launch
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+        val decryptedJson = App.appCore.authManager
             .decrypt(
                 password = password,
                 encryptedData = storageAccountDataEncrypted,

@@ -57,11 +57,9 @@ class AppCore(val context: Context) {
     val session: Session = Session(App.appContext)
     var newIdentities = mutableMapOf<Int, Identity>()
 
-    private val authenticationManagerGeneric: AuthenticationManager =
-        AuthenticationManager(session.getBiometricAuthKeyName())
-    private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric
-    private var authenticationManager: AuthenticationManager = authenticationManagerGeneric
-    private var resetBiometricKeyNameAppendix: String = ""
+    var authManager: AuthenticationManager = AuthenticationManager(session.getCurrentAuthSlot())
+        private set
+    private var oldAuthManager = authManager
 
     fun getNotificationsBackend(): NotificationsBackend {
         return notificationsBackendConfig.backend
@@ -90,28 +88,24 @@ class AppCore(val context: Context) {
         return gsonBuilder.create()
     }
 
-    fun getOriginalAuthenticationManager(): AuthenticationManager {
-        return authenticationManagerReset
+    fun beginAuthReset() {
+        // Back up the current auth manager and replace it
+        // with the one with an alternative slot.
+        oldAuthManager = authManager
+        authManager = AuthenticationManager(
+            slot = System.currentTimeMillis().toString()
+        )
     }
 
-    fun getCurrentAuthenticationManager(): AuthenticationManager {
-        return authenticationManager
-    }
-
-    fun startResetAuthFlow() {
-        resetBiometricKeyNameAppendix = System.currentTimeMillis().toString()
-        authenticationManagerReset = AuthenticationManager(resetBiometricKeyNameAppendix)
-        authenticationManager = authenticationManagerReset
-    }
-
-    fun finalizeResetAuthFlow() {
-        session.setBiometricAuthKeyName(resetBiometricKeyNameAppendix)
+    fun commitAuthReset() {
+        // Save the current (alternative) slot and continue using it.
+        session.setCurrentAuthSlot(authManager.slot)
         session.hasFinishedSetupPassword()
     }
 
-    fun cancelResetAuthFlow() {
-        authenticationManagerReset = authenticationManagerGeneric
-        authenticationManager = authenticationManagerReset
+    fun cancelAuthReset() {
+        // Restore the auth manager discarding the alternative slot.
+        authManager = oldAuthManager
         session.hasFinishedSetupPassword()
     }
 }

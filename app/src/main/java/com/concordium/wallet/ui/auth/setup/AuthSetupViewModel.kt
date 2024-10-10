@@ -44,9 +44,7 @@ class AuthSetupViewModel(application: Application) : AndroidViewModel(applicatio
     fun setupPassword(password: String, continueFlow: Boolean) = viewModelScope.launch {
         val isSetUpSuccessfully =
             runCatching {
-                App.appCore
-                    .getCurrentAuthenticationManager()
-                    .initPasswordAuth(password)
+                App.appCore.authManager.initPasswordAuth(password)
             }.isSuccess
 
         if (isSetUpSuccessfully) {

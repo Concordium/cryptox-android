@@ -14,8 +14,15 @@ import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.IllegalBlockSizeException
 
+/**
+ * Handles app-wide password auth and encryption.
+ *
+ * @param slot identifier of a slot to read/write the auth data into.
+ * Use AuthenticationManagers with different slots to safely update the auth
+ * in the same way the A/B flashing works in smartphones.
+ */
 class AuthenticationManager(
-    private val authKeyName: String,
+    val slot: String,
 ) {
     private val authPreferences = AuthPreferences(App.appContext)
 
@@ -27,14 +34,14 @@ class AuthenticationManager(
     ): Boolean {
         try {
             authPreferences.setEncryptedPassword(
-                authKeyName,
+                slot,
                 EncryptedData(
                     ciphertext = cipher.doFinal(password.toByteArray()),
                     iv = cipher.iv,
                     transformation = cipher.algorithm,
                 )
             )
-            authPreferences.setUseBiometrics(authKeyName, true)
+            authPreferences.setUseBiometrics(slot, true)
             return true
         } catch (e: java.lang.Exception) {
             when (e) {
@@ -51,7 +58,7 @@ class AuthenticationManager(
 
     fun generateBiometricsSecretKey(): Boolean {
         return try {
-            KeystoreHelper().generateSecretKey(authKeyName)
+            KeystoreHelper().generateSecretKey(slot)
             true
         } catch (e: KeystoreEncryptionException) {
             false
@@ -62,7 +69,7 @@ class AuthenticationManager(
      * Can throw KeystoreEncryptionException or return null in case of KeyPermanentlyInvalidatedException
      */
     fun getBiometricsCipherForEncryption(): Cipher? {
-        return KeystoreHelper().initCipherForEncryption(authKeyName)
+        return KeystoreHelper().initCipherForEncryption(slot)
     }
 
     /**
@@ -71,17 +78,17 @@ class AuthenticationManager(
     fun getBiometricsCipherForDecryption(): Cipher? {
         try {
             val cipher = KeystoreHelper().initCipherForDecryption(
-                keyName = authKeyName,
-                initVector = authPreferences.getEncryptedPassword(authKeyName).decodeIv(),
+                keyName = slot,
+                initVector = authPreferences.getEncryptedPassword(slot).decodeIv(),
             )
 
             if (cipher == null) {
-                authPreferences.setUseBiometrics(authKeyName, false)
+                authPreferences.setUseBiometrics(slot, false)
             }
 
             return cipher
         } catch (e: KeystoreEncryptionException) {
-            authPreferences.setUseBiometrics(authKeyName, false)
+            authPreferences.setUseBiometrics(slot, false)
             throw e
         }
     }
@@ -90,7 +97,7 @@ class AuthenticationManager(
         cipher: Cipher,
     ): String? = withContext(Dispatchers.Default) {
         runCatching {
-            val encryptedPassword = authPreferences.getEncryptedPassword(authKeyName)
+            val encryptedPassword = authPreferences.getEncryptedPassword(slot)
             cipher.doFinal(encryptedPassword.decodeCiphertext())
         }
             .getOrNull()
@@ -121,11 +128,11 @@ class AuthenticationManager(
             data = masterKey,
         )
         authPreferences.setPasswordKeySalt(
-            authKeyName,
+            slot,
             passwordKeySalt
         )
         authPreferences.setEncryptedMasterKey(
-            authKeyName,
+            slot,
             encryptedMasterKey
         )
     }
@@ -134,10 +141,10 @@ class AuthenticationManager(
     suspend fun getMasterKey(
         password: String,
     ): ByteArray {
-        val encryptedMasterKey = authPreferences.getEncryptedMasterKey(authKeyName)
+        val encryptedMasterKey = authPreferences.getEncryptedMasterKey(slot)
         val passwordKey = EncryptionHelper.generatePasswordKey(
             password = password.toCharArray(),
-            salt = authPreferences.getPasswordKeySalt(authKeyName),
+            salt = authPreferences.getPasswordKeySalt(slot),
         )
         return EncryptionHelper.decrypt(
             key = passwordKey,
@@ -193,14 +200,14 @@ class AuthenticationManager(
         }.getOrNull()
 
     fun usePasscode(): Boolean {
-        return authPreferences.getUsePasscode(authKeyName)
+        return authPreferences.getUsePasscode(slot)
     }
 
     fun useBiometrics(): Boolean {
-        return authPreferences.getUseBiometrics(authKeyName)
+        return authPreferences.getUseBiometrics(slot)
     }
 
     fun setUsePassCode(passcodeUsed: Boolean) {
-        authPreferences.setUsePasscode(authKeyName, passcodeUsed)
+        authPreferences.setUsePasscode(slot, passcodeUsed)
     }
 }

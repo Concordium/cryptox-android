@@ -57,18 +57,18 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
             binding.authenticationContent.passwordDescription.text = alternativeString
         } else {
             binding.authenticationContent.passwordDescription.setText(
-                if (App.appCore.getCurrentAuthenticationManager()
+                if (App.appCore.authManager
                         .usePasscode()
                 ) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description
             )
         }
 
         binding.authenticationContent.passwordEdittext.setHint(
-            if (App.appCore.getCurrentAuthenticationManager()
+            if (App.appCore.authManager
                     .usePasscode()
             ) R.string.auth_dialog_passcode else R.string.auth_dialog_password
         )
-        if (App.appCore.getCurrentAuthenticationManager().usePasscode()) {
+        if (App.appCore.authManager.usePasscode()) {
             binding.authenticationContent.passwordEdittext.inputType =
                 InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
         }
@@ -102,7 +102,7 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
     }
 
     private fun verifyPassword() = viewLifecycleOwner.lifecycleScope.launch {
-        val passwordIsValid = App.appCore.getCurrentAuthenticationManager()
+        val passwordIsValid = App.appCore.authManager
             .checkPassword(binding.authenticationContent.passwordEdittext.text.toString())
         if (passwordIsValid) {
             callback?.onCorrectPassword(binding.authenticationContent.passwordEdittext.text.toString())
@@ -112,7 +112,7 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
             binding.authenticationContent.passwordEdittext.setText("")
             binding.authenticationContent.passwordError.isVisible = true
             binding.authenticationContent.passwordError.setText(
-                if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                if (App.appCore.authManager.usePasscode())
                     R.string.auth_login_passcode_error
                 else
                     R.string.auth_login_password_error

@@ -37,13 +37,13 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun shouldShowBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
+        return App.appCore.authManager.useBiometrics()
     }
 
     fun getCipherForBiometrics(): Cipher? {
         try {
             val cipher =
-                App.appCore.getCurrentAuthenticationManager().getBiometricsCipherForDecryption()
+                App.appCore.authManager.getBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -56,13 +56,13 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun checkLogin(password: String) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val res = App.appCore.getCurrentAuthenticationManager().checkPassword(password)
+        val res = App.appCore.authManager.checkPassword(password)
         if (res) {
             loginSuccess()
         } else {
             _passwordErrorLiveData.value =
                 Event(
-                    if (App.appCore.getCurrentAuthenticationManager()
+                    if (App.appCore.authManager
                             .usePasscode()
                     ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
                 )
@@ -72,14 +72,14 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager()
+        val password = App.appCore.authManager
             .decryptPasswordWithBiometricsCipher(cipher)
         if (password != null) {
             loginSuccess()
         } else {
             _passwordErrorLiveData.value =
                 Event(
-                    if (App.appCore.getCurrentAuthenticationManager()
+                    if (App.appCore.authManager
                             .usePasscode()
                     ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
                 )
@@ -93,6 +93,6 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun usePasscode(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().usePasscode()
+        return App.appCore.authManager.usePasscode()
     }
 }
