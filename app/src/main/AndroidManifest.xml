@@ -207,19 +207,6 @@
             android:theme="@style/CCX_Screen"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
-            android:name=".ui.auth.setup.AuthSetupActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/CCX_Screen"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity
-            android:name=".ui.auth.setuprepeat.AuthSetupRepeatActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.auth.setup.AuthSetupActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CCX_Screen"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity
             android:name=".ui.auth.setuppassword.AuthSetupPasswordActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.auth.setup.AuthSetupActivity"

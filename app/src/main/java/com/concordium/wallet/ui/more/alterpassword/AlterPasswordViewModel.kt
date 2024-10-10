@@ -9,7 +9,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlterPasswordViewModel(application: Application) :
@@ -46,21 +45,18 @@ class AlterPasswordViewModel(application: Application) :
     fun initialize() {
     }
 
-    fun checkLogin(password: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun onAuthenticated(password: String) = viewModelScope.launch {
         _waitingLiveData.postValue(true)
-        handleAuthPassword(password)
-    }
-
-    private suspend fun handleAuthPassword(password: String) {
         // Decrypt the master key
-        this.decryptedMasterKey = runCatching {
+
+        decryptedMasterKey = runCatching {
             App.appCore.authManager.getMasterKey(password)
         }.getOrNull()
 
         if (decryptedMasterKey == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
             _waitingLiveData.postValue(false)
-            return
+            return@launch
         }
 
         Log.d("starting_auth_reset")
@@ -71,8 +67,12 @@ class AlterPasswordViewModel(application: Application) :
         _waitingLiveData.postValue(false)
     }
 
-    fun finishPasswordChange() = viewModelScope.launch {
-        _waitingLiveData.postValue(true)
+    fun onPasscodeSetupResult(isSetUpSuccessfully: Boolean) = viewModelScope.launch {
+        if (!isSetUpSuccessfully) {
+            App.appCore.cancelAuthReset()
+            Log.d("cancelled_auth_reset")
+            return@launch
+        }
 
         Log.d("trying_reinit_password_auth")
 
