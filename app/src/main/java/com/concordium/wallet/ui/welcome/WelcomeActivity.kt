@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.data.preferences.TrackingPreferences
 import com.concordium.wallet.databinding.ActivityWelcomeBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.handleUrlClicks
@@ -15,10 +16,14 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
     }
 
+    private val trackingPreferences: TrackingPreferences by lazy {
+        TrackingPreferences(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding.consentTextView.handleUrlClicks { url ->
+        binding.termsTextView.handleUrlClicks { url ->
             when (url) {
                 "#terms" ->
                     openTerms()
@@ -29,13 +34,14 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 }
             }
         }
-        binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
+        binding.termsCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 App.appCore.tracker.welcomeCheckBoxChecked()
             }
             binding.getStartedButton.isEnabled = isChecked
         }
         binding.getStartedButton.setOnClickListener {
+            trackingPreferences.isTrackingEnabled = binding.activityTrackingCheckBox.isChecked
             App.appCore.tracker.welcomeGetStartedClicked()
             goToStart()
         }

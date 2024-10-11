@@ -978,10 +978,11 @@
     <string name="welcome_point_3_details">With CryptoX you can make transactions
         to invest, earn, sell, play games and more!</string>
     <string name="welcome_get_started">Get started</string>
-    <string name="welcome_consent">I have read and accept
+    <string name="welcome_terms">I have read and accept
         <a href="#terms">Terms and Conditions</a>
         and <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
+    <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
     <string name="welcome_promo_activate_and_get">Activate your account and get access to all the features</string>
     <string name="welcome_promo_watch_video">Watch video</string>
     <string name="welcome_promo_activate_account">Activate account</string>
