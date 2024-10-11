@@ -360,12 +360,14 @@
             android:name=".ui.recipient.recipientlist.RecipientListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.recipient.recipient.RecipientActivity"
             android:launchMode="singleTop"
@@ -538,15 +540,18 @@
             android:name=".ui.more.unshielding.UnshieldingAccountsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.unshielding.UnshieldingActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.tracking.TrackingPreferencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.onramp.CcdOnrampSitesActivity"
             android:launchMode="singleTop"
@@ -560,7 +565,8 @@
         <activity
             android:name=".ui.more.notifications.NotificationsPreferencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"/>
     </application>
 
 </manifest>
