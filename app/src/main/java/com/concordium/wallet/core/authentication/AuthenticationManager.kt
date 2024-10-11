@@ -17,6 +17,15 @@ import javax.crypto.IllegalBlockSizeException
 /**
  * Handles app-wide password auth and encryption.
  *
+ * In the app, all the encryption is done with a single master key.
+ * The master key is stored encrypted with a key derived from the password.
+ * If the biometric auth is set up, the password is also stored encrypted
+ * with a key from Android keystore and a dedicated cipher for biometrics.
+ *
+ * When the password is changed, only the master key gets re-encrypted
+ * as well as the encrypted password for biometrics, if set up.
+ * But all the encrypted data remains intact.
+ *
  * @param slot identifier of a slot to read/write the auth data into.
  * Use AuthenticationManagers with different slots to safely update the auth
  * in the same way the A/B flashing works in smartphones.
