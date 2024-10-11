@@ -60,6 +60,8 @@ class AppCore(val context: Context) {
     var authManager: AuthenticationManager = AuthenticationManager(session.getCurrentAuthSlot())
         private set
     private var oldAuthManager = authManager
+    var authResetMasterKey: ByteArray? = null
+        private set
 
     fun getNotificationsBackend(): NotificationsBackend {
         return notificationsBackendConfig.backend
@@ -88,22 +90,33 @@ class AppCore(val context: Context) {
         return gsonBuilder.create()
     }
 
-    fun beginAuthReset() {
+    /**
+     * Allows manipulating the [authManager] without making the change permanent
+     * until [commitAuthReset] is called. In case of failure, call [cancelAuthReset].
+     *
+     * @param decryptedMasterKey to be used for during the reset, see [authResetMasterKey]
+     */
+    fun beginAuthReset(decryptedMasterKey: ByteArray) {
         // Back up the current auth manager and replace it
         // with the one with an alternative slot.
         oldAuthManager = authManager
         authManager = AuthenticationManager(
             slot = System.currentTimeMillis().toString()
         )
+        // Store the decrypted master key in memory
+        // to re-init the auth with it later.
+        this.authResetMasterKey = decryptedMasterKey
     }
 
     fun commitAuthReset() {
+        authResetMasterKey = null
         // Save the current (alternative) slot and continue using it.
         session.setCurrentAuthSlot(authManager.slot)
         session.hasFinishedSetupPassword()
     }
 
     fun cancelAuthReset() {
+        authResetMasterKey = null
         // Restore the auth manager discarding the alternative slot.
         authManager = oldAuthManager
         session.hasFinishedSetupPassword()

@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.setupbiometrics
+package com.concordium.wallet.ui.auth.setup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -23,7 +23,6 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
         get() = _finishScreenLiveData
 
     fun initialize() {
-
         val generated = App.appCore.authManager.generateBiometricsSecretKey()
         if (!generated) {
             _errorLiveData.value = Event(R.string.app_error_keystore)

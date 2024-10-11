@@ -47,9 +47,8 @@ class AlterPasswordViewModel(application: Application) :
 
     fun onAuthenticated(password: String) = viewModelScope.launch {
         _waitingLiveData.postValue(true)
-        // Decrypt the master key
 
-        decryptedMasterKey = runCatching {
+        val decryptedMasterKey = runCatching {
             App.appCore.authManager.getMasterKey(password)
         }.getOrNull()
 
@@ -61,7 +60,7 @@ class AlterPasswordViewModel(application: Application) :
 
         Log.d("starting_auth_reset")
 
-        App.appCore.beginAuthReset()
+        App.appCore.beginAuthReset(decryptedMasterKey)
 
         _doneInitialAuthenticationLiveData.postValue(Event(true))
         _waitingLiveData.postValue(false)
@@ -77,25 +76,14 @@ class AlterPasswordViewModel(application: Application) :
         Log.d("trying_reinit_password_auth")
 
         try {
-            App.appCore.authManager.initPasswordAuth(
-                password = App.appCore.session.getPasswordToSetUp()
-                    ?: error("Finishing password change while there is no password to set up"),
-                masterKey = decryptedMasterKey
-                    ?: error("Finishing password change while there is no decrypted master key")
-            )
-
             App.appCore.commitAuthReset()
-
             _doneFinalChangePasswordLiveData.postValue(Event(true))
-
             Log.d("committed_auth_reset")
         } catch (e: Exception) {
-            Log.e("failed_to_reinit_password_auth", e)
+            Log.e("failed_to_committed_auth_reset", e)
 
             App.appCore.cancelAuthReset()
-
             Log.d("cancelled_auth_reset")
-
             _errorFinalChangePasswordLiveData.postValue(Event(true))
         } finally {
             _waitingLiveData.postValue(false)

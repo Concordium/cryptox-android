@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.passcode
+package com.concordium.wallet.ui.auth.setup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class PasscodeSetupViewModel(application: Application) : AndroidViewModel(application) {
+class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(application) {
     private val session: Session = App.appCore.session
 
     private val mutableStateFlow = MutableStateFlow<State>(
@@ -63,10 +63,19 @@ class PasscodeSetupViewModel(application: Application) : AndroidViewModel(applic
 
         session.startPasswordSetup(confirmedPasscode)
 
-        val isSetUpSuccessfully =
-            runCatching {
-                App.appCore.authManager.initPasswordAuth(confirmedPasscode)
-            }.isSuccess
+        val isSetUpSuccessfully = runCatching {
+            val authResetMasterKey = App.appCore.authResetMasterKey
+            if (authResetMasterKey != null) {
+                App.appCore.authManager.initPasswordAuth(
+                    password = confirmedPasscode,
+                    masterKey = authResetMasterKey,
+                )
+            } else {
+                App.appCore.authManager.initPasswordAuth(
+                    password = confirmedPasscode,
+                )
+            }
+        }.isSuccess
 
         if (isSetUpSuccessfully) {
             onSetUpSuccessfully(usedPasscode = true)

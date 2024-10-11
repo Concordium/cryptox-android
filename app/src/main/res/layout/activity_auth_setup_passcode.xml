@@ -30,7 +30,7 @@
         app:layout_constraintBottom_toTopOf="@id/passcode_input_view"
         tools:text="@string/template_passcode_create_details" />
 
-    <com.concordium.wallet.ui.auth.passcode.CcxPasscodeInputView
+    <com.concordium.wallet.ui.auth.setup.CcxPasscodeInputView
         android:id="@+id/passcode_input_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

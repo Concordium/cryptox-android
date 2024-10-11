@@ -106,6 +106,10 @@ class AuthenticationManager(
 
     //endregion
 
+    /**
+     * Initializes the password auth generating a new encryption master key.
+     * Use this method to init the auth for the first time.
+     */
     @Throws(EncryptionException::class)
     suspend fun initPasswordAuth(password: String) =
         initPasswordAuth(
@@ -113,6 +117,11 @@ class AuthenticationManager(
             masterKey = EncryptionHelper.generateKey(),
         )
 
+    /**
+     * Initializes the password auth reusing the existing master key.
+     * Use this method in combination with the current master key
+     * to change the existing password.
+     */
     @Throws(EncryptionException::class)
     suspend fun initPasswordAuth(
         password: String,

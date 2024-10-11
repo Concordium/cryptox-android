@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.setuppassword
+package com.concordium.wallet.ui.auth.setup.password
 
 import android.app.Activity
 import android.content.Intent
@@ -9,12 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.databinding.ActivityAuthSetupPasswordBinding
-import com.concordium.wallet.ui.auth.setupbiometrics.AuthSetupBiometricsActivity
-import com.concordium.wallet.ui.auth.setuppasswordrepeat.AuthSetupPasswordRepeatActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 
+/**
+ * This screen should only be called from the passcode setup.
+ * It does not suggest biometrics and does not finalize session password setup.
+ */
 class AuthSetupPasswordActivity : BaseActivity(
     R.layout.activity_auth_setup_password,
     R.string.auth_setup_password_title
@@ -24,14 +26,9 @@ class AuthSetupPasswordActivity : BaseActivity(
         ActivityAuthSetupPasswordBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private val skipBiometrics: Boolean by lazy {
-        intent.getBooleanExtra(SKIP_BIOMETRICS, false)
-    }
-
     companion object {
         private const val REQUEST_CODE_AUTH_SETUP_BIOMETRICS = 2000
         private const val REQUEST_CODE_AUTH_SETUP_PASSWORD_REPEAT = 2001
-        const val SKIP_BIOMETRICS = "skip_biometrics"
     }
 
     //region Lifecycle
@@ -41,7 +38,7 @@ class AuthSetupPasswordActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         initializeViewModel()
-        viewModel.initialize(skipBiometrics)
+        viewModel.initialize()
         initializeViews()
 
         hideActionBarBack(isVisible = true)
@@ -99,13 +96,6 @@ class AuthSetupPasswordActivity : BaseActivity(
                 }
             }
         })
-        viewModel.gotoBiometricsSetupLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-                    gotoAuthSetupBiometrics()
-                }
-            }
-        })
     }
 
     private fun initializeViews() {
@@ -155,11 +145,6 @@ class AuthSetupPasswordActivity : BaseActivity(
             binding.errorTextview.isVisible = true
             binding.errorTextview.setText(R.string.auth_error_password_not_valid)
         }
-    }
-
-    private fun gotoAuthSetupBiometrics() {
-        val intent = Intent(this, AuthSetupBiometricsActivity::class.java)
-        startActivityForResult(intent, REQUEST_CODE_AUTH_SETUP_BIOMETRICS)
     }
 
     private fun gotoAuthSetupPasswordRepeat() {

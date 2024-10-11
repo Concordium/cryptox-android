@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.setuppassword
+package com.concordium.wallet.ui.auth.setup.password
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.util.BiometricsUtil
 import kotlinx.coroutines.launch
 
 class AuthSetupPasswordViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,17 +20,12 @@ class AuthSetupPasswordViewModel(application: Application) : AndroidViewModel(ap
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
-    private val _gotoBiometricsSetupLiveData = MutableLiveData<Event<Boolean>>()
-    val gotoBiometricsSetupLiveData: LiveData<Event<Boolean>>
-        get() = _gotoBiometricsSetupLiveData
-    private var skipBiometrics = true
 
-    fun initialize(skipBiometrics: Boolean) {
-        this.skipBiometrics = skipBiometrics
+    fun initialize() {
     }
 
     fun startSetupPassword(password: String) {
-        // Keep password for re-enter check and biometrics activation
+        // Keep password for re-enter check and biometrics activation (outside this screen).
         session.startPasswordSetup(password)
     }
 
@@ -40,24 +34,22 @@ class AuthSetupPasswordViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun setupPassword(password: String) = viewModelScope.launch {
-        val isSetUpSuccessfully =
-            runCatching {
-                App.appCore.authManager.initPasswordAuth(password)
-            }.isSuccess
+        val isSetUpSuccessfully = runCatching {
+            val authResetMasterKey = App.appCore.authResetMasterKey
+            if (authResetMasterKey != null) {
+                App.appCore.authManager.initPasswordAuth(
+                    password = password,
+                    masterKey = authResetMasterKey,
+                )
+            } else {
+                App.appCore.authManager.initPasswordAuth(
+                    password = password,
+                )
+            }
+        }.isSuccess
 
         if (isSetUpSuccessfully) {
-            // Setting up password is done, so login screen should be shown next time app is opened
-            session.hasSetupPassword()
-            if (BiometricsUtil.isBiometricsAvailable()) {
-                if (skipBiometrics) {
-                    _finishScreenLiveData.value = Event(true)
-                } else {
-                    _gotoBiometricsSetupLiveData.value = Event(true)
-                }
-            } else {
-                session.hasFinishedSetupPassword()
-                _finishScreenLiveData.value = Event(true)
-            }
+            _finishScreenLiveData.value = Event(true)
         } else {
             _errorLiveData.value = Event(true)
         }

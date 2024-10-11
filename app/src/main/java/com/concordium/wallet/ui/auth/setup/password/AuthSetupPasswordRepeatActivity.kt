@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.setuppasswordrepeat
+package com.concordium.wallet.ui.auth.setup.password
 
 import android.app.Activity
 import android.content.Intent

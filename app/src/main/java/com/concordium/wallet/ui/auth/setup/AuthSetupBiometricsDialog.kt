@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.passcode
+package com.concordium.wallet.ui.auth.setup
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -12,15 +12,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
-import com.concordium.wallet.databinding.DialogPasscodeSetupBiometricsBinding
-import com.concordium.wallet.ui.auth.setupbiometrics.AuthSetupBiometricsViewModel
+import com.concordium.wallet.databinding.DialogAuthSetupBiometricsBinding
 import javax.crypto.Cipher
 
-class PasscodeSetupBiometricsDialog : AppCompatDialogFragment() {
+class AuthSetupBiometricsDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
         R.style.CCX_Dialog
 
-    private lateinit var binding: DialogPasscodeSetupBiometricsBinding
+    private lateinit var binding: DialogAuthSetupBiometricsBinding
     private lateinit var viewModel: AuthSetupBiometricsViewModel
     private lateinit var biometricPrompt: BiometricPrompt
 
@@ -29,7 +28,7 @@ class PasscodeSetupBiometricsDialog : AppCompatDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogPasscodeSetupBiometricsBinding.inflate(inflater, container, false)
+        binding = DialogAuthSetupBiometricsBinding.inflate(inflater, container, false)
         return binding.root
     }
 

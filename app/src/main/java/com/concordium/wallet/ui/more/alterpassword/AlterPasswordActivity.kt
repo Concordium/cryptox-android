@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.databinding.ActivityAlterpasswordBinding
-import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
+import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -67,7 +67,7 @@ class AlterPasswordActivity : BaseActivity(
                     passcodeSetupLauncher.launch(
                         Intent(
                             this@AlterPasswordActivity,
-                            PasscodeSetupActivity::class.java
+                            AuthSetupPasscodeActivity::class.java
                         )
                     )
                 }

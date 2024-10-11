@@ -11,7 +11,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomePromoBinding
-import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
+import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPermissionDialog
 import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
@@ -94,7 +94,7 @@ class WelcomePromoActivity :
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a new wallet.
                         passcodeSetupForCreateLauncher
-                            .launch(Intent(this, PasscodeSetupActivity::class.java))
+                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
                     } else {
                         goToCreateWallet()
                     }
@@ -103,7 +103,7 @@ class WelcomePromoActivity :
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a import an existing wallet.
                         passcodeSetupForImportLauncher
-                            .launch(Intent(this, PasscodeSetupActivity::class.java))
+                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
                     } else {
                         goToImportWallet()
                     }

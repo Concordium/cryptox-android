@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.passcode
+package com.concordium.wallet.ui.auth.setup
 
 import android.content.Context
 import android.util.AttributeSet

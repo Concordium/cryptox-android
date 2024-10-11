@@ -70,6 +70,8 @@ class Session {
     }
 
     fun hasFinishedSetupPassword() {
+        println("OOLEG here")
+        Exception().printStackTrace()
         tempPassword = null
     }
 

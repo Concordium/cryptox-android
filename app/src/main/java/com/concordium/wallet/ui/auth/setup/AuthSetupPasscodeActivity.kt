@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.auth.passcode
+package com.concordium.wallet.ui.auth.setup
 
 import android.app.Activity
 import android.content.DialogInterface
@@ -10,24 +10,24 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isInvisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ActivityPasscodeSetupBinding
+import com.concordium.wallet.databinding.ActivityAuthSetupPasscodeBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.auth.setuppassword.AuthSetupPasswordActivity
+import com.concordium.wallet.ui.auth.setup.password.AuthSetupPasswordActivity
 import com.concordium.wallet.ui.base.BaseActivity
 
-class PasscodeSetupActivity :
-    BaseActivity(R.layout.activity_passcode_setup),
+class AuthSetupPasscodeActivity :
+    BaseActivity(R.layout.activity_auth_setup_passcode),
     OnDismissListener {
 
-    private val binding: ActivityPasscodeSetupBinding by lazy {
-        ActivityPasscodeSetupBinding.bind(findViewById(R.id.toastLayoutTopError))
+    private val binding: ActivityAuthSetupPasscodeBinding by lazy {
+        ActivityAuthSetupPasscodeBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private val viewModel: PasscodeSetupViewModel by lazy {
+    private val viewModel: AuthSetupPasscodeViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[PasscodeSetupViewModel::class.java]
+        )[AuthSetupPasscodeViewModel::class.java]
     }
 
     private val getResultAuthSetupFullPassword =
@@ -50,7 +50,7 @@ class PasscodeSetupActivity :
         length = viewModel.passcodeLength
         biometricsButton.isInvisible = true
 
-        mutableInput.observe(this@PasscodeSetupActivity) { inputValue ->
+        mutableInput.observe(this@AuthSetupPasscodeActivity) { inputValue ->
             if (inputValue.length == viewModel.passcodeLength) {
                 viewModel.onPasscodeEntered(inputValue)
             }
@@ -68,31 +68,31 @@ class PasscodeSetupActivity :
     private fun subscribeToState(
     ) = viewModel.stateFlow.collectWhenStarted(this) { state ->
         binding.titleTextView.text = when (state) {
-            is PasscodeSetupViewModel.State.Create -> getString(R.string.passcode_create_title)
-            PasscodeSetupViewModel.State.Repeat -> getString(R.string.passcode_repeat_title)
+            is AuthSetupPasscodeViewModel.State.Create -> getString(R.string.passcode_create_title)
+            AuthSetupPasscodeViewModel.State.Repeat -> getString(R.string.passcode_repeat_title)
         }
 
         binding.detailsTextView.text = when (state) {
-            is PasscodeSetupViewModel.State.Create -> getString(
+            is AuthSetupPasscodeViewModel.State.Create -> getString(
                 R.string.template_passcode_create_details,
                 viewModel.passcodeLength
             )
 
-            PasscodeSetupViewModel.State.Repeat -> getString(
+            AuthSetupPasscodeViewModel.State.Repeat -> getString(
                 R.string.template_passcode_repeat_details,
                 viewModel.passcodeLength
             )
         }
 
         when (state) {
-            is PasscodeSetupViewModel.State.Create -> {
+            is AuthSetupPasscodeViewModel.State.Create -> {
                 binding.passcodeInputView.reset()
                 if (state.hasError) {
                     binding.passcodeInputView.animateError()
                 }
             }
 
-            PasscodeSetupViewModel.State.Repeat -> {
+            AuthSetupPasscodeViewModel.State.Repeat -> {
                 binding.passcodeInputView.reset()
             }
         }
@@ -101,23 +101,23 @@ class PasscodeSetupActivity :
     private fun subscribeToEvents(
     ) = viewModel.eventsFlow.collect(this) { event ->
         when (event) {
-            PasscodeSetupViewModel.Event.FinishWithSuccess -> {
+            AuthSetupPasscodeViewModel.Event.FinishWithSuccess -> {
                 setResult(Activity.RESULT_OK)
                 finish()
             }
 
-            PasscodeSetupViewModel.Event.ShowFatalError -> {
+            AuthSetupPasscodeViewModel.Event.ShowFatalError -> {
                 showError(R.string.passcode_setup_failed)
             }
 
-            PasscodeSetupViewModel.Event.SuggestBiometricsSetup -> {
-                PasscodeSetupBiometricsDialog().show(
+            AuthSetupPasscodeViewModel.Event.SuggestBiometricsSetup -> {
+                AuthSetupBiometricsDialog().show(
                     supportFragmentManager,
-                    PasscodeSetupBiometricsDialog.TAG
+                    AuthSetupBiometricsDialog.TAG
                 )
             }
 
-            PasscodeSetupViewModel.Event.OpenFullPasswordSetUp ->
+            AuthSetupPasscodeViewModel.Event.OpenFullPasswordSetUp ->
                 goToAuthSetupPassword()
         }
     }
@@ -129,7 +129,6 @@ class PasscodeSetupActivity :
 
     private fun goToAuthSetupPassword() {
         val intent = Intent(this, AuthSetupPasswordActivity::class.java)
-        intent.putExtra(AuthSetupPasswordActivity.SKIP_BIOMETRICS, true)
         getResultAuthSetupFullPassword.launch(intent)
     }
 

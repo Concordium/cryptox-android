@@ -207,22 +207,18 @@
             android:theme="@style/CCX_Screen"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
-            android:name=".ui.auth.setuppassword.AuthSetupPasswordActivity"
+            android:name=".ui.auth.setup.password.AuthSetupPasswordActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.auth.setup.AuthSetupActivity"
+            android:parentActivityName=".ui.auth.setup.AuthSetupPasscodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
-            android:name=".ui.auth.setuppasswordrepeat.AuthSetupPasswordRepeatActivity"
+            android:name=".ui.auth.setup.password.AuthSetupPasswordRepeatActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity
-            android:name=".ui.auth.setupbiometrics.AuthSetupBiometricsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.identity.identitycreate.IdentityIntroFlow"
             android:launchMode="singleTop"
@@ -502,7 +498,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/CCX_WelcomePromoScreen" />
         <activity
-            android:name=".ui.auth.passcode.PasscodeSetupActivity"
+            android:name=".ui.auth.setup.AuthSetupPasscodeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
