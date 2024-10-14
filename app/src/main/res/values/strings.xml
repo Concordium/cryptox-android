@@ -1194,4 +1194,8 @@
         <item quantity="other">%1$d days left</item>
     </plurals>
     <string name="learn_more_icon">Learn more</string>
+
+    <string name="unlock_feature_title">Unlock this feature</string>
+    <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
+    <string name="unlock_feature_go_back_button">Go back</string>
 </resources>
