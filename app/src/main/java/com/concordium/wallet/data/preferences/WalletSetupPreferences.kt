@@ -83,15 +83,13 @@ class WalletSetupPreferences(
         val authenticationManager = App.appCore.authManager
 
         // Try the encrypted entropy.
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
-            ?.let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
             ?.let { authenticationManager.decrypt(password, it) }
             ?.let { Mnemonics.MnemonicCode(it).toSeed().toHex() }
             ?.let { return it }
 
         // Try the encrypted seed.
-        getString(PREFKEY_ENCRYPTED_SEED_JSON)
-            ?.let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_JSON)
             ?.let { authenticationManager.decrypt(password, it) }
             ?.let { return it.toHex() }
 
@@ -102,8 +100,7 @@ class WalletSetupPreferences(
      * @see hasEncryptedSeedPhrase
      */
     suspend fun getSeedPhrase(password: String): String =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
-            ?.let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
             ?.let { App.appCore.authManager.decrypt(password, it) }
             ?.let {
                 Mnemonics.MnemonicCode(it).words.joinToString(

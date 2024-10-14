@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
-import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.walletconnect.util.hexToBytes
@@ -35,27 +34,19 @@ class AppAuthPreferences(
     }
 
     fun setEncryptedPassword(slot: String, value: EncryptedData) {
-        setString(
-            PREFKEY_ENCRYPTED_PASSWORD_JSON + slot,
-            App.appCore.gson.toJson(value)
-        )
+        setJsonSerialized(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot, value)
     }
 
     fun getEncryptedPassword(slot: String): EncryptedData {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot)!!
-            .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+        return getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot)!!
     }
 
     fun setEncryptedMasterKey(slot: String, value: EncryptedData) {
-        setString(
-            PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot,
-            App.appCore.gson.toJson(value)
-        )
+        setJsonSerialized(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot, value)
     }
 
     fun getEncryptedMasterKey(slot: String): EncryptedData {
-        return getString(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot)!!
-            .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
+        return getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot)!!
     }
 
     fun getCurrentAuthSlot(): String {
