@@ -4,7 +4,9 @@ import android.content.Context
 import com.concordium.wallet.ui.tokens.provider.ProviderMeta
 import com.google.gson.Gson
 
-class ProviderPreferences(val context: Context) : Preferences(context, SharedPreferencesKeys.PREF_FILE_PROVIDER.key, Context.MODE_PRIVATE) {
+class WalletProviderPreferences(
+    val context: Context,
+) : Preferences(context, SharedPreferenceFiles.WALLET_PROVIDER.key, Context.MODE_PRIVATE) {
 
     private val gson by lazy {
         Gson()

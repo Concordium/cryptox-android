@@ -12,7 +12,7 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -103,7 +103,7 @@ private constructor(
         IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
     }
     private val keyCreationVersion: KeyCreationVersion by lazy {
-        KeyCreationVersion(AuthPreferences(application))
+        KeyCreationVersion(WalletSetupPreferences(application))
     }
 
     private lateinit var sessionProposalPublicKey: String

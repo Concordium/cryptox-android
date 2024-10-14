@@ -6,7 +6,7 @@ import com.concordium.wallet.core.security.EncryptionHelper
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.core.security.KeystoreHelper
 import com.concordium.wallet.data.model.EncryptedData
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.AppAuthPreferences
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,7 +33,7 @@ import javax.crypto.IllegalBlockSizeException
 class AuthenticationManager(
     val slot: String,
 ) {
-    private val authPreferences = AuthPreferences(App.appContext)
+    private val appAuthPreferences = AppAuthPreferences(App.appContext)
 
     // region Biometrics
 
@@ -42,7 +42,7 @@ class AuthenticationManager(
         cipher: Cipher,
     ): Boolean {
         try {
-            authPreferences.setEncryptedPassword(
+            appAuthPreferences.setEncryptedPassword(
                 slot,
                 EncryptedData(
                     ciphertext = cipher.doFinal(password.toByteArray()),
@@ -50,7 +50,7 @@ class AuthenticationManager(
                     transformation = cipher.algorithm,
                 )
             )
-            authPreferences.setUseBiometrics(slot, true)
+            appAuthPreferences.setUseBiometrics(slot, true)
             return true
         } catch (e: java.lang.Exception) {
             when (e) {
@@ -88,16 +88,16 @@ class AuthenticationManager(
         try {
             val cipher = KeystoreHelper().initCipherForDecryption(
                 keyName = slot,
-                initVector = authPreferences.getEncryptedPassword(slot).decodeIv(),
+                initVector = appAuthPreferences.getEncryptedPassword(slot).decodeIv(),
             )
 
             if (cipher == null) {
-                authPreferences.setUseBiometrics(slot, false)
+                appAuthPreferences.setUseBiometrics(slot, false)
             }
 
             return cipher
         } catch (e: KeystoreEncryptionException) {
-            authPreferences.setUseBiometrics(slot, false)
+            appAuthPreferences.setUseBiometrics(slot, false)
             throw e
         }
     }
@@ -106,7 +106,7 @@ class AuthenticationManager(
         cipher: Cipher,
     ): String? = withContext(Dispatchers.Default) {
         runCatching {
-            val encryptedPassword = authPreferences.getEncryptedPassword(slot)
+            val encryptedPassword = appAuthPreferences.getEncryptedPassword(slot)
             cipher.doFinal(encryptedPassword.decodeCiphertext())
         }
             .getOrNull()
@@ -145,11 +145,11 @@ class AuthenticationManager(
             key = passwordKey,
             data = masterKey,
         )
-        authPreferences.setPasswordKeySalt(
+        appAuthPreferences.setPasswordKeySalt(
             slot,
             passwordKeySalt
         )
-        authPreferences.setEncryptedMasterKey(
+        appAuthPreferences.setEncryptedMasterKey(
             slot,
             encryptedMasterKey
         )
@@ -159,10 +159,10 @@ class AuthenticationManager(
     suspend fun getMasterKey(
         password: String,
     ): ByteArray {
-        val encryptedMasterKey = authPreferences.getEncryptedMasterKey(slot)
+        val encryptedMasterKey = appAuthPreferences.getEncryptedMasterKey(slot)
         val passwordKey = EncryptionHelper.generatePasswordKey(
             password = password.toCharArray(),
-            salt = authPreferences.getPasswordKeySalt(slot),
+            salt = appAuthPreferences.getPasswordKeySalt(slot),
         )
         return EncryptionHelper.decrypt(
             key = passwordKey,
@@ -218,14 +218,14 @@ class AuthenticationManager(
         }.getOrNull()
 
     fun usePasscode(): Boolean {
-        return authPreferences.getUsePasscode(slot)
+        return appAuthPreferences.getUsePasscode(slot)
     }
 
     fun useBiometrics(): Boolean {
-        return authPreferences.getUseBiometrics(slot)
+        return appAuthPreferences.getUseBiometrics(slot)
     }
 
     fun setUsePassCode(passcodeUsed: Boolean) {
-        authPreferences.setUsePasscode(slot, passcodeUsed)
+        appAuthPreferences.setUsePasscode(slot, passcodeUsed)
     }
 }

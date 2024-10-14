@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
@@ -22,7 +22,7 @@ import kotlin.system.exitProcess
 
 class MoreOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val authPreferences = AuthPreferences(application)
+    private val walletSetupPreferences = WalletSetupPreferences(application)
     private val accountRepository: AccountRepository by lazy {
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         AccountRepository(accountDao)
@@ -54,20 +54,20 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     fun updateOptionsVisibility() = viewModelScope.launch {
         // Seed recovery is visible when there is a seed.
-        _seedRecoveryVisibilityLiveData.postValue(authPreferences.hasEncryptedSeed())
+        _seedRecoveryVisibilityLiveData.postValue(walletSetupPreferences.hasEncryptedSeed())
         // File import and export are visible if the backup is possible.
         _fileImportExportVisibilityLiveData.postValue(App.appCore.session.isAccountsBackupPossible())
         // Seed phrase reveal is visible when there is an encrypted saved version of it.
-        _seedPhraseRevealVisibilityLiveData.postValue(authPreferences.hasEncryptedSeedPhrase())
+        _seedPhraseRevealVisibilityLiveData.postValue(walletSetupPreferences.hasEncryptedSeedPhrase())
         // Seed reveal is visible when there is an encrypted saved version of it,
         // while the phrase is not available.
         _seedRevealVisibilityLiveData.postValue(
-            authPreferences.hasEncryptedSeed() && !authPreferences.hasEncryptedSeedPhrase()
+            walletSetupPreferences.hasEncryptedSeed() && !walletSetupPreferences.hasEncryptedSeedPhrase()
         )
         // Wallet erase is visible if the initial setup is completed.
         _walletEraseVisibilityLiveData.postValue(App.appCore.session.hasCompletedInitialSetup)
         // Password alter is visible if it is set up.
-        _passwordAlterVisibilityLiveData.postValue(authPreferences.getHasSetupUser())
+        _passwordAlterVisibilityLiveData.postValue(walletSetupPreferences.getHasSetupUser())
         // Unshielding is visible if may be required.
         _unshieldingVisibilityLiveData.postValue(
             accountRepository.getAllDone().any(Account::mayNeedUnshielding)

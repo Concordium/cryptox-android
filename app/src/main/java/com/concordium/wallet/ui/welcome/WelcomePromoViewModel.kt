@@ -3,16 +3,16 @@ package com.concordium.wallet.ui.welcome
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.concordium.wallet.App
-import com.concordium.wallet.data.preferences.TrackingPreferences
+import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import java.math.BigInteger
 
 class WelcomePromoViewModel(application: Application) : AndroidViewModel(application) {
-    private val trackingPreferences: TrackingPreferences by lazy {
-        TrackingPreferences(application)
+    private val appTrackingPreferences: AppTrackingPreferences by lazy {
+        AppTrackingPreferences(application)
     }
 
     val shouldShowTrackingPermissionDialog: Boolean
-        get() = !trackingPreferences.hasDecidedOnPermission
+        get() = !appTrackingPreferences.hasDecidedOnPermission
     val shouldSetUpPassword: Boolean
         get() = !App.appCore.session.hasSetupPassword
     val accountActivationReward = BigInteger("1000000000")

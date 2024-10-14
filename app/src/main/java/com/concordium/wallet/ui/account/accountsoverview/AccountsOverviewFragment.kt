@@ -14,7 +14,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -57,7 +57,7 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-        keyCreationVersion = KeyCreationVersion(AuthPreferences(requireContext()))
+        keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(requireContext()))
     }
 
     override fun onCreateView(

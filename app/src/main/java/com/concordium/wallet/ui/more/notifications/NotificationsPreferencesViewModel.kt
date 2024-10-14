@@ -6,14 +6,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
-import com.concordium.wallet.data.preferences.NotificationsPreferences
+import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NotificationsPreferencesViewModel(application: Application) : AndroidViewModel(application) {
-    private val notificationsPreferences = NotificationsPreferences(application)
+    private val walletNotificationsPreferences = WalletNotificationsPreferences(application)
     private val updateNotificationsSubscriptionUseCase =
         UpdateNotificationsSubscriptionUseCase(application)
 
@@ -34,9 +34,9 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
 
     init {
         _areCcdTxNotificationsEnabledFlow.value =
-            notificationsPreferences.areCcdTxNotificationsEnabled
+            walletNotificationsPreferences.areCcdTxNotificationsEnabled
         _areCis2TxNotificationsEnabledFlow.value =
-            notificationsPreferences.areCis2TxNotificationsEnabled
+            walletNotificationsPreferences.areCis2TxNotificationsEnabled
     }
 
     fun onCcdTxClicked() = viewModelScope.launch {
@@ -55,7 +55,7 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
         Log.d("success: $success")
         if (success) {
             _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled
-            notificationsPreferences.areCcdTxNotificationsEnabled = areCcdTxNotificationsEnabled
+            walletNotificationsPreferences.areCcdTxNotificationsEnabled = areCcdTxNotificationsEnabled
         }
 
         _isCcdSwitchEnabledFlow.value = true
@@ -78,7 +78,7 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
         Log.d("success: $success")
         if (success) {
             _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled
-            notificationsPreferences.areCis2TxNotificationsEnabled = areCis2TxNotificationsEnabled
+            walletNotificationsPreferences.areCis2TxNotificationsEnabled = areCis2TxNotificationsEnabled
         }
 
         _isCcdSwitchEnabledFlow.value = true
@@ -95,8 +95,8 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     }
 
     private suspend fun updateNotificationsSubscription(
-        isCcdTxEnabled: Boolean = notificationsPreferences.areCcdTxNotificationsEnabled,
-        isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled,
+        isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
+        isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled,
     ): Boolean {
         Log.d(
             "updating_subscriptions:" +

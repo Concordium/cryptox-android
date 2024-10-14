@@ -3,7 +3,7 @@ package com.concordium.wallet.ui.seed.reveal
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -42,7 +42,7 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
 
     private fun decryptAndRevealPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {
         val seedPhrase = try {
-            AuthPreferences(getApplication()).getSeedPhrase(password)
+            WalletSetupPreferences(getApplication()).getSeedPhrase(password)
         } catch (e: Exception) {
             Log.e("phrase_decrypt_failed", e)
 

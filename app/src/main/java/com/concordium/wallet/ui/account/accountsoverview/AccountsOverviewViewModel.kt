@@ -14,8 +14,8 @@ import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionU
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.data.preferences.NotificationsPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
+import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -65,7 +65,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val keyCreationVersion: KeyCreationVersion
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
-    private val notificationsPreferences: NotificationsPreferences
+    private val walletNotificationsPreferences: WalletNotificationsPreferences
 
     private val updateNotificationsSubscriptionUseCase by lazy {
         UpdateNotificationsSubscriptionUseCase(application)
@@ -107,13 +107,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.postValue(Event(stringRes))
             }
         })
-        keyCreationVersion = KeyCreationVersion(AuthPreferences(application))
+        keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(application))
         ccdOnrampSiteRepository = CcdOnrampSiteRepository()
         accountsObserver = Observer { accountsWithIdentity ->
             postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
-        notificationsPreferences = NotificationsPreferences(application)
+        walletNotificationsPreferences = WalletNotificationsPreferences(application)
         updateNotificationSubscription()
     }
 
@@ -218,7 +218,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         }
 
         // Show notifications permission if never shown.
-        if (!notificationsPreferences.hasEverShownPermissionDialog) {
+        if (!walletNotificationsPreferences.hasEverShownPermissionDialog) {
             dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
         }
 

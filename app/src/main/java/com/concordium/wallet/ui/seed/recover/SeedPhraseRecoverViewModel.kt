@@ -10,7 +10,7 @@ import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.ui.seed.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
@@ -96,7 +96,7 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun setSeedPhrase(seed: String, password: String) = viewModelScope.launch {
-        val isSavedSuccessfully = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
+        val isSavedSuccessfully = WalletSetupPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
             seed,
             password
         )

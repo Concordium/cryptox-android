@@ -31,7 +31,7 @@ import com.concordium.wallet.data.model.PossibleAccount
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
@@ -53,7 +53,7 @@ open class NewAccountViewModel(application: Application) :
     private val accountRepository: AccountRepository
     private val recipientRepository: RecipientRepository
     private val gson = App.appCore.gson
-    private val keyCreationVersion = KeyCreationVersion(AuthPreferences(App.appContext))
+    private val keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(App.appContext))
 
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
@@ -204,7 +204,7 @@ open class NewAccountViewModel(application: Application) :
         val output: CreateCredentialOutput? =
             if (keyCreationVersion.useV1) {
                 val net = AppConfig.net
-                val seed = AuthPreferences(getApplication()).getSeedHex(password)
+                val seed = WalletSetupPreferences(getApplication()).getSeedHex(password)
 
                 val credentialInput = CreateCredentialInputV1(
                     ipInfo = idProviderInfo,

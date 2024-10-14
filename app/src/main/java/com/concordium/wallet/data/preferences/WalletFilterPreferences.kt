@@ -2,8 +2,8 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 
-class FilterPreferences(val context: Context) :
-    Preferences(context, SharedPreferencesKeys.PREF_FILE_FILTER.key, Context.MODE_PRIVATE) {
+class WalletFilterPreferences(val context: Context) :
+    Preferences(context, SharedPreferenceFiles.WALLET_FILTER.key, Context.MODE_PRIVATE) {
 
     companion object {
         val PREFKEY_FILTER_SHOW_REWARDS = "PREFKEY_FILTER_SHOW_REWARDS"

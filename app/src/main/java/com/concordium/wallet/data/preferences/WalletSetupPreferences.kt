@@ -8,22 +8,9 @@ import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.walletconnect.util.hexToBytes
 
-class AuthPreferences(val context: Context) :
-    Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE) {
-
-    companion object {
-        const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
-        const val PREFKEY_HAS_COMPLETED_INITIAL_SETUP = "PREFKEY_HAS_COMPLETED_INITIAL_SETUP"
-        const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
-        const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
-        const val PREFKEY_PASSWORD_KEY_SALT_HEX = "PREFKEY_PASSWORD_KEY_SALT"
-        const val PREFKEY_ENCRYPTED_PASSWORD_JSON = "PREFKEY_ENCRYPTED_PASSWORD_JSON"
-        const val PREFKEY_CURRENT_AUTH_SLOT = "PREFKEY_CURRENT_AUTH_SLOT"
-        const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
-        const val PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON = "PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON"
-        const val PREFKEY_ENCRYPTED_SEED_JSON = "PREFKEY_ENCRYPTED_SEED_JSON"
-        const val PREFKEY_ENCRYPTED_MASTER_KEY_JSON = "PREFKEY_ENCRYPTED_MASTER_KEY_JSON"
-    }
+class WalletSetupPreferences(
+    val context: Context,
+) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key, Context.MODE_PRIVATE) {
 
     fun setHasSetupUser(value: Boolean) {
         setBoolean(PREFKEY_HAS_SETUP_USER, value)
@@ -40,62 +27,6 @@ class AuthPreferences(val context: Context) :
     fun getHasCompletedInitialSetup(): Boolean {
         // Default value is true for backward compatibility.
         return getBoolean(PREFKEY_HAS_COMPLETED_INITIAL_SETUP, true)
-    }
-
-    fun setUsePasscode(slot: String, value: Boolean) {
-        setBoolean(PREFKEY_USE_PASSCODE + slot, value)
-    }
-
-    fun getUsePasscode(slot: String): Boolean {
-        return getBoolean(PREFKEY_USE_PASSCODE + slot)
-    }
-
-    fun setUseBiometrics(slot: String, value: Boolean) {
-        setBoolean(PREFKEY_USE_BIOMETRICS + slot, value)
-    }
-
-    fun getUseBiometrics(slot: String): Boolean {
-        return getBoolean(PREFKEY_USE_BIOMETRICS + slot)
-    }
-
-    fun setPasswordKeySalt(slot: String, value: ByteArray) {
-        setString(PREFKEY_PASSWORD_KEY_SALT_HEX + slot, value.toHex())
-    }
-
-    fun getPasswordKeySalt(slot: String): ByteArray {
-        return getString(PREFKEY_PASSWORD_KEY_SALT_HEX + slot, "").hexToBytes()
-    }
-
-    fun setEncryptedPassword(slot: String, value: EncryptedData) {
-        setString(
-            PREFKEY_ENCRYPTED_PASSWORD_JSON + slot,
-            App.appCore.gson.toJson(value)
-        )
-    }
-
-    fun getEncryptedPassword(slot: String): EncryptedData {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot)!!
-            .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
-    }
-
-    fun setEncryptedMasterKey(slot: String, value: EncryptedData) {
-        setString(
-            PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot,
-            App.appCore.gson.toJson(value)
-        )
-    }
-
-    fun getEncryptedMasterKey(slot: String): EncryptedData {
-        return getString(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot)!!
-            .let { App.appCore.gson.fromJson(it, EncryptedData::class.java) }
-    }
-
-    fun getCurrentAuthSlot(): String {
-        return getString(PREFKEY_CURRENT_AUTH_SLOT, "default_key")
-    }
-
-    fun setCurrentAuthSlot(slot: String) {
-        return setString(PREFKEY_CURRENT_AUTH_SLOT, slot)
     }
 
     fun isAccountsBackedUp(): Boolean {
@@ -193,4 +124,12 @@ class AuthPreferences(val context: Context) :
      */
     fun hasEncryptedSeedPhrase(): Boolean =
         getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
+
+    private companion object {
+        const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
+        const val PREFKEY_HAS_COMPLETED_INITIAL_SETUP = "PREFKEY_HAS_COMPLETED_INITIAL_SETUP"
+        const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
+        const val PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON = "PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON"
+        const val PREFKEY_ENCRYPTED_SEED_JSON = "PREFKEY_ENCRYPTED_SEED_JSON"
+    }
 }

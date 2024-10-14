@@ -6,13 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.util.Log
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.web3j.utils.Numeric.hexStringToByteArray
-import java.util.Locale
 
 class SeedRecoverViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -52,7 +50,7 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun setSeed(privateKey: String, password: String) = viewModelScope.launch {
-        val success = AuthPreferences(getApplication()).tryToSetEncryptedSeedHex(
+        val success = WalletSetupPreferences(getApplication()).tryToSetEncryptedSeedHex(
             privateKey,
             password
         )

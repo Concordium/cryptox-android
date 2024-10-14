@@ -6,7 +6,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.UpdateSubscriptionRequest
 import com.concordium.wallet.data.model.NotificationsTopic
-import com.concordium.wallet.data.preferences.NotificationsPreferences
+import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
@@ -17,19 +17,19 @@ import java.net.HttpURLConnection
 
 class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
-    private val notificationsPreferences: NotificationsPreferences,
+    private val walletNotificationsPreferences: WalletNotificationsPreferences,
     private val notificationsBackend: NotificationsBackend,
 ) {
     constructor(application: Application) : this(
         accountRepository = WalletDatabase.getDatabase(application).accountDao()
             .let(::AccountRepository),
-        notificationsPreferences = NotificationsPreferences(application),
+        walletNotificationsPreferences = WalletNotificationsPreferences(application),
         notificationsBackend = App.appCore.getNotificationsBackend(),
     )
 
     suspend operator fun invoke(
-        isCcdTxEnabled: Boolean = notificationsPreferences.areCcdTxNotificationsEnabled,
-        isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled
+        isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
+        isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled
     ): Boolean {
         val fcmToken = FirebaseMessaging.getInstance().token.await()
         val accounts = accountRepository.getAllDone()

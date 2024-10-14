@@ -7,7 +7,7 @@ import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -54,7 +54,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
     }
 
     private fun setUpPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {
-        val isSavedSuccessfully = AuthPreferences(getApplication())
+        val isSavedSuccessfully = WalletSetupPreferences(getApplication())
             .tryToSetEncryptedSeedPhrase(
                 seedPhraseString = checkNotNull(phraseString) {
                     "The phrase must be generated at this moment"

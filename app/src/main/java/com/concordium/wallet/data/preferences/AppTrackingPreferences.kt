@@ -2,8 +2,8 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 
-class TrackingPreferences(context: Context) :
-    Preferences(context, SharedPreferencesKeys.PREF_TRACKING.key, Context.MODE_PRIVATE) {
+class AppTrackingPreferences(context: Context) :
+    Preferences(context, SharedPreferenceFiles.APP_TRACKING.key, Context.MODE_PRIVATE) {
 
     var isTrackingEnabled: Boolean
             by BooleanPreference(PREFKEY_TRACKING_ENABLED, false)

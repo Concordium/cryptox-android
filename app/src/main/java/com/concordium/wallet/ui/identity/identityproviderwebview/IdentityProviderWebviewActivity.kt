@@ -16,7 +16,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.preferences.Preferences
-import com.concordium.wallet.data.preferences.SharedPreferencesKeys
+import com.concordium.wallet.data.preferences.SharedPreferenceFiles
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentityProviderWebviewBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -117,7 +117,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
         get() {
             return IdentityDataPreferences(
                 application,
-                SharedPreferencesKeys.KEY_IDENTITY_CREATION_DATA.key,
+                SharedPreferenceFiles.WALLET_ID_CREATION_DATA.key,
                 Context.MODE_PRIVATE
             )
         }

@@ -21,7 +21,7 @@ import com.concordium.wallet.data.backend.notifications.NotificationsBackendConf
 import com.concordium.wallet.data.backend.tokens.TokensBackend
 import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.model.RawJson
-import com.concordium.wallet.data.preferences.TrackingPreferences
+import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.data.room.Identity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -40,7 +40,7 @@ class AppCore(val context: Context) {
         NotificationsBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
 
-    private val trackingPreferences = TrackingPreferences(context)
+    private val appTrackingPreferences = AppTrackingPreferences(context)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
     private val matomoAppTracker: AppTracker by lazy {
         TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 8)
@@ -49,7 +49,7 @@ class AppCore(val context: Context) {
     }
     val tracker: AppTracker
         get() =
-            if (trackingPreferences.isTrackingEnabled)
+            if (appTrackingPreferences.isTrackingEnabled)
                 matomoAppTracker
             else
                 noOpAppTracker

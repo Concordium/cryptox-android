@@ -20,7 +20,7 @@ import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.model.RawJson
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.KeyCreationVersion
@@ -30,7 +30,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     private val identityRepository: IdentityRepository
     private val repository: IdentityProviderRepository = IdentityProviderRepository()
     private val gson = App.appCore.gson
-    private val keyCreationVersion = KeyCreationVersion(AuthPreferences(App.appContext))
+    private val keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(App.appContext))
 
     private var identityProviderInfoRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
@@ -222,7 +222,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
         tempData.identityName =
             identityRepository.nextIdentityName(getApplication<Application>().getString(R.string.identity_create_default_name_prefix))
-        val seed = AuthPreferences(getApplication()).getSeedHex(password)
+        val seed = WalletSetupPreferences(getApplication()).getSeedHex(password)
 
         val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(
             identityProvider.ipInfo,

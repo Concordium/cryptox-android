@@ -13,7 +13,7 @@ import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.Constants
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.ProviderPreferences
+import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.databinding.FragmentProvidersOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -23,7 +23,7 @@ import com.concordium.wallet.ui.tokens.wallets.WalletsOverviewActivity
 
 class ProvidersOverviewFragment: BaseFragment(), ProviderItemView.IProviderItemView {
     private val providerPrefs by lazy {
-        ProviderPreferences(requireContext().applicationContext)
+        WalletProviderPreferences(requireContext().applicationContext)
     }
 
     private lateinit var sharedViewModel: ProvidersOverviewViewModel
