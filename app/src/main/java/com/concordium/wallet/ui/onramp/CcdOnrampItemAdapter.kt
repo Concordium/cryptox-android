@@ -135,7 +135,10 @@ class CcdOnrampItemAdapter(
 
                 holder.binding.swipeluxWidgetLayout.webChromeClient = chromeClient
                 holder.binding.swipeluxWidgetLayout.isNestedScrollingEnabled = true
-                holder.binding.swipeluxWidgetLayout.loadUrl("${SwipeluxWebChromeClient.BASE_URL}/?specificSettings=${chromeClient.getWidgetSettings()}")
+                holder.binding.swipeluxWidgetLayout.loadUrl(
+                    "${SwipeluxWebChromeClient.BASE_URL}" +
+                            "/?blank=true&specificSettings=${chromeClient.getWidgetSettings()}"
+                )
             }
         }
     }
