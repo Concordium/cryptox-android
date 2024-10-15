@@ -11,8 +11,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.text.color
 import androidx.core.text.underline
+import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.tokens.provider.ProviderMeta
 import com.google.android.material.textfield.TextInputEditText
@@ -20,9 +20,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class AddProviderActivity : BaseActivity(R.layout.activity_add_provider) {
 
-    private val providerPrefs by lazy {
-        WalletProviderPreferences(applicationContext)
-    }
+    private val providerPrefs = App.appCore.session.walletStorage.providerPreferences
 
     private val websiteUrlLayout by lazy {
         findViewById<TextInputLayout>(R.id.website_url_layout)

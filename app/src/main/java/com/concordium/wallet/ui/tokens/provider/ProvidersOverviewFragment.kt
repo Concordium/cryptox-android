@@ -11,9 +11,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.concordium.wallet.App
 import com.concordium.wallet.Constants
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.databinding.FragmentProvidersOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -21,22 +21,21 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.tokens.add_provider.AddProviderActivity
 import com.concordium.wallet.ui.tokens.wallets.WalletsOverviewActivity
 
-class ProvidersOverviewFragment: BaseFragment(), ProviderItemView.IProviderItemView {
-    private val providerPrefs by lazy {
-        WalletProviderPreferences(requireContext().applicationContext)
-    }
+class ProvidersOverviewFragment : BaseFragment(), ProviderItemView.IProviderItemView {
+    private val providerPrefs = App.appCore.session.walletStorage.providerPreferences
 
     private lateinit var sharedViewModel: ProvidersOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: FragmentProvidersOverviewBinding
     private var providersAdapter = ProvidersAdapter(this)
 
-    private val addProviderResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            showWaiting(true)
-            sharedViewModel.processAction(ProvidersViewAction.GetProviders(providerPrefs.getProviders()))
+    private val addProviderResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                showWaiting(true)
+                sharedViewModel.processAction(ProvidersViewAction.GetProviders(providerPrefs.getProviders()))
+            }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,7 +61,8 @@ class ProvidersOverviewFragment: BaseFragment(), ProviderItemView.IProviderItemV
 
     private fun initializeViewModel() {
         sharedViewModel = ViewModelProvider(
-            this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[ProvidersOverviewViewModel::class.java]
 
         sharedViewModel.onAccountReady().observe(viewLifecycleOwner) { event ->
