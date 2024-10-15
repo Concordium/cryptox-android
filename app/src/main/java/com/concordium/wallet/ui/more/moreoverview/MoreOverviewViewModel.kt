@@ -21,7 +21,7 @@ import kotlin.system.exitProcess
 
 class MoreOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val walletSetupPreferences = WalletSetupPreferences(application)
+    private val walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences
     private val accountRepository: AccountRepository by lazy {
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }

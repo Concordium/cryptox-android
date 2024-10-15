@@ -50,10 +50,11 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun setSeed(privateKey: String, password: String) = viewModelScope.launch {
-        val success = WalletSetupPreferences(getApplication()).tryToSetEncryptedSeedHex(
-            privateKey,
-            password
-        )
+        val success = App.appCore.session.walletStorage.setupPreferences
+            .tryToSetEncryptedSeedHex(
+                privateKey,
+                password
+            )
         if (success) {
             session.hasCompletedInitialSetup()
         }

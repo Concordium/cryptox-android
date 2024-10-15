@@ -55,7 +55,8 @@ open class NewAccountViewModel(application: Application) :
     private val recipientRepository: RecipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val gson = App.appCore.gson
-    private val keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(App.appContext))
+    private val keyCreationVersion =
+        KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
 
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
@@ -197,7 +198,7 @@ open class NewAccountViewModel(application: Application) :
         val output: CreateCredentialOutput? =
             if (keyCreationVersion.useV1) {
                 val net = AppConfig.net
-                val seed = WalletSetupPreferences(getApplication()).getSeedHex(password)
+                val seed = App.appCore.session.walletStorage.setupPreferences.getSeedHex(password)
 
                 val credentialInput = CreateCredentialInputV1(
                     ipInfo = idProviderInfo,

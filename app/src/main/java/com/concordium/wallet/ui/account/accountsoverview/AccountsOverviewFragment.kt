@@ -57,7 +57,7 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-        keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(requireContext()))
+        keyCreationVersion = KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
     }
 
     override fun onCreateView(

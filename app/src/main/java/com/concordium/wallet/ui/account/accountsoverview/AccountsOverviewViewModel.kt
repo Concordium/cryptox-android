@@ -14,7 +14,6 @@ import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionU
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
@@ -101,7 +100,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.postValue(Event(stringRes))
             }
         })
-        keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(application))
+        keyCreationVersion = KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
         ccdOnrampSiteRepository = CcdOnrampSiteRepository()
         accountsObserver = Observer { accountsWithIdentity ->
             postListItems(accountsWithIdentity)

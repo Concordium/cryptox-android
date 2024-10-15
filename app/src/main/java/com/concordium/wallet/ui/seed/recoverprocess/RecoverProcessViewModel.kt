@@ -25,7 +25,6 @@ import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityDao
@@ -209,7 +208,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         globalInfo: GlobalParamsWrapper,
         identityIndex: Int
     ): String? {
-        val seed = WalletSetupPreferences(getApplication()).getSeedHex(password)
+        val seed = App.appCore.session.walletStorage.setupPreferences.getSeedHex(password)
         val recoveryRequestInput = GenerateRecoveryRequestInput(
             identityProvider.ipInfo,
             globalInfo.value,
@@ -273,7 +272,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
         var createCredentialOutput: CreateCredentialOutput? = null
         if (identity.identityObject != null) {
-            val seed = WalletSetupPreferences(getApplication()).getSeedHex(password)
+            val seed = App.appCore.session.walletStorage.setupPreferences.getSeedHex(password)
             val credentialInput = CreateCredentialInputV1(
                 identity.identityProvider.ipInfo,
                 identity.identityProvider.arsInfos,
