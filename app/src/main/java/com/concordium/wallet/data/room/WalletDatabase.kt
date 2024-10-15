@@ -43,6 +43,13 @@ abstract class WalletDatabase : RoomDatabase() {
     companion object {
         const val VERSION_NUMBER = 10
 
+        @Deprecated(
+            message = "Do not construct instances on your own",
+            replaceWith = ReplaceWith(
+                expression = "App.appCore.session.walletStorage.database",
+                imports = arrayOf("com.concordium.wallet.App"),
+            )
+        )
         fun getDatabase(context: Context): WalletDatabase = synchronized(this) {
             Room.databaseBuilder(
                 context.applicationContext,

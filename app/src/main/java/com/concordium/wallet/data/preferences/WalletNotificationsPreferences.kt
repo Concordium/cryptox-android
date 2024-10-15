@@ -2,8 +2,17 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 
-class WalletNotificationsPreferences(context: Context) :
-    Preferences(context, SharedPreferenceFiles.WALLET_NOTIFICATIONS.key, Context.MODE_PRIVATE) {
+class WalletNotificationsPreferences
+@Deprecated(
+    message = "Do not construct instances on your own",
+    replaceWith = ReplaceWith(
+        expression = "App.appCore.session.walletStorage.notificationsPreferences",
+        imports = arrayOf("com.concordium.wallet.App"),
+    )
+)
+constructor(
+    context: Context,
+) : Preferences(context, SharedPreferenceFiles.WALLET_NOTIFICATIONS.key, Context.MODE_PRIVATE) {
 
     var hasEverShownPermissionDialog: Boolean
             by BooleanPreference(PREFKEY_HAS_EVER_SHOWN_PERMISSION_DIALOG, false)

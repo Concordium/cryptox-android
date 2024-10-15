@@ -2,7 +2,15 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 
-class WalletFilterPreferences(val context: Context) :
+class WalletFilterPreferences
+@Deprecated(
+    message = "Do not construct instances on your own",
+    replaceWith = ReplaceWith(
+        expression = "App.appCore.session.walletStorage.filterPreferences",
+        imports = arrayOf("com.concordium.wallet.App"),
+    )
+)
+constructor(val context: Context) :
     Preferences(context, SharedPreferenceFiles.WALLET_FILTER.key, Context.MODE_PRIVATE) {
 
     companion object {

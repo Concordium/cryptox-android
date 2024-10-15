@@ -8,7 +8,15 @@ import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.walletconnect.util.hexToBytes
 
-class WalletSetupPreferences(
+class WalletSetupPreferences
+@Deprecated(
+    message = "Do not construct instances on your own",
+    replaceWith = ReplaceWith(
+        expression = "App.appCore.session.walletStorage.setupPreferences",
+        imports = arrayOf("com.concordium.wallet.App"),
+    )
+)
+constructor(
     val context: Context,
 ) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key, Context.MODE_PRIVATE) {
 

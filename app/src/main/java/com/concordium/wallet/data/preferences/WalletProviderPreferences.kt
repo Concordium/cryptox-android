@@ -4,7 +4,15 @@ import android.content.Context
 import com.concordium.wallet.ui.tokens.provider.ProviderMeta
 import com.google.gson.Gson
 
-class WalletProviderPreferences(
+class WalletProviderPreferences
+@Deprecated(
+    message = "Do not construct instances on your own",
+    replaceWith = ReplaceWith(
+        expression = "App.appCore.session.walletStorage.providerPreferences",
+        imports = arrayOf("com.concordium.wallet.App"),
+    )
+)
+constructor(
     val context: Context,
 ) : Preferences(context, SharedPreferenceFiles.WALLET_PROVIDER.key, Context.MODE_PRIVATE) {
 

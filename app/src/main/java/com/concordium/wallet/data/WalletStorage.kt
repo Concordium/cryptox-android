@@ -7,6 +7,7 @@ import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.WalletDatabase
 
+@Suppress("DEPRECATION")
 class WalletStorage(
     private val context: Context,
 ) {
