@@ -6,17 +6,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.tokens.TokensRepository
 import com.concordium.wallet.data.model.WalletMeta
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Event
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 
 data class Token(
     @SerializedName("blockchain_id")
@@ -73,9 +73,6 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
 
     private val tokensRepo = TokensRepository()
 
-    private val _conversationListLiveData: MutableLiveData<Event<List<Token>>> = MutableLiveData()
-    fun tokensList(): LiveData<Event<List<Token>>> = _conversationListLiveData
-
     private val _onAccountReadyLiveData: MutableLiveData<Event<List<WalletMeta>>> = MutableLiveData()
     fun onAccountReady(): LiveData<Event<List<WalletMeta>>> = _onAccountReadyLiveData
 
@@ -91,9 +88,6 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
             is ProvidersViewAction.GetProviders -> getProviders(action.providers)
             else -> {}
         }
-    }
-
-    private fun deleteProvider(providerMeta: ProviderMeta) {
     }
 
     private fun getProviders(providers: List<ProviderMeta>) {
@@ -122,17 +116,12 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
     }
 
     private fun getAccount() = viewModelScope.launch(viewModelScope.coroutineContext) {
-        val accountDao = WalletDatabase.getDatabase(getApplication()).accountDao()
-        val accountRepository = AccountRepository(accountDao)
+        val accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val acc = withContext(Dispatchers.IO) {
             accountRepository.getAll()
         }
         accounts.clear()
         accounts.addAll(acc.map { WalletMeta(it.name, it.address, 0) })
-
-        // "4oojyKb9C9K5EG7YH3wxcnC9YoW7MupJrt1xsscfH75HbnAhnm", "4mf4sgYSrfvakr3fm41X2gduGtdfQnxoSnPDb8nHPwn75V9WHF"
-//        accounts.add(WalletMeta("Wall 1", "4oojyKb9C9K5EG7YH3wxcnC9YoW7MupJrt1xsscfH75HbnAhnm", 0))
-//        accounts.add(WalletMeta("Wall 2", "4mf4sgYSrfvakr3fm41X2gduGtdfQnxoSnPDb8nHPwn75V9WHF", 0))
 
         _onAccountReadyLiveData.postValue(Event(accounts.toList()))
     }

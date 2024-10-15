@@ -4,13 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -66,7 +66,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
         ContractTokensRepository(
-            WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+            App.appCore.session.walletStorage.database.contractTokenDao()
         )
     }
 
@@ -445,7 +445,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
         val accountRepository =
-            AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")
         return Token.ccd(account)

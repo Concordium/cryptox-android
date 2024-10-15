@@ -35,7 +35,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
@@ -51,12 +50,15 @@ import java.io.IOException
 class ImportViewModel(application: Application) :
     AndroidViewModel(application) {
 
+    private val session: Session = App.appCore.session
     private val identityProviderRepository = IdentityProviderRepository()
     private val proxyRepository = ProxyRepository()
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
-    private val session: Session = App.appCore.session
+    private val identityRepository: IdentityRepository =
+        IdentityRepository(session.walletStorage.database.identityDao())
+    private val accountRepository: AccountRepository =
+        AccountRepository(session.walletStorage.database.accountDao())
+    private val recipientRepository: RecipientRepository =
+        RecipientRepository(session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
 
     private val gson = App.appCore.gson
@@ -100,16 +102,10 @@ class ImportViewModel(application: Application) :
     }
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-
-        val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
-            contractTokensRepository = ContractTokensRepository(contractTokenDao),
+            contractTokensRepository = ContractTokensRepository(
+                App.appCore.session.walletStorage.database.contractTokenDao()
+            ),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }

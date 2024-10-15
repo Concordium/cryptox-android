@@ -35,7 +35,6 @@ import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.KeyCreationVersion
@@ -49,9 +48,12 @@ open class NewAccountViewModel(application: Application) :
 
     private val identityProviderRepository = IdentityProviderRepository()
     private val proxyRepository = ProxyRepository()
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
+    private val identityRepository: IdentityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository: AccountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val recipientRepository: RecipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val gson = App.appCore.gson
     private val keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(App.appContext))
 
@@ -95,15 +97,6 @@ open class NewAccountViewModel(application: Application) :
         var encryptedAccountData: EncryptedData? = null
         var credential: CredentialWrapper? = null
         var nextCredNumber: Int? = null
-    }
-
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
     }
 
     override fun onCleared() {
@@ -261,7 +254,7 @@ open class NewAccountViewModel(application: Application) :
 
             val storageAccountDataEncrypted = App.appCore.authManager
                 .encrypt(
-                    password=password,
+                    password = password,
                     data = jsonToBeEncrypted.toByteArray()
                 )
             if (storageAccountDataEncrypted != null) {

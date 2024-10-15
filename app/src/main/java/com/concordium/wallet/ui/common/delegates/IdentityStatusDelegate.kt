@@ -64,7 +64,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
                     CoroutineScope(Dispatchers.IO).launch {
                         job = launch {
                             val identityRepository = IdentityRepository(
-                                WalletDatabase.getDatabase(activity).identityDao()
+                                App.appCore.session.walletStorage.database.identityDao()
                             )
                             val identity = identityRepository.findById(newIdentity.key)
                             identity?.let {

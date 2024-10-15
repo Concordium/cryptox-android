@@ -35,7 +35,6 @@ import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -65,8 +64,10 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private val gson = App.appCore.gson
 
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val accountRepository: AccountRepository
-    private val transferRepository: TransferRepository
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
 
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
@@ -127,13 +128,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         var receiverPublicKey: String? = null
         lateinit var origPayload: WsMessageResponse.Payload
         lateinit var messageType: String
-    }
-
-    init {
-        val accountDao = WalletDatabase.getDatabase(getApplication()).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val transferDao = WalletDatabase.getDatabase(getApplication()).transferDao()
-        transferRepository = TransferRepository(transferDao)
     }
 
     /**

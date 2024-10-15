@@ -14,11 +14,10 @@ import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionU
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
+import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
@@ -59,8 +58,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val _listItemsLiveData = MutableLiveData<List<AccountsOverviewListItem>>()
     val listItemsLiveData: LiveData<List<AccountsOverviewListItem>> = _listItemsLiveData
 
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val keyCreationVersion: KeyCreationVersion
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
@@ -85,10 +86,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _waitingLiveData.postValue(false)

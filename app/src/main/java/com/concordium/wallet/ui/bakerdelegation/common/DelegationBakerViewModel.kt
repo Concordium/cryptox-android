@@ -57,7 +57,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     lateinit var bakerDelegationData: BakerDelegationData
     private val proxyRepository = ProxyRepository()
-    private val transferRepository: TransferRepository
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
@@ -114,11 +115,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private val _bakerPoolStatusLiveData = MutableLiveData<BakerPoolStatus?>()
     val bakerPoolStatusLiveData: MutableLiveData<BakerPoolStatus?>
         get() = _bakerPoolStatusLiveData
-
-    init {
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        transferRepository = TransferRepository(transferDao)
-    }
 
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData

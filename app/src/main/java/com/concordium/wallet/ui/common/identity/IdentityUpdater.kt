@@ -14,7 +14,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.util.Log
@@ -30,9 +29,12 @@ import java.net.URL
 class IdentityUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
 
     private val gson = App.appCore.gson
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
     private val updateNotificationsSubscriptionUseCase by lazy {
         UpdateNotificationsSubscriptionUseCase(application)
@@ -42,16 +44,11 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     private var run = true
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
 
-        val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
-            contractTokensRepository = ContractTokensRepository(contractTokenDao),
+            contractTokensRepository = ContractTokensRepository(
+                App.appCore.session.walletStorage.database.contractTokenDao()
+            ),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -102,9 +99,13 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                     val resp = URL(identity.codeUri).readText()
                     Log.d("Identity poll response: $resp")
 
-                    val identityTokenContainer = gson.fromJson<IdentityTokenContainer>(resp, IdentityTokenContainer::class.java)
+                    val identityTokenContainer = gson.fromJson<IdentityTokenContainer>(
+                        resp,
+                        IdentityTokenContainer::class.java
+                    )
 
-                    val newStatus = if (BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
+                    val newStatus =
+                        if (BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
 
                     if (newStatus != IdentityStatus.PENDING) {
                         identity.status = identityTokenContainer.status
@@ -117,7 +118,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                             val accountAddress = token.accountAddress
                             identity.identityObject = identityContainer.value
                             identityRepository.update(identity)
-                            val account = accountRepository.getAllByIdentityId(identity.id).firstOrNull()
+                            val account =
+                                accountRepository.getAllByIdentityId(identity.id).firstOrNull()
                             account?.let {
                                 if (it.address == accountAddress) {
                                     // it.credential = CredentialWrapper(RawJson(gson.toJson(CredentialContentWrapper(accountCredentialWrapper.value))), accountCredentialWrapper.v) //Make up for protocol inconsistency
@@ -143,7 +145,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                         } else if (newStatus == IdentityStatus.ERROR) {
 
                             identityRepository.update(identity)
-                            val account = accountRepository.getAllByIdentityId(identity.id).firstOrNull()
+                            val account =
+                                accountRepository.getAllByIdentityId(identity.id).firstOrNull()
                             account?.let { accountRepository.delete(it) }
                             withContext(Dispatchers.Main) {
                                 updateListener?.onError(identity, account)

@@ -11,7 +11,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.Flow
@@ -24,8 +23,7 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     private val walletSetupPreferences = WalletSetupPreferences(application)
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
 
     private val _seedRecoveryVisibilityLiveData = MutableLiveData<Boolean>()

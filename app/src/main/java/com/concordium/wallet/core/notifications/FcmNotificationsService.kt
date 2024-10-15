@@ -6,7 +6,6 @@ import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.ContractToken
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
@@ -27,12 +26,10 @@ class FcmNotificationsService : FirebaseMessagingService() {
         TransactionNotificationsManager(application)
     }
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val contractTokensRepository: ContractTokensRepository by lazy {
-        val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
-        ContractTokensRepository(contractTokenDao)
+        ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao())
     }
     private val updateNotificationsSubscriptionUseCase by lazy {
         UpdateNotificationsSubscriptionUseCase(application)

@@ -25,7 +25,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.EncryptedAmount
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -60,10 +59,14 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     )
 
     private val proxyRepository = ProxyRepository()
-    private val accountRepository: AccountRepository
-    private val encryptedAmountRepository: EncryptedAmountRepository
-    private val transferRepository: TransferRepository
-    private val recipientRepository: RecipientRepository
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val encryptedAmountRepository =
+        EncryptedAmountRepository(App.appCore.session.walletStorage.database.encryptedAmountDao())
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
 
     private var accountSubmissionStatusRequestList: MutableList<AccountSubmissionStatusRequestData> =
@@ -84,18 +87,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     }
 
     init {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        transferRepository = TransferRepository(transferDao)
-        val encryptedAmountDao = WalletDatabase.getDatabase(application).encryptedAmountDao()
-        encryptedAmountRepository = EncryptedAmountRepository(encryptedAmountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
 
-        val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
-            contractTokensRepository = ContractTokensRepository(contractTokenDao),
+            contractTokensRepository = ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao()),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }

@@ -41,37 +41,24 @@ abstract class WalletDatabase : RoomDatabase() {
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
-
         const val VERSION_NUMBER = 10
 
-        // Singleton prevents multiple instances of database opening at the same time.
-        @Volatile
-        private var INSTANCE: WalletDatabase? = null
-
-        fun getDatabase(context: Context): WalletDatabase {
-            val tempInstance = INSTANCE
-            if (tempInstance != null) {
-                return tempInstance
-            }
-            synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    WalletDatabase::class.java,
-                    "wallet_database"
+        fun getDatabase(context: Context): WalletDatabase = synchronized(this) {
+            Room.databaseBuilder(
+                context.applicationContext,
+                WalletDatabase::class.java,
+                "wallet_database"
+            )
+                .fallbackToDestructiveMigration()
+                // See auto migrations in the @Database declaration.
+                .addMigrations(
+                    MIGRATION_3_4,
+                    MIGRATION_4_5,
+                    MIGRATION_5_6,
+                    MIGRATION_7_8,
+                    MIGRATION_8_9,
                 )
-                    .fallbackToDestructiveMigration()
-                    // See auto migrations in the @Database declaration.
-                    .addMigrations(
-                        MIGRATION_3_4,
-                        MIGRATION_4_5,
-                        MIGRATION_5_6,
-                        MIGRATION_7_8,
-                        MIGRATION_8_9,
-                    )
-                    .build()
-                INSTANCE = instance
-                return instance
-            }
+                .build()
         }
     }
 }

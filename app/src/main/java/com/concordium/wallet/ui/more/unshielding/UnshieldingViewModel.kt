@@ -24,7 +24,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -39,13 +38,11 @@ import kotlin.coroutines.resumeWithException
 
 class UnshieldingViewModel(application: Application) : AndroidViewModel(application) {
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val proxyRepository: ProxyRepository by lazy(::ProxyRepository)
     private val transferRepository: TransferRepository by lazy {
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        TransferRepository(transferDao)
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     }
     private val accountUpdater: AccountUpdater by lazy {
         AccountUpdater(application, viewModelScope)

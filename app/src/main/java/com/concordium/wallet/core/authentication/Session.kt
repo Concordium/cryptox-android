@@ -5,18 +5,16 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
+import com.concordium.wallet.data.WalletStorage
 import com.concordium.wallet.data.preferences.AppAuthPreferences
 import com.concordium.wallet.data.preferences.Preferences
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
-import com.concordium.wallet.data.preferences.WalletFilterPreferences
 
-class Session {
+class Session(context: Context) {
 
-    private var appAuthPreferences: AppAuthPreferences
-    private var walletSetupPreferences: WalletSetupPreferences
-    private var walletFilterPreferences: WalletFilterPreferences
+    private val appAuthPreferences = AppAuthPreferences(context)
+    val walletStorage = WalletStorage(context)
 
-    var hasSetupPassword = false
+    var hasSetupPassword = walletStorage.setupPreferences.getHasSetupUser()
         private set
 
     private var tempPassword: String? = null
@@ -24,7 +22,7 @@ class Session {
     /**
      * The value is positive at the fresh app start until the setup start screen is visited.
      */
-    var hasCompletedInitialSetup = true
+    var hasCompletedInitialSetup = walletStorage.setupPreferences.getHasCompletedInitialSetup()
         private set
 
     private val _isLoggedIn = MutableLiveData<Boolean>(false)
@@ -34,28 +32,20 @@ class Session {
     // The notice must be shown once per app start.
     private var isUnshieldingNoticeShown = false
 
-    constructor(context: Context) {
-        appAuthPreferences = AppAuthPreferences(context)
-        walletSetupPreferences = WalletSetupPreferences(context)
-        hasSetupPassword = walletSetupPreferences.getHasSetupUser()
-        hasCompletedInitialSetup = walletSetupPreferences.getHasCompletedInitialSetup()
-        walletFilterPreferences = WalletFilterPreferences(context)
-    }
-
     fun setHasShowRewards(id: Int, value: Boolean) {
-        walletFilterPreferences.setHasShowRewards(id, value)
+        walletStorage.filterPreferences.setHasShowRewards(id, value)
     }
 
     fun getHasShowRewards(id: Int): Boolean {
-        return walletFilterPreferences.getHasShowRewards(id)
+        return  walletStorage.filterPreferences.getHasShowRewards(id)
     }
 
     fun setHasShowFinalizationRewards(id: Int, value: Boolean) {
-        walletFilterPreferences.setHasShowFinalizationRewards(id, value)
+        walletStorage.filterPreferences.setHasShowFinalizationRewards(id, value)
     }
 
     fun getHasShowFinalizationRewards(id: Int): Boolean {
-        return walletFilterPreferences.getHasShowFinalizationRewards(id)
+        return  walletStorage.filterPreferences.getHasShowFinalizationRewards(id)
     }
 
     fun unshieldingNoticeShown() {
@@ -67,7 +57,7 @@ class Session {
 
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
-        walletSetupPreferences.setHasSetupUser(true)
+        walletStorage.setupPreferences.setHasSetupUser(true)
         App.appCore.authManager.setUsePassCode(passcodeUsed)
         hasSetupPassword = true
     }
@@ -79,12 +69,12 @@ class Session {
     }
 
     fun startedInitialSetup() {
-        walletSetupPreferences.setHasCompletedInitialSetup(false)
+        walletStorage.setupPreferences.setHasCompletedInitialSetup(false)
         hasCompletedInitialSetup = false
     }
 
     fun hasCompletedInitialSetup() {
-        walletSetupPreferences.setHasCompletedInitialSetup(true)
+        walletStorage.setupPreferences.setHasCompletedInitialSetup(true)
         hasCompletedInitialSetup = true
     }
 
@@ -128,22 +118,22 @@ class Session {
     }
 
     fun isAccountsBackupPossible(): Boolean {
-        return !walletSetupPreferences.hasEncryptedSeed()
+        return !walletStorage.setupPreferences.hasEncryptedSeed()
     }
 
     fun isAccountsBackedUp(): Boolean {
-        return walletSetupPreferences.isAccountsBackedUp()
+        return walletStorage.setupPreferences.isAccountsBackedUp()
     }
 
     fun setAccountsBackedUp(value: Boolean) {
-        return walletSetupPreferences.setAccountsBackedUp(value)
+        return walletStorage.setupPreferences.setAccountsBackedUp(value)
     }
 
     fun addAccountsBackedUpListener(listener: Preferences.Listener) {
-        walletSetupPreferences.addAccountsBackedUpListener(listener)
+        walletStorage.setupPreferences.addAccountsBackedUpListener(listener)
     }
 
     fun removeAccountsBackedUpListener(listener: Preferences.Listener) {
-        appAuthPreferences.removeListener(listener)
+        walletStorage.setupPreferences.removeListener(listener)
     }
 }

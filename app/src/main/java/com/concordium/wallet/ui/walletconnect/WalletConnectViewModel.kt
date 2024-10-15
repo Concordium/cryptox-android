@@ -15,7 +15,6 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
@@ -96,11 +95,11 @@ private constructor(
     )
 
     private val accountRepository: AccountRepository by lazy {
-        AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val proxyRepository: ProxyRepository by lazy(::ProxyRepository)
     private val identityRepository: IdentityRepository by lazy {
-        IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     }
     private val keyCreationVersion: KeyCreationVersion by lazy {
         KeyCreationVersion(WalletSetupPreferences(application))

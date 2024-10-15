@@ -21,14 +21,14 @@ import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.launch
 
 class IdentityProviderListViewModel(application: Application) : AndroidViewModel(application) {
-    private val identityRepository: IdentityRepository
-    private val repository: IdentityProviderRepository = IdentityProviderRepository()
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val repository = IdentityProviderRepository()
     private val gson = App.appCore.gson
     private val keyCreationVersion = KeyCreationVersion(WalletSetupPreferences(App.appContext))
 
@@ -74,8 +74,6 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     }
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
         _waitingLiveData.value = true
         _waitingGlobalData.value = true
     }

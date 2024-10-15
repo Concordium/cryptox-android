@@ -8,7 +8,6 @@ import com.concordium.wallet.data.backend.notifications.UpdateSubscriptionReques
 import com.concordium.wallet.data.model.NotificationsTopic
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
@@ -21,8 +20,7 @@ class UpdateNotificationsSubscriptionUseCase(
     private val notificationsBackend: NotificationsBackend,
 ) {
     constructor(application: Application) : this(
-        accountRepository = WalletDatabase.getDatabase(application).accountDao()
-            .let(::AccountRepository),
+        accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao()),
         walletNotificationsPreferences = WalletNotificationsPreferences(application),
         notificationsBackend = App.appCore.getNotificationsBackend(),
     )

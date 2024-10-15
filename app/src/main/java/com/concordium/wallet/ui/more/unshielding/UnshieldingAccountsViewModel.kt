@@ -12,7 +12,6 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
@@ -22,8 +21,7 @@ import java.math.BigInteger
 
 class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(application) {
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val accountUpdater: AccountUpdater by lazy {
         AccountUpdater(application, viewModelScope)

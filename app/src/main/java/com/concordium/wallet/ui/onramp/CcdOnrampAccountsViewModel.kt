@@ -5,14 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.launch
 
 class CcdOnrampAccountsViewModel(application: Application) : AndroidViewModel(application) {
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampAccountListItem>>()

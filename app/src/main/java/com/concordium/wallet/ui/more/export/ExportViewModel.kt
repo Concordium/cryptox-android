@@ -24,7 +24,6 @@ import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.util.Log
@@ -41,9 +40,12 @@ class ExportViewModel(application: Application) :
         const val FILE_NAME = "export.concordiumwallet"
     }
 
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
 
     private val gson = App.appCore.gson
     private var _exportPassword: String = ""
@@ -93,15 +95,6 @@ class ExportViewModel(application: Application) :
     private val _errorNonIdenticalRepeatPasswordLiveData = MutableLiveData<Event<Boolean>>()
     val errorNonIdenticalRepeatPasswordLiveData: LiveData<Event<Boolean>>
         get() = _errorNonIdenticalRepeatPasswordLiveData
-
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-    }
 
     fun initialize() {
     }

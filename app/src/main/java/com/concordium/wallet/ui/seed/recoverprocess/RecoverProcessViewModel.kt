@@ -31,7 +31,6 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityDao
 import com.concordium.wallet.data.room.IdentityWithAccounts
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -59,9 +58,12 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         private const val ACCOUNT_GAP_MAX = 20
     }
 
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
 
     private val identitiesWithAccountsFound = mutableListOf<IdentityWithAccounts>()
@@ -89,15 +91,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     val recoverProcessData = RecoverProcessData()
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-        val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
-            contractTokensRepository = ContractTokensRepository(contractTokenDao),
+            contractTokensRepository = ContractTokensRepository(
+                App.appCore.session.walletStorage.database.contractTokenDao()
+            ),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -307,7 +304,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         )
         val encryptedAccountData = App.appCore.authManager
             .encrypt(
-                password=password,
+                password = password,
                 data = jsonToBeEncrypted.toByteArray(),
             )
             ?: return
@@ -416,7 +413,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val accountsPercent = accountsPercent()
         if ((identitiesPercent >= 100 && accountsPercent >= 100) || (identitiesPercent >= 100 && accountGaps.size == 0)) {
             val identityRepository =
-                IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+                IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
             val allIdentities = identityRepository.getAllNew()
             for (identity in allIdentities) {
                 if (identity.name == IdentityDao.DEFAULT_NAME) {

@@ -31,7 +31,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -77,7 +76,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private val proxyRepository = ProxyRepository()
-    private val transferRepository: TransferRepository
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val sendFundsPreferences by lazy {
         SendFundsPreferences(getApplication())
@@ -107,9 +107,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
     init {
-        transferRepository =
-            TransferRepository(WalletDatabase.getDatabase(application).transferDao())
-
         chooseToken.observeForever { token ->
             sendTokenData.token = token
             sendTokenData.max = if (token.isCcd) null else token.balance
@@ -130,7 +127,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
             val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+                App.appCore.session.walletStorage.database.contractTokenDao()
             )
             val tokensFound = mutableListOf<Token>()
             tokensFound.add(getCCDDefaultToken(accountAddress))
@@ -330,7 +327,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
         val accountRepository =
-            AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")
         return Token.ccd(account)
