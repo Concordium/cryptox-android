@@ -14,7 +14,6 @@ import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionU
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
@@ -66,11 +65,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val keyCreationVersion: KeyCreationVersion
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
-    private val walletNotificationsPreferences: WalletNotificationsPreferences
-
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val walletNotificationsPreferences =
+        App.appCore.session.walletStorage.notificationsPreferences
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     enum class State {
         NO_IDENTITIES,
@@ -110,7 +107,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
-        walletNotificationsPreferences = WalletNotificationsPreferences(application)
         updateNotificationSubscription()
     }
 

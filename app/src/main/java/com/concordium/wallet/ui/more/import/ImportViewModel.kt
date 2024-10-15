@@ -97,9 +97,7 @@ class ImportViewModel(application: Application) :
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
 
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     init {
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(

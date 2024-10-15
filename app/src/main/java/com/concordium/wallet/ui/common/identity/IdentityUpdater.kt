@@ -36,9 +36,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     private var updateListener: UpdateListener? = null
     private var run = true

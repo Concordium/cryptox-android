@@ -82,9 +82,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     private var transferList: MutableList<Transfer> = ArrayList()
     private var transfersToDeleteList: MutableList<Transfer> = ArrayList()
 
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     init {
 

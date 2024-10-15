@@ -8,6 +8,7 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
@@ -25,7 +26,7 @@ class TransactionNotificationsManager(
     }
 
     private val walletNotificationsPreferences: WalletNotificationsPreferences by lazy {
-        WalletNotificationsPreferences(context)
+        App.appCore.session.walletStorage.notificationsPreferences
     }
 
     private val areNotificationsEnabled: Boolean

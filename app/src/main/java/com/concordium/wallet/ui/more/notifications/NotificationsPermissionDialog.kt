@@ -11,9 +11,9 @@ import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
-import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
@@ -24,13 +24,10 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
     private lateinit var binding: DialogNotificationsPermissionBinding
 
-    private val walletNotificationsPreferences: WalletNotificationsPreferences by lazy {
-        WalletNotificationsPreferences(requireContext())
-    }
+    private val walletNotificationsPreferences =
+        App.appCore.session.walletStorage.notificationsPreferences
 
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(requireActivity().application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notificationPermissionsLauncher =
@@ -87,7 +84,7 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
         walletNotificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
 
-        if(isGranted) {
+        if (isGranted) {
             lifecycleScope.launchWhenStarted {
                 val success = updateNotificationsSubscriptionUseCase()
                 Log.d("success: $success")

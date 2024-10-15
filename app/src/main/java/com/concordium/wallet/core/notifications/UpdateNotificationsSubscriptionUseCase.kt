@@ -1,6 +1,5 @@
 package com.concordium.wallet.core.notifications
 
-import android.app.Application
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
@@ -19,9 +18,9 @@ class UpdateNotificationsSubscriptionUseCase(
     private val walletNotificationsPreferences: WalletNotificationsPreferences,
     private val notificationsBackend: NotificationsBackend,
 ) {
-    constructor(application: Application) : this(
+    constructor() : this(
         accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao()),
-        walletNotificationsPreferences = WalletNotificationsPreferences(application),
+        walletNotificationsPreferences = App.appCore.session.walletStorage.notificationsPreferences,
         notificationsBackend = App.appCore.getNotificationsBackend(),
     )
 

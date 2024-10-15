@@ -31,9 +31,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
     private val contractTokensRepository: ContractTokensRepository by lazy {
         ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao())
     }
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     override fun onNewToken(token: String) = runBlocking(serviceCoroutineContext) {
         Log.d(
@@ -44,7 +42,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         try {
             updateNotificationsSubscriptionUseCase()
             Log.d("trying update subscriptions with new token")
-        } catch (error: Exception){
+        } catch (error: Exception) {
             Log.e("failed_updating_subscriptions", error)
         }
     }

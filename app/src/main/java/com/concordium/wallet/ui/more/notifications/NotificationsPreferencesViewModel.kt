@@ -4,18 +4,19 @@ import android.app.Application
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
-import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NotificationsPreferencesViewModel(application: Application) : AndroidViewModel(application) {
-    private val walletNotificationsPreferences = WalletNotificationsPreferences(application)
+    private val walletNotificationsPreferences =
+        App.appCore.session.walletStorage.notificationsPreferences
     private val updateNotificationsSubscriptionUseCase =
-        UpdateNotificationsSubscriptionUseCase(application)
+        UpdateNotificationsSubscriptionUseCase()
 
     private val _areCcdTxNotificationsEnabledFlow = MutableStateFlow(false)
     val areCcdTxNotificationsEnabledFlow = _areCcdTxNotificationsEnabledFlow.asStateFlow()
@@ -55,7 +56,8 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
         Log.d("success: $success")
         if (success) {
             _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled
-            walletNotificationsPreferences.areCcdTxNotificationsEnabled = areCcdTxNotificationsEnabled
+            walletNotificationsPreferences.areCcdTxNotificationsEnabled =
+                areCcdTxNotificationsEnabled
         }
 
         _isCcdSwitchEnabledFlow.value = true
@@ -78,7 +80,8 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
         Log.d("success: $success")
         if (success) {
             _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled
-            walletNotificationsPreferences.areCis2TxNotificationsEnabled = areCis2TxNotificationsEnabled
+            walletNotificationsPreferences.areCis2TxNotificationsEnabled =
+                areCis2TxNotificationsEnabled
         }
 
         _isCcdSwitchEnabledFlow.value = true

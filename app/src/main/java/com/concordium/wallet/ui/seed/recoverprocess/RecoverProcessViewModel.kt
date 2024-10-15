@@ -79,9 +79,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private var identityProviders: ArrayList<IdentityProvider>? = null
     private val identityGapMutex = Mutex()
     private val accountGapMutex = Mutex()
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
