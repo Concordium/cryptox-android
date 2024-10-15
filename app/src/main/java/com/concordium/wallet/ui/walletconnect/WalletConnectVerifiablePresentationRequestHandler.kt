@@ -194,7 +194,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 val storageAccountDataEncrypted = account.encryptedAccountData
                     ?: error("Account has no encrypted data")
 
-                val decryptedJson = App.appCore.authManager
+                val decryptedJson = App.appCore.auth
                     .decrypt(
                         password = password,
                         encryptedData = storageAccountDataEncrypted

@@ -7,12 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
 import kotlinx.coroutines.launch
 
 class AuthSetupPasswordViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val session: Session = App.appCore.session
 
     private val _errorLiveData = MutableLiveData<Event<Boolean>>()
     val errorLiveData: LiveData<Event<Boolean>>
@@ -26,7 +23,7 @@ class AuthSetupPasswordViewModel(application: Application) : AndroidViewModel(ap
 
     fun startSetupPassword(password: String) {
         // Keep password for re-enter check and biometrics activation (outside this screen).
-        session.startPasswordSetup(password)
+        App.appCore.setup.beginAuthSetup(password)
     }
 
     fun checkPasswordRequirements(password: String): Boolean {
@@ -35,15 +32,17 @@ class AuthSetupPasswordViewModel(application: Application) : AndroidViewModel(ap
 
     fun setupPassword(password: String) = viewModelScope.launch {
         val isSetUpSuccessfully = runCatching {
-            val authResetMasterKey = App.appCore.authResetMasterKey
+            val authResetMasterKey = App.appCore.setup.authResetMasterKey
             if (authResetMasterKey != null) {
-                App.appCore.authManager.initPasswordAuth(
+                App.appCore.auth.initPasswordAuth(
                     password = password,
+                    isPasscode = false,
                     masterKey = authResetMasterKey,
                 )
             } else {
-                App.appCore.authManager.initPasswordAuth(
+                App.appCore.auth.initPasswordAuth(
                     password = password,
+                    isPasscode = false,
                 )
             }
         }.isSuccess

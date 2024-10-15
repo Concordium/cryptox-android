@@ -9,5 +9,5 @@ class KeyCreationVersion(
      * Whether or not to use V1 methods, requiring the seed.
      */
     val useV1: Boolean
-        get() = walletSetupPreferences.getHasSetupUser() && walletSetupPreferences.hasEncryptedSeed()
+        get() = walletSetupPreferences.hasEncryptedSeed()
 }

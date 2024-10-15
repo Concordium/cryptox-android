@@ -2,6 +2,7 @@ package com.concordium.wallet
 
 import android.app.Application
 import android.content.Context
+import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.core.notifications.AnnouncementNotificationManager
 import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.util.Log
@@ -39,7 +40,7 @@ class App : Application() {
     }
 
     fun initAppCore() {
-        appCore = AppCore(this.applicationContext)
+        appCore = AppCore(this)
     }
 
     private fun initWalletConnect() {

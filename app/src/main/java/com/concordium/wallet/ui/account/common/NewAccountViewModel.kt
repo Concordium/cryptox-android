@@ -31,7 +31,6 @@ import com.concordium.wallet.data.model.PossibleAccount
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
@@ -160,7 +159,7 @@ open class NewAccountViewModel(application: Application) :
                 _waitingLiveData.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.authManager
+            val decryptedJson = App.appCore.auth
                 .decrypt(
                     password = password,
                     encryptedData = privateIdObjectDataEncrypted,
@@ -253,7 +252,7 @@ open class NewAccountViewModel(application: Application) :
                 )
             )
 
-            val storageAccountDataEncrypted = App.appCore.authManager
+            val storageAccountDataEncrypted = App.appCore.auth
                 .encrypt(
                     password = password,
                     data = jsonToBeEncrypted.toByteArray()

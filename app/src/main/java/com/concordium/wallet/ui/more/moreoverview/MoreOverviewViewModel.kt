@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
@@ -63,9 +62,9 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
             walletSetupPreferences.hasEncryptedSeed() && !walletSetupPreferences.hasEncryptedSeedPhrase()
         )
         // Wallet erase is visible if the initial setup is completed.
-        _walletEraseVisibilityLiveData.postValue(App.appCore.session.hasCompletedInitialSetup)
+        _walletEraseVisibilityLiveData.postValue(App.appCore.setup.isInitialSetupCompleted)
         // Password alter is visible if it is set up.
-        _passwordAlterVisibilityLiveData.postValue(walletSetupPreferences.getHasSetupUser())
+        _passwordAlterVisibilityLiveData.postValue(App.appCore.setup.isAuthSetupCompleted)
         // Unshielding is visible if may be required.
         _unshieldingVisibilityLiveData.postValue(
             accountRepository.getAllDone().any(Account::mayNeedUnshielding)

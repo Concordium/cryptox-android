@@ -14,16 +14,8 @@ class WelcomePromoViewModel(application: Application) : AndroidViewModel(applica
     val shouldShowTrackingPermissionDialog: Boolean
         get() = !appTrackingPreferences.hasDecidedOnPermission
     val shouldSetUpPassword: Boolean
-        get() = !App.appCore.session.hasSetupPassword
+        get() = !App.appCore.setup.isAuthSetupCompleted
     val accountActivationReward = BigInteger("1000000000")
     val aiAssistantUrl = "https://www.concordium.com/contact"
     val videosUrl = "https://www.youtube.com/watch?v=UQPPqXO7hZw&list=PLK_gvUmWN_G_x_63SZswz8ZEK-UqPPZjp&index=3"
-
-    fun initialize() {
-        App.appCore.session.startedInitialSetup()
-    }
-
-    private companion object {
-        private const val IS_SENDING_ANY_NOTIFICATIONS = false
-    }
 }

@@ -19,7 +19,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
@@ -94,15 +93,15 @@ abstract class BaseActivity(
         popup = Popup()
         dialogs = Dialogs()
 
-        App.appCore.session.isLoggedIn.observe(this, Observer<Boolean> { loggedin ->
-            if (App.appCore.session.hasSetupPassword) {
-                if (loggedin) {
+        App.appCore.session.isLoggedIn.observe(this) { loggedIn ->
+            if (App.appCore.setup.isAuthSetupCompleted) {
+                if (loggedIn) {
                     loggedIn()
                 } else {
                     loggedOut()
                 }
             }
-        })
+        }
     }
 
     override fun onResume() {
@@ -269,8 +268,8 @@ abstract class BaseActivity(
     }
 
     fun showAuthentication(text: String = authenticateText(), callback: AuthenticationCallback) {
-        val useBiometrics = App.appCore.authManager.useBiometrics()
-        val usePasscode = App.appCore.authManager.usePasscode()
+        val useBiometrics = App.appCore.auth.isBiometricsUsed()
+        val usePasscode = App.appCore.auth.isPasscodeUsed()
         if (useBiometrics) {
             showBiometrics(text, usePasscode, callback)
         } else {
@@ -343,8 +342,8 @@ abstract class BaseActivity(
     }
 
     fun authenticateText(): String {
-        val useBiometrics = App.appCore.authManager.useBiometrics()
-        val usePasscode = App.appCore.authManager.usePasscode()
+        val useBiometrics = App.appCore.auth.isBiometricsUsed()
+        val usePasscode = App.appCore.auth.isPasscodeUsed()
         return when {
             useBiometrics -> getString(R.string.auth_login_biometrics_dialog_subtitle)
             usePasscode -> getString(R.string.auth_login_biometrics_dialog_cancel_passcode)

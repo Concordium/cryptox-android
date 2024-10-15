@@ -1,13 +1,12 @@
 package com.concordium.wallet.ui.common.delegates
 
+import android.app.Activity
 import android.content.Intent
-import androidx.core.app.ComponentActivity
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
@@ -24,20 +23,20 @@ import kotlin.concurrent.schedule
 
 interface IdentityStatusDelegate {
     fun startCheckForPendingIdentity(
-        activity: ComponentActivity?,
+        activity: Activity?,
         specificIdentityId: Int?,
         showForFirstIdentity: Boolean,
         statusChanged: (Identity) -> Unit
     )
 
     fun identityDone(
-        activity: ComponentActivity,
+        activity: Activity,
         identity: Identity,
         statusChanged: (Identity) -> Unit
     )
 
     fun identityError(
-        activity: ComponentActivity,
+        activity: Activity,
         identity: Identity,
         statusChanged: (Identity) -> Unit
     )
@@ -50,7 +49,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     private var showForFirstIdentity = false
 
     override fun startCheckForPendingIdentity(
-        activity: ComponentActivity?,
+        activity: Activity?,
         specificIdentityId: Int?,
         showForFirstIdentity: Boolean,
         statusChanged: (Identity) -> Unit
@@ -58,8 +57,8 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
         this.showForFirstIdentity = showForFirstIdentity
         if (activity == null || activity.isFinishing || activity.isDestroyed)
             return
-        if (App.appCore.newIdentities.isNotEmpty()) {
-            for (newIdentity in App.appCore.newIdentities) {
+        if (App.appCore.session.newIdentities.isNotEmpty()) {
+            for (newIdentity in App.appCore.session.newIdentities) {
                 if (specificIdentityId == null || specificIdentityId == newIdentity.key) {
                     CoroutineScope(Dispatchers.IO).launch {
                         job = launch {
@@ -114,13 +113,13 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     override fun identityDone(
-        activity: ComponentActivity,
+        activity: Activity,
         identity: Identity,
         statusChanged: (Identity) -> Unit
     ) {
-        if (App.appCore.newIdentities[identity.id] == null)
+        if (App.appCore.session.newIdentities[identity.id] == null)
             return
-        App.appCore.newIdentities.remove(identity.id)
+        App.appCore.session.newIdentities.remove(identity.id)
 
         if (showForFirstIdentity) {
             statusChanged(identity)
@@ -153,13 +152,13 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     override fun identityError(
-        activity: ComponentActivity,
+        activity: Activity,
         identity: Identity,
         statusChanged: (Identity) -> Unit
     ) {
-        if (App.appCore.newIdentities[identity.id] == null)
+        if (App.appCore.session.newIdentities[identity.id] == null)
             return
-        App.appCore.newIdentities.remove(identity.id)
+        App.appCore.session.newIdentities.remove(identity.id)
 
         val builder = MaterialAlertDialogBuilder(activity)
         builder.setTitle(R.string.identities_overview_identity_rejected_title)
@@ -176,7 +175,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     private fun identityErrorNextIdentity(
-        activity: ComponentActivity,
+        activity: Activity,
         identity: Identity,
         builder: MaterialAlertDialogBuilder,
         statusChanged: (Identity) -> Unit
@@ -198,7 +197,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     private fun identityErrorFirstIdentity(
-        activity: ComponentActivity,
+        activity: Activity,
         identity: Identity,
         builder: MaterialAlertDialogBuilder
     ) {

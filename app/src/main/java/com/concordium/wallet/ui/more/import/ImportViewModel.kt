@@ -10,7 +10,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
+import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.core.security.EncryptionException
@@ -152,7 +152,7 @@ class ImportViewModel(application: Application) :
     private suspend fun handleAuthPassword(password: String) {
         // Decrypt the master key
         val decryptedMasterKey = runCatching {
-            App.appCore.authManager.getMasterKey(password)
+            App.appCore.auth.getMasterKey(password)
         }.getOrNull()
         if (decryptedMasterKey == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
@@ -368,7 +368,7 @@ class ImportViewModel(application: Application) :
             }
         } // End of identity
         confirmImport()
-        session.hasCompletedInitialSetup()
+        App.appCore.setup.finishInitialSetup()
         _waitingLiveData.postValue(false)
     }
 
@@ -480,7 +480,7 @@ class ImportViewModel(application: Application) :
         masterKey: ByteArray
     ): Identity? {
         val privateIdObjectDataJson = gson.toJson(identityExport.privateIdObjectData)
-        val privateIdObjectDataEncrypted = App.appCore.authManager
+        val privateIdObjectDataEncrypted = App.appCore.auth
             .encrypt(
                 masterKey = masterKey,
                 data = privateIdObjectDataJson.toByteArray(),
@@ -510,7 +510,7 @@ class ImportViewModel(application: Application) :
                 accountExport.encryptionSecretKey
             )
         )
-        val accountDataEncrypted = App.appCore.authManager
+        val accountDataEncrypted = App.appCore.auth
             .encrypt(
                 masterKey = masterKey,
                 data = accountDataJson.toByteArray(),

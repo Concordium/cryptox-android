@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.more.export
 
 import android.app.Application
 import android.net.Uri
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -63,7 +62,7 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
             textResourceInt.postValue(R.string.app_error_general)
             return
         }
-        val decryptedJson = App.appCore.authManager
+        val decryptedJson = App.appCore.auth
             .decrypt(
                 password = password,
                 encryptedData = storageAccountDataEncrypted,

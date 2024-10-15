@@ -1,12 +1,11 @@
-package com.concordium.wallet.core.authentication
+package com.concordium.wallet.core
 
-import com.concordium.wallet.App
 import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.core.security.EncryptionHelper
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.core.security.KeystoreHelper
 import com.concordium.wallet.data.model.EncryptedData
-import com.concordium.wallet.data.preferences.AppAuthPreferences
+import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,12 +28,13 @@ import javax.crypto.IllegalBlockSizeException
  * @param slot identifier of a slot to read/write the auth data into.
  * Use AuthenticationManagers with different slots to safely update the auth
  * in the same way the A/B flashing works in smartphones.
+ *
+ * @see commitCurrentSlot to save changes done in a given slot
  */
-class AuthenticationManager(
-    val slot: String,
+class AppAuth(
+    private val appSetupPreferences: AppSetupPreferences,
+    private val slot: String = appSetupPreferences.getCurrentAuthSlot(),
 ) {
-    private val appAuthPreferences = AppAuthPreferences(App.appContext)
-
     // region Biometrics
 
     fun initBiometricAuth(
@@ -42,7 +42,7 @@ class AuthenticationManager(
         cipher: Cipher,
     ): Boolean {
         try {
-            appAuthPreferences.setEncryptedPassword(
+            appSetupPreferences.setEncryptedPassword(
                 slot,
                 EncryptedData(
                     ciphertext = cipher.doFinal(password.toByteArray()),
@@ -50,7 +50,7 @@ class AuthenticationManager(
                     transformation = cipher.algorithm,
                 )
             )
-            appAuthPreferences.setUseBiometrics(slot, true)
+            appSetupPreferences.setUseBiometrics(slot, true)
             return true
         } catch (e: java.lang.Exception) {
             when (e) {
@@ -88,16 +88,16 @@ class AuthenticationManager(
         try {
             val cipher = KeystoreHelper().initCipherForDecryption(
                 keyName = slot,
-                initVector = appAuthPreferences.getEncryptedPassword(slot).decodeIv(),
+                initVector = appSetupPreferences.getEncryptedPassword(slot).decodeIv(),
             )
 
             if (cipher == null) {
-                appAuthPreferences.setUseBiometrics(slot, false)
+                appSetupPreferences.setUseBiometrics(slot, false)
             }
 
             return cipher
         } catch (e: KeystoreEncryptionException) {
-            appAuthPreferences.setUseBiometrics(slot, false)
+            appSetupPreferences.setUseBiometrics(slot, false)
             throw e
         }
     }
@@ -106,7 +106,7 @@ class AuthenticationManager(
         cipher: Cipher,
     ): String? = withContext(Dispatchers.Default) {
         runCatching {
-            val encryptedPassword = appAuthPreferences.getEncryptedPassword(slot)
+            val encryptedPassword = appSetupPreferences.getEncryptedPassword(slot)
             cipher.doFinal(encryptedPassword.decodeCiphertext())
         }
             .getOrNull()
@@ -120,9 +120,13 @@ class AuthenticationManager(
      * Use this method to init the auth for the first time.
      */
     @Throws(EncryptionException::class)
-    suspend fun initPasswordAuth(password: String) =
+    suspend fun initPasswordAuth(
+        password: String,
+        isPasscode: Boolean,
+    ) =
         initPasswordAuth(
             password = password,
+            isPasscode = isPasscode,
             masterKey = EncryptionHelper.generateKey(),
         )
 
@@ -134,6 +138,7 @@ class AuthenticationManager(
     @Throws(EncryptionException::class)
     suspend fun initPasswordAuth(
         password: String,
+        isPasscode: Boolean,
         masterKey: ByteArray,
     ) {
         val passwordKeySalt = EncryptionHelper.generatePasswordKeySalt()
@@ -145,24 +150,27 @@ class AuthenticationManager(
             key = passwordKey,
             data = masterKey,
         )
-        appAuthPreferences.setPasswordKeySalt(
-            slot,
-            passwordKeySalt
-        )
-        appAuthPreferences.setEncryptedMasterKey(
-            slot,
-            encryptedMasterKey
-        )
+        appSetupPreferences.setPasswordKeySalt(slot, passwordKeySalt)
+        appSetupPreferences.setEncryptedMasterKey(slot, encryptedMasterKey)
+        appSetupPreferences.setUsePasscode(slot, isPasscode)
+    }
+
+    /**
+     * Saves the current slot as the main one,
+     * therefore committing all the changes done in this slot.
+     */
+    fun commitCurrentSlot() {
+        appSetupPreferences.setCurrentAuthSlot(slot)
     }
 
     @Throws(EncryptionException::class)
     suspend fun getMasterKey(
         password: String,
     ): ByteArray {
-        val encryptedMasterKey = appAuthPreferences.getEncryptedMasterKey(slot)
+        val encryptedMasterKey = appSetupPreferences.getEncryptedMasterKey(slot)
         val passwordKey = EncryptionHelper.generatePasswordKey(
             password = password.toCharArray(),
-            salt = appAuthPreferences.getPasswordKeySalt(slot),
+            salt = appSetupPreferences.getPasswordKeySalt(slot),
         )
         return EncryptionHelper.decrypt(
             key = passwordKey,
@@ -217,15 +225,16 @@ class AuthenticationManager(
             )
         }.getOrNull()
 
-    fun usePasscode(): Boolean {
-        return appAuthPreferences.getUsePasscode(slot)
+    fun isPasswordAuthInitialized(): Boolean {
+        return appSetupPreferences.hasEncryptedMasterKey(slot)
+                && appSetupPreferences.hasPasswordKeySalt(slot)
     }
 
-    fun useBiometrics(): Boolean {
-        return appAuthPreferences.getUseBiometrics(slot)
+    fun isPasscodeUsed(): Boolean {
+        return appSetupPreferences.getUsePasscode(slot)
     }
 
-    fun setUsePassCode(passcodeUsed: Boolean) {
-        appAuthPreferences.setUsePasscode(slot, passcodeUsed)
+    fun isBiometricsUsed(): Boolean {
+        return appSetupPreferences.getUseBiometrics(slot)
     }
 }

@@ -20,24 +20,7 @@ constructor(
     val context: Context,
 ) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key, Context.MODE_PRIVATE) {
 
-    fun setHasSetupUser(value: Boolean) {
-        setBoolean(PREFKEY_HAS_SETUP_USER, value)
-    }
-
-    fun getHasSetupUser(): Boolean {
-        return getBoolean(PREFKEY_HAS_SETUP_USER)
-    }
-
-    fun setHasCompletedInitialSetup(value: Boolean) {
-        setBoolean(PREFKEY_HAS_COMPLETED_INITIAL_SETUP, value)
-    }
-
-    fun getHasCompletedInitialSetup(): Boolean {
-        // Default value is true for backward compatibility.
-        return getBoolean(PREFKEY_HAS_COMPLETED_INITIAL_SETUP, true)
-    }
-
-    fun isAccountsBackedUp(): Boolean {
+    fun areAccountsBackedUp(): Boolean {
         return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)
     }
 
@@ -58,7 +41,7 @@ constructor(
      */
     suspend fun tryToSetEncryptedSeedPhrase(seedPhraseString: String, password: String): Boolean {
         val entropy = Mnemonics.MnemonicCode(seedPhraseString).toEntropy()
-        val encryptedEntropy = App.appCore.authManager.encrypt(
+        val encryptedEntropy = App.appCore.auth.encrypt(
             password = password,
             data = entropy,
         ) ?: return false
@@ -77,7 +60,7 @@ constructor(
      * @see getSeedHex
      */
     suspend fun tryToSetEncryptedSeedHex(seedHex: String, password: String): Boolean {
-        val encryptedSeed = App.appCore.authManager.encrypt(
+        val encryptedSeed = App.appCore.auth.encrypt(
             password = password,
             data = seedHex.hexToBytes(),
         ) ?: return false
@@ -88,7 +71,7 @@ constructor(
     }
 
     suspend fun getSeedHex(password: String): String {
-        val authenticationManager = App.appCore.authManager
+        val authenticationManager = App.appCore.auth
 
         // Try the encrypted entropy.
         getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
@@ -109,7 +92,7 @@ constructor(
      */
     suspend fun getSeedPhrase(password: String): String =
         getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
-            ?.let { App.appCore.authManager.decrypt(password, it) }
+            ?.let { App.appCore.auth.decrypt(password, it) }
             ?.let {
                 Mnemonics.MnemonicCode(it).words.joinToString(
                     separator = " ",
@@ -131,8 +114,6 @@ constructor(
         getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
 
     private companion object {
-        const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
-        const val PREFKEY_HAS_COMPLETED_INITIAL_SETUP = "PREFKEY_HAS_COMPLETED_INITIAL_SETUP"
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON = "PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON"
         const val PREFKEY_ENCRYPTED_SEED_JSON = "PREFKEY_ENCRYPTED_SEED_JSON"

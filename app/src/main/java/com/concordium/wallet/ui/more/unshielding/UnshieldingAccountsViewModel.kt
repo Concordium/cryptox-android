@@ -120,7 +120,7 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
             _waitingLiveData.postValue(false)
             return
         }
-        val decryptedJson = App.appCore.authManager
+        val decryptedJson = App.appCore.auth
             .decrypt(
                 password=password,
                 encryptedData = storageAccountDataEncrypted,

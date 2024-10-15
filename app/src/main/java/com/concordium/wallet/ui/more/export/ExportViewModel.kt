@@ -126,7 +126,7 @@ class ExportViewModel(application: Application) :
     private suspend fun handleAuthPassword(password: String) {
         // Decrypt the master key
         this.decryptedMasterKey = runCatching {
-            App.appCore.authManager.getMasterKey(password)
+            App.appCore.auth.getMasterKey(password)
         }.getOrNull()
         if (decryptedMasterKey == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
@@ -169,7 +169,7 @@ class ExportViewModel(application: Application) :
                     }
                     if (account.transactionStatus == TransactionStatus.FINALIZED) {
                         val accountDataJsonDecrypted =
-                            App.appCore.authManager
+                            App.appCore.auth
                                 .decrypt(
                                     masterKey = masterKey,
                                     encryptedData = storageAccountDataEncrypted,
@@ -189,7 +189,7 @@ class ExportViewModel(application: Application) :
                 }
 
                 val privateIdObjectDataDecrypted =
-                    App.appCore.authManager
+                    App.appCore.auth
                         .decrypt(
                             masterKey = masterKey,
                             encryptedData = identity.privateIdObjectDataEncrypted

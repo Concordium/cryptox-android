@@ -40,7 +40,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
@@ -461,7 +460,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 _waitingLiveData.value = false
                 return
             }
-            val decryptedJson = App.appCore.authManager
+            val decryptedJson = App.appCore.auth
                 .decrypt(
                     password = password,
                     encryptedData = storageAccountDataEncrypted,

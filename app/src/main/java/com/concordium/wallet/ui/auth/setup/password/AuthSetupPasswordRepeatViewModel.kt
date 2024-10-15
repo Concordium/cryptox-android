@@ -6,12 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
 
 class AuthSetupPasswordRepeatViewModel(application: Application) : AndroidViewModel(application) {
-
-    // App.appCore.authManager
-    private val session: Session = App.appCore.session
 
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()
     val finishScreenLiveData: LiveData<Event<Boolean>>
@@ -21,7 +17,7 @@ class AuthSetupPasswordRepeatViewModel(application: Application) : AndroidViewMo
     }
 
     fun checkPassword(password: String) {
-        val isEqual = session.checkPassword(password)
+        val isEqual = App.appCore.setup.authSetupPassword == password
         _finishScreenLiveData.value = Event(isEqual)
     }
 }

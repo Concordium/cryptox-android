@@ -141,7 +141,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             val output = createIdRequestAndPrivateData()
             if (output != null) {
                 val privateIdObjectDataJson = gson.toJson(output.privateIdObjectData.value)
-                val encryptedPrivateIdObjectData = App.appCore.authManager
+                val encryptedPrivateIdObjectData = App.appCore.auth
                     .encrypt(
                         password = password,
                         data = privateIdObjectDataJson.toByteArray(),
@@ -165,7 +165,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     ): Boolean {
         // Encrypt account data for later when saving account
         val initialAccountDataJson = gson.toJson(output.initialAccountData)
-        val encryptedInitialAccountData = App.appCore.authManager
+        val encryptedInitialAccountData = App.appCore.auth
             .encrypt(
                 password = password,
                 data = initialAccountDataJson.toByteArray(),

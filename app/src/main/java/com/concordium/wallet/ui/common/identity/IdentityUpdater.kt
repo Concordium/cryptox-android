@@ -150,8 +150,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                                 updateListener?.onError(identity, account)
                             }
                         }
-                        if (App.appCore.newIdentities[identity.id] == null) {
-                            App.appCore.newIdentities[identity.id] = identity
+                        if (App.appCore.session.newIdentities[identity.id] == null) {
+                            App.appCore.session.newIdentities[identity.id] = identity
                         }
                     } else {
                         hasMorePending = true

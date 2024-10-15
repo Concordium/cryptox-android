@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.util.BiometricsUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,8 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(application) {
-    private val session: Session = App.appCore.session
-
     private val mutableStateFlow = MutableStateFlow<State>(
         State.Create(hasError = false)
     )
@@ -61,44 +58,43 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
             "The passcode must be created at this point"
         }
 
-        session.startPasswordSetup(confirmedPasscode)
+        App.appCore.setup.beginAuthSetup(confirmedPasscode)
 
         val isSetUpSuccessfully = runCatching {
-            val authResetMasterKey = App.appCore.authResetMasterKey
+            val authResetMasterKey = App.appCore.setup.authResetMasterKey
             if (authResetMasterKey != null) {
-                App.appCore.authManager.initPasswordAuth(
+                App.appCore.auth.initPasswordAuth(
                     password = confirmedPasscode,
+                    isPasscode = true,
                     masterKey = authResetMasterKey,
                 )
             } else {
-                App.appCore.authManager.initPasswordAuth(
+                App.appCore.auth.initPasswordAuth(
                     password = confirmedPasscode,
+                    isPasscode = true,
                 )
             }
         }.isSuccess
 
         if (isSetUpSuccessfully) {
-            onSetUpSuccessfully(usedPasscode = true)
+            onSetUpSuccessfully()
         } else {
-            session.hasFinishedSetupPassword()
+            App.appCore.setup.finishAuthSetup()
             mutableEventsFlow.tryEmit(Event.ShowFatalError)
         }
     }
 
-    private fun onSetUpSuccessfully(usedPasscode: Boolean) {
-        // Setting up password is done, so login screen should be shown next time app is opened
-        session.hasSetupPassword(usedPasscode)
-
+    private fun onSetUpSuccessfully() {
         if (BiometricsUtil.isBiometricsAvailable()) {
             mutableEventsFlow.tryEmit(Event.SuggestBiometricsSetup)
         } else {
-            session.hasFinishedSetupPassword()
+            App.appCore.setup.finishAuthSetup()
             mutableEventsFlow.tryEmit(Event.FinishWithSuccess)
         }
     }
 
     fun onBiometricsSuggestionReviewed() {
-        session.hasFinishedSetupPassword()
+        App.appCore.setup.finishAuthSetup()
         mutableEventsFlow.tryEmit(Event.FinishWithSuccess)
     }
 
@@ -112,7 +108,10 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
         )
 
         if (isSetUpSuccessfully) {
-            onSetUpSuccessfully(usedPasscode = false)
+            onSetUpSuccessfully()
+        } else {
+            App.appCore.setup.finishAuthSetup()
+            mutableEventsFlow.tryEmit(Event.ShowFatalError)
         }
     }
 

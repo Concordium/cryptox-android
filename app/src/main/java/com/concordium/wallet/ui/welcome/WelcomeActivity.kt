@@ -40,9 +40,7 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             goToStart()
         }
 
-        // hasCompletedInitialSetup has positive value at the fresh app start,
-        // hence we can skip this screen if the user has ever visited the next one.
-        if (savedInstanceState == null && !App.appCore.session.hasCompletedInitialSetup) {
+        if (savedInstanceState == null && App.appCore.setup.isInitialSetupCompleted) {
             goToStart()
         } else if (savedInstanceState == null){
             App.appCore.tracker.welcomeScreen()

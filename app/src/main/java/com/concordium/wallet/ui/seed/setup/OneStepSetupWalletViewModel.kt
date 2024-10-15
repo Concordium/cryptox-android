@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(application) {
-    private val session: Session = App.appCore.session
 
     private val mutablePhraseFlow = MutableStateFlow<List<String>?>(null)
     val phraseFlow: Flow<List<String>?> = mutablePhraseFlow
@@ -62,7 +60,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
             )
 
         if (isSavedSuccessfully) {
-            session.hasCompletedInitialSetup()
+            App.appCore.setup.finishInitialSetup()
             mutableEventsFlow.emit(Event.GoToIdentityCreation)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)

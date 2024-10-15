@@ -1,8 +1,6 @@
-package com.concordium.wallet
+package com.concordium.wallet.core
 
-import android.content.Context
-import com.concordium.wallet.core.authentication.AuthenticationManager
-import com.concordium.wallet.core.authentication.Session
+import com.concordium.wallet.App
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
@@ -21,15 +19,15 @@ import com.concordium.wallet.data.backend.notifications.NotificationsBackendConf
 import com.concordium.wallet.data.backend.tokens.TokensBackend
 import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
-import com.concordium.wallet.data.room.Identity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.matomo.sdk.Matomo
 import org.matomo.sdk.TrackerBuilder
 import java.math.BigInteger
 
-class AppCore(val context: Context) {
+class AppCore(val app: App) {
 
     val gson: Gson = initializeGson()
     val proxyBackendConfig = ProxyBackendConfig(gson)
@@ -40,11 +38,11 @@ class AppCore(val context: Context) {
         NotificationsBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
 
-    private val appTrackingPreferences = AppTrackingPreferences(context)
+    private val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
     private val matomoAppTracker: AppTracker by lazy {
         TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 8)
-            .build(Matomo.getInstance(context))
+            .build(Matomo.getInstance(App.appContext))
             .let(::MatomoAppTracker)
     }
     val tracker: AppTracker
@@ -54,14 +52,13 @@ class AppCore(val context: Context) {
             else
                 noOpAppTracker
 
-    val session: Session = Session(App.appContext)
-    var newIdentities = mutableMapOf<Int, Identity>()
-
-    var authManager: AuthenticationManager = AuthenticationManager(session.getCurrentAuthSlot())
-        private set
-    private var oldAuthManager = authManager
-    var authResetMasterKey: ByteArray? = null
-        private set
+    val session = Session(App.appContext)
+    val setup = AppSetup(
+        appSetupPreferences = AppSetupPreferences(App.appContext),
+        session = session,
+    )
+    val auth: AppAuth
+        get() = setup.auth
 
     fun getNotificationsBackend(): NotificationsBackend {
         return notificationsBackendConfig.backend
@@ -88,37 +85,5 @@ class AppCore(val context: Context) {
         gsonBuilder.registerTypeAdapter(RawJson::class.java, RawJsonTypeAdapter())
         gsonBuilder.registerTypeAdapter(BigInteger::class.java, BigIntegerTypeAdapter())
         return gsonBuilder.create()
-    }
-
-    /**
-     * Allows manipulating the [authManager] without making the change permanent
-     * until [commitAuthReset] is called. In case of failure, call [cancelAuthReset].
-     *
-     * @param decryptedMasterKey to be used for during the reset, see [authResetMasterKey]
-     */
-    fun beginAuthReset(decryptedMasterKey: ByteArray) {
-        // Back up the current auth manager and replace it
-        // with the one with an alternative slot.
-        oldAuthManager = authManager
-        authManager = AuthenticationManager(
-            slot = System.currentTimeMillis().toString()
-        )
-        // Store the decrypted master key in memory
-        // to re-init the auth with it later.
-        this.authResetMasterKey = decryptedMasterKey
-    }
-
-    fun commitAuthReset() {
-        authResetMasterKey = null
-        // Save the current (alternative) slot and continue using it.
-        session.setCurrentAuthSlot(authManager.slot)
-        session.hasFinishedSetupPassword()
-    }
-
-    fun cancelAuthReset() {
-        authResetMasterKey = null
-        // Restore the auth manager discarding the alternative slot.
-        authManager = oldAuthManager
-        session.hasFinishedSetupPassword()
     }
 }

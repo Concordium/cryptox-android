@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.core.authentication.Session
+import com.concordium.wallet.core.Session
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
@@ -74,11 +74,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun shouldShowPasswordSetup(): Boolean {
-        return !session.hasSetupPassword
+        return !App.appCore.setup.isAuthSetupCompleted
     }
 
     fun shouldShowInitialSetup(): Boolean {
-        return session.hasSetupPassword && !session.hasCompletedInitialSetup
+        return !App.appCore.setup.isInitialSetupCompleted
     }
 
     fun startIdentityUpdate() {

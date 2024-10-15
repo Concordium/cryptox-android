@@ -1,29 +1,16 @@
-package com.concordium.wallet.core.authentication
+package com.concordium.wallet.core
 
 import android.content.Context
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.concordium.wallet.App
 import com.concordium.wallet.data.WalletStorage
-import com.concordium.wallet.data.preferences.AppAuthPreferences
 import com.concordium.wallet.data.preferences.Preferences
+import com.concordium.wallet.data.room.Identity
 
 class Session(context: Context) {
-
-    private val appAuthPreferences = AppAuthPreferences(context)
     val walletStorage = WalletStorage(context)
-
-    var hasSetupPassword = walletStorage.setupPreferences.getHasSetupUser()
-        private set
-
-    private var tempPassword: String? = null
-
-    /**
-     * The value is positive at the fresh app start until the setup start screen is visited.
-     */
-    var hasCompletedInitialSetup = walletStorage.setupPreferences.getHasCompletedInitialSetup()
-        private set
+    var newIdentities = mutableMapOf<Int, Identity>()
 
     private val _isLoggedIn = MutableLiveData<Boolean>(false)
     val isLoggedIn: LiveData<Boolean>
@@ -48,47 +35,14 @@ class Session(context: Context) {
         return  walletStorage.filterPreferences.getHasShowFinalizationRewards(id)
     }
 
-    fun unshieldingNoticeShown() {
+    fun setUnshieldingNoticeShown() {
         isUnshieldingNoticeShown = true
     }
 
     fun isUnshieldingNoticeShown(): Boolean =
         isUnshieldingNoticeShown
 
-    fun hasSetupPassword(passcodeUsed: Boolean = false) {
-        _isLoggedIn.value = true
-        walletStorage.setupPreferences.setHasSetupUser(true)
-        App.appCore.authManager.setUsePassCode(passcodeUsed)
-        hasSetupPassword = true
-    }
-
-    fun hasFinishedSetupPassword() {
-        println("OOLEG here")
-        Exception().printStackTrace()
-        tempPassword = null
-    }
-
-    fun startedInitialSetup() {
-        walletStorage.setupPreferences.setHasCompletedInitialSetup(false)
-        hasCompletedInitialSetup = false
-    }
-
-    fun hasCompletedInitialSetup() {
-        walletStorage.setupPreferences.setHasCompletedInitialSetup(true)
-        hasCompletedInitialSetup = true
-    }
-
-    fun startPasswordSetup(password: String) {
-        tempPassword = password
-    }
-
-    fun checkPassword(password: String): Boolean {
-        return password.equals(tempPassword)
-    }
-
-    fun getPasswordToSetUp(): String? = tempPassword
-
-    fun hasLoggedInUser() {
+    fun setUserLoggedIn() {
         _isLoggedIn.value = true
         resetLogoutTimeout()
     }
@@ -109,20 +63,12 @@ class Session(context: Context) {
             }
         }
 
-    fun getCurrentAuthSlot(): String {
-        return appAuthPreferences.getCurrentAuthSlot()
-    }
-
-    fun setCurrentAuthSlot(resetBiometricKeyNameAppendix: String) {
-        appAuthPreferences.setCurrentAuthSlot(resetBiometricKeyNameAppendix)
-    }
-
     fun isAccountsBackupPossible(): Boolean {
         return !walletStorage.setupPreferences.hasEncryptedSeed()
     }
 
     fun isAccountsBackedUp(): Boolean {
-        return walletStorage.setupPreferences.isAccountsBackedUp()
+        return walletStorage.setupPreferences.areAccountsBackedUp()
     }
 
     fun setAccountsBackedUp(value: Boolean) {

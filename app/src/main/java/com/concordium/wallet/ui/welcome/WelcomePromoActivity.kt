@@ -45,7 +45,6 @@ class WelcomePromoActivity :
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
-        viewModel.initialize()
 
         if (savedInstanceState == null) {
             showAccounts()

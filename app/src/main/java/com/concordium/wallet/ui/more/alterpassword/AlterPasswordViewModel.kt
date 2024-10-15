@@ -11,10 +11,7 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
 
-class AlterPasswordViewModel(application: Application) :
-    AndroidViewModel(application) {
-
-    private var decryptedMasterKey: ByteArray? = null
+class AlterPasswordViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -49,7 +46,7 @@ class AlterPasswordViewModel(application: Application) :
         _waitingLiveData.postValue(true)
 
         val decryptedMasterKey = runCatching {
-            App.appCore.authManager.getMasterKey(password)
+            App.appCore.auth.getMasterKey(password)
         }.getOrNull()
 
         if (decryptedMasterKey == null) {
@@ -60,7 +57,7 @@ class AlterPasswordViewModel(application: Application) :
 
         Log.d("starting_auth_reset")
 
-        App.appCore.beginAuthReset(decryptedMasterKey)
+        App.appCore.setup.beginAuthReset(decryptedMasterKey)
 
         _doneInitialAuthenticationLiveData.postValue(Event(true))
         _waitingLiveData.postValue(false)
@@ -68,7 +65,7 @@ class AlterPasswordViewModel(application: Application) :
 
     fun onPasscodeSetupResult(isSetUpSuccessfully: Boolean) = viewModelScope.launch {
         if (!isSetUpSuccessfully) {
-            App.appCore.cancelAuthReset()
+            App.appCore.setup.cancelAuthReset()
             Log.d("cancelled_auth_reset")
             return@launch
         }
@@ -76,13 +73,13 @@ class AlterPasswordViewModel(application: Application) :
         Log.d("trying_reinit_password_auth")
 
         try {
-            App.appCore.commitAuthReset()
+            App.appCore.setup.commitAuthReset()
             _doneFinalChangePasswordLiveData.postValue(Event(true))
             Log.d("committed_auth_reset")
         } catch (e: Exception) {
             Log.e("failed_to_committed_auth_reset", e)
 
-            App.appCore.cancelAuthReset()
+            App.appCore.setup.cancelAuthReset()
             Log.d("cancelled_auth_reset")
             _errorFinalChangePasswordLiveData.postValue(Event(true))
         } finally {

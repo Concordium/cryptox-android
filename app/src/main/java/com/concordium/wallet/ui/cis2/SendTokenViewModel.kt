@@ -346,7 +346,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 waiting.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.authManager
+            val decryptedJson = App.appCore.auth
                 .decrypt(
                     password = password,
                     encryptedData = storageAccountDataEncrypted

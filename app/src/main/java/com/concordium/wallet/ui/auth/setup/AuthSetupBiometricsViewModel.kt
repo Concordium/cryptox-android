@@ -7,13 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import javax.crypto.Cipher
 
 class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val session: Session = App.appCore.session
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -23,7 +20,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
         get() = _finishScreenLiveData
 
     fun initialize() {
-        val generated = App.appCore.authManager.generateBiometricsSecretKey()
+        val generated = App.appCore.auth.generateBiometricsSecretKey()
         if (!generated) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
         }
@@ -31,7 +28,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher = App.appCore.authManager.getBiometricsCipherForEncryption()
+            val cipher = App.appCore.auth.getBiometricsCipherForEncryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -43,10 +40,10 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
     }
 
     fun proceedWithSetup(cipher: Cipher) {
-        val password = session.getPasswordToSetUp()
+        val password = App.appCore.setup.authSetupPassword
             ?: error("Setting up biometrics when there is no password to set up")
 
-        val setupDone = App.appCore.authManager.initBiometricAuth(password, cipher)
+        val setupDone = App.appCore.auth.initBiometricAuth(password, cipher)
         if (setupDone) {
             _finishScreenLiveData.value = Event(true)
         } else {

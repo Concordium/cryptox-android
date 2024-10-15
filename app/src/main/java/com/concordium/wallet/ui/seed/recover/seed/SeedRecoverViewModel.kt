@@ -5,16 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.web3j.utils.Numeric.hexStringToByteArray
 
 class SeedRecoverViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val session: Session = App.appCore.session
 
     private val _saveSeedSuccess = MutableStateFlow(false)
     val saveSeedSuccess = _saveSeedSuccess.asStateFlow()
@@ -56,7 +52,7 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
                 password
             )
         if (success) {
-            session.hasCompletedInitialSetup()
+            App.appCore.setup.finishInitialSetup()
         }
         _saveSeedSuccess.value = success
     }

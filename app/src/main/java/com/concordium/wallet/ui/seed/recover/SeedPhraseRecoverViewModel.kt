@@ -9,7 +9,6 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.ui.seed.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
@@ -38,8 +37,6 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     private val _saveSeedLiveData = MutableLiveData<Boolean>()
     val saveSeed: LiveData<Boolean>
         get() = _saveSeedLiveData
-
-    private val session: Session = App.appCore.session
 
     private val _validateLiveData = MutableLiveData<Boolean>()
     val validate: LiveData<Boolean>
@@ -102,7 +99,7 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
             )
 
         if (isSavedSuccessfully) {
-            session.hasCompletedInitialSetup()
+            App.appCore.setup.finishInitialSetup()
         }
 
         _saveSeedLiveData.value = isSavedSuccessfully
