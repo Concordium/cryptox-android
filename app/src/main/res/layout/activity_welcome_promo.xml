@@ -26,7 +26,7 @@
         android:id="@+id/bottom_navigation_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/bottom_navigation_bar_background"
+        android:background="@color/cryptox_black_main"
         app:itemIconTint="@color/ccx_bottom_navigation_bar_item_color"
         app:itemTextAppearanceActive="@style/CCX_Typography_TabTitle"
         app:itemTextAppearanceInactive="@style/CCX_Typography_TabTitle"

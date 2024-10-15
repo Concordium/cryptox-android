@@ -49,13 +49,13 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set theme to default to remove launcher theme.
-        setTheme(R.style.CCX_Screen)
+        setTheme(R.style.CCX_MainScreen)
 
         super.onCreate(savedInstanceState)
 
         // Make the navigation bar color match the bottom navigation bar.
         window.navigationBarColor =
-            ContextCompat.getColor(this, R.color.bottom_navigation_bar_background)
+            ContextCompat.getColor(this, R.color.cryptox_black_main)
 
         initializeViewModel()
         viewModel.initialize()
