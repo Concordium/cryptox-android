@@ -56,13 +56,9 @@ class AppCore(val app: App) {
     val session = Session(
         context = app,
         // TODO load the wallet form persistence
-//        activeWallet = WalletInfo.primary(
-//            type = WalletInfo.Type.SEED,
-//        ),
-        activeWallet = WalletInfo(
-            id = "",
+        activeWallet = WalletInfo.primary(
             type = WalletInfo.Type.SEED,
-        )
+        ),
     )
     val setup = AppSetup(
         appSetupPreferences = AppSetupPreferences(App.appContext),

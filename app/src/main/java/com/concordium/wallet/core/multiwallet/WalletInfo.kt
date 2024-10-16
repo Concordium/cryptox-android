@@ -1,7 +1,7 @@
 package com.concordium.wallet.core.multiwallet
 
 class WalletInfo
-constructor(
+private constructor(
     val id: String,
     val type: Type,
 ) {

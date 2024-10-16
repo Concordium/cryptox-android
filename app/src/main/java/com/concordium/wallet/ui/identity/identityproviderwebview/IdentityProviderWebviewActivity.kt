@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.identity.identityproviderwebview
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,15 +14,13 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.model.IdentityCreationData
-import com.concordium.wallet.data.preferences.Preferences
-import com.concordium.wallet.data.preferences.SharedPreferenceFiles
+import com.concordium.wallet.data.preferences.WalletIdentityCreationDataPreferences
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentityProviderWebviewBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
-import com.google.gson.Gson
 import java.util.BitSet
 
 class IdentityProviderWebviewActivity : BaseActivity(
@@ -35,14 +32,12 @@ class IdentityProviderWebviewActivity : BaseActivity(
     private val binding by lazy {
         ActivityIdentityProviderWebviewBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private val gson = App.appCore.gson
     private var showForFirstIdentity = false
     private var chromeLaunched = false
 
     companion object {
         const val EXTRA_IDENTITY_CREATION_DATA = "EXTRA_IDENTITY_CREATION_DATA"
-        const val KEY_IDENTITY_CREATION_DATA = "KEY_IDENTITY_CREATION_DATA"
-        const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
+        const val EXTRA_SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE = 1 // data were available
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI = 2 // valid callback uri
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA =
@@ -60,65 +55,8 @@ class IdentityProviderWebviewActivity : BaseActivity(
             9 // nothing is set in the callback uri
     }
 
-    // Have to keep this intent data in case the Activity is force killed while on the IdentityProvider website
-    private inner class IdentityDataPreferences(
-        context: Context,
-        preferenceName: String,
-    ) : Preferences(context, preferenceName) {
-
-        private inner class StoredIdentityCreationData(
-            val version: Int,
-            val data: String,
-        )
-
-        fun getIdentityCreationData(): IdentityCreationData? {
-            val json = getString(KEY_IDENTITY_CREATION_DATA)
-            return if (json == null) {
-                null
-            } else {
-                val storedData = Gson().fromJson(json, StoredIdentityCreationData::class.java)
-                when (val version = storedData.version) {
-                    0 -> gson.fromJson(storedData.data, IdentityCreationData.V0::class.java)
-                    1 -> gson.fromJson(storedData.data, IdentityCreationData.V1::class.java)
-                    else -> error("Unexpected version $version")
-                }
-            }
-        }
-
-        fun setIdentityCreationData(data: IdentityCreationData?) {
-            setString(
-                KEY_IDENTITY_CREATION_DATA, if (data == null) {
-                    null
-                } else {
-                    val version = when (data) {
-                        is IdentityCreationData.V0 -> 0
-                        is IdentityCreationData.V1 -> 1
-                    }
-                    val storedData = StoredIdentityCreationData(
-                        version = version,
-                        data = gson.toJson(data)
-                    )
-                    gson.toJson(storedData)
-                }
-            )
-        }
-
-        fun getShowForFirstIdentityFromCallback(): Boolean {
-            return getBoolean(SHOW_FOR_FIRST_IDENTITY, false)
-        }
-
-        fun setShowForFirstIdentityFromCallback(isFirst: Boolean) {
-            setBoolean(SHOW_FOR_FIRST_IDENTITY, isFirst)
-        }
-    }
-
-    private val preferences: IdentityDataPreferences
-        get() {
-            return IdentityDataPreferences(
-                application,
-                SharedPreferenceFiles.WALLET_ID_CREATION_DATA.key,
-            )
-        }
+    private val preferences: WalletIdentityCreationDataPreferences=
+        App.appCore.session.walletStorage.identityCreationDataPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,7 +66,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
 
         if (!showForFirstIdentity)
             showForFirstIdentity =
-                intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+                intent.extras?.getBoolean(EXTRA_SHOW_FOR_FIRST_IDENTITY, false) ?: false
 
         var handled = false
 

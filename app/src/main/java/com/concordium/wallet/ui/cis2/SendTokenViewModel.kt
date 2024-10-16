@@ -29,12 +29,12 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsPreferences
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.DateTimeUtil
@@ -79,9 +79,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private val transferRepository =
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val sendFundsPreferences by lazy {
-        SendFundsPreferences(getApplication())
-    }
+    private val sendFundsPreferences: WalletSendFundsPreferences =
+        App.appCore.session.walletStorage.sendFundsPreferences
 
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null

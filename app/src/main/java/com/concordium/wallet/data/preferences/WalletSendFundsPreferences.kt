@@ -1,10 +1,16 @@
-package com.concordium.wallet.ui.transaction.sendfunds
+package com.concordium.wallet.data.preferences
 
 import android.content.Context
-import com.concordium.wallet.data.preferences.Preferences
-import com.concordium.wallet.data.preferences.SharedPreferenceFiles
 
-class SendFundsPreferences(
+class WalletSendFundsPreferences
+@Deprecated(
+    message = "Do not construct instances on your own",
+    replaceWith = ReplaceWith(
+        expression = "App.appCore.session.walletStorage.sendFundsPreferences",
+        imports = arrayOf("com.concordium.wallet.App"),
+    )
+)
+constructor(
     context: Context,
     fileNameSuffix: String = "",
 ) : Preferences(context, SharedPreferenceFiles.WALLET_SEND_FUNDS.key + fileNameSuffix) {

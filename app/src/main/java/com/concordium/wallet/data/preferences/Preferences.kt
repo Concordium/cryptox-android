@@ -139,19 +139,14 @@ open class Preferences(context: Context, preferenceName: String) {
 
     protected fun <T> setJsonSerialized(
         key: String,
-        value: T,
+        value: T?,
         gson: Gson = App.appCore.gson,
-    ) {
-        setString(key, gson.toJson(value))
-    }
+    ) = setString(key, value?.let(gson::toJson))
 
     protected inline fun <reified T> getJsonSerialized(
         key: String,
         gson: Gson = App.appCore.gson,
-    ): T? {
-        return runCatching {
-            getString(key)
-                ?.let { gson.fromJson(it, T::class.java) }
-        }.getOrNull()
-    }
+    ): T? = runCatching {
+        getString(key)?.let { gson.fromJson(it, T::class.java) }
+    }.getOrNull()
 }

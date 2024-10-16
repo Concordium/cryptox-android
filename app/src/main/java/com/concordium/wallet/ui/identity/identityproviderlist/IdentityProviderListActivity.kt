@@ -118,7 +118,10 @@ class IdentityProviderListActivity : BaseActivity(
                 identityCreationData
             )
             if (showForFirstIdentity)
-                intent.putExtra(IdentityProviderWebviewActivity.SHOW_FOR_FIRST_IDENTITY, true)
+                intent.putExtra(
+                    IdentityProviderWebviewActivity.EXTRA_SHOW_FOR_FIRST_IDENTITY,
+                    true
+                )
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }

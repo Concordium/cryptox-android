@@ -3,8 +3,10 @@ package com.concordium.wallet.data
 import android.content.Context
 import com.concordium.wallet.core.multiwallet.WalletInfo
 import com.concordium.wallet.data.preferences.WalletFilterPreferences
+import com.concordium.wallet.data.preferences.WalletIdentityCreationDataPreferences
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.preferences.WalletProviderPreferences
+import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.WalletDatabase
 
@@ -37,6 +39,14 @@ class WalletStorage(
 
     val filterPreferences: WalletFilterPreferences by lazy {
         WalletFilterPreferences(context, fileNameSuffix)
+    }
+
+    val sendFundsPreferences: WalletSendFundsPreferences by lazy {
+        WalletSendFundsPreferences(context, fileNameSuffix)
+    }
+
+    val identityCreationDataPreferences: WalletIdentityCreationDataPreferences by lazy {
+        WalletIdentityCreationDataPreferences(context, fileNameSuffix)
     }
 
     val notificationsPreferences: WalletNotificationsPreferences by lazy {
