@@ -7,7 +7,7 @@ import com.walletconnect.util.hexToBytes
 
 class AppSetupPreferences(
     val context: Context,
-) : Preferences(context, SharedPreferenceFiles.APP_SETUP.key, Context.MODE_PRIVATE) {
+) : Preferences(context, SharedPreferenceFiles.APP_SETUP.key) {
 
     fun setUsePasscode(slot: String, value: Boolean) {
         setBoolean(PREFKEY_USE_PASSCODE + slot, value)

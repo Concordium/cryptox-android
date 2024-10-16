@@ -50,11 +50,14 @@ abstract class WalletDatabase : RoomDatabase() {
                 imports = arrayOf("com.concordium.wallet.App"),
             )
         )
-        fun getDatabase(context: Context): WalletDatabase = synchronized(this) {
+        fun getDatabase(
+            context: Context,
+            fileNameSuffix: String = "",
+        ): WalletDatabase = synchronized(this) {
             Room.databaseBuilder(
                 context.applicationContext,
                 WalletDatabase::class.java,
-                "wallet_database"
+                "wallet_database$fileNameSuffix"
             )
                 .fallbackToDestructiveMigration()
                 // See auto migrations in the @Database declaration.

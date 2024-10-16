@@ -64,9 +64,8 @@ class IdentityProviderWebviewActivity : BaseActivity(
     private inner class IdentityDataPreferences(
         context: Context,
         preferenceName: String,
-        preferenceMode: Int
-    ) :
-        Preferences(context, preferenceName, preferenceMode) {
+    ) : Preferences(context, preferenceName) {
+
         private inner class StoredIdentityCreationData(
             val version: Int,
             val data: String,
@@ -118,7 +117,6 @@ class IdentityProviderWebviewActivity : BaseActivity(
             return IdentityDataPreferences(
                 application,
                 SharedPreferenceFiles.WALLET_ID_CREATION_DATA.key,
-                Context.MODE_PRIVATE
             )
         }
 

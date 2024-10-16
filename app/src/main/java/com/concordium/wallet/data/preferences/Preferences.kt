@@ -6,10 +6,10 @@ import com.concordium.wallet.App
 import com.google.gson.Gson
 import kotlin.reflect.KProperty
 
-open class Preferences(context: Context, preferenceName: String, preferenceMode: Int) {
+open class Preferences(context: Context, preferenceName: String) {
 
     private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences(preferenceName, preferenceMode)
+        context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
 
     private val editor: SharedPreferences.Editor
         get() = sharedPreferences.edit()

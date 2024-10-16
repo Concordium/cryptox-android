@@ -4,15 +4,22 @@ import android.content.Context
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.concordium.wallet.core.multiwallet.WalletInfo
 import com.concordium.wallet.data.WalletStorage
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Identity
 
-class Session(context: Context) {
-    val walletStorage = WalletStorage(context)
+class Session(
+    context: Context,
+    val activeWallet: WalletInfo,
+) {
+    val walletStorage = WalletStorage(
+        activeWallet = activeWallet,
+        context = context,
+    )
     var newIdentities = mutableMapOf<Int, Identity>()
 
-    private val _isLoggedIn = MutableLiveData<Boolean>(false)
+    private val _isLoggedIn = MutableLiveData(false)
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
@@ -24,7 +31,7 @@ class Session(context: Context) {
     }
 
     fun getHasShowRewards(id: Int): Boolean {
-        return  walletStorage.filterPreferences.getHasShowRewards(id)
+        return walletStorage.filterPreferences.getHasShowRewards(id)
     }
 
     fun setHasShowFinalizationRewards(id: Int, value: Boolean) {
@@ -32,7 +39,7 @@ class Session(context: Context) {
     }
 
     fun getHasShowFinalizationRewards(id: Int): Boolean {
-        return  walletStorage.filterPreferences.getHasShowFinalizationRewards(id)
+        return walletStorage.filterPreferences.getHasShowFinalizationRewards(id)
     }
 
     fun setUnshieldingNoticeShown() {

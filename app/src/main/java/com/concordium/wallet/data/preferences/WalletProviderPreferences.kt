@@ -14,7 +14,8 @@ class WalletProviderPreferences
 )
 constructor(
     val context: Context,
-) : Preferences(context, SharedPreferenceFiles.WALLET_PROVIDER.key, Context.MODE_PRIVATE) {
+    fileNameSuffix: String = "",
+) : Preferences(context, SharedPreferenceFiles.WALLET_PROVIDER.key + fileNameSuffix) {
 
     private val gson by lazy {
         Gson()

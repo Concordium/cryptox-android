@@ -10,12 +10,14 @@ class WalletFilterPreferences
         imports = arrayOf("com.concordium.wallet.App"),
     )
 )
-constructor(val context: Context) :
-    Preferences(context, SharedPreferenceFiles.WALLET_FILTER.key, Context.MODE_PRIVATE) {
+constructor(
+    val context: Context,
+    fileNameSuffix: String = "",
+) : Preferences(context, SharedPreferenceFiles.WALLET_FILTER.key + fileNameSuffix) {
 
-    companion object {
-        val PREFKEY_FILTER_SHOW_REWARDS = "PREFKEY_FILTER_SHOW_REWARDS"
-        val PREFKEY_FILTER_SHOW_FINALIZATION_REWARDS = "PREFKEY_FILTER_SHOW_FINALIZATION_REWARDS"
+    private companion object {
+        const val PREFKEY_FILTER_SHOW_REWARDS = "PREFKEY_FILTER_SHOW_REWARDS"
+        const val PREFKEY_FILTER_SHOW_FINALIZATION_REWARDS = "PREFKEY_FILTER_SHOW_FINALIZATION_REWARDS"
     }
 
     fun setHasShowRewards(id: Int, value: Boolean) {

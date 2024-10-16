@@ -1,33 +1,53 @@
 package com.concordium.wallet.data
 
 import android.content.Context
+import com.concordium.wallet.core.multiwallet.WalletInfo
 import com.concordium.wallet.data.preferences.WalletFilterPreferences
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.WalletDatabase
 
+/**
+ * A provider for all the persistence for a single wallet.
+ *
+ * @param fileNameSuffix a part to append to default persistence file names.
+ * For the primary wallet, use an empty string to keep backward compatibility.
+ */
 @Suppress("DEPRECATION")
 class WalletStorage(
     private val context: Context,
+    private val fileNameSuffix: String,
 ) {
+    constructor(
+        context: Context,
+        activeWallet: WalletInfo,
+    ) : this(
+        context = context,
+        fileNameSuffix =
+        if (activeWallet.id.isEmpty())
+            ""
+        else
+            "_${activeWallet.id}"
+    )
+
     val database: WalletDatabase by lazy {
-        WalletDatabase.getDatabase(context)
+        WalletDatabase.getDatabase(context, fileNameSuffix)
     }
 
     val filterPreferences: WalletFilterPreferences by lazy {
-        WalletFilterPreferences(context)
+        WalletFilterPreferences(context, fileNameSuffix)
     }
 
     val notificationsPreferences: WalletNotificationsPreferences by lazy {
-        WalletNotificationsPreferences(context)
+        WalletNotificationsPreferences(context, fileNameSuffix)
     }
 
     val providerPreferences: WalletProviderPreferences by lazy {
-        WalletProviderPreferences(context)
+        WalletProviderPreferences(context, fileNameSuffix)
     }
 
     val setupPreferences: WalletSetupPreferences by lazy {
-        WalletSetupPreferences(context)
+        WalletSetupPreferences(context, fileNameSuffix)
     }
 }

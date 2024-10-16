@@ -18,7 +18,8 @@ class WalletSetupPreferences
 )
 constructor(
     val context: Context,
-) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key, Context.MODE_PRIVATE) {
+    fileNameSuffix: String = "",
+) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key + fileNameSuffix) {
 
     fun areAccountsBackedUp(): Boolean {
         return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)

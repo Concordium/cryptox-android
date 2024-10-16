@@ -5,6 +5,7 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
+import com.concordium.wallet.core.multiwallet.WalletInfo
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.MatomoAppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
@@ -52,7 +53,17 @@ class AppCore(val app: App) {
             else
                 noOpAppTracker
 
-    val session = Session(App.appContext)
+    val session = Session(
+        context = app,
+        // TODO load the wallet form persistence
+//        activeWallet = WalletInfo.primary(
+//            type = WalletInfo.Type.SEED,
+//        ),
+        activeWallet = WalletInfo(
+            id = "",
+            type = WalletInfo.Type.SEED,
+        )
+    )
     val setup = AppSetup(
         appSetupPreferences = AppSetupPreferences(App.appContext),
         session = session,

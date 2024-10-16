@@ -12,7 +12,8 @@ class WalletNotificationsPreferences
 )
 constructor(
     context: Context,
-) : Preferences(context, SharedPreferenceFiles.WALLET_NOTIFICATIONS.key, Context.MODE_PRIVATE) {
+    fileNameSuffix: String = "",
+) : Preferences(context, SharedPreferenceFiles.WALLET_NOTIFICATIONS.key + fileNameSuffix) {
 
     var hasEverShownPermissionDialog: Boolean
             by BooleanPreference(PREFKEY_HAS_EVER_SHOWN_PERMISSION_DIALOG, false)

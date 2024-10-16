@@ -197,11 +197,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         sendTokenData.memo?.let(CBORUtil.Companion::decodeHexAndCBOR)
 
     fun showMemoWarning(): Boolean {
-        return sendFundsPreferences.showMemoWarning()
+        return sendFundsPreferences.shouldShowMemoWarning()
     }
 
     fun dontShowMemoWarning() {
-        return sendFundsPreferences.dontShowMemoWarning()
+        return sendFundsPreferences.disableShowMemoWarning()
     }
 
     fun onReceiverEntered(input: String) {
