@@ -21,7 +21,6 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.R
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
-import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
@@ -100,8 +99,6 @@ private constructor(
     private val identityRepository: IdentityRepository by lazy {
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     }
-    private val keyCreationVersion =
-        KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
 
     private lateinit var sessionProposalPublicKey: String
     private lateinit var sessionProposalNamespaceKey: String
@@ -169,7 +166,7 @@ private constructor(
             onFinish = ::onSessionRequestHandlingFinished,
             proxyRepository = proxyRepository,
             identityRepository = identityRepository,
-            keyCreationVersion = keyCreationVersion,
+            activeWalletType = App.appCore.session.activeWallet.type,
         )
     }
 

@@ -1,13 +1,13 @@
 package com.concordium.wallet.util
 
-import com.concordium.wallet.data.preferences.WalletSetupPreferences
+import com.concordium.wallet.core.multiwallet.AppWallet
 
 class KeyCreationVersion(
-    private val walletSetupPreferences: WalletSetupPreferences,
+    private val activeWallet: AppWallet,
 ) {
     /**
      * Whether or not to use V1 methods, requiring the seed.
      */
     val useV1: Boolean
-        get() = walletSetupPreferences.hasEncryptedSeed()
+        get() = activeWallet.type != AppWallet.Type.FILE
 }

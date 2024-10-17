@@ -4,14 +4,14 @@ import android.content.Context
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.concordium.wallet.core.multiwallet.WalletInfo
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.WalletStorage
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Identity
 
 class Session(
     context: Context,
-    val activeWallet: WalletInfo,
+    val activeWallet: AppWallet,
 ) {
     val walletStorage = WalletStorage(
         activeWallet = activeWallet,
@@ -71,7 +71,7 @@ class Session(
         }
 
     fun isAccountsBackupPossible(): Boolean {
-        return !walletStorage.setupPreferences.hasEncryptedSeed()
+        return activeWallet.type == AppWallet.Type.FILE
     }
 
     fun isAccountsBackedUp(): Boolean {

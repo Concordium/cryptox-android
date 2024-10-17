@@ -1,7 +1,7 @@
 package com.concordium.wallet.data
 
 import android.content.Context
-import com.concordium.wallet.core.multiwallet.WalletInfo
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.preferences.WalletFilterPreferences
 import com.concordium.wallet.data.preferences.WalletIdentityCreationDataPreferences
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
@@ -23,7 +23,7 @@ class WalletStorage(
 ) {
     constructor(
         context: Context,
-        activeWallet: WalletInfo,
+        activeWallet: AppWallet,
     ) : this(
         context = context,
         fileNameSuffix =

@@ -100,7 +100,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.postValue(Event(stringRes))
             }
         })
-        keyCreationVersion = KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
+        keyCreationVersion = KeyCreationVersion(App.appCore.session.activeWallet)
         ccdOnrampSiteRepository = CcdOnrampSiteRepository()
         accountsObserver = Observer { accountsWithIdentity ->
             postListItems(accountsWithIdentity)

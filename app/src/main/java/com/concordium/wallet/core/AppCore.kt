@@ -5,10 +5,10 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
-import com.concordium.wallet.core.multiwallet.WalletInfo
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.MatomoAppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
+import com.concordium.wallet.data.AppWalletRepository
 import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.airdrop.AirDropBackend
@@ -22,8 +22,10 @@ import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
+import com.concordium.wallet.data.room.app.AppDatabase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.runBlocking
 import org.matomo.sdk.Matomo
 import org.matomo.sdk.TrackerBuilder
 import java.math.BigInteger
@@ -38,6 +40,8 @@ class AppCore(val app: App) {
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
+    val database = AppDatabase.getDatabase(app)
+    val walletRepository = AppWalletRepository(database.appWalletDao())
 
     private val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
@@ -53,13 +57,12 @@ class AppCore(val app: App) {
             else
                 noOpAppTracker
 
-    val session = Session(
-        context = app,
-        // TODO load the wallet form persistence
-        activeWallet = WalletInfo.primary(
-            type = WalletInfo.Type.SEED,
-        ),
-    )
+    val session = runBlocking {
+        Session(
+            context = app,
+            activeWallet = walletRepository.getActiveWallet(),
+        )
+    }
     val setup = AppSetup(
         appSetupPreferences = AppSetupPreferences(App.appContext),
         session = session,

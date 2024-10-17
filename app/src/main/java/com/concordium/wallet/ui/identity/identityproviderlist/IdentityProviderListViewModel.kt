@@ -29,8 +29,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     private val repository = IdentityProviderRepository()
     private val gson = App.appCore.gson
-    private val keyCreationVersion =
-        KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
+    private val keyCreationVersion = KeyCreationVersion(App.appCore.session.activeWallet)
 
     private var identityProviderInfoRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null

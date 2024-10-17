@@ -17,6 +17,7 @@ import com.concordium.sdk.transactions.CredentialRegistrationId
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
@@ -27,7 +28,6 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
-import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -41,7 +41,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
     private val onFinish: () -> Unit,
     private val proxyRepository: ProxyRepository,
     private val identityRepository: IdentityRepository,
-    private val keyCreationVersion: KeyCreationVersion,
+    private val activeWalletType: AppWallet.Type,
 ) {
     private val network =
         if (BuildConfig.ENV_NAME.equals("production", ignoreCase = true))
@@ -62,7 +62,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         availableAccounts: Collection<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
-        if (!keyCreationVersion.useV1) {
+        if (activeWalletType != AppWallet.Type.SEED) {
             Log.d("A non-seed phrase wallet does not support identity proofs")
 
             respondError("A non-seed phrase wallet does not support identity proofs")

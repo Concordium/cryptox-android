@@ -54,8 +54,7 @@ open class NewAccountViewModel(application: Application) :
     private val recipientRepository: RecipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val gson = App.appCore.gson
-    private val keyCreationVersion =
-        KeyCreationVersion(App.appCore.session.walletStorage.setupPreferences)
+    private val keyCreationVersion = KeyCreationVersion(App.appCore.session.activeWallet)
 
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
