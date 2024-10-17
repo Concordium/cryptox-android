@@ -12,6 +12,7 @@ import com.concordium.wallet.data.room.Identity
 class Session(
     context: Context,
     val activeWallet: AppWallet,
+    isLoggedIn: Boolean = false,
 ) {
     val walletStorage = WalletStorage(
         activeWallet = activeWallet,
@@ -19,7 +20,7 @@ class Session(
     )
     var newIdentities = mutableMapOf<Int, Identity>()
 
-    private val _isLoggedIn = MutableLiveData(false)
+    private val _isLoggedIn = MutableLiveData(isLoggedIn)
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 

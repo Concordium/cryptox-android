@@ -5,6 +5,7 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.MatomoAppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
@@ -57,15 +58,18 @@ class AppCore(val app: App) {
             else
                 noOpAppTracker
 
-    val session = runBlocking {
-        Session(
-            context = app,
-            activeWallet = walletRepository.getActiveWallet(),
-        )
-    }
+    var session: Session =
+        runBlocking {
+            Session(
+                context = app,
+                activeWallet = walletRepository.getActiveWallet(),
+            )
+        }
+        private set
+
     val setup = AppSetup(
         appSetupPreferences = AppSetupPreferences(App.appContext),
-        session = session,
+        getSession = { session },
     )
     val auth: AppAuth
         get() = setup.auth
@@ -88,6 +92,17 @@ class AppCore(val app: App) {
 
     fun getProxyBackend(): ProxyBackend {
         return proxyBackendConfig.backend
+    }
+
+    fun startNewSession(
+        activeWallet: AppWallet,
+        isLoggedIn: Boolean = session.isLoggedIn.value == true,
+    ) {
+        session = Session(
+            context = app,
+            activeWallet = activeWallet,
+            isLoggedIn = isLoggedIn,
+        )
     }
 
     private fun initializeGson(): Gson {

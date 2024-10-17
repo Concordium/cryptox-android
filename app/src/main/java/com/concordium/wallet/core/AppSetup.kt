@@ -4,7 +4,7 @@ import com.concordium.wallet.data.preferences.AppSetupPreferences
 
 class AppSetup(
     private val appSetupPreferences: AppSetupPreferences,
-    private val session: Session,
+    private val getSession: () -> Session,
 ) {
     var auth = AppAuth(appSetupPreferences)
         private set
@@ -28,7 +28,7 @@ class AppSetup(
 
     fun finishAuthSetup() {
         authSetupPassword = null
-        session.setUserLoggedIn()
+        getSession().setUserLoggedIn()
     }
 
     /**
