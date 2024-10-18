@@ -21,4 +21,6 @@
 
     <color name="yellow">#FFBC11</color>
     <color name="nft_card_background">#292929</color>
+
+    <color name="bottom_navigation_bar_divider">#20262E</color>
 </resources>

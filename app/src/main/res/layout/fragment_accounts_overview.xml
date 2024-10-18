@@ -135,6 +135,14 @@
                     app:layout_constraintTop_toBottomOf="@id/no_accounts_textview"
                     app:layout_constraintVertical_bias="1" />
 
+                <include
+                    android:id="@+id/onboarding_status_card"
+                    layout="@layout/onboarding_status_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="20dp" />
+
                 <LinearLayout
                     android:id="@+id/no_identities_layout"
                     android:layout_width="match_parent"

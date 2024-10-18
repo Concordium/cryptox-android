@@ -1,14 +1,17 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -31,9 +34,11 @@ import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderLi
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -88,6 +93,7 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onResume()
         viewModel.updateState()
         viewModel.initiateFrequentUpdater()
+        animateProgressBar(0, 66)
     }
 
     override fun onDestroy() {
@@ -193,6 +199,19 @@ class AccountsOverviewFragment : BaseFragment() {
             gotoExport()
         }
 
+        listOf(
+            binding.onboardingStatusCard.onrampBtn,
+            binding.onboardingStatusCard.sendFundsBtn,
+            binding.onboardingStatusCard.addressBtn,
+        ).forEach {
+            it.setOnClickListener {
+                UnlockFeatureDialog().showSingle(
+                    childFragmentManager,
+                    UnlockFeatureDialog.TAG
+                )
+            }
+        }
+
         eventListener = object : Preferences.Listener {
             override fun onChange() {
                 updateMissingBackup()
@@ -208,6 +227,27 @@ class AccountsOverviewFragment : BaseFragment() {
         initializeList()
 
         updateMissingBackup()
+    }
+
+    private fun animateProgressBar(startValue: Int, newValue: Int) {
+        lifecycleScope.launch {
+            delay(500)
+
+            // Create ObjectAnimator to animate the progress from the start value to the new value
+            val progressAnimator = ObjectAnimator.ofInt(
+                binding.onboardingStatusCard.onboardingStatusProgressBar,
+                "progress",
+                startValue,
+                newValue
+            )
+
+            // Set animation duration to 1 second
+            progressAnimator.duration = 1000
+
+            // Set ease-in and ease-out interpolator
+            progressAnimator.interpolator = AccelerateDecelerateInterpolator()
+            progressAnimator.start()
+        }
     }
 
     private fun updateMissingBackup() = viewModel.viewModelScope.launch(Dispatchers.Main) {

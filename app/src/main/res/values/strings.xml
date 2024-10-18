@@ -170,7 +170,7 @@
     <!-- ***** Account ***** -->
     <!-- Accounts overview -->
     <string name="accounts_overview_title">Accounts</string>
-    <string name="accounts_overview_create_identity">Activate account</string>
+    <string name="accounts_overview_create_identity">Verify identity</string>
     <string name="accounts_overview_create_account">Create account</string>
     <string name="accounts_overview_wallet_total">Wallet total</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
