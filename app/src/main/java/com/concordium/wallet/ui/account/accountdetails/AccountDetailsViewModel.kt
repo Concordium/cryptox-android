@@ -190,8 +190,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             submissionId,
             TransactionStatus.RECEIVED,
             TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFERTOPUBLIC,   //Not really an outgoing public transfer,
-            //but amount is negative so it is listed as incoming positive
+            TransactionType.TRANSFER,
             null,
             0,
             null
