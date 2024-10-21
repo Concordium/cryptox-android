@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallets_title">Wallets</string>
+    <string name="wallets_complexity_disclaimer">
+        Be aware that adding an additional wallet increases complexity.
+        This should only be used by experienced Concordium users who require access
+        to both a file wallet and a seed phrase wallet.
+    </string>
+    <string name="wallet_list_file_wallet">File wallet</string>
+    <string name="wallet_list_seed_wallet">Seed phrase wallet</string>
+    <string name="wallet_list_add_file_wallet">Add a file wallet</string>
+    <string name="wallet_list_add_seed_wallet">Add a seed phrase wallet</string>
+    <string name="wallet_list_status_active_selected">Active • Selected</string>
+    <string name="wallet_list_status_active">Active</string>
+</resources>

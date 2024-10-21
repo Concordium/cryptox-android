@@ -41,6 +41,16 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/wallets_layout"
+                style="@style/MoreOverviewItem">
+
+                <TextView
+                    style="@style/MoreOverviewItemTextView"
+                    android:text="@string/wallets_title"
+                    app:drawableStartCompat="@drawable/ccx_ico_user_circle" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/address_book_layout"
                 style="@style/MoreOverviewItem">
 

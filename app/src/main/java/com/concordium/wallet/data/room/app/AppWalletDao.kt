@@ -5,11 +5,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class AppWalletDao {
     @Query("SELECT * FROM wallets ORDER BY created_at ASC")
-    abstract suspend fun getAll(): List<AppWalletEntity>
+    abstract fun getAll(): Flow<List<AppWalletEntity>>
 
     @Query("SELECT * FROM WALLETS WHERE is_active=1")
     abstract suspend fun getActive(): AppWalletEntity
