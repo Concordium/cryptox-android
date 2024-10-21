@@ -72,6 +72,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     enum class State {
+        NO_SEED,
         NO_IDENTITIES,
         NO_ACCOUNTS,
         DEFAULT,
@@ -131,29 +132,35 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
         viewModelScope.launch(Dispatchers.IO) {
-            val identityCount = identityRepository.getNonFailedCount()
-            if (identityCount == 0) {
-                _stateLiveData.postValue(State.NO_IDENTITIES)
-                // Set balance, because we know it will be 0
+            if (!keyCreationVersion.useV1) {
+                _waitingLiveData.postValue(false)
                 _totalBalanceLiveData.postValue(zeroAccountBalances)
-                if (notifyWaitingLiveData) {
-                    _waitingLiveData.postValue(false)
-                }
+                _stateLiveData.postValue(State.NO_SEED)
             } else {
-                val accountCount = accountRepository.getCount()
-                if (accountCount == 0) {
-                    _stateLiveData.postValue(State.NO_ACCOUNTS)
+                val identityCount = identityRepository.getNonFailedCount()
+                if (identityCount == 0) {
+                    _stateLiveData.postValue(State.NO_IDENTITIES)
                     // Set balance, because we know it will be 0
                     _totalBalanceLiveData.postValue(zeroAccountBalances)
                     if (notifyWaitingLiveData) {
                         _waitingLiveData.postValue(false)
                     }
                 } else {
-                    _stateLiveData.postValue(State.DEFAULT)
-                    if (notifyWaitingLiveData) {
-                        _waitingLiveData.postValue(false)
+                    val accountCount = accountRepository.getCount()
+                    if (accountCount == 0) {
+                        _stateLiveData.postValue(State.NO_ACCOUNTS)
+                        // Set balance, because we know it will be 0
+                        _totalBalanceLiveData.postValue(zeroAccountBalances)
+                        if (notifyWaitingLiveData) {
+                            _waitingLiveData.postValue(false)
+                        }
+                    } else {
+                        _stateLiveData.postValue(State.DEFAULT)
+                        if (notifyWaitingLiveData) {
+                            _waitingLiveData.postValue(false)
+                        }
+                        updateSubmissionStatesAndBalances(notifyWaitingLiveData)
                     }
-                    updateSubmissionStatesAndBalances(notifyWaitingLiveData)
                 }
             }
         }

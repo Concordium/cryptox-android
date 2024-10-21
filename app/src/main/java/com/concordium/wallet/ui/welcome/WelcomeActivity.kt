@@ -10,16 +10,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.preferences.TrackingPreferences
 import com.concordium.wallet.databinding.ActivityWelcomeBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 
 class WelcomeActivity :
     BaseActivity(R.layout.activity_welcome),
     WelcomeAccountActivationLauncher {
+    private val session: Session = App.appCore.session
+
     private val binding: ActivityWelcomeBinding by lazy {
         ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
     }
@@ -31,7 +34,7 @@ class WelcomeActivity :
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                goToCreateWallet()
+                gotoAccountOverview()
             }
         }
     private val passcodeSetupForImportLauncher =
@@ -53,11 +56,6 @@ class WelcomeActivity :
 
         initViews()
 
-        // hasCompletedInitialSetup has positive value at the fresh app start,
-        // hence we can skip this screen if the user has ever visited the next one.
-//        if (savedInstanceState == null && !App.appCore.session.hasCompletedInitialSetup) {
-//            goToStart()
-//        } else
         if (savedInstanceState == null) {
             App.appCore.tracker.welcomeScreen()
         }
@@ -74,7 +72,7 @@ class WelcomeActivity :
                         passcodeSetupForCreateLauncher
                             .launch(Intent(this, PasscodeSetupActivity::class.java))
                     } else {
-                        goToCreateWallet()
+                        gotoAccountOverview()
                     }
 
                 WelcomePromoActivateAccountBottomSheet.ChosenAction.IMPORT ->
@@ -110,14 +108,8 @@ class WelcomeActivity :
         binding.getStartedButton.setOnClickListener {
             trackingPreferences.isTrackingEnabled = binding.activityTrackingCheckBox.isChecked
             App.appCore.tracker.welcomeGetStartedClicked()
-//            goToStart()
             proceedWithAccountActivation()
         }
-    }
-
-    private fun goToStart() {
-        finish()
-        startActivity(Intent(this, WelcomePromoActivity::class.java))
     }
 
     private fun openTerms() {
@@ -133,11 +125,17 @@ class WelcomeActivity :
             .show(supportFragmentManager, WelcomePromoActivateAccountBottomSheet.TAG)
     }
 
-    private fun goToCreateWallet() {
-        startActivity(Intent(this, OneStepSetupWalletActivity::class.java))
-    }
-
     private fun goToImportWallet() {
         startActivity(Intent(this, WelcomeRecoverWalletActivity::class.java))
+    }
+
+    private fun gotoAccountOverview() {
+        // hasCompletedInitialSetup has positive value at the fresh app start,
+        // hence we can skip this screen if the user created the password.
+        session.hasCompletedInitialSetup()
+        finish()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }

@@ -109,6 +109,10 @@ class OneStepSetupWalletActivity :
             OneStepSetupWalletViewModel.Event.GoToIdentityCreation -> {
                 goToIdentityCreation()
             }
+
+            OneStepSetupWalletViewModel.Event.GoToAccountOverview -> {
+                gotoAccountOverview()
+            }
         }
     }
 
@@ -117,6 +121,13 @@ class OneStepSetupWalletActivity :
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra(MainActivity.EXTRA_CREATE_FIRST_IDENTITY, true)
+        startActivity(intent)
+    }
+
+    private fun gotoAccountOverview() {
+//        finishAffinity()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
 }

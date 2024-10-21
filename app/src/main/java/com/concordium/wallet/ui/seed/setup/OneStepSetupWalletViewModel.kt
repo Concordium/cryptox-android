@@ -63,8 +63,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
             )
 
         if (isSavedSuccessfully) {
-            session.hasCompletedInitialSetup()
-            mutableEventsFlow.emit(Event.GoToIdentityCreation)
+            mutableEventsFlow.emit(Event.GoToAccountOverview)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)
         }
@@ -74,6 +73,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
         object Authenticate : Event
         object ShowFatalError: Event
         object GoToIdentityCreation: Event
+        object GoToAccountOverview : Event
     }
 
     private companion object {

@@ -34,6 +34,7 @@ import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderLi
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
@@ -146,11 +147,11 @@ class AccountsOverviewFragment : BaseFragment() {
 
         viewModel.stateLiveData.observe(viewLifecycleOwner) { state ->
             when (state) {
-                AccountsOverviewViewModel.State.NO_IDENTITIES -> showStateNoIdentities()
-                AccountsOverviewViewModel.State.NO_ACCOUNTS -> showStateNoAccounts()
+//                AccountsOverviewViewModel.State.NO_SEED -> showStateOnboarding()
+//                AccountsOverviewViewModel.State.NO_IDENTITIES -> showStateOnboarding()
+//                AccountsOverviewViewModel.State.NO_ACCOUNTS -> showStateOnboarding()
                 AccountsOverviewViewModel.State.DEFAULT -> showStateDefault()
-                else -> {
-                }
+                else -> { showStateOnboarding() }
             }
         }
         viewModel.totalBalanceLiveData.observe(viewLifecycleOwner) { totalBalance ->
@@ -181,19 +182,7 @@ class AccountsOverviewFragment : BaseFragment() {
     private fun initializeViews() {
         mainViewModel.setTitle(getString(R.string.accounts_overview_title))
         binding.progress.progressLayout.visibility = View.VISIBLE
-        binding.noIdentitiesLayout.visibility = View.GONE
-        binding.noAccountsTextview.visibility = View.GONE
-        binding.createAccountButton.visibility = View.GONE
-
-        binding.createIdentityButton.setOnClickListener {
-            viewModel.checkUsingV1KeyCreation()
-            goToFirstIdentityCreation()
-        }
-
-        binding.createAccountButton.setOnClickListener {
-            viewModel.checkUsingV1KeyCreation()
-            gotoCreateAccount()
-        }
+        binding.onboardingLayout.visibility = View.GONE
 
         binding.missingBackup.setOnClickListener {
             gotoExport()
@@ -210,6 +199,10 @@ class AccountsOverviewFragment : BaseFragment() {
                     UnlockFeatureDialog.TAG
                 )
             }
+        }
+
+        binding.onboardingActionButton.setOnClickListener {
+            goToCreateWallet()
         }
 
         eventListener = object : Preferences.Listener {
@@ -354,6 +347,10 @@ class AccountsOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
+    private fun goToCreateWallet() {
+        startActivity(Intent(activity, OneStepSetupWalletActivity::class.java))
+    }
+
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
             binding.progress.progressLayout.visibility = View.VISIBLE
@@ -366,40 +363,37 @@ class AccountsOverviewFragment : BaseFragment() {
         popup.showSnackbar(binding.root, stringRes)
     }
 
-    private fun showStateNoIdentities() {
+    private fun showStateOnboarding() {
         activity?.invalidateOptionsMenu()
-        binding.noAccountsLayout.visibility = View.VISIBLE
+        binding.onboardingLayout.visibility = View.VISIBLE
         binding.accountRecyclerview.visibility = View.GONE
-        showNoIdentities(true)
-        showNoAccounts(false)
+        showOnboarding(true)
     }
 
-    private fun showStateNoAccounts() {
-        activity?.invalidateOptionsMenu()
-        binding.noAccountsLayout.visibility = View.VISIBLE
-        binding.accountRecyclerview.visibility = View.GONE
-        showNoIdentities(false)
-        showNoAccounts(true)
-    }
+//    private fun showStateNoAccounts() {
+//        activity?.invalidateOptionsMenu()
+//        binding.onboardingLayout.visibility = View.VISIBLE
+//        binding.accountRecyclerview.visibility = View.GONE
+//        showOnboarding(true)
+//    }
 
     private fun showStateDefault() {
         activity?.invalidateOptionsMenu()
-        binding.noAccountsLayout.visibility = View.GONE
+        binding.onboardingLayout.visibility = View.GONE
         binding.accountRecyclerview.visibility = View.VISIBLE
-        showNoIdentities(false)
-        showNoAccounts(false)
+        showOnboarding(false)
     }
 
-    private fun showNoIdentities(show: Boolean) {
+    private fun showOnboarding(show: Boolean) {
         val state = if (show) View.VISIBLE else View.GONE
-        binding.noIdentitiesLayout.visibility = state
+        binding.onboardingLayout.visibility = state
     }
 
-    private fun showNoAccounts(show: Boolean) {
-        val state = if (show) View.VISIBLE else View.GONE
-        binding.noAccountsTextview.visibility = state
-        binding.createAccountButton.visibility = state
-    }
+//    private fun showNoAccounts(show: Boolean) {
+//        val state = if (show) View.VISIBLE else View.GONE
+//        binding.noAccountsTextview.visibility = state
+//        binding.createAccountButton.visibility = state
+//    }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
         binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
