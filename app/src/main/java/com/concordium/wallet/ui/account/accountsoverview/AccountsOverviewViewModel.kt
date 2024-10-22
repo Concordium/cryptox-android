@@ -21,6 +21,7 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
+import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
 import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +38,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
 
-    private var _stateLiveData = MutableLiveData<State>()
-    val stateLiveData: LiveData<State>
+    private var _stateLiveData = MutableLiveData<OnboardingState>()
+    val stateLiveData: LiveData<OnboardingState>
         get() = _stateLiveData
 
     private val zeroAccountBalances = TotalBalancesData(
@@ -69,14 +70,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     private val updateNotificationsSubscriptionUseCase by lazy {
         UpdateNotificationsSubscriptionUseCase(application)
-    }
-
-    enum class State {
-        NO_SEED,
-        NO_IDENTITIES,
-        NO_ACCOUNTS,
-        DEFAULT,
-        ;
     }
 
     enum class DialogToShow {
@@ -135,11 +128,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             if (!keyCreationVersion.useV1) {
                 _waitingLiveData.postValue(false)
                 _totalBalanceLiveData.postValue(zeroAccountBalances)
-                _stateLiveData.postValue(State.NO_SEED)
+                _stateLiveData.postValue(OnboardingState.INITIAL)
             } else {
                 val identityCount = identityRepository.getNonFailedCount()
                 if (identityCount == 0) {
-                    _stateLiveData.postValue(State.NO_IDENTITIES)
+                    _stateLiveData.postValue(OnboardingState.SAVE_PHRASE)
                     // Set balance, because we know it will be 0
                     _totalBalanceLiveData.postValue(zeroAccountBalances)
                     if (notifyWaitingLiveData) {
@@ -148,14 +141,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 } else {
                     val accountCount = accountRepository.getCount()
                     if (accountCount == 0) {
-                        _stateLiveData.postValue(State.NO_ACCOUNTS)
+                        _stateLiveData.postValue(OnboardingState.VERIFY_IDENTITY)
                         // Set balance, because we know it will be 0
                         _totalBalanceLiveData.postValue(zeroAccountBalances)
                         if (notifyWaitingLiveData) {
                             _waitingLiveData.postValue(false)
                         }
                     } else {
-                        _stateLiveData.postValue(State.DEFAULT)
+                        _stateLiveData.postValue(OnboardingState.DONE)
                         if (notifyWaitingLiveData) {
                             _waitingLiveData.postValue(false)
                         }

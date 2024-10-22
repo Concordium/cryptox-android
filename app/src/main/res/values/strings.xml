@@ -1202,5 +1202,10 @@
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>
     <string name="onboarding_status_card_description_second">Final step: Verify your identity</string>
+    <string name="onboarding_status_card_description_complete">Set-up complete</string>
     <string name="onboarding_action_button_save_seed">Save seed phrase</string>
+    <string name="onboarding_identity_verification_in_progress">Verification in progress</string>
+    <string name="onboarding_identity_verification_completed">Verification completed</string>
+    <string name="onboarding_identity_verification_unsuccessful">Verification unsuccessful</string>
+    <string name="onboarding_identity_verification_status_icon">Identity verification status icon</string>
 </resources>

@@ -1,17 +1,14 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
-import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -22,6 +19,7 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
+import com.concordium.wallet.databinding.OnboardingStatusCardBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -33,13 +31,13 @@ import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
+import com.concordium.wallet.ui.onboarding.OnboardingState
+import com.concordium.wallet.ui.onboarding.OnboardingStatusCard
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
-import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -52,9 +50,12 @@ class AccountsOverviewFragment : BaseFragment() {
     private var eventListener: Preferences.Listener? = null
 
     private lateinit var binding: FragmentAccountsOverviewBinding
+    private lateinit var onboardingBinding: OnboardingStatusCardBinding
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var keyCreationVersion: KeyCreationVersion
+
+    private lateinit var onboardingStatusCard: OnboardingStatusCard
 
     //region Lifecycle
     // ************************************************************
@@ -72,6 +73,9 @@ class AccountsOverviewFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAccountsOverviewBinding.inflate(inflater, container, false)
+        onboardingBinding = OnboardingStatusCardBinding.inflate(layoutInflater)
+        onboardingStatusCard = binding.onboardingLayout
+
         return binding.root
     }
 
@@ -94,7 +98,6 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onResume()
         viewModel.updateState()
         viewModel.initiateFrequentUpdater()
-        animateProgressBar(0, 66)
     }
 
     override fun onDestroy() {
@@ -146,11 +149,9 @@ class AccountsOverviewFragment : BaseFragment() {
         })
 
         viewModel.stateLiveData.observe(viewLifecycleOwner) { state ->
+            onboardingStatusCard.updateViews(state)
             when (state) {
-//                AccountsOverviewViewModel.State.NO_SEED -> showStateOnboarding()
-//                AccountsOverviewViewModel.State.NO_IDENTITIES -> showStateOnboarding()
-//                AccountsOverviewViewModel.State.NO_ACCOUNTS -> showStateOnboarding()
-                AccountsOverviewViewModel.State.DEFAULT -> showStateDefault()
+                OnboardingState.DONE -> showStateDefault()
                 else -> { showStateOnboarding() }
             }
         }
@@ -188,23 +189,6 @@ class AccountsOverviewFragment : BaseFragment() {
             gotoExport()
         }
 
-        listOf(
-            binding.onboardingStatusCard.onrampBtn,
-            binding.onboardingStatusCard.sendFundsBtn,
-            binding.onboardingStatusCard.addressBtn,
-        ).forEach {
-            it.setOnClickListener {
-                UnlockFeatureDialog().showSingle(
-                    childFragmentManager,
-                    UnlockFeatureDialog.TAG
-                )
-            }
-        }
-
-        binding.onboardingActionButton.setOnClickListener {
-            goToCreateWallet()
-        }
-
         eventListener = object : Preferences.Listener {
             override fun onChange() {
                 updateMissingBackup()
@@ -220,27 +204,6 @@ class AccountsOverviewFragment : BaseFragment() {
         initializeList()
 
         updateMissingBackup()
-    }
-
-    private fun animateProgressBar(startValue: Int, newValue: Int) {
-        lifecycleScope.launch {
-            delay(500)
-
-            // Create ObjectAnimator to animate the progress from the start value to the new value
-            val progressAnimator = ObjectAnimator.ofInt(
-                binding.onboardingStatusCard.onboardingStatusProgressBar,
-                "progress",
-                startValue,
-                newValue
-            )
-
-            // Set animation duration to 1 second
-            progressAnimator.duration = 1000
-
-            // Set ease-in and ease-out interpolator
-            progressAnimator.interpolator = AccelerateDecelerateInterpolator()
-            progressAnimator.start()
-        }
     }
 
     private fun updateMissingBackup() = viewModel.viewModelScope.launch(Dispatchers.Main) {
@@ -370,13 +333,6 @@ class AccountsOverviewFragment : BaseFragment() {
         showOnboarding(true)
     }
 
-//    private fun showStateNoAccounts() {
-//        activity?.invalidateOptionsMenu()
-//        binding.onboardingLayout.visibility = View.VISIBLE
-//        binding.accountRecyclerview.visibility = View.GONE
-//        showOnboarding(true)
-//    }
-
     private fun showStateDefault() {
         activity?.invalidateOptionsMenu()
         binding.onboardingLayout.visibility = View.GONE
@@ -388,12 +344,6 @@ class AccountsOverviewFragment : BaseFragment() {
         val state = if (show) View.VISIBLE else View.GONE
         binding.onboardingLayout.visibility = state
     }
-
-//    private fun showNoAccounts(show: Boolean) {
-//        val state = if (show) View.VISIBLE else View.GONE
-//        binding.noAccountsTextview.visibility = state
-//        binding.createAccountButton.visibility = state
-//    }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
         binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
