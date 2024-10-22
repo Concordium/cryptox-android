@@ -3,7 +3,7 @@ package com.concordium.wallet.core.multiwallet
 import com.concordium.wallet.App
 import com.concordium.wallet.core.AppCore
 
-class AddAndActivateWalletUseCase() {
+class AddAndActivateWalletUseCase {
     /**
      * Adds and activates an extra wallet of the given [walletType].
      * Once the wallet is added, a new session is started with it.
@@ -23,7 +23,6 @@ class AddAndActivateWalletUseCase() {
         App.appCore.walletRepository.addWallet(newWallet)
         App.appCore.startNewSession(
             activeWallet = newWallet,
-            isLoggedIn = true,
         )
         return newWallet.id
     }

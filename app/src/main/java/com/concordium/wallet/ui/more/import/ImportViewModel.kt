@@ -9,9 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.Session
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendErrorException
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.data.AccountRepository
@@ -224,6 +226,11 @@ class ImportViewModel(application: Application) :
             return@launch
         }
 
+        SwitchActiveWalletTypeUseCase().invoke(
+            newWalletType = AppWallet.Type.FILE,
+        )
+        App.appCore.setup.finishInitialSetup()
+
         val exportValue = exportData.value
         importResult = ImportResult()
         // Recipients
@@ -368,7 +375,6 @@ class ImportViewModel(application: Application) :
             }
         } // End of identity
         confirmImport()
-        App.appCore.setup.finishInitialSetup()
         _waitingLiveData.postValue(false)
     }
 

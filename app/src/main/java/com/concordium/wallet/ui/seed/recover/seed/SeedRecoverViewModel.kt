@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -51,7 +53,11 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
                 privateKey,
                 password
             )
+
         if (success) {
+            SwitchActiveWalletTypeUseCase().invoke(
+                newWalletType = AppWallet.Type.SEED,
+            )
             App.appCore.setup.finishInitialSetup()
         }
         _saveSeedSuccess.value = success

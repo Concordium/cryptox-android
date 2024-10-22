@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -60,7 +62,11 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
             )
 
         if (isSavedSuccessfully) {
+            SwitchActiveWalletTypeUseCase().invoke(
+                newWalletType = AppWallet.Type.SEED,
+            )
             App.appCore.setup.finishInitialSetup()
+
             mutableEventsFlow.emit(Event.GoToIdentityCreation)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)

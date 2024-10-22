@@ -37,13 +37,19 @@ abstract class AppWalletDao {
         activate(wallet.id)
     }
 
+    @Query("UPDATE wallets SET type=:newType WHERE id=:walletId")
+    abstract suspend fun switchType(
+        walletId: String,
+        newType: String,
+    )
+
     @Query("DELETE FROM wallets WHERE id=:walletId")
     protected abstract suspend fun delete(walletId: String)
 
     @Transaction
     open suspend fun deleteAndActivateAnother(
         walletToDeleteId: String,
-        walletToActivateId: String
+        walletToActivateId: String,
     ) {
         delete(walletToDeleteId)
         activate(walletToActivateId)

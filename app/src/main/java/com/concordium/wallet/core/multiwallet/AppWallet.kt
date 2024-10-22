@@ -11,7 +11,7 @@ private constructor(
 ) {
     constructor(entity: AppWalletEntity) : this(
         id = entity.id,
-        type = AppWallet.Type.valueOf(entity.type),
+        type = Type.valueOf(entity.type),
         createdAt = Date(entity.createdAt),
     )
 
@@ -35,11 +35,9 @@ private constructor(
     }
 
     companion object {
-        fun primary(
-            type: Type,
-        ) = AppWallet(
+        fun primary() = AppWallet(
             id = "",
-            type = type,
+            type = Type.SEED,
             createdAt = Date(),
         )
 

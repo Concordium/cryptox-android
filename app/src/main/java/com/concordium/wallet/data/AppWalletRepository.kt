@@ -31,12 +31,20 @@ class AppWalletRepository(
         appWalletDao.insertAndActivate(AppWalletEntity(wallet))
     }
 
+    suspend fun switchWalletType(
+        walletId: String,
+        newType: AppWallet.Type
+    ) {
+        appWalletDao.switchType(
+            walletId = walletId,
+            newType = newType.name,
+        )
+    }
+
     private suspend fun ensurePrimaryWallet() {
         appWalletDao.ensureExistence(
             AppWalletEntity(
-                wallet = AppWallet.primary(
-                    type = AppWallet.Type.SEED,
-                ),
+                wallet = AppWallet.primary(),
                 isActive = true,
             )
         )

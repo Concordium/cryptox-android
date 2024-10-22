@@ -1,5 +1,6 @@
 package com.concordium.wallet.core
 
+import android.os.Handler
 import com.concordium.wallet.App
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
@@ -26,10 +27,13 @@ import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.data.room.app.AppDatabase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
 import org.matomo.sdk.Matomo
 import org.matomo.sdk.TrackerBuilder
 import java.math.BigInteger
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AppCore(val app: App) {
 
@@ -94,15 +98,23 @@ class AppCore(val app: App) {
         return proxyBackendConfig.backend
     }
 
-    fun startNewSession(
+    suspend fun startNewSession(
         activeWallet: AppWallet,
         isLoggedIn: Boolean = session.isLoggedIn.value == true,
-    ) {
-        session = Session(
-            context = app,
-            activeWallet = activeWallet,
-            isLoggedIn = isLoggedIn,
-        )
+    ) = suspendCoroutine { continuation ->
+        // Session must be created in the main thread as it contains logout timer.
+        Handler(app.mainLooper).post {
+            continuation.context.ensureActive()
+
+            session.inactivityCountDownTimer.cancel()
+            session = Session(
+                context = app,
+                activeWallet = activeWallet,
+                isLoggedIn = isLoggedIn,
+            )
+
+            continuation.resume(Unit)
+        }
     }
 
     private fun initializeGson(): Gson {
