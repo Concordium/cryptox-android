@@ -18,8 +18,18 @@ abstract class AppWalletDao {
     @Query("UPDATE wallets SET is_active = CASE WHEN id=:walletId THEN 1 ELSE 0 END")
     abstract suspend fun activate(walletId: String)
 
+    @Insert
+    protected abstract suspend fun insert(wallet: AppWalletEntity): Long
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    protected abstract suspend fun insert(wallet: AppWalletEntity)
+    protected abstract suspend fun insertIgnoring(wallet: AppWalletEntity): Long
+
+    @Transaction
+    open suspend fun ensureExistence(wallet: AppWalletEntity) {
+        if (insertIgnoring(wallet) > 0) {
+            activate(wallet.id)
+        }
+    }
 
     @Transaction
     open suspend fun insertAndActivate(wallet: AppWalletEntity) {

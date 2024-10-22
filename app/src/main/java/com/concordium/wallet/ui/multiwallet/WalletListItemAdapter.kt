@@ -13,7 +13,7 @@ import com.concordium.wallet.databinding.ListItemWalletListWalletBinding
 
 class WalletListItemAdapter(
     val onWalletClicked: (item: WalletListItem.Wallet) -> Unit,
-    val onAddClicked: (item: WalletListItem.AddButton) -> Unit,
+    val onAddClicked: (walletType: AppWallet.Type) -> Unit,
 ) : RecyclerView.Adapter<WalletListItemAdapter.ViewHolder>() {
 
     private var data: List<WalletListItem> = emptyList()
@@ -50,7 +50,7 @@ class WalletListItemAdapter(
 
             with(holder.binding) {
                 root.setOnClickListener{
-                    onAddClicked(item)
+                    onAddClicked(item.walletType)
                 }
 
                 titleTextView.setText(

@@ -6,16 +6,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.core.multiwallet.AddAndActivateWalletUseCase
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AppWalletRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 class WalletsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val walletRepository: AppWalletRepository = App.appCore.walletRepository
+    private val addAndActivateWalletUseCase = AddAndActivateWalletUseCase()
+    private var isAddingWallet = false
 
     private val _listItemsLiveData = MutableLiveData<List<WalletListItem>>()
     val listItemsLiveData: LiveData<List<WalletListItem>> = _listItemsLiveData
+
+    private val mutableEventsFlow =
+        MutableSharedFlow<Event>(extraBufferCapacity = 10)
+    val eventsFlow: Flow<Event> = mutableEventsFlow
 
     init {
         subscribeToWallets()
@@ -41,5 +50,47 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
                 }
             })
         }
+    }
+
+    fun onAddingSeedWalletConfirmed() = viewModelScope.launch {
+        if (isAddingWallet) {
+            return@launch
+        }
+
+        isAddingWallet = true
+
+        addAndActivateWalletUseCase(
+            walletType = AppWallet.Type.SEED,
+        )
+
+        mutableEventsFlow.tryEmit(
+            Event.GoToMain(
+                startWithFileImport = false,
+            )
+        )
+    }
+
+    fun onAddingFileWalletConfirmed() = viewModelScope.launch {
+        if (isAddingWallet) {
+            return@launch
+        }
+
+        isAddingWallet = true
+
+        addAndActivateWalletUseCase(
+            walletType = AppWallet.Type.FILE,
+        )
+
+        mutableEventsFlow.tryEmit(
+            Event.GoToMain(
+                startWithFileImport = true,
+            )
+        )
+    }
+
+    sealed interface Event {
+        class GoToMain(
+            val startWithFileImport: Boolean,
+        ) : Event
     }
 }

@@ -27,10 +27,18 @@ class AppWalletRepository(
     suspend fun getWallets(): List<AppWallet> =
         getWalletsFlow().first()
 
+    suspend fun addWallet(wallet: AppWallet) {
+        appWalletDao.insertAndActivate(AppWalletEntity(wallet))
+    }
+
     private suspend fun ensurePrimaryWallet() {
-        val primaryWallet = AppWallet.primary(
-            type = AppWallet.Type.SEED,
+        appWalletDao.ensureExistence(
+            AppWalletEntity(
+                wallet = AppWallet.primary(
+                    type = AppWallet.Type.SEED,
+                ),
+                isActive = true,
+            )
         )
-        appWalletDao.insertAndActivate(AppWalletEntity(primaryWallet))
     }
 }

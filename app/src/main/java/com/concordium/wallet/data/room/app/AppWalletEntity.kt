@@ -24,10 +24,13 @@ class AppWalletEntity(
     @ColumnInfo(name = "is_active")
     val isActive: Boolean,
 ) {
-    constructor(wallet: AppWallet) : this(
+    constructor(
+        wallet: AppWallet,
+        isActive: Boolean = false,
+    ) : this(
         id = wallet.id,
         type = wallet.type.name,
         createdAt = wallet.createdAt.time,
-        isActive = false,
+        isActive = isActive,
     )
 }

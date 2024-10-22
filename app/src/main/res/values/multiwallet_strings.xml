@@ -20,4 +20,19 @@
          • 1 seed phrase wallet (newly created or imported via either seed phrase or wallet private key)
     </string>
     <string name="wallets_adding_okay">Okay</string>
+    <string name="wallets_action_adding_seed_wallet">Adding a seed phrase wallet</string>
+    <string name="wallets_action_adding_seed_wallet_explanation">
+        You can add a new or existing Concordium seed phrase wallet.
+        After adding it you will be able to switch between your seed phrase wallet and your file wallet.
+        \n
+    </string>
+    <string name="wallets_action_adding_file_wallet">Adding a file wallet</string>
+    <string name="wallets_action_adding_file_wallet_explanation">
+        You can add an existing Concordium file wallet.
+        After adding it you will be able to switch between your seed phrase wallet and your file wallet.
+        \n\n
+        Be aware that you can not create new accounts or identities in your file wallet.
+    </string>
+    <string name="wallets_action_add_wallet">Add wallet</string>
+    <string name="wallets_action_go_back">Go back</string>
 </resources>

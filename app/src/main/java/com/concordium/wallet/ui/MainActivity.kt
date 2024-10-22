@@ -34,6 +34,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     companion object {
         const val EXTRA_CREATE_FIRST_IDENTITY = "EXTRA_CREATE_FIRST_IDENTITY"
+        const val EXTRA_IMPORT_FROM_FILE = "EXTRA_IMPORT_FROM_FILE"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
     }
 
@@ -74,6 +75,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
         if (intent.getBooleanExtra(EXTRA_CREATE_FIRST_IDENTITY, false)) {
             goToFirstIdentityCreation()
+        } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
+            goToImportFromFile()
         }
     }
 
@@ -259,14 +262,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
     }
 
-    private fun gotoIdentityProviderList() {
-        val intent = Intent(this, IdentityProviderListActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun goToFirstIdentityCreation() {
         val intent = Intent(this, IdentityProviderListActivity::class.java)
         intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
+        startActivity(intent)
+    }
+
+    private fun goToImportFromFile() {
+        val intent = Intent(this, ImportActivity::class.java)
         startActivity(intent)
     }
     //endregion
