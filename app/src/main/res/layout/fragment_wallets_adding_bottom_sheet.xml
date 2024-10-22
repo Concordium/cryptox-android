@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ccx_bottom_sheet_dialog_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="vertical"
+        android:requiresFadingEdge="vertical"
+        tools:ignore="ScrollViewCount">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/wallets_adding"
+                android:textAppearance="@style/CCX_Typography_H1"
+                android:textColor="@color/ccx_neutral_tint_7" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="start"
+                android:text="@string/wallets_adding_summary"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_5" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="start"
+                android:lineHeight="20sp"
+                android:paddingHorizontal="4dp"
+                android:text="@string/wallets_adding_explanation"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_5"
+                tools:targetApi="p" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="start"
+                android:lineHeight="20sp"
+                android:paddingHorizontal="4dp"
+                android:text="@string/wallets_complexity_disclaimer"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_5"
+                tools:targetApi="p" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="@style/CCX_Button_Primary"
+                android:layout_width="match_parent"
+                android:layout_marginTop="40dp"
+                android:backgroundTint="#14191F"
+                android:gravity="center"
+                android:text="@string/wallets_adding_okay"
+                android:textColor="#ffffff"
+                app:layout_constraintTop_toBottomOf="@id/create_wallet_step_3_text_view" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

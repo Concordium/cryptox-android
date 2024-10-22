@@ -12,4 +12,12 @@
     <string name="wallet_list_add_seed_wallet">Add a seed phrase wallet</string>
     <string name="wallet_list_status_active_selected">Active • Selected</string>
     <string name="wallet_list_status_active">Active</string>
+    <string name="wallets_adding">Adding wallets</string>
+    <string name="wallets_adding_summary">You can now add and remove wallets.</string>
+    <string name="wallets_adding_explanation">
+        You can have a total of 2 wallets in CryptoX. They can be:\n
+         • 1 file wallet (imported via backup file)\n
+         • 1 seed phrase wallet (newly created or imported via either seed phrase or wallet private key)
+    </string>
+    <string name="wallets_adding_okay">Okay</string>
 </resources>

@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWalletsBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.welcome.ImportSeedPhraseInfoBottomSheet
 
 class WalletsActivity : BaseActivity(
     R.layout.activity_wallets,
@@ -28,6 +30,9 @@ class WalletsActivity : BaseActivity(
         initList()
 
         hideActionBarBack(isVisible = true)
+        hideInfo(isVisible = true) {
+            showAddingBottomSheet()
+        }
     }
 
     private fun initList() {
@@ -41,5 +46,12 @@ class WalletsActivity : BaseActivity(
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)
+    }
+
+    private fun showAddingBottomSheet() {
+        WalletsAddingBottomSheet().showSingle(
+            supportFragmentManager,
+            WalletsAddingBottomSheet.TAG
+        )
     }
 }

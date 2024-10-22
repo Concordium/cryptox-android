@@ -52,6 +52,7 @@ abstract class BaseActivity(
     private var plusLeftBtn: ImageView? = null
     private var plusRightBtn: ImageView? = null
     private var qrScanBtn: ImageView? = null
+    private var infoBtn: ImageView? = null
     protected var closeBtn: ImageView? = null
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
@@ -80,6 +81,7 @@ abstract class BaseActivity(
         plusLeftBtn = toolbar?.findViewById(R.id.toolbar_plus_btn)
         plusRightBtn = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact)
         qrScanBtn = toolbar?.findViewById(R.id.toolbar_qr_btn)
+        infoBtn = toolbar?.findViewById(R.id.toolbar_info_btn)
         closeBtn = toolbar?.findViewById(R.id.toolbar_close_btn)
         deleteBtn = toolbar?.findViewById(R.id.toolbar_delete_btn)
         settingsBtn = toolbar?.findViewById(R.id.toolbar_settings_btn)
@@ -199,6 +201,11 @@ abstract class BaseActivity(
         }
     }
 
+    fun hideInfo(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        infoBtn?.isVisible = isVisible
+        infoBtn?.setOnClickListener(listener)
+    }
+
     fun hideRightPlus(isVisible: Boolean, listener: View.OnClickListener? = null) {
         plusRightBtn?.isVisible = isVisible
         plusRightBtn?.setOnClickListener(listener)
@@ -311,7 +318,10 @@ abstract class BaseActivity(
         }
     }
 
-    private fun createBiometricPrompt(text: String?, callback: AuthenticationCallback): BiometricPrompt {
+    private fun createBiometricPrompt(
+        text: String?,
+        callback: AuthenticationCallback
+    ): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(this)
 
         val callback = object : BiometricPromptCallback() {
