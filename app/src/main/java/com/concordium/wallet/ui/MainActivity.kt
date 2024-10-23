@@ -7,10 +7,12 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -21,6 +23,7 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
+import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
@@ -43,6 +46,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
     private lateinit var viewModel: MainViewModel
     private lateinit var walletConnectViewModel: WalletConnectViewModel
+    private lateinit var walletSwitchViewModel: WalletSwitchViewModel
     private var hasHandledPossibleImportFile = false
 
     //region Lifecycle
@@ -143,11 +147,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     // ************************************************************
 
     private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
+        val viewModelProvider = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[MainViewModel::class.java]
+        )
 
+        viewModel = viewModelProvider.get()
         viewModel.titleLiveData.observe(this, this::setActionBarTitle)
         viewModel.stateLiveData.observe(this) { state ->
             checkNotNull(state)
@@ -158,10 +163,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             replaceFragment(state)
         }
 
-        walletConnectViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[WalletConnectViewModel::class.java]
+        walletConnectViewModel = viewModelProvider.get()
+
+        walletSwitchViewModel = viewModelProvider.get()
+        walletSwitchViewModel.switchesFlow.collectWhenStarted(this) {
+            // Force restart the activity with recreation of view models.
+            finishAffinity()
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
     private fun initializeViews() {
@@ -179,6 +188,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             authDelegate = this,
             viewModel = walletConnectViewModel,
         ).init()
+
+        binding.walletSwitchView.bind(walletSwitchViewModel)
     }
 
     //endregion

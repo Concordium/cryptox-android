@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.core.Session
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
@@ -24,7 +23,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
-    private val session: Session = App.appCore.session
 
     var databaseVersionAllowed = true
 
@@ -70,7 +68,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun shouldShowAuthentication(): Boolean {
-        session.isLoggedIn.value.let { return it == null || it == false }
+        App.appCore.session.isLoggedIn.value.let { return it == null || it == false }
     }
 
     fun shouldShowPasswordSetup(): Boolean {

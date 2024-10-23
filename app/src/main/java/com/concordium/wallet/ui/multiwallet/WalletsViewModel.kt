@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.multiwallet.AddAndActivateWalletUseCase
 import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletUseCase
 import com.concordium.wallet.data.AppWalletRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,6 +19,7 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
     private val walletRepository: AppWalletRepository = App.appCore.walletRepository
     private val addAndActivateWalletUseCase = AddAndActivateWalletUseCase()
     private var isAddingWallet = false
+    private var isSwitchingWallet = false
 
     private val _listItemsLiveData = MutableLiveData<List<WalletListItem>>()
     val listItemsLiveData: LiveData<List<WalletListItem>> = _listItemsLiveData
@@ -49,6 +51,30 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
             })
+        }
+    }
+
+    fun onWalletItemClicked(item: WalletListItem.Wallet) = viewModelScope.launch {
+        val wallet = item.source
+            ?: return@launch
+
+        if (wallet != App.appCore.session.activeWallet) {
+            if (isSwitchingWallet) {
+                return@launch
+            }
+
+            isSwitchingWallet = true
+
+            SwitchActiveWalletUseCase()
+                .invoke(
+                    newActiveWallet = wallet,
+                )
+
+            mutableEventsFlow.tryEmit(
+                Event.GoToMain(
+                    startWithFileImport = false,
+                )
+            )
         }
     }
 

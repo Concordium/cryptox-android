@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    tools:viewBindingIgnore="true"
+    android:layout_height="36dp"
+    tools:background="@drawable/wallet_switch_background"
+    tools:parentTag="android.widget.FrameLayout">
+
+    <TextView
+        android:id="@+id/active_wallet_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="36dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingBottom="2sp"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="@color/cryptox_white_main"
+        tools:text="@string/wallet_switch_seed_wallet_selected" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="end|center_vertical"
+        android:contentDescription="@string/wallet_switch"
+        app:srcCompat="@drawable/ccx_ico_arrows_clockwise" />
+</merge>

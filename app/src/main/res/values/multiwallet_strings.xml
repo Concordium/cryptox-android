@@ -35,4 +35,7 @@
     </string>
     <string name="wallets_action_add_wallet">Add wallet</string>
     <string name="wallets_action_go_back">Go back</string>
+    <string name="wallet_switch">Switch wallet</string>
+    <string name="wallet_switch_file_wallet_selected">File wallet is selected</string>
+    <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
 </resources>

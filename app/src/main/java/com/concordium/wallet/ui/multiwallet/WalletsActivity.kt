@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.multiwallet
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
@@ -42,9 +41,7 @@ class WalletsActivity : BaseActivity(
 
     private fun initList() {
         val adapter = WalletListItemAdapter(
-            onWalletClicked = {
-                Toast.makeText(this, it.source.toString(), Toast.LENGTH_SHORT).show()
-            },
+            onWalletClicked = viewModel::onWalletItemClicked,
             onAddClicked = this::onAddClicked,
         )
         binding.recyclerview.adapter = adapter

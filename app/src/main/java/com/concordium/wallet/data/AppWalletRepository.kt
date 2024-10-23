@@ -41,6 +41,14 @@ class AppWalletRepository(
         )
     }
 
+    suspend fun activate(
+        newActiveWallet: AppWallet,
+    ) {
+        appWalletDao.activate(
+            walletId = newActiveWallet.id,
+        )
+    }
+
     private suspend fun ensurePrimaryWallet() {
         appWalletDao.ensureExistence(
             AppWalletEntity(
