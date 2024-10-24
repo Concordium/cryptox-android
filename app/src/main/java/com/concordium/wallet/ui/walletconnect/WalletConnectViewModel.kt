@@ -652,13 +652,14 @@ private constructor(
         if (account == null) {
             Log.e("Unable to find account with address: $accountAddress")
 
-            respondError(message = "Broken session")
+            respondError(message = "Unable to find the namespace account")
 
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
-                    Error.InvalidRequest
+                    Error.AccountNotFound
                 )
             )
+
             onSessionRequestHandlingFinished()
 
             return@launch
@@ -1161,7 +1162,7 @@ private constructor(
          * The dApp sent an account transaction request for a different account
          * than the one connected in the session.
          */
-        object AccountMismatch : Error
+        object AccountNotFound : Error
 
         /**
          * There are no accounts in the wallet therefore a session can't be established.

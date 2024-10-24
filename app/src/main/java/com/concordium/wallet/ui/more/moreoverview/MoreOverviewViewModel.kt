@@ -12,6 +12,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
+import com.walletconnect.android.internal.common.di.DBUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -73,9 +74,14 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     fun deleteWCDatabaseAndExit() {
         try {
-            val path = getApplication<App>().dataDir.absolutePath
-            File("$path/databases/WalletConnectAndroidCore.db").delete()
-            File("$path/databases/WalletConnectV2.db").delete()
+            with(getApplication<Application>()) {
+                databaseList().forEach { database ->
+                    if (database in DBUtils.dbNames) {
+                        deleteDatabase(database)
+                    }
+                }
+            }
+
             Handler(Looper.getMainLooper()).post {
                 exitProcess(0)
             }

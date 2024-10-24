@@ -106,7 +106,7 @@ class WalletConnectSignTransactionRequestHandler(
 
             emitEvent(
                 Event.ShowFloatingError(
-                    Error.AccountMismatch
+                    Error.InvalidRequest
                 )
             )
 

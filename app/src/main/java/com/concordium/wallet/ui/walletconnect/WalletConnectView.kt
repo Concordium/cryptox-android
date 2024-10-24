@@ -176,8 +176,8 @@ class WalletConnectView(
                     WalletConnectViewModel.Error.LoadingFailed ->
                         R.string.wallet_connect_error_loading_failed
 
-                    WalletConnectViewModel.Error.AccountMismatch ->
-                        R.string.wallet_connect_error_account_mismatch
+                    WalletConnectViewModel.Error.AccountNotFound ->
+                        R.string.wallet_connect_error_account_not_found
 
                     WalletConnectViewModel.Error.NoAccounts ->
                         R.string.wallet_connect_error_no_accounts
@@ -202,7 +202,8 @@ class WalletConnectView(
                 }
 
                 val duration = when (event.error) {
-                    WalletConnectViewModel.Error.ConnectionFailed ->
+                    WalletConnectViewModel.Error.ConnectionFailed,
+                    WalletConnectViewModel.Error.AccountNotFound->
                         Toast.LENGTH_LONG
 
                     else ->
