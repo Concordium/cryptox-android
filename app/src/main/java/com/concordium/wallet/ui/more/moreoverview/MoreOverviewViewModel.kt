@@ -95,21 +95,22 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun onAuthenticated(password: String) {
-        eraseWalletAndGoToWelcome()
+        eraseDataAndGoToWelcome()
     }
 
-    private fun eraseWalletAndGoToWelcome() {
+    private fun eraseDataAndGoToWelcome() {
         try {
             clearNotificationToken()
             with(getApplication<App>()) {
                 dataDir.deleteRecursively()
                 filesDir.deleteRecursively()
+                noBackupFilesDir.deleteRecursively()
                 cacheDir.deleteRecursively()
                 File(filesDir.parentFile!!.absolutePath, "shared_prefs").deleteRecursively()
                 initAppCore()
             }
 
-            mutableEventsFlow.tryEmit(Event.ShowWalletErasedMessage)
+            mutableEventsFlow.tryEmit(Event.ShowDataErasedMessage)
             mutableEventsFlow.tryEmit(Event.GoToWelcome)
 
             Handler(Looper.getMainLooper()).post {
@@ -131,7 +132,7 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     sealed interface Event {
         object ShowAuthentication : Event
-        object ShowWalletErasedMessage : Event
+        object ShowDataErasedMessage : Event
         object GoToWelcome : Event
     }
 }

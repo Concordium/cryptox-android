@@ -273,14 +273,15 @@
     <string name="more_overview_item_developer_options">Developer Options</string>
     <string name="more_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="more_overview_item_recover">Recovery</string>
-    <string name="more_overview_erase_wallet">Erase Wallet</string>
-    <string name="more_overview_erase_wallet_confirmation_title">Erasing your wallet</string>
+    <string name="more_overview_erase_data">Erase Data</string>
+    <string name="more_overview_erase_data_confirmation_title">Erasing all data</string>
     <string name="more_overview_erase_wallet_confirmation_message">
-        Your wallet will be erased from this device. However, you can restore it at any time
-        using the secret recovery phrase or the backup file. Proceed with erasing?
+        All your wallets will be erased from this device.
+        However, you can restore them at any time using the secret recovery phrase or the backup file.
+        Proceed with erasing?
     </string>
-    <string name="more_overview_erase_wallet_continue">@string/dialog_yes</string>
-    <string name="more_overview_erase_wallet_erased">The wallet has been successfully erased</string>
+    <string name="more_overview_erase_data_continue">@string/dialog_yes</string>
+    <string name="more_overview_erase_data_erased">All the data has been successfully erased</string>
     <string name="more_overview_reveal_seed_phrase">Seed Phrase</string>
     <string name="more_overview_reveal_seed">Wallet Private Key</string>
     <!-- Export -->

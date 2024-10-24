@@ -52,7 +52,7 @@
 
         <TextView
             style="@style/MoreOverviewItemTextView"
-            android:text="@string/more_overview_erase_wallet"
+            android:text="@string/more_overview_erase_data"
             app:drawableStartCompat="@drawable/ccx_ico_file_shred" />
     </LinearLayout>
 

@@ -99,10 +99,10 @@ class WelcomePromoMoreFragment : Fragment() {
                     onAuthenticated = viewModel::onAuthenticated
                 )
 
-            MoreOverviewViewModel.Event.ShowWalletErasedMessage ->
+            MoreOverviewViewModel.Event.ShowDataErasedMessage ->
                 Toast.makeText(
                     requireContext(),
-                    R.string.more_overview_erase_wallet_erased,
+                    R.string.more_overview_erase_data_erased,
                     Toast.LENGTH_SHORT
                 )
                     .show()
@@ -125,9 +125,9 @@ class WelcomePromoMoreFragment : Fragment() {
 
     private fun showConfirmEraseWallet() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.more_overview_erase_wallet_confirmation_title)
+            .setTitle(R.string.more_overview_erase_data_confirmation_title)
             .setMessage(getString(R.string.more_overview_erase_wallet_confirmation_message))
-            .setPositiveButton(getString(R.string.more_overview_erase_wallet_continue)) { _, _ ->
+            .setPositiveButton(getString(R.string.more_overview_erase_data_continue)) { _, _ ->
                 viewModel.onEraseContinueClicked()
             }
             .setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel), null)

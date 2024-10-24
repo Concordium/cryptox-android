@@ -188,8 +188,8 @@ class MoreOverviewFragment : BaseFragment() {
             clearWalletConnectAndRestart()
         }
 
-        binding.eraseWalletLayout.setOnClickListener {
-            eraseWalletAndExit()
+        binding.eraseDataLayout.setOnClickListener {
+            eraseDataAndExit()
         }
     }
 
@@ -201,10 +201,10 @@ class MoreOverviewFragment : BaseFragment() {
                     onAuthenticated = viewModel::onAuthenticated
                 )
 
-            MoreOverviewViewModel.Event.ShowWalletErasedMessage ->
+            MoreOverviewViewModel.Event.ShowDataErasedMessage ->
                 Toast.makeText(
                     requireContext(),
-                    R.string.more_overview_erase_wallet_erased,
+                    R.string.more_overview_erase_data_erased,
                     Toast.LENGTH_SHORT
                 )
                     .show()
@@ -250,15 +250,15 @@ class MoreOverviewFragment : BaseFragment() {
         builder.create().show()
     }
 
-    private fun eraseWalletAndExit() {
-        showConfirmEraseWallet()
+    private fun eraseDataAndExit() {
+        showConfirmEraseData()
     }
 
-    private fun showConfirmEraseWallet() {
+    private fun showConfirmEraseData() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.more_overview_erase_wallet_confirmation_title)
+            .setTitle(R.string.more_overview_erase_data_confirmation_title)
             .setMessage(getString(R.string.more_overview_erase_wallet_confirmation_message))
-            .setPositiveButton(getString(R.string.more_overview_erase_wallet_continue)) { _, _ ->
+            .setPositiveButton(getString(R.string.more_overview_erase_data_continue)) { _, _ ->
                 viewModel.onEraseContinueClicked()
             }
             .setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel), null)

@@ -141,12 +141,12 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/erase_wallet_layout"
+                android:id="@+id/erase_data_layout"
                 style="@style/MoreOverviewItem">
 
                 <TextView
                     style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_erase_wallet"
+                    android:text="@string/more_overview_erase_data"
                     app:drawableStartCompat="@drawable/ccx_ico_file_shred" />
             </LinearLayout>
 
