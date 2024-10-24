@@ -19,19 +19,6 @@ import kotlinx.coroutines.runBlocking
 
 class FcmNotificationsService : FirebaseMessagingService() {
     private val serviceCoroutineContext = Dispatchers.IO + SupervisorJob()
-    private val announcementNotificationManager: AnnouncementNotificationManager by lazy {
-        AnnouncementNotificationManager(application)
-    }
-    private val transactionNotificationsManager: TransactionNotificationsManager by lazy {
-        TransactionNotificationsManager(application)
-    }
-    private val accountRepository: AccountRepository by lazy {
-        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-    }
-    private val contractTokensRepository: ContractTokensRepository by lazy {
-        ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao())
-    }
-    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     override fun onNewToken(token: String) = runBlocking(serviceCoroutineContext) {
         Log.d(
@@ -40,7 +27,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         )
 
         try {
-            updateNotificationsSubscriptionUseCase()
+            UpdateNotificationsSubscriptionUseCase().invoke()
             Log.d("trying update subscriptions with new token")
         } catch (error: Exception) {
             Log.e("failed_updating_subscriptions", error)
@@ -110,7 +97,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
                     "\nmessageId=$messageId"
         )
 
-        announcementNotificationManager.notifyAnnouncement(
+        AnnouncementNotificationManager(application).notifyAnnouncement(
             title = notificationTitle,
             text = notificationBody,
             reference = messageId ?: System.currentTimeMillis(),
@@ -132,10 +119,12 @@ class FcmNotificationsService : FirebaseMessagingService() {
         val recipientAccountAddress = data["recipient"]
             ?: error("Recipient is missing or invalid")
 
-        val recipientAccount = accountRepository.findByAddress(recipientAccountAddress)
-            ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
+        val recipientAccount =
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+                .findByAddress(recipientAccountAddress)
+                ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
 
-        transactionNotificationsManager.notifyCcdTransaction(
+        TransactionNotificationsManager(application).notifyCcdTransaction(
             receivedAmount = amount,
             account = recipientAccount,
             reference = data["reference"] ?: System.currentTimeMillis(),
@@ -157,8 +146,10 @@ class FcmNotificationsService : FirebaseMessagingService() {
         val recipientAccountAddress = data["recipient"]
             ?: error("Recipient is missing or invalid")
 
-        val recipientAccount = accountRepository.findByAddress(recipientAccountAddress)
-            ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
+        val recipientAccount =
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+                .findByAddress(recipientAccountAddress)
+                ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
 
         val contractAddress: ContractAddress = data["contract_address"]
             ?.let { App.appCore.gson.fromJson(it, ContractAddress::class.java) }
@@ -171,6 +162,9 @@ class FcmNotificationsService : FirebaseMessagingService() {
             ?.let { App.appCore.gson.fromJson(it, NotificationTokenMetadata::class.java) }
             ?: error("tokenMetadata is missing or invalid")
         Log.d("tokenMetadata: $tokenMetadata")
+
+        val contractTokensRepository =
+            ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao())
 
         val existingContractToken = contractTokensRepository.find(
             accountAddress = recipientAccountAddress,
@@ -223,7 +217,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
             token = Token(existingContractToken)
         }
 
-        transactionNotificationsManager.notifyCis2Transaction(
+        TransactionNotificationsManager(application).notifyCis2Transaction(
             receivedAmount = amount,
             token = token,
             account = recipientAccount,
