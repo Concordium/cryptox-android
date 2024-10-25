@@ -23,6 +23,10 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
 
     private val _listItemsLiveData = MutableLiveData<List<WalletListItem>>()
     val listItemsLiveData: LiveData<List<WalletListItem>> = _listItemsLiveData
+    private val _isRemoveButtonVisibleLiveData = MutableLiveData<Boolean>()
+    val isRemoveButtonVisibleLiveData: LiveData<Boolean> = _isRemoveButtonVisibleLiveData
+    private val _removeButtonWalletTypeLiveData = MutableLiveData<AppWallet.Type>()
+    val removeButtonWalletTypeLiveData: LiveData<AppWallet.Type> = _removeButtonWalletTypeLiveData
 
     private val mutableEventsFlow =
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
@@ -35,6 +39,7 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
     private fun subscribeToWallets() = viewModelScope.launch {
         walletRepository.getWalletsFlow().collect { wallets ->
             val activeWallet = App.appCore.session.activeWallet
+
             _listItemsLiveData.postValue(buildList {
                 wallets.forEach { wallet ->
                     add(
@@ -51,6 +56,9 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
             })
+
+            _isRemoveButtonVisibleLiveData.postValue(wallets.size > 1)
+            _removeButtonWalletTypeLiveData.postValue(activeWallet.type)
         }
     }
 

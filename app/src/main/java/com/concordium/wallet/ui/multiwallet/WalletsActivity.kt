@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.multiwallet
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
@@ -31,6 +32,7 @@ class WalletsActivity : BaseActivity(
 
         initList()
         initActionConfirmation()
+        initRemoval()
         subscribeToEvents()
 
         hideActionBarBack(isVisible = true)
@@ -68,10 +70,33 @@ class WalletsActivity : BaseActivity(
         }
     }
 
+    private fun initRemoval() {
+        viewModel.isRemoveButtonVisibleLiveData.observe(
+            this,
+            binding.removeButton::isVisible::set
+        )
+        viewModel.removeButtonWalletTypeLiveData.observe(this) { walletType ->
+            binding.removeButtonTextView.setText(
+                when (walletType!!) {
+                    AppWallet.Type.FILE ->
+                        R.string.wallets_remove_file_wallet
+
+                    AppWallet.Type.SEED ->
+                        R.string.wallets_remove_seed_wallet
+                }
+            )
+        }
+        binding.removeButton.setOnClickListener {
+            WalletsActionConfirmationDialog
+                .removingWallet()
+                .showSingle(supportFragmentManager, WalletsActionConfirmationDialog.TAG)
+        }
+    }
+
     private fun subscribeToEvents(
     ) = viewModel.eventsFlow.collectWhenStarted(this) { event ->
         when (event) {
-          is  WalletsViewModel.Event.GoToMain -> {
+            is WalletsViewModel.Event.GoToMain -> {
                 finishAffinity()
                 startActivity(
                     Intent(this, MainActivity::class.java)

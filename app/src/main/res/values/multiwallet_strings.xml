@@ -33,9 +33,17 @@
         \n\n
         Be aware that you can not create new accounts or identities in your file wallet.
     </string>
+    <string name="wallets_action_removing_wallet">Removing a wallet</string>
+    <string name="wallets_action_removing_wallet_explanation">
+        After removing a wallet you will not be able to access it in CryptoX.
+        But you can restore it whenever you like.
+    </string>
     <string name="wallets_action_add_wallet">Add wallet</string>
     <string name="wallets_action_go_back">Go back</string>
+    <string name="wallets_action_remove_wallet">Remove</string>
     <string name="wallet_switch">Switch wallet</string>
     <string name="wallet_switch_file_wallet_selected">File wallet is selected</string>
     <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
+    <string name="wallets_remove_seed_wallet">Remove your seed phrase wallet</string>
+    <string name="wallets_remove_file_wallet">Remove your file wallet</string>
 </resources>
