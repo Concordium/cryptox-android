@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -22,11 +23,13 @@ import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderLi
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.news.NewsOverviewFragment
+import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
     AuthDelegate by AuthDelegateImpl(),
@@ -41,6 +44,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         ActivityMainBinding.bind(findViewById(R.id.root_layout))
     }
     private lateinit var viewModel: MainViewModel
+    private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var walletConnectViewModel: WalletConnectViewModel
     private var hasHandledPossibleImportFile = false
 
@@ -108,7 +112,15 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                 }
 
                 viewModel.startIdentityUpdate()
-                startCheckForPendingIdentity(this, null, false) {}
+                if (!viewModel.hasCompletedOnboarding()) {
+                    startCheckForPendingIdentity(this, null, true) { identity ->
+                        lifecycleScope.launch {
+                            onboardingViewModel.setIdentity(identity)
+                        }
+                    }
+                } else {
+                    startCheckForPendingIdentity(this, null, false) {}
+                }
 
                 App.appCore.tracker.homeScreen()
             }
@@ -154,6 +166,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             hideQrScan(false)
             replaceFragment(state)
         }
+
+        onboardingViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[OnboardingSharedViewModel::class.java]
 
         walletConnectViewModel = ViewModelProvider(
             this,
@@ -208,7 +225,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         val fragment = when (state) {
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
             MainViewModel.State.NewsOverview -> NewsOverviewFragment()
-            MainViewModel.State.TokensOverview -> ProvidersOverviewFragment()
+            MainViewModel.State.TokensOverview -> {
+                if (viewModel.hasCompletedOnboarding()) {
+                    ProvidersOverviewFragment()
+                } else {
+                    showUnlockFeatureDialog()
+                    null
+                }
+            }
             MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment)
@@ -257,11 +281,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         if (walletConnectUri != null) {
             walletConnectViewModel.handleWcUri(walletConnectUri)
         }
-    }
-
-    private fun gotoIdentityProviderList() {
-        val intent = Intent(this, IdentityProviderListActivity::class.java)
-        startActivity(intent)
     }
 
     private fun goToFirstIdentityCreation() {

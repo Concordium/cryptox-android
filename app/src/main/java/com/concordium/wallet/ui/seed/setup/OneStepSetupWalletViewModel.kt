@@ -72,7 +72,6 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
     sealed interface Event {
         object Authenticate : Event
         object ShowFatalError: Event
-        object GoToIdentityCreation: Event
         object GoToAccountOverview : Event
     }
 

@@ -6,14 +6,19 @@ import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.OnboardingStatusCardBinding
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
+import kotlinx.coroutines.launch
 
 class OnboardingStatusCard @JvmOverloads constructor(
     context: Context,
@@ -28,7 +33,20 @@ class OnboardingStatusCard @JvmOverloads constructor(
         true
     )
     private val dataProvider = OnboardingDataProvider(context)
-    private val activity = context as? FragmentActivity
+    private val activity = context as FragmentActivity
+
+    private val onboardingViewModel = ViewModelProvider(
+        activity,
+        ViewModelProvider.AndroidViewModelFactory.getInstance(activity.application)
+    )[OnboardingSharedViewModel::class.java]
+
+    private val pulsateAnimator = ObjectAnimator.ofFloat(
+        binding.identityVerificationStatusIcon,
+        "alpha",
+        1f,
+        0f,
+        1f
+    )
 
     init {
         listOf(
@@ -40,35 +58,105 @@ class OnboardingStatusCard @JvmOverloads constructor(
                 showUnlockFeatureDialog()
             }
         }
+        activity.lifecycleScope.launch {
+            onboardingViewModel.identityFlow.collect { identity ->
+                binding.onboardingInnerActionButton.setOnClickListener {
+                    createFirstAccount(identity)
+                }
+            }
+        }
     }
 
-    fun updateViews(state: OnboardingState) {
-        val currentState = dataProvider.getViewDataByState(state, IdentityVerificationState.IN_PROGRESS)
+    fun updateViewsByState(state: OnboardingState) {
+        val currentDataState = dataProvider.getViewDataByState(state)
+        println("OnboardingStatusCard, updateViewsByState: ${state.name}")
+        updateViews(currentDataState)
 
-        binding.onboardingStatusTitle.text = currentState.statusTitle
-        binding.onboardingStatusDescription.text = currentState.statusDescription
-        binding.onboardingActionButton.text = currentState.actionButtonTitle
-
-        if (currentState.showProgressBar) {
-            animateProgressBar(currentState.progressPrevious, currentState.progressCurrent)
-        }
-
-        if (currentState.animateStatusIcon) {
-            animateStatusIcon(binding.identityVerificationStatusIcon)
-        }
-
-        when(state) {
-            OnboardingState.INITIAL -> {
+        when (state) {
+            OnboardingState.SAVE_PHRASE -> {
                 binding.onboardingActionButton.setOnClickListener {
                     goToCreateWallet()
                 }
             }
-            OnboardingState.SAVE_PHRASE -> {
+
+            OnboardingState.VERIFY_IDENTITY -> {
                 binding.onboardingActionButton.setOnClickListener {
                     goToFirstIdentityCreation()
                 }
             }
+
+            OnboardingState.IDENTITY_UNSUCCESSFUL -> {
+                binding.onboardingInnerActionButton.setOnClickListener {
+                    goToFirstIdentityCreation()
+                }
+            }
+
             else -> {}
+        }
+    }
+
+    fun updateViewsByIdentityStatus(identity: Identity) {
+        val currentDataState = dataProvider.getViewDataByIdentityVerificationStatus(identity.status)
+        updateViews(currentDataState)
+
+        when (identity.status) {
+            IdentityStatus.DONE -> {
+                binding.onboardingInnerActionButton.setOnClickListener {
+                    createFirstAccount(identity)
+                }
+            }
+
+            IdentityStatus.ERROR -> {
+                binding.onboardingInnerActionButton.setOnClickListener {
+                    goToFirstIdentityCreation()
+                }
+            }
+        }
+    }
+
+    private fun updateViews(currentViewState: OnboardingStateModel) {
+        binding.onboardingStatusTitle.text = currentViewState.statusTitle
+        binding.onboardingStatusTitle.setTextColor(currentViewState.statusTextColor)
+        binding.onboardingActionButton.text = currentViewState.actionButtonTitle
+        binding.onboardingInnerActionButton.text = currentViewState.innerActionButtonTitle
+        binding.identityVerificationStatusIcon.setImageDrawable(currentViewState.verificationStatusIcon)
+
+        if (currentViewState.statusDescription.isNotEmpty()) {
+            binding.onboardingStatusDescription.visibility = VISIBLE
+            binding.onboardingStatusDescription.text = currentViewState.statusDescription
+        } else {
+            binding.onboardingStatusDescription.visibility = GONE
+        }
+
+        if (currentViewState.showProgressBar) {
+            binding.onboardingStatusProgressBar.visibility = VISIBLE
+            binding.onboardingInnerActionButton.visibility = GONE
+            animateProgressBar(currentViewState.progressPrevious, currentViewState.progressCurrent)
+        } else {
+            binding.onboardingStatusProgressBar.visibility = GONE
+            binding.onboardingInnerActionButton.visibility = VISIBLE
+
+            currentViewState.innerActionButtonBackground?.let {
+                binding.onboardingInnerActionButton.setBackgroundResource(it)
+            }
+        }
+
+        if (currentViewState.showVerificationStatusIcon) {
+            binding.identityVerificationStatusIcon.visibility = VISIBLE
+
+            if (currentViewState.animateStatusIcon) {
+                animateStatusIcon()
+            } else {
+                pulsateAnimator.end()
+            }
+        } else {
+            binding.identityVerificationStatusIcon.visibility = GONE
+        }
+
+        if (currentViewState.showActionButton) {
+            binding.onboardingActionButton.visibility = VISIBLE
+        } else {
+            binding.onboardingActionButton.visibility = GONE
         }
     }
 
@@ -79,7 +167,6 @@ class OnboardingStatusCard @JvmOverloads constructor(
             startValue,
             newValue
         )
-
         progressAnimator.duration = 1000 // 1 second
 
         // Set ease-in and ease-out interpolator
@@ -87,8 +174,7 @@ class OnboardingStatusCard @JvmOverloads constructor(
         progressAnimator.start()
     }
 
-    private fun animateStatusIcon(imageView: ImageView) {
-        val pulsateAnimator = ObjectAnimator.ofFloat(imageView, "alpha", 1f, 0f, 1f)
+    private fun animateStatusIcon() {
         pulsateAnimator.duration = 1500 // 1.5 second
         pulsateAnimator.repeatCount = ObjectAnimator.INFINITE
         pulsateAnimator.repeatMode = ObjectAnimator.REVERSE
@@ -99,21 +185,26 @@ class OnboardingStatusCard @JvmOverloads constructor(
     }
 
     private fun showUnlockFeatureDialog() {
-        activity?.let {
-            UnlockFeatureDialog().showSingle(
-                it.supportFragmentManager,
-                UnlockFeatureDialog.TAG
-            )
-        }
+        UnlockFeatureDialog().showSingle(
+            activity.supportFragmentManager,
+            UnlockFeatureDialog.TAG
+        )
     }
 
     private fun goToCreateWallet() {
-        activity?.startActivity(Intent(activity, OneStepSetupWalletActivity::class.java))
+        activity.startActivity(Intent(activity, OneStepSetupWalletActivity::class.java))
     }
 
     private fun goToFirstIdentityCreation() {
         val intent = Intent(context, IdentityProviderListActivity::class.java)
         intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
-        activity?.startActivity(intent)
+        activity.startActivity(intent)
+    }
+
+    private fun createFirstAccount(identity: Identity) {
+        val intent = Intent(activity, IdentityConfirmedActivity::class.java)
+        intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
+        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_ACCOUNT, true)
+        activity.startActivity(intent)
     }
 }

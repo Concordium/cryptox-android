@@ -103,6 +103,7 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
         if (isSavedSuccessfully) {
             session.hasCompletedInitialSetup()
+            session.hasCompletedOnboarding()
         }
 
         _saveSeedLiveData.value = isSavedSuccessfully

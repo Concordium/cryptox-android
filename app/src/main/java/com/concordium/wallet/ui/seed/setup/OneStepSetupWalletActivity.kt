@@ -106,26 +106,13 @@ class OneStepSetupWalletActivity :
                 showError(R.string.setup_wallet_failed)
             }
 
-            OneStepSetupWalletViewModel.Event.GoToIdentityCreation -> {
-                goToIdentityCreation()
-            }
-
             OneStepSetupWalletViewModel.Event.GoToAccountOverview -> {
                 gotoAccountOverview()
             }
         }
     }
 
-    private fun goToIdentityCreation() {
-        finishAffinity()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(MainActivity.EXTRA_CREATE_FIRST_IDENTITY, true)
-        startActivity(intent)
-    }
-
     private fun gotoAccountOverview() {
-//        finishAffinity()
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)

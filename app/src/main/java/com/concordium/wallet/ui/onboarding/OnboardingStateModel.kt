@@ -9,6 +9,7 @@ data class OnboardingStateModel(
     val statusDescription: String,
     val verificationStatusIcon: Drawable? = null,
     val showVerificationStatusIcon: Boolean,
+    val identityVerificationStatus: String = "",
     val animateStatusIcon: Boolean,
     val showProgressBar: Boolean = true,
     val progressPrevious: Int = 0,
@@ -16,5 +17,6 @@ data class OnboardingStateModel(
     val showActionButton: Boolean,
     val actionButtonTitle: String,
     val showInnerActionButton: Boolean,
-    val innerActionButtonTitle: String
+    val innerActionButtonTitle: String,
+    val innerActionButtonBackground: Int? = null
 )
