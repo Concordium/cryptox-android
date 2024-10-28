@@ -24,7 +24,6 @@ class OnboardingStatusCard @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var binding: OnboardingStatusCardBinding = OnboardingStatusCardBinding.inflate(
@@ -114,6 +113,7 @@ class OnboardingStatusCard @JvmOverloads constructor(
         }
     }
 
+    // update OnboardingStatus card according to setup state
     private fun updateViews(currentViewState: OnboardingStateModel) {
         binding.onboardingStatusTitle.text = currentViewState.statusTitle
         binding.onboardingStatusTitle.setTextColor(currentViewState.statusTextColor)
