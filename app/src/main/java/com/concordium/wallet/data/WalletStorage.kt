@@ -2,6 +2,7 @@ package com.concordium.wallet.data
 
 import android.content.Context
 import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.WalletFilterPreferences
 import com.concordium.wallet.data.preferences.WalletIdentityCreationDataPreferences
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
@@ -9,6 +10,8 @@ import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.WalletDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * A provider for all the persistence for a single wallet.
@@ -59,5 +62,18 @@ class WalletStorage(
 
     val setupPreferences: WalletSetupPreferences by lazy {
         WalletSetupPreferences(context, fileNameSuffix)
+    }
+
+    suspend fun erase() = withContext(Dispatchers.IO) {
+        database.clearAllTables()
+
+        arrayOf(
+            filterPreferences,
+            sendFundsPreferences,
+            identityCreationDataPreferences,
+            notificationsPreferences,
+            providerPreferences,
+            setupPreferences,
+        ).forEach(Preferences::clearAll)
     }
 }

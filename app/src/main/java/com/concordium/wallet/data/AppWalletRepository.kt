@@ -49,6 +49,16 @@ class AppWalletRepository(
         )
     }
 
+    suspend fun delete(
+        walletToDeleteId: String,
+        walletToActivateId: String,
+    ) {
+        appWalletDao.deleteAndActivateAnother(
+            walletToDeleteId = walletToDeleteId,
+            walletToActivateId = walletToActivateId,
+        )
+    }
+
     private suspend fun ensurePrimaryWallet() {
         appWalletDao.ensureExistence(
             AppWalletEntity(

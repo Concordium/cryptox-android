@@ -66,6 +66,9 @@ class WalletsActivity : BaseActivity(
 
                 WalletsActionConfirmationDialog.ADDING_FILE_WALLET_ACTION ->
                     viewModel.onAddingFileWalletConfirmed()
+
+                WalletsActionConfirmationDialog.REMOVING_WALLET_ACTION ->
+                    viewModel.onRemovingWalletConfirmed()
             }
         }
     }

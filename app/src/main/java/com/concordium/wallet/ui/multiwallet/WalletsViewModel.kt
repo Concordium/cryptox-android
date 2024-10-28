@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.multiwallet.AddAndActivateWalletUseCase
 import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.DeleteActiveWalletUseCase
 import com.concordium.wallet.core.multiwallet.SwitchActiveWalletUseCase
 import com.concordium.wallet.data.AppWalletRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,8 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
 
     private val walletRepository: AppWalletRepository = App.appCore.walletRepository
     private val addAndActivateWalletUseCase = AddAndActivateWalletUseCase()
-    private var isAddingWallet = false
+    private val deleteActiveWalletUseCase = DeleteActiveWalletUseCase()
+    private var isModifyingWallets = false
     private var isSwitchingWallet = false
 
     private val _listItemsLiveData = MutableLiveData<List<WalletListItem>>()
@@ -87,11 +89,11 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun onAddingSeedWalletConfirmed() = viewModelScope.launch {
-        if (isAddingWallet) {
+        if (isModifyingWallets) {
             return@launch
         }
 
-        isAddingWallet = true
+        isModifyingWallets = true
 
         addAndActivateWalletUseCase(
             walletType = AppWallet.Type.SEED,
@@ -105,11 +107,11 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun onAddingFileWalletConfirmed() = viewModelScope.launch {
-        if (isAddingWallet) {
+        if (isModifyingWallets) {
             return@launch
         }
 
-        isAddingWallet = true
+        isModifyingWallets = true
 
         addAndActivateWalletUseCase(
             walletType = AppWallet.Type.FILE,
@@ -118,6 +120,28 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
         mutableEventsFlow.tryEmit(
             Event.GoToMain(
                 startWithFileImport = true,
+            )
+        )
+    }
+
+    fun onRemovingWalletConfirmed() = viewModelScope.launch {
+        if (isModifyingWallets) {
+            return@launch
+        }
+
+        isModifyingWallets = true
+
+        val newActiveWallet = walletRepository.getWallets()
+            .find { it != App.appCore.session.activeWallet }
+            ?: error("Removing is not possible when there is a single wallet")
+
+        deleteActiveWalletUseCase(
+            newActiveWallet=newActiveWallet,
+        )
+
+        mutableEventsFlow.tryEmit(
+            Event.GoToMain(
+                startWithFileImport = false,
             )
         )
     }
