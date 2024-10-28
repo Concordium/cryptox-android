@@ -204,7 +204,7 @@ class OnboardingStatusCard @JvmOverloads constructor(
     private fun createFirstAccount(identity: Identity) {
         val intent = Intent(activity, IdentityConfirmedActivity::class.java)
         intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
-        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_ACCOUNT, true)
+        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_FIRST_ACCOUNT, true)
         activity.startActivity(intent)
     }
 }
