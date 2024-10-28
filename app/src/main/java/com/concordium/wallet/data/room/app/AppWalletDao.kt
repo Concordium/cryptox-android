@@ -2,7 +2,6 @@ package com.concordium.wallet.data.room.app
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +11,9 @@ abstract class AppWalletDao {
     @Query("SELECT * FROM wallets ORDER BY created_at ASC")
     abstract fun getAll(): Flow<List<AppWalletEntity>>
 
+    @Query("SELECT COUNT(*) FROM wallets")
+    abstract suspend fun getCount(): Int
+
     @Query("SELECT * FROM WALLETS WHERE is_active=1")
     abstract suspend fun getActive(): AppWalletEntity
 
@@ -20,16 +22,6 @@ abstract class AppWalletDao {
 
     @Insert
     protected abstract suspend fun insert(wallet: AppWalletEntity): Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    protected abstract suspend fun insertIgnoring(wallet: AppWalletEntity): Long
-
-    @Transaction
-    open suspend fun ensureExistence(wallet: AppWalletEntity) {
-        if (insertIgnoring(wallet) > 0) {
-            activate(wallet.id)
-        }
-    }
 
     @Transaction
     open suspend fun insertAndActivate(wallet: AppWalletEntity) {

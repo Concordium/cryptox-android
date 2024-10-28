@@ -6,20 +6,30 @@ import com.concordium.wallet.data.room.app.AppWalletEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 
 class AppWalletRepository(
     private val appWalletDao: AppWalletDao,
 ) {
+    init {
+        // Ensure there is at least a primary wallet.
+        runBlocking {
+            if (appWalletDao.getCount() == 0) {
+                appWalletDao.insertAndActivate(
+                    AppWalletEntity(
+                        wallet = AppWallet.primary(),
+                    )
+                )
+            }
+        }
+    }
+
     suspend fun getActiveWallet(): AppWallet =
-        appWalletDao
-            .also { ensurePrimaryWallet() }
-            .getActive()
+        appWalletDao.getActive()
             .let(::AppWallet)
 
-    suspend fun getWalletsFlow(): Flow<List<AppWallet>> =
-        appWalletDao
-            .also { ensurePrimaryWallet() }
-            .getAll()
+    fun getWalletsFlow(): Flow<List<AppWallet>> =
+        appWalletDao.getAll()
             .map { rows ->
                 rows.map(::AppWallet)
             }
@@ -56,15 +66,6 @@ class AppWalletRepository(
         appWalletDao.deleteAndActivateAnother(
             walletToDeleteId = walletToDeleteId,
             walletToActivateId = walletToActivateId,
-        )
-    }
-
-    private suspend fun ensurePrimaryWallet() {
-        appWalletDao.ensureExistence(
-            AppWalletEntity(
-                wallet = AppWallet.primary(),
-                isActive = true,
-            )
         )
     }
 }
