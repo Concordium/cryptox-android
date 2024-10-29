@@ -86,18 +86,20 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.initialize()
         initializeViews()
 
-        (activity as BaseActivity).hideLeftPlus(isVisible = true) {
+        val baseActivity = (activity as BaseActivity)
+
+        baseActivity.hideLeftPlus(isVisible = true) {
             if (mainViewModel.hasCompletedOnboarding()) {
                 gotoCreateAccount()
             } else {
-                (activity as BaseActivity).showUnlockFeatureDialog()
+                baseActivity.showUnlockFeatureDialog()
             }
         }
 
-        (activity as BaseActivity).hideQrScan(isVisible = true)
+        baseActivity.hideQrScan(isVisible = true)
         if (!mainViewModel.hasCompletedOnboarding()) {
-            (activity as BaseActivity).hideQrScan(isVisible = true) {
-                (activity as BaseActivity).showUnlockFeatureDialog()
+            baseActivity.hideQrScan(isVisible = true) {
+                baseActivity.showUnlockFeatureDialog()
             }
         }
 

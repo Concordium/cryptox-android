@@ -65,6 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
                     android:src="@drawable/ccx_verification_in_progress"
                     android:contentDescription="@string/onboarding_identity_verification_status_icon"/>
             </LinearLayout>
