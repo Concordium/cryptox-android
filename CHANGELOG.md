@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Optimised user experience during the onboarding process
+
 ## [1.3.0] - 2024-10-18
 
 ### Added
