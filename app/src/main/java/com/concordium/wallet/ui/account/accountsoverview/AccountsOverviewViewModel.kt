@@ -20,7 +20,6 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
-import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -62,7 +61,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountRepository =
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val keyCreationVersion: KeyCreationVersion
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
     private val walletNotificationsPreferences =
@@ -101,7 +99,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.postValue(Event(stringRes))
             }
         })
-        keyCreationVersion = KeyCreationVersion(App.appCore.session.activeWallet)
         ccdOnrampSiteRepository = CcdOnrampSiteRepository()
         accountsObserver = Observer { accountsWithIdentity ->
             postListItems(accountsWithIdentity)
@@ -195,9 +192,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return false
     }
 
-    fun checkUsingV1KeyCreation() =
-        check(keyCreationVersion.useV1) {
-            "Key creation V1 (seed-based) must be used to perform this action"
+    fun checkNotFileWallet() =
+        check(App.appCore.session.activeWallet.type != AppWallet.Type.FILE) {
+            "File wallet can't used to perform this action"
         }
 
     private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {

@@ -49,7 +49,7 @@ class IdentityProviderListActivity : BaseActivity(
         )[IdentityProviderListViewModel::class.java]
 
         if (showForFirstIdentity) {
-            viewModel.checkUsingV1KeyCreation()
+            viewModel.checkNotFileWallet()
         }
 
         viewModel.waitingLiveData.observe(this) { waiting ->

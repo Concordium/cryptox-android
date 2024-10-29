@@ -118,7 +118,6 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
     private fun getIdentityProviderInfo() {
         identityProvidersRequest = IdentityProviderRepository().getIdentityProviderInfo(
-            useLegacy = false,
             { identityProviders ->
                 this.identityProviders =
                     identityProviders.filterNot { it.ipInfo.ipDescription.name == "instant_fail_provider" } as ArrayList<IdentityProvider>

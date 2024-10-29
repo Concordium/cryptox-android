@@ -12,12 +12,9 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.model.AttributeList
-import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.model.IdentityObject
@@ -27,10 +24,7 @@ import com.concordium.wallet.data.model.PreIdentityContainer
 import com.concordium.wallet.data.model.PreIdentityObject
 import com.concordium.wallet.data.model.PubInfoForIp
 import com.concordium.wallet.data.model.RawJson
-import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.Log
@@ -76,10 +70,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     private val gson = App.appCore.gson
     private val identityRepository =
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
-    private val accountRepository =
-        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-    private val recipientRepository =
-        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val repository = IdentityProviderRepository()
     private var identityRequest: BackendRequest<IdentityContainer>? = null
     val useTemporaryBackend = BuildConfig.USE_BACKEND_MOCK
@@ -146,21 +136,16 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
 
     private fun saveNewIdentity(identityObject: IdentityObject) {
         val identityCreationData = identityCreationData
-        val privateIdObjectDataEncrypted: EncryptedData? =
-            if (identityCreationData is IdentityCreationData.V0)
-                identityCreationData.privateIdObjectDataEncrypted
-            else
-                null
         val identity = Identity(
             0,
             identityCreationData.identityName,
             IdentityStatus.DONE,
             "",
             "",
-            1, // Next acccount number is set to 1, because 0 has been used for the initial account created by the id provider
+            1, // Next account number is set to 1, because 0 has been used for the initial account created by the id provider
             identityCreationData.identityProvider,
             identityObject,
-            privateIdObjectDataEncrypted,
+            null,
             identityCreationData.identityProvider.ipInfo.ipIdentity,
             identityCreationData.identityIndex
         )
@@ -168,12 +153,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     private fun saveNewIdentity(identity: Identity) = viewModelScope.launch {
-        val identityId = identityRepository.insert(identity).toInt()
-        identity.id = identityId
-        val identityCreationData = identityCreationData
-        if (identityCreationData is IdentityCreationData.V0) {
-            createTempInitialAccount(identityId, identityCreationData)
-        }
+        identity.id = identityRepository.insert(identity).toInt()
         _gotoIdentityConfirmedLiveData.value = Event(identity)
     }
 
@@ -195,11 +175,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 idObjectRequest.value.idCredPub
             )
         val identityCreationData = identityCreationData
-        val privateIdObjectDataEncrypted: EncryptedData? =
-            if (identityCreationData is IdentityCreationData.V0)
-                identityCreationData.privateIdObjectDataEncrypted
-            else
-                null
         val identity = Identity(
             0,
             identityCreationData.identityName,
@@ -213,7 +188,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 preIdentityObject,
                 RawJson("{}")
             ),
-            privateIdObjectDataEncrypted,
+            null,
             identityCreationData.identityProvider.ipInfo.ipIdentity,
             identityCreationData.identityIndex
         )
@@ -241,32 +216,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         } else {
             _identityCreationError.value = event
         }
-    }
-
-    private fun createTempInitialAccount(
-        identityId: Int,
-        identityCreationDataV0: IdentityCreationData.V0,
-    ) = viewModelScope.launch {
-        val accountName = identityCreationDataV0.accountName
-        val accountAddress = identityCreationDataV0.accountAddress
-        val encryptedAccountData = identityCreationDataV0.encryptedAccountData
-        val nextCredNumber = accountRepository.nextCredNumber(identityId)
-
-        val account = Account(
-            identityId = identityId,
-            name = accountName,
-            address = accountAddress,
-            // This account will not have a valid submissionId
-            submissionId = "",
-            // This is just a temp state, it will be updated to finalized or absent based on the identity poll response
-            transactionStatus = TransactionStatus.COMMITTED,
-            encryptedAccountData = encryptedAccountData,
-            // Temp data - the actual data will be returned together with the identityObject for the identity
-            credential = null,
-            credNumber = nextCredNumber,
-        )
-        accountRepository.insert(account)
-        recipientRepository.insert(Recipient(account))
     }
 
     private fun getIdentityObjectFromProvider(request: IdentityRequest) {

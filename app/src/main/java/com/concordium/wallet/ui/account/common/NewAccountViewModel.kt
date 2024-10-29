@@ -13,22 +13,17 @@ import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateCredentialInput
 import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.CreateCredentialOutput
-import com.concordium.wallet.data.cryptolib.GenerateAccountsInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.PossibleAccount
-import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
@@ -36,7 +31,6 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
@@ -47,14 +41,11 @@ open class NewAccountViewModel(application: Application) :
 
     private val identityProviderRepository = IdentityProviderRepository()
     private val proxyRepository = ProxyRepository()
-    private val identityRepository: IdentityRepository =
-        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     private val accountRepository: AccountRepository =
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val recipientRepository: RecipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val gson = App.appCore.gson
-    private val keyCreationVersion = KeyCreationVersion(App.appCore.session.activeWallet)
 
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
@@ -142,41 +133,19 @@ open class NewAccountViewModel(application: Application) :
 
     private suspend fun decryptAndContinue(password: String) {
         val globalParams = tempData.globalParams
-        if (keyCreationVersion.useV1) {
-            // Proceed to credentials creation as there is nothing to decrypt.
-            if (globalParams == null) {
-                _errorLiveData.value = Event(R.string.app_error_general)
-                _waitingLiveData.value = false
-                return
-            }
-            createCredentials(password, null, globalParams)
-        } else {
-            // Decrypt the private data.
-            val privateIdObjectDataEncrypted = identity.privateIdObjectDataEncrypted!!
-            if (globalParams == null) {
-                _errorLiveData.postValue(Event(R.string.app_error_general))
-                _waitingLiveData.postValue(false)
-                return
-            }
-            val decryptedJson = App.appCore.auth
-                .decrypt(
-                    password = password,
-                    encryptedData = privateIdObjectDataEncrypted,
-                )
-                ?.let(::String)
-            if (decryptedJson != null) {
-                val privateIdObjectData = gson.fromJson(decryptedJson, RawJson::class.java)
-                createCredentials(password, privateIdObjectData, globalParams)
-            } else {
-                _errorLiveData.postValue(Event(R.string.app_error_encryption))
-                _waitingLiveData.postValue(false)
-            }
+
+        // Proceed to credentials creation as there is nothing to decrypt.
+        if (globalParams == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
         }
+
+        createCredentials(password, globalParams)
     }
 
     private suspend fun createCredentials(
         password: String,
-        privateIdObjectData: RawJson?,
         globalParams: GlobalParams
     ) {
         val identityProvider = identity.identityProvider
@@ -193,49 +162,24 @@ open class NewAccountViewModel(application: Application) :
 
         tempData.nextCredNumber = accountRepository.nextCredNumber(identity.id)
 
+        val net = AppConfig.net
+        val seed = App.appCore.session.walletStorage.setupPreferences.getSeedHex(password)
+
+        val credentialInput = CreateCredentialInputV1(
+            ipInfo = idProviderInfo,
+            arsInfos = arsInfos,
+            global = globalParams,
+            identityObject = identityObject,
+            revealedAttributes = JsonArray(),
+            seed = seed,
+            net = net,
+            identityIndex = identity.identityIndex,
+            accountNumber = tempData.nextCredNumber ?: 0,
+            expiry = (DateTimeUtil.nowPlusMinutes(5).time) / 1000,
+        )
+
         val output: CreateCredentialOutput? =
-            if (keyCreationVersion.useV1) {
-                val net = AppConfig.net
-                val seed = App.appCore.session.walletStorage.setupPreferences.getSeedHex(password)
-
-                val credentialInput = CreateCredentialInputV1(
-                    ipInfo = idProviderInfo,
-                    arsInfos = arsInfos,
-                    global = globalParams,
-                    identityObject = identityObject,
-                    revealedAttributes = JsonArray(),
-                    seed = seed,
-                    net = net,
-                    identityIndex = identity.identityIndex,
-                    accountNumber = tempData.nextCredNumber ?: 0,
-                    expiry = (DateTimeUtil.nowPlusMinutes(5).time) / 1000,
-                )
-
-                App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
-            } else {
-                requireNotNull(privateIdObjectData) {
-                    "Private ID data must be set when using V0 creation"
-                }
-
-                val generateAccountsInput =
-                    GenerateAccountsInput(globalParams, identityObject, privateIdObjectData)
-                val nextAccountNumber = findNextAccountNumber(generateAccountsInput)
-                    ?: // Error has been handled
-                    return
-
-                val credentialInput = CreateCredentialInput(
-                    ipInfo = idProviderInfo,
-                    arsInfos = arsInfos,
-                    global = globalParams,
-                    identityObject = identityObject,
-                    privateIdObjectData = privateIdObjectData,
-                    revealedAttributes = JsonArray(),
-                    accountNumber = nextAccountNumber,
-                    expiry = (DateTimeUtil.nowPlusMinutes(5).time) / 1000,
-                )
-
-                App.appCore.cryptoLibrary.createCredential(credentialInput)
-            }
+            App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
 
         if (output == null) {
             _errorLiveData.postValue(Event(R.string.app_error_lib))
@@ -265,77 +209,6 @@ open class NewAccountViewModel(application: Application) :
                 _waitingLiveData.postValue(false)
             }
         }
-    }
-
-    private suspend fun findNextAccountNumber(generateAccountsInput: GenerateAccountsInput): Int? {
-        var nextAccountNumber = identity.nextAccountNumber
-        Log.d("nextAccountNumber: $nextAccountNumber")
-        val maxAccounts = identity.identityObject!!.attributeList.maxAccounts
-
-        val possibleAccountList = App.appCore.cryptoLibrary.generateAccounts(generateAccountsInput)
-        if (possibleAccountList == null) {
-            Log.e("Could not generate accounts, so do not allow account creation")
-            _errorLiveData.postValue(Event(R.string.app_error_lib))
-            _waitingLiveData.postValue(false)
-            return null
-        } else {
-            Log.d("Generated account info for ${possibleAccountList.size} accounts")
-            val next = checkExistingAccounts(possibleAccountList, nextAccountNumber)
-            if (next == null) {
-                _errorLiveData.postValue(Event(R.string.app_error_backend_unknown))
-                _waitingLiveData.postValue(false)
-                return null
-            } else {
-                nextAccountNumber = next
-            }
-        }
-
-        Log.d("nextAccountNumber used: $nextAccountNumber")
-        // Next account number starts from 0
-        if (nextAccountNumber >= maxAccounts) {
-            _errorLiveData.postValue(Event(R.string.new_account_identity_attributes_error_max_accounts_alt))
-            _waitingLiveData.postValue(false)
-            return null
-        }
-        identity.nextAccountNumber = nextAccountNumber + 1
-        viewModelScope.launch(Dispatchers.IO) {
-            identityRepository.update(identity)
-        }
-        return nextAccountNumber
-    }
-
-    /**
-     * Returns the index for the first unused account
-     */
-    private suspend fun checkExistingAccounts(
-        possibleAccountList: List<PossibleAccount>,
-        startIndex: Int
-    ): Int? {
-        var index = startIndex
-        while (index < possibleAccountList.size) {
-            try {
-                Log.d("Get account balance for index $index")
-                val accountBalance =
-                    proxyRepository.getAccountBalanceSuspended(possibleAccountList[index].accountAddress)
-                Log.d("AccountBalance: $accountBalance")
-                if (!accountBalance.accountExists()) {
-                    Log.d("Unused account address")
-                    return index
-                }
-                index++
-            } catch (e: Exception) {
-                val ex = BackendErrorHandler.getCoroutineBackendException(e)
-                return if (ex != null && ex is BackendErrorException) {
-                    Log.d("Backend error - unused account address", ex)
-                    index
-                } else {
-                    // Other exceptions like connection problems should not let the account be created
-                    Log.e("Unexpected exception when getting account balance", e)
-                    null
-                }
-            }
-        }
-        return null
     }
 
     private fun submitCredential(credentialWrapper: CredentialWrapper) {
