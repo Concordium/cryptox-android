@@ -993,10 +993,6 @@
         Get updates on new features, discount and promo</string>
     <string name="notifications_permission_allow">Allow notifications</string>
     <string name="notifications_permission_deny">Not now</string>
-    <string name="import_file_wallet_title">Importing a file wallet</string>
-    <string name="import_file_wallet_details">Be aware that you can not create new accounts or identities in your file wallet. But after the import you will be able to connect a new or existing Concordium seed phrase wallet which has full functionality. After connecting you will be able to switch between your seed phrase wallet and your file wallet.</string>
-    <string name="import_file_wallet_import_button">Import</string>
-    <string name="import_file_wallet_go_back_button">Go back</string>
     <string name="import_wallet_okay_button">Okay</string>
     <string name="import_wallet_backup_file">Backup file</string>
     <string name="import_wallet_backup_file_description">• A file that can be exported and imported \n• Grants access to all connected accounts \n• Can be used to recover a file wallet \n• Used in older Concordium wallets</string>

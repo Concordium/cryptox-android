@@ -71,6 +71,7 @@ class WalletsActionConfirmationDialog : AppCompatDialogFragment() {
         const val CONFIRMATION_REQUEST = "confirmation"
         const val ADDING_SEED_WALLET_ACTION = "adding_seed_wallet"
         const val ADDING_FILE_WALLET_ACTION = "adding_file_wallet"
+        const val IMPORTING_FILE_WALLET_ACTION = "importing_file_wallet"
         const val REMOVING_WALLET_ACTION = "removing_wallet"
         private const val IS_CONFIRMED_EXTRA = "is_confirmed"
         private const val ACTION_EXTRA = "action"
@@ -96,6 +97,16 @@ class WalletsActionConfirmationDialog : AppCompatDialogFragment() {
                 putInt(DETAILS_ID_EXTRA, R.string.wallets_action_adding_file_wallet_explanation)
                 putInt(OK_BUTTON_TEXT_ID_EXTRA, R.string.wallets_action_add_wallet)
                 putString(ACTION_EXTRA, ADDING_FILE_WALLET_ACTION)
+            }
+        }
+
+        fun importingFileWallet() = WalletsActionConfirmationDialog().apply {
+            arguments = Bundle().apply {
+                putInt(IMAGE_ID_EXTRA, R.drawable.ccx_warning)
+                putInt(TITLE_ID_EXTRA, R.string.wallets_action_importing_file_wallet)
+                putInt(DETAILS_ID_EXTRA, R.string.wallets_action_importing_file_wallet_explanation)
+                putInt(OK_BUTTON_TEXT_ID_EXTRA, R.string.wallets_action_import_wallet)
+                putString(ACTION_EXTRA, IMPORTING_FILE_WALLET_ACTION)
             }
         }
 

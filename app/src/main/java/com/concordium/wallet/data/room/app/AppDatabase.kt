@@ -17,7 +17,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun appWalletDao(): AppWalletDao
 
     companion object {
-        const val FILE_NAME = "app_database"
+        private const val FILE_NAME = "app_database"
 
         fun getDatabase(context: Context): AppDatabase =
             Room.databaseBuilder(

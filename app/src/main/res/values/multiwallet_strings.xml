@@ -33,12 +33,21 @@
         \n\n
         Be aware that you can not create new accounts or identities in your file wallet.
     </string>
+    <string name="wallets_action_importing_file_wallet">Importing a file wallet</string>
+    <string name="wallets_action_importing_file_wallet_explanation">
+        Be aware that you can not create new accounts or identities in your file wallet.
+        \n\n
+        But after the import you will be able to connect a new or existing Concordium seed phrase wallet
+        which has full functionality. After connecting you will be able to switch
+        between your seed phrase wallet and your file wallet.
+    </string>
     <string name="wallets_action_removing_wallet">Removing a wallet</string>
     <string name="wallets_action_removing_wallet_explanation">
         After removing a wallet you will not be able to access it in CryptoX.
         But you can restore it whenever you like.
     </string>
     <string name="wallets_action_add_wallet">Add wallet</string>
+    <string name="wallets_action_import_wallet">Import</string>
     <string name="wallets_action_go_back">Go back</string>
     <string name="wallets_action_remove_wallet">Remove</string>
     <string name="wallet_switch">Switch wallet</string>
@@ -46,4 +55,12 @@
     <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
     <string name="wallets_remove_seed_wallet">Remove your seed phrase wallet</string>
     <string name="wallets_remove_file_wallet">Remove your file wallet</string>
+    <string name="file_wallet_creation_limitation">File wallet limitations</string>
+    <string name="file_wallet_creation_limitation_explanation">
+        Be aware that you can not create new accounts or identities in your file wallet.
+        \n\n
+        We recommend that you migrate to a seed phrase wallet
+        in order to make use of the full range of CryptoX features.
+    </string>
+    <string name="file_wallet_creation_limitation_okay">Okay</string>
 </resources>

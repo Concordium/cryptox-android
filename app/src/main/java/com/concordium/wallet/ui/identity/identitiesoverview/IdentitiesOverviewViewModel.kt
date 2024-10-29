@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Identity
 
@@ -18,6 +19,8 @@ class IdentitiesOverviewViewModel(application: Application) : AndroidViewModel(a
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     val identityListLiveData: LiveData<List<Identity>> =
         identityRepository.allIdentities
+    val isCreationLimitedForFileWallet: Boolean
+        get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
 
     fun initialize() {
     }

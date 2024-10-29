@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentitiesOverviewBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.IdentityAdapter
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
+import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
 
 class IdentitiesOverviewActivity : BaseActivity(
     R.layout.activity_identities_overview,
@@ -34,8 +36,13 @@ class IdentitiesOverviewActivity : BaseActivity(
         initializeViews()
 
         hideActionBarBack(isVisible = true)
-        hideRightPlus(isVisible = true) {
-            gotoCreateIdentity()
+
+        hideRightPlus(
+            isVisible = true,
+            isDisabled = viewModel.isCreationLimitedForFileWallet,
+            hasNotice = viewModel.isCreationLimitedForFileWallet,
+        ) {
+            onCreateClicked()
         }
     }
     // endregion
@@ -68,7 +75,7 @@ class IdentitiesOverviewActivity : BaseActivity(
         binding.noIdentityLayout.visibility = View.GONE
 
         binding.newIdentityButton.setOnClickListener {
-            gotoCreateIdentity()
+            onCreateClicked()
         }
 
         initializeList()
@@ -89,6 +96,21 @@ class IdentitiesOverviewActivity : BaseActivity(
 
     //region Control/UI
     // ************************************************************
+
+    private fun onCreateClicked() {
+        if (viewModel.isCreationLimitedForFileWallet) {
+            showFileWalletCreationLimitation()
+        } else {
+            gotoCreateIdentity()
+        }
+    }
+
+    private fun showFileWalletCreationLimitation() {
+        FileWalletCreationLimitationDialog().showSingle(
+            supportFragmentManager,
+            FileWalletCreationLimitationDialog.TAG
+        )
+    }
 
     private fun gotoCreateIdentity() {
         val intent = Intent(this, IdentityProviderListActivity::class.java)

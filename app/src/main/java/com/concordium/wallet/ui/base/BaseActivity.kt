@@ -9,6 +9,7 @@ import android.os.storage.StorageManager
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
@@ -50,7 +51,9 @@ abstract class BaseActivity(
 
     private var backBtn: ImageView? = null
     private var plusLeftBtn: ImageView? = null
-    private var plusRightBtn: ImageView? = null
+    private var plusRightBtn: FrameLayout? = null
+    private var plusRightBtnImage: ImageView? = null
+    private var plusRightBtnNotice: View? = null
     private var qrScanBtn: ImageView? = null
     private var infoBtn: ImageView? = null
     protected var closeBtn: ImageView? = null
@@ -80,6 +83,8 @@ abstract class BaseActivity(
         backBtn = toolbar?.findViewById(R.id.toolbar_back_btn)
         plusLeftBtn = toolbar?.findViewById(R.id.toolbar_plus_btn)
         plusRightBtn = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact)
+        plusRightBtnImage = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact_image)
+        plusRightBtnNotice = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact_notice)
         qrScanBtn = toolbar?.findViewById(R.id.toolbar_qr_btn)
         infoBtn = toolbar?.findViewById(R.id.toolbar_info_btn)
         closeBtn = toolbar?.findViewById(R.id.toolbar_close_btn)
@@ -206,9 +211,20 @@ abstract class BaseActivity(
         infoBtn?.setOnClickListener(listener)
     }
 
-    fun hideRightPlus(isVisible: Boolean, listener: View.OnClickListener? = null) {
+    fun hideRightPlus(
+        isVisible: Boolean,
+        isDisabled: Boolean = false,
+        hasNotice: Boolean = false,
+        listener: View.OnClickListener? = null
+    ) {
         plusRightBtn?.isVisible = isVisible
         plusRightBtn?.setOnClickListener(listener)
+        plusRightBtnImage?.alpha =
+            if (isDisabled)
+                0.7f
+            else
+                1f
+        plusRightBtnNotice?.isVisible = hasNotice
     }
 
     fun hideLeftPlus(isVisible: Boolean, listener: View.OnClickListener? = null) {
