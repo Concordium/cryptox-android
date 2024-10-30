@@ -81,14 +81,12 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
                 )
 
             mutableEventsFlow.tryEmit(
-                Event.GoToMain(
-                    startWithFileImport = false,
-                )
+                Event.GoToMain()
             )
         }
     }
 
-    fun onAddingSeedWalletConfirmed() = viewModelScope.launch {
+    fun onAddingSeedWalletConfirmed(import: Boolean) = viewModelScope.launch {
         if (isModifyingWallets) {
             return@launch
         }
@@ -101,7 +99,7 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
 
         mutableEventsFlow.tryEmit(
             Event.GoToMain(
-                startWithFileImport = false,
+                startWithSeedImport = import,
             )
         )
     }
@@ -136,19 +134,18 @@ class WalletsViewModel(application: Application) : AndroidViewModel(application)
             ?: error("Removing is not possible when there is a single wallet")
 
         deleteActiveWalletUseCase(
-            newActiveWallet=newActiveWallet,
+            newActiveWallet = newActiveWallet,
         )
 
         mutableEventsFlow.tryEmit(
-            Event.GoToMain(
-                startWithFileImport = false,
-            )
+            Event.GoToMain()
         )
     }
 
     sealed interface Event {
         class GoToMain(
-            val startWithFileImport: Boolean,
+            val startWithFileImport: Boolean = false,
+            val startWithSeedImport: Boolean = false,
         ) : Event
     }
 }

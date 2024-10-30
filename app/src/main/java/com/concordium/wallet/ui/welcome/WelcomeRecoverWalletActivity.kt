@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
 import com.concordium.wallet.extension.showSingle
@@ -42,6 +43,12 @@ class WelcomeRecoverWalletActivity : BaseActivity(
     }
 
     private fun initViews() {
+        binding.usePhraseLayout.isVisible =
+            intent.getBooleanExtra(EXTRA_SHOW_SEED_OPTIONS, true)
+        binding.useFileLayout.isVisible =
+            intent.getBooleanExtra(EXTRA_SHOW_FILE_OPTIONS, true)
+        binding.bottomAwareLayout.isVisible = binding.useFileLayout.isVisible
+
         binding.importSeedPhraseButton.setOnClickListener {
             goToPhraseRecovery()
         }
@@ -90,5 +97,22 @@ class WelcomeRecoverWalletActivity : BaseActivity(
 
     private fun goToSeedRecovery() {
         startActivity(Intent(this, RecoverSeedWalletActivity::class.java))
+    }
+
+    companion object {
+        private const val EXTRA_SHOW_SEED_OPTIONS = "show_seed_options"
+        private const val EXTRA_SHOW_FILE_OPTIONS = "show_file_options"
+
+        fun getBundle(
+            showSeedOptions: Boolean = true,
+            showFileOptions: Boolean = true,
+        ) = Bundle().apply {
+            require(showFileOptions || showSeedOptions) {
+                "No options to show"
+            }
+
+            putBoolean(EXTRA_SHOW_SEED_OPTIONS, showSeedOptions)
+            putBoolean(EXTRA_SHOW_FILE_OPTIONS, showFileOptions)
+        }
     }
 }

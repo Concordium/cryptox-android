@@ -50,11 +50,15 @@
                 android:textAppearance="@style/CCX_Typography_Body"
                 android:textColor="@color/ccx_neutral_tint_2" />
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="16dp" />
+
             <LinearLayout
                 android:id="@+id/use_phrase_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/ccx_card_dark_20_background"
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
@@ -123,8 +127,8 @@
                     style="@style/CCX_Typography_Body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
                     android:gravity="start"
+                    android:paddingVertical="10dp"
                     android:text="@string/welcome_recover_import_via_seed_phrase"
                     android:textColor="@color/cryptox_white_main"
                     app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
@@ -140,8 +144,8 @@
                     style="@style/CCX_Typography_Body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
                     android:gravity="start"
+                    android:paddingVertical="10dp"
                     android:text="@string/welcome_recover_import_via_seed"
                     android:textColor="@color/cryptox_white_main"
                     app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
@@ -222,8 +226,8 @@
                     style="@style/CCX_Typography_Body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
                     android:gravity="start"
+                    android:paddingVertical="10dp"
                     android:text="@string/welcome_recover_import_via_backup_file"
                     android:textColor="@color/cryptox_white_main"
                     app:drawableEndCompat="@drawable/ccx_ico_arrow_right"

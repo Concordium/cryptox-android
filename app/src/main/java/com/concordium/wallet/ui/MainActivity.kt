@@ -29,6 +29,7 @@ import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
+import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
@@ -38,6 +39,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     companion object {
         const val EXTRA_CREATE_FIRST_IDENTITY = "EXTRA_CREATE_FIRST_IDENTITY"
         const val EXTRA_IMPORT_FROM_FILE = "EXTRA_IMPORT_FROM_FILE"
+        const val EXTRA_IMPORT_FROM_SEED = "EXTRA_IMPORT_FROM_SEED"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
     }
 
@@ -81,6 +83,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             goToFirstIdentityCreation()
         } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
             goToImportFromFile()
+        } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_SEED, false)) {
+            goToImportFromSeed()
         }
     }
 
@@ -281,6 +285,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun goToImportFromFile() {
         val intent = Intent(this, ImportActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToImportFromSeed() {
+        val intent = Intent(this, WelcomeRecoverWalletActivity::class.java)
+        intent.putExtras(WelcomeRecoverWalletActivity.getBundle(
+            showFileOptions = false,
+        ))
         startActivity(intent)
     }
     //endregion

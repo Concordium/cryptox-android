@@ -37,7 +37,8 @@ class WalletsActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
         hideInfo(isVisible = true) {
-            showAddingBottomSheet()
+            WalletsAddingBottomSheet()
+                .showSingle(supportFragmentManager, WalletsAddingBottomSheet.TAG)
         }
     }
 
@@ -62,7 +63,8 @@ class WalletsActivity : BaseActivity(
 
             when (confirmedAction) {
                 WalletsActionConfirmationDialog.ADDING_SEED_WALLET_ACTION ->
-                    viewModel.onAddingSeedWalletConfirmed()
+                    SeedWalletAddingBottomSheet()
+                        .showSingle(supportFragmentManager, SeedWalletAddingBottomSheet.TAG)
 
                 WalletsActionConfirmationDialog.ADDING_FILE_WALLET_ACTION ->
                     viewModel.onAddingFileWalletConfirmed()
@@ -70,6 +72,16 @@ class WalletsActivity : BaseActivity(
                 WalletsActionConfirmationDialog.REMOVING_WALLET_ACTION ->
                     viewModel.onRemovingWalletConfirmed()
             }
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            SeedWalletAddingBottomSheet.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            val confirmedAction = SeedWalletAddingBottomSheet.getResult(bundle)
+            viewModel.onAddingSeedWalletConfirmed(
+                import = confirmedAction == SeedWalletAddingBottomSheet.ChosenAction.IMPORT,
+            )
         }
     }
 
@@ -104,16 +116,10 @@ class WalletsActivity : BaseActivity(
                 startActivity(
                     Intent(this, MainActivity::class.java)
                         .putExtra(MainActivity.EXTRA_IMPORT_FROM_FILE, event.startWithFileImport)
+                        .putExtra(MainActivity.EXTRA_IMPORT_FROM_SEED, event.startWithSeedImport)
                 )
             }
         }
-    }
-
-    private fun showAddingBottomSheet() {
-        WalletsAddingBottomSheet().showSingle(
-            supportFragmentManager,
-            WalletsAddingBottomSheet.TAG
-        )
     }
 
     private fun onAddClicked(walletType: AppWallet.Type) = when (walletType) {

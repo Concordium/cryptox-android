@@ -20,7 +20,8 @@
          • 1 seed phrase wallet (newly created or imported via either seed phrase or wallet private key)
     </string>
     <string name="wallets_adding_okay">Okay</string>
-    <string name="wallets_action_adding_seed_wallet">Adding a seed phrase wallet</string>
+    <string name="adding_seed_wallet">Adding a seed phrase wallet</string>
+    <string name="wallets_action_adding_seed_wallet">@string/adding_seed_wallet</string>
     <string name="wallets_action_adding_seed_wallet_explanation">
         You can add a new or existing Concordium seed phrase wallet.
         After adding it you will be able to switch between your seed phrase wallet and your file wallet.
@@ -63,4 +64,18 @@
         in order to make use of the full range of CryptoX features.
     </string>
     <string name="file_wallet_creation_limitation_okay">Okay</string>
+    <string name="seed_wallet_adding_title">@string/adding_seed_wallet</string>
+    <string name="seed_wallet_adding_subtitle">There are two options available</string>
+    <string name="seed_wallet_adding_create_new_wallet_title">CREATE A NEW WALLET</string>
+    <string name="seed_wallet_adding_create_new_wallet_details">
+        You have to complete 2 easy steps to create your wallet:
+    </string>
+    <string name="seed_wallet_adding_create_new_wallet_step_1">Save seed phrase</string>
+    <string name="seed_wallet_adding_create_new_wallet_step_2">Verify identity</string>
+    <string name="seed_wallet_adding_create_wallet">Create Wallet</string>
+    <string name="seed_wallet_adding_import_wallet_title">IMPORT A WALLET</string>
+    <string name="seed_wallet_adding_import_wallet_details">
+       You can import your wallet with a seed phrase, or a wallet private key.
+    </string>
+    <string name="seed_wallet_adding_import_wallet">Import Wallet</string>
 </resources>
