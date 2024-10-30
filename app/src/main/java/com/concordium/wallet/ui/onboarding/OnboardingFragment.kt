@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.databinding.OnboardingStatusCardBinding
+import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
@@ -24,13 +24,13 @@ import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import kotlinx.coroutines.launch
 
-class OnboardingStatusCard @JvmOverloads constructor(
+class OnboardingFragment @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private var binding: OnboardingStatusCardBinding = OnboardingStatusCardBinding.inflate(
+    private var binding: FragmentOnboardingBinding = FragmentOnboardingBinding.inflate(
         LayoutInflater.from(context),
         this,
         true

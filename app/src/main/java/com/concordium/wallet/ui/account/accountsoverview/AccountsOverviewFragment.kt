@@ -20,7 +20,7 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
-import com.concordium.wallet.databinding.OnboardingStatusCardBinding
+import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
@@ -33,7 +33,7 @@ import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.onboarding.OnboardingState
-import com.concordium.wallet.ui.onboarding.OnboardingStatusCard
+import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.KeyCreationVersion
@@ -50,12 +50,12 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private var eventListener: Preferences.Listener? = null
     private lateinit var binding: FragmentAccountsOverviewBinding
-    private lateinit var onboardingBinding: OnboardingStatusCardBinding
+    private lateinit var onboardingBinding: FragmentOnboardingBinding
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var keyCreationVersion: KeyCreationVersion
-    private lateinit var onboardingStatusCard: OnboardingStatusCard
+    private lateinit var onboardingStatusCard: OnboardingFragment
 
     //region Lifecycle
     // ************************************************************
@@ -73,7 +73,7 @@ class AccountsOverviewFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAccountsOverviewBinding.inflate(inflater, container, false)
-        onboardingBinding = OnboardingStatusCardBinding.inflate(layoutInflater)
+        onboardingBinding = FragmentOnboardingBinding.inflate(layoutInflater)
         onboardingStatusCard = binding.onboardingLayout
 
         return binding.root
@@ -195,6 +195,7 @@ class AccountsOverviewFragment : BaseFragment() {
                     }
                     showStateDefault()
                 }
+
                 else -> {
                     onboardingStatusCard.updateViewsByState(state)
                     showStateOnboarding()
@@ -306,13 +307,15 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun initializeAnimation() {
         binding.confettiAnimation.addAnimatorListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(p0: Animator) { }
+            override fun onAnimationStart(p0: Animator) {}
 
-            override fun onAnimationEnd(p0: Animator) { cancelAnimation() }
+            override fun onAnimationEnd(p0: Animator) {
+                cancelAnimation()
+            }
 
-            override fun onAnimationCancel(p0: Animator) { }
+            override fun onAnimationCancel(p0: Animator) {}
 
-            override fun onAnimationRepeat(p0: Animator) { }
+            override fun onAnimationRepeat(p0: Animator) {}
 
         })
     }
@@ -380,11 +383,18 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
+        binding.totalBalanceTextview.text = CurrencyUtil.formatAndRoundGTU(
+            value = totalBalance,
+            roundDecimals = 2
+        )
     }
 
     private fun showDisposalBalance(atDisposal: BigInteger) {
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
+        binding.accountsOverviewTotalDetailsDisposal.text =
+            getString(
+                R.string.accounts_overview_total_details_disposal_amount,
+                CurrencyUtil.formatAndRoundGTU(value = atDisposal, roundDecimals = 2)
+            )
     }
 
     private fun cancelAnimation() {

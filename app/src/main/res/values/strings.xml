@@ -174,7 +174,7 @@
     <string name="accounts_overview_create_account">Create account</string>
     <string name="accounts_overview_wallet_total">Wallet total</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
-    <string name="accounts_overview_balance_at_disposal">At disposal</string>
+    <string name="accounts_overview_balance_at_disposal">at disposal</string>
     <string name="total_amount">Total amount</string>
     <string name="unshielding_notice_title">Transaction Shielding is going away</string>
     <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
@@ -376,10 +376,12 @@
     <string name="error_database_close">Close</string>
     <string name="accounts_overview_total_at_disposal">Total currently at disposal</string>
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
+    <string name="accounts_overview_total_details_disposal_amount">%1$s at disposal</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Delegating:</string>
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">…</string>
+    <string name="accounts_overview_balance_suffix">CCD</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_change_name">Change account name</string>

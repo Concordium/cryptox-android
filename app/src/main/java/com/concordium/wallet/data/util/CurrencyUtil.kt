@@ -4,6 +4,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 import java.text.DecimalFormatSymbols
+import java.util.Locale
 import java.util.regex.Pattern
 
 object CurrencyUtil {
@@ -65,6 +66,13 @@ object CurrencyUtil {
         }
 
         return strBuilder.toString().removeSuffix(separator.toString())
+    }
+
+    fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int): String {
+        val formattedBalance = formatGTU(value)
+        return formattedBalance.toDoubleOrNull()?.let {
+            String.format(Locale.getDefault(), "%.${roundDecimals}f", it)
+        } ?: formattedBalance
     }
 
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? =

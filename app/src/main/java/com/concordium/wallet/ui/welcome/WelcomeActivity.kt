@@ -62,11 +62,11 @@ class WelcomeActivity :
 
         // Subscribe to activation bottom sheet chosen action.
         supportFragmentManager.setFragmentResultListener(
-            WelcomePromoActivateAccountBottomSheet.ACTION_REQUEST,
+            WelcomeActivateAccountBottomSheet.ACTION_REQUEST,
             this
         ) { _, bundle ->
-            when (WelcomePromoActivateAccountBottomSheet.getResult(bundle)) {
-                WelcomePromoActivateAccountBottomSheet.ChosenAction.CREATE ->
+            when (WelcomeActivateAccountBottomSheet.getResult(bundle)) {
+                WelcomeActivateAccountBottomSheet.ChosenAction.CREATE ->
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a new wallet.
                         passcodeSetupForCreateLauncher
@@ -75,7 +75,7 @@ class WelcomeActivity :
                         gotoAccountOverview()
                     }
 
-                WelcomePromoActivateAccountBottomSheet.ChosenAction.IMPORT ->
+                WelcomeActivateAccountBottomSheet.ChosenAction.IMPORT ->
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a import an existing wallet.
                         passcodeSetupForImportLauncher
@@ -121,8 +121,8 @@ class WelcomeActivity :
     }
 
     override fun proceedWithAccountActivation() {
-        WelcomePromoActivateAccountBottomSheet()
-            .show(supportFragmentManager, WelcomePromoActivateAccountBottomSheet.TAG)
+        WelcomeActivateAccountBottomSheet()
+            .show(supportFragmentManager, WelcomeActivateAccountBottomSheet.TAG)
     }
 
     private fun goToImportWallet() {
