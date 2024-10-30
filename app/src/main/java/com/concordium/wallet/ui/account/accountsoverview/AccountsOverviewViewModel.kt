@@ -131,7 +131,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         // Also update all accounts (and set the overall balance) if any exists.
         viewModelScope.launch(Dispatchers.IO) {
             if (!keyCreationVersion.useV1) {
-                postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
+                checkFileWallet(notifyWaitingLiveData)
             } else {
                 val identityCount = identityRepository.getCount()
                 if (identityCount == 0) {
@@ -186,6 +186,16 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         } else {
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             updateSubmissionStatesAndBalances()
+        }
+    }
+
+    private suspend fun checkFileWallet(notifyWaitingLiveData: Boolean) {
+        val doneCount = identityRepository.getAllDone().size
+        if (doneCount > 0) {
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
+        } else {
+            postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
         }
     }
 

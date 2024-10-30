@@ -340,7 +340,8 @@
             android:name=".ui.more.export.ExportActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.import.ImportActivity"
             android:launchMode="singleTop"
@@ -518,11 +519,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
-        <activity
-            android:name=".ui.welcome.WelcomePromoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/CCX_WelcomePromoScreen" />
         <activity
             android:name=".ui.auth.passcode.PasscodeSetupActivity"
             android:launchMode="singleTop"

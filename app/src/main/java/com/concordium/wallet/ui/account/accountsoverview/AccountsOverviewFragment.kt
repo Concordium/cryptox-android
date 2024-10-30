@@ -318,6 +318,15 @@ class AccountsOverviewFragment : BaseFragment() {
             override fun onAnimationRepeat(p0: Animator) {}
 
         })
+
+        binding.confettiAnimation.addAnimatorPauseListener(object : Animator.AnimatorPauseListener {
+            override fun onAnimationPause(p0: Animator) {
+                cancelAnimation()
+            }
+
+            override fun onAnimationResume(p0: Animator) {}
+
+        })
     }
 
     //endregion
