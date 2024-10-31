@@ -2,7 +2,9 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
+import java.math.BigDecimal
 import java.math.BigInteger
+import java.math.RoundingMode
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 import java.util.regex.Pattern
@@ -69,10 +71,13 @@ object CurrencyUtil {
     }
 
     fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int): String {
-        val formattedBalance = formatGTU(value)
-        return formattedBalance.toDoubleOrNull()?.let {
-            String.format(Locale.getDefault(), "%.${roundDecimals}f", it)
-        } ?: formattedBalance
+        val bigDecimalValue = formatGTU(value)
+            .replace(separator, '.')
+            .toBigDecimal()
+            .setScale(roundDecimals, RoundingMode.HALF_UP)
+
+        //replace '.' to initial separator
+        return bigDecimalValue.toString().replace('.', separator)
     }
 
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? =
