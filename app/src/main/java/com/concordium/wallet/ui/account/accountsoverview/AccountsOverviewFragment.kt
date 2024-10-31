@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
@@ -392,23 +393,91 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.totalBalanceTextview.text = CurrencyUtil.formatAndRoundGTU(
-            value = totalBalance,
-            roundDecimals = 2
-        )
+        binding.totalBalanceTextview.text =
+            CurrencyUtil.formatAndRoundGTU(
+                value = totalBalance,
+                roundDecimals = 2
+            )
+        updateTotalBalanceView()
     }
 
     private fun showDisposalBalance(atDisposal: BigInteger) {
         binding.accountsOverviewTotalDetailsDisposal.text =
-            getString(
-                R.string.accounts_overview_total_details_disposal_amount,
-                CurrencyUtil.formatAndRoundGTU(value = atDisposal, roundDecimals = 2)
+            CurrencyUtil.formatAndRoundGTU(
+                value = atDisposal,
+                roundDecimals = 2
             )
+        updateBalanceAtDisposalView()
     }
 
     private fun cancelAnimation() {
         viewModel.setHasShowedInitialAnimation()
         binding.confettiAnimation.visibility = View.GONE
+    }
+
+    // update balance TextView directly if balance value is too long
+    private fun updateTotalBalanceView() {
+        val availableWidth = binding.totalBalanceLayout.width - binding.totalBalanceSuffix.width
+
+        if (binding.totalBalanceTextview.width > availableWidth) {
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(binding.totalBalanceLayout)
+            constraintSet.apply {
+                connect(
+                    binding.totalBalanceTextview.id,
+                    ConstraintSet.END,
+                    binding.totalBalanceSuffix.id,
+                    ConstraintSet.START
+                )
+                connect(
+                    binding.totalBalanceSuffix.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END
+                )
+                constrainWidth(binding.totalBalanceTextview.id, ConstraintSet.MATCH_CONSTRAINT)
+                setHorizontalChainStyle(
+                    binding.totalBalanceLayout.id,
+                    ConstraintSet.CHAIN_SPREAD_INSIDE
+                )
+                setMargin(binding.totalBalanceSuffix.id, ConstraintSet.BOTTOM, 0)
+            }
+            constraintSet.applyTo(binding.totalBalanceLayout)
+        }
+    }
+
+    // update disposable balance TextView directly if balance value is too long
+    private fun updateBalanceAtDisposalView() {
+        val availableWidth =
+            binding.totalDetailsDisposalLayout.width - binding.accountsOverviewTotalDetailsDisposalSuffix.width
+
+        if (binding.accountsOverviewTotalDetailsDisposal.width > availableWidth) {
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(binding.totalDetailsDisposalLayout)
+            constraintSet.apply {
+                connect(
+                    binding.accountsOverviewTotalDetailsDisposal.id,
+                    ConstraintSet.END,
+                    binding.accountsOverviewTotalDetailsDisposalSuffix.id,
+                    ConstraintSet.START
+                )
+                connect(
+                    binding.accountsOverviewTotalDetailsDisposalSuffix.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END
+                )
+                constrainWidth(
+                    binding.accountsOverviewTotalDetailsDisposal.id,
+                    ConstraintSet.MATCH_CONSTRAINT
+                )
+                setHorizontalChainStyle(
+                    binding.totalDetailsDisposalLayout.id,
+                    ConstraintSet.CHAIN_SPREAD_INSIDE
+                )
+            }
+            constraintSet.applyTo(binding.totalDetailsDisposalLayout)
+        }
     }
 
     //endregion

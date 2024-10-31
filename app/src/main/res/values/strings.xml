@@ -376,7 +376,7 @@
     <string name="error_database_close">Close</string>
     <string name="accounts_overview_total_at_disposal">Total currently at disposal</string>
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
-    <string name="accounts_overview_total_details_disposal_amount">%1$s at disposal</string>
+    <string name="accounts_overview_total_details_disposal_amount">at disposal</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Delegating:</string>
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
