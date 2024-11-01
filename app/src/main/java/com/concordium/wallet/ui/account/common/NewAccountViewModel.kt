@@ -115,6 +115,7 @@ open class NewAccountViewModel(application: Application) :
         globalParamsRequest?.dispose()
         globalParamsRequest = identityProviderRepository.getIGlobalInfo(
             {
+                App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
                 tempData.globalParams = it.value
                 _showAuthenticationLiveData.postValue(Event(true))
                 _waitingLiveData.postValue(false)

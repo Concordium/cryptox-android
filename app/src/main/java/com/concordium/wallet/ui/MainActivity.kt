@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -25,12 +26,14 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.news.NewsOverviewFragment
+import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
     AuthDelegate by AuthDelegateImpl(),
@@ -47,6 +50,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         ActivityMainBinding.bind(findViewById(R.id.root_layout))
     }
     private lateinit var viewModel: MainViewModel
+    private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var walletConnectViewModel: WalletConnectViewModel
     private lateinit var walletSwitchViewModel: WalletSwitchViewModel
     private var hasHandledPossibleImportFile = false
@@ -56,13 +60,13 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set theme to default to remove launcher theme.
-        setTheme(R.style.CCX_Screen)
+        setTheme(R.style.CCX_MainScreen)
 
         super.onCreate(savedInstanceState)
 
         // Make the navigation bar color match the bottom navigation bar.
         window.navigationBarColor =
-            ContextCompat.getColor(this, R.color.bottom_navigation_bar_background)
+            ContextCompat.getColor(this, R.color.cryptox_black_main)
 
         initializeViewModel()
         viewModel.initialize()
@@ -119,7 +123,15 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                 }
 
                 viewModel.startIdentityUpdate()
-                startCheckForPendingIdentity(this, null, false) {}
+                if (!viewModel.hasCompletedOnboarding()) {
+                    startCheckForPendingIdentity(this, null, true) { identity ->
+                        lifecycleScope.launch {
+                            onboardingViewModel.setIdentity(identity)
+                        }
+                    }
+                } else {
+                    startCheckForPendingIdentity(this, null, false) {}
+                }
 
                 App.appCore.tracker.homeScreen()
             }
@@ -168,6 +180,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
 
         walletConnectViewModel = viewModelProvider.get()
+        onboardingViewModel = viewModelProvider.get()
 
         walletSwitchViewModel = viewModelProvider.get()
         walletSwitchViewModel.switchesFlow.collectWhenStarted(this) {
@@ -226,7 +239,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         val fragment = when (state) {
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
             MainViewModel.State.NewsOverview -> NewsOverviewFragment()
-            MainViewModel.State.TokensOverview -> ProvidersOverviewFragment()
+            MainViewModel.State.TokensOverview -> {
+                if (viewModel.hasCompletedOnboarding()) {
+                    ProvidersOverviewFragment()
+                } else {
+                    showUnlockFeatureDialog()
+                    null
+                }
+            }
             MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment)

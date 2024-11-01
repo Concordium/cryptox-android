@@ -1,24 +1,92 @@
 package com.concordium.wallet.ui.welcome
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.databinding.ActivityWelcomeBinding
+import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 
-class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
+class WelcomeActivity :
+    BaseActivity(R.layout.activity_welcome),
+    WelcomeAccountActivationLauncher {
+
     private val binding: ActivityWelcomeBinding by lazy {
         ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
     }
 
+    private val trackingPreferences: AppTrackingPreferences by lazy {
+        AppTrackingPreferences(this)
+    }
+
+    private val passcodeSetupForCreateLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                gotoAccountOverview()
+            }
+        }
+    private val passcodeSetupForImportLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                goToImportWallet()
+            }
+        }
+
+    private lateinit var viewModel: WelcomeViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding.consentTextView.handleUrlClicks { url ->
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get()
+
+        initViews()
+
+        if (savedInstanceState == null) {
+            App.appCore.tracker.welcomeScreen()
+        }
+
+        // Subscribe to activation bottom sheet chosen action.
+        supportFragmentManager.setFragmentResultListener(
+            WelcomeActivateAccountBottomSheet.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            when (WelcomeActivateAccountBottomSheet.getResult(bundle)) {
+                WelcomeActivateAccountBottomSheet.ChosenAction.CREATE ->
+                    if (viewModel.shouldSetUpPassword) {
+                        // Set up password and create a new wallet.
+                        passcodeSetupForCreateLauncher
+                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
+                    } else {
+                        gotoAccountOverview()
+                    }
+
+                WelcomeActivateAccountBottomSheet.ChosenAction.IMPORT ->
+                    if (viewModel.shouldSetUpPassword) {
+                        // Set up password and create a import an existing wallet.
+                        passcodeSetupForImportLauncher
+                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
+                    } else {
+                        goToImportWallet()
+                    }
+            }
+        }
+    }
+
+    private fun initViews() {
+        binding.termsTextView.handleUrlClicks { url ->
             when (url) {
                 "#terms" ->
                     openTerms()
@@ -29,27 +97,17 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 }
             }
         }
-        binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
+        binding.termsCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 App.appCore.tracker.welcomeCheckBoxChecked()
             }
             binding.getStartedButton.isEnabled = isChecked
         }
         binding.getStartedButton.setOnClickListener {
+            trackingPreferences.isTrackingEnabled = binding.activityTrackingCheckBox.isChecked
             App.appCore.tracker.welcomeGetStartedClicked()
-            goToStart()
+            proceedWithAccountActivation()
         }
-
-        if (savedInstanceState == null && App.appCore.setup.isInitialSetupCompleted) {
-            goToStart()
-        } else if (savedInstanceState == null){
-            App.appCore.tracker.welcomeScreen()
-        }
-    }
-
-    private fun goToStart() {
-        finish()
-        startActivity(Intent(this, WelcomePromoActivity::class.java))
     }
 
     private fun openTerms() {
@@ -58,5 +116,24 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     override fun loggedOut() {
         // do nothing as we are one of the root activities
+    }
+
+    override fun proceedWithAccountActivation() {
+        WelcomeActivateAccountBottomSheet()
+            .show(supportFragmentManager, WelcomeActivateAccountBottomSheet.TAG)
+    }
+
+    private fun goToImportWallet() {
+        startActivity(Intent(this, WelcomeRecoverWalletActivity::class.java))
+    }
+
+    private fun gotoAccountOverview() {
+        // hasCompletedInitialSetup has positive value at the fresh app start,
+        // hence we can skip this screen if the user created the password.
+        App.appCore.setup.finishInitialSetup()
+        finish()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }

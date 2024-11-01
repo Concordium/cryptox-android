@@ -17,10 +17,14 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
+import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -34,9 +38,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
 
-    private var _stateLiveData = MutableLiveData<State>()
-    val stateLiveData: LiveData<State>
-        get() = _stateLiveData
+    private val _stateFlow = MutableSharedFlow<OnboardingState>()
+    val stateFlow = _stateFlow.asSharedFlow()
+
+    private val _identityFlow = MutableSharedFlow<Identity>()
+    val identityFlow = _identityFlow.asSharedFlow()
 
     private val zeroAccountBalances = TotalBalancesData(
         BigInteger.ZERO,
@@ -66,13 +72,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val walletNotificationsPreferences =
         App.appCore.session.walletStorage.notificationsPreferences
     private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
-
-    enum class State {
-        NO_IDENTITIES,
-        NO_ACCOUNTS,
-        DEFAULT,
-        ;
-    }
 
     enum class DialogToShow {
         UNSHIELDING,
@@ -121,31 +120,72 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
         viewModelScope.launch(Dispatchers.IO) {
-            val identityCount = identityRepository.getNonFailedCount()
-            if (identityCount == 0) {
-                _stateLiveData.postValue(State.NO_IDENTITIES)
-                // Set balance, because we know it will be 0
-                _totalBalanceLiveData.postValue(zeroAccountBalances)
-                if (notifyWaitingLiveData) {
-                    _waitingLiveData.postValue(false)
-                }
+            if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
+                checkFileWallet(notifyWaitingLiveData)
             } else {
-                val accountCount = accountRepository.getCount()
-                if (accountCount == 0) {
-                    _stateLiveData.postValue(State.NO_ACCOUNTS)
-                    // Set balance, because we know it will be 0
-                    _totalBalanceLiveData.postValue(zeroAccountBalances)
-                    if (notifyWaitingLiveData) {
-                        _waitingLiveData.postValue(false)
-                    }
+                val identityCount = identityRepository.getCount()
+                if (identityCount == 0) {
+                    postState(
+                        OnboardingState.VERIFY_IDENTITY,
+                        zeroAccountBalances,
+                        notifyWaitingLiveData
+                    )
                 } else {
-                    _stateLiveData.postValue(State.DEFAULT)
-                    if (notifyWaitingLiveData) {
-                        _waitingLiveData.postValue(false)
-                    }
-                    updateSubmissionStatesAndBalances(notifyWaitingLiveData)
+                    updateIdentityStatus(notifyWaitingLiveData)
                 }
             }
+        }
+    }
+
+    private suspend fun postState(
+        state: OnboardingState,
+        balances: TotalBalancesData = zeroAccountBalances,
+        notifyWaitingLiveData: Boolean = true
+    ) {
+        _stateFlow.emit(state)
+        _totalBalanceLiveData.postValue(balances)
+        if (notifyWaitingLiveData) {
+            _waitingLiveData.postValue(false)
+        }
+    }
+
+    private suspend fun updateIdentityStatus(notifyWaitingLiveData: Boolean) {
+        val doneCount = identityRepository.getAllDone().size
+        when {
+            doneCount > 0 -> handleDoneIdentities(notifyWaitingLiveData)
+            identityRepository.getAllPending().isNotEmpty() -> postState(
+                OnboardingState.IDENTITY_IN_PROGRESS,
+                zeroAccountBalances,
+                notifyWaitingLiveData
+            )
+
+            else -> postState(
+                OnboardingState.IDENTITY_UNSUCCESSFUL,
+                zeroAccountBalances,
+                notifyWaitingLiveData
+            )
+        }
+    }
+
+    private suspend fun handleDoneIdentities(notifyWaitingLiveData: Boolean) {
+        val accountCount = accountRepository.getCount()
+        if (accountCount == 0) {
+            val identity = identityRepository.getAllDone().first()
+            _identityFlow.emit(identity)
+            postState(OnboardingState.CREATE_ACCOUNT, zeroAccountBalances, notifyWaitingLiveData)
+        } else {
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
+        }
+    }
+
+    private suspend fun checkFileWallet(notifyWaitingLiveData: Boolean) {
+        val doneCount = identityRepository.getAllDone().size
+        if (doneCount > 0) {
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
+        } else {
+            postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
         }
     }
 

@@ -4,6 +4,12 @@
 
 ### Added
 
+- Optimized user experience during the onboarding process
+
+## [1.3.0] - 2024-10-18
+
+### Added
+
 - Notifications for CCD and CIS-2 token transactions
 - Concordex exchange and Wert service where CCD can be purchased
 - Ability to reveal the wallet private key for those 
@@ -15,6 +21,8 @@
 
 - Inability to configure a validator closed for delegation
 - Incorrect state of the account tokens page when there are no tokens
+- Crash caused by a malformed WalletConnect verifiable presentation request
+- Validation/delegation text notices
 
 ## [1.2.0] - 2024-08-27
 
@@ -117,7 +125,9 @@
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.3.0...HEAD
+
+[1.3.0]: https://github.com/Concordium/cryptox-android/compare/1.2.0...1.3.0
 
 [1.2.0]: https://github.com/Concordium/cryptox-android/compare/1.1.1...1.2.0
 

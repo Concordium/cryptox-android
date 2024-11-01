@@ -31,21 +31,14 @@ class IdentityConfirmedActivity :
 
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
-    private var showForFirstIdentity = false
+    private var showForFirstAccount = false
     private var showForCreateAccount = false
     private lateinit var identity: Identity
     private var accountCreated = false
 
     companion object {
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
-
-        // TODO: This screen needs to be refactored.
-        // There is too much logic implicitly relying on
-        // IdentityUpdater and IdentityStatusDelegate behaviour
-        // as well depending on whether this screen is opened
-        // to create first identity or account.
-        // I'm struggling to figure it out and some parts seem broken.
-        const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
+        const val SHOW_FOR_CREATE_FIRST_ACCOUNT = "SHOW_FOR_CREATE_FIRST_ACCOUNT"
         const val SHOW_FOR_CREATE_ACCOUNT = "SHOW_FOR_CREATE_ACCOUNT"
     }
 
@@ -53,11 +46,11 @@ class IdentityConfirmedActivity :
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityConfirmedBinding.bind(findViewById(R.id.root_layout))
 
-        showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+        showForFirstAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_FIRST_ACCOUNT, false) ?: false
         showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
 
         setActionBarTitle("")
-        hideActionBarBack(isVisible = !showForFirstIdentity)
+        hideActionBarBack(isVisible = true)
 
         identity = requireNotNull(intent.getSerializable(EXTRA_IDENTITY, Identity::class.java))
 
@@ -73,10 +66,9 @@ class IdentityConfirmedActivity :
 
         App.appCore.tracker.identityVerificationResultScreen()
 
-        showRequestNoticeDialog(IdentityRequestNoticeDialog.submitted())
-
-        if (showForFirstIdentity)
-            viewModel.startIdentityUpdate()
+        if (!showForFirstAccount) {
+            showRequestNoticeDialog(IdentityRequestNoticeDialog.submitted())
+        }
     }
 
     override fun onResume() {
@@ -87,12 +79,12 @@ class IdentityConfirmedActivity :
     override fun onDestroy() {
         super.onDestroy()
         stopCheckForPendingIdentity()
-        if (showForFirstIdentity)
+        if (showForFirstAccount)
             viewModel.stopIdentityUpdate()
     }
 
     override fun onBackPressed() {
-        if (!showForFirstIdentity && showForCreateAccount && !accountCreated)
+        if (showForFirstAccount || (showForCreateAccount && !accountCreated))
             super.onBackPressed()
     }
 
@@ -113,16 +105,12 @@ class IdentityConfirmedActivity :
         showWaiting(true)
 
         binding.confirmButton.setOnClickListener {
-            if (showForFirstIdentity) {
-                showSubmitAccount()
-            } else {
-                gotoAccountsOverview()
-            }
+            gotoAccountsOverview()
         }
 
         identity.let {
             binding.identityView.setIdentityData(it)
-            startCheckForPendingIdentity(this, it.id, showForFirstIdentity) { newIdentity ->
+            startCheckForPendingIdentity(this, it.id, false) { newIdentity ->
                 stopCheckForPendingIdentity()
 
                 identity = newIdentity
@@ -145,8 +133,10 @@ class IdentityConfirmedActivity :
 
         binding.btnSubmitAccount.visibility = View.GONE
 
-        if (showForFirstIdentity) {
+        if (showForFirstAccount) {
             binding.confirmButton.isVisible = false
+            binding.btnSubmitAccount.isVisible = false
+            createAccount(identity)
         } else {
             if (showForCreateAccount) {
                 showSubmitAccount()
@@ -157,13 +147,7 @@ class IdentityConfirmedActivity :
 
         binding.btnSubmitAccount.setOnClickListener {
             App.appCore.tracker.identityVerificationResultCreateAccountClicked()
-
-            CoroutineScope(Dispatchers.IO).launch {
-                runOnUiThread {
-                    viewModelNewAccount.initialize(Account.getDefaultName(""), identity)
-                    viewModelNewAccount.createAccount()
-                }
-            }
+            createAccount(identity)
         }
     }
 
@@ -187,7 +171,7 @@ class IdentityConfirmedActivity :
     }
 
     override fun accountCreated(account: Account) {
-        if (showForFirstIdentity) {
+        if (showForFirstAccount) {
             finishAffinity()
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -231,5 +215,14 @@ class IdentityConfirmedActivity :
     private fun showRequestNoticeDialog(dialog: IdentityRequestNoticeDialog) {
         dismissAnyRequestNoticeDialog()
         dialog.show(supportFragmentManager, IdentityRequestNoticeDialog.TAG)
+    }
+
+    private fun createAccount(identity: Identity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            runOnUiThread {
+                viewModelNewAccount.initialize(Account.getDefaultName(""), identity)
+                viewModelNewAccount.createAccount()
+            }
+        }
     }
 }

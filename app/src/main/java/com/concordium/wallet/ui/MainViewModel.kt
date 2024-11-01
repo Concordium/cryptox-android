@@ -79,6 +79,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return !App.appCore.setup.isInitialSetupCompleted
     }
 
+    fun hasCompletedOnboarding(): Boolean {
+        return App.appCore.session.walletStorage.setupPreferences.getHasCompletedOnboarding()
+    }
+
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {
             override fun onError(identity: Identity, account: Account?) {

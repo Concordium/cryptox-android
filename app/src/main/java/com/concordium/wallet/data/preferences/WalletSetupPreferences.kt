@@ -114,9 +114,18 @@ constructor(
     fun hasEncryptedSeedPhrase(): Boolean =
         getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
 
+    fun setHasCompletedOnboarding(value: Boolean) {
+        setBoolean(PREFKEY_HAS_COMPLETED_ONBOARDING, value)
+    }
+
+    fun getHasCompletedOnboarding(): Boolean {
+        return getBoolean(PREFKEY_HAS_COMPLETED_ONBOARDING, false)
+    }
+
     private companion object {
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON = "PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON"
         const val PREFKEY_ENCRYPTED_SEED_JSON = "PREFKEY_ENCRYPTED_SEED_JSON"
+        const val PREFKEY_HAS_COMPLETED_ONBOARDING = "PREFKEY_HAS_COMPLETED_ONBOARDING"
     }
 }

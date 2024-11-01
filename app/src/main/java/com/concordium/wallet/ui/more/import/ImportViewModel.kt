@@ -230,6 +230,7 @@ class ImportViewModel(application: Application) :
             newWalletType = AppWallet.Type.FILE,
         )
         App.appCore.setup.finishInitialSetup()
+        App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
 
         val exportValue = exportData.value
         importResult = ImportResult()

@@ -20,10 +20,10 @@ android {
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
-    def versionMinor = 2
+    def versionMinor = 3
     def versionPatch = 0
     def versionMeta = ""
-    def versionCodeIncremental = 1393
+    def versionCodeIncremental = 1406
 
     compileSdkVersion 34
 
@@ -344,6 +344,9 @@ dependencies {
 
     // Push notifications
     implementation 'com.google.firebase:firebase-messaging:24.0.0'
+
+    // Lottie animations
+    implementation 'com.airbnb.android:lottie:6.0.0'
 }
 
 task printVersionName {

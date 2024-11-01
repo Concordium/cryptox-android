@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -110,6 +111,7 @@ private constructor(
     private lateinit var sessionRequestAccount: Account
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private val handledRequests = mutableSetOf<Long>()
+    private val connectionAvailabilityFlow = MutableStateFlow(false)
 
     enum class ProofProvableState {
         Provable,
@@ -298,6 +300,11 @@ private constructor(
         // When receiving the request URI, enter the request waiting state.
         // The request will arrive soon over the websocket.
         mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
+    }
+
+    override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
+        defaultWalletDelegate.onConnectionStateChange(state)
+        connectionAvailabilityFlow.tryEmit(state.isAvailable)
     }
 
     override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) =
@@ -667,46 +674,70 @@ private constructor(
 
         this@WalletConnectViewModel.sessionRequestAccount = account
 
-        when (method) {
-            REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
-                signTransactionRequestHandler.start(
-                    params = params,
-                    account = sessionRequestAccount,
-                    appMetadata = sessionRequestAppMetadata,
+        if (method !in allowedRequestMethods) {
+            val unsupportedMethodMessage =
+                "Received an unsupported WalletConnect method request: $method"
+
+            Log.e(unsupportedMethodMessage)
+
+            respondError(message = unsupportedMethodMessage)
+
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
                 )
+            )
 
-            REQUEST_METHOD_SIGN_MESSAGE ->
-                signMessageRequestHandler.start(
-                    params = params,
-                    account = sessionRequestAccount,
-                    appMetadata = sessionRequestAppMetadata,
-                )
+            onSessionRequestHandlingFinished()
 
-            REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
-                verifiablePresentationRequestHandler.start(
-                    params = params,
-                    account = account,
-                    availableAccounts = getAvailableAccounts(),
-                    appMetadata = sessionRequestAppMetadata,
-                )
-            }
+            return@launch
+        }
 
-            else -> {
-                val unsupportedMethodMessage =
-                    "Received an unsupported WalletConnect method request: $method"
-
-                Log.e(unsupportedMethodMessage)
-
-                respondError(message = unsupportedMethodMessage)
-
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.InvalidRequest
+        // Even though handlers contain specific error handling,
+        // the global try-catch prevents the crash loop
+        // if there is an unexpected error.
+        try {
+            when (method) {
+                REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
+                    signTransactionRequestHandler.start(
+                        params = params,
+                        account = sessionRequestAccount,
+                        appMetadata = sessionRequestAppMetadata,
                     )
-                )
 
-                onSessionRequestHandlingFinished()
+                REQUEST_METHOD_SIGN_MESSAGE ->
+                    signMessageRequestHandler.start(
+                        params = params,
+                        account = sessionRequestAccount,
+                        appMetadata = sessionRequestAppMetadata,
+                    )
+
+                REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
+                    verifiablePresentationRequestHandler.start(
+                        params = params,
+                        account = account,
+                        availableAccounts = getAvailableAccounts(),
+                        appMetadata = sessionRequestAppMetadata,
+                    )
+                }
+
+                else ->
+                    error("Missing a handler for the allowed method '$method'")
             }
+        } catch (error: Exception) {
+            val unexpectedErrorMessage = "Unexpected error occurred: $error"
+
+            Log.e(unexpectedErrorMessage, error)
+
+            respondError(unexpectedErrorMessage)
+
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidRequest
+                )
+            )
+
+            onSessionRequestHandlingFinished()
         }
     }
 
@@ -938,8 +969,11 @@ private constructor(
                 false
         }
 
-    private fun respondSuccess(result: String) {
+    private fun respondSuccess(result: String) = viewModelScope.launch {
         handledRequests += sessionRequestId
+
+        // Await the connection.
+        connectionAvailabilityFlow.first { it }
 
         SignClient.respond(
             Sign.Params.Response(
@@ -964,8 +998,11 @@ private constructor(
         message: String,
         sessionRequestId: Long = this.sessionRequestId,
         sessionRequestTopic: String = this.sessionRequestTopic,
-    ) {
+    ) = viewModelScope.launch {
         handledRequests += sessionRequestId
+
+        // Await the connection.
+        connectionAvailabilityFlow.first { it }
 
         SignClient.respond(
             Sign.Params.Response(

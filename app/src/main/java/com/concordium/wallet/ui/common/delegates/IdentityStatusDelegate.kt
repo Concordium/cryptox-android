@@ -160,18 +160,18 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
             return
         App.appCore.session.newIdentities.remove(identity.id)
 
-        val builder = MaterialAlertDialogBuilder(activity)
-        builder.setTitle(R.string.identities_overview_identity_rejected_title)
-
-        if (showForFirstIdentity)
-            identityErrorFirstIdentity(activity, identity, builder)
-        else
+        if (showForFirstIdentity) {
+            statusChanged(identity)
+        } else {
+            val builder = MaterialAlertDialogBuilder(activity)
+            builder.setTitle(R.string.identities_overview_identity_rejected_title)
             identityErrorNextIdentity(activity, identity, builder, statusChanged)
 
-        val dialog = builder.create()
-        dialog.setCanceledOnTouchOutside(false)
-        statusChanged(identity)
-        dialog.show()
+            val dialog = builder.create()
+            dialog.setCanceledOnTouchOutside(false)
+            statusChanged(identity)
+            dialog.show()
+        }
     }
 
     private fun identityErrorNextIdentity(
@@ -193,26 +193,6 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
         builder.setNegativeButton(activity.getString(R.string.identities_overview_identity_later)) { dialog, _ ->
             dialog.dismiss()
             statusChanged(identity)
-        }
-    }
-
-    private fun identityErrorFirstIdentity(
-        activity: Activity,
-        identity: Identity,
-        builder: MaterialAlertDialogBuilder
-    ) {
-        builder.setMessage(
-            activity.getString(
-                R.string.identities_overview_identity_rejected_first_text,
-                "${identity.name}\n${identity.detail ?: ""}"
-            )
-        )
-        builder.setPositiveButton(activity.getString(R.string.identities_overview_identity_make_new)) { dialog, _ ->
-            dialog.dismiss()
-            activity.finish()
-            val intent = Intent(activity, IdentityProviderListActivity::class.java)
-            intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
-            activity.startActivity(intent)
         }
     }
 }

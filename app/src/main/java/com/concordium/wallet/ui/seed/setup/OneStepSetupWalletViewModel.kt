@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.seed.setup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.App
@@ -13,12 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(application) {
+class OneStepSetupWalletViewModel(
+    application: Application,
+    private val savedStateHandle: SavedStateHandle
+) : AndroidViewModel(application) {
 
-    private val mutablePhraseFlow = MutableStateFlow<List<String>?>(null)
-    val phraseFlow: Flow<List<String>?> = mutablePhraseFlow
+    private val mutablePhraseFlow = MutableStateFlow<List<String>?>(savedStateHandle[PHRASE_KEY])
+    val phraseFlow: Flow<List<String>?> = mutablePhraseFlow.asStateFlow()
     val phraseString: String?
         get() = mutablePhraseFlow.value?.joinToString(" ")
 
@@ -27,7 +32,8 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
 
     init {
         App.appCore.tracker.welcomePhrase()
-        generatePhrase()
+        if (mutablePhraseFlow.value.isNullOrEmpty())
+            generatePhrase()
     }
 
     private fun generatePhrase() = viewModelScope.launch(Dispatchers.IO) {
@@ -42,6 +48,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
         }
 
         mutablePhraseFlow.emit(phrase)
+        savedStateHandle[PHRASE_KEY] = phrase
     }
 
     fun onContinueClicked() {
@@ -67,7 +74,7 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
             )
             App.appCore.setup.finishInitialSetup()
 
-            mutableEventsFlow.emit(Event.GoToIdentityCreation)
+            mutableEventsFlow.emit(Event.GoToAccountOverview)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)
         }
@@ -75,11 +82,12 @@ class OneStepSetupWalletViewModel(application: Application) : AndroidViewModel(a
 
     sealed interface Event {
         object Authenticate : Event
-        object ShowFatalError : Event
-        object GoToIdentityCreation : Event
+        object ShowFatalError: Event
+        object GoToAccountOverview : Event
     }
 
     private companion object {
         private val PHRASE_WORD_COUNT = Mnemonics.WordCount.COUNT_24
+        private const val PHRASE_KEY = "PHRASE_KEY"
     }
 }

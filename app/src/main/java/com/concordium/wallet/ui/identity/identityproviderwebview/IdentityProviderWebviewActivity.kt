@@ -17,6 +17,7 @@ import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.preferences.WalletIdentityCreationDataPreferences
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentityProviderWebviewBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
@@ -192,12 +193,15 @@ class IdentityProviderWebviewActivity : BaseActivity(
 
     private fun gotoIdentityConfirmed(identity: Identity) {
         finish()
-        val intent = Intent(this, IdentityConfirmedActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
-        if (showForFirstIdentity)
-            intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_FIRST_IDENTITY, true)
-        startActivity(intent)
+        if (showForFirstIdentity) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        } else {
+            val intent = Intent(this, IdentityConfirmedActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
+            startActivity(intent)
+        }
     }
 
     private fun gotoFailed(error: BackendError?) {

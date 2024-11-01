@@ -59,7 +59,9 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
                 newWalletType = AppWallet.Type.SEED,
             )
             App.appCore.setup.finishInitialSetup()
+            App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
         }
+
         _saveSeedSuccess.value = success
     }
 
