@@ -116,7 +116,10 @@ class MoreOverviewFragment : BaseFragment() {
         )
 
         binding.identitiesLayout.setOnClickListener {
-            gotoIdentitiesOverview()
+            if (mainViewModel.hasCompletedOnboarding())
+                gotoIdentitiesOverview()
+            else
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
 
         binding.addressBookLayout.setOnClickListener {
@@ -128,7 +131,10 @@ class MoreOverviewFragment : BaseFragment() {
         }
 
         binding.exportLayout.setOnClickListener {
-            gotoExport()
+            if (mainViewModel.hasCompletedOnboarding())
+                gotoExport()
+            else
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
         viewModel.fileImportExportVisibilityLiveData.observe(
             viewLifecycleOwner,
@@ -152,7 +158,10 @@ class MoreOverviewFragment : BaseFragment() {
         )
 
         binding.seedPhraseRevealLayout.setOnClickListener {
-            revealSeedPhrase()
+            if (mainViewModel.hasCompletedOnboarding())
+                revealSeedPhrase()
+            else
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
         viewModel.seedPhraseRevealVisibilityLiveData.observe(
             viewLifecycleOwner,
@@ -160,7 +169,10 @@ class MoreOverviewFragment : BaseFragment() {
         )
 
         binding.seedRevealLayout.setOnClickListener {
-            revealSeed()
+            if (mainViewModel.hasCompletedOnboarding())
+                revealSeed()
+            else
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
         viewModel.seedRevealVisibilityLiveData.observe(
             viewLifecycleOwner,

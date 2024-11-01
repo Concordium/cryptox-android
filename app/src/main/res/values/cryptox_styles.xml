@@ -148,6 +148,14 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="tint">@color/cryptox_button_secondary_text_color</item>
     </style>
+
+    <style name="CryptoX_OnboardingImageButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">12dp</item>
+        <item name="tint">@color/cryptox_black_additional</item>
+    </style>
     <!-- endregion Buttons -->
 
     <!-- region Containers -->
@@ -233,6 +241,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">4dp</item>
         <item name="android:progressDrawable">@drawable/cryptox_progress_bar</item>
+        <item name="android:max">100</item>
+        <item name="android:min">0</item>
+    </style>
+
+    <style name="CryptoX_Onboarding_Progress_Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">12dp</item>
+        <item name="android:progressDrawable">@drawable/ccx_onboarding_progress_bar</item>
         <item name="android:max">100</item>
         <item name="android:min">0</item>
     </style>

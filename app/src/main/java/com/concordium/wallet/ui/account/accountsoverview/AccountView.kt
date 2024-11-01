@@ -32,11 +32,11 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         this.accountWithIdentity = accountWithIdentity
 
         binding.totalTextview.text =
-            CurrencyUtil.formatGTU(accountWithIdentity.account.balance, withGStroke = true)
+            CurrencyUtil.formatAndRoundGTU(accountWithIdentity.account.balance, roundDecimals = 2)
 
-        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatAndRoundGTU(
             accountWithIdentity.account.balanceAtDisposal,
-            withGStroke = true
+            roundDecimals = 2
         )
 
         binding.accountNameArea.setData(accountWithIdentity)

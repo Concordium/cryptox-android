@@ -28,12 +28,14 @@ import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.Constants.Extras.EXTRA_QR_CONNECT
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.connect.ConnectActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
+import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import com.concordium.wallet.uicore.popup.Popup
 import java.io.Serializable
 import javax.crypto.Cipher
@@ -432,5 +434,12 @@ abstract class BaseActivity(
         }
         intent.apply { flags = Intent.FLAG_GRANT_READ_URI_PERMISSION }
         activityResult.launch(intent)
+    }
+
+    fun showUnlockFeatureDialog() {
+        UnlockFeatureDialog().showSingle(
+            supportFragmentManager,
+            UnlockFeatureDialog.TAG
+        )
     }
 }

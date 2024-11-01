@@ -119,7 +119,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Launcher">
             <intent-filter>
@@ -281,12 +281,14 @@
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.account.newaccountidentity.NewAccountIdentityActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.newaccountname.NewAccountNameActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.account.newaccountsetup.NewAccountSetupActivity"
             android:launchMode="singleTop"
@@ -301,7 +303,8 @@
             android:name=".ui.account.accountdetails.AccountDetailsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
             android:launchMode="singleTop"
@@ -337,7 +340,8 @@
             android:name=".ui.more.export.ExportActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.import.ImportActivity"
             android:launchMode="singleTop"
@@ -360,22 +364,26 @@
             android:name=".ui.recipient.recipientlist.RecipientListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.recipient.recipient.RecipientActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.recipient.recipientlist.RecipientListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.scanqr.ScanQRActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.cis2.TokenDetailsActivity"
             android:launchMode="singleTop"
@@ -408,7 +416,8 @@
         <activity
             android:name=".ui.more.export.ExportAccountKeysActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.export.ExportTransactionLogActivity"
             android:launchMode="singleTop"
@@ -417,7 +426,8 @@
             android:name=".ui.account.accountdetails.AccountSettingsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.account.earn.EarnInfoActivity"
             android:launchMode="singleTop"
@@ -510,11 +520,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
         <activity
-            android:name=".ui.welcome.WelcomePromoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/CCX_WelcomePromoScreen" />
-        <activity
             android:name=".ui.auth.passcode.PasscodeSetupActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -538,15 +543,18 @@
             android:name=".ui.more.unshielding.UnshieldingAccountsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.unshielding.UnshieldingActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.more.tracking.TrackingPreferencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen" />
         <activity
             android:name=".ui.onramp.CcdOnrampSitesActivity"
             android:launchMode="singleTop"
@@ -560,7 +568,8 @@
         <activity
             android:name=".ui.more.notifications.NotificationsPreferencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/CCX_Screen"/>
     </application>
 
 </manifest>

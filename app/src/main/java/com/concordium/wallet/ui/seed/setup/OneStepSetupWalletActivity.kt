@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -33,7 +34,7 @@ class OneStepSetupWalletActivity :
 
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            SavedStateViewModelFactory(application, this)
         )[OneStepSetupWalletViewModel::class.java]
 
         initWords()
@@ -106,17 +107,15 @@ class OneStepSetupWalletActivity :
                 showError(R.string.setup_wallet_failed)
             }
 
-            OneStepSetupWalletViewModel.Event.GoToIdentityCreation -> {
-                goToIdentityCreation()
+            OneStepSetupWalletViewModel.Event.GoToAccountOverview -> {
+                gotoAccountOverview()
             }
         }
     }
 
-    private fun goToIdentityCreation() {
-        finishAffinity()
+    private fun gotoAccountOverview() {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(MainActivity.EXTRA_CREATE_FIRST_IDENTITY, true)
         startActivity(intent)
     }
 }
