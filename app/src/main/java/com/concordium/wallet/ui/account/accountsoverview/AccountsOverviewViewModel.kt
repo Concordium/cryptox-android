@@ -116,24 +116,29 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountUpdater.dispose()
     }
 
-    fun updateState(notifyWaitingLiveData: Boolean = true) {
+    fun updateState(notifyWaitingLiveData: Boolean = true) = viewModelScope.launch(Dispatchers.IO) {
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
-        viewModelScope.launch(Dispatchers.IO) {
-            if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
-                checkFileWallet(notifyWaitingLiveData)
-            } else {
-                val identityCount = identityRepository.getCount()
-                if (identityCount == 0) {
-                    postState(
-                        OnboardingState.VERIFY_IDENTITY,
-                        zeroAccountBalances,
-                        notifyWaitingLiveData
-                    )
-                } else {
-                    updateIdentityStatus(notifyWaitingLiveData)
-                }
-            }
+
+        if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
+            return@launch
+        }
+
+        when {
+            !App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed() ->
+                postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
+
+            identityRepository.getCount() == 0 ->
+                postState(
+                    OnboardingState.VERIFY_IDENTITY,
+                    zeroAccountBalances,
+                    notifyWaitingLiveData
+                )
+
+            else ->
+                updateIdentityStatus(notifyWaitingLiveData)
         }
     }
 
@@ -176,16 +181,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         } else {
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             updateSubmissionStatesAndBalances()
-        }
-    }
-
-    private suspend fun checkFileWallet(notifyWaitingLiveData: Boolean) {
-        val doneCount = identityRepository.getAllDone().size
-        if (doneCount > 0) {
-            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-            updateSubmissionStatesAndBalances()
-        } else {
-            postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
         }
     }
 
