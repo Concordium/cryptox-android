@@ -140,8 +140,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun commissionRatesHasChanged(): Boolean =
-        bakerDelegationData.oldCommissionRates?.bakingCommission != bakerDelegationData.bakingCommissionRate ||
-                bakerDelegationData.oldCommissionRates?.transactionCommission != bakerDelegationData.transactionCommissionRate
+        (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL)
+                && (bakerDelegationData.oldCommissionRates?.bakingCommission != bakerDelegationData.bakingCommissionRate
+                || bakerDelegationData.oldCommissionRates?.transactionCommission != bakerDelegationData.transactionCommissionRate)
 
     fun openStatusHasChanged(): Boolean {
         return bakerDelegationData.bakerPoolInfo?.openStatus != bakerDelegationData.oldOpenStatus
