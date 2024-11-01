@@ -1,12 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Showing incorrect commission rates on the update validator stake update confirmation screen
+
 ## [1.3.0] - 2024-10-18
 
 ### Added
 
 - Notifications for CCD and CIS-2 token transactions
 - Concordex exchange and Wert service where CCD can be purchased
-- Ability to reveal the wallet private key for those 
+- Ability to reveal the wallet private key for those
   having no ability to reveal the seed phrase
 - Ability to use the wallet private key to restore the wallet
 - Support for Protocol 7 – reducing validation/delegation stake no longer locks the whole amount
