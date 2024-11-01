@@ -27,7 +27,9 @@ import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
 import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -46,6 +48,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     private val _identityFlow = MutableSharedFlow<Identity>()
     val identityFlow = _identityFlow.asSharedFlow()
+
+    private val _onrampActive = MutableStateFlow(false)
+    val onrampActive = _onrampActive.asStateFlow()
 
     private val zeroAccountBalances = TotalBalancesData(
         BigInteger.ZERO,
@@ -279,11 +284,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private fun postListItems(accountsWithIdentity: List<AccountWithIdentity>) {
         val items = mutableListOf<AccountsOverviewListItem>()
 
-        // Only show the onramp banner if has sites and there are finalized accounts.
+        // Only set the onramp banner active if has sites and there are finalized accounts.
         if (ccdOnrampSiteRepository.hasSites
             && accountsWithIdentity.any { it.account.transactionStatus == TransactionStatus.FINALIZED }
         ) {
-            items.add(AccountsOverviewListItem.CcdOnrampBanner)
+            viewModelScope.launch {
+                _onrampActive.emit(true)
+            }
         }
 
         items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
