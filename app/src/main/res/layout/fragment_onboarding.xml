@@ -6,11 +6,10 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/onboarding_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="24dp"
         android:background="@drawable/ccx_onboarding_status_card_background"
-        app:layout_constraintBottom_toTopOf="@id/onboarding_action_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -171,6 +170,16 @@
                 app:srcCompat="@drawable/ccx_ico_qr" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginVertical="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onboarding_card"
+        app:layout_constraintBottom_toTopOf="@id/onboarding_action_button" />
 
     <Button
         android:id="@+id/onboarding_action_button"

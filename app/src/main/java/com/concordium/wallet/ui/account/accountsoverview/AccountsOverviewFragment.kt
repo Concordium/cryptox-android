@@ -169,22 +169,24 @@ class AccountsOverviewFragment : BaseFragment() {
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
         viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
-            when (event.contentIfNotHandled) {
-                AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
-                    UnshieldingNoticeDialog().showSingle(
-                        childFragmentManager,
-                        UnshieldingNoticeDialog.TAG
-                    )
-                }
+            if (viewModel.hasShowedInitialAnimation()) {
+                when (event.contentIfNotHandled) {
+                    AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
+                        UnshieldingNoticeDialog().showSingle(
+                            childFragmentManager,
+                            UnshieldingNoticeDialog.TAG
+                        )
+                    }
 
-                AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                    NotificationsPermissionDialog().showSingle(
-                        childFragmentManager,
-                        NotificationsPermissionDialog.TAG,
-                    )
-                }
+                    AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
+                        NotificationsPermissionDialog().showSingle(
+                            childFragmentManager,
+                            NotificationsPermissionDialog.TAG,
+                        )
+                    }
 
-                null -> {}
+                    null -> {}
+                }
             }
         }
         viewModel.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
@@ -200,6 +202,21 @@ class AccountsOverviewFragment : BaseFragment() {
                 else -> {
                     onboardingStatusCard.updateViewsByState(state)
                     showStateOnboarding()
+                }
+            }
+        }
+        viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
+            binding.onrampBanner.root.setOnClickListener {
+                if (active) {
+                    val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
+                    intent.putExtras(
+                        CcdOnrampSitesActivity.getBundle(
+                            accountAddress = null,
+                        )
+                    )
+                    startActivity(intent)
+                } else {
+                    (activity as BaseActivity).showUnlockFeatureDialog()
                 }
             }
         }
@@ -277,15 +294,6 @@ class AccountsOverviewFragment : BaseFragment() {
                     startActivity(intent)
                 }
             },
-            onCcdOnrampBannerClicked = {
-                val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
-                intent.putExtras(
-                    CcdOnrampSitesActivity.getBundle(
-                        accountAddress = null,
-                    )
-                )
-                startActivity(intent)
-            }
         )
         binding.accountRecyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
