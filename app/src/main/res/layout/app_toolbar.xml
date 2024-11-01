@@ -45,18 +45,35 @@
                 app:tint="@color/cryptox_white_main"
                 tools:visibility="visible" />
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/toolbar_plus_btn"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:padding="8dp"
-                android:src="@drawable/ic_plus"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/cryptox_white_main"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/toolbar_plus_btn_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_plus"
+                    app:tint="@color/cryptox_white_main" />
+
+                <View
+                    android:id="@+id/toolbar_plus_btn_notice"
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_gravity="end|top"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/simple_circle_bg"
+                    android:backgroundTint="@color/cryptox_pinky_main"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/toolbar_title"

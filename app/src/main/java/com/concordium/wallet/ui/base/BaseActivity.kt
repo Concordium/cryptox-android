@@ -52,9 +52,9 @@ abstract class BaseActivity(
     var isActive = false
 
     private var backBtn: ImageView? = null
-    private var plusLeftBtn: ImageView? = null
+    private var plusLeftBtn: FrameLayout? = null
+    private var plusLeftBtnNotice: View? = null
     private var plusRightBtn: FrameLayout? = null
-    private var plusRightBtnImage: ImageView? = null
     private var plusRightBtnNotice: View? = null
     private var qrScanBtn: ImageView? = null
     private var infoBtn: ImageView? = null
@@ -84,8 +84,8 @@ abstract class BaseActivity(
 
         backBtn = toolbar?.findViewById(R.id.toolbar_back_btn)
         plusLeftBtn = toolbar?.findViewById(R.id.toolbar_plus_btn)
+        plusLeftBtnNotice = toolbar?.findViewById(R.id.toolbar_plus_btn_notice)
         plusRightBtn = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact)
-        plusRightBtnImage = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact_image)
         plusRightBtnNotice = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact_notice)
         qrScanBtn = toolbar?.findViewById(R.id.toolbar_qr_btn)
         infoBtn = toolbar?.findViewById(R.id.toolbar_info_btn)
@@ -215,23 +215,22 @@ abstract class BaseActivity(
 
     fun hideRightPlus(
         isVisible: Boolean,
-        isDisabled: Boolean = false,
         hasNotice: Boolean = false,
         listener: View.OnClickListener? = null
     ) {
         plusRightBtn?.isVisible = isVisible
         plusRightBtn?.setOnClickListener(listener)
-        plusRightBtnImage?.alpha =
-            if (isDisabled)
-                0.7f
-            else
-                1f
         plusRightBtnNotice?.isVisible = hasNotice
     }
 
-    fun hideLeftPlus(isVisible: Boolean, listener: View.OnClickListener? = null) {
+    fun hideLeftPlus(
+        isVisible: Boolean,
+        hasNotice: Boolean = false,
+        listener: View.OnClickListener? = null
+    ) {
         plusLeftBtn?.isVisible = isVisible
         plusLeftBtn?.setOnClickListener(listener)
+        plusLeftBtnNotice?.isVisible = hasNotice
     }
 
     fun hideSettings(isVisible: Boolean, listener: View.OnClickListener? = null) {

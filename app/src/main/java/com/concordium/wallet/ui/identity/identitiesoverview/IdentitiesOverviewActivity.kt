@@ -39,7 +39,6 @@ class IdentitiesOverviewActivity : BaseActivity(
 
         hideRightPlus(
             isVisible = true,
-            isDisabled = viewModel.isCreationLimitedForFileWallet,
             hasNotice = viewModel.isCreationLimitedForFileWallet,
         ) {
             onCreateClicked()

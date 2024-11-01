@@ -32,6 +32,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
+import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
@@ -85,8 +86,13 @@ class AccountsOverviewFragment : BaseFragment() {
 
         val baseActivity = (activity as BaseActivity)
 
-        baseActivity.hideLeftPlus(isVisible = true) {
-            if (mainViewModel.hasCompletedOnboarding()) {
+        baseActivity.hideLeftPlus(
+            isVisible = true,
+            hasNotice = viewModel.isCreationLimitedForFileWallet,
+        ) {
+            if (viewModel.isCreationLimitedForFileWallet) {
+                showFileWalletCreationLimitation()
+            } else if (mainViewModel.hasCompletedOnboarding()) {
                 gotoCreateAccount()
             } else {
                 baseActivity.showUnlockFeatureDialog()
@@ -355,6 +361,13 @@ class AccountsOverviewFragment : BaseFragment() {
             )
         )
         startActivity(intent)
+    }
+
+    private fun showFileWalletCreationLimitation() {
+        FileWalletCreationLimitationDialog().showSingle(
+            childFragmentManager,
+            FileWalletCreationLimitationDialog.TAG
+        )
     }
 
     private fun showWaiting(waiting: Boolean) {

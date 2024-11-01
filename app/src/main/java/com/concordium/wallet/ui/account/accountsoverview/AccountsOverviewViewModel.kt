@@ -72,6 +72,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val walletNotificationsPreferences =
         App.appCore.session.walletStorage.notificationsPreferences
     private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
+    val isCreationLimitedForFileWallet: Boolean
+        get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
 
     enum class DialogToShow {
         UNSHIELDING,
