@@ -186,8 +186,10 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
             when (state) {
                 OnboardingState.DONE -> {
-                    binding.confettiAnimation.visibility = View.VISIBLE
-                    binding.confettiAnimation.playAnimation()
+                    if (!viewModel.hasShownInitialAnimation()) {
+                        binding.confettiAnimation.visibility = View.VISIBLE
+                        binding.confettiAnimation.playAnimation()
+                    }
                     showStateDefault()
                 }
 
@@ -405,6 +407,7 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun cancelAnimation() {
+        viewModel.setHasShownInitialAnimation()
         binding.confettiAnimation.visibility = View.GONE
     }
 

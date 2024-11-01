@@ -200,6 +200,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         updater.cancel()
     }
 
+    fun hasShownInitialAnimation(): Boolean {
+        return App.appCore.session.walletStorage.setupPreferences.getHasShownInitialAnimation()
+    }
+
+    fun setHasShownInitialAnimation() {
+        return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
+    }
+
     private var updater =
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
