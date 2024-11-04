@@ -73,6 +73,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     }
 
     init {
+        App.appCore.tracker.identityVerificationProvidersListScreen()
         val identityDao = WalletDatabase.getDatabase(application).identityDao()
         identityRepository = IdentityRepository(identityDao)
         _waitingLiveData.value = true

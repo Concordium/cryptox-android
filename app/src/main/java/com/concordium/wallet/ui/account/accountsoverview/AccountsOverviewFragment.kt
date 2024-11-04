@@ -207,6 +207,8 @@ class AccountsOverviewFragment : BaseFragment() {
         }
         viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
             binding.onrampBanner.root.setOnClickListener {
+                App.appCore.tracker.homeOnRampBannerClicked()
+
                 if (active) {
                     val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
                     intent.putExtras(
@@ -237,6 +239,12 @@ class AccountsOverviewFragment : BaseFragment() {
 
         binding.missingBackup.setOnClickListener {
             gotoExport()
+        }
+
+        listOf(binding.totalBalanceLayout, binding.totalDetailsDisposalLayout).forEach {
+            it.setOnClickListener {
+                App.appCore.tracker.homeTotalBalanceClicked()
+            }
         }
 
         eventListener = object : Preferences.Listener {

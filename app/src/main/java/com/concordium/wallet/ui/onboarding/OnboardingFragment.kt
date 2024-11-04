@@ -14,6 +14,7 @@ import androidx.core.animation.doOnStart
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
@@ -64,6 +65,7 @@ class OnboardingFragment @JvmOverloads constructor(
         activity.lifecycleScope.launch {
             onboardingViewModel.identityFlow.collect { identity ->
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
             }
@@ -73,22 +75,26 @@ class OnboardingFragment @JvmOverloads constructor(
     fun updateViewsByState(state: OnboardingState) {
         val currentDataState = dataProvider.getViewDataByState(state)
         updateViews(currentDataState)
+        App.appCore.tracker.homeIdentityVerificationStateChanged(currentDataState.state.name)
 
         when (state) {
             OnboardingState.SAVE_PHRASE -> {
                 binding.onboardingActionButton.setOnClickListener {
+                    App.appCore.tracker.homeSaveSeedPhraseClicked()
                     goToCreateWallet()
                 }
             }
 
             OnboardingState.VERIFY_IDENTITY -> {
                 binding.onboardingActionButton.setOnClickListener {
+                    App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
 
             OnboardingState.IDENTITY_UNSUCCESSFUL -> {
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
@@ -100,16 +106,19 @@ class OnboardingFragment @JvmOverloads constructor(
     fun updateViewsByIdentityStatus(identity: Identity) {
         val currentDataState = dataProvider.getViewDataByIdentityVerificationStatus(identity.status)
         updateViews(currentDataState)
+        App.appCore.tracker.homeIdentityVerificationStateChanged(currentDataState.state.name)
 
         when (identity.status) {
             IdentityStatus.DONE -> {
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
             }
 
             IdentityStatus.ERROR -> {
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
