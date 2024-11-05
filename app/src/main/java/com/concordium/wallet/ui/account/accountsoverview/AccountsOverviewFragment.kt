@@ -230,6 +230,13 @@ class AccountsOverviewFragment : BaseFragment() {
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
         }
+        onboardingViewModel.updateState.collectWhenStarted(viewLifecycleOwner) { update ->
+            if (update)
+                viewModel.updateState(true)
+        }
+        onboardingViewModel.showLoading.collectWhenStarted(viewLifecycleOwner) { show ->
+            showWaiting(show)
+        }
     }
 
     private fun initializeViews() {
