@@ -189,6 +189,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             _identityFlow.emit(identity)
             postState(OnboardingState.CREATE_ACCOUNT, zeroAccountBalances, notifyWaitingLiveData)
         } else {
+            App.appCore.session.hasCompletedOnboarding()
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             updateSubmissionStatesAndBalances()
         }
@@ -197,6 +198,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private suspend fun checkFileWallet(notifyWaitingLiveData: Boolean) {
         val doneCount = identityRepository.getAllDone().size
         if (doneCount > 0) {
+            App.appCore.session.hasCompletedOnboarding()
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             updateSubmissionStatesAndBalances()
         } else {
