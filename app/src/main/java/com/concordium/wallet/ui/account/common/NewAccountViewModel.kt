@@ -131,7 +131,6 @@ open class NewAccountViewModel(application: Application) :
         globalParamsRequest?.dispose()
         globalParamsRequest = identityProviderRepository.getIGlobalInfo(
             {
-                App.appCore.session.hasCompletedOnboarding()
                 tempData.globalParams = it.value
                 _showAuthenticationLiveData.postValue(Event(true))
                 _waitingLiveData.postValue(false)

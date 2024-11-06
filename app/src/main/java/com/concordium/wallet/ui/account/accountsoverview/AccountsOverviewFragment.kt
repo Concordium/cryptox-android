@@ -169,22 +169,24 @@ class AccountsOverviewFragment : BaseFragment() {
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
         viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
-            when (event.contentIfNotHandled) {
-                AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
-                    UnshieldingNoticeDialog().showSingle(
-                        childFragmentManager,
-                        UnshieldingNoticeDialog.TAG
-                    )
-                }
+            if (viewModel.hasShowedInitialAnimation()) {
+                when (event.contentIfNotHandled) {
+                    AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
+                        UnshieldingNoticeDialog().showSingle(
+                            childFragmentManager,
+                            UnshieldingNoticeDialog.TAG
+                        )
+                    }
 
-                AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                    NotificationsPermissionDialog().showSingle(
-                        childFragmentManager,
-                        NotificationsPermissionDialog.TAG,
-                    )
-                }
+                    AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
+                        NotificationsPermissionDialog().showSingle(
+                            childFragmentManager,
+                            NotificationsPermissionDialog.TAG,
+                        )
+                    }
 
-                null -> {}
+                    null -> {}
+                }
             }
         }
         viewModel.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
@@ -203,6 +205,23 @@ class AccountsOverviewFragment : BaseFragment() {
                 }
             }
         }
+        viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
+            binding.onrampBanner.root.setOnClickListener {
+                App.appCore.tracker.homeOnRampBannerClicked()
+
+                if (active) {
+                    val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
+                    intent.putExtras(
+                        CcdOnrampSitesActivity.getBundle(
+                            accountAddress = null,
+                        )
+                    )
+                    startActivity(intent)
+                } else {
+                    (activity as BaseActivity).showUnlockFeatureDialog()
+                }
+            }
+        }
 
         viewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingViewModel.setIdentity(identity)
@@ -210,6 +229,13 @@ class AccountsOverviewFragment : BaseFragment() {
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
+        }
+        onboardingViewModel.updateState.collectWhenStarted(viewLifecycleOwner) { update ->
+            if (update)
+                viewModel.updateState(true)
+        }
+        onboardingViewModel.showLoading.collectWhenStarted(viewLifecycleOwner) { show ->
+            showWaiting(show)
         }
     }
 
@@ -220,6 +246,12 @@ class AccountsOverviewFragment : BaseFragment() {
 
         binding.missingBackup.setOnClickListener {
             gotoExport()
+        }
+
+        listOf(binding.totalBalanceLayout, binding.totalDetailsDisposalLayout).forEach {
+            it.setOnClickListener {
+                App.appCore.tracker.homeTotalBalanceClicked()
+            }
         }
 
         eventListener = object : Preferences.Listener {
@@ -277,15 +309,6 @@ class AccountsOverviewFragment : BaseFragment() {
                     startActivity(intent)
                 }
             },
-            onCcdOnrampBannerClicked = {
-                val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
-                intent.putExtras(
-                    CcdOnrampSitesActivity.getBundle(
-                        accountAddress = null,
-                    )
-                )
-                startActivity(intent)
-            }
         )
         binding.accountRecyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)

@@ -10,7 +10,6 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 
 class AccountsOverviewItemAdapter(
     private val accountViewClickListener: AccountView.OnItemClickListener,
-    private val onCcdOnrampBannerClicked: () -> Unit,
 ) : RecyclerView.Adapter<AccountsOverviewItemAdapter.ViewHolder>() {
     private var data: List<AccountsOverviewListItem> = emptyList()
 
@@ -26,9 +25,6 @@ class AccountsOverviewItemAdapter(
     override fun getItemViewType(position: Int): Int = when (data[position]) {
         is AccountsOverviewListItem.Account ->
             R.layout.list_item_accounts_overview_account
-
-        AccountsOverviewListItem.CcdOnrampBanner ->
-            R.layout.list_item_accounts_overview_ccd_onramp_banner
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,9 +32,6 @@ class AccountsOverviewItemAdapter(
         return when (viewType) {
             R.layout.list_item_accounts_overview_account ->
                 ViewHolder.Account(view)
-
-            R.layout.list_item_accounts_overview_ccd_onramp_banner ->
-                ViewHolder.CcdOnrampBanner(view)
 
             else ->
                 error("Unknown view type $viewType")
@@ -52,18 +45,10 @@ class AccountsOverviewItemAdapter(
                 holder.accountView.setAccount(item.accountWithIdentity)
                 holder.accountView.setOnItemClickListener(accountViewClickListener)
             }
-
-            is ViewHolder.CcdOnrampBanner -> {
-                holder.itemView.setOnClickListener {
-                    onCcdOnrampBannerClicked()
-                }
-            }
         }
     }
 
     sealed class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        class CcdOnrampBanner(itemView: View) : ViewHolder(itemView)
-
         class Account(itemView: View) : ViewHolder(itemView) {
             val accountView = itemView as AccountView
         }

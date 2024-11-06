@@ -101,12 +101,15 @@ class WelcomeActivity :
         }
         binding.termsCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                App.appCore.tracker.welcomeCheckBoxChecked()
+                App.appCore.tracker.welcomeTermAndConditionsCheckBoxChecked()
             }
             binding.getStartedButton.isEnabled = isChecked
         }
         binding.getStartedButton.setOnClickListener {
-            trackingPreferences.isTrackingEnabled = binding.activityTrackingCheckBox.isChecked
+            if (binding.activityTrackingCheckBox.isChecked) {
+                App.appCore.tracker.welcomeActivityTrackingCheckBoxChecked()
+                trackingPreferences.isTrackingEnabled = true
+            }
             App.appCore.tracker.welcomeGetStartedClicked()
             proceedWithAccountActivation()
         }

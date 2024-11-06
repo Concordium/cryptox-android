@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogUnlockFeatureBinding
 
@@ -29,6 +30,7 @@ class UnlockFeatureDialog : AppCompatDialogFragment() {
                 dismiss()
             }
         }
+        App.appCore.tracker.homeUnlockFeatureDialog()
     }
 
     companion object {
