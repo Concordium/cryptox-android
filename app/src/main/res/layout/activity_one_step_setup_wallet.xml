@@ -11,7 +11,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginTop="64dp"
         android:fadingEdge="vertical"
         android:fillViewport="true"
         android:requiresFadingEdge="vertical"
@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="16dp"
-            android:gravity="bottom|center_horizontal"
+            android:gravity="top|center_horizontal"
             android:orientation="vertical">
 
             <TextView
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="4dp"
-                    android:text="@string/setup_wallet_seed_phrase_transcribe"
+                    android:text="@string/setup_wallet_seed_phrase_physical_copy"
                     android:textAppearance="@style/CCX_Typography_Caption"
                     android:textColor="@color/ccx_neutral_tint_1"
                     app:drawableStartCompat="@drawable/ccx_ico_approved" />
@@ -85,9 +85,9 @@
                 android:id="@+id/words_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="36dp"
                 android:background="@drawable/ccx_card_dark_16_background"
-                android:padding="6dp"
+                android:padding="8dp"
                 app:flexDirection="row"
                 app:flexWrap="wrap"
                 app:justifyContent="center"
@@ -103,6 +103,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
                 android:text="@string/setup_wallet_seed_phrase_copy"
                 android:textAppearance="@style/CCX_Typography_Button_M"
                 android:textColor="@color/ccx_neutral_tint_1"

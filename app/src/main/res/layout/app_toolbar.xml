@@ -21,12 +21,12 @@
 
             <ImageView
                 android:id="@+id/toolbar_close_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/toolbar_btn_bg"
-                android:padding="10dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_ico_close_new"
                 android:visibility="gone"
+                app:tint="@color/cryptox_white_main"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -34,12 +34,12 @@
 
             <ImageView
                 android:id="@+id/toolbar_back_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/toolbar_btn_bg"
-                android:padding="10dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_ico_back_new"
                 android:visibility="gone"
+                app:tint="@color/cryptox_white_main"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -47,12 +47,12 @@
 
             <ImageView
                 android:id="@+id/toolbar_plus_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/toolbar_btn_bg"
-                android:padding="10dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_plus"
                 android:visibility="gone"
+                app:tint="@color/cryptox_white_main"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -90,10 +90,10 @@
                     android:id="@+id/toolbar_qr_btn"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:background="@drawable/toolbar_btn_bg"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_qr_scanner"
                     android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />
 
                 <ImageView
@@ -101,10 +101,10 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/toolbar_btn_bg"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_plus"
                     android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />
 
                 <ImageView
@@ -112,23 +112,23 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/toolbar_btn_bg"
                     android:contentDescription="@string/delete"
                     android:padding="8dp"
                     android:src="@drawable/ic_ico_delete"
                     android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/toolbar_settings_btn"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/toolbar_btn_bg"
                     android:contentDescription="@string/account_settings_title"
                     android:padding="8dp"
                     android:src="@drawable/ic_settings"
                     android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />
 
             </LinearLayout>

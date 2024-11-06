@@ -89,6 +89,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return session.hasSetupPassword && !session.hasCompletedInitialSetup
     }
 
+    fun hasCompletedOnboarding(): Boolean {
+        return session.hasCompleteOnboarding
+    }
+
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {
             override fun onError(identity: Identity, account: Account?) {

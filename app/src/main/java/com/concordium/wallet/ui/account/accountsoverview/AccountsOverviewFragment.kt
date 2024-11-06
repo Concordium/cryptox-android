@@ -1,11 +1,13 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.animation.Animator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +21,8 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
+import com.concordium.wallet.databinding.FragmentOnboardingBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -27,9 +31,11 @@ import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
-import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
+import com.concordium.wallet.ui.onboarding.OnboardingState
+import com.concordium.wallet.ui.onboarding.OnboardingFragment
+import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
@@ -44,11 +50,13 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private var eventListener: Preferences.Listener? = null
-
     private lateinit var binding: FragmentAccountsOverviewBinding
+    private lateinit var onboardingBinding: FragmentOnboardingBinding
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var keyCreationVersion: KeyCreationVersion
+    private lateinit var onboardingStatusCard: OnboardingFragment
 
     //region Lifecycle
     // ************************************************************
@@ -66,6 +74,9 @@ class AccountsOverviewFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAccountsOverviewBinding.inflate(inflater, container, false)
+        onboardingBinding = FragmentOnboardingBinding.inflate(layoutInflater)
+        onboardingStatusCard = binding.onboardingLayout
+
         return binding.root
     }
 
@@ -76,11 +87,22 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.initialize()
         initializeViews()
 
-        (requireActivity() as BaseActivity).hideLeftPlus(isVisible = true) {
-            gotoCreateAccount()
+        val baseActivity = (activity as BaseActivity)
+
+        baseActivity.hideLeftPlus(isVisible = true) {
+            if (mainViewModel.hasCompletedOnboarding()) {
+                gotoCreateAccount()
+            } else {
+                baseActivity.showUnlockFeatureDialog()
+            }
         }
 
-        (requireActivity() as BaseActivity).hideQrScan(isVisible = true)
+        baseActivity.hideQrScan(isVisible = true)
+        if (!mainViewModel.hasCompletedOnboarding()) {
+            baseActivity.hideQrScan(isVisible = true) {
+                baseActivity.showUnlockFeatureDialog()
+            }
+        }
 
     }
 
@@ -126,6 +148,11 @@ class AccountsOverviewFragment : BaseFragment() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[MainViewModel::class.java]
 
+        onboardingViewModel = ViewModelProvider(
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[OnboardingSharedViewModel::class.java]
+
         viewModel.waitingLiveData.observe(viewLifecycleOwner) { waiting ->
             waiting?.let {
                 Log.d("waiting:$waiting")
@@ -137,60 +164,94 @@ class AccountsOverviewFragment : BaseFragment() {
                 showError(value)
             }
         })
-
-        viewModel.stateLiveData.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                AccountsOverviewViewModel.State.NO_IDENTITIES -> showStateNoIdentities()
-                AccountsOverviewViewModel.State.NO_ACCOUNTS -> showStateNoAccounts()
-                AccountsOverviewViewModel.State.DEFAULT -> showStateDefault()
-                else -> {
-                }
-            }
-        }
         viewModel.totalBalanceLiveData.observe(viewLifecycleOwner) { totalBalance ->
             showTotalBalance(totalBalance.totalBalanceForAllAccounts)
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
         viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
-            when (event.contentIfNotHandled) {
-                AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
-                    UnshieldingNoticeDialog().showSingle(
-                        childFragmentManager,
-                        UnshieldingNoticeDialog.TAG
-                    )
-                }
+            if (viewModel.hasShowedInitialAnimation()) {
+                when (event.contentIfNotHandled) {
+                    AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
+                        UnshieldingNoticeDialog().showSingle(
+                            childFragmentManager,
+                            UnshieldingNoticeDialog.TAG
+                        )
+                    }
 
-                AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                    NotificationsPermissionDialog().showSingle(
-                        childFragmentManager,
-                        NotificationsPermissionDialog.TAG,
-                    )
-                }
+                    AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
+                        NotificationsPermissionDialog().showSingle(
+                            childFragmentManager,
+                            NotificationsPermissionDialog.TAG,
+                        )
+                    }
 
-                null -> {}
+                    null -> {}
+                }
             }
+        }
+        viewModel.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
+            when (state) {
+                OnboardingState.DONE -> {
+                    if (!viewModel.hasShowedInitialAnimation()) {
+                        binding.confettiAnimation.visibility = View.VISIBLE
+                        binding.confettiAnimation.playAnimation()
+                    }
+                    showStateDefault()
+                }
+
+                else -> {
+                    onboardingStatusCard.updateViewsByState(state)
+                    showStateOnboarding()
+                }
+            }
+        }
+        viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
+            binding.onrampBanner.root.setOnClickListener {
+                App.appCore.tracker.homeOnRampBannerClicked()
+
+                if (active) {
+                    val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
+                    intent.putExtras(
+                        CcdOnrampSitesActivity.getBundle(
+                            accountAddress = null,
+                        )
+                    )
+                    startActivity(intent)
+                } else {
+                    (activity as BaseActivity).showUnlockFeatureDialog()
+                }
+            }
+        }
+
+        viewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
+            onboardingViewModel.setIdentity(identity)
+        }
+
+        onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
+            onboardingStatusCard.updateViewsByIdentityStatus(identity)
+        }
+        onboardingViewModel.updateState.collectWhenStarted(viewLifecycleOwner) { update ->
+            if (update)
+                viewModel.updateState(true)
+        }
+        onboardingViewModel.showLoading.collectWhenStarted(viewLifecycleOwner) { show ->
+            showWaiting(show)
         }
     }
 
     private fun initializeViews() {
         mainViewModel.setTitle(getString(R.string.accounts_overview_title))
         binding.progress.progressLayout.visibility = View.VISIBLE
-        binding.noIdentitiesLayout.visibility = View.GONE
-        binding.noAccountsTextview.visibility = View.GONE
-        binding.createAccountButton.visibility = View.GONE
-
-        binding.createIdentityButton.setOnClickListener {
-            viewModel.checkUsingV1KeyCreation()
-            goToFirstIdentityCreation()
-        }
-
-        binding.createAccountButton.setOnClickListener {
-            viewModel.checkUsingV1KeyCreation()
-            gotoCreateAccount()
-        }
+        binding.onboardingLayout.visibility = View.GONE
 
         binding.missingBackup.setOnClickListener {
             gotoExport()
+        }
+
+        listOf(binding.totalBalanceLayout, binding.totalDetailsDisposalLayout).forEach {
+            it.setOnClickListener {
+                App.appCore.tracker.homeTotalBalanceClicked()
+            }
         }
 
         eventListener = object : Preferences.Listener {
@@ -205,8 +266,8 @@ class AccountsOverviewFragment : BaseFragment() {
             App.appCore.session.addAccountsBackedUpListener(it)
         }
 
+        initializeAnimation()
         initializeList()
-
         updateMissingBackup()
     }
 
@@ -248,15 +309,6 @@ class AccountsOverviewFragment : BaseFragment() {
                     startActivity(intent)
                 }
             },
-            onCcdOnrampBannerClicked = {
-                val intent = Intent(requireContext(), CcdOnrampSitesActivity::class.java)
-                intent.putExtras(
-                    CcdOnrampSitesActivity.getBundle(
-                        accountAddress = null,
-                    )
-                )
-                startActivity(intent)
-            }
         )
         binding.accountRecyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
@@ -277,6 +329,30 @@ class AccountsOverviewFragment : BaseFragment() {
         }
     }
 
+    private fun initializeAnimation() {
+        binding.confettiAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(p0: Animator) {}
+
+            override fun onAnimationEnd(p0: Animator) {
+                cancelAnimation()
+            }
+
+            override fun onAnimationCancel(p0: Animator) {}
+
+            override fun onAnimationRepeat(p0: Animator) {}
+
+        })
+
+        binding.confettiAnimation.addAnimatorPauseListener(object : Animator.AnimatorPauseListener {
+            override fun onAnimationPause(p0: Animator) {
+                cancelAnimation()
+            }
+
+            override fun onAnimationResume(p0: Animator) {}
+
+        })
+    }
+
     //endregion
 
     //region Control/UI
@@ -284,12 +360,6 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun goToFirstIdentityCreation() {
-        val intent = Intent(requireContext(), IdentityProviderListActivity::class.java)
-        intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
         startActivity(intent)
     }
 
@@ -326,47 +396,111 @@ class AccountsOverviewFragment : BaseFragment() {
         popup.showSnackbar(binding.root, stringRes)
     }
 
-    private fun showStateNoIdentities() {
+    private fun showStateOnboarding() {
         activity?.invalidateOptionsMenu()
-        binding.noAccountsLayout.visibility = View.VISIBLE
+        binding.onboardingLayout.visibility = View.VISIBLE
         binding.accountRecyclerview.visibility = View.GONE
-        showNoIdentities(true)
-        showNoAccounts(false)
-    }
-
-    private fun showStateNoAccounts() {
-        activity?.invalidateOptionsMenu()
-        binding.noAccountsLayout.visibility = View.VISIBLE
-        binding.accountRecyclerview.visibility = View.GONE
-        showNoIdentities(false)
-        showNoAccounts(true)
+        showOnboarding(true)
     }
 
     private fun showStateDefault() {
         activity?.invalidateOptionsMenu()
-        binding.noAccountsLayout.visibility = View.GONE
+        binding.onboardingLayout.visibility = View.GONE
         binding.accountRecyclerview.visibility = View.VISIBLE
-        showNoIdentities(false)
-        showNoAccounts(false)
+        showOnboarding(false)
     }
 
-    private fun showNoIdentities(show: Boolean) {
+    private fun showOnboarding(show: Boolean) {
         val state = if (show) View.VISIBLE else View.GONE
-        binding.noIdentitiesLayout.visibility = state
-    }
-
-    private fun showNoAccounts(show: Boolean) {
-        val state = if (show) View.VISIBLE else View.GONE
-        binding.noAccountsTextview.visibility = state
-        binding.createAccountButton.visibility = state
+        binding.onboardingLayout.visibility = state
     }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
+        binding.totalBalanceTextview.text =
+            CurrencyUtil.formatAndRoundGTU(
+                value = totalBalance,
+                roundDecimals = 2
+            )
+        updateTotalBalanceView()
     }
 
     private fun showDisposalBalance(atDisposal: BigInteger) {
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
+        binding.accountsOverviewTotalDetailsDisposal.text =
+            CurrencyUtil.formatAndRoundGTU(
+                value = atDisposal,
+                roundDecimals = 2
+            )
+        updateBalanceAtDisposalView()
+    }
+
+    private fun cancelAnimation() {
+        viewModel.setHasShowedInitialAnimation()
+        binding.confettiAnimation.visibility = View.GONE
+    }
+
+    // update balance TextView directly if balance value is too long
+    private fun updateTotalBalanceView() {
+        val availableWidth = binding.totalBalanceLayout.width - binding.totalBalanceSuffix.width
+
+        if (binding.totalBalanceTextview.width > availableWidth) {
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(binding.totalBalanceLayout)
+            constraintSet.apply {
+                connect(
+                    binding.totalBalanceTextview.id,
+                    ConstraintSet.END,
+                    binding.totalBalanceSuffix.id,
+                    ConstraintSet.START
+                )
+                connect(
+                    binding.totalBalanceSuffix.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END
+                )
+                constrainWidth(binding.totalBalanceTextview.id, ConstraintSet.MATCH_CONSTRAINT)
+                setHorizontalChainStyle(
+                    binding.totalBalanceLayout.id,
+                    ConstraintSet.CHAIN_SPREAD_INSIDE
+                )
+                setMargin(binding.totalBalanceSuffix.id, ConstraintSet.BOTTOM, 0)
+            }
+            constraintSet.applyTo(binding.totalBalanceLayout)
+        }
+    }
+
+    // update disposable balance TextView directly if balance value is too long
+    private fun updateBalanceAtDisposalView() {
+        val availableWidth =
+            binding.totalDetailsDisposalLayout.width - binding.accountsOverviewTotalDetailsDisposalSuffix.width
+
+        if (binding.accountsOverviewTotalDetailsDisposal.width > availableWidth) {
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(binding.totalDetailsDisposalLayout)
+            constraintSet.apply {
+                connect(
+                    binding.accountsOverviewTotalDetailsDisposal.id,
+                    ConstraintSet.END,
+                    binding.accountsOverviewTotalDetailsDisposalSuffix.id,
+                    ConstraintSet.START
+                )
+                connect(
+                    binding.accountsOverviewTotalDetailsDisposalSuffix.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END
+                )
+                constrainWidth(
+                    binding.accountsOverviewTotalDetailsDisposal.id,
+                    ConstraintSet.MATCH_CONSTRAINT
+                )
+                setHorizontalChainStyle(
+                    binding.totalDetailsDisposalLayout.id,
+                    ConstraintSet.CHAIN_SPREAD_INSIDE
+                )
+            }
+            constraintSet.applyTo(binding.totalDetailsDisposalLayout)
+        }
     }
 
     //endregion

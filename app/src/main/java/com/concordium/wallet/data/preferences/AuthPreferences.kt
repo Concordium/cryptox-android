@@ -14,6 +14,7 @@ class AuthPreferences(val context: Context) :
     companion object {
         const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
         const val PREFKEY_HAS_COMPLETED_INITIAL_SETUP = "PREFKEY_HAS_COMPLETED_INITIAL_SETUP"
+        const val PREFKEY_HAS_COMPLETED_ONBOARDING = "PREFKEY_HAS_COMPLETED_ONBOARDING"
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
         const val PREFKEY_PASSWORD_CHECK = "PREFKEY_PASSWORD_CHECK"
@@ -28,6 +29,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX =
             "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX"
         const val PREFKEY_LEGACY_SEED_HEX_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
+        const val PREFKEY_HAS_SHOWED_INITIAL_ANIMATION = "PREFKEY_HAS_SHOWED_INITIAL_ANIMATION"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -45,6 +47,22 @@ class AuthPreferences(val context: Context) :
     fun getHasCompletedInitialSetup(): Boolean {
         // Default value is true for backward compatibility.
         return getBoolean(PREFKEY_HAS_COMPLETED_INITIAL_SETUP, true)
+    }
+
+    fun setHasCompletedOnboarding(value: Boolean) {
+        setBoolean(PREFKEY_HAS_COMPLETED_ONBOARDING, value)
+    }
+
+    fun getHasCompletedOnboarding(): Boolean {
+        return getBoolean(PREFKEY_HAS_COMPLETED_ONBOARDING, false)
+    }
+
+    fun setHasShowedInitialAnimation(value: Boolean) {
+        setBoolean(PREFKEY_HAS_SHOWED_INITIAL_ANIMATION, value)
+    }
+
+    fun getShowedInitialAnimation(): Boolean {
+        return getBoolean(PREFKEY_HAS_SHOWED_INITIAL_ANIMATION, false)
     }
 
     fun setUsePasscode(appendix: String, value: Boolean) {

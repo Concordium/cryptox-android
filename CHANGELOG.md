@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Optimized user experience during the onboarding process
+
 ### Fixed
 
 - Showing incorrect commission rates on the update validator stake update confirmation screen

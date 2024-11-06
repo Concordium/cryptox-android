@@ -26,6 +26,9 @@ class Session {
     var hasCompletedInitialSetup = true
         private set
 
+    var hasCompleteOnboarding = false
+        private set
+
     private val _isLoggedIn = MutableLiveData<Boolean>(false)
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
@@ -37,6 +40,7 @@ class Session {
         authPreferences = AuthPreferences(context)
         hasSetupPassword = authPreferences.getHasSetupUser()
         hasCompletedInitialSetup = authPreferences.getHasCompletedInitialSetup()
+        hasCompleteOnboarding = authPreferences.getHasCompletedOnboarding()
         filterPreferences = FilterPreferences(context)
     }
 
@@ -82,6 +86,19 @@ class Session {
     fun hasCompletedInitialSetup() {
         authPreferences.setHasCompletedInitialSetup(true)
         hasCompletedInitialSetup = true
+    }
+
+    fun hasCompletedOnboarding() {
+        authPreferences.setHasCompletedOnboarding(true)
+        hasCompleteOnboarding = true
+    }
+
+    fun setHasShowedInitialAnimation() {
+        authPreferences.setHasShowedInitialAnimation(true)
+    }
+
+    fun getHasShowedInitialAnimation(): Boolean {
+        return authPreferences.getShowedInitialAnimation()
     }
 
     fun startPasswordSetup(password: String) {
