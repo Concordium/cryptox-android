@@ -10,6 +10,11 @@
 
 - Showing incorrect commission rates on the update validator stake update confirmation screen
 
+### Changed
+
+- When going to Concordex DEX, there's no need to select or copy account address, 
+ as it is a WalletConnect-based DEX which fetches the wallet data itself.
+
 ## [1.3.0] - 2024-10-18
 
 ### Added
