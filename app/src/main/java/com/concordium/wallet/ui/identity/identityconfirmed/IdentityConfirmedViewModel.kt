@@ -83,7 +83,7 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
         _waitingLiveData.value = true
         viewModelScope.launch {
             val identityCount = identityRepository.getCount()
-            _waitingLiveData.value = false
+            _waitingLiveData.postValue(false)
             // If we are in the process of creating the first identity, there will be one identity saved at this point
             _isFirstIdentityLiveData.value = isFirst(identityCount)
         }

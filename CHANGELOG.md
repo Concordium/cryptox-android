@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Optimized user experience during the onboarding process
+
+### Changed
+
+- When going to Concordex DEX, there's no need to select or copy account address, 
+ as it is a WalletConnect-based DEX which fetches the wallet data itself.
+ 
 ## [1.3.1] - 2024-11-07
 
 ### Fixed

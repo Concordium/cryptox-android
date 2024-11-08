@@ -174,12 +174,8 @@
     <style name="CCX_Screen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">
-            <!-- This color is obtained experimentally.
-            Figma value doesn't match the rendered background bottom color-->
-            #0D0E12
-        </item>
-        <item name="android:windowBackground">@drawable/ccx_main_background</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/ccx_new_main_background</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
@@ -189,7 +185,7 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowBackground">@drawable/ccx_welcome_background</item>
+        <item name="android:windowBackground">@drawable/ccx_new_main_background</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
@@ -198,8 +194,18 @@
     <style name="CCX_WelcomePromoScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/bottom_navigation_bar_background</item>
-        <item name="android:windowBackground">@drawable/ccx_main_background</item>
+        <item name="android:navigationBarColor">@color/cryptox_black_main</item>
+        <item name="android:windowBackground">@drawable/ccx_new_main_background</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+    </style>
+
+    <style name="CCX_MainScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/cryptox_black_main</item>
+        <item name="android:windowBackground">@drawable/ccx_new_main_background</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>

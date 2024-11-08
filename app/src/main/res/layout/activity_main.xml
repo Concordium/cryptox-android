@@ -20,16 +20,25 @@
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <View
+        android:id="@+id/bottom_navigation_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/bottom_navigation_bar_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view" />
 
     <com.concordium.wallet.uicore.view.NoBoldBottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/bottom_navigation_bar_background"
+        android:background="@color/cryptox_black_main"
         app:itemIconTint="@color/ccx_bottom_navigation_bar_item_color"
         app:itemTextAppearanceActive="@style/CCX_Typography_TabTitle"
         app:itemTextAppearanceInactive="@style/CCX_Typography_TabTitle"

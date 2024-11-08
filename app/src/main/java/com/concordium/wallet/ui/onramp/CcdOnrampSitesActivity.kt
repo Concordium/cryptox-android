@@ -55,29 +55,38 @@ class CcdOnrampSitesActivity : BaseActivity(
     private fun onSiteClicked(site: CcdOnrampSite) {
         val accountAddress = viewModel.accountAddress
 
-        if (accountAddress != null) {
+        if (site.type == CcdOnrampSite.Type.DEX) {
             OpenCcdOnrampSiteWithAccountUseCase(
                 site = site,
-                accountAddress = accountAddress,
-                onAccountAddressCopied = {
-                    Toast
-                        .makeText(
-                            this,
-                            getString(R.string.template_ccd_onramp_opening_site, site.name),
-                            Toast.LENGTH_SHORT
-                        )
-                        .show()
-                },
+                accountAddress = "",
+                onAccountAddressCopied = { },
                 context = this,
             ).invoke()
         } else {
-            val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
-            intent.putExtras(
-                CcdOnrampAccountsActivity.getBundle(
+            if (accountAddress != null) {
+                OpenCcdOnrampSiteWithAccountUseCase(
                     site = site,
+                    accountAddress = accountAddress,
+                    onAccountAddressCopied = {
+                        Toast
+                            .makeText(
+                                this,
+                                getString(R.string.template_ccd_onramp_opening_site, site.name),
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    },
+                    context = this,
+                ).invoke()
+            } else {
+                val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
+                intent.putExtras(
+                    CcdOnrampAccountsActivity.getBundle(
+                        site = site,
+                    )
                 )
-            )
-            startActivity(intent)
+                startActivity(intent)
+            }
         }
     }
 

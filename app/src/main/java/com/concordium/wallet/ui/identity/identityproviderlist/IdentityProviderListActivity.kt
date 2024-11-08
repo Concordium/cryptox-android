@@ -93,8 +93,6 @@ class IdentityProviderListActivity : BaseActivity(
     }
 
     private fun initializeList() {
-        binding.recyclerview.setHasFixedSize(true)
-
         identityProviderAdapter.setOnItemClickListener(object :
             IdentityProviderAdapter.OnItemClickListener {
             override fun onItemClicked(item: IdentityProvider) {

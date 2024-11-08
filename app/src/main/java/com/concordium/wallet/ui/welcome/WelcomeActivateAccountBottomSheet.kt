@@ -10,7 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWelcomePromoActivateAccountBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class WelcomePromoActivateAccountBottomSheet : BottomSheetDialogFragment() {
+class WelcomeActivateAccountBottomSheet : BottomSheetDialogFragment() {
     override fun getTheme(): Int =
         R.style.CCX_BottomSheetDialog
 

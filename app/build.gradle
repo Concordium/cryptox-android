@@ -344,6 +344,9 @@ dependencies {
 
     // Push notifications
     implementation 'com.google.firebase:firebase-messaging:24.0.0'
+
+    // Lottie animations
+    implementation 'com.airbnb.android:lottie:6.0.0'
 }
 
 task printVersionName {
