@@ -6,6 +6,10 @@
 
 - Optimized user experience during the onboarding process
 
+### Fixed
+
+- Crash on launch when Google Play Services is disabled
+
 ### Changed
 
 - When going to Concordex DEX, there's no need to select or copy account address, 
