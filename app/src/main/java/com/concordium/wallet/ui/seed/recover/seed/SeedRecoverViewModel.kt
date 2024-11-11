@@ -58,7 +58,6 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
         )
         if (success) {
             session.hasCompletedInitialSetup()
-            session.hasCompletedOnboarding()
         }
         _saveSeedSuccess.value = success
     }
