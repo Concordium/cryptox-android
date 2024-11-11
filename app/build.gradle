@@ -344,6 +344,7 @@ dependencies {
 
     // Push notifications
     implementation 'com.google.firebase:firebase-messaging:24.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
 }
 
 task printVersionName {

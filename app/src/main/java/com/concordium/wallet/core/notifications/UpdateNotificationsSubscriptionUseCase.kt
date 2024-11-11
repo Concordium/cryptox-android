@@ -10,6 +10,8 @@ import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import retrofit2.HttpException
@@ -19,19 +21,28 @@ class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
     private val notificationsPreferences: NotificationsPreferences,
     private val notificationsBackend: NotificationsBackend,
+    private val application: Application
 ) {
     constructor(application: Application) : this(
         accountRepository = WalletDatabase.getDatabase(application).accountDao()
             .let(::AccountRepository),
         notificationsPreferences = NotificationsPreferences(application),
         notificationsBackend = App.appCore.getNotificationsBackend(),
+        application = application
     )
 
     suspend operator fun invoke(
         isCcdTxEnabled: Boolean = notificationsPreferences.areCcdTxNotificationsEnabled,
         isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled
     ): Boolean {
-        val fcmToken = FirebaseMessaging.getInstance().token.await()
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(application)
+        var fcmToken = ""
+
+        if (resultCode == ConnectionResult.SUCCESS) {
+            fcmToken = FirebaseMessaging.getInstance().token.await()
+        }
+
         val accounts = accountRepository.getAllDone()
 
         val topics: Set<NotificationsTopic> = buildSet {
