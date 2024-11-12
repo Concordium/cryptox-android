@@ -375,7 +375,6 @@ class ImportViewModel(application: Application) :
             } // End of identity
             confirmImport()
             session.hasCompletedInitialSetup()
-            session.hasCompletedOnboarding()
             _waitingLiveData.postValue(false)
         }
     }
