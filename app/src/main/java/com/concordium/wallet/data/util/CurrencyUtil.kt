@@ -2,9 +2,9 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
-import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 import java.util.regex.Pattern
@@ -18,8 +18,12 @@ object CurrencyUtil {
         "115792089237316195423570985008687907853269984665640564039457584007913129639935"
             .toBigInteger()
 
+    private const val ZERO_AMOUNT = "0.00"
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,77}\$")
+
+    //Format the Decimal value with comma separators for thousands
+    private val formatter = DecimalFormat("#,###.######", DecimalFormatSymbols(Locale.US))
 
     fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String =
         formatGTU(value.toBigInteger(), withGStroke, decimals)
@@ -31,9 +35,8 @@ object CurrencyUtil {
     }
 
     fun formatGTU(value: BigInteger, withGStroke: Boolean = false, decimals: Int = 6): String {
-        if (decimals <= 0) {
-            return value.toString()
-        }
+        if (value == BigInteger.ZERO) return ZERO_AMOUNT
+        if (decimals <= 0) return value.toString()
 
         val isNegative = value.signum() < 0
         val str =
@@ -67,17 +70,18 @@ object CurrencyUtil {
             strBuilder.insert(0, "-")
         }
 
-        return strBuilder.toString().removeSuffix(separator.toString())
+        return formatGTUWithCommas(strBuilder.toString().removeSuffix(separator.toString()))
     }
 
     fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int): String {
+        if (value == BigInteger.ZERO) return ZERO_AMOUNT
+
         val bigDecimalValue = formatGTU(value)
-            .replace(separator, '.')
+            .replace(",", "")
             .toBigDecimal()
             .setScale(roundDecimals, RoundingMode.HALF_UP)
 
-        //replace '.' to initial separator
-        return bigDecimalValue.toString().replace('.', separator)
+        return formatter.format(bigDecimalValue)
     }
 
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? =
@@ -108,5 +112,10 @@ object CurrencyUtil {
 
     private fun checkGTUString(stringValue: String): Boolean {
         return patternGTU.matcher(stringValue).matches()
+    }
+
+    private fun formatGTUWithCommas(value: String): String {
+        val bigDecimalValue = value.replace(separator, '.').toBigDecimal()
+        return formatter.format(bigDecimalValue)
     }
 }
