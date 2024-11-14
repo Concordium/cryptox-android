@@ -1,5 +1,6 @@
 package com.concordium.wallet.core.notifications
 
+import android.content.Context
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
@@ -8,6 +9,8 @@ import com.concordium.wallet.data.model.NotificationsTopic
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.util.Log
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.tasks.await
 import retrofit2.HttpException
@@ -17,18 +20,27 @@ class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
     private val walletNotificationsPreferences: WalletNotificationsPreferences,
     private val notificationsBackend: NotificationsBackend,
+    private val context: Context,
 ) {
     constructor() : this(
         accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao()),
         walletNotificationsPreferences = App.appCore.session.walletStorage.notificationsPreferences,
         notificationsBackend = App.appCore.getNotificationsBackend(),
+        context = App.appContext,
     )
 
     suspend operator fun invoke(
         isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
         isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled
     ): Boolean {
-        val fcmToken = FirebaseMessaging.getInstance().token.await()
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
+        var fcmToken = ""
+
+        if (resultCode == ConnectionResult.SUCCESS) {
+            fcmToken = FirebaseMessaging.getInstance().token.await()
+        }
+
         val accounts = accountRepository.getAllDone()
 
         val topics: Set<NotificationsTopic> = buildSet {

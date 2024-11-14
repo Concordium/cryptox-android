@@ -108,6 +108,14 @@
                 style="@style/CryptoX_Divider_Horizontal"
                 android:layout_marginTop="16dp" />
 
+            <include
+                android:id="@+id/onramp_banner"
+                layout="@layout/list_item_accounts_overview_ccd_onramp_banner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="@dimen/activity_vertical_margin" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/account_recyclerview"
                 android:layout_width="match_parent"
@@ -126,6 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toTopOf="@id/onboarding_action_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

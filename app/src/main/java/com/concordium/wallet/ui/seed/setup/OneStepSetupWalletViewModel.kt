@@ -31,7 +31,7 @@ class OneStepSetupWalletViewModel(
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
     init {
-        App.appCore.tracker.welcomePhrase()
+        App.appCore.tracker.seedPhraseScreen()
         if (mutablePhraseFlow.value.isNullOrEmpty())
             generatePhrase()
     }

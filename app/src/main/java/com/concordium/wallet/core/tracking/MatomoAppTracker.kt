@@ -15,17 +15,14 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
     override fun welcomeScreen() =
         trackScreenAndImpression(SCREEN_WELCOME)
 
-    override fun welcomeCheckBoxChecked() =
-        trackInteraction(SCREEN_WELCOME, "Check box", INTERACTION_CHECKED)
+    override fun welcomeTermAndConditionsCheckBoxChecked() =
+        trackInteraction(SCREEN_WELCOME, "Terms and Conditions check box", INTERACTION_CHECKED)
+
+    override fun welcomeActivityTrackingCheckBoxChecked() =
+        trackInteraction(SCREEN_WELCOME, "Activity Tracking check box", INTERACTION_CHECKED)
 
     override fun welcomeGetStartedClicked() =
         trackInteraction(SCREEN_WELCOME, "Get started", INTERACTION_CLICKED)
-
-    override fun welcomeHomeScreen() =
-        trackScreenAndImpression(SCREEN_WELCOME_HOME)
-
-    override fun welcomeHomeActivateAccountClicked() =
-        trackInteraction(SCREEN_WELCOME_HOME, "Activate account", INTERACTION_CLICKED)
 
     override fun welcomeActivateAccountDialog() =
         trackScreenAndImpression(DIALOG_ACTIVATE_ACCOUNT)
@@ -58,14 +55,20 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
     override fun welcomePasscodeBiometricsRejected() =
         trackInteraction(DIALOG_WELCOME_PASSCODE_BIOMETRICS, "Later", INTERACTION_CLICKED)
 
-    override fun welcomePhrase() =
-        trackScreenAndImpression(SCREEN_WELCOME_PHRASE)
+    override fun seedPhraseScreen() =
+        trackScreenAndImpression(SCREEN_SAVE_PHRASE)
 
-    override fun welcomePhraseCopyClicked() =
-        trackInteraction(SCREEN_WELCOME_PHRASE, "Copy to clipboard", INTERACTION_CLICKED)
+    override fun seedPhraseCopyClicked() =
+        trackInteraction(SCREEN_SAVE_PHRASE, "Copy to clipboard", INTERACTION_CLICKED)
 
-    override fun welcomePhraseCheckboxBoxChecked() =
-        trackInteraction(SCREEN_WELCOME_PHRASE, "Check box", INTERACTION_CHECKED)
+    override fun seedPhraseCheckboxBoxChecked() =
+        trackInteraction(SCREEN_SAVE_PHRASE, "Check box", INTERACTION_CHECKED)
+
+    override fun seedPhraseContinueCLicked() =
+        trackInteraction(SCREEN_SAVE_PHRASE, "Continue", INTERACTION_CLICKED)
+
+    override fun identityVerificationProvidersListScreen() =
+        trackScreenAndImpression(SCREEN_ID)
 
     override fun identityVerificationScreen(provider: String) {
         track()
@@ -85,6 +88,34 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
 
     override fun homeScreen() =
         trackScreenAndImpression(SCREEN_HOME)
+
+    override fun homeSaveSeedPhraseClicked() =
+        trackInteraction(SCREEN_HOME, "Save seed phrase", INTERACTION_CLICKED)
+
+    override fun homeIdentityVerificationClicked() =
+        trackInteraction(SCREEN_HOME, "Verify identity", INTERACTION_CLICKED)
+
+    override fun homeIdentityVerificationStateChanged(state: String) {
+        track()
+            .screen(SCREEN_HOME)
+            .dimension(0, state)
+            .safelyWith(tracker)
+    }
+
+    override fun homeCreateAccountClicked() =
+        trackInteraction(SCREEN_HOME, "Create account", INTERACTION_CLICKED)
+
+    override fun homeOnRampScreen() =
+        trackScreenAndImpression(SCREEN_ONRAMP)
+
+    override fun homeOnRampBannerClicked() =
+        trackInteraction(SCREEN_HOME, "OnRamp banner", INTERACTION_CLICKED)
+
+    override fun homeUnlockFeatureDialog() =
+        trackScreenAndImpression(DIALOG_UNLOCK_FEATURE)
+
+    override fun homeTotalBalanceClicked() =
+        trackInteraction(SCREEN_HOME, "Wallet total balance", INTERACTION_CLICKED)
 
     private fun track() =
         TrackHelper.track()
@@ -120,17 +151,17 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
             title = "Welcome",
             path = "/welcome",
         )
-        private val SCREEN_WELCOME_HOME = Screen(
-            title = "Welcome: Home",
-            path = "/welcome/home",
-        )
         private val SCREEN_WELCOME_PASSCODE = Screen(
             title = "Welcome: Passcode",
-            path = "/welcome/home/passcode_setup",
+            path = "/welcome/passcode_setup",
         )
-        private val SCREEN_WELCOME_PHRASE = Screen(
-            title = "Welcome: Phrase",
-            path = "/welcome/home/phrase",
+        private val SCREEN_SAVE_PHRASE = Screen(
+            title = "Home: Phrase",
+            path = "/home/phrase",
+        )
+        private val SCREEN_ID = Screen(
+            title = "ID Screen",
+            path = "/id_providers",
         )
         private val SCREEN_ID_VERIFICATION = Screen(
             title = "ID Verification",
@@ -142,20 +173,28 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
         )
         private val SCREEN_HOME = Screen(
             title = "Home",
-            path = "/"
+            path = "/home"
+        )
+        private val SCREEN_ONRAMP = Screen(
+            title = "Home: OnRamp",
+            path = "/home/onramp"
         )
 
         private val DIALOG_ACTIVATE_ACCOUNT = Screen(
             title = "Welcome: Activate account dialog",
-            path = SCREEN_WELCOME_HOME.path + "#activate_account",
+            path = SCREEN_WELCOME.path + "#activate_account",
         )
         private val DIALOG_WELCOME_PASSCODE_BIOMETRICS = Screen(
             title = "Welcome: Passcode: Biometrics dialog",
-            path = SCREEN_WELCOME_PASSCODE.path + "#biometrics",
+            path = SCREEN_WELCOME.path + "#biometrics",
         )
         private val DIALOG_ID_VERIFICATION_APPROVED = Screen(
             title = "ID Verification approved",
             path = SCREEN_ID_VERIFICATION_RESULT.path + "#approved",
+        )
+        private val DIALOG_UNLOCK_FEATURE = Screen(
+            title = "Home: Unlock feature dialog",
+            path = SCREEN_HOME.path + "#unlock_feature"
         )
 
         private const val INTERACTION_CHECKED = "checked"

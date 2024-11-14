@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.databinding.ItemIdentityProviderBinding
@@ -36,6 +37,7 @@ class IdentityProviderAdapter(
             binding.logoImageview.setImageBitmap(image)
         }
         binding.headerTextview.text = identityProvider.displayName
+        binding.itemDivider.isVisible = position != data.size - 1
 
         // Click
         if (onItemClickListener != null) {

@@ -167,7 +167,7 @@ class ImportViewModel(application: Application) :
     private suspend fun performImport(
         encryptedExportData: EncryptedExportData?,
         importPassword: String?,
-        masterKey: ByteArray
+        masterKey: ByteArray,
     ) = viewModelScope.launch(Dispatchers.IO) {
         if (encryptedExportData == null || importPassword == null) {
             _errorLiveData.postValue(Event(R.string.app_error_general))
@@ -186,7 +186,8 @@ class ImportViewModel(application: Application) :
             _waitingLiveData.postValue(false)
             when (e) {
                 is JsonIOException,
-                is JsonSyntaxException -> {
+                is JsonSyntaxException,
+                -> {
                     Log.e("Unexpected json format")
                     _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
                 }
@@ -383,7 +384,7 @@ class ImportViewModel(application: Application) :
         existingAccountList: List<Account>,
         identityExport: IdentityExport,
         identityId: Long,
-        identityImportResult: ImportResult.IdentityImportResult
+        identityImportResult: ImportResult.IdentityImportResult,
     ) {
         var globalParams: GlobalParams?
         try {
@@ -414,7 +415,7 @@ class ImportViewModel(application: Application) :
         startIndex: Int,
         existingAccountList: List<Account>,
         identityId: Long,
-        identityImportResult: ImportResult.IdentityImportResult
+        identityImportResult: ImportResult.IdentityImportResult,
     ) {
         val readOnlyAccountList = mutableListOf<Account>()
         var index = startIndex
@@ -484,7 +485,7 @@ class ImportViewModel(application: Application) :
 
     private suspend fun encryptAndMapIdentity(
         identityExport: IdentityExport,
-        masterKey: ByteArray
+        masterKey: ByteArray,
     ): Identity? {
         val privateIdObjectDataJson = gson.toJson(identityExport.privateIdObjectData)
         val privateIdObjectDataEncrypted = App.appCore.auth
@@ -507,7 +508,7 @@ class ImportViewModel(application: Application) :
         accountExport: AccountExport,
         identityId: Long,
         credNumber: Int,
-        masterKey: ByteArray
+        masterKey: ByteArray,
     ): Account? {
 
         val accountDataJson = gson.toJson(
@@ -532,7 +533,7 @@ class ImportViewModel(application: Application) :
 
     private suspend fun mapIdentityFromExport(
         identityExport: IdentityExport,
-        privateIdObjectDataEncrypted: EncryptedData
+        privateIdObjectDataEncrypted: EncryptedData,
     ): Identity {
         // Correct indices for identities are important
         // when importing on top of the existing identities.
@@ -561,7 +562,7 @@ class ImportViewModel(application: Application) :
         accountExport: AccountExport,
         identityId: Long,
         credNumber: Int,
-        accountDataEncrypted: EncryptedData
+        accountDataEncrypted: EncryptedData,
     ): Account {
         return Account(
             identityId = identityId.toInt(),
@@ -578,7 +579,7 @@ class ImportViewModel(application: Application) :
 
     private fun createReadOnlyAccount(
         possibleAccount: PossibleAccount,
-        identityId: Long
+        identityId: Long,
     ): Account {
         return Account(
             identityId = identityId.toInt(),

@@ -63,17 +63,18 @@ class OneStepSetupWalletActivity :
     private fun initButtons() {
         binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                App.appCore.tracker.welcomePhraseCheckboxBoxChecked()
+                App.appCore.tracker.seedPhraseCheckboxBoxChecked()
             }
             binding.continueButton.isEnabled = isChecked
         }
 
         binding.continueButton.setOnClickListener {
+            App.appCore.tracker.seedPhraseContinueCLicked()
             viewModel.onContinueClicked()
         }
 
         binding.copyButton.setOnClickListener {
-            App.appCore.tracker.welcomePhraseCopyClicked()
+            App.appCore.tracker.seedPhraseCopyClicked()
 
             val clipboardManager: ClipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

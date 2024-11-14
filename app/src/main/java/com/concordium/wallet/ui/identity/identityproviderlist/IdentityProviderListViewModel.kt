@@ -66,6 +66,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     }
 
     init {
+        App.appCore.tracker.identityVerificationProvidersListScreen()
         _waitingLiveData.value = true
         _waitingGlobalData.value = true
     }

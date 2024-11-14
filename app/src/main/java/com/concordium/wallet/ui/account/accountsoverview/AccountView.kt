@@ -45,6 +45,8 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
         binding.sendFundsBtn.isEnabled = !accountWithIdentity.account.readOnly
                 && accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
+        binding.addressBtn.isEnabled =
+            accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {

@@ -14,21 +14,28 @@ import androidx.core.animation.doOnStart
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
+import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.showSingle
-import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
+import com.concordium.wallet.ui.account.newaccountsetup.NewAccountSetupViewModel
+import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class OnboardingFragment @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr), AuthDelegate by AuthDelegateImpl() {
 
     private var binding: FragmentOnboardingBinding = FragmentOnboardingBinding.inflate(
         LayoutInflater.from(context),
@@ -42,6 +49,11 @@ class OnboardingFragment @JvmOverloads constructor(
         activity,
         ViewModelProvider.AndroidViewModelFactory.getInstance(activity.application)
     )[OnboardingSharedViewModel::class.java]
+
+    private val newAccountViewModel = ViewModelProvider(
+        activity,
+        ViewModelProvider.AndroidViewModelFactory.getInstance(activity.application)
+    )[NewAccountSetupViewModel::class.java]
 
     private val pulsateAnimator = ObjectAnimator.ofFloat(
         binding.identityVerificationStatusIcon,
@@ -64,31 +76,68 @@ class OnboardingFragment @JvmOverloads constructor(
         activity.lifecycleScope.launch {
             onboardingViewModel.identityFlow.collect { identity ->
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
             }
         }
+        newAccountViewModel.showAuthenticationLiveData.observe(activity, object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                if (value) {
+                    showAuthentication(
+                        activity = context as BaseActivity,
+                        onAuthenticated = {
+                            newAccountViewModel.continueWithPassword(it)
+                            activity.lifecycleScope.launch {
+                                onboardingViewModel.setShowLoading(true)
+                            }
+                        }
+                    )
+                }
+            }
+        })
+        newAccountViewModel.gotoAccountCreatedLiveData.observe(activity, object : EventObserver<Account>() {
+            override fun onUnhandledEvent(value: Account) {
+                App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+                activity.lifecycleScope.launch {
+                    onboardingViewModel.setShowLoading(false)
+                    onboardingViewModel.setUpdateState(true)
+                }
+            }
+        })
+        newAccountViewModel.errorLiveData.observe(activity, object : EventObserver<Int>() {
+            override fun onUnhandledEvent(value: Int) {
+                activity.lifecycleScope.launch {
+                    onboardingViewModel.setShowLoading(false)
+                }
+                (activity as BaseActivity).showError(value)
+            }
+        })
     }
 
     fun updateViewsByState(state: OnboardingState) {
         val currentDataState = dataProvider.getViewDataByState(state)
         updateViews(currentDataState)
+        App.appCore.tracker.homeIdentityVerificationStateChanged(currentDataState.state.name)
 
         when (state) {
             OnboardingState.SAVE_PHRASE -> {
                 binding.onboardingActionButton.setOnClickListener {
+                    App.appCore.tracker.homeSaveSeedPhraseClicked()
                     goToCreateWallet()
                 }
             }
 
             OnboardingState.VERIFY_IDENTITY -> {
                 binding.onboardingActionButton.setOnClickListener {
+                    App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
 
             OnboardingState.IDENTITY_UNSUCCESSFUL -> {
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
@@ -100,16 +149,19 @@ class OnboardingFragment @JvmOverloads constructor(
     fun updateViewsByIdentityStatus(identity: Identity) {
         val currentDataState = dataProvider.getViewDataByIdentityVerificationStatus(identity.status)
         updateViews(currentDataState)
+        App.appCore.tracker.homeIdentityVerificationStateChanged(currentDataState.state.name)
 
         when (identity.status) {
             IdentityStatus.DONE -> {
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
             }
 
             IdentityStatus.ERROR -> {
                 binding.onboardingInnerActionButton.setOnClickListener {
+                    App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
@@ -239,9 +291,9 @@ class OnboardingFragment @JvmOverloads constructor(
     }
 
     private fun createFirstAccount(identity: Identity) {
-        val intent = Intent(activity, IdentityConfirmedActivity::class.java)
-        intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
-        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_FIRST_ACCOUNT, true)
-        activity.startActivity(intent)
+        activity.lifecycleScope.launch(Dispatchers.IO) {
+            newAccountViewModel.initialize(Account.getDefaultName(""), identity)
+            newAccountViewModel.createAccount()
+        }
     }
 }
