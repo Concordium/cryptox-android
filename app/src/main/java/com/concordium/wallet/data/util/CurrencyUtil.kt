@@ -20,7 +20,7 @@ object CurrencyUtil {
 
     private const val ZERO_AMOUNT = "0.00"
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
-    private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,77}\$")
+    private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*(\\.[0-9]{0,77})?\$")
 
     //Format the Decimal value with comma separators for thousands
     private val formatter = DecimalFormat("#,###.######", DecimalFormatSymbols(Locale.US))
@@ -95,10 +95,10 @@ object CurrencyUtil {
         if (!checkGTUString(str)) {
             return null
         }
-        val decimalSeparatorIndex = str.indexOf(separator)
+        val decimalSeparatorIndex = str.indexOf('.')
         // Ensure that there is the required number of decimals.
         if (decimalSeparatorIndex == -1) {
-            str = "$str${separator}" + String(CharArray(decimals) { '0' })
+            str = "${str}." + String(CharArray(decimals) { '0' })
         } else {
             val missingZeros = decimals - ((str.length - 1) - decimalSeparatorIndex)
             for (i in 1..missingZeros) {
@@ -106,7 +106,7 @@ object CurrencyUtil {
             }
         }
         // Remove the separator to get the value (because there are four decimals)
-        val noDecimalSeparatorString = str.replace("$separator", "")
+        val noDecimalSeparatorString = str.replace(".", "")
         return noDecimalSeparatorString.toBigInteger()
     }
 
