@@ -12,6 +12,7 @@ import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
 import com.concordium.wallet.data.room.migrations.MIGRATION_7_8
 import com.concordium.wallet.data.room.migrations.MIGRATION_8_9
+import com.concordium.wallet.data.room.migrations.MIGRATION_9_10
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
@@ -27,7 +28,6 @@ import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 6, to = 7),
-        AutoMigration(from = 9, to = 10),
     ],
 )
 @TypeConverters(GlobalTypeConverters::class)
@@ -67,6 +67,7 @@ abstract class WalletDatabase : RoomDatabase() {
                     MIGRATION_5_6,
                     MIGRATION_7_8,
                     MIGRATION_8_9,
+                    MIGRATION_9_10(context),
                 )
                 .build()
         }
