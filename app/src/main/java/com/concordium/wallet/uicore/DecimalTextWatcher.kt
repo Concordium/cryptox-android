@@ -24,44 +24,37 @@ class DecimalTextWatcher(val maxNumberOfDecimals: Int = 1) : TextWatcher {
     }
 
     override fun afterTextChanged(editable: Editable) {
-        var change = false
         var str = editable.toString()
         // Replace the non decimal separator with the decimal separator
         if ("." != "" + separator) {
-            if (str.indexOf(".") > -1) {
-                // Only trigger change if there are any (to avoid loop)
-                str = str.replace('.', separator)
-                change = true
-            }
-        } else if ("," != "" + separator) {
             if (str.indexOf(",") > -1) {
-                // Only trigger change if there are any (to avoid loop)
-                str = str.replace(',', separator)
-                change = true
+                str = str.replace(separator, '.')
             }
         }
-        val decimalSeparatorIndex = str.indexOf(separator)
+        else if ("," != "" + separator) {
+            if (str.indexOf(",") > -1) {
+                str = str.replace(',', '.')
+            }
+        }
+        val decimalSeparatorIndex = str.indexOf('.')
         // Decimal operator in the first space is not allowed - remove it
         if (decimalSeparatorIndex == 0) {
             str = str.substring(1)
-            change = true
         }
         if (decimalSeparatorIndex > 0) {
             // Delete decimal operator occurrences after the first
-            if (str.lastIndexOf(separator) != decimalSeparatorIndex) {
+            if (str.lastIndexOf('.') != decimalSeparatorIndex) {
                 // Replace the last char with the empty string
                 str = str.substring(0, str.length - 1)
-                change = true
             }
             // Delete the last char if there is more than 'maxNumberOfDecimals' decimal after the decimal separator
             val indexOfLastChar = str.length - 1
             if (indexOfLastChar > decimalSeparatorIndex + maxNumberOfDecimals) { // too many decimals (not allowed)
                 // Replace the last char with the empty string
                 str = str.substring(0, str.length - 1)
-                change = true
             }
         }
-        if (change) {
+        if (editable.toString() != str) {
             editable.replace(0, editable.length, str)
         }
     }

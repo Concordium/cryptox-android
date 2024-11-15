@@ -14,6 +14,8 @@
 
 - When going to Concordex DEX, there's no need to select or copy account address, 
  as it is a WalletConnect-based DEX which fetches the wallet data itself.
+- The "," separator sign used on all balances in the wallet - to make it easier to read 
+ large numbers
  
 ## [1.3.1] - 2024-11-07
 
