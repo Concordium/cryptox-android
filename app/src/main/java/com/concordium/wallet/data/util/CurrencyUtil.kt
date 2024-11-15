@@ -79,7 +79,7 @@ object CurrencyUtil {
         val bigDecimalValue = formatGTU(value)
             .replace(",", "")
             .toBigDecimal()
-            .setScale(roundDecimals, RoundingMode.HALF_UP)
+            .setScale(roundDecimals, RoundingMode.HALF_DOWN)
 
         return formatter.format(bigDecimalValue)
     }
