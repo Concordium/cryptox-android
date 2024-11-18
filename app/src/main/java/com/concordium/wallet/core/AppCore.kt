@@ -6,6 +6,7 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
+import com.concordium.wallet.core.migration.TwoWalletsMigration
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.MatomoAppTracker
@@ -37,7 +38,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class AppCore(val app: App) {
 
-    val gson: Gson = initializeGson()
+    val gson: Gson = getGson()
     val proxyBackendConfig = ProxyBackendConfig(gson)
     private val tokenBackendConfig = TokensBackendConfig(gson)
     private val airdropBackendConfig = AirDropBackendConfig(gson)
@@ -45,9 +46,6 @@ class AppCore(val app: App) {
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
-    val database = AppDatabase.getDatabase(app)
-    val walletRepository = AppWalletRepository(database.appWalletDao())
-
     private val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
     private val matomoAppTracker: AppTracker by lazy {
@@ -62,6 +60,25 @@ class AppCore(val app: App) {
             else
                 noOpAppTracker
 
+    // Migrations are invoked once vital core components are initialized:
+    // Gson, crypto lib, etc.
+    init {
+        with(TwoWalletsMigration(app, gson)) {
+            if (isPreferenceMigrationNeeded()) {
+                migratePreferencesOnce()
+            }
+
+            runBlocking {
+                if (isAppDatabaseMigrationNeeded()) {
+                    migrateAppDatabaseOnce()
+                }
+            }
+        }
+    }
+
+    val database = AppDatabase.getDatabase(app)
+    val walletRepository = AppWalletRepository(database.appWalletDao())
+
     var session: Session =
         runBlocking {
             Session(
@@ -72,7 +89,10 @@ class AppCore(val app: App) {
         private set
 
     val setup = AppSetup(
-        appSetupPreferences = AppSetupPreferences(App.appContext),
+        appSetupPreferences = AppSetupPreferences(
+            context = App.appContext,
+            gson = gson,
+        ),
         getSession = { session },
     )
     val auth: AppAuth
@@ -117,10 +137,12 @@ class AppCore(val app: App) {
         }
     }
 
-    private fun initializeGson(): Gson {
-        val gsonBuilder = GsonBuilder()
-        gsonBuilder.registerTypeAdapter(RawJson::class.java, RawJsonTypeAdapter())
-        gsonBuilder.registerTypeAdapter(BigInteger::class.java, BigIntegerTypeAdapter())
-        return gsonBuilder.create()
+    companion object {
+        fun getGson(): Gson {
+            val gsonBuilder = GsonBuilder()
+            gsonBuilder.registerTypeAdapter(RawJson::class.java, RawJsonTypeAdapter())
+            gsonBuilder.registerTypeAdapter(BigInteger::class.java, BigIntegerTypeAdapter())
+            return gsonBuilder.create()
+        }
     }
 }

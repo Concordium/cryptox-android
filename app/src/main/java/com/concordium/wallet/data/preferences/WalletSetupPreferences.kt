@@ -6,6 +6,7 @@ import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
+import com.google.gson.Gson
 import com.walletconnect.util.bytesToHex
 import com.walletconnect.util.hexToBytes
 
@@ -18,8 +19,9 @@ class WalletSetupPreferences
     )
 )
 constructor(
-    val context: Context,
+    context: Context,
     fileNameSuffix: String = "",
+    private val gson: Gson = App.appCore.gson,
 ) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key + fileNameSuffix) {
 
     fun areAccountsBackedUp(): Boolean {
@@ -55,7 +57,7 @@ constructor(
     fun tryToSetEncryptedSeedPhrase(encryptedSeedEntropy: EncryptedData): Boolean =
         setStringWithResult(
             PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON,
-            App.appCore.gson.toJson(encryptedSeedEntropy)
+            gson.toJson(encryptedSeedEntropy)
         )
 
     /**
@@ -79,21 +81,21 @@ constructor(
     fun tryToSetEncryptedSeedHex(encryptedSeedHex: EncryptedData): Boolean =
         setStringWithResult(
             PREFKEY_ENCRYPTED_SEED_HEX_JSON,
-            App.appCore.gson.toJson(encryptedSeedHex)
+            gson.toJson(encryptedSeedHex)
         )
 
     suspend fun getSeedHex(password: String): String {
         val authenticationManager = App.appCore.auth
 
         // Try the encrypted entropy.
-        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON)
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON, gson)
             ?.let { authenticationManager.decrypt(password, it) }
             ?.let { String(it).hexToBytes() }
             ?.let { Mnemonics.MnemonicCode(it).toSeed().toHex() }
             ?.let { return it }
 
         // Try the encrypted seed.
-        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_HEX_JSON)
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_HEX_JSON, gson)
             ?.let { authenticationManager.decrypt(password, it) }
             ?.let(::String)
 
@@ -104,7 +106,7 @@ constructor(
      * @see hasEncryptedSeedPhrase
      */
     suspend fun getSeedPhrase(password: String): String =
-        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON)
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON, gson)
             ?.let { App.appCore.auth.decrypt(password, it) }
             ?.let { String(it).hexToBytes() }
             ?.let {

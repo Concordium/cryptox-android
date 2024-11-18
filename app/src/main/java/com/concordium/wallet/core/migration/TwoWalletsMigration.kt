@@ -12,10 +12,12 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.room.app.AppDatabase
 import com.concordium.wallet.data.room.app.AppWalletDao
 import com.concordium.wallet.data.room.app.AppWalletEntity
+import com.google.gson.Gson
 import java.io.File
 
 class TwoWalletsMigration(
     private val context: Context,
+    private val gson: Gson,
 ) {
     private val oldAuthPreferences: OldAuthPreferences by lazy {
         OldAuthPreferences(context)
@@ -49,8 +51,14 @@ class TwoWalletsMigration(
             "The migration is not needed"
         }
 
-        val newAppSetupPreferences = AppSetupPreferences(context)
-        val newWalletSetupPreferences = WalletSetupPreferences(context)
+        val newAppSetupPreferences = AppSetupPreferences(
+            context = context,
+            gson = gson,
+        )
+        val newWalletSetupPreferences = WalletSetupPreferences(
+            context = context,
+            gson = gson,
+        )
 
         // Auth.
         val authSlot = oldAuthPreferences.authKeyName

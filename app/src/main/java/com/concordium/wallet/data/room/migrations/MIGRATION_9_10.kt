@@ -8,10 +8,17 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.concordium.wallet.core.migration.TwoWalletsMigration
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
+import com.google.gson.Gson
 
-fun MIGRATION_9_10(context: Context) = object : Migration(9, 10) {
+fun MIGRATION_9_10(
+    context: Context,
+    gson: Gson,
+) = object : Migration(9, 10) {
     private val globalTypeConverters = GlobalTypeConverters()
-    private val twoWalletsMigration = TwoWalletsMigration(context)
+    private val twoWalletsMigration = TwoWalletsMigration(
+        context = context,
+        gson = gson,
+    )
 
     override fun migrate(database: SupportSQLiteDatabase) = with(database) {
         execSQL("CREATE TABLE IF NOT EXISTS `_new_identity_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `status` TEXT NOT NULL, `detail` TEXT, `code_uri` TEXT NOT NULL, `next_account_number` INTEGER NOT NULL, `identity_provider` TEXT NOT NULL, `identity_object` TEXT, `private_id_object_data_encrypted` TEXT, `identity_provider_id` INTEGER NOT NULL, `identity_index` INTEGER NOT NULL)")

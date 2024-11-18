@@ -263,7 +263,8 @@ class AppAuth(
         }.getOrNull()
 
     fun isPasswordAuthInitialized(): Boolean {
-        return appSetupPreferences.hasEncryptedMasterKey(slot)
+        return (appSetupPreferences.hasEncryptedMasterKey(slot)
+                || appSetupPreferences.getLegacyPasswordCheck(slot) != null)
                 && appSetupPreferences.hasPasswordKeySalt(slot)
     }
 

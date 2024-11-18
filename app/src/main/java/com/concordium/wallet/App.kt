@@ -3,7 +3,6 @@ package com.concordium.wallet
 import android.app.Application
 import android.content.Context
 import com.concordium.wallet.core.AppCore
-import com.concordium.wallet.core.migration.TwoWalletsMigration
 import com.concordium.wallet.core.notifications.AnnouncementNotificationManager
 import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.util.Log
@@ -13,7 +12,6 @@ import com.walletconnect.android.relay.ConnectionType
 import com.walletconnect.android.relay.NetworkClientTimeout
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
@@ -41,17 +39,7 @@ class App : Application() {
         AnnouncementNotificationManager(this).ensureChannel()
     }
 
-    fun initAppCore() = runBlocking {
-        with(TwoWalletsMigration(appContext)) {
-            if (isPreferenceMigrationNeeded()) {
-                migratePreferencesOnce()
-            }
-
-            if (isAppDatabaseMigrationNeeded()) {
-                migrateAppDatabaseOnce()
-            }
-        }
-
+    fun initAppCore() {
         appCore = AppCore(this@App)
     }
 

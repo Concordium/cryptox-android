@@ -1,12 +1,15 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
+import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
+import com.google.gson.Gson
 import com.walletconnect.util.hexToBytes
 
 class AppSetupPreferences(
-    val context: Context,
+    context: Context,
+    private val gson: Gson,
 ) : Preferences(context, SharedPreferenceFiles.APP_SETUP.key) {
 
     fun setUsePasscode(slot: String, value: Boolean) {
@@ -38,19 +41,19 @@ class AppSetupPreferences(
     }
 
     fun setEncryptedPassword(slot: String, value: EncryptedData) {
-        setJsonSerialized(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot, value)
+        setJsonSerialized(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot, value, gson)
     }
 
     fun getEncryptedPassword(slot: String): EncryptedData {
-        return getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot)!!
+        return getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_PASSWORD_JSON + slot, gson)!!
     }
 
     fun setEncryptedMasterKey(slot: String, value: EncryptedData) {
-        setJsonSerialized(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot, value)
+        setJsonSerialized(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot, value, gson)
     }
 
     fun getEncryptedMasterKey(slot: String): EncryptedData {
-        return getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot)!!
+        return getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot, gson)!!
     }
 
     fun hasEncryptedMasterKey(slot: String): Boolean {
@@ -58,11 +61,14 @@ class AppSetupPreferences(
     }
 
     fun setLegacyEncryptedPasswordCheck(slot: String, value: EncryptedData) {
-        setJsonSerialized(PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON + slot, value)
+        setJsonSerialized(PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON + slot, value, gson)
     }
 
     fun getLegacyEncryptedPasswordCheck(slot: String): EncryptedData? {
-        return getJsonSerialized<EncryptedData>(PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON + slot)
+        return getJsonSerialized<EncryptedData>(
+            PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON + slot,
+            gson
+        )
     }
 
     fun setLegacyPasswordCheck(slot: String, value: String) {
