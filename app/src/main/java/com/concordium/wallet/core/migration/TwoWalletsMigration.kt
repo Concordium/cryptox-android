@@ -2,14 +2,19 @@ package com.concordium.wallet.core.migration
 
 import android.content.Context
 import android.util.Base64
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.security.KeystoreHelper
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
+import com.concordium.wallet.data.room.app.AppDatabase
+import com.concordium.wallet.data.room.app.AppWalletDao
+import com.concordium.wallet.data.room.app.AppWalletEntity
+import java.io.File
 
 class TwoWalletsMigration(
-    context: Context,
+    private val context: Context,
 ) {
     private val oldAuthPreferences: OldAuthPreferences by lazy {
         OldAuthPreferences(context)
@@ -18,6 +23,10 @@ class TwoWalletsMigration(
     private val oldEncryptionIv: ByteArray? by lazy {
         oldAuthPreferences.passwordEncryptionInitVectorBase64
             ?.let(::decodeOldBase64)
+    }
+
+    private val appWalletDao: AppWalletDao by lazy {
+        AppDatabase.getDatabase(context).appWalletDao()
     }
 
     fun migrateOldEncryptedData(oldEncryptedDataBase64: String) =
@@ -29,10 +38,19 @@ class TwoWalletsMigration(
             transformation = OLD_ENCRYPTION_TRANSFORMATION,
         )
 
-    fun migrateOldPreferences(
-        newWalletSetupPreferences: WalletSetupPreferences,
-        newAppSetupPreferences: AppSetupPreferences,
-    ) {
+    fun isPreferenceMigrationNeeded(): Boolean =
+        File(context.dataDir, "/shared_prefs/$OLD_AUTH_PREFERENCES_FILE.xml").exists()
+                && !oldAuthPreferences.areMigrated
+
+    @Suppress("DEPRECATION")
+    fun migratePreferencesOnce() {
+        check(isPreferenceMigrationNeeded()) {
+            "The migration is not needed"
+        }
+
+        val newAppSetupPreferences = AppSetupPreferences(context)
+        val newWalletSetupPreferences = WalletSetupPreferences(context)
+
         // Auth.
         val authSlot = oldAuthPreferences.authKeyName
         newAppSetupPreferences.setCurrentAuthSlot(authSlot)
@@ -83,11 +101,40 @@ class TwoWalletsMigration(
                     newWalletSetupPreferences.tryToSetEncryptedSeedHex(newEncryptedSeedHex)
                 ) { "Failed setting encrypted seed" }
             }
+
+        // Finalize.
+        oldAuthPreferences.areMigrated = true
+    }
+
+    suspend fun isAppDatabaseMigrationNeeded(): Boolean =
+        appWalletDao.getCount() == 0
+
+    suspend fun migrateAppDatabaseOnce() {
+        check(isAppDatabaseMigrationNeeded()) {
+            "The migration is not needed"
+        }
+
+        val primaryWalletType =
+            if (oldAuthPreferences.encryptedSeedHexBase64 != null
+                || oldAuthPreferences.encryptedSeedEntropyHexBase64 != null
+            ) {
+                AppWallet.Type.SEED
+            } else {
+                AppWallet.Type.FILE
+            }
+
+        appWalletDao.insertAndActivate(
+            AppWalletEntity(
+                wallet = AppWallet.primary(
+                    type = primaryWalletType,
+                )
+            )
+        )
     }
 
     private class OldAuthPreferences(
         context: Context,
-    ) : Preferences(context, "PREF_FILE_AUTH") {
+    ) : Preferences(context, OLD_AUTH_PREFERENCES_FILE) {
 
         val authKeyName: String
             get() = getString("PREFKEY_BIOMETRIC_KEY", "default_key")
@@ -133,12 +180,17 @@ class TwoWalletsMigration(
 
         val hasShownInitialAnimation: Boolean
             get() = getBoolean("PREFKEY_HAS_SHOWED_INITIAL_ANIMATION", false)
+
+        var areMigrated: Boolean
+            get() = getBoolean("MIGRATED", false)
+            set(value) = setBoolean("MIGRATED", value)
     }
 
     companion object {
-        const val OLD_ENCRYPTION_TRANSFORMATION = "AES/CBC/PKCS7Padding"
+        private const val OLD_ENCRYPTION_TRANSFORMATION = "AES/CBC/PKCS7Padding"
+        private const val OLD_AUTH_PREFERENCES_FILE = "PREF_FILE_AUTH"
 
-        fun decodeOldBase64(encoded: String): ByteArray =
+        private fun decodeOldBase64(encoded: String): ByteArray =
             Base64.decode(encoded, Base64.DEFAULT)
     }
 }

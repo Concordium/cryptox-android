@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
         AppWalletEntity::class,
     ],
     version = 1,
-    exportSchema = false, // TODO enable later
+    exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -18,13 +18,17 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         private const val FILE_NAME = "app_database"
+        private var instance: AppDatabase? = null
 
-        fun getDatabase(context: Context): AppDatabase =
-            Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java,
-                FILE_NAME,
-            )
-                .build()
+        fun getDatabase(context: Context): AppDatabase = synchronized(this) {
+            instance
+                ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    FILE_NAME,
+                )
+                    .build()
+                    .also(::instance::set)
+        }
     }
 }

@@ -35,10 +35,12 @@ private constructor(
     }
 
     companion object {
-        fun primary() = AppWallet(
+        fun primary(
+            type: Type,
+        ) = AppWallet(
             id = "",
-            type = Type.SEED,
-            createdAt = Date(),
+            type = type,
+            createdAt = Date(0),
         )
 
         fun extra(
