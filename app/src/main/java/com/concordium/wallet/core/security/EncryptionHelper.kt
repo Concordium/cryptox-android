@@ -10,7 +10,6 @@ import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
-import java.security.spec.KeySpec
 import javax.crypto.*
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
@@ -25,7 +24,7 @@ object EncryptionHelper {
 
     private const val ENCRYPTION_KEY_SIZE_BITS = 256
     private const val ENCRYPTION_KEY_ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
-    private const val CIPHER_TRANSFORMATION =
+    private const val ENCRYPTION_CIPHER_TRANSFORMATION =
         "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/NoPadding"
 
     /**
@@ -37,7 +36,7 @@ object EncryptionHelper {
     suspend fun encrypt(
         key: ByteArray,
         data: ByteArray,
-        cipherTransformation: String = CIPHER_TRANSFORMATION,
+        cipherTransformation: String = ENCRYPTION_CIPHER_TRANSFORMATION,
     ): EncryptedData = withContext(Dispatchers.Default) {
         try {
             val cipher = Cipher.getInstance(cipherTransformation)

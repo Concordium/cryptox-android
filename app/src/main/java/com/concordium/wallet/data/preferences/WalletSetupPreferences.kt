@@ -46,11 +46,14 @@ constructor(
             password = password,
             data = entropy,
         ) ?: return false
-        return setStringWithResult(
-            PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON,
-            App.appCore.gson.toJson(encryptedEntropy)
-        )
+        return tryToSetEncryptedSeedPhrase(encryptedEntropy)
     }
+
+    fun tryToSetEncryptedSeedPhrase(encryptedSeedEntropy: EncryptedData): Boolean =
+        setStringWithResult(
+            PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON,
+            App.appCore.gson.toJson(encryptedSeedEntropy)
+        )
 
     /**
      * Saves the seed in HEX. This method is **only** to be used in case of
@@ -65,11 +68,14 @@ constructor(
             password = password,
             data = seedHex.hexToBytes(),
         ) ?: return false
-        return setStringWithResult(
+        return tryToSetEncryptedSeedHex(encryptedSeed)
+    }
+
+    fun tryToSetEncryptedSeedHex(encryptedSeed: EncryptedData): Boolean =
+        setStringWithResult(
             PREFKEY_ENCRYPTED_SEED_JSON,
             App.appCore.gson.toJson(encryptedSeed)
         )
-    }
 
     suspend fun getSeedHex(password: String): String {
         val authenticationManager = App.appCore.auth
