@@ -57,6 +57,22 @@ class AppSetupPreferences(
         return getString(PREFKEY_ENCRYPTED_MASTER_KEY_JSON + slot) != null
     }
 
+    fun setLegacyEncryptedPasswordCheck(slot: String, value: EncryptedData) {
+        setJsonSerialized(PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON + slot, value)
+    }
+
+    fun getLegacyEncryptedPasswordCheck(slot: String): EncryptedData? {
+        return getJsonSerialized<EncryptedData>(PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON + slot)
+    }
+
+    fun setLegacyPasswordCheck(slot: String, value: String) {
+        setString(PREFKEY_LEGACY_PASSWORD_CHECK + slot, value)
+    }
+
+    fun getLegacyPasswordCheck(slot: String): String? {
+        return getString(PREFKEY_LEGACY_PASSWORD_CHECK + slot)
+    }
+
     fun getCurrentAuthSlot(): String {
         return getString(PREFKEY_CURRENT_AUTH_SLOT, "default_key")
     }
@@ -81,5 +97,8 @@ class AppSetupPreferences(
         const val PREFKEY_CURRENT_AUTH_SLOT = "PREFKEY_CURRENT_AUTH_SLOT"
         const val PREFKEY_ENCRYPTED_MASTER_KEY_JSON = "PREFKEY_ENCRYPTED_MASTER_KEY_JSON"
         const val PREFKEY_HAS_COMPLETED_INITIAL_SETUP = "PREFKEY_HAS_COMPLETED_INITIAL_SETUP"
+        const val PREFKEY_LEGACY_PASSWORD_CHECK = "PREFKEY_LEGACY_PASSWORD_CHECK"
+        const val PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON =
+            "PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON"
     }
 }

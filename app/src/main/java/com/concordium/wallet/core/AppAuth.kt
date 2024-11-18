@@ -55,7 +55,8 @@ class AppAuth(
         } catch (e: java.lang.Exception) {
             when (e) {
                 is BadPaddingException,
-                is IllegalBlockSizeException -> {
+                is IllegalBlockSizeException,
+                -> {
                     Log.e("Failed to encrypt the data with the generated key. ${e.message}")
                     return false
                 }
@@ -167,19 +168,55 @@ class AppAuth(
     suspend fun getMasterKey(
         password: String,
     ): ByteArray {
-        val encryptedMasterKey = appSetupPreferences.getEncryptedMasterKey(slot)
         val passwordKey = EncryptionHelper.generatePasswordKey(
             password = password.toCharArray(),
             salt = appSetupPreferences.getPasswordKeySalt(slot),
         )
+        return getMasterKey(passwordKey)
+    }
+
+    @Throws(EncryptionException::class)
+    private suspend fun getMasterKey(
+        passwordKey: ByteArray,
+    ): ByteArray {
+        val encryptedMasterKey = appSetupPreferences.getEncryptedMasterKey(slot)
         return EncryptionHelper.decrypt(
             key = passwordKey,
             encryptedData = encryptedMasterKey
         )
     }
 
-    suspend fun checkPassword(password: String): Boolean =
-        runCatching { getMasterKey(password) }.getOrNull() != null
+    suspend fun checkPassword(password: String): Boolean {
+        val passwordKey = EncryptionHelper.generatePasswordKey(
+            password = password.toCharArray(),
+            salt = appSetupPreferences.getPasswordKeySalt(slot),
+        )
+
+        if (runCatching { getMasterKey(passwordKey) }.getOrNull() != null) {
+            return true
+        }
+
+        return checkPasswordLegacy(passwordKey)
+    }
+
+    private suspend fun checkPasswordLegacy(passwordKey: ByteArray): Boolean {
+        // Legacy password check is a string and its encrypted representation,
+        // which must be compared once decrypted.
+        // It was in place before the Two wallets feature.
+
+        val legacyPasswordCheck = appSetupPreferences.getLegacyPasswordCheck(slot)
+            ?: return false
+        val legacyEncryptedPasswordCheck = appSetupPreferences.getLegacyEncryptedPasswordCheck(slot)
+            ?: return false
+        val legacyDecryptedPasswordCheck = runCatching {
+            EncryptionHelper.decrypt(
+                key = passwordKey,
+                encryptedData = legacyEncryptedPasswordCheck,
+            )
+        }.getOrNull() ?: return false
+
+        return String(legacyDecryptedPasswordCheck) == legacyPasswordCheck
+    }
 
     suspend fun encrypt(
         password: String,

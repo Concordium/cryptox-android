@@ -56,6 +56,11 @@ class TwoWalletsMigration(
                     )
                 )
             }
+        oldAuthPreferences.passwordCheck
+            ?.also { newAppSetupPreferences.setLegacyPasswordCheck(authSlot, it) }
+        oldAuthPreferences.encryptedPasswordCheckBase64
+            ?.let(::migrateOldEncryptedData)
+            ?.also { newAppSetupPreferences.setLegacyEncryptedPasswordCheck(authSlot, it) }
 
         // App setup.
         newAppSetupPreferences.setHasCompletedInitialSetup(oldAuthPreferences.hasCompletedInitialSetup)
