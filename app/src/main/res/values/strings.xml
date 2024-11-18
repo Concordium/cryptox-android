@@ -970,19 +970,16 @@
     </plurals>
 
     <string name="welcome_title">Welcome to Concordium CryptoX wallet</string>
-    <string name="welcome_point_1">Safe and Secure</string>
-    <string name="welcome_point_1_details">Trusted by thousands, CryptoX is a secure wallet
-        making the Concordium blockchain accessible to all</string>
+    <string name="welcome_point_1">Safe and secure</string>
+    <string name="welcome_point_1_details">The CryptoX wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
     <string name="welcome_point_2">Easily manage digital assets</string>
-    <string name="welcome_point_2_details">Store, spend and send digital assets like tokens,
-        crypto, unique collectibles</string>
-    <string name="welcome_point_3">Unlimited possibilities</string>
-    <string name="welcome_point_3_details">With CryptoX you can make transactions
-        to invest, earn, sell, play games and more!</string>
+    <string name="welcome_point_2_details">Seamlessly store, spend and send tokens, crypto, and collectibles.</string>
+    <string name="welcome_point_3">For a safer tomorrow</string>
+    <string name="welcome_point_3_details">Access a global ecosystem and contribute to a secure digital future.</string>
     <string name="welcome_get_started">Get started</string>
-    <string name="welcome_terms">I have read and accept
+    <string name="welcome_terms">I have read and understood the
         <a href="#terms">Terms and Conditions</a>
-        and <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
+        and the <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
     <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
     <string name="welcome_promo_activate_and_get">Activate your account and get access to all the features</string>
@@ -1018,15 +1015,15 @@
     <string name="import_wallet_seed_phrase_description">• Consists of 24 words \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet</string>
     <string name="import_wallet_seed">Wallet private key</string>
     <string name="import_wallet_seed_description">• Consists of 128 characters long hexadecimal string \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet \n• Used in older Concordium wallets</string>
-    <string name="welcome_activate_bottom_sheet_title">Activate account</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE WALLET</string>
+    <string name="welcome_activate_bottom_sheet_title">Set up your wallet</string>
+    <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE A NEW WALLET</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_details">You have to complete 3 easy steps to create your wallet:</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_step_1">Create 6-digit passcode</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_step_2">Save seed phrase</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_step_3">Verify identity</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_button">Create Wallet</string>
-    <string name="welcome_activate_bottom_sheet_import_wallet_details">You can import your wallet with a secret seed phrase or a backup file here</string>
-    <string name="welcome_activate_bottom_sheet_import_wallet_button"><u>Import Wallet</u></string>
+    <string name="welcome_activate_bottom_sheet_create_wallet_button">Continue</string>
+    <string name="welcome_activate_bottom_sheet_import_wallet_details">You can import your wallet with a secret seed phrase, wallet private key or a backup file.</string>
+    <string name="welcome_activate_bottom_sheet_import_wallet_button"><u>Import a wallet</u></string>
     <string name="passcode_create_title">Create passcode</string>
     <string name="template_passcode_create_details">%1$d-digit passcode to secure your wallet. Remember it to enter the wallet again</string>
     <string name="passcode_repeat_title">Repeat passcode</string>
