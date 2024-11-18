@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.room
 
 import android.content.Context
+import androidx.collection.LruCache
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
@@ -42,6 +43,16 @@ abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
         const val VERSION_NUMBER = 10
+        private val instances = object : LruCache<String, WalletDatabase>(2) {
+            override fun entryRemoved(
+                evicted: Boolean,
+                key: String,
+                oldValue: WalletDatabase,
+                newValue: WalletDatabase?,
+            ) {
+                oldValue.close()
+            }
+        }
 
         @Deprecated(
             message = "Do not construct instances on your own",
@@ -54,22 +65,26 @@ abstract class WalletDatabase : RoomDatabase() {
             context: Context,
             fileNameSuffix: String = "",
         ): WalletDatabase = synchronized(this) {
-            Room.databaseBuilder(
-                context.applicationContext,
-                WalletDatabase::class.java,
-                "wallet_database$fileNameSuffix"
-            )
-                .fallbackToDestructiveMigration()
-                // See auto migrations in the @Database declaration.
-                .addMigrations(
-                    MIGRATION_3_4,
-                    MIGRATION_4_5,
-                    MIGRATION_5_6,
-                    MIGRATION_7_8,
-                    MIGRATION_8_9,
-                    MIGRATION_9_10(context),
+            val name = "wallet_database$fileNameSuffix"
+
+            instances[name]
+                ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    WalletDatabase::class.java,
+                    "wallet_database$fileNameSuffix"
                 )
-                .build()
+                    .fallbackToDestructiveMigration()
+                    // See auto migrations in the @Database declaration.
+                    .addMigrations(
+                        MIGRATION_3_4,
+                        MIGRATION_4_5,
+                        MIGRATION_5_6,
+                        MIGRATION_7_8,
+                        MIGRATION_8_9,
+                        MIGRATION_9_10(context),
+                    )
+                    .build()
+                    .also { instances.put(name, it) }
         }
     }
 }

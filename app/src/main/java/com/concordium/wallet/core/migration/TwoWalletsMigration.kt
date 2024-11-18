@@ -8,6 +8,7 @@ import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.room.app.AppDatabase
 import com.concordium.wallet.data.room.app.AppWalletDao
 import com.concordium.wallet.data.room.app.AppWalletEntity
@@ -109,19 +110,22 @@ class TwoWalletsMigration(
     suspend fun isAppDatabaseMigrationNeeded(): Boolean =
         appWalletDao.getCount() == 0
 
+    @Suppress("DEPRECATION")
     suspend fun migrateAppDatabaseOnce() {
         check(isAppDatabaseMigrationNeeded()) {
             "The migration is not needed"
         }
 
-        val primaryWalletType =
-            if (oldAuthPreferences.encryptedSeedHexBase64 != null
-                || oldAuthPreferences.encryptedSeedEntropyHexBase64 != null
-            ) {
-                AppWallet.Type.SEED
-            } else {
+        val primaryWalletDatabase = WalletDatabase.getDatabase(context)
+        val primaryWalletType = when {
+            primaryWalletDatabase.identityDao().getCount() > 0
+                    && oldAuthPreferences.encryptedSeedHexBase64 == null
+                    && oldAuthPreferences.encryptedSeedEntropyHexBase64 == null ->
                 AppWallet.Type.FILE
-            }
+
+            else ->
+                AppWallet.Type.SEED
+        }
 
         appWalletDao.insertAndActivate(
             AppWalletEntity(
