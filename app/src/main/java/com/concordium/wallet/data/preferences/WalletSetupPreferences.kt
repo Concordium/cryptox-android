@@ -6,6 +6,7 @@ import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
+import com.walletconnect.util.bytesToHex
 import com.walletconnect.util.hexToBytes
 
 class WalletSetupPreferences
@@ -44,14 +45,16 @@ constructor(
         val entropy = Mnemonics.MnemonicCode(seedPhraseString).toEntropy()
         val encryptedEntropy = App.appCore.auth.encrypt(
             password = password,
-            data = entropy,
+            // The entropy is encoded to hex to keep backward compatibility
+            // with the data encrypted before the Two wallets feature.
+            data = entropy.bytesToHex().toByteArray(),
         ) ?: return false
         return tryToSetEncryptedSeedPhrase(encryptedEntropy)
     }
 
     fun tryToSetEncryptedSeedPhrase(encryptedSeedEntropy: EncryptedData): Boolean =
         setStringWithResult(
-            PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON,
+            PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON,
             App.appCore.gson.toJson(encryptedSeedEntropy)
         )
 
@@ -66,30 +69,33 @@ constructor(
     suspend fun tryToSetEncryptedSeedHex(seedHex: String, password: String): Boolean {
         val encryptedSeed = App.appCore.auth.encrypt(
             password = password,
-            data = seedHex.hexToBytes(),
+            // The seed is not decoded from hex to keep backward compatibility
+            // with the data encrypted before the Two wallets feature.
+            data = seedHex.toByteArray(),
         ) ?: return false
         return tryToSetEncryptedSeedHex(encryptedSeed)
     }
 
-    fun tryToSetEncryptedSeedHex(encryptedSeed: EncryptedData): Boolean =
+    fun tryToSetEncryptedSeedHex(encryptedSeedHex: EncryptedData): Boolean =
         setStringWithResult(
-            PREFKEY_ENCRYPTED_SEED_JSON,
-            App.appCore.gson.toJson(encryptedSeed)
+            PREFKEY_ENCRYPTED_SEED_HEX_JSON,
+            App.appCore.gson.toJson(encryptedSeedHex)
         )
 
     suspend fun getSeedHex(password: String): String {
         val authenticationManager = App.appCore.auth
 
         // Try the encrypted entropy.
-        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON)
             ?.let { authenticationManager.decrypt(password, it) }
+            ?.let { String(it).hexToBytes() }
             ?.let { Mnemonics.MnemonicCode(it).toSeed().toHex() }
             ?.let { return it }
 
         // Try the encrypted seed.
-        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_JSON)
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_HEX_JSON)
             ?.let { authenticationManager.decrypt(password, it) }
-            ?.let { return it.toHex() }
+            ?.let(::String)
 
         error("Failed to get the seed")
     }
@@ -98,8 +104,9 @@ constructor(
      * @see hasEncryptedSeedPhrase
      */
     suspend fun getSeedPhrase(password: String): String =
-        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON)
+        getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON)
             ?.let { App.appCore.auth.decrypt(password, it) }
+            ?.let { String(it).hexToBytes() }
             ?.let {
                 Mnemonics.MnemonicCode(it).words.joinToString(
                     separator = " ",
@@ -109,8 +116,8 @@ constructor(
             ?: error("Failed to get the seed phrase")
 
     fun hasEncryptedSeed(): Boolean =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
-                || getString(PREFKEY_ENCRYPTED_SEED_JSON) != null
+        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON) != null
+                || getString(PREFKEY_ENCRYPTED_SEED_HEX_JSON) != null
 
     /**
      * The seed phrase can be restored only if it has been saved as an entropy.
@@ -118,7 +125,7 @@ constructor(
      * @see getSeedPhrase
      */
     fun hasEncryptedSeedPhrase(): Boolean =
-        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON) != null
+        getString(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON) != null
 
     fun setHasCompletedOnboarding(value: Boolean) {
         setBoolean(PREFKEY_HAS_COMPLETED_ONBOARDING, value)
@@ -138,8 +145,9 @@ constructor(
 
     private companion object {
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
-        const val PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON = "PREFKEY_ENCRYPTED_SEED_ENTROPY_JSON"
-        const val PREFKEY_ENCRYPTED_SEED_JSON = "PREFKEY_ENCRYPTED_SEED_JSON"
+        const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON =
+            "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON"
+        const val PREFKEY_ENCRYPTED_SEED_HEX_JSON = "PREFKEY_ENCRYPTED_SEED_HEX_JSON"
         const val PREFKEY_HAS_COMPLETED_ONBOARDING = "PREFKEY_HAS_COMPLETED_ONBOARDING"
         const val PREFKEY_HAS_SHOWN_INITIAL_ANIMATION = "PREFKEY_HAS_SHOWN_INITIAL_ANIMATION"
     }
