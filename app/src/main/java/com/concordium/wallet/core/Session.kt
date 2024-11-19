@@ -75,7 +75,7 @@ class Session(
         return activeWallet.type == AppWallet.Type.FILE
     }
 
-    fun isAccountsBackedUp(): Boolean {
+    fun areAccountsBackedUp(): Boolean {
         return walletStorage.setupPreferences.areAccountsBackedUp()
     }
 

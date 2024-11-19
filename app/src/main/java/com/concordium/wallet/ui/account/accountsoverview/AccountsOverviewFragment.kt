@@ -275,7 +275,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun updateMissingBackup() = viewModel.viewModelScope.launch(Dispatchers.Main) {
         binding.missingBackup.isVisible = App.appCore.session.run {
-            isAccountsBackupPossible() && !isAccountsBackedUp()
+            isAccountsBackupPossible() && !areAccountsBackedUp()
         }
     }
 
