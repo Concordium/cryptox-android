@@ -92,12 +92,13 @@ constructor(
             ?.let { authenticationManager.decrypt(password, it) }
             ?.let { String(it).hexToBytes() }
             ?.let { Mnemonics.MnemonicCode(it).toSeed().toHex() }
-            ?.let { return it }
+            ?.also { return it }
 
         // Try the encrypted seed.
         getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_HEX_JSON, gson)
             ?.let { authenticationManager.decrypt(password, it) }
             ?.let(::String)
+            ?.also { return it }
 
         error("Failed to get the seed")
     }
