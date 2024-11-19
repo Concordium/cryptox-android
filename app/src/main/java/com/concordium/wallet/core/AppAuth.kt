@@ -196,10 +196,10 @@ class AppAuth(
             return true
         }
 
-        return checkPasswordLegacy(passwordKey)
+        return checkPasswordLegacySavingMasterKey(passwordKey)
     }
 
-    private suspend fun checkPasswordLegacy(passwordKey: ByteArray): Boolean {
+    private suspend fun checkPasswordLegacySavingMasterKey(passwordKey: ByteArray): Boolean {
         // Legacy password check is a string and its encrypted representation,
         // which must be compared once decrypted.
         // It was in place before the Two wallets feature.
@@ -215,6 +215,17 @@ class AppAuth(
             )
         }.getOrNull() ?: return false
 
+        if (String(legacyDecryptedPasswordCheck) == legacyPasswordCheck) {
+            // If the password is correct, then the current master key is the password key.
+            // This was the approach to the encryption before the Two wallets feature.
+            val encryptedMasterKey: EncryptedData = EncryptionHelper.encrypt(
+                key = passwordKey,
+                data = passwordKey,
+            )
+            appSetupPreferences.setEncryptedMasterKey(slot, encryptedMasterKey)
+        } else {
+            return false
+        }
         return String(legacyDecryptedPasswordCheck) == legacyPasswordCheck
     }
 
