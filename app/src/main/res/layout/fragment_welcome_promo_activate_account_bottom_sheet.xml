@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="@string/welcome_activate_bottom_sheet_title"
         android:textAppearance="@style/CCX_Typography_H1"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/ccx_create_wallet_card_background"
         android:padding="16dp">
 
@@ -47,15 +47,7 @@
             app:layout_constraintTop_toTopOf="@id/create_wallet_title_text_view"
             app:srcCompat="@drawable/ccx_ico_star" />
 
-        <TextView
-            android:id="@+id/create_wallet_details_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/welcome_activate_bottom_sheet_create_wallet_details"
-            android:textAppearance="@style/CCX_Typography_Body"
-            android:textColor="@color/ccx_neutral_tint_5"
-            app:layout_constraintTop_toBottomOf="@id/create_wallet_title_text_view" />
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/create_wallet_steps_guide"
@@ -88,7 +80,7 @@
             android:textColor="@color/ccx_neutral_tint_5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/create_wallet_steps_guide"
-            app:layout_constraintTop_toBottomOf="@id/create_wallet_details_text_view" />
+            app:layout_constraintTop_toBottomOf="@id/create_wallet_title_text_view" />
 
         <!-- -->
         <TextView
