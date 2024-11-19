@@ -161,7 +161,7 @@ class TwoWalletsMigration(
             get() = getBoolean("PREFKEY_USE_PASSCODE$authKeyName", false)
 
         val useBiometrics: Boolean
-            get() = getBoolean("PREFKEY_USE_PREFKEY_USE_BIOMETRICS$authKeyName", false)
+            get() = getBoolean("PREFKEY_USE_BIOMETRICS$authKeyName", false)
 
         val passwordCheck: String?
             get() = getString("PREFKEY_PASSWORD_CHECK$authKeyName")
@@ -170,7 +170,7 @@ class TwoWalletsMigration(
             get() = getString("PREFKEY_PASSWORD_CHECK_ENCRYPTED$authKeyName")
 
         val encryptedPasswordBase64: String?
-            get() = getString("PREFKEY_ENCRYPTED_PASSWORD$authKeyName")
+            get() = getString("PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY$authKeyName")
 
         val encryptedPasswordIvBase64: String?
             get() = getString("PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR$authKeyName")

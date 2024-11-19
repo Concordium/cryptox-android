@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.Session
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
@@ -54,10 +54,9 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun checkLogin(password: String) = viewModelScope.launch {
+    fun checkLogin(password: String?) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val res = App.appCore.auth.checkPassword(password)
-        if (res) {
+        if (password != null && App.appCore.auth.checkPassword(password)) {
             loginSuccess()
         } else {
             _passwordErrorLiveData.value =
@@ -71,20 +70,9 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
-        _waitingLiveData.value = true
-        val password = App.appCore.auth
-            .decryptPasswordWithBiometricsCipher(cipher)
-        if (password != null) {
-            loginSuccess()
-        } else {
-            _passwordErrorLiveData.value =
-                Event(
-                    if (App.appCore.auth
-                            .isPasscodeUsed()
-                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
-                )
-            _waitingLiveData.value = false
-        }
+        checkLogin(
+            password = App.appCore.auth.decryptPasswordWithBiometricsCipher(cipher),
+        )
     }
 
     private fun loginSuccess() {
