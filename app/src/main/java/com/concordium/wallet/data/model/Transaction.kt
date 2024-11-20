@@ -65,7 +65,6 @@ data class Transaction(
         return origin?.type == TransactionOriginType.Self
     }
 
-
     fun getTotalAmountForRegular(): BigInteger {
         if (transactionStatus == TransactionStatus.ABSENT) {
             return BigInteger.ZERO
@@ -73,6 +72,10 @@ data class Transaction(
             return if (cost == null) BigInteger.ZERO else -cost
         }
         return total
+    }
+
+    fun getTotalAmountForSmartContractUpdate(): BigInteger {
+        return if (cost == null) BigInteger.ZERO else -cost
     }
 
     fun getDecryptedMemo(): String{
