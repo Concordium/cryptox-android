@@ -49,6 +49,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val _onrampActive = MutableStateFlow(false)
     val onrampActive = _onrampActive.asStateFlow()
 
+    private val _fileWalletMigrationVisible = MutableStateFlow(false)
+    val fileWalletMigrationVisible = _fileWalletMigrationVisible.asSharedFlow()
+
     private val zeroAccountBalances = TotalBalancesData(
         BigInteger.ZERO,
         BigInteger.ZERO,
@@ -110,6 +113,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
+        _fileWalletMigrationVisible.tryEmit(App.appCore.session.activeWallet.type == AppWallet.Type.FILE)
         updateNotificationSubscription()
     }
 
@@ -152,7 +156,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private suspend fun postState(
         state: OnboardingState,
         balances: TotalBalancesData = zeroAccountBalances,
-        notifyWaitingLiveData: Boolean = true
+        notifyWaitingLiveData: Boolean = true,
     ) {
         _stateFlow.emit(state)
         _totalBalanceLiveData.postValue(balances)

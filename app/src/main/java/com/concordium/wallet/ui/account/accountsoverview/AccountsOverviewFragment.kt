@@ -33,6 +33,7 @@ import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
+import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
@@ -229,6 +230,11 @@ class AccountsOverviewFragment : BaseFragment() {
             onboardingViewModel.setIdentity(identity)
         }
 
+        viewModel.fileWalletMigrationVisible.collectWhenStarted(
+            viewLifecycleOwner,
+            binding.fileWalletMigrationDisclaimerLayout::isVisible::set
+        )
+
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
         }
@@ -266,6 +272,10 @@ class AccountsOverviewFragment : BaseFragment() {
 
         eventListener?.let {
             App.appCore.session.addAccountsBackedUpListener(it)
+        }
+
+        binding.fileWalletMigrationDisclaimerLayout.setOnClickListener {
+            startActivity(Intent(requireActivity(), WalletsActivity::class.java))
         }
 
         initializeAnimation()

@@ -108,13 +108,39 @@
                 style="@style/CryptoX_Divider_Horizontal"
                 android:layout_marginTop="16dp" />
 
+            <LinearLayout
+                android:id="@+id/file_wallet_migration_disclaimer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:layout_marginTop="2sp"
+                    android:importantForAccessibility="no"
+                    app:srcCompat="@drawable/ccx_ico_information_circle_contained" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/file_wallet_migration_disclaimer"
+                    android:textAppearance="@style/CCX_Typography_Body"
+                    android:textColor="@color/cryptox_white_main" />
+            </LinearLayout>
+
             <include
                 android:id="@+id/onramp_banner"
                 layout="@layout/list_item_accounts_overview_ccd_onramp_banner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginHorizontal="@dimen/activity_vertical_margin" />
+                android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                android:layout_marginTop="24dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/account_recyclerview"

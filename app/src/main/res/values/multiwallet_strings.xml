@@ -78,4 +78,8 @@
        You can import your wallet with a seed phrase, or a wallet private key.
     </string>
     <string name="seed_wallet_adding_import_wallet">Import Wallet</string>
+    <string name="file_wallet_migration_disclaimer">
+        We recommend that you migrate to a seed phrase wallet
+        in order to make use of the full range of CryptoX features.
+    </string>
 </resources>
