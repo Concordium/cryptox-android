@@ -9,6 +9,7 @@
 ### Fixed
 
 - Crash on launch when Google Play Services is disabled
+- Inconsistent transaction fee for invoke smart contract
 
 ### Changed
 
