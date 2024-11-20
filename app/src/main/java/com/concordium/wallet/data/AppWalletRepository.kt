@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.map
 class AppWalletRepository(
     private val appWalletDao: AppWalletDao,
 ) {
+    // The first (primary) wallet is created by the Two wallets migration.
+
     suspend fun getActiveWallet(): AppWallet =
         appWalletDao.getActive()
             .let(::AppWallet)
