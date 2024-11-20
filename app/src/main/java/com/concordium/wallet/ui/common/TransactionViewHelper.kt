@@ -14,6 +14,7 @@ import com.concordium.wallet.util.DateTimeUtil
 import java.math.BigInteger
 
 object TransactionViewHelper {
+    @SuppressLint("SetTextI18n")
     fun show(
         ta: Transaction,
         titleTextView: TextView,
@@ -69,8 +70,6 @@ object TransactionViewHelper {
             amountTextView.visibility = View.GONE
         }
 
-
-        @SuppressLint("SetTextI18n")
         fun showCostLineWithAmounts() {
             // Subtotal and cost
             if (ta.subtotal != null && ta.cost != null) {
@@ -137,6 +136,11 @@ object TransactionViewHelper {
             // transferToSecret (as simpleTransfer)
             if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
                 setTotalView(ta.getTotalAmountForRegular())
+                showCostLineWithAmounts()
+            } else
+            // update Smart Contract (show the fee as an estimate cost until the transaction is Finalized)
+                if (ta.isSmartContractUpdate()) {
+                setTotalView(ta.getTotalAmountForSmartContractUpdate())
                 showCostLineWithAmounts()
             } else
             // transferToPublic (show only the cost as total, no subtotal or fee on second row - clarified with Concordium)
