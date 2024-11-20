@@ -8,6 +8,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityCcdOnrampAccountsBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 
 class CcdOnrampAccountsActivity : BaseActivity(
     R.layout.activity_ccd_onramp_accounts,
@@ -50,21 +51,32 @@ class CcdOnrampAccountsActivity : BaseActivity(
     }
 
     private fun onAccountClicked(account: Account) {
-        OpenCcdOnrampSiteWithAccountUseCase(
-            site = site,
-            accountAddress = account.address,
-            onAccountAddressCopied = {
-                Toast
-                    .makeText(
-                        this,
-                        getString(R.string.template_ccd_onramp_opening_site, site.name),
-                        Toast.LENGTH_SHORT
-                    )
-                    .show()
-            },
-            context = this
-        ).invoke()
+        if (site.name == "Swipelux") {
+            val swipeluxSite =
+                site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(account.address))
 
+            OpenCcdOnrampSiteWithAccountUseCase(
+                site = swipeluxSite,
+                accountAddress = account.address,
+                onAccountAddressCopied = { },
+                context = this
+            ).invoke()
+        } else {
+            OpenCcdOnrampSiteWithAccountUseCase(
+                site = site,
+                accountAddress = account.address,
+                onAccountAddressCopied = {
+                    Toast
+                        .makeText(
+                            this,
+                            getString(R.string.template_ccd_onramp_opening_site, site.name),
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                },
+                context = this
+            ).invoke()
+        }
         finish()
     }
 

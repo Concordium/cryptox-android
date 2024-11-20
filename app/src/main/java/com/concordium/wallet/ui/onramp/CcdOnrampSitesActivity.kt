@@ -8,6 +8,7 @@ import androidx.lifecycle.get
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 
 class CcdOnrampSitesActivity : BaseActivity(
     R.layout.activity_ccd_onramp_sites,
@@ -56,38 +57,46 @@ class CcdOnrampSitesActivity : BaseActivity(
         val accountAddress = viewModel.accountAddress
 
         if (site.type == CcdOnrampSite.Type.DEX) {
-            OpenCcdOnrampSiteWithAccountUseCase(
-                site = site,
-                accountAddress = "",
-                onAccountAddressCopied = { },
-                context = this,
-            ).invoke()
+            openSite(site = site, accountAddress = "")
         } else {
             if (accountAddress != null) {
-                OpenCcdOnrampSiteWithAccountUseCase(
-                    site = site,
-                    accountAddress = accountAddress,
-                    onAccountAddressCopied = {
-                        Toast
-                            .makeText(
-                                this,
-                                getString(R.string.template_ccd_onramp_opening_site, site.name),
-                                Toast.LENGTH_SHORT
-                            )
-                            .show()
-                    },
-                    context = this,
-                ).invoke()
+                if (site.name == "Swipelux") {
+                    val swipeluxSite =
+                        site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress))
+                    openSite(site = swipeluxSite, accountAddress = accountAddress)
+                } else {
+                    openSite(
+                        site = site,
+                        accountAddress = accountAddress,
+                        onAccountAddressCopied = {
+                            Toast
+                                .makeText(
+                                    this,
+                                    getString(R.string.template_ccd_onramp_opening_site, site.name),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                        }
+                    )
+                }
             } else {
                 val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
-                intent.putExtras(
-                    CcdOnrampAccountsActivity.getBundle(
-                        site = site,
-                    )
-                )
+                intent.putExtras(CcdOnrampAccountsActivity.getBundle(site = site))
                 startActivity(intent)
             }
         }
+    }
+
+    private fun openSite(
+        site: CcdOnrampSite,
+        accountAddress: String,
+        onAccountAddressCopied: () -> Unit = {}
+    ) {
+        OpenCcdOnrampSiteWithAccountUseCase(
+            site = site,
+            accountAddress = accountAddress,
+            onAccountAddressCopied = onAccountAddressCopied,
+            context = this
+        ).invoke()
     }
 
     companion object {
