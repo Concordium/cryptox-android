@@ -17,6 +17,8 @@
  as it is a WalletConnect-based DEX which fetches the wallet data itself.
 - The "," separator sign used on all balances in the wallet - to make it easier to read 
  large numbers
+- Use the new customizable page allowing pre-setting the address and the token for the Swipelux
+ payment gateway
  
 ## [1.3.1] - 2024-11-07
 

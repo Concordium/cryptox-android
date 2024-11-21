@@ -2,7 +2,7 @@ package com.concordium.wallet.ui.onramp
 
 import java.io.Serializable
 
-class CcdOnrampSite(
+data class CcdOnrampSite(
     val name: String,
     val url: String,
     val logoUrl: String,
