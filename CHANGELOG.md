@@ -5,6 +5,7 @@
 ### Added
 
 - Optimized user experience during the onboarding process
+- Ability to have both file and seed phrase wallets in the app and switch between them
 
 ### Fixed
 
@@ -13,11 +14,17 @@
 
 ### Changed
 
-- When going to Concordex DEX, there's no need to select or copy account address, 
- as it is a WalletConnect-based DEX which fetches the wallet data itself.
-- The "," separator sign used on all balances in the wallet - to make it easier to read 
- large numbers
- 
+- When going to Concordex DEX, there's no need to select or copy account address,
+  as it is a WalletConnect-based DEX which fetches the wallet data itself.
+- The "," separator sign used on all balances in the wallet - to make it easier to read
+  large numbers
+
+### Removed
+
+- Ability to create new accounts and identities in a file wallet.
+  We recommend that you migrate to a seed phrase wallet
+  in order to make use of the full range of CryptoX features.
+
 ## [1.3.1] - 2024-11-07
 
 ### Fixed
