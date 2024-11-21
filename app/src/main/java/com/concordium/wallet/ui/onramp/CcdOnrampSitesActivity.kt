@@ -56,15 +56,10 @@ class CcdOnrampSitesActivity : BaseActivity(
         val accountAddress = viewModel.accountAddress
 
         if (site.type == CcdOnrampSite.Type.DEX) {
-            OpenCcdOnrampSiteWithAccountUseCase(
-                site = site,
-                accountAddress = "",
-                onAccountAddressCopied = { },
-                context = this,
-            ).invoke()
+            openSite(site = site)
         } else {
             if (accountAddress != null) {
-                OpenCcdOnrampSiteWithAccountUseCase(
+                openSite(
                     site = site,
                     accountAddress = accountAddress,
                     onAccountAddressCopied = {
@@ -73,21 +68,28 @@ class CcdOnrampSitesActivity : BaseActivity(
                                 this,
                                 getString(R.string.template_ccd_onramp_opening_site, site.name),
                                 Toast.LENGTH_SHORT
-                            )
-                            .show()
-                    },
-                    context = this,
-                ).invoke()
+                            ).show()
+                    }
+                )
             } else {
                 val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
-                intent.putExtras(
-                    CcdOnrampAccountsActivity.getBundle(
-                        site = site,
-                    )
-                )
+                intent.putExtras(CcdOnrampAccountsActivity.getBundle(site = site))
                 startActivity(intent)
             }
         }
+    }
+
+    private fun openSite(
+        site: CcdOnrampSite,
+        accountAddress: String = "",
+        onAccountAddressCopied: () -> Unit = {}
+    ) {
+        OpenCcdOnrampSiteWithAccountUseCase(
+            site = site,
+            accountAddress = accountAddress,
+            onAccountAddressCopied = onAccountAddressCopied,
+            context = this
+        ).invoke()
     }
 
     companion object {
