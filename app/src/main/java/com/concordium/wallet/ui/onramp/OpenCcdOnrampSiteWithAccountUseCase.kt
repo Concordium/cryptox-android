@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 
 class OpenCcdOnrampSiteWithAccountUseCase(
     val site: CcdOnrampSite,
@@ -23,7 +24,12 @@ class OpenCcdOnrampSiteWithAccountUseCase(
         onAccountAddressCopied()
         clipboardManager.setPrimaryClip(clipData)
 
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(site.url))
-        context.startActivity(Intent.createChooser(browserIntent, site.name))
+        val launchSite = if (site.name == "Swipelux")
+            site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress))
+        else
+            site
+
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(launchSite.url))
+        context.startActivity(Intent.createChooser(browserIntent, launchSite.name))
     }
 }

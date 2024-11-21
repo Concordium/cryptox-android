@@ -8,7 +8,6 @@ import androidx.lifecycle.get
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 
 class CcdOnrampSitesActivity : BaseActivity(
     R.layout.activity_ccd_onramp_sites,
@@ -60,24 +59,18 @@ class CcdOnrampSitesActivity : BaseActivity(
             openSite(site = site, accountAddress = "")
         } else {
             if (accountAddress != null) {
-                if (site.name == "Swipelux") {
-                    val swipeluxSite =
-                        site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress))
-                    openSite(site = swipeluxSite, accountAddress = accountAddress)
-                } else {
-                    openSite(
-                        site = site,
-                        accountAddress = accountAddress,
-                        onAccountAddressCopied = {
-                            Toast
-                                .makeText(
-                                    this,
-                                    getString(R.string.template_ccd_onramp_opening_site, site.name),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                        }
-                    )
-                }
+                openSite(
+                    site = site,
+                    accountAddress = accountAddress,
+                    onAccountAddressCopied = {
+                        Toast
+                            .makeText(
+                                this,
+                                getString(R.string.template_ccd_onramp_opening_site, site.name),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                    }
+                )
             } else {
                 val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
                 intent.putExtras(CcdOnrampAccountsActivity.getBundle(site = site))
