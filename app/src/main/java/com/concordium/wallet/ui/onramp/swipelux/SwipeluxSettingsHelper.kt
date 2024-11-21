@@ -17,7 +17,7 @@ object SwipeluxSettingsHelper {
                 processing = "#FFA400",
                 warning = "#ED0A34",
                 success = "#58CB4E",
-                link = "F24F21"
+                link = "#F24F21"
             ),
             defaultValues = DefaultValues(
                 targetAddress = DefaultValue(

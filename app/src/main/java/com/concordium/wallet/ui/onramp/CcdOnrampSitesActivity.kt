@@ -56,7 +56,7 @@ class CcdOnrampSitesActivity : BaseActivity(
         val accountAddress = viewModel.accountAddress
 
         if (site.type == CcdOnrampSite.Type.DEX) {
-            openSite(site = site, accountAddress = "")
+            openSite(site = site)
         } else {
             if (accountAddress != null) {
                 openSite(
@@ -81,7 +81,7 @@ class CcdOnrampSitesActivity : BaseActivity(
 
     private fun openSite(
         site: CcdOnrampSite,
-        accountAddress: String,
+        accountAddress: String = "",
         onAccountAddressCopied: () -> Unit = {}
     ) {
         OpenCcdOnrampSiteWithAccountUseCase(
