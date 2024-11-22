@@ -54,6 +54,8 @@ Update the version in `main`, tag the commit with the version name and push the 
 
 APKs can be downloaded from the GitHub workflow artifacts or from the Firebase console.
 
+This project is tested with BrowserStack.
+
 ### Building for release
 Builds for releases tagged with semver version (`X.Y.Z`) or release candidate (`-rc.X`) 
 are assembled by the [corresponding pipeline](.github/workflows/release_build.yml). 
