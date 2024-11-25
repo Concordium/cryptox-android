@@ -34,6 +34,7 @@ class InMemoryCookieJar : CookieJar {
 
             return this.cookie.name == other.cookie.name
                     && this.cookie.domain == other.cookie.domain
+                    && this.cookie.path == other.cookie.path
                     && this.cookie.secure == other.cookie.secure
                     && this.cookie.hostOnly == other.cookie.hostOnly
         }
