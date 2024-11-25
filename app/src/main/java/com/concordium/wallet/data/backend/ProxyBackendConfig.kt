@@ -2,13 +2,13 @@ package com.concordium.wallet.data.backend
 
 import com.concordium.wallet.AppConfig
 import com.google.gson.Gson
+import com.ihsanbal.logging.Level
+import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import com.ihsanbal.logging.Level
-import com.ihsanbal.logging.LoggingInterceptor
 
 class ProxyBackendConfig(val gson: Gson) {
 
@@ -34,17 +34,16 @@ class ProxyBackendConfig(val gson: Gson) {
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .cache(null)
+            .cookieJar(InMemoryCookieJar())
             .addInterceptor(ModifyHeaderInterceptor())
             .addInterceptor(
                 LoggingInterceptor.Builder()
                     .setLevel(Level.BASIC)
                     .log(Platform.INFO)
-//                    .logger(LoggerX())
                     .request("Request")
                     .response("Response")
                     .addHeader("Accept", "application/json")
                     .addHeader("Content-Type", "application/json")
-//                    .addHeader("Authorization", t)
                     .build()
             )
 
