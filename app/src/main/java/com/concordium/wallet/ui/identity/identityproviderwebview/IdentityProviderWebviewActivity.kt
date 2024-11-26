@@ -194,7 +194,9 @@ class IdentityProviderWebviewActivity : BaseActivity(
     private fun gotoIdentityConfirmed(identity: Identity) {
         finish()
         if (showForFirstIdentity) {
+            finishAffinity()
             val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         } else {
             val intent = Intent(this, IdentityConfirmedActivity::class.java)

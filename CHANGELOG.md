@@ -11,6 +11,7 @@
 
 - Crash on launch when Google Play Services is disabled
 - Inconsistent transaction fee for invoke smart contract
+- Crashing when first launching the app offline 
 
 ### Changed
 

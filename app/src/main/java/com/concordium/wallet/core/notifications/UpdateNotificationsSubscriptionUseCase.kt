@@ -29,16 +29,28 @@ class UpdateNotificationsSubscriptionUseCase(
         context = App.appContext,
     )
 
+    /**
+     * @return **true** on successful update
+     */
     suspend operator fun invoke(
         isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
         isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled
     ): Boolean {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
-        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
-        var fcmToken = ""
+        val fcmToken = when (googleApiAvailability.isGooglePlayServicesAvailable(context)) {
+            ConnectionResult.SUCCESS -> {
+                try {
+                    FirebaseMessaging.getInstance().token.await()
+                } catch (e: Exception) {
+                    Log.e("token_not_available", e)
+                    return false
+                }
+            }
 
-        if (resultCode == ConnectionResult.SUCCESS) {
-            fcmToken = FirebaseMessaging.getInstance().token.await()
+            else -> {
+                Log.e("google_api_not_available")
+                return false
+            }
         }
 
         val accounts = accountRepository.getAllDone()

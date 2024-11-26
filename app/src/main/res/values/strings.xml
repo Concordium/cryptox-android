@@ -111,9 +111,7 @@
     <string name="identities_overview_identity_later">Later</string>
     <string name="identities_overview_identity_rejected_title">Identity rejected</string>
     <string name="identities_overview_identity_rejected_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nRejected identity requests cannot be resolved, so the rejected identity will be discarded, after dismissing this notification.\n\nDo you want to make another request now?</string>
-    <string name="identities_overview_identity_rejected_first_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nFor security reasons rejected identity requests cannot be resolved, which means you have to submit a new request.</string>
     <string name="identities_overview_identity_request_another">Request another identity</string>
-    <string name="identities_overview_identity_make_new">Make new identity request</string>
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>
     <string name="identity_details_attribute_header">Identity data</string>
@@ -138,7 +136,6 @@
     <string name="identity_confirmed_failed">Identity issuance failed</string>
     <string name="identity_confirmed_finish_button">@string/finish</string>
     <string name="identity_confirmed_create_new_account">Create new account</string>
-    <string name="identity_confirmed_first_account_creation_notice">Once your verification request is approved you can create your first account</string>
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>
     <string name="identity_attribute_last_name">Last name</string>
@@ -173,7 +170,6 @@
     <string name="accounts_overview_create_identity">Verify identity</string>
     <string name="accounts_overview_create_account">Create account</string>
     <string name="accounts_overview_wallet_total">Wallet total</string>
-    <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
     <string name="accounts_overview_balance_at_disposal">at disposal</string>
     <string name="total_amount">Total amount</string>
     <string name="unshielding_notice_title">Transaction Shielding is going away</string>
@@ -374,7 +370,6 @@
     <string name="error_adding_account_duplicate">This account was not added to the address book, as it was already there.</string>
     <string name="error_database">You need to uninstall the app, and reinstall it, in order to continue</string>
     <string name="error_database_close">Close</string>
-    <string name="accounts_overview_total_at_disposal">Total currently at disposal</string>
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
     <string name="accounts_overview_total_details_disposal_amount">at disposal</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
@@ -631,7 +626,6 @@
     <string name="delegation_update_subtitle3">Cooldowns</string>
   
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
-    <string name="delegation_remove_subtitle2">Update during the cooldown period</string>
 
     <string name="delegation_status_title">Delegation status</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
@@ -817,10 +811,6 @@
     <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
     <string name="baker_status_baker_delegation_pool_status_closed_for_new">Closed for new delegation</string>
     <string name="baker_status_baker_metadata_url">Metadata URL</string>
-    <string name="baker_status_baker_effective_remove">The validator will be deregistered, and the stake will be unlocked on the public balance of the account.</string>
-    <string name="baker_status_baker_effective_time">%1$s at %2$s</string>
-    <string name="baker_status_baker_take_effect_on">The following changes will take effect on</string>
-    <string name="baker_status_baker_stake_lowered_to">Validator stake will be lowered to</string>
 
     <string name="baker_registration_amount_title">Register validator</string>
     <string name="baker_registration_amount_explain">Do you want to automatically add your validating rewards to your validator stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
@@ -921,13 +911,6 @@
     <string name="intro_next">Next</string>
     <string name="intro_continue">Continue</string>
 
-    <!-- Identity intro flow -->
-    <string name="identity_intro_flow_title">Introduction</string>
-    <string name="identity_intro_flow_subtitle1">Welcome to CryptoX</string>
-    <string name="identity_intro_flow_subtitle2">A Concordium Identity</string>
-    <string name="identity_intro_flow_subtitle3">Getting verified</string>
-    <string name="identity_intro_flow_subtitle4">Your first account</string>
-
     <!-- Account keys export-->
     <string name="export_account_keys_title">Export Account Keys</string>
     <string name="export_account_keys_reveal_explain">Make sure to keep the keys safe, because they can be used to access your accounts.</string>
@@ -969,7 +952,6 @@
         <item quantity="other">Showing %1$d items</item>
     </plurals>
 
-    <string name="welcome_title">Welcome to Concordium CryptoX wallet</string>
     <string name="welcome_point_1">Safe and secure</string>
     <string name="welcome_point_1_details">The CryptoX wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
     <string name="welcome_point_2">Easily manage digital assets</string>
@@ -982,12 +964,6 @@
         and the <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
     <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
-    <string name="welcome_promo_activate_and_get">Activate your account and get access to all the features</string>
-    <string name="welcome_promo_watch_video">Watch video</string>
-    <string name="welcome_promo_activate_account">Activate account</string>
-    <string name="welcome_promo_ask_ai">Ask our AI assistant anything</string>
-    <string name="welcome_promo_ask_ai_example">e.g “How do I stake my CCDs?”</string>
-    <string name="welcome_promo_ai_prompt_hint">Type your prompt here…</string>
     <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
     <string name="notifications_permission_details">Find out when you get or receive payment requests.
         Get updates on new features, discount and promo</string>
@@ -1013,7 +989,6 @@
     <string name="import_wallet_seed_description">• Consists of 128 characters long hexadecimal string \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet \n• Used in older Concordium wallets</string>
     <string name="welcome_activate_bottom_sheet_title">Set up your wallet</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE A NEW WALLET</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_details">You have to complete 3 easy steps to create your wallet:</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_step_1">Create 6-digit passcode</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_step_2">Save seed phrase</string>
     <string name="welcome_activate_bottom_sheet_create_wallet_step_3">Verify identity</string>
