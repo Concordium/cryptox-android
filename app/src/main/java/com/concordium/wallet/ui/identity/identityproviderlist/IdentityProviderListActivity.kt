@@ -11,7 +11,6 @@ import com.concordium.wallet.databinding.ActivityIdentityProviderListBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.concordium.wallet.ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebViewActivity
 import com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebviewActivity
 
 class IdentityProviderListActivity : BaseActivity(
@@ -93,16 +92,9 @@ class IdentityProviderListActivity : BaseActivity(
     }
 
     private fun initializeList() {
-        identityProviderAdapter.setOnItemClickListener(object :
-            IdentityProviderAdapter.OnItemClickListener {
-            override fun onItemClicked(item: IdentityProvider) {
-                viewModel.selectedIdentityVerificationItem(item)
-            }
-
-            override fun onItemActionClicked(item: IdentityProvider) {
-                gotoIdentityProviderPolicyWebView(item)
-            }
-        })
+        identityProviderAdapter.setOnItemClickListener { item: IdentityProvider ->
+            viewModel.selectedIdentityVerificationItem(item)
+        }
         binding.recyclerview.adapter = identityProviderAdapter
 
         viewModel.identityProviderList.observe(this, identityProviderAdapter::setData)
@@ -120,13 +112,6 @@ class IdentityProviderListActivity : BaseActivity(
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }
-    }
-
-    private fun gotoIdentityProviderPolicyWebView(identityProvider: IdentityProvider) {
-        identityProvider.metadata
-        val intent = Intent(this, IdentityProviderPolicyWebViewActivity::class.java)
-        intent.putExtra(IdentityProviderPolicyWebViewActivity.EXTRA_URL, "https://google.com")
-        startActivity(intent)
     }
 
     private fun showWaiting(waiting: Boolean) {

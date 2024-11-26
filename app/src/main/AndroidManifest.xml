@@ -237,18 +237,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
         <activity
-            android:name=".ui.identity.identitycreate.IdentityIntroFlow"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/CCX_Screen" />
-        <activity
-            android:name=".ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebViewActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
             android:exported="true"
