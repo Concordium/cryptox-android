@@ -5,12 +5,12 @@ import android.content.Context
 import com.concordium.wallet.core.notifications.AnnouncementNotificationManager
 import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.util.Log
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
-import com.walletconnect.android.relay.ConnectionType
-import com.walletconnect.android.relay.NetworkClientTimeout
-import com.walletconnect.sign.client.Sign
-import com.walletconnect.sign.client.SignClient
+import com.reown.android.Core
+import com.reown.android.CoreClient
+import com.reown.android.relay.ConnectionType
+import com.reown.android.relay.NetworkClientTimeout
+import com.reown.sign.client.Sign
+import com.reown.sign.client.SignClient
 import java.util.concurrent.TimeUnit
 
 class App : Application() {

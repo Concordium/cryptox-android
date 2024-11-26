@@ -26,10 +26,10 @@ import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreD
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
-import com.walletconnect.sign.client.Sign
-import com.walletconnect.sign.client.SignClient
+import com.reown.android.Core
+import com.reown.android.CoreClient
+import com.reown.sign.client.Sign
+import com.reown.sign.client.SignClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -202,7 +202,7 @@ private constructor(
         Log.d(
             "initialized:" +
                     "\npairingsCount=${CoreClient.Pairing.getPairings().size}," +
-                    "\nsettledSessionsCount=${SignClient.getListOfSettledSessions().size}"
+                    "\nactiveSessionsCount=${SignClient.getListOfActiveSessions().size}"
         )
 
         handleNextOldestPendingSessionRequest()
@@ -314,36 +314,38 @@ private constructor(
         connectionAvailabilityFlow.tryEmit(state.isAvailable)
     }
 
-    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) =
-        viewModelScope.launch {
-            defaultWalletDelegate.onSessionProposal(sessionProposal)
+    override fun onSessionProposal(
+        sessionProposal: Sign.Model.SessionProposal,
+        verifyContext: Sign.Model.VerifyContext
+    ) = viewModelScope.launch {
+        defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
 
-            // Find a single allowed namespace and chain.
-            val singleNamespaceEntry =
-                sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
-                    namespace.chains?.any { chain ->
-                        allowedChains.contains(chain)
-                    } == true
-                }
-            val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
-                allowedChains.contains(chain)
+        // Find a single allowed namespace and chain.
+        val singleNamespaceEntry =
+            sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
+                namespace.chains?.any { chain ->
+                    allowedChains.contains(chain)
+                } == true
             }
+        val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
+            allowedChains.contains(chain)
+        }
 
-            val proposerPublicKey = sessionProposal.proposerPublicKey
+        val proposerPublicKey = sessionProposal.proposerPublicKey
 
-            if (singleNamespaceEntry == null || singleNamespaceChain == null) {
-                Log.e("cant_find_supported_chain")
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.NoSupportedChains
-                    )
+        if (singleNamespaceEntry == null || singleNamespaceChain == null) {
+            Log.e("cant_find_supported_chain")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.NoSupportedChains
                 )
-                rejectSession(
-                    proposerPublicKey,
-                    "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
-                )
-                return@launch
-            }
+            )
+            rejectSession(
+                proposerPublicKey,
+                "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
+            )
+            return@launch
+        }
 
             // Check if the proposer requests unsupported methods, and reject the session proposal
             // if that is the case.
@@ -525,8 +527,11 @@ private constructor(
         )
     }
 
-    override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
-        defaultWalletDelegate.onSessionRequest(sessionRequest)
+    override fun onSessionRequest(
+        sessionRequest: Sign.Model.SessionRequest,
+        verifyContext: Sign.Model.VerifyContext
+    ) {
+        defaultWalletDelegate.onSessionRequest(sessionRequest, verifyContext)
 
         val sessionRequestPeerMetadata: Core.Model.AppMetaData? = sessionRequest.peerMetaData
         if (sessionRequestPeerMetadata == null) {
@@ -555,7 +560,7 @@ private constructor(
             // We do not want to queue more than one request for each topic (dApp),
             // as the dApp may be broken and spam requests.
             // At this point, topic pending requests may already contain this sessionRequest.
-            val topicPendingRequests = SignClient.getPendingRequests(sessionRequest.topic)
+            val topicPendingRequests = SignClient.getPendingSessionRequests(sessionRequest.topic)
             if (topicPendingRequests.isEmpty() || topicPendingRequests.size == 1) {
                 Log.d(
                     "session_request_to_be_handled_later:" +
@@ -571,7 +576,7 @@ private constructor(
 
                 respondError(
                     message = "Subsequent requests are rejected until the current one is handled: " +
-                            topicPendingRequests.first().requestId,
+                            topicPendingRequests.first().request.id,
                     sessionRequestId = sessionRequest.request.id,
                     sessionRequestTopic = sessionRequest.topic,
                 )
@@ -624,7 +629,7 @@ private constructor(
 
         // Find the session that the request matches. The session will allow us to extract
         // the account that the request is for.
-        val currentSession = SignClient.getSettledSessionByTopic(topic)
+        val currentSession = SignClient.getActiveSessionByTopic(topic)
         if (currentSession == null) {
             Log.e("Received a request for a topic where we did not find the session: Topic=$topic")
 
@@ -753,14 +758,14 @@ private constructor(
     }
 
     private fun handleNextOldestPendingSessionRequest() {
-        val settledSessions = SignClient.getListOfSettledSessions()
-        val pendingRequestWithMetaData: Pair<Sign.Model.PendingRequest, Core.Model.AppMetaData?>? =
-            settledSessions
+        val activeSessions = SignClient.getListOfActiveSessions()
+        val pendingRequestWithMetaData: Pair<Sign.Model.SessionRequest, Core.Model.AppMetaData?>? =
+            activeSessions
                 .map { session ->
-                    SignClient.getPendingRequests(session.topic)
+                    SignClient.getPendingSessionRequests(session.topic)
                         .filter { pendingRequest ->
                             // Do not include requests just handled.
-                            pendingRequest.requestId !in handledRequests
+                            pendingRequest.request.id !in handledRequests
                         }
                         .map { pendingRequest ->
                             pendingRequest to session.metaData
@@ -768,10 +773,10 @@ private constructor(
                 }
                 .flatten()
                 .minByOrNull { (pendingRequest, _) ->
-                    pendingRequest.requestId
+                    pendingRequest.request.id
                 }
 
-        val pendingRequest: Sign.Model.PendingRequest? = pendingRequestWithMetaData?.first
+        val pendingRequest: Sign.Model.SessionRequest? = pendingRequestWithMetaData?.first
         if (pendingRequest == null) {
             Log.d("no_pending_requests_left")
             return
@@ -781,21 +786,21 @@ private constructor(
         if (peerMetaData == null) {
             Log.d(
                 "pending_request_has_no_metadata:" +
-                        "\nrequestId=${pendingRequest.requestId}"
+                        "\nrequestId=${pendingRequest.request.id}"
             )
             return
         }
 
         Log.d(
             "handling_pending_request:" +
-                    "\nrequestId=${pendingRequest.requestId}"
+                    "\nrequestId=${pendingRequest.request.id}"
         )
 
         handleSessionRequest(
             topic = pendingRequest.topic,
-            id = pendingRequest.requestId,
-            method = pendingRequest.method,
-            params = pendingRequest.params,
+            id = pendingRequest.request.id,
+            method = pendingRequest.request.method,
+            params = pendingRequest.request.params,
             peerMetadata = peerMetaData,
         )
     }
