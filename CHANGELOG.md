@@ -10,7 +10,8 @@
 
 - Crash on launch when Google Play Services is disabled
 - Inconsistent transaction fee for invoke smart contract
-- Crashing when first launching the app offline 
+- Crashing when first launching the app offline
+- Not receiving CIS-2 transaction notifications when they are disabled for CCD transactions
 
 ### Changed
 
