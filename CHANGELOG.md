@@ -6,6 +6,17 @@
 
 - Optimized user experience during the onboarding process
 
+### Changed
+
+- When going to Concordex DEX, there's no need to select or copy account address,
+  as it is a WalletConnect-based DEX which fetches the wallet data itself.
+- The "," separator sign used on all balances in the wallet - to make it easier to read
+  large numbers
+- Use the new customizable page allowing pre-setting the address and the token for the Swipelux
+  payment gateway
+
+## [1.3.2] - 2024-11-27
+
 ### Fixed
 
 - Crash on launch when Google Play Services is disabled
@@ -13,15 +24,6 @@
 - Crashing when first launching the app offline
 - Not receiving CIS-2 transaction notifications when they are disabled for CCD transactions
 
-### Changed
-
-- When going to Concordex DEX, there's no need to select or copy account address, 
- as it is a WalletConnect-based DEX which fetches the wallet data itself.
-- The "," separator sign used on all balances in the wallet - to make it easier to read 
- large numbers
-- Use the new customizable page allowing pre-setting the address and the token for the Swipelux
- payment gateway
- 
 ## [1.3.1] - 2024-11-07
 
 ### Fixed
@@ -147,7 +149,9 @@
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.3.1...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.3.2...HEAD
+
+[1.3.2]: https://github.com/Concordium/cryptox-android/compare/1.3.1...1.3.2
 
 [1.3.1]: https://github.com/Concordium/cryptox-android/compare/1.3.0...1.3.1
 
