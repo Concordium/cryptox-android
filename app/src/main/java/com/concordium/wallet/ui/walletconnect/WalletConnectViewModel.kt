@@ -306,7 +306,9 @@ private constructor(
     private fun onRequestWcUriReceived() {
         // When receiving the request URI, enter the request waiting state.
         // The request will arrive soon over the websocket.
-        mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
+        if (state !is State.SessionRequestReview) {
+            mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
+        }
     }
 
     override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
@@ -532,7 +534,6 @@ private constructor(
         verifyContext: Sign.Model.VerifyContext
     ) {
         defaultWalletDelegate.onSessionRequest(sessionRequest, verifyContext)
-
         val sessionRequestPeerMetadata: Core.Model.AppMetaData? = sessionRequest.peerMetaData
         if (sessionRequestPeerMetadata == null) {
             Log.e("missing_app_metadata_in_session_request")
@@ -545,42 +546,40 @@ private constructor(
             return
         }
 
-        if (state is State.Idle || state is State.WaitingForSessionRequest) {
-            // Only handle the request if not doing anything else.
-            // Otherwise, the request will be handled as a pending one
-            // once the current affair is finished.
-            handleSessionRequest(
-                topic = sessionRequest.topic,
-                id = sessionRequest.request.id,
-                method = sessionRequest.request.method,
-                params = sessionRequest.request.params,
-                peerMetadata = sessionRequestPeerMetadata
-            )
-        } else {
-            // We do not want to queue more than one request for each topic (dApp),
-            // as the dApp may be broken and spam requests.
-            // At this point, topic pending requests may already contain this sessionRequest.
-            val topicPendingRequests = SignClient.getPendingSessionRequests(sessionRequest.topic)
-            if (topicPendingRequests.isEmpty() || topicPendingRequests.size == 1) {
-                Log.d(
-                    "session_request_to_be_handled_later:" +
-                            "\nrequestId=${sessionRequest.request.id}" +
-                            "\nrequestTopic=${sessionRequest.topic}"
+        // We do not want to queue more than one request for each topic (dApp),
+        // as the dApp may be broken and spam requests.
+        // At this point, topic pending requests may already contain this sessionRequest.
+        val topicPendingRequests = SignClient.getPendingSessionRequests(sessionRequest.topic)
+        if (topicPendingRequests.isEmpty() || topicPendingRequests.size == 1) {
+            // Only handle the request if the session ID is different from the current one
+            // Otherwise, ignore the re-processing call
+            if (sessionRequest.request.id != this.sessionRequestId) {
+                handleSessionRequest(
+                    topic = sessionRequest.topic,
+                    id = sessionRequest.request.id,
+                    method = sessionRequest.request.method,
+                    params = sessionRequest.request.params,
+                    peerMetadata = sessionRequestPeerMetadata
                 )
             } else {
                 Log.w(
-                    "received_next_session_request_in_topic_before_current_is_handled:" +
-                            "\nrequestId=${sessionRequest.request.id}" +
-                            "\nrequestTopic=${sessionRequest.topic}"
-                )
-
-                respondError(
-                    message = "Subsequent requests are rejected until the current one is handled: " +
-                            topicPendingRequests.first().request.id,
-                    sessionRequestId = sessionRequest.request.id,
-                    sessionRequestTopic = sessionRequest.topic,
+                    "received_next_session_request_in_topic_with_the_same_id" +
+                    "\ndon't handle the request again"
                 )
             }
+        } else {
+            Log.w(
+                "received_next_session_request_in_topic_before_current_is_handled:" +
+                        "\nrequestId=${topicPendingRequests.last().request.id}" +
+                        "\nrequestTopic=${topicPendingRequests.last().topic}"
+            )
+
+            respondError(
+                message = "Subsequent requests are rejected until the current one is handled: " +
+                        topicPendingRequests.first().request.id,
+                sessionRequestId = topicPendingRequests.last().request.id,
+                sessionRequestTopic = topicPendingRequests.last().topic,
+            )
         }
     }
 
@@ -759,13 +758,14 @@ private constructor(
 
     private fun handleNextOldestPendingSessionRequest() {
         val activeSessions = SignClient.getListOfActiveSessions()
-        val pendingRequestWithMetaData: Pair<Sign.Model.SessionRequest, Core.Model.AppMetaData?>? =
+        val pendingRequestWithMetaData: Pair<Sign.Model.PendingRequest, Core.Model.AppMetaData?>? =
             activeSessions
                 .map { session ->
                     SignClient.getPendingSessionRequests(session.topic)
+                        .filterIsInstance<Sign.Model.PendingRequest>() // Ensure the type matches
                         .filter { pendingRequest ->
                             // Do not include requests just handled.
-                            pendingRequest.request.id !in handledRequests
+                            pendingRequest.requestId !in handledRequests
                         }
                         .map { pendingRequest ->
                             pendingRequest to session.metaData
@@ -773,10 +773,10 @@ private constructor(
                 }
                 .flatten()
                 .minByOrNull { (pendingRequest, _) ->
-                    pendingRequest.request.id
+                    pendingRequest.requestId
                 }
 
-        val pendingRequest: Sign.Model.SessionRequest? = pendingRequestWithMetaData?.first
+        val pendingRequest: Sign.Model.PendingRequest? = pendingRequestWithMetaData?.first
         if (pendingRequest == null) {
             Log.d("no_pending_requests_left")
             return
@@ -786,21 +786,21 @@ private constructor(
         if (peerMetaData == null) {
             Log.d(
                 "pending_request_has_no_metadata:" +
-                        "\nrequestId=${pendingRequest.request.id}"
+                        "\nrequestId=${pendingRequest.requestId}"
             )
             return
         }
 
         Log.d(
             "handling_pending_request:" +
-                    "\nrequestId=${pendingRequest.request.id}"
+                    "\nrequestId=${pendingRequest.requestId}"
         )
 
         handleSessionRequest(
             topic = pendingRequest.topic,
-            id = pendingRequest.request.id,
-            method = pendingRequest.request.method,
-            params = pendingRequest.request.params,
+            id = pendingRequest.requestId,
+            method = pendingRequest.method,
+            params = pendingRequest.params,
             peerMetadata = peerMetaData,
         )
     }

@@ -62,6 +62,7 @@ class App : Application() {
             networkClientTimeout = NetworkClientTimeout(40, TimeUnit.SECONDS),
             application = this,
             metaData = appMetaData,
+            telemetryEnabled = false,
             onError = { error ->
                 println("WalletConnect -> CORE ERROR ${error.throwable.stackTraceToString()}")
             }
