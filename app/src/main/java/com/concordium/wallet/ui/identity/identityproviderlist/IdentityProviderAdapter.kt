@@ -56,9 +56,8 @@ class IdentityProviderAdapter(
     //region OnItemClickListener
     //************************************************************
 
-    interface OnItemClickListener {
+    fun interface OnItemClickListener {
         fun onItemClicked(item: IdentityProvider)
-        fun onItemActionClicked(item: IdentityProvider)
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {

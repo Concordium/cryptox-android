@@ -21,7 +21,7 @@ class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
     private val notificationsPreferences: NotificationsPreferences,
     private val notificationsBackend: NotificationsBackend,
-    private val application: Application
+    private val application: Application,
 ) {
     constructor(application: Application) : this(
         accountRepository = WalletDatabase.getDatabase(application).accountDao()
@@ -31,16 +31,28 @@ class UpdateNotificationsSubscriptionUseCase(
         application = application
     )
 
+    /**
+     * @return **true** on successful update
+     */
     suspend operator fun invoke(
         isCcdTxEnabled: Boolean = notificationsPreferences.areCcdTxNotificationsEnabled,
-        isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled
+        isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled,
     ): Boolean {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
-        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(application)
-        var fcmToken = ""
+        val fcmToken = when (googleApiAvailability.isGooglePlayServicesAvailable(application)) {
+            ConnectionResult.SUCCESS -> {
+                try {
+                    FirebaseMessaging.getInstance().token.await()
+                } catch (e: Exception) {
+                    Log.e("token_not_available", e)
+                    return false
+                }
+            }
 
-        if (resultCode == ConnectionResult.SUCCESS) {
-            fcmToken = FirebaseMessaging.getInstance().token.await()
+            else -> {
+                Log.e("google_api_not_available")
+                return false
+            }
         }
 
         val accounts = accountRepository.getAllDone()

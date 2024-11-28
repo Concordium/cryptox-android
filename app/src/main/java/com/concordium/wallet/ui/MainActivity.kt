@@ -19,7 +19,6 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
-import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.news.NewsOverviewFragment
@@ -36,7 +35,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     IdentityStatusDelegate by IdentityStatusDelegateImpl() {
 
     companion object {
-        const val EXTRA_CREATE_FIRST_IDENTITY = "EXTRA_CREATE_FIRST_IDENTITY"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
     }
 
@@ -75,10 +73,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
 
         handlePossibleWalletConnectUri(intent)
-
-        if (intent.getBooleanExtra(EXTRA_CREATE_FIRST_IDENTITY, false)) {
-            goToFirstIdentityCreation()
-        }
     }
 
     override fun onResume() {
@@ -281,12 +275,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         if (walletConnectUri != null) {
             walletConnectViewModel.handleWcUri(walletConnectUri)
         }
-    }
-
-    private fun goToFirstIdentityCreation() {
-        val intent = Intent(this, IdentityProviderListActivity::class.java)
-        intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
-        startActivity(intent)
     }
     //endregion
 }
