@@ -1,12 +1,16 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import android.view.animation.AccelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -342,26 +346,33 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun initializeAnimation() {
-        binding.confettiAnimation.addAnimatorListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(p0: Animator) {}
+        val handler = Handler(Looper.getMainLooper())
+        binding.confettiAnimation.addAnimatorListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(p0: Animator) {
+                handler.postDelayed({
+                    binding.confettiAnimation.animate()
+                        .setInterpolator(AccelerateInterpolator())
+                        .alpha(0f)
+                        .scaleXBy(0.3f)
+                        .scaleYBy(0.3f)
+                        .setDuration(900)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                cancelAnimation()
+                            }
+                        })
+                }, 800)
+            }
 
             override fun onAnimationEnd(p0: Animator) {
                 cancelAnimation()
             }
-
-            override fun onAnimationCancel(p0: Animator) {}
-
-            override fun onAnimationRepeat(p0: Animator) {}
-
         })
 
-        binding.confettiAnimation.addAnimatorPauseListener(object : Animator.AnimatorPauseListener {
+        binding.confettiAnimation.addAnimatorPauseListener(object : AnimatorListenerAdapter() {
             override fun onAnimationPause(p0: Animator) {
                 cancelAnimation()
             }
-
-            override fun onAnimationResume(p0: Animator) {}
-
         })
     }
 

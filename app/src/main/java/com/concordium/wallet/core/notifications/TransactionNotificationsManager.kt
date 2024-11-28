@@ -36,7 +36,7 @@ class TransactionNotificationsManager(
         get() = areNotificationsEnabled && walletNotificationsPreferences.areCcdTxNotificationsEnabled
 
     private val areCis2TxNotificationsEnabled: Boolean
-        get() = areNotificationsEnabled && walletNotificationsPreferences.areCcdTxNotificationsEnabled
+        get() = areNotificationsEnabled && walletNotificationsPreferences.areCis2TxNotificationsEnabled
 
     @SuppressLint("MissingPermission")
     fun notifyCcdTransaction(
