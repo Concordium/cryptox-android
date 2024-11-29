@@ -26,7 +26,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_unshielding"
+                    android:text="@string/settings_overview_item_unshielding"
                     app:drawableStartCompat="@drawable/ccx_ico_unshield" />
 
                 <View
@@ -42,7 +42,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_identities"
+                    android:text="@string/settings_overview_item_identities"
                     app:drawableStartCompat="@drawable/ccx_ico_settings_idetntites" />
 
                 <View
@@ -58,7 +58,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_address_book"
+                    android:text="@string/settings_overview_item_address_book"
                     app:drawableStartCompat="@drawable/ccx_ico_settings_address_book" />
 
                 <View
@@ -74,7 +74,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_notifications"
+                    android:text="@string/settings_overview_item_notifications"
                     app:drawableStartCompat="@drawable/ccx_ico_bell" />
 
                 <View
@@ -90,7 +90,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_export"
+                    android:text="@string/settings_overview_item_export"
                     app:drawableStartCompat="@drawable/cryptox_ico_export" />
 
                 <View
@@ -106,7 +106,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_import"
+                    android:text="@string/settings_overview_item_import"
                     app:drawableStartCompat="@drawable/cryptox_ico_import" />
 
                 <View
@@ -122,7 +122,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_recover"
+                    android:text="@string/settings_overview_item_recover"
                     app:drawableStartCompat="@drawable/ccx_ico_settings_recovery" />
 
                 <View
@@ -138,7 +138,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_reveal_seed_phrase"
+                    android:text="@string/settings_overview_reveal_seed_phrase"
                     app:drawableStartCompat="@drawable/ccx_ico_eye_open" />
 
                 <View
@@ -154,7 +154,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_reveal_seed"
+                    android:text="@string/settings_overview_reveal_seed"
                     app:drawableStartCompat="@drawable/ccx_ico_eye_open" />
 
                 <View
@@ -170,7 +170,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_alter_password"
+                    android:text="@string/settings_overview_item_alter_password"
                     app:drawableStartCompat="@drawable/ccx_ico_settings_biometrics" />
 
                 <View
@@ -186,7 +186,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_clear_wallet_connect"
+                    android:text="@string/settings_overview_item_clear_wallet_connect"
                     app:drawableStartCompat="@drawable/ccx_ico_trash_2" />
 
                 <View
@@ -202,7 +202,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_erase_wallet"
+                    android:text="@string/settings_overview_erase_wallet"
                     app:drawableStartCompat="@drawable/ccx_ico_file_shred" />
 
                 <View
@@ -218,8 +218,24 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_analytics"
+                    android:text="@string/settings_overview_item_analytics"
                     app:drawableStartCompat="@drawable/ccx_ico_chart_donut" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nft_layout"
+                style="@style/SettingsOverviewItem">
+
+                <TextView
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_nft"
+                    app:drawableStartCompat="@drawable/ccx_ico_settings_nft" />
 
                 <View
                     android:layout_width="match_parent"
@@ -234,7 +250,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_about"
+                    android:text="@string/settings_overview_item_about"
                     app:drawableStartCompat="@drawable/ccx_ico_information_circle_contained" />
             </LinearLayout>
 
@@ -244,7 +260,7 @@
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/more_overview_item_developer_options" />
+                    android:text="@string/settings_overview_item_developer_options" />
 
             </LinearLayout>
         </LinearLayout>
