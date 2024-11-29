@@ -51,7 +51,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set theme to default to remove launcher theme.
-        setTheme(R.style.CCX_MainScreen)
+        setTheme(R.style.MW24_MainScreen)
 
         super.onCreate(savedInstanceState)
 
