@@ -16,7 +16,7 @@ import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
-import com.walletconnect.util.Empty
+import com.reown.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
