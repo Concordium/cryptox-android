@@ -311,12 +311,10 @@ dependencies {
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "android.arch.persistence.room:testing:1.1.1"
 
-    // WalletConnect.
-    // Further updates require regression testing.
-    // Update to 1.32.0+2.32.0 requires fixing
-    // opening links from a mobile browser and request spam prevention.
-    implementation "com.walletconnect:android-core:1.13.0"
-    implementation "com.walletconnect:sign:2.11.0"
+    // Reown (formerly WalletConnect)
+    implementation(platform "com.reown:android-bom:1.0.0")
+    implementation "com.reown:android-core"
+    implementation "com.reown:sign"
 
     // Scarlet Gson adapter required for Spaceseven wallet connection.
     implementation("com.tinder.scarlet:message-adapter-gson:0.1.12") {
