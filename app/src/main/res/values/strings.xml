@@ -256,7 +256,7 @@
     <string name="transaction_details_view_on_explorer">View transaction on block explorer</string>
     <!-- ***** More ***** -->
     <!-- More overview -->
-    <string name="more_overview_title">More</string>
+    <string name="settings_overview_title">Wallet Settings</string>
     <string name="more_overview_item_unshielding">Funds to Unshield</string>
     <string name="more_overview_item_identities">Identities</string>
     <string name="more_overview_item_address_book">Address Book</string>
@@ -264,6 +264,7 @@
     <string name="more_overview_item_import">Import</string>
     <string name="more_overview_item_about">About</string>
     <string name="more_overview_item_analytics">Analytics</string>
+    <string name="settings_overview_item_nft">NFT</string>
     <string name="more_overview_item_notifications">Notifications</string>
     <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="more_overview_item_developer_options">Developer Options</string>

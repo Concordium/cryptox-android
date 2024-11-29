@@ -97,7 +97,7 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun initializeViews() {
         binding.progress.progressLayout.visibility = View.GONE
-        mainViewModel.setTitle(getString(R.string.more_overview_title))
+        mainViewModel.setTitle(getString(R.string.settings_overview_title))
 
         binding.devLayout.visibility = View.GONE
         binding.devLayout.setOnClickListener {

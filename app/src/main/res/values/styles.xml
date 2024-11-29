@@ -14,7 +14,7 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/ccx_new_main_background</item>
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
@@ -123,19 +123,21 @@
         <item name="android:background">@drawable/cryptox_bottom_sheet_background</item>
     </style>
 
-    <style name="MoreOverviewItem">
+    <style name="SettingsOverviewItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="MoreOverviewItemTextView" parent="CCX_Typography_H3">
+    <style name="SettingsOverviewItemTextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:drawablePadding">16dp</item>
         <item name="android:layout_marginVertical">20dp</item>
-        <item name="drawableTint">@color/ccx_neutral_tint_1</item>
-        <item name="android:textColor">@color/ccx_neutral_tint_1</item>
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">19sp</item>
+        <item name="drawableTint">@color/ccx_neutral_tint_9</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
 
     <style name="AccountSettingsItem">
