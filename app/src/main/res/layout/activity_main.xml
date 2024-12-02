@@ -43,7 +43,7 @@
         app:itemTextAppearanceActive="@style/CCX_Typography_TabTitle"
         app:itemTextAppearanceInactive="@style/CCX_Typography_TabTitle"
         app:itemTextColor="@color/ccx_bottom_navigation_bar_item_color"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
