@@ -20,7 +20,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
         AccountOverview,
         NewsOverview,
-        TokensOverview,
         More,
         ;
     }

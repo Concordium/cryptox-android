@@ -209,7 +209,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
             R.id.menuitem_news -> MainViewModel.State.NewsOverview
-            R.id.menuitem_tokens -> MainViewModel.State.TokensOverview
             R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
@@ -219,14 +218,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         val fragment = when (state) {
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
             MainViewModel.State.NewsOverview -> NewsOverviewFragment()
-            MainViewModel.State.TokensOverview -> {
-                if (viewModel.hasCompletedOnboarding()) {
-                    ProvidersOverviewFragment()
-                } else {
-                    showUnlockFeatureDialog()
-                    null
-                }
-            }
             MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment)

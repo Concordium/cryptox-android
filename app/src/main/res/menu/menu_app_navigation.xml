@@ -13,12 +13,6 @@
         android:title="@string/app_menu_item_news" />
 
     <item
-        android:id="@+id/menuitem_tokens"
-        android:icon="@drawable/ccx_ico_nft"
-        android:orderInCategory="3"
-        android:title="@string/app_menu_item_tokens" />
-
-    <item
         android:id="@+id/menuitem_more"
         android:icon="@drawable/ccx_ico_more"
         android:orderInCategory="4"

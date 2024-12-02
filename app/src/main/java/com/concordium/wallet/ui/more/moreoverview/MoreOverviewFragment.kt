@@ -29,6 +29,7 @@ import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
+import com.concordium.wallet.ui.tokens.provider.NFTActivity
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -183,6 +184,13 @@ class MoreOverviewFragment : BaseFragment() {
             openTrackingPreferences()
         }
 
+        binding.nftLayout.setOnClickListener {
+            if (mainViewModel.hasCompletedOnboarding())
+                gotoNFT()
+            else
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
+        }
+
         binding.aboutLayout.setOnClickListener {
             about()
         }
@@ -294,6 +302,11 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun gotoNFT() {
+        val intent = Intent(activity, NFTActivity::class.java)
         startActivity(intent)
     }
 

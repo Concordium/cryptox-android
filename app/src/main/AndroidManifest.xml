@@ -67,7 +67,8 @@
             android:name=".ui.tokens.add_provider.AddProviderActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.connect.ConnectActivity"
             android:excludeFromRecents="true"
@@ -562,6 +563,11 @@
             android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.more.notifications.NotificationsPreferencesActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen"/>
+        <activity
+            android:name=".ui.tokens.provider.NFTActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"/>
