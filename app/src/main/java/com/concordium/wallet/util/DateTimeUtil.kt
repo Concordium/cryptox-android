@@ -104,7 +104,9 @@ object DateTimeUtil {
         // Log.d(DateFormat.getTimeFormat(App.appContext).format(date))          // 14.50            2:50 PM
 
         // 15/06/2018       6/15/18
-        return DateFormat.getDateFormat(App.appContext).format(date)
+
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        return dateFormat.format(date)
     }
 
     fun formatDateAsLocalMedium(date: Date?): String {
