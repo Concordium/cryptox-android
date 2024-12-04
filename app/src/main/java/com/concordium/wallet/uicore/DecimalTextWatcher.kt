@@ -25,6 +25,12 @@ class DecimalTextWatcher(val maxNumberOfDecimals: Int = 1) : TextWatcher {
 
     override fun afterTextChanged(editable: Editable) {
         var str = editable.toString()
+
+        // Remove thousands comma delimiter if inserted value is not an integer
+        if (str.contains(",") && str.contains(".")) {
+            str = str.replace(",", "")
+        }
+
         // Replace the non decimal separator with the decimal separator
         if ("." != "" + separator) {
             if (str.indexOf(",") > -1) {

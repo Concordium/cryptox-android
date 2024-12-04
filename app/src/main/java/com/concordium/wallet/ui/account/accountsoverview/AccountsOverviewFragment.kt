@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
@@ -102,13 +101,13 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
 
-        baseActivity.hideQrScan(isVisible = true)
-        if (!mainViewModel.hasCompletedOnboarding()) {
-            baseActivity.hideQrScan(isVisible = true) {
+        baseActivity.hideQrScan(isVisible = true) {
+            if (mainViewModel.hasCompletedOnboarding()) {
+                baseActivity.startQrScanner()
+            } else {
                 baseActivity.showUnlockFeatureDialog()
             }
         }
-
     }
 
     override fun onResume() {
