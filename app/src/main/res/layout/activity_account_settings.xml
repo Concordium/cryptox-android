@@ -35,7 +35,7 @@
                 style="@style/AccountSettingsItem">
 
                 <TextView
-                    style="@style/AccountSettingsItemTextView"
+                    style="@style/MW24_AccountSettingsItemTextView"
                     android:text="@string/account_details_menu_transfer_filter" />
 
             </LinearLayout>
@@ -47,7 +47,7 @@
                 <View style="@style/CryptoX_Divider_Horizontal" />
 
                 <TextView
-                    style="@style/AccountSettingsItemTextView"
+                    style="@style/MW24_AccountSettingsItemTextView"
                     android:text="@string/account_details_menu_release_schedule" />
 
             </LinearLayout>
@@ -59,7 +59,7 @@
                 <View style="@style/CryptoX_Divider_Horizontal" />
 
                 <TextView
-                    style="@style/AccountSettingsItemTextView"
+                    style="@style/MW24_AccountSettingsItemTextView"
                     android:text="@string/account_details_menu_export_key" />
 
             </LinearLayout>
@@ -71,7 +71,7 @@
                 <View style="@style/CryptoX_Divider_Horizontal" />
 
                 <TextView
-                    style="@style/AccountSettingsItemTextView"
+                    style="@style/MW24_AccountSettingsItemTextView"
                     android:text="@string/account_details_menu_export_transaction_log" />
 
             </LinearLayout>
@@ -83,7 +83,7 @@
                 <View style="@style/CryptoX_Divider_Horizontal" />
 
                 <TextView
-                    style="@style/AccountSettingsItemTextView"
+                    style="@style/MW24_AccountSettingsItemTextView"
                     android:text="@string/account_details_menu_change_name" />
 
             </LinearLayout>

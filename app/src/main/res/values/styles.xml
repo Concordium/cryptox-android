@@ -22,10 +22,6 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
-    <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
-
     <style name="AlertDialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>

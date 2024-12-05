@@ -186,10 +186,6 @@
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
-    <style name="MW24_Screen" parent="CCX_Screen">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
-
     <style name="CCX_WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -200,10 +196,6 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
-    <style name="MW24_WelcomeScreen" parent="CCX_WelcomeScreen">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
-
     <style name="CCX_MainScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -212,10 +204,6 @@
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
-    </style>
-
-    <style name="MW24_MainScreen" parent="CCX_MainScreen">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
     </style>
 
     <!-- endregion -->
