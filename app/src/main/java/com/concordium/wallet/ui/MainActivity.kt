@@ -23,7 +23,6 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
-import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
@@ -179,7 +178,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             onNavigationItemSelected(it)
         }
         hideActionBarBack(false)
-        binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
 
         WalletConnectView(
             activity = this,

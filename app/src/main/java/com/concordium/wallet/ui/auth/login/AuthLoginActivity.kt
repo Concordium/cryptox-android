@@ -42,7 +42,6 @@ class AuthLoginActivity : BaseActivity(
         }
 
         hideActionBarBack(isVisible = false)
-        binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
     }
 
     override fun onBackPressed() {

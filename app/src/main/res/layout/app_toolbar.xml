@@ -60,7 +60,7 @@
 
             <TextView
                 android:id="@+id/toolbar_title"
-                style="@style/CryptoX_Typography_Body_Medium"
+                style="@style/MW24_Typography_Headline_Large"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="72dp"
@@ -68,8 +68,6 @@
                 android:gravity="center_horizontal"
                 android:maxLines="2"
                 android:singleLine="false"
-                android:textColor="@color/cryptox_white_main"
-                android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

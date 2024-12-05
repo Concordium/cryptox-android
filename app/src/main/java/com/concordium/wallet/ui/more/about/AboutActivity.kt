@@ -45,7 +45,6 @@ class AboutActivity : BaseActivity(
         binding.aboutVersionText.text = AppConfig.appVersion
 
         hideActionBarBack(isVisible = true)
-        binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
     }
 
     //endregion

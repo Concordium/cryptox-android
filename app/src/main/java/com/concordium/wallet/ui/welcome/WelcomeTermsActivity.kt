@@ -18,7 +18,6 @@ class WelcomeTermsActivity: BaseActivity(
         super.onCreate(savedInstanceState)
 
         hideActionBarBack(true)
-        binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
 
         with(binding.termsWebview) {
             isVerticalScrollBarEnabled = false
