@@ -1,6 +1,6 @@
 package com.concordium.wallet.data.util
 
-import com.walletconnect.util.hexToBytes
+import com.reown.util.hexToBytes
 import okio.utf8Size
 
 /**

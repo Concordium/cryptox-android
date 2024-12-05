@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- region Screens -->
+    <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+
+    <style name="MW24_Screen" parent="CCX_Screen">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+
+    <style name="MW24_WelcomeScreen" parent="CCX_WelcomeScreen">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+
+    <style name="MW24_MainScreen" parent="CCX_MainScreen">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+    <!-- end region -->
+
+
+    <!-- region Typography -->
+    <style name="MW24_Typography_Headline_Large">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <!-- end region -->
+
+
+    <style name="MW24_AccountSettingsItemTextView" parent="MW24_Typography_Headline_Large">
+        <item name="android:layout_marginVertical">20dp</item>
+        <item name="drawableEndCompat">@null</item>
+    </style>
+
+
+</resources>

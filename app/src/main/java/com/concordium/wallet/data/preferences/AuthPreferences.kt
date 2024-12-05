@@ -5,7 +5,7 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.util.toHex
-import com.walletconnect.util.hexToBytes
+import com.reown.util.hexToBytes
 import javax.crypto.SecretKey
 
 class AuthPreferences(val context: Context) :

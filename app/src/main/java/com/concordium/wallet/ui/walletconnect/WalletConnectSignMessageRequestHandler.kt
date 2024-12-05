@@ -19,7 +19,7 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.concordium.wallet.util.toHex
-import com.walletconnect.util.hexToBytes
+import com.reown.util.hexToBytes
 
 class WalletConnectSignMessageRequestHandler(
     private val respondSuccess: (result: String) -> Unit,
