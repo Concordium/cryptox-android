@@ -37,5 +37,11 @@
         <item name="drawableEndCompat">@null</item>
     </style>
 
+    <style name="MW24_Container_Primary">
+        <item name="android:background">@drawable/mw24_container_primary_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 
 </resources>
