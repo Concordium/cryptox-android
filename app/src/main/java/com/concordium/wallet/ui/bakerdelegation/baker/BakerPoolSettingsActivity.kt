@@ -15,6 +15,7 @@ import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 import java.text.DecimalFormat
 import java.text.ParseException
+import java.util.Locale
 import kotlin.math.roundToInt
 
 
@@ -26,7 +27,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
     /**
      * Formats values in range [[0.0; 1.0]].
      */
-    private val percentNumberFormat = (DecimalFormat.getNumberInstance() as DecimalFormat).apply {
+    private val percentNumberFormat = (DecimalFormat.getNumberInstance(Locale.US) as DecimalFormat).apply {
         multiplier = 100
         minimumFractionDigits = PERCENT_FORMAT_DECIMALS
         maximumFractionDigits = PERCENT_FORMAT_DECIMALS
