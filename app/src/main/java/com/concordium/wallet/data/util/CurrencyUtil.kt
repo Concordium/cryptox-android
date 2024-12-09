@@ -81,7 +81,13 @@ object CurrencyUtil {
             .toBigDecimal()
             .setScale(roundDecimals, RoundingMode.HALF_DOWN)
 
-        return formatter.format(bigDecimalValue)
+        //Format the small Decimal value for proper trailing zeros not omitted
+        val decimalFormatter = DecimalFormat(
+            "#,##0." + "0".repeat(roundDecimals),
+            DecimalFormatSymbols(Locale.US)
+        )
+
+        return decimalFormatter.format(bigDecimalValue)
     }
 
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? =
