@@ -2,7 +2,6 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
-import org.web3j.abi.datatypes.Bool
 import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
