@@ -2,6 +2,7 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
+import org.web3j.abi.datatypes.Bool
 import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -34,7 +35,12 @@ object CurrencyUtil {
         return formatGTU(value, withGStroke, decimals)
     }
 
-    fun formatGTU(value: BigInteger, withGStroke: Boolean = false, decimals: Int = 6): String {
+    fun formatGTU(
+        value: BigInteger,
+        withGStroke: Boolean = false,
+        decimals: Int = 6,
+        withCommas: Boolean = true
+    ): String {
         if (value == BigInteger.ZERO) return ZERO_AMOUNT
         if (decimals <= 0) return value.toString()
 
@@ -70,7 +76,9 @@ object CurrencyUtil {
             strBuilder.insert(0, "-")
         }
 
-        return formatGTUWithCommas(strBuilder.toString().removeSuffix(separator.toString()))
+        val formattedString = strBuilder.toString().removeSuffix(separator.toString())
+
+        return if (withCommas) formatGTUWithCommas(formattedString) else formattedString
     }
 
     fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int): String {
