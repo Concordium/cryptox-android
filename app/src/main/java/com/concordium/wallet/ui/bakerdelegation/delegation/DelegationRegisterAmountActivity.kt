@@ -187,8 +187,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 getString(R.string.delegation_update_delegation_amount_enter_amount)
             binding.amount.setText(viewModel.bakerDelegationData.account?.delegation?.stakedAmount?.let {
                 CurrencyUtil.formatGTU(
-                    it,
-                    false
+                    value = it,
+                    withGStroke = false,
+                    withCommas = false
                 )
             })
         }
