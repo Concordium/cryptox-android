@@ -121,10 +121,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         updateNotificationSubscription()
     }
 
-    fun initialize() {
-        showSingleDialogIfNeeded()
-    }
-
     override fun onCleared() {
         super.onCleared()
         accountRepository.allAccountsWithIdentity.removeObserver(accountsObserver)
@@ -191,6 +187,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         } else {
             App.appCore.session.hasCompletedOnboarding()
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            showSingleDialogIfNeeded()
             updateSubmissionStatesAndBalances()
         }
     }
@@ -200,6 +197,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         if (doneCount > 0) {
             App.appCore.session.hasCompletedOnboarding()
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            showSingleDialogIfNeeded()
             updateSubmissionStatesAndBalances()
         } else {
             postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)

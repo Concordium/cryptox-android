@@ -51,9 +51,10 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
                 viewModel.bakerDelegationData.account?.baker?.restakeEarnings
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.bakerDelegationData.account?.baker?.stakedAmount
+                    value = viewModel.bakerDelegationData.account?.baker?.stakedAmount
                         ?: BigInteger.ZERO,
-                    true
+                    withGStroke = true,
+                    withCommas = false
                 )
             )
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)

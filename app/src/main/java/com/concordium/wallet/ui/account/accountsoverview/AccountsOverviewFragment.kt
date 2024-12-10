@@ -88,7 +88,6 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initializeViewModel()
-        viewModel.initialize()
         initializeViews()
 
         val baseActivity = (activity as BaseActivity)
@@ -173,7 +172,7 @@ class AccountsOverviewFragment : BaseFragment() {
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
         viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
-            if (viewModel.hasShowedInitialAnimation()) {
+            if (mainViewModel.hasCompletedOnboarding()) {
                 when (event.contentIfNotHandled) {
                     AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
                         UnshieldingNoticeDialog().showSingle(
@@ -196,10 +195,6 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
             when (state) {
                 OnboardingState.DONE -> {
-                    if (!viewModel.hasShowedInitialAnimation()) {
-                        binding.confettiAnimation.visibility = View.VISIBLE
-                        binding.confettiAnimation.playAnimation()
-                    }
                     showStateDefault()
                 }
 
@@ -210,6 +205,13 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
         viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
+            if (active) {
+                if (!viewModel.hasShowedInitialAnimation()) {
+                    binding.confettiAnimation.visibility = View.VISIBLE
+                    binding.confettiAnimation.playAnimation()
+                }
+            }
+
             binding.onrampBanner.root.setOnClickListener {
                 App.appCore.tracker.homeOnRampBannerClicked()
 

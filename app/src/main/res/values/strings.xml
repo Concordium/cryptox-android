@@ -1001,9 +1001,9 @@
     <string name="welcome_activate_bottom_sheet_create_wallet_button">Continue</string>
     <string name="welcome_activate_bottom_sheet_import_wallet_details">You can import your wallet with a secret seed phrase, wallet private key or a backup file.</string>
     <string name="welcome_activate_bottom_sheet_import_wallet_button"><u>Import a wallet</u></string>
-    <string name="passcode_create_title">Create passcode</string>
+    <string name="passcode_create_title">Create Passcode</string>
     <string name="template_passcode_create_details">%1$d-digit passcode to secure your wallet. Remember it to enter the wallet again</string>
-    <string name="passcode_repeat_title">Repeat passcode</string>
+    <string name="passcode_repeat_title">Repeat Passcode</string>
     <string name="template_passcode_repeat_details">It should be the same %1$d-digit passcode you entered in the previous step</string>
     <string name="passcode_use_full_password">Use full password instead</string>
     <string name="passcode_backspace_button">Delete</string>
