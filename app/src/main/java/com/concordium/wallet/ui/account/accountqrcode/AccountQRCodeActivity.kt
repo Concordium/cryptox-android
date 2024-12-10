@@ -59,7 +59,8 @@ class AccountQRCodeActivity :
         if (qrImage != null) {
             binding.addressQrImageview.setImageBitmap(qrImage)
         }
-        binding.accountTitleTextview.text = viewModel.account.getAccountName() + ":"
+        binding.accountTitleTextview.text =
+            getString(R.string.account_qr_code_to_account, viewModel.account.getAccountName())
         binding.addressQrTextview.text = viewModel.account.address
         binding.shareLayout.setOnClickListener {
             shareAddress()
@@ -95,7 +96,7 @@ class AccountQRCodeActivity :
         try {
             val writer = QRCodeWriter()
             val bitMatrix: BitMatrix =
-                writer.encode(qrCodeContent, BarcodeFormat.QR_CODE, 512, 512)
+                writer.encode(qrCodeContent, BarcodeFormat.QR_CODE, 256, 256)
             val width = bitMatrix.width
             val height = bitMatrix.height
             val pixels = IntArray(width * height)

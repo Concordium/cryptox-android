@@ -227,10 +227,11 @@
     <!--  Account release schedule and filters -->
     <string name="account_transaction_filters_title">%1$s Transfer filters</string>
     <!-- Account QR -->
-    <string name="account_qr_code_title">Address</string>
+    <string name="account_qr_code_title">Receive funds</string>
     <string name="account_qr_code_share">Share</string>
     <string name="account_qr_code_copy">Copy</string>
     <string name="account_qr_code_copied">Address copied</string>
+    <string name="account_qr_code_to_account">to %1$s</string>
     <!-- ***** Transaction / Send funds ***** -->
     <!-- Send funds -->
     <string name="send_funds_title">Send Funds</string>
