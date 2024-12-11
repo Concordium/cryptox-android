@@ -1153,7 +1153,7 @@
     <string name="template_ccd_onramp_opening_site">Account address copied. Opening %1$s…</string>
     <string name="ccd_onramp_accounts_title">Select Account</string>
     <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
-    <string name="ccd_onramp_banner_title">Where is CCD available?</string>
+    <string name="ccd_onramp_banner_title">Get your CCD</string>
     <string name="ccd_onramp_banner_content">CCD is listed in the following exchanges and services. <u>See more</u></string>
     <string name="notifications_preferences_title">Notifications</string>
     <string name="notifications_preferences_ccd_transactions">CCD transactions</string>
