@@ -23,13 +23,13 @@ class BalanceGradientTextView @JvmOverloads constructor(
             val paint: TextPaint = paint
             // Linear gradient at a 45-degree angle
             val shader = RadialGradient(
-                0f, // x-coordinate of center
-                textSize / 1f, // y-coordinate of center
-                width / 1f, // radius
+                0f,
+                0f,
+                width / 1f,
                 intArrayOf(
-                    0xE59EF2EB.toInt(),
-                    0xE5EDDABF.toInt(),
-                    0xE5A49AE3.toInt(),
+                    0xE69EF2EB.toInt(),
+                    0xE6EDDABF.toInt(),
+                    0xE6A49AE3.toInt(),
                 ),
                 null,
                 Shader.TileMode.CLAMP
