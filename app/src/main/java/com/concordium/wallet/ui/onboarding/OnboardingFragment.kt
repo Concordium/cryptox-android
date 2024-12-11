@@ -64,15 +64,6 @@ class OnboardingFragment @JvmOverloads constructor(
     )
 
     init {
-        listOf(
-            binding.onrampBtn,
-            binding.sendFundsBtn,
-            binding.addressBtn,
-        ).forEach {
-            it.setOnClickListener {
-                showUnlockFeatureDialog()
-            }
-        }
         activity.lifecycleScope.launch {
             onboardingViewModel.identityFlow.collect { identity ->
                 binding.onboardingInnerActionButton.setOnClickListener {
