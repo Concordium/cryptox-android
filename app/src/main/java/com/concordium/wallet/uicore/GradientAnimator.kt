@@ -1,37 +1,47 @@
 package com.concordium.wallet.uicore
 
 import android.animation.ValueAnimator
+import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.view.View
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 class GradientAnimator {
 
-    fun applyGradientAnimation(view: View, duration: Long = 4000) {
-        // Define the gradient colors
+    fun applyGradientAnimation(context: Context, view: View, duration: Long = 8000) {
+        // Gradient colors
         val colors = intArrayOf(
-            0xE59EF2EB.toInt(),
-            0xE5EDDABF.toInt(),
-            0xE5A49AE3.toInt()
+            0xE69EF2EB.toInt(),
+            0xE6EDDABF.toInt(),
+            0xE6A49AE3.toInt()
         )
 
-        // Create a GradientDrawable with a radial gradient
+        // GradientDrawable with a radial gradient
         val gradientDrawable = GradientDrawable().apply {
             gradientType = GradientDrawable.RADIAL_GRADIENT
-            setGradientCenter(0f, 0f) // Center the gradient
-            gradientRadius = 1000f // Radius of the gradient
+            setGradientCenter(0f, 0f)
+            gradientRadius = dpToPx(context, 800f)
+            cornerRadius = dpToPx(context, 16f)
         }
         view.background = gradientDrawable
 
-        // Create an animator to cycle through gradient colors
-        val animator = ValueAnimator.ofFloat(0f, 1f).apply {
+        // Animator to cycle through gradient colors
+        val animator = ValueAnimator.ofFloat(0f, 360f).apply {
             this.duration = duration
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
 
-            addUpdateListener {
-                val fraction = it.animatedValue as Float
-                val blendedColors = blendColorsArray(colors, fraction)
-                gradientDrawable.colors = blendedColors
+            addUpdateListener { animation ->
+                val angle = (animation.animatedValue as Float) * (PI / 180).toFloat() // Convert to radians
+                val radius = 0.3f // The radius of the circle as a fraction of the view's dimensions
+                val centerX = 0.5f + radius * cos(angle)
+                val centerY = 0.5f + radius * sin(angle)
+                gradientDrawable.setGradientCenter(centerX, centerY)
+
+                val fraction = animation.animatedFraction
+                gradientDrawable.colors = blendColorsArray(colors, fraction)
             }
         }
 
@@ -43,7 +53,7 @@ class GradientAnimator {
         for (i in 0 until colors.size - 1) {
             blendedColors.add(blendColors(colors[i], colors[i + 1], fraction))
         }
-        blendedColors.add(colors.last()) // Add the last color to complete the array
+        blendedColors.add(colors.last())
         return blendedColors.toIntArray()
     }
 
@@ -55,5 +65,9 @@ class GradientAnimator {
                 ((red.toInt() and 0xFF) shl 16) or
                 ((green.toInt() and 0xFF) shl 8) or
                 (blue.toInt() and 0xFF)
+    }
+
+    private fun dpToPx(context: Context, dp: Float): Float {
+        return dp * context.resources.displayMetrics.density
     }
 }
