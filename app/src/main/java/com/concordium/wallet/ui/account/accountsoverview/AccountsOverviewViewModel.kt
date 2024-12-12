@@ -105,6 +105,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                         App.appCore.session.setAccountsBackedUp(false)
                     }
                 }
+                viewModelScope.launch {
+                    postState(OnboardingState.DONE)
+                }
             }
 
             override fun onError(stringRes: Int) {
@@ -185,10 +188,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             _identityFlow.emit(identity)
             postState(OnboardingState.CREATE_ACCOUNT, zeroAccountBalances, notifyWaitingLiveData)
         } else {
-            App.appCore.session.hasCompletedOnboarding()
-            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-            showSingleDialogIfNeeded()
-            updateSubmissionStatesAndBalances()
+            handleAccountCreation(notifyWaitingLiveData)
         }
     }
 
@@ -202,6 +202,18 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         } else {
             postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
         }
+    }
+
+    private suspend fun handleAccountCreation(notifyWaitingLiveData: Boolean) {
+        val allAccounts = accountRepository.getAll()
+        if (allAccounts.isNotEmpty() && allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
+            App.appCore.session.hasCompletedOnboarding()
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            showSingleDialogIfNeeded()
+        } else {
+            postState(OnboardingState.FINALIZING_ACCOUNT, notifyWaitingLiveData = notifyWaitingLiveData)
+        }
+        updateSubmissionStatesAndBalances()
     }
 
     private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
