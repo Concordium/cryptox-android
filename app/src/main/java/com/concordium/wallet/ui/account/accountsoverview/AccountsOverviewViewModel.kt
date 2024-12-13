@@ -85,7 +85,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     enum class DialogToShow {
         UNSHIELDING,
-        NOTIFICATIONS_PERMISSION,
         ;
     }
 
@@ -292,11 +291,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
         ) {
             dialogsToShow += DialogToShow.UNSHIELDING
-        }
-
-        // Show notifications permission if never shown.
-        if (!notificationsPreferences.hasEverShownPermissionDialog) {
-            dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
         }
 
         // Show a single dialog if needed.
