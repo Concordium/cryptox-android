@@ -7,13 +7,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.GradientAnimator
+import com.concordium.wallet.uicore.toast.showGradientToast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
@@ -91,7 +91,10 @@ class AccountQRCodeActivity :
         val clipData = ClipData.newPlainText("txt", viewModel.account.address)
         clipboardManager.setPrimaryClip(clipData)
 
-        binding.copiedMessageTextView.isVisible = true
+        showGradientToast(
+            iconResId = R.drawable.mw24_ic_address_copy_check,
+            title = getString(R.string.account_qr_code_copied)
+        )
     }
 
     private fun generateQR(qrCodeContent: String): Bitmap? {
