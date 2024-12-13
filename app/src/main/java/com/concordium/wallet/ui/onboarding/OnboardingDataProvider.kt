@@ -82,6 +82,22 @@ class OnboardingDataProvider(val context: Context) {
             showInnerActionButton = true,
             innerActionButtonTitle = context.getString(R.string.accounts_overview_create_account),
             innerActionButtonBackground = R.drawable.ccx_button_primary_green_background
+        ),
+        OnboardingStateModel(
+            state = OnboardingState.FINALIZING_ACCOUNT,
+            statusTitle = context.getString(R.string.onboarding_finalizing_account),
+            statusTextColor = context.getColor(R.color.cryptox_green_main),
+            statusDescription = "",
+            verificationStatusIcon = context.getDrawable(R.drawable.ccx_finalizing_account),
+            showVerificationStatusIcon = true,
+            identityVerificationStatus = IdentityStatus.DONE,
+            animateStatusIcon = true,
+            showProgressBar = false,
+            showActionButton = false,
+            actionButtonTitle = "",
+            showInnerActionButton = true,
+            innerActionButtonTitle = context.getString(R.string.accounts_overview_create_account),
+            innerActionButtonBackground = R.drawable.ccx_button_primary_green_inactive_background
         )
     )
 
