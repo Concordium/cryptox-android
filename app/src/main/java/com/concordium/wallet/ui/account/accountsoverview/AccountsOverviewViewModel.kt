@@ -77,13 +77,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
     private val notificationsPreferences: NotificationsPreferences
+    private var updater: CountDownTimer? = null
 
     private val updateNotificationsSubscriptionUseCase by lazy {
         UpdateNotificationsSubscriptionUseCase(application)
     }
-
-    private var countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC
-    private var updater: CountDownTimer? = null
 
     enum class DialogToShow {
         UNSHIELDING,
@@ -210,7 +208,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     private suspend fun handleAccountCreation(notifyWaitingLiveData: Boolean) {
         val allAccounts = accountRepository.getAll()
-        if (allAccounts.isNotEmpty() && allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
+        if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.hasCompletedOnboarding()
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             showSingleDialogIfNeeded()
@@ -219,7 +217,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 state = OnboardingState.FINALIZING_ACCOUNT,
                 notifyWaitingLiveData = notifyWaitingLiveData
             )
-            viewModelScope.launch { restartUpdater(5L) }
+            viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
         }
         updateSubmissionStatesAndBalances()
     }
@@ -231,11 +229,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountUpdater.updateForAllAccounts()
     }
 
-    fun initiateFrequentUpdater() {
+    fun initiateUpdater() {
         startUpdater()
     }
 
-    fun stopFrequentUpdater() {
+    fun stopUpdater() {
         updater?.cancel()
         updater = null
     }
@@ -248,11 +246,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         App.appCore.session.setHasShowedInitialAnimation()
     }
 
-    private fun startUpdater() {
-        stopFrequentUpdater()
+    private fun startUpdater(countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
+        stopUpdater()
         updater = object : CountDownTimer(Long.MAX_VALUE, countdownInterval * 1000) {
             private var first = true
-
             override fun onTick(millisUntilFinished: Long) {
                 if (first) { // ignore first tick
                     first = false
@@ -270,8 +267,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     private fun restartUpdater(newInterval: Long) {
-        countdownInterval = newInterval
-        startUpdater()
+        startUpdater(newInterval)
     }
 
     private fun isRegularUpdateNeeded(): Boolean {
