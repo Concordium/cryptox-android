@@ -112,7 +112,7 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.updateState()
-        viewModel.initiateFrequentUpdater()
+        viewModel.initiateUpdater()
     }
 
     override fun onDestroy() {
@@ -124,7 +124,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopFrequentUpdater()
+        viewModel.stopUpdater()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
