@@ -77,6 +77,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
     private val notificationsPreferences: NotificationsPreferences
+    private var updater: CountDownTimer? = null
 
     private val updateNotificationsSubscriptionUseCase by lazy {
         UpdateNotificationsSubscriptionUseCase(application)
@@ -84,7 +85,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     enum class DialogToShow {
         UNSHIELDING,
-        NOTIFICATIONS_PERMISSION,
         ;
     }
 
@@ -104,6 +104,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                     if (App.appCore.session.isAccountsBackupPossible()) {
                         App.appCore.session.setAccountsBackedUp(false)
                     }
+                }
+                viewModelScope.launch {
+                    postState(OnboardingState.DONE)
+                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                 }
             }
 
@@ -185,10 +189,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             _identityFlow.emit(identity)
             postState(OnboardingState.CREATE_ACCOUNT, zeroAccountBalances, notifyWaitingLiveData)
         } else {
-            App.appCore.session.hasCompletedOnboarding()
-            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-            showSingleDialogIfNeeded()
-            updateSubmissionStatesAndBalances()
+            handleAccountCreation(notifyWaitingLiveData)
         }
     }
 
@@ -204,6 +205,22 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
+    private suspend fun handleAccountCreation(notifyWaitingLiveData: Boolean) {
+        val allAccounts = accountRepository.getAll()
+        if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
+            App.appCore.session.hasCompletedOnboarding()
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            showSingleDialogIfNeeded()
+        } else {
+            postState(
+                state = OnboardingState.FINALIZING_ACCOUNT,
+                notifyWaitingLiveData = notifyWaitingLiveData
+            )
+            viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
+        }
+        updateSubmissionStatesAndBalances()
+    }
+
     private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
         if (notifyWaitingLiveData) {
             _waitingLiveData.postValue(true)
@@ -211,13 +228,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountUpdater.updateForAllAccounts()
     }
 
-    fun initiateFrequentUpdater() {
-        updater.cancel()
-        updater.start()
+    fun initiateUpdater() {
+        startUpdater()
     }
 
-    fun stopFrequentUpdater() {
-        updater.cancel()
+    fun stopUpdater() {
+        updater?.cancel()
+        updater = null
     }
 
     fun hasShowedInitialAnimation(): Boolean {
@@ -228,8 +245,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         App.appCore.session.setHasShowedInitialAnimation()
     }
 
-    private var updater =
-        object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
+    private fun startUpdater(countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
+        stopUpdater()
+        updater = object : CountDownTimer(Long.MAX_VALUE, countdownInterval * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
                 if (first) { // ignore first tick
@@ -244,7 +262,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
             override fun onFinish() {
             }
-        }
+        }.also { it.start() }
+    }
+
+    private fun restartUpdater(newInterval: Long) {
+        startUpdater(newInterval)
+    }
 
     private fun isRegularUpdateNeeded(): Boolean {
         this.accountRepository.allAccountsWithIdentity.value?.forEach { accountWithIdentity ->
@@ -268,11 +291,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
         ) {
             dialogsToShow += DialogToShow.UNSHIELDING
-        }
-
-        // Show notifications permission if never shown.
-        if (!notificationsPreferences.hasEverShownPermissionDialog) {
-            dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
         }
 
         // Show a single dialog if needed.

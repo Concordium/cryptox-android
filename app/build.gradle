@@ -39,6 +39,7 @@ android {
         buildConfigField("boolean", "INCL_DEV_OPTIONS", "false")
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+        buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
         buildConfigField("boolean", "SHOW_NEWSFEED", "true")

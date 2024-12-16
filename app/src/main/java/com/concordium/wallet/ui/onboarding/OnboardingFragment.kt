@@ -133,6 +133,10 @@ class OnboardingFragment @JvmOverloads constructor(
                 }
             }
 
+            OnboardingState.FINALIZING_ACCOUNT -> {
+                binding.onboardingInnerActionButton.setOnClickListener(null)
+            }
+
             else -> {}
         }
     }

@@ -1184,5 +1184,6 @@
     <string name="onboarding_identity_verification_in_progress">Verification in progress</string>
     <string name="onboarding_identity_verification_completed">Verification completed</string>
     <string name="onboarding_identity_verification_unsuccessful">Verification unsuccessful</string>
+    <string name="onboarding_finalizing_account">Finalizing account</string>
     <string name="onboarding_identity_verification_status_icon">Identity verification status icon</string>
 </resources>

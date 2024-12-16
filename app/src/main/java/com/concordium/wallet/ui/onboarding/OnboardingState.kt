@@ -6,5 +6,6 @@ enum class OnboardingState {
     IDENTITY_IN_PROGRESS,
     IDENTITY_UNSUCCESSFUL,
     CREATE_ACCOUNT,
+    FINALIZING_ACCOUNT,
     DONE
 }

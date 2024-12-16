@@ -36,7 +36,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
-import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
@@ -112,7 +111,7 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.updateState()
-        viewModel.initiateFrequentUpdater()
+        viewModel.initiateUpdater()
     }
 
     override fun onDestroy() {
@@ -124,7 +123,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopFrequentUpdater()
+        viewModel.stopUpdater()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -178,13 +177,6 @@ class AccountsOverviewFragment : BaseFragment() {
                         UnshieldingNoticeDialog().showSingle(
                             childFragmentManager,
                             UnshieldingNoticeDialog.TAG
-                        )
-                    }
-
-                    AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                        NotificationsPermissionDialog().showSingle(
-                            childFragmentManager,
-                            NotificationsPermissionDialog.TAG,
                         )
                     }
 
