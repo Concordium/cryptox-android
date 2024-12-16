@@ -1130,7 +1130,7 @@
     <string name="tracking_permission_message">@string/tracking_motivation</string>
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
-    <string name="ccd_onramp_title">CCD Listings</string>
+    <string name="ccd_onramp_title">Buy CCD</string>
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
@@ -1154,7 +1154,8 @@
     <string name="ccd_onramp_accounts_title">Select Account</string>
     <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
     <string name="ccd_onramp_banner_title">Get your CCD</string>
-    <string name="ccd_onramp_banner_content">CCD is listed in the following exchanges and services. <u>See more</u></string>
+    <string name="ccd_onramp_banner_content">And be part of a safer digital future</string>
+    <string name="ccd_onramp_close_banner">Close the banner</string>
     <string name="notifications_preferences_title">Notifications</string>
     <string name="notifications_preferences_ccd_transactions">CCD transactions</string>
     <string name="notifications_preferences_cis2_transactions">CIS-2 token transactions</string>
