@@ -27,4 +27,10 @@ class WelcomeViewModel(application: Application) : AndroidViewModel(application)
             _isNotificationDialogEverShowed.emit(notificationsPreferences.hasEverShownPermissionDialog)
         }
     }
+
+    fun setNotificationDialogShowed() {
+        viewModelScope.launch {
+            _isNotificationDialogEverShowed.emit(true)
+        }
+    }
 }
