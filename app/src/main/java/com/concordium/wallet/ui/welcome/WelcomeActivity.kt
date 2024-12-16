@@ -69,6 +69,7 @@ class WelcomeActivity :
                     supportFragmentManager,
                     NotificationsPermissionDialog.TAG,
                 )
+                viewModel.setNotificationDialogShowed()
             }
         }
 
