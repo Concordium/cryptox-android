@@ -111,9 +111,9 @@
 
     <Button
         android:id="@+id/onboarding_action_button"
-        style="@style/CCX_Button_Primary.ArrowRight"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/accounts_overview_create_identity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

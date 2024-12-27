@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <color name="mw24_plain_white_10">#1AFFFFFF</color>
+
+   <color name="mw24_blue_2">#9DAEC3</color>
+   <color name="mw24_blue_3">#D7E3EF</color>
+   <color name="mw24_blue_3_50">#80D7E3EF</color>
+   <color name="mw24_deep_blue">#1C4A7F</color>
+
+   <color name="mw24_grey_4">#71797E</color>
+
+</resources>

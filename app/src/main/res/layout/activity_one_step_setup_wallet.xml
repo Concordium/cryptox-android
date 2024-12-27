@@ -127,7 +127,7 @@
 
     <Button
         android:id="@+id/continue_button"
-        style="@style/CCX_Button_Primary.ArrowRight"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
