@@ -247,7 +247,7 @@
 
     <style name="CryptoX_Onboarding_Progress_Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_height">11dp</item>
         <item name="android:progressDrawable">@drawable/ccx_onboarding_progress_bar</item>
         <item name="android:max">100</item>
         <item name="android:min">0</item>
