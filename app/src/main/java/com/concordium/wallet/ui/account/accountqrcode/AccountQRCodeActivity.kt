@@ -12,7 +12,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.uicore.GradientAnimator
 import com.concordium.wallet.uicore.toast.showGradientToast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
@@ -60,7 +59,6 @@ class AccountQRCodeActivity :
         if (qrImage != null) {
             binding.addressQrImageview.setImageBitmap(qrImage)
         }
-        GradientAnimator().applyGradientAnimation(this, binding.addressLayout)
         binding.accountTitleTextview.text =
             getString(R.string.account_qr_code_to_account, viewModel.account.getAccountName())
         binding.addressQrTextview.text = viewModel.account.address
@@ -108,7 +106,7 @@ class AccountQRCodeActivity :
             for (y in 0 until height) {
                 val offset = y * width
                 for (x in 0 until width) {
-                    pixels[offset + x] = if (bitMatrix[x, y]) Color.BLACK else Color.TRANSPARENT
+                    pixels[offset + x] = if (bitMatrix[x, y]) Color.WHITE else Color.TRANSPARENT
                 }
             }
 

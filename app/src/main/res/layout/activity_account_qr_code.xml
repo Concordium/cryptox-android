@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/ccx_card_gradient_16_background">
+                android:background="@drawable/mw24_card_qr_background">
 
                 <ImageView
                     android:id="@+id/address_qr_imageview"
