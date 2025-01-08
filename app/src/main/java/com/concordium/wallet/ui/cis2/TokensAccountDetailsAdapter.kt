@@ -100,6 +100,7 @@ class TokensAccountDetailsAdapter(
 
         if (token.isUnique) {
             holder.binding.title.text = token.name
+            holder.binding.balance.isVisible = false
             holder.binding.subtitle.isVisible = true
             holder.binding.subtitle.text =
                 if (token.balance > BigInteger.ZERO)
@@ -107,12 +108,11 @@ class TokensAccountDetailsAdapter(
                 else
                     context.getString(R.string.cis_not_owned)
         } else {
-            holder.binding.title.text = "${
-                CurrencyUtil.formatGTU(
-                    token.balance,
-                    token,
-                )
-            } ${token.symbol}"
+            holder.binding.title.text = token.symbol
+            holder.binding.balance.text = CurrencyUtil.formatGTU(
+                token.balance,
+                token,
+            )
             holder.binding.subtitle.isVisible = false
         }
 

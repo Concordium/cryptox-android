@@ -9,7 +9,6 @@
         android:id="@+id/tokens_found"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="18dp"
         android:clipToPadding="false"
         android:paddingBottom="20dp"
         android:scrollbars="none"
@@ -38,11 +37,11 @@
             android:text="@string/cis_no_collectibles_added"
             android:textAlignment="center" />
 
-        <Button
+        <TextView
             android:id="@+id/no_items_manage_tokens"
-            style="@style/CryptoX_Button_Primary"
-            android:layout_width="match_parent"
+            style="@style/MW24_Manage_Token_List_Button"
             android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
             android:clickable="true"
             android:text="@string/cis_manage" />
     </LinearLayout>

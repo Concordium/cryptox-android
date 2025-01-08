@@ -45,6 +45,7 @@
         android:layout_height="24dp"
         android:text="@string/ccd_onramp_banner_content"
         android:contentDescription="@string/ccd_onramp_close_banner"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/mw24_ic_onramp_close" />

@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="@drawable/mw24_container_primary_background"
         android:visibility="visible"
         tools:visibility="visible">
 
@@ -18,10 +20,10 @@
             android:layout_width="@dimen/cis_token_icon_size"
             android:layout_height="@dimen/cis_token_icon_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="20dp"
             android:scaleType="fitCenter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:src="@drawable/ic_logo_placeholder" />
 
         <TextView
@@ -40,7 +42,7 @@
             app:layout_constraintTop_toTopOf="@id/token_icon"
             app:layout_constraintWidth_default="wrap"
             app:layout_goneMarginEnd="12dp"
-            tools:text="255.05 wBTC" />
+            tools:text="wBTC" />
 
         <View
             android:id="@+id/notice"
@@ -60,7 +62,6 @@
             android:layout_width="0dp"
             android:layout_marginTop="4dp"
             app:layout_constraintBottom_toBottomOf="@id/token_icon"
-            app:layout_constraintEnd_toEndOf="@id/title"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="@string/cis_not_owned" />
@@ -74,23 +75,32 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/cryptox_grey_secondary" />
+            app:tint="@color/mw24_grey_4" />
 
-        <View
-            style="@style/CryptoX_Divider_Horizontal"
-            android:layout_marginTop="20dp"
+        <TextView
+            android:id="@+id/balance"
+            style="@style/MW24_Typography_Label_Main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:gravity="center_vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/token_icon" />
+            app:layout_goneMarginEnd="12dp"
+            tools:text="BTC" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
+    <TextView
         android:id="@+id/manage_tokens"
-        style="@style/CryptoX_Button_Primary"
-        android:layout_width="match_parent"
+        style="@style/MW24_Manage_Token_List_Button"
         android:layout_below="@id/content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="20dp"
         android:clickable="true"
         android:text="@string/cis_manage"
         android:visibility="gone"
