@@ -34,7 +34,12 @@ object CurrencyUtil {
         return formatGTU(value, withGStroke, decimals)
     }
 
-    fun formatGTU(value: BigInteger, withGStroke: Boolean = false, decimals: Int = 6): String {
+    fun formatGTU(
+        value: BigInteger,
+        withGStroke: Boolean = false,
+        decimals: Int = 6,
+        withCommas: Boolean = true
+    ): String {
         if (value == BigInteger.ZERO) return ZERO_AMOUNT
         if (decimals <= 0) return value.toString()
 
@@ -70,7 +75,9 @@ object CurrencyUtil {
             strBuilder.insert(0, "-")
         }
 
-        return formatGTUWithCommas(strBuilder.toString().removeSuffix(separator.toString()))
+        val formattedString = strBuilder.toString().removeSuffix(separator.toString())
+
+        return if (withCommas) formatGTUWithCommas(formattedString) else formattedString
     }
 
     fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int): String {
@@ -81,7 +88,13 @@ object CurrencyUtil {
             .toBigDecimal()
             .setScale(roundDecimals, RoundingMode.HALF_DOWN)
 
-        return formatter.format(bigDecimalValue)
+        //Format the small Decimal value for proper trailing zeros not omitted
+        val decimalFormatter = DecimalFormat(
+            "#,##0." + "0".repeat(roundDecimals),
+            DecimalFormatSymbols(Locale.US)
+        )
+
+        return decimalFormatter.format(bigDecimalValue)
     }
 
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? =

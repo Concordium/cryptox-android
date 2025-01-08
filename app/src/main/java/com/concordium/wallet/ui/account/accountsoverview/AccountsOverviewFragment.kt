@@ -35,7 +35,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
-import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
@@ -86,7 +85,6 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initializeViewModel()
-        viewModel.initialize()
         initializeViews()
 
         val baseActivity = (activity as BaseActivity)
@@ -104,19 +102,19 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
 
-        baseActivity.hideQrScan(isVisible = true)
-        if (!mainViewModel.hasCompletedOnboarding()) {
-            baseActivity.hideQrScan(isVisible = true) {
+        baseActivity.hideQrScan(isVisible = true) {
+            if (mainViewModel.hasCompletedOnboarding()) {
+                baseActivity.startQrScanner()
+            } else {
                 baseActivity.showUnlockFeatureDialog()
             }
         }
-
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.updateState()
-        viewModel.initiateFrequentUpdater()
+        viewModel.initiateUpdater()
     }
 
     override fun onDestroy() {
@@ -128,7 +126,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopFrequentUpdater()
+        viewModel.stopUpdater()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -176,19 +174,12 @@ class AccountsOverviewFragment : BaseFragment() {
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
         }
         viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
-            if (viewModel.hasShownInitialAnimation()) {
+            if (mainViewModel.hasCompletedOnboarding()) {
                 when (event.contentIfNotHandled) {
                     AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
                         UnshieldingNoticeDialog().showSingle(
                             childFragmentManager,
                             UnshieldingNoticeDialog.TAG
-                        )
-                    }
-
-                    AccountsOverviewViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                        NotificationsPermissionDialog().showSingle(
-                            childFragmentManager,
-                            NotificationsPermissionDialog.TAG,
                         )
                     }
 
@@ -199,10 +190,6 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
             when (state) {
                 OnboardingState.DONE -> {
-                    if (!viewModel.hasShownInitialAnimation()) {
-                        binding.confettiAnimation.visibility = View.VISIBLE
-                        binding.confettiAnimation.playAnimation()
-                    }
                     showStateDefault()
                 }
 
@@ -213,6 +200,13 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
         viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
+            if (active) {
+                if (!viewModel.hasShownInitialAnimation()) {
+                    binding.confettiAnimation.visibility = View.VISIBLE
+                    binding.confettiAnimation.playAnimation()
+                }
+            }
+
             binding.onrampBanner.root.setOnClickListener {
                 App.appCore.tracker.homeOnRampBannerClicked()
 

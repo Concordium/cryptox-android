@@ -12,9 +12,12 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.databinding.ActivityWelcomeBinding
+import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.uicore.handleUrlClicks
 
 class WelcomeActivity :
@@ -56,6 +59,16 @@ class WelcomeActivity :
 
         if (savedInstanceState == null) {
             App.appCore.tracker.welcomeScreen()
+        }
+
+        viewModel.isNotificationDialogEverShowed.collectWhenStarted(this) {
+            if (it.not()) {
+                NotificationsPermissionDialog().showSingle(
+                    supportFragmentManager,
+                    NotificationsPermissionDialog.TAG,
+                )
+                viewModel.setNotificationDialogShowed()
+            }
         }
 
         // Subscribe to activation bottom sheet chosen action.

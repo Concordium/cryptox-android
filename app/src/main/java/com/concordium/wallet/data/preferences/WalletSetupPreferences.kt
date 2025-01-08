@@ -7,8 +7,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
-import com.walletconnect.util.bytesToHex
-import com.walletconnect.util.hexToBytes
+import okio.ByteString.Companion.decodeHex
 
 class WalletSetupPreferences
 @Deprecated(
@@ -49,7 +48,7 @@ constructor(
             password = password,
             // The entropy is encoded to hex to keep backward compatibility
             // with the data encrypted before the Two wallets feature.
-            data = entropy.bytesToHex().toByteArray(),
+            data = entropy.toHex().toByteArray(),
         ) ?: return false
         return tryToSetEncryptedSeedPhrase(encryptedEntropy)
     }
@@ -90,7 +89,7 @@ constructor(
         // Try the encrypted entropy.
         getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON, gson)
             ?.let { authenticationManager.decrypt(password, it) }
-            ?.let { String(it).hexToBytes() }
+            ?.let { String(it).decodeHex().toByteArray() }
             ?.let { Mnemonics.MnemonicCode(it).toSeed().toHex() }
             ?.also { return it }
 
@@ -109,7 +108,7 @@ constructor(
     suspend fun getSeedPhrase(password: String): String =
         getJsonSerialized<EncryptedData>(PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON, gson)
             ?.let { App.appCore.auth.decrypt(password, it) }
-            ?.let { String(it).hexToBytes() }
+            ?.let { String(it).decodeHex().toByteArray() }
             ?.let {
                 Mnemonics.MnemonicCode(it).words.joinToString(
                     separator = " ",

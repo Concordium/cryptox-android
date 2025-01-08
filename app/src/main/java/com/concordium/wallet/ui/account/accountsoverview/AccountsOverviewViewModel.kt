@@ -77,15 +77,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
-    private val walletNotificationsPreferences =
-        App.appCore.session.walletStorage.notificationsPreferences
     private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
     val isCreationLimitedForFileWallet: Boolean
         get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
+    private var updater: CountDownTimer? = null
 
     enum class DialogToShow {
         UNSHIELDING,
-        NOTIFICATIONS_PERMISSION,
         ;
     }
 
@@ -102,6 +100,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                         App.appCore.session.setAccountsBackedUp(false)
                     }
                 }
+                viewModelScope.launch {
+                    postState(OnboardingState.DONE)
+                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
+                }
             }
 
             override fun onError(stringRes: Int) {
@@ -115,10 +117,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
         _fileWalletMigrationVisible.tryEmit(App.appCore.session.activeWallet.type == AppWallet.Type.FILE)
         updateNotificationSubscription()
-    }
-
-    fun initialize() {
-        showSingleDialogIfNeeded()
     }
 
     override fun onCleared() {
@@ -190,10 +188,24 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             _identityFlow.emit(identity)
             postState(OnboardingState.CREATE_ACCOUNT, zeroAccountBalances, notifyWaitingLiveData)
         } else {
+            handleAccountCreation(notifyWaitingLiveData)
+        }
+    }
+
+    private suspend fun handleAccountCreation(notifyWaitingLiveData: Boolean) {
+        val allAccounts = accountRepository.getAll()
+        if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-            updateSubmissionStatesAndBalances()
+            showSingleDialogIfNeeded()
+        } else {
+            postState(
+                state = OnboardingState.FINALIZING_ACCOUNT,
+                notifyWaitingLiveData = notifyWaitingLiveData
+            )
+            viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
         }
+        updateSubmissionStatesAndBalances()
     }
 
     private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
@@ -203,13 +215,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountUpdater.updateForAllAccounts()
     }
 
-    fun initiateFrequentUpdater() {
-        updater.cancel()
-        updater.start()
+    fun initiateUpdater() {
+        startUpdater()
     }
 
-    fun stopFrequentUpdater() {
-        updater.cancel()
+    fun stopUpdater() {
+        updater?.cancel()
+        updater = null
     }
 
     fun hasShownInitialAnimation(): Boolean {
@@ -220,8 +232,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
     }
 
-    private var updater =
-        object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
+    private fun startUpdater(countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
+        stopUpdater()
+        updater = object : CountDownTimer(Long.MAX_VALUE, countdownInterval * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
                 if (first) { // ignore first tick
@@ -236,7 +249,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
             override fun onFinish() {
             }
-        }
+        }.also { it.start() }
+    }
+
+    private fun restartUpdater(newInterval: Long) {
+        startUpdater(newInterval)
+    }
 
     private fun isRegularUpdateNeeded(): Boolean {
         this.accountRepository.allAccountsWithIdentity.value?.forEach { accountWithIdentity ->
@@ -247,11 +265,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return false
     }
 
-    fun checkNotFileWallet() =
-        check(App.appCore.session.activeWallet.type != AppWallet.Type.FILE) {
-            "File wallet can't used to perform this action"
-        }
-
     private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
         val dialogsToShow = linkedSetOf<DialogToShow>()
 
@@ -260,11 +273,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
         ) {
             dialogsToShow += DialogToShow.UNSHIELDING
-        }
-
-        // Show notifications permission if never shown.
-        if (!walletNotificationsPreferences.hasEverShownPermissionDialog) {
-            dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
         }
 
         // Show a single dialog if needed.

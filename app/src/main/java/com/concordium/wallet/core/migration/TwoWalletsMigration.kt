@@ -116,6 +116,8 @@ class TwoWalletsMigration(
     }
 
     suspend fun isAppDatabaseMigrationNeeded(): Boolean =
+        // The migration is needed when updated to the "two wallets" release
+        // as well as when the app is just installed so the DB must be prepared.
         appWalletDao.getCount() == 0
 
     @Suppress("DEPRECATION")
@@ -135,6 +137,7 @@ class TwoWalletsMigration(
                 AppWallet.Type.SEED
         }
 
+        // Creation of the first (primary) wallet.
         appWalletDao.insertAndActivate(
             AppWalletEntity(
                 wallet = AppWallet.primary(

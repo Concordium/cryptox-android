@@ -1,11 +1,10 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
-import com.concordium.wallet.App
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
-import com.walletconnect.util.hexToBytes
+import okio.ByteString.Companion.decodeHex
 
 class AppSetupPreferences(
     context: Context,
@@ -33,7 +32,7 @@ class AppSetupPreferences(
     }
 
     fun getPasswordKeySalt(slot: String): ByteArray {
-        return getString(PREFKEY_PASSWORD_KEY_SALT_HEX + slot, "").hexToBytes()
+        return getString(PREFKEY_PASSWORD_KEY_SALT_HEX + slot, "").decodeHex().toByteArray()
     }
 
     fun hasPasswordKeySalt(slot: String): Boolean {

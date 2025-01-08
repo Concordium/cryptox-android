@@ -265,7 +265,7 @@ abstract class BaseActivity(
             }
         }
 
-    private fun startQrScanner() {
+    fun startQrScanner() {
         val intent = Intent(applicationContext, ScanQRActivity::class.java)
         intent.putExtra(EXTRA_QR_CONNECT, true)
         scanQrResult.launch(intent)
