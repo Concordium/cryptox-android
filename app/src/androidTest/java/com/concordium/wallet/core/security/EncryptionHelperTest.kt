@@ -2,14 +2,13 @@ package com.concordium.wallet.core.security
 
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.util.toHex
-import com.walletconnect.util.hexToBytes
 import kotlinx.coroutines.runBlocking
+import okio.ByteString.Companion.decodeHex
 import org.junit.Assert
 import org.junit.Test
 
 class EncryptionHelperTest {
-    private val sharedKey = "12345678912345678912345678912345"
-        .hexToBytes()
+    private val sharedKey = "12345678912345678912345678912345".decodeHex().toByteArray()
 
     @Test
     fun encryptSuccessfully() {
@@ -183,8 +182,8 @@ class EncryptionHelperTest {
     fun generatePasswordKeySuccessfully() {
         val p1 = "123456".toCharArray()
         val p2 = "qwe123".toCharArray()
-        val s1 = "7804836792fbecf04961fe286e8ec950d2e105448e61a290262711154ec59026".hexToBytes()
-        val s2 = "ac6e5196afd67b0e69c42fcba198420391b79a6ba9a916fa76a905f09017acc5".hexToBytes()
+        val s1 = "7804836792fbecf04961fe286e8ec950d2e105448e61a290262711154ec59026".decodeHex().toByteArray()
+        val s2 = "ac6e5196afd67b0e69c42fcba198420391b79a6ba9a916fa76a905f09017acc5".decodeHex().toByteArray()
 
         val (k1, k2) = runBlocking {
             List(2) {
