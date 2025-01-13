@@ -37,8 +37,9 @@
 
             <TextView
                 android:id="@+id/title_textview"
-                style="@style/CryptoX_Typography_Body_Medium"
+                style="@style/MW24_Typography_Label_Main"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:ellipsize="middle"
@@ -54,7 +55,6 @@
                 android:paddingHorizontal="8sp"
                 android:paddingVertical="2sp"
                 android:textColor="@color/cryptox_white_main"
-                tools:background="@drawable/cryptox_income_amount_background"
                 tools:text="- Ͼ1000000000000.65" />
         </LinearLayout>
 

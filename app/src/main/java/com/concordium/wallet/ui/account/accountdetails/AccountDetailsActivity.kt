@@ -18,6 +18,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenActivity
@@ -190,6 +191,10 @@ class AccountDetailsActivity : BaseActivity(
             onEarnClicked()
         }
 
+        binding.activityBtn.setOnClickListener {
+            onActivityClicked()
+        }
+
         initTabs()
     }
 
@@ -251,6 +256,7 @@ class AccountDetailsActivity : BaseActivity(
         binding.sendFundsBtn.isEnabled = false
         binding.addressBtn.isEnabled = false
         binding.earnBtn.isEnabled = false
+        binding.activityBtn.isEnabled = false
     }
 
     private fun initTabs() {
@@ -347,6 +353,12 @@ class AccountDetailsActivity : BaseActivity(
             viewModelAccountDetails.hasPendingDelegationTransactions,
             viewModelAccountDetails.hasPendingBakingTransactions
         )
+    }
+
+    private fun onActivityClicked() {
+        val intent = Intent(this, AccountDetailsTransfersActivity::class.java)
+        intent.putExtra(AccountDetailsTransfersActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+        startActivity(intent)
     }
 
     private fun showTokenDetailsDialog(token: Token) {

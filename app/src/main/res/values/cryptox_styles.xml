@@ -196,7 +196,7 @@
     </style>
 
     <style name="CryptoX_Container_TextCard">
-        <item name="android:background">@drawable/cryptox_container_textcard_background</item>
+        <item name="android:background">@drawable/mw24_container_primary_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>

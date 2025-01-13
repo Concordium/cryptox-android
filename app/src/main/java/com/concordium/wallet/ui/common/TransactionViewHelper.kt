@@ -42,19 +42,16 @@ object TransactionViewHelper {
 
         fun setTotalView(total: BigInteger) {
             totalTextView.text = CurrencyUtil.formatGTU(total, withGStroke = false)
-            totalTextView.background =
-                if (total.signum() < 0)
-                    ContextCompat.getDrawable(
-                        totalTextView.context,
-                        R.drawable.cryptox_outcome_amount_background
-                    )
-                else if (total.signum() > 0)
-                    ContextCompat.getDrawable(
-                        totalTextView.context,
-                        R.drawable.cryptox_income_amount_background
-                    )
-                else
-                    null
+            val textColor = if (total.signum() > 0)
+                ContextCompat.getColor(
+                totalTextView.context,
+                R.color.mw24_green
+            ) else
+                ContextCompat.getColor(
+                    totalTextView.context,
+                    R.color.cryptox_white_main
+                )
+            totalTextView.setTextColor(textColor)
             totalTextView.visibility = View.VISIBLE
         }
 

@@ -56,22 +56,26 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginLeft="@dimen/section_gtu_drop"
+                    style="@style/MW24_Typography_Label_Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/section_gtu_drop"
                     android:layout_marginTop="@dimen/section_gtu_drop"
-                    android:layout_marginRight="@dimen/section_gtu_drop"
-                    android:text="@string/account_details_gtu_drop_header" />
+                    android:text="@string/account_details_gtu_drop_header"
+                    android:textColor="@color/mw24_blue_3"/>
 
                 <TextView
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginLeft="@dimen/section_gtu_drop"
+                    style="@style/MW24_Typography_Label_Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/section_gtu_drop"
                     android:layout_marginTop="20dp"
-                    android:layout_marginRight="@dimen/section_gtu_drop"
-                    android:text="@string/account_details_gtu_drop_info" />
+                    android:text="@string/account_details_gtu_drop_info"
+                    android:textColor="@color/mw24_blue_3"/>
 
                 <Button
                     android:id="@+id/gtu_drop_button"
-                    style="@style/Cryptox_Button_Secondary"
+                    style="@style/MW24_Button_Secondary"
                     android:layout_width="match_parent"
                     android:layout_marginLeft="@dimen/section_gtu_drop"
                     android:layout_marginTop="20dp"
