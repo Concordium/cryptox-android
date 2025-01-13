@@ -6,6 +6,12 @@
 
 - Ability to have both file and seed phrase wallets in the app and switch between them
 
+### Removed
+
+- Ability to create new accounts and identities in a file wallet.
+  We recommend that you migrate to a seed phrase wallet
+  in order to make use of the full range of CryptoX features.
+
 ## [1.4.0] - 2024-12-16
 
 ### Added
@@ -20,12 +26,6 @@
   large numbers
 - Use the new customizable page allowing pre-setting the address and the token for the Swipelux
   payment gateway
-
-### Removed
-
-- Ability to create new accounts and identities in a file wallet.
-  We recommend that you migrate to a seed phrase wallet
-  in order to make use of the full range of CryptoX features.
 
 ## [1.3.2] - 2024-11-27
 
