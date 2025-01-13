@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentTokensBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokensBottomSheet
 
 class TokensFragment : Fragment() {
@@ -85,28 +87,31 @@ class TokensFragment : Fragment() {
             viewModel.loadTokens(accountAddress, isFungible)
         }
 
-        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
-            requireActivity().runOnUiThread {
-                manageTokensBottomSheet?.dismiss()
-                manageTokensBottomSheet = null
-                if (anyChanges) {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.cis_tokens_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.cis_tokens_not_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
-            }
-        }
+//        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
+//            requireActivity().runOnUiThread {
+////                manageTokensBottomSheet?.dismiss()
+//                manageTokensBottomSheet = null
+//                if (anyChanges) {
+//                    Toast.makeText(
+//                        requireContext(),
+//                        R.string.cis_tokens_updated,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                } else
+//                    Toast.makeText(
+//                        requireContext(),
+//                        R.string.cis_tokens_not_updated,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//            }
+//        }
     }
 
     private fun showFindTokensDialog() {
-        manageTokensBottomSheet = ManageTokensBottomSheet()
-        manageTokensBottomSheet?.show(childFragmentManager, "")
+//        manageTokensBottomSheet = ManageTokensBottomSheet()
+//        manageTokensBottomSheet?.show(childFragmentManager, "")
+        val intent = Intent(requireActivity(), ManageTokenListActivity::class.java)
+        intent.putExtra(ManageTokenListActivity.ACCOUNT, (requireActivity() as AccountDetailsActivity).viewModelAccountDetails.account)
+        startActivity(intent)
     }
 }

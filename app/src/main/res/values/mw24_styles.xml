@@ -54,6 +54,11 @@
         <item name="android:textSize">15sp</item>
     </style>
 
+    <style name="MW24_Typography_Text_Mid">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="MW24_Typography_Text_Mid_Alternative">
         <item name="android:fontFamily">@font/w400</item>
         <item name="android:textSize">14sp</item>

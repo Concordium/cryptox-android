@@ -94,6 +94,20 @@
                     android:tooltipText="@string/account_details_earn_rewards"
                     app:srcCompat="@drawable/ccx_ico_earn" />
 
+                <View
+                    style="@style/CryptoX_Divider_Vertical"
+                    android:layout_marginVertical="12dp" />
+
+                <ImageButton
+                    android:id="@+id/activity_btn"
+                    style="@style/CryptoX_ImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/account_details_earn_rewards"
+                    android:tooltipText="@string/account_details_earn_rewards"
+                    app:srcCompat="@drawable/mw24_ic_activity_btn" />
+
             </LinearLayout>
 
             <androidx.viewpager.widget.ViewPager

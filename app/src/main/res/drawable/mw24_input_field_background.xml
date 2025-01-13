@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/mw24_input_field_background_default" android:state_focused="true" />
+    <item android:drawable="@drawable/mw24_input_field_background_active" android:state_focused="false" />
+</selector>

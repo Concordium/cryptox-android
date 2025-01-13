@@ -113,7 +113,7 @@
         <TextView
             style="@style/CryptoX_Typography_Body_Medium"
             android:layout_marginTop="16dp"
-            android:text="@string/cis_contract_index" />
+            android:text="@string/cis_contract_index_subindex" />
 
         <TextView
             android:id="@+id/contract_index"

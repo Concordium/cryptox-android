@@ -43,19 +43,19 @@ class ManageTokensContractAddressFragment : Fragment() {
             lookForTokens()
         }
 
-        binding.contractAddress.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus)
-                showOrHideError(TokensViewModel.TOKENS_OK)
-        }
-
-        binding.contractAddress.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                lookForTokens()
-                true
-            } else {
-                false
-            }
-        }
+//        binding.contractAddress.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus)
+//                showOrHideError(TokensViewModel.TOKENS_OK)
+//        }
+//
+//        binding.contractAddress.setOnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                lookForTokens()
+//                true
+//            } else {
+//                false
+//            }
+//        }
     }
 
     private fun initObservers() {
@@ -68,8 +68,7 @@ class ManageTokensContractAddressFragment : Fragment() {
     }
 
     private fun lookForTokens() {
-        val contractIndex = binding.contractAddress.text
-            .toString()
+        val contractIndex = binding.searchLayout.getSearchText()
             .takeUnless(String::isNullOrBlank)
             ?: return
 
@@ -82,11 +81,9 @@ class ManageTokensContractAddressFragment : Fragment() {
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
             binding.look.isEnabled = false
-            binding.contractAddress.isEnabled = false
             binding.includeProgress.progressLayout.isVisible = true
         } else {
             binding.look.isEnabled = true
-            binding.contractAddress.isEnabled = true
             binding.includeProgress.progressLayout.isVisible = false
         }
     }

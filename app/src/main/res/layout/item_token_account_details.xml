@@ -28,8 +28,9 @@
 
         <TextView
             android:id="@+id/title"
-            style="@style/CryptoX_Typography_Body_Medium"
+            style="@style/MW24_Typography_Label_Main"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -58,9 +59,11 @@
 
         <TextView
             android:id="@+id/subtitle"
-            style="@style/CryptoX_Typography_Caption"
+            style="@style/MW24_Typography_Text_Mid_Alternative"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:textColor="@color/cryptox_grey_main"
             app:layout_constraintBottom_toBottomOf="@id/token_icon"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintTop_toBottomOf="@id/title"

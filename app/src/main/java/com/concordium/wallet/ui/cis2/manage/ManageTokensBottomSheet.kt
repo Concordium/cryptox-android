@@ -1,63 +1,27 @@
 package com.concordium.wallet.ui.cis2.manage
 
-import android.app.Dialog
-import android.content.DialogInterface
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
-import androidx.activity.OnBackPressedCallback
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentManageTokensBottomSheetBinding
-import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ManageTokensBottomSheet : BottomSheetDialogFragment(
+class ManageTokensBottomSheet : Fragment(
     R.layout.fragment_manage_tokens_bottom_sheet
 ) {
-    override fun getTheme() =
-        R.style.AppBottomSheetDialogTheme
 
     private var _binding: FragmentManageTokensBottomSheetBinding? = null
     private val binding get() = _binding!!
     val viewModel: TokensViewModel
-        get() = (parentFragment as TokensFragment).viewModel
+        get() = (requireActivity() as AddTokenActivity).viewModelTokens
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentManageTokensBottomSheetBinding.bind(view)
         initViews()
         initObservers()
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        bottomSheetDialog.setOnShowListener {
-            val targetHeight = (Resources.getSystem().displayMetrics.heightPixels * 0.9).toInt()
-            bottomSheetDialog.behavior.peekHeight = targetHeight
-            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-            // Make the sheet fill 90% of height
-            bottomSheetDialog.findViewById<View>(R.id.content_layout)?.updateLayoutParams {
-                height = targetHeight
-            }
-
-            // Handle back button press.
-            bottomSheetDialog.onBackPressedDispatcher.addCallback(
-                viewLifecycleOwner,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        viewModel.stepPage(-1)
-                    }
-                }
-            )
-        }
-        return bottomSheetDialog
     }
 
     override fun onResume() {
@@ -68,11 +32,6 @@ class ManageTokensBottomSheet : BottomSheetDialogFragment(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        viewModel.onFindTokensDialogDismissed()
     }
 
     private fun initViews() {
@@ -94,7 +53,6 @@ class ManageTokensBottomSheet : BottomSheetDialogFragment(
             val targetPosition = binding.viewPager.currentItem + it
 
             if (targetPosition == -1) {
-                dismiss()
                 return@observe
             }
 

@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="16dp"
-    android:paddingBottom="20dp"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-    <com.google.android.material.bottomsheet.BottomSheetDragHandleView style="@style/CryptoX_BottomSheetHandle" />
+    android:paddingBottom="20dp">
 
     <TextView
         android:id="@+id/title_text_view"
-        style="@style/CryptoX_Typography_TitleLarge"
+        style="@style/MW24_Typography_Text_Mid_Alternative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/mw24_blue_3"
         android:layout_marginHorizontal="18dp"
         android:layout_marginTop="30dp"
         android:text="@string/cis_manage_tokens" />
