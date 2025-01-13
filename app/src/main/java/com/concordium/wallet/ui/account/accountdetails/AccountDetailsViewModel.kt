@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
+import com.concordium.wallet.core.Session
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
@@ -24,7 +24,6 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
 import com.concordium.wallet.ui.account.accountdetails.transfers.HeaderItem
@@ -40,25 +39,17 @@ import java.math.BigInteger
 import java.util.Date
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
-    private fun <T> MutableLiveData<T>.forceRefresh() {
-        this.value = this.value
-    }
-
     private val session: Session = App.appCore.session
-
-    var hasTransactionsToDecrypt: Boolean = false
 
     lateinit var account: Account
     var hasPendingDelegationTransactions: Boolean = false
     var hasPendingBakingTransactions: Boolean = false
 
     private val proxyRepository = ProxyRepository()
-    private val accountRepository: AccountRepository
-    private val transferRepository: TransferRepository
-    private val identityRepository: IdentityRepository
-    private val recipientRepository: RecipientRepository
-
-    private val gson = App.appCore.gson
+    private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
+    private val transferRepository = TransferRepository(session.walletStorage.database.transferDao())
+    private val identityRepository = IdentityRepository(session.walletStorage.database.identityDao())
+    private val recipientRepository = RecipientRepository(session.walletStorage.database.recipientDao())
 
     private lateinit var transactionMappingHelper: TransactionMappingHelper
     private val accountUpdater = AccountUpdater(application, viewModelScope)
@@ -111,14 +102,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         get() = _accountUpdatedLiveData
 
     init {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        transferRepository = TransferRepository(transferDao)
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
         initializeAccountUpdater()
 
         _transferListLiveData.observeForever {
@@ -366,7 +349,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun addToTransactionList(newTransactions: List<Transaction>) {
-        val transferList = _transferListLiveData.value ?: ArrayList<AdapterItem>()
+        val transferList = _transferListLiveData.value ?: ArrayList()
         val adapterList = transferList.toMutableList()
         for (ta in newTransactions) {
             val isAfterHeader = checkToAddHeaderItem(adapterList, ta)

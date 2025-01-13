@@ -20,7 +20,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -36,11 +35,12 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
+import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
-import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +58,6 @@ class AccountsOverviewFragment : BaseFragment() {
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
-    private lateinit var keyCreationVersion: KeyCreationVersion
     private lateinit var onboardingStatusCard: OnboardingFragment
 
     //region Lifecycle
@@ -68,7 +67,6 @@ class AccountsOverviewFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-        keyCreationVersion = KeyCreationVersion(AuthPreferences(requireContext()))
     }
 
     override fun onCreateView(
@@ -91,8 +89,13 @@ class AccountsOverviewFragment : BaseFragment() {
 
         val baseActivity = (activity as BaseActivity)
 
-        baseActivity.hideLeftPlus(isVisible = true) {
-            if (mainViewModel.hasCompletedOnboarding()) {
+        baseActivity.hideLeftPlus(
+            isVisible = true,
+            hasNotice = viewModel.isCreationLimitedForFileWallet,
+        ) {
+            if (viewModel.isCreationLimitedForFileWallet) {
+                showFileWalletCreationLimitation()
+            } else if (mainViewModel.hasCompletedOnboarding()) {
                 gotoCreateAccount()
             } else {
                 baseActivity.showUnlockFeatureDialog()
@@ -198,7 +201,7 @@ class AccountsOverviewFragment : BaseFragment() {
         }
         viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
             if (active) {
-                if (!viewModel.hasShowedInitialAnimation()) {
+                if (!viewModel.hasShownInitialAnimation()) {
                     binding.confettiAnimation.visibility = View.VISIBLE
                     binding.confettiAnimation.playAnimation()
                 }
@@ -224,6 +227,11 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingViewModel.setIdentity(identity)
         }
+
+        viewModel.fileWalletMigrationVisible.collectWhenStarted(
+            viewLifecycleOwner,
+            binding.fileWalletMigrationDisclaimerLayout::isVisible::set
+        )
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
@@ -264,6 +272,10 @@ class AccountsOverviewFragment : BaseFragment() {
             App.appCore.session.addAccountsBackedUpListener(it)
         }
 
+        binding.fileWalletMigrationDisclaimerLayout.setOnClickListener {
+            startActivity(Intent(requireActivity(), WalletsActivity::class.java))
+        }
+
         initializeAnimation()
         initializeList()
         updateMissingBackup()
@@ -271,7 +283,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun updateMissingBackup() = viewModel.viewModelScope.launch(Dispatchers.Main) {
         binding.missingBackup.isVisible = App.appCore.session.run {
-            isAccountsBackupPossible() && !isAccountsBackedUp()
+            isAccountsBackupPossible() && !areAccountsBackedUp()
         }
     }
 
@@ -389,6 +401,13 @@ class AccountsOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
+    private fun showFileWalletCreationLimitation() {
+        FileWalletCreationLimitationDialog().showSingle(
+            childFragmentManager,
+            FileWalletCreationLimitationDialog.TAG
+        )
+    }
+
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
             binding.progress.progressLayout.visibility = View.VISIBLE
@@ -439,7 +458,7 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun cancelAnimation() {
-        viewModel.setHasShowedInitialAnimation()
+        viewModel.setHasShownInitialAnimation()
         binding.confettiAnimation.visibility = View.GONE
     }
 

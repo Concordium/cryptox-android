@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
@@ -31,7 +32,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -42,21 +42,14 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
 
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val transferRepository: TransferRepository
-    private val recipientRepository: RecipientRepository
-
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        transferRepository = TransferRepository(transferDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-    }
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
 
     fun initialize() {
     }
@@ -78,7 +71,11 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
         val arsInfos = HashMap<String, ArsInfo>()
         arsInfos.put("1", ArsInfo(1, "", ArDescription("", "", "")))
         val identityProvider =
-            IdentityProvider(identityProviderInfo, arsInfos, IdentityProviderMetaData("", "", "", ""))
+            IdentityProvider(
+                identityProviderInfo,
+                arsInfos,
+                IdentityProviderMetaData("", "", "", "")
+            )
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
@@ -101,7 +98,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             0,
             identityProvider,
             identityObject,
-            "",
+            null,
             identityProvider.ipInfo.ipIdentity,
             0
         )
@@ -127,7 +124,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 address = "address01",
                 submissionId = "a01",
                 transactionStatus = TransactionStatus.FINALIZED,
-                encryptedAccountData = "",
+                encryptedAccountData = null,
                 revealedAttributes = revealedAttributes,
                 credential = CredentialWrapper(credential, 0),
                 balance = BigInteger.ZERO,
@@ -147,7 +144,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 address = "address02",
                 submissionId = "a02",
                 transactionStatus = TransactionStatus.COMMITTED,
-                encryptedAccountData = "",
+                encryptedAccountData = null,
                 revealedAttributes = revealedAttributes,
                 credential = CredentialWrapper(credential, 0),
                 balance = BigInteger.ZERO,
@@ -167,7 +164,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 address = "address03",
                 submissionId = "a03",
                 transactionStatus = TransactionStatus.RECEIVED,
-                encryptedAccountData = "",
+                encryptedAccountData = null,
                 revealedAttributes = revealedAttributes,
                 credential = CredentialWrapper(credential, 0),
                 balance = BigInteger.ZERO,
@@ -187,7 +184,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 address = "address04",
                 submissionId = "a04",
                 transactionStatus = TransactionStatus.ABSENT,
-                encryptedAccountData = "",
+                encryptedAccountData = null,
                 revealedAttributes = revealedAttributes,
                 credential = CredentialWrapper(credential, 0),
                 balance = BigInteger.ZERO,

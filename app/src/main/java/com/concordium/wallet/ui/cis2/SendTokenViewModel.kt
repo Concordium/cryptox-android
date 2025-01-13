@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +12,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
@@ -29,14 +29,12 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
-import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsPreferences
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.DateTimeUtil
@@ -78,11 +76,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private val proxyRepository = ProxyRepository()
-    private val transferRepository: TransferRepository
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val sendFundsPreferences by lazy {
-        SendFundsPreferences(getApplication())
-    }
+    private val sendFundsPreferences: WalletSendFundsPreferences =
+        App.appCore.session.walletStorage.sendFundsPreferences
 
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
@@ -108,9 +106,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
     init {
-        transferRepository =
-            TransferRepository(WalletDatabase.getDatabase(application).transferDao())
-
         chooseToken.observeForever { token ->
             sendTokenData.token = token
             sendTokenData.max = if (token.isCcd) null else token.balance
@@ -131,7 +126,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
             val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+                App.appCore.session.walletStorage.database.contractTokenDao()
             )
             val tokensFound = mutableListOf<Token>()
             tokensFound.add(getCCDDefaultToken(accountAddress))
@@ -201,11 +196,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         sendTokenData.memo?.let(CBORUtil.Companion::decodeHexAndCBOR)
 
     fun showMemoWarning(): Boolean {
-        return sendFundsPreferences.showMemoWarning()
+        return sendFundsPreferences.shouldShowMemoWarning()
     }
 
     fun dontShowMemoWarning() {
-        return sendFundsPreferences.dontShowMemoWarning()
+        return sendFundsPreferences.disableShowMemoWarning()
     }
 
     fun onReceiverEntered(input: String) {
@@ -331,7 +326,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
         val accountRepository =
-            AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")
         return Token.ccd(account)
@@ -345,16 +340,21 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private suspend fun decryptAndContinue(password: String) {
         sendTokenData.account?.let { account ->
             val storageAccountDataEncrypted = account.encryptedAccountData
-            if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+            if (storageAccountDataEncrypted == null) {
                 errorInt.postValue(R.string.app_error_general)
                 waiting.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-                .decryptInBackground(password, storageAccountDataEncrypted)
-            val credentialsOutput =
-                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+            val decryptedJson = App.appCore.auth
+                .decrypt(
+                    password = password,
+                    encryptedData = storageAccountDataEncrypted
+                )
+                ?.let(::String)
+
             if (decryptedJson != null) {
+                val credentialsOutput =
+                    App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 getAccountEncryptedKey(credentialsOutput)
             } else {
                 errorInt.postValue(R.string.app_error_encryption)

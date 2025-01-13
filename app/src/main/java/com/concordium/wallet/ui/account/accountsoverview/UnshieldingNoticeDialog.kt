@@ -40,7 +40,7 @@ class UnshieldingNoticeDialog : AppCompatDialogFragment() {
         // Track showing the notice once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
-            App.appCore.session.unshieldingNoticeShown()
+            App.appCore.session.setUnshieldingNoticeShown()
         }
     }
 

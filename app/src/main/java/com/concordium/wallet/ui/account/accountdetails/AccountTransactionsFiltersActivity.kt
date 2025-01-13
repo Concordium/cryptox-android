@@ -3,7 +3,7 @@ package com.concordium.wallet.ui.account.accountdetails
 import android.os.Bundle
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.core.authentication.Session
+import com.concordium.wallet.core.Session
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountTransactionFiltersBinding
 import com.concordium.wallet.ui.base.BaseActivity

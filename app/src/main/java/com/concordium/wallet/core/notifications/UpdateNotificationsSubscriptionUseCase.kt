@@ -1,14 +1,13 @@
 package com.concordium.wallet.core.notifications
 
-import android.app.Application
+import android.content.Context
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.UpdateSubscriptionRequest
 import com.concordium.wallet.data.model.NotificationsTopic
-import com.concordium.wallet.data.preferences.NotificationsPreferences
+import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -19,27 +18,26 @@ import java.net.HttpURLConnection
 
 class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
-    private val notificationsPreferences: NotificationsPreferences,
+    private val walletNotificationsPreferences: WalletNotificationsPreferences,
     private val notificationsBackend: NotificationsBackend,
-    private val application: Application,
+    private val context: Context,
 ) {
-    constructor(application: Application) : this(
-        accountRepository = WalletDatabase.getDatabase(application).accountDao()
-            .let(::AccountRepository),
-        notificationsPreferences = NotificationsPreferences(application),
+    constructor() : this(
+        accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao()),
+        walletNotificationsPreferences = App.appCore.session.walletStorage.notificationsPreferences,
         notificationsBackend = App.appCore.getNotificationsBackend(),
-        application = application
+        context = App.appContext,
     )
 
     /**
      * @return **true** on successful update
      */
     suspend operator fun invoke(
-        isCcdTxEnabled: Boolean = notificationsPreferences.areCcdTxNotificationsEnabled,
-        isCis2TxEnabled: Boolean = notificationsPreferences.areCis2TxNotificationsEnabled,
+        isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
+        isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled
     ): Boolean {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
-        val fcmToken = when (googleApiAvailability.isGooglePlayServicesAvailable(application)) {
+        val fcmToken = when (googleApiAvailability.isGooglePlayServicesAvailable(context)) {
             ConnectionResult.SUCCESS -> {
                 try {
                     FirebaseMessaging.getInstance().token.await()

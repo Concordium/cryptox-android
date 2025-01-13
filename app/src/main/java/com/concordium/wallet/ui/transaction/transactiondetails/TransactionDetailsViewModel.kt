@@ -7,20 +7,17 @@ import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionSource
 import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 
 class TransactionDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val proxyRepository = ProxyRepository()
-    private val transferRepository: TransferRepository
 
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
     lateinit var account: Account
@@ -37,11 +34,6 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     private val _showDetailsLiveData = MutableLiveData<Event<Boolean>>()
     val showDetailsLiveData: LiveData<Event<Boolean>>
         get() = _showDetailsLiveData
-
-    init {
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        transferRepository = TransferRepository(transferDao)
-    }
 
     fun initialize(account: Account, transaction: Transaction) {
         this.account = account

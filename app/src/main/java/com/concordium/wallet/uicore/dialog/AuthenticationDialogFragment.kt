@@ -12,10 +12,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogAuthenticationContainerBinding
 import com.concordium.wallet.uicore.afterTextChanged
+import kotlinx.coroutines.launch
 
 class AuthenticationDialogFragment : AppCompatDialogFragment(),
     TextView.OnEditorActionListener {
@@ -55,18 +57,18 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
             binding.authenticationContent.passwordDescription.text = alternativeString
         } else {
             binding.authenticationContent.passwordDescription.setText(
-                if (App.appCore.getCurrentAuthenticationManager()
-                        .usePasscode()
+                if (App.appCore.auth
+                        .isPasscodeUsed()
                 ) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description
             )
         }
 
         binding.authenticationContent.passwordEdittext.setHint(
-            if (App.appCore.getCurrentAuthenticationManager()
-                    .usePasscode()
+            if (App.appCore.auth
+                    .isPasscodeUsed()
             ) R.string.auth_dialog_passcode else R.string.auth_dialog_password
         )
-        if (App.appCore.getCurrentAuthenticationManager().usePasscode()) {
+        if (App.appCore.auth.isPasscodeUsed()) {
             binding.authenticationContent.passwordEdittext.inputType =
                 InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
         }
@@ -99,8 +101,8 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
         this.callback = callback
     }
 
-    private fun verifyPassword() {
-        val passwordIsValid = App.appCore.getCurrentAuthenticationManager()
+    private fun verifyPassword() = viewLifecycleOwner.lifecycleScope.launch {
+        val passwordIsValid = App.appCore.auth
             .checkPassword(binding.authenticationContent.passwordEdittext.text.toString())
         if (passwordIsValid) {
             callback?.onCorrectPassword(binding.authenticationContent.passwordEdittext.text.toString())
@@ -110,7 +112,7 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
             binding.authenticationContent.passwordEdittext.setText("")
             binding.authenticationContent.passwordError.isVisible = true
             binding.authenticationContent.passwordError.setText(
-                if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                if (App.appCore.auth.isPasscodeUsed())
                     R.string.auth_login_passcode_error
                 else
                     R.string.auth_login_password_error

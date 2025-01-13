@@ -4,10 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.launch
 
 class AccountSettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,9 +21,9 @@ class AccountSettingsViewModel(application: Application) : AndroidViewModel(appl
 
     fun changeAccountName(name: String) {
         val accountRepository =
-            AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val recipientRepository =
-            RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
+            RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
         viewModelScope.launch {
             account.name = name
             accountRepository.update(account)

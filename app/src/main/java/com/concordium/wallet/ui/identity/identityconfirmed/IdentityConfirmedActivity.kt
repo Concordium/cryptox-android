@@ -12,7 +12,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.databinding.ActivityIdentityConfirmedBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
@@ -187,7 +186,7 @@ class IdentityConfirmedActivity :
     private fun showSubmitAccount() {
         CoroutineScope(Dispatchers.IO).launch {
             val identityRepository =
-                IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
+                IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
             identity = checkNotNull(identityRepository.findById(identity.id)) {
                 "The identity ${identity.id} must be in the repository"
             }

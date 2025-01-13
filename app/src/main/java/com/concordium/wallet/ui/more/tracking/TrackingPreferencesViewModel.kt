@@ -4,23 +4,23 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.concordium.wallet.data.preferences.TrackingPreferences
+import com.concordium.wallet.data.preferences.AppTrackingPreferences
 
 class TrackingPreferencesViewModel(application: Application) : AndroidViewModel(application) {
-    private val trackingPreferences = TrackingPreferences(application)
+    private val appTrackingPreferences = AppTrackingPreferences(application)
 
     private val _isTrackingEnabledLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val isTrackingEnabledLiveData: LiveData<Boolean> = _isTrackingEnabledLiveData
 
     init {
-        _isTrackingEnabledLiveData.value = trackingPreferences.isTrackingEnabled
+        _isTrackingEnabledLiveData.value = appTrackingPreferences.isTrackingEnabled
     }
 
     fun onAllowClicked() {
         val isTrackingEnabled = _isTrackingEnabledLiveData.value != true
         _isTrackingEnabledLiveData.value = isTrackingEnabled
-        trackingPreferences.isTrackingEnabled = isTrackingEnabled
+        appTrackingPreferences.isTrackingEnabled = isTrackingEnabled
 
-        trackingPreferences.hasDecidedOnPermission = true
+        appTrackingPreferences.hasDecidedOnPermission = true
     }
 }

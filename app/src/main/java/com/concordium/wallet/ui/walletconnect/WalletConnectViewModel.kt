@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
@@ -13,10 +12,8 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
@@ -24,7 +21,6 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.R
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
-import com.concordium.wallet.util.KeyCreationVersion
 import com.concordium.wallet.util.Log
 import com.reown.android.Core
 import com.reown.android.CoreClient
@@ -98,14 +94,11 @@ private constructor(
     )
 
     private val accountRepository: AccountRepository by lazy {
-        AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val proxyRepository: ProxyRepository by lazy(::ProxyRepository)
     private val identityRepository: IdentityRepository by lazy {
-        IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
-    }
-    private val keyCreationVersion: KeyCreationVersion by lazy {
-        KeyCreationVersion(AuthPreferences(application))
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     }
 
     private lateinit var sessionProposalPublicKey: String
@@ -175,7 +168,7 @@ private constructor(
             onFinish = ::onSessionRequestHandlingFinished,
             proxyRepository = proxyRepository,
             identityRepository = identityRepository,
-            keyCreationVersion = keyCreationVersion,
+            activeWalletType = App.appCore.session.activeWallet.type,
         )
     }
 
@@ -670,13 +663,14 @@ private constructor(
         if (account == null) {
             Log.e("Unable to find account with address: $accountAddress")
 
-            respondError(message = "Broken session")
+            respondError(message = "Unable to find the namespace account")
 
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
-                    Error.InvalidRequest
+                    Error.AccountNotFound
                 )
             )
+
             onSessionRequestHandlingFinished()
 
             return@launch
@@ -846,7 +840,7 @@ private constructor(
         }
 
         val storageAccountDataEncrypted = sessionRequestAccount.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             Log.e("account_has_no_encrypted_data")
 
             mutableEventsFlow.tryEmit(
@@ -857,8 +851,12 @@ private constructor(
 
             return@launch
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+        val decryptedJson = App.appCore.auth
+            .decrypt(
+                password = password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
 
         if (decryptedJson != null) {
             val storageAccountData =
@@ -1206,7 +1204,7 @@ private constructor(
          * The dApp sent an account transaction request for a different account
          * than the one connected in the session.
          */
-        object AccountMismatch : Error
+        object AccountNotFound : Error
 
         /**
          * There are no accounts in the wallet therefore a session can't be established.

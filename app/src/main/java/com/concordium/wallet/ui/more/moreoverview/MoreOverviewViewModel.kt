@@ -9,9 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.Flow
@@ -22,10 +20,9 @@ import kotlin.system.exitProcess
 
 class MoreOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val authPreferences = AuthPreferences(application)
+    private val walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
 
     private val _seedRecoveryVisibilityLiveData = MutableLiveData<Boolean>()
@@ -54,20 +51,20 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     fun updateOptionsVisibility() = viewModelScope.launch {
         // Seed recovery is visible when there is a seed.
-        _seedRecoveryVisibilityLiveData.postValue(authPreferences.hasEncryptedSeed())
+        _seedRecoveryVisibilityLiveData.postValue(walletSetupPreferences.hasEncryptedSeed())
         // File import and export are visible if the backup is possible.
         _fileImportExportVisibilityLiveData.postValue(App.appCore.session.isAccountsBackupPossible())
         // Seed phrase reveal is visible when there is an encrypted saved version of it.
-        _seedPhraseRevealVisibilityLiveData.postValue(authPreferences.hasEncryptedSeedPhrase())
+        _seedPhraseRevealVisibilityLiveData.postValue(walletSetupPreferences.hasEncryptedSeedPhrase())
         // Seed reveal is visible when there is an encrypted saved version of it,
         // while the phrase is not available.
         _seedRevealVisibilityLiveData.postValue(
-            authPreferences.hasEncryptedSeed() && !authPreferences.hasEncryptedSeedPhrase()
+            walletSetupPreferences.hasEncryptedSeed() && !walletSetupPreferences.hasEncryptedSeedPhrase()
         )
         // Wallet erase is visible if the initial setup is completed.
-        _walletEraseVisibilityLiveData.postValue(App.appCore.session.hasCompletedInitialSetup)
+        _walletEraseVisibilityLiveData.postValue(App.appCore.setup.isInitialSetupCompleted)
         // Password alter is visible if it is set up.
-        _passwordAlterVisibilityLiveData.postValue(authPreferences.getHasSetupUser())
+        _passwordAlterVisibilityLiveData.postValue(App.appCore.setup.isAuthSetupCompleted)
         // Unshielding is visible if may be required.
         _unshieldingVisibilityLiveData.postValue(
             accountRepository.getAllDone().any(Account::mayNeedUnshielding)
@@ -92,21 +89,22 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun onAuthenticated(password: String) {
-        eraseWalletAndGoToWelcome()
+        eraseDataAndGoToWelcome()
     }
 
-    private fun eraseWalletAndGoToWelcome() {
+    private fun eraseDataAndGoToWelcome() {
         try {
             clearNotificationToken()
             with(getApplication<App>()) {
                 dataDir.deleteRecursively()
                 filesDir.deleteRecursively()
+                noBackupFilesDir.deleteRecursively()
                 cacheDir.deleteRecursively()
                 File(filesDir.parentFile!!.absolutePath, "shared_prefs").deleteRecursively()
                 initAppCore()
             }
 
-            mutableEventsFlow.tryEmit(Event.ShowWalletErasedMessage)
+            mutableEventsFlow.tryEmit(Event.ShowDataErasedMessage)
             mutableEventsFlow.tryEmit(Event.GoToWelcome)
 
             Handler(Looper.getMainLooper()).post {
@@ -128,7 +126,7 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
 
     sealed interface Event {
         object ShowAuthentication : Event
-        object ShowWalletErasedMessage : Event
+        object ShowDataErasedMessage : Event
         object GoToWelcome : Event
     }
 }

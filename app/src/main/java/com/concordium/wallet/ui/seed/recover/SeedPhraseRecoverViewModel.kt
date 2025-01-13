@@ -9,8 +9,8 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.ui.seed.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
@@ -39,8 +39,6 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     private val _saveSeedLiveData = MutableLiveData<Boolean>()
     val saveSeed: LiveData<Boolean>
         get() = _saveSeedLiveData
-
-    private val session: Session = App.appCore.session
 
     private val _validateLiveData = MutableLiveData<Boolean>()
     val validate: LiveData<Boolean>
@@ -96,13 +94,18 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun setSeedPhrase(seed: String, password: String) = viewModelScope.launch {
-        val isSavedSuccessfully = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
-            seed,
-            password
-        )
+        val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
+            .tryToSetEncryptedSeedPhrase(
+                seed,
+                password
+            )
 
         if (isSavedSuccessfully) {
-            session.hasCompletedInitialSetup()
+            SwitchActiveWalletTypeUseCase().invoke(
+                newWalletType = AppWallet.Type.SEED,
+            )
+            App.appCore.setup.finishInitialSetup()
+            App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
         }
 
         _saveSeedLiveData.value = isSavedSuccessfully

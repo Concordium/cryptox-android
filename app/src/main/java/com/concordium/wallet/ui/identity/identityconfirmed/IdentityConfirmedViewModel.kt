@@ -9,7 +9,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +20,8 @@ data class IdentityErrorData(
 )
 
 class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(application) {
-    private val identityRepository: IdentityRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
@@ -41,11 +41,6 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
         get() = _identityErrorLiveData
 
     lateinit var identity: Identity
-
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-    }
 
     override fun onCleared() {
         super.onCleared()

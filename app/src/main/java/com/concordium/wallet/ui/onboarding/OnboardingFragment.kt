@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -25,6 +26,8 @@ import com.concordium.wallet.ui.account.newaccountsetup.NewAccountSetupViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.ui.common.failed.FailedActivity
+import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
@@ -34,7 +37,7 @@ import kotlinx.coroutines.launch
 class OnboardingFragment @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : ConstraintLayout(context, attrs, defStyleAttr), AuthDelegate by AuthDelegateImpl() {
 
     private var binding: FragmentOnboardingBinding = FragmentOnboardingBinding.inflate(
@@ -81,30 +84,36 @@ class OnboardingFragment @JvmOverloads constructor(
                 }
             }
         }
-        newAccountViewModel.showAuthenticationLiveData.observe(activity, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-                    showAuthentication(
-                        activity = context as BaseActivity,
-                        onAuthenticated = {
-                            newAccountViewModel.continueWithPassword(it)
-                            activity.lifecycleScope.launch {
-                                onboardingViewModel.setShowLoading(true)
+        newAccountViewModel.showAuthenticationLiveData.observe(
+            activity,
+            object : EventObserver<Boolean>() {
+                override fun onUnhandledEvent(value: Boolean) {
+                    if (value) {
+                        showAuthentication(
+                            activity = context as BaseActivity,
+                            onAuthenticated = {
+                                newAccountViewModel.continueWithPassword(it)
+                                activity.lifecycleScope.launch {
+                                    onboardingViewModel.setShowLoading(true)
+                                }
                             }
-                        }
+                        )
+                    }
+                }
+            })
+        newAccountViewModel.gotoAccountCreatedLiveData.observe(
+            activity,
+            object : EventObserver<Account>() {
+                override fun onUnhandledEvent(value: Account) {
+                    App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(
+                        true
                     )
+                    activity.lifecycleScope.launch {
+                        onboardingViewModel.setShowLoading(false)
+                        onboardingViewModel.setUpdateState(true)
+                    }
                 }
-            }
-        })
-        newAccountViewModel.gotoAccountCreatedLiveData.observe(activity, object : EventObserver<Account>() {
-            override fun onUnhandledEvent(value: Account) {
-                App.appCore.session.hasCompletedOnboarding()
-                activity.lifecycleScope.launch {
-                    onboardingViewModel.setShowLoading(false)
-                    onboardingViewModel.setUpdateState(true)
-                }
-            }
-        })
+            })
         newAccountViewModel.errorLiveData.observe(activity, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 activity.lifecycleScope.launch {
@@ -113,6 +122,15 @@ class OnboardingFragment @JvmOverloads constructor(
                 (activity as BaseActivity).showError(value)
             }
         })
+        newAccountViewModel.gotoFailedLiveData.observe(
+            activity,
+            object : EventObserver<Pair<Boolean, BackendError?>>() {
+                override fun onUnhandledEvent(value: Pair<Boolean, BackendError?>) {
+                    if (value.first) {
+                        goToFailed(value.second)
+                    }
+                }
+            })
     }
 
     fun updateViewsByState(state: OnboardingState) {
@@ -299,5 +317,14 @@ class OnboardingFragment @JvmOverloads constructor(
             newAccountViewModel.initialize(Account.getDefaultName(""), identity)
             newAccountViewModel.createAccount()
         }
+    }
+
+    private fun goToFailed(error: BackendError?) {
+        val intent = Intent(activity, FailedActivity::class.java)
+        intent.putExtra(FailedActivity.EXTRA_SOURCE, FailedViewModel.Source.Account)
+        error?.let {
+            intent.putExtra(FailedActivity.EXTRA_ERROR, it)
+        }
+        activity.startActivity(intent)
     }
 }

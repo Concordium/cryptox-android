@@ -5,12 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.airdrop.AirDropRepository
 import com.concordium.wallet.data.backend.airdrop.RegistrationRequest
 import com.concordium.wallet.data.backend.airdrop.RegistrationResponse
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.extension.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,12 +36,8 @@ class AirDropViewModel(application: Application) : AndroidViewModel(application)
     private val _doRegistrationResponseLiveData: MutableLiveData<Event<RegistrationResponse>> = MutableLiveData()
     fun doRegistrationResponse(): LiveData<Event<RegistrationResponse>> = _doRegistrationResponseLiveData
 
-    private var accountRepository: AccountRepository? = null
-
-    init {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-    }
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
 
     fun processAction(action: AirDropAction) {
         when (action) {

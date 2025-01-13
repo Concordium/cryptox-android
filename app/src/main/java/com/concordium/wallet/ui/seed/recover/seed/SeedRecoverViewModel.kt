@@ -5,18 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.util.Log
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.web3j.utils.Numeric.hexStringToByteArray
-import java.util.Locale
 
 class SeedRecoverViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val session: Session = App.appCore.session
 
     private val _saveSeedSuccess = MutableStateFlow(false)
     val saveSeedSuccess = _saveSeedSuccess.asStateFlow()
@@ -52,13 +48,20 @@ class SeedRecoverViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun setSeed(privateKey: String, password: String) = viewModelScope.launch {
-        val success = AuthPreferences(getApplication()).tryToSetEncryptedSeedHex(
-            privateKey,
-            password
-        )
+        val success = App.appCore.session.walletStorage.setupPreferences
+            .tryToSetEncryptedSeedHex(
+                privateKey,
+                password
+            )
+
         if (success) {
-            session.hasCompletedInitialSetup()
+            SwitchActiveWalletTypeUseCase().invoke(
+                newWalletType = AppWallet.Type.SEED,
+            )
+            App.appCore.setup.finishInitialSetup()
+            App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
         }
+
         _saveSeedSuccess.value = success
     }
 

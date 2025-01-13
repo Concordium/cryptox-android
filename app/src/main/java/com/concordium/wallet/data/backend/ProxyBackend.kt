@@ -101,10 +101,6 @@ interface ProxyBackend {
     @PUT("v0/testnetGTUDrop/{accountAddress}")
     fun requestGTUDrop(@Path("accountAddress") accountAddress: String): Call<SubmissionData>
 
-    // Identity Provider
-    @GET("v0/ip_info")
-    fun getIdentityProviderInfo(): Call<ArrayList<IdentityProvider>>
-
     @GET("v2/ip_info")
     fun getV2IdentityProviderInfo(): Call<ArrayList<IdentityProvider>>
 

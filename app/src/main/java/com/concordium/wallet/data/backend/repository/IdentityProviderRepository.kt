@@ -14,16 +14,11 @@ class IdentityProviderRepository {
     private val backend = App.appCore.getProxyBackend()
 
     fun getIdentityProviderInfo(
-        useLegacy: Boolean,
         success: (ArrayList<IdentityProvider>) -> Unit,
         failure: ((Throwable) -> Unit)?
     ): BackendRequest<ArrayList<IdentityProvider>> {
-        val call =
-            if (useLegacy)
-                backend.getIdentityProviderInfo()
-            else
-                backend.getV2IdentityProviderInfo()
-        call.enqueue(object : BackendCallback<ArrayList<IdentityProvider>>() {
+        val call = backend.getV2IdentityProviderInfo()
+        backend.getV2IdentityProviderInfo().enqueue(object : BackendCallback<ArrayList<IdentityProvider>>() {
 
             override fun onResponseData(response: ArrayList<IdentityProvider>) {
                 success(response)

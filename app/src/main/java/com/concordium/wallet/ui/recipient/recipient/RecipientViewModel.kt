@@ -11,7 +11,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -19,7 +18,8 @@ import kotlinx.coroutines.runBlocking
 class RecipientViewModel(application: Application) : AndroidViewModel(application) {
 
     private val cryptoLibrary = App.appCore.cryptoLibrary
-    private val recipientRepository: RecipientRepository
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     lateinit var recipient: Recipient
     var editRecipientMode = false
 
@@ -32,11 +32,6 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
-
-    init {
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-    }
 
     fun initialize(recipient: Recipient?) {
         if (recipient != null) {

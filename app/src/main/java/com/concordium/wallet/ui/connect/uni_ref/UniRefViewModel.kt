@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.connect.uni_ref
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +16,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.ws.WsTransport
+import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
@@ -35,9 +35,7 @@ import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
-import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.connect.TransactionResult
@@ -66,8 +64,10 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private val gson = App.appCore.gson
 
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val accountRepository: AccountRepository
-    private val transferRepository: TransferRepository
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
 
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
@@ -128,13 +128,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         var receiverPublicKey: String? = null
         lateinit var origPayload: WsMessageResponse.Payload
         lateinit var messageType: String
-    }
-
-    init {
-        val accountDao = WalletDatabase.getDatabase(getApplication()).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val transferDao = WalletDatabase.getDatabase(getApplication()).transferDao()
-        transferRepository = TransferRepository(transferDao)
     }
 
     /**
@@ -309,12 +302,16 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private suspend fun decryptAndContinue(password: String) {
         // Decrypt the private data
         val storageAccountDataEncrypted = account.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+        val decryptedJson = App.appCore.auth
+            .decrypt(
+                password = password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
 
         if (decryptedJson != null) {
             val credentialsOutput = gson.fromJson(decryptedJson, StorageAccountData::class.java)

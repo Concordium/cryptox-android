@@ -1,14 +1,16 @@
 package com.concordium.wallet.data.room.typeconverter
 
 import androidx.room.TypeConverter
+import com.concordium.wallet.core.AppCore
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
-import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 
 class GlobalTypeConverters {
+    private val gson = AppCore.getGson()
 
     @TypeConverter
     fun intToTransactionStatus(value: Int): TransactionStatus {
@@ -42,22 +44,6 @@ class GlobalTypeConverters {
     }
 
     @TypeConverter
-    fun intToTransactionOriginType(value: Int): TransactionOriginType {
-        return when (value) {
-            0 -> TransactionOriginType.Self
-            1 -> TransactionOriginType.Account
-            2 -> TransactionOriginType.Reward
-            3 -> TransactionOriginType.None
-            else -> TransactionOriginType.UNKNOWN
-        }
-    }
-
-    @TypeConverter
-    fun transactionOriginTypeToInt(transactionOriginType: TransactionOriginType): Int {
-        return transactionOriginType.code
-    }
-
-    @TypeConverter
     fun intToShieldedAccountEncryptionStatus(value: Int): ShieldedAccountEncryptionStatus {
         return when (value) {
             ShieldedAccountEncryptionStatus.ENCRYPTED.code -> ShieldedAccountEncryptionStatus.ENCRYPTED
@@ -80,5 +66,17 @@ class GlobalTypeConverters {
     @TypeConverter
     fun stringToBigInteger(value: String?): BigInteger? {
         return value?.toBigInteger()
+    }
+
+    @TypeConverter
+    fun encryptedDataToJson(value: EncryptedData?): String? {
+        return value?.let(gson::toJson)
+    }
+
+    @TypeConverter
+    fun jsonToEncryptedData(value: String?): EncryptedData? {
+        return value?.takeIf(String::isNotEmpty)?.let {
+            gson.fromJson(it, EncryptedData::class.java)
+        }
     }
 }

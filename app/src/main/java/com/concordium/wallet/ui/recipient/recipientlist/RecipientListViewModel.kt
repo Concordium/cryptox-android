@@ -6,10 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -17,11 +17,12 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
 
     var account: Account? = null
     var isShielded: Boolean = false
-    private var recipientRepository: RecipientRepository
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     var selectRecipientMode = false
         private set
 
-    private val allRecipientsLiveData: LiveData<List<Recipient>>
+    private val allRecipientsLiveData = recipientRepository.allRecipients
     val recipientListLiveData: LiveData<List<Recipient>>
         get() = allRecipientsLiveData.switchMap { allRecipients ->
             val filteredRecipientsLiveData = MutableLiveData<List<Recipient>>()
@@ -33,6 +34,7 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
                     filteredRecipientsLiveData.value = filteredList
                     filteredRecipientsLiveData
                 }
+
                 else -> {
                     filteredRecipientsLiveData.value = allRecipients
                     filteredRecipientsLiveData
@@ -44,12 +46,6 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
-
-    init {
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-        allRecipientsLiveData = recipientRepository.allRecipients
-    }
 
     fun initialize(
         selectRecipientMode: Boolean,

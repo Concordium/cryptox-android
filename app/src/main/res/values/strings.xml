@@ -269,14 +269,15 @@
     <string name="more_overview_item_developer_options">Developer Options</string>
     <string name="more_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="more_overview_item_recover">Recovery</string>
-    <string name="more_overview_erase_wallet">Erase Wallet</string>
-    <string name="more_overview_erase_wallet_confirmation_title">Erasing your wallet</string>
+    <string name="more_overview_erase_data">Erase Data</string>
+    <string name="more_overview_erase_data_confirmation_title">Erasing all data</string>
     <string name="more_overview_erase_wallet_confirmation_message">
-        Your wallet will be erased from this device. However, you can restore it at any time
-        using the secret recovery phrase or the backup file. Proceed with erasing?
+        All your wallets will be erased from this device.
+        However, you can restore them at any time using the secret recovery phrase or the backup file.
+        Proceed with erasing?
     </string>
-    <string name="more_overview_erase_wallet_continue">@string/dialog_yes</string>
-    <string name="more_overview_erase_wallet_erased">The wallet has been successfully erased</string>
+    <string name="more_overview_erase_data_continue">@string/dialog_yes</string>
+    <string name="more_overview_erase_data_erased">All the data has been successfully erased</string>
     <string name="more_overview_reveal_seed_phrase">Seed Phrase</string>
     <string name="more_overview_reveal_seed">Wallet Private Key</string>
     <!-- Export -->
@@ -348,7 +349,6 @@
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="alterpassword_desc">By pressing Continue, you will be guided through setting up a new passcode. You will also get the option of enabling biometrics, or to continue without them.</string>
     <string name="alterpassword_confirm">Continue</string>
-    <string name="alterpassword_non_finalised_items">All identities and accounts must be finalized before passcode can be changed. Please wait, then try again.</string>
     <!-- ***** Recipient ***** -->
     <!-- Select recipient -->
     <string name="recipient_list_default_title">Address Book</string>
@@ -449,7 +449,7 @@
     <string name="wallet_connect_error_invalid_request">The WalletConnect request is invalid</string>
     <string name="wallet_connect_error_cryptography_failed">Unexpected cryptography error</string>
     <string name="wallet_connect_error_loading_failed">Could not load the required data</string>
-    <string name="wallet_connect_error_account_mismatch">The received transaction was not for the chosen account</string>
+    <string name="wallet_connect_error_account_not_found">The WalletConnect request account is not in this wallet</string>
     <string name="wallet_connect_error_response_failed">Could not send the response</string>
     <string name="wallet_connect_error_tx_submit_failed">Could not submit the transaction</string>
     <string name="wallet_connect_error_no_accounts">You must have at least one active account to continue</string>
@@ -969,10 +969,6 @@
         Get updates on new features, discount and promo</string>
     <string name="notifications_permission_allow">Allow notifications</string>
     <string name="notifications_permission_deny">Not now</string>
-    <string name="import_file_wallet_title">Importing a file wallet</string>
-    <string name="import_file_wallet_details">Be aware that you can not create new accounts or identities in your file wallet. But after the import you will be able to connect a new or existing Concordium seed phrase wallet which has full functionality. After connecting you will be able to switch between your seed phrase wallet and your file wallet.</string>
-    <string name="import_file_wallet_import_button">Import</string>
-    <string name="import_file_wallet_go_back_button">Go back</string>
     <string name="import_wallet_okay_button">Okay</string>
     <string name="import_wallet_backup_file">Backup file</string>
     <string name="import_wallet_backup_file_description">• A file that can be exported and imported \n• Grants access to all connected accounts \n• Can be used to recover a file wallet \n• Used in older Concordium wallets</string>
@@ -1183,4 +1179,87 @@
     <string name="onboarding_identity_verification_unsuccessful">Verification unsuccessful</string>
     <string name="onboarding_finalizing_account">Finalizing account</string>
     <string name="onboarding_identity_verification_status_icon">Identity verification status icon</string>
+
+    <string name="wallets_title">Wallets</string>
+    <string name="wallets_complexity_disclaimer">
+        Be aware that adding an additional wallet increases complexity.
+        This should only be used by experienced Concordium users who require access
+        to both a file wallet and a seed phrase wallet.
+    </string>
+    <string name="wallet_list_file_wallet">File wallet</string>
+    <string name="wallet_list_seed_wallet">Seed phrase wallet</string>
+    <string name="wallet_list_add_file_wallet">Add a file wallet</string>
+    <string name="wallet_list_add_seed_wallet">Add a seed phrase wallet</string>
+    <string name="wallet_list_status_active_selected">Active • Selected</string>
+    <string name="wallet_list_status_active">Active</string>
+    <string name="wallets_adding">Adding wallets</string>
+    <string name="wallets_adding_summary">You can now add and remove wallets.</string>
+    <string name="wallets_adding_explanation">
+        You can have a total of 2 wallets in CryptoX. They can be:\n
+         • 1 file wallet (imported via backup file)\n
+         • 1 seed phrase wallet (newly created or imported via either seed phrase or wallet private key)
+    </string>
+    <string name="wallets_adding_okay">Okay</string>
+    <string name="adding_seed_wallet">Adding a seed phrase wallet</string>
+    <string name="wallets_action_adding_seed_wallet">@string/adding_seed_wallet</string>
+    <string name="wallets_action_adding_seed_wallet_explanation">
+        You can add a new or existing Concordium seed phrase wallet.
+        After adding it you will be able to switch between your seed phrase wallet and your file wallet.
+        \n
+    </string>
+    <string name="wallets_action_adding_file_wallet">Adding a file wallet</string>
+    <string name="wallets_action_adding_file_wallet_explanation">
+        You can add an existing Concordium file wallet.
+        After adding it you will be able to switch between your seed phrase wallet and your file wallet.
+        \n\n
+        Be aware that you can not create new accounts or identities in your file wallet.
+    </string>
+    <string name="wallets_action_importing_file_wallet">Importing a file wallet</string>
+    <string name="wallets_action_importing_file_wallet_explanation">
+        Be aware that you can not create new accounts or identities in your file wallet.
+        \n\n
+        But after the import you will be able to connect a new or existing Concordium seed phrase wallet
+        which has full functionality. After connecting you will be able to switch
+        between your seed phrase wallet and your file wallet.
+    </string>
+    <string name="wallets_action_removing_wallet">Removing a wallet</string>
+    <string name="wallets_action_removing_wallet_explanation">
+        After removing a wallet you will not be able to access it in CryptoX.
+        But you can restore it whenever you like.
+    </string>
+    <string name="wallets_action_add_wallet">Add wallet</string>
+    <string name="wallets_action_import_wallet">Import</string>
+    <string name="wallets_action_go_back">Go back</string>
+    <string name="wallets_action_remove_wallet">Remove</string>
+    <string name="wallet_switch">Switch wallet</string>
+    <string name="wallet_switch_file_wallet_selected">File wallet is selected</string>
+    <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
+    <string name="wallets_remove_seed_wallet">Remove your seed phrase wallet</string>
+    <string name="wallets_remove_file_wallet">Remove your file wallet</string>
+    <string name="file_wallet_creation_limitation">File wallet limitations</string>
+    <string name="file_wallet_creation_limitation_explanation">
+        Be aware that you can not create new accounts or identities in your file wallet.
+        \n\n
+        We recommend that you migrate to a seed phrase wallet
+        in order to make use of the full range of CryptoX features.
+    </string>
+    <string name="file_wallet_creation_limitation_okay">Okay</string>
+    <string name="seed_wallet_adding_title">@string/adding_seed_wallet</string>
+    <string name="seed_wallet_adding_subtitle">There are two options available</string>
+    <string name="seed_wallet_adding_create_new_wallet_title">CREATE A NEW WALLET</string>
+    <string name="seed_wallet_adding_create_new_wallet_details">
+        You have to complete 2 easy steps to create your wallet:
+    </string>
+    <string name="seed_wallet_adding_create_new_wallet_step_1">Save seed phrase</string>
+    <string name="seed_wallet_adding_create_new_wallet_step_2">Verify identity</string>
+    <string name="seed_wallet_adding_create_wallet">Create Wallet</string>
+    <string name="seed_wallet_adding_import_wallet_title">IMPORT A WALLET</string>
+    <string name="seed_wallet_adding_import_wallet_details">
+       You can import your wallet with a seed phrase, or a wallet private key.
+    </string>
+    <string name="seed_wallet_adding_import_wallet">Import Wallet</string>
+    <string name="file_wallet_migration_disclaimer">
+        We recommend that you migrate to a seed phrase wallet
+        in order to make use of the full range of CryptoX features.
+    </string>
 </resources>

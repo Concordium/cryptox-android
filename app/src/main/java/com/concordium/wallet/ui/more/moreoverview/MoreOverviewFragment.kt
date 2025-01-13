@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPreferencesActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
+import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
@@ -122,6 +123,10 @@ class MoreOverviewFragment : BaseFragment() {
                 (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
 
+        binding.walletsLayout.setOnClickListener {
+            openWallets()
+        }
+
         binding.addressBookLayout.setOnClickListener {
             gotoAddressBook()
         }
@@ -195,8 +200,8 @@ class MoreOverviewFragment : BaseFragment() {
             clearWalletConnectAndRestart()
         }
 
-        binding.eraseWalletLayout.setOnClickListener {
-            eraseWalletAndExit()
+        binding.eraseDataLayout.setOnClickListener {
+            eraseDataAndExit()
         }
     }
 
@@ -208,10 +213,10 @@ class MoreOverviewFragment : BaseFragment() {
                     onAuthenticated = viewModel::onAuthenticated
                 )
 
-            MoreOverviewViewModel.Event.ShowWalletErasedMessage ->
+            MoreOverviewViewModel.Event.ShowDataErasedMessage ->
                 Toast.makeText(
                     requireContext(),
-                    R.string.more_overview_erase_wallet_erased,
+                    R.string.more_overview_erase_data_erased,
                     Toast.LENGTH_SHORT
                 )
                     .show()
@@ -257,15 +262,15 @@ class MoreOverviewFragment : BaseFragment() {
         builder.create().show()
     }
 
-    private fun eraseWalletAndExit() {
-        showConfirmEraseWallet()
+    private fun eraseDataAndExit() {
+        showConfirmEraseData()
     }
 
-    private fun showConfirmEraseWallet() {
+    private fun showConfirmEraseData() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.more_overview_erase_wallet_confirmation_title)
+            .setTitle(R.string.more_overview_erase_data_confirmation_title)
             .setMessage(getString(R.string.more_overview_erase_wallet_confirmation_message))
-            .setPositiveButton(getString(R.string.more_overview_erase_wallet_continue)) { _, _ ->
+            .setPositiveButton(getString(R.string.more_overview_erase_data_continue)) { _, _ ->
                 viewModel.onEraseContinueClicked()
             }
             .setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel), null)
@@ -325,6 +330,11 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun openNotificationsPreferences() {
         val intent = Intent(activity, NotificationsPreferencesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openWallets() {
+        val intent = Intent(activity, WalletsActivity::class.java)
         startActivity(intent)
     }
 

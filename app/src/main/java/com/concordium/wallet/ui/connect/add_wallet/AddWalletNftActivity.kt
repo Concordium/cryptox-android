@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.bumptech.glide.Glide
+import com.concordium.wallet.App
 import com.concordium.wallet.Constants
 import com.concordium.wallet.R
 import com.concordium.wallet.data.AccountRepository
@@ -17,7 +18,6 @@ import com.concordium.wallet.data.model.AccountInfo
 import com.concordium.wallet.data.model.WsConnectionInfo
 import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.gson.Gson
@@ -27,7 +27,8 @@ import kotlinx.coroutines.launch
 
 class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.title_add_wallet) {
 
-    private var accountRepository: AccountRepository? = null
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private var siteInfo: WsConnectionInfo.SiteInfo? = null
     private var payload: WsMessageResponse.Payload? = null
 
@@ -48,9 +49,6 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
 
         descTitle.setText(R.string.title_add_wallet)
         accountsPool = findViewById(R.id.accountsPool)
-
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
     }
 
     override fun onResume() {
@@ -69,7 +67,8 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
 
         shopName.text = siteInfo?.title
         shopDescription.text = siteInfo?.description
-        Glide.with(applicationContext).load(siteInfo?.iconLink).placeholder(R.drawable.ic_favicon).error(R.drawable.ic_favicon).into(shopLogo)
+        Glide.with(applicationContext).load(siteInfo?.iconLink).placeholder(R.drawable.ic_favicon)
+            .error(R.drawable.ic_favicon).into(shopLogo)
 
         findViewById<Button>(R.id.btnCancel).setOnClickListener {
             WsTransport.sendTransactionResult()
@@ -120,7 +119,8 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
                 v.setOnClickListener {
                     clearAccSelection()
                     selectedAccount = acc
-                    v.findViewById<ConstraintLayout>(R.id.accRoot).background = resources.getDrawable(R.drawable.btn_round_outline_bg_active)
+                    v.findViewById<ConstraintLayout>(R.id.accRoot).background =
+                        resources.getDrawable(R.drawable.btn_round_outline_bg_active)
                 }
             }
         }
@@ -128,7 +128,8 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
 
     private fun clearAccSelection() {
         accountsPool?.children?.forEach {
-            it.findViewById<ConstraintLayout>(R.id.accRoot).background = resources.getDrawable(R.drawable.btn_round_outline_bg)
+            it.findViewById<ConstraintLayout>(R.id.accRoot).background =
+                resources.getDrawable(R.drawable.btn_round_outline_bg)
         }
     }
 }
