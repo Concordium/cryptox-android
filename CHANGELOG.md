@@ -1,11 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Ability to have both file and seed phrase wallets in the app and switch between them
+
 ## [1.4.0] - 2024-12-16
 
 ### Added
 
 - Optimized user experience during the onboarding process
-- Ability to have both file and seed phrase wallets in the app and switch between them
 
 ### Changed
 
