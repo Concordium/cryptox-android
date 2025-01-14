@@ -1005,7 +1005,7 @@
     <string name="passcode_use_full_password">Use full password instead</string>
     <string name="passcode_backspace_button">Delete</string>
     <string name="passcode_biometrics_button">Use biometrics</string>
-    <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.software.com</string>
+    <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.com</string>
     <string name="passcode_create_setup_biometrics_title">Enable biometrics for next time?</string>
     <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sign in faster when you come back</string>
     <string name="passcode_create_setup_biometrics_allow">Enable biometrics</string>
@@ -1019,7 +1019,7 @@
     <string name="setup_wallet_seed_phrase_digital_copy">Digital copy</string>
     <string name="setup_wallet_seed_phrase_screenshot">Screenshot</string>
     <string name="setup_wallet_seed_phrase_copied">@string/copied</string>
-    <string name="setup_wallet_failed">Failed to set up the wallet, please contact \nsupport@concordium.software.com</string>
+    <string name="setup_wallet_failed">Failed to set up the wallet, please contact \nsupport@concordium.com</string>
     <string name="saved_seed_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
     <string name="saved_seed_phrase_reveal_seed_phrase_show">Show seed phrase</string>
     <string name="saved_seed_phrase_reveal_title">@string/your_seed_phrase</string>
@@ -1027,7 +1027,7 @@
     <string name="saved_seed_phrase_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_phrase_reveal_digital_copy">Digital copy</string>
     <string name="saved_seed_phrase_reveal_screenshot">Screenshot</string>
-    <string name="saved_seed_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.com</string>
     <string name="saved_seed_reveal_seed_copy">Copy to clipboard</string>
     <string name="saved_seed_reveal_seed_show">Show wallet private key</string>
     <string name="saved_seed_reveal_title">@string/your_wallet_seed</string>
@@ -1035,7 +1035,7 @@
     <string name="saved_seed_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_reveal_copy_and_keep">Copy and keep safe</string>
     <string name="saved_seed_reveal_screenshot">Screenshot</string>
-    <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.com</string>
 
     <!-- Identity proofs in WalletConnect -->
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
