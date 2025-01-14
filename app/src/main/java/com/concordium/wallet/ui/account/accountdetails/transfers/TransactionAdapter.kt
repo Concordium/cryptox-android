@@ -38,6 +38,7 @@ class TransactionAdapter :
                 binding.subheaderTextview,
                 binding.totalTextview,
                 binding.costTextview,
+                binding.layoutMemo,
                 binding.memoTextview,
                 binding.amountTextview,
                 binding.alertImageview,

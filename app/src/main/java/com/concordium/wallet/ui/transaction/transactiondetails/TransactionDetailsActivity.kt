@@ -144,6 +144,7 @@ class TransactionDetailsActivity : BaseActivity(
     private fun showDetailsContent() {
         val transaction = viewModel.transaction
         val transactionItem = binding.transactionItem
+        binding.transactionItem.itemRootLayout.background = null
 
         TransactionViewHelper.show(
             transaction,
@@ -151,6 +152,7 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.subheaderTextview,
             transactionItem.totalTextview,
             transactionItem.costTextview,
+            transactionItem.layoutMemo,
             transactionItem.memoTextview,
             transactionItem.amountTextview,
             transactionItem.alertImageview,
@@ -158,7 +160,8 @@ class TransactionDetailsActivity : BaseActivity(
         )
         // Do not show the memo in the item,
         // it is shown below with ability to copy the value.
-        transactionItem.memoTextview.isVisible = false
+        transactionItem.layoutMemo.isVisible = false
+        transactionItem.arrowImageview.isVisible = false
 
         showDate(transaction)
         showRejectReason(transaction)

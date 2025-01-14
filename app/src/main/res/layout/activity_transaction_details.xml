@@ -38,13 +38,16 @@
                 android:layout_marginTop="20dp"
                 tools:text="Error message for api - this can be long 32 Segmentation fault      timeout 15s" />
 
-            <Space
+            <View
                 android:layout_width="0dp"
                 android:layout_height="8dp" />
 
             <include
                 android:id="@+id/transaction_item"
-                layout="@layout/item_transaction" />
+                layout="@layout/item_transaction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"/>
 
             <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                 android:id="@+id/transaction_date_layout"
@@ -89,7 +92,7 @@
                 android:text="@string/transaction_details_view_on_explorer"
                 app:drawableEndCompat="@drawable/cryptox_ico_arrow" />
 
-            <Space
+            <View
                 android:layout_width="0dp"
                 android:layout_height="18dp" />
         </LinearLayout>

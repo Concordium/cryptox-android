@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.common
 import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
@@ -21,6 +22,7 @@ object TransactionViewHelper {
         subHeaderTextView: TextView,
         totalTextView: TextView,
         costTextView: TextView,
+        memoLayout: LinearLayout,
         memoTextView: TextView,
         amountTextView: TextView,
         alertImageView: ImageView,
@@ -31,7 +33,7 @@ object TransactionViewHelper {
         titleTextView.text = ta.title
 
         memoTextView.text = ta.getDecryptedMemo()
-        memoTextView.visibility = if (ta.hasMemo()) View.VISIBLE else View.GONE
+        memoLayout.visibility = if (ta.hasMemo()) View.VISIBLE else View.GONE
 
         // Time
         subHeaderTextView.text = if (showDate) {
