@@ -306,6 +306,9 @@
     <string name="about_contact">Website</string>
     <string name="about_contact_text">For more info about CryptoX Wallet you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
+    <string name="about_legal">Legal Information</string>
+    <string name="about_terms_link"><a href="#terms">Terms and Conditions</a></string>
+    <string name="about_privacy_link"><a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <!-- Import -->
     <string name="import_not_possible_when_using_phrase">File import is not possible when using a secret phrase</string>
     <string name="import_importing_progress">Importing…</string>
@@ -624,7 +627,7 @@
     <string name="delegation_update_subtitle1">Updating your delegation</string>
     <string name="delegation_update_subtitle2">Pay day updates</string>
     <string name="delegation_update_subtitle3">Cooldowns</string>
-  
+
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
 
     <string name="delegation_status_title">Delegation status</string>
@@ -1168,7 +1171,7 @@
     <string name="unlock_feature_title">Unlock this feature</string>
     <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
     <string name="unlock_feature_go_back_button">Go back</string>
-    
+
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>
     <string name="onboarding_status_card_description_second">Final step: Verify your identity</string>
