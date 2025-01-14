@@ -8,6 +8,7 @@ import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAboutBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.welcome.WelcomeTermsActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 
 class AboutActivity : BaseActivity(
@@ -43,6 +44,15 @@ class AboutActivity : BaseActivity(
         }
 
         binding.aboutVersionText.text = AppConfig.appVersion
+
+        binding.termsTextView.handleUrlClicks {
+            startActivity(Intent(this, WelcomeTermsActivity::class.java))
+        }
+
+        binding.privacyTextView.handleUrlClicks { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            ContextCompat.startActivity(this, browserIntent, null)
+        }
 
         hideActionBarBack(isVisible = true)
         binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
