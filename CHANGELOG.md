@@ -7,6 +7,10 @@
 - Ability to have both file and seed phrase wallets in the app and switch between them
 - Ability to open the Terms and Conditions and the Privacy Policy from the About screen
 
+### Fixed
+
+- Incorrect support email address in some error messages
+
 ### Removed
 
 - Ability to create new accounts and identities in a file wallet.
