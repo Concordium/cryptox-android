@@ -26,33 +26,40 @@ class AboutActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding.aboutContactText.handleUrlClicks { url ->
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            ContextCompat.startActivity(this, browserIntent, null)
-        }
+        fun onUrlClicked(url: String) = when {
+            url == "#terms" -> {
+                startActivity(Intent(this, WelcomeTermsActivity::class.java))
+            }
 
-        binding.aboutSupportText.handleUrlClicks { url ->
-            val emailIntent = Intent(Intent.ACTION_SENDTO)
-            emailIntent.data = Uri.parse(url)
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(url))
-            try {
-                // start email intent
-                startActivity(Intent.createChooser(emailIntent, getString(R.string.about_support)))
-            } catch (e: Exception) {
-                // Left empty on purpose
+            url.startsWith("mailto") -> {
+                val emailIntent = Intent(Intent.ACTION_SENDTO)
+                emailIntent.data = Uri.parse(url)
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(url))
+                try {
+                    // start email intent
+                    startActivity(
+                        Intent.createChooser(
+                            emailIntent,
+                            getString(R.string.about_support)
+                        )
+                    )
+                } catch (e: Exception) {
+                    // Left empty on purpose
+                }
+            }
+
+            else -> {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                ContextCompat.startActivity(this, browserIntent, null)
             }
         }
 
         binding.aboutVersionText.text = AppConfig.appVersion
 
-        binding.termsTextView.handleUrlClicks {
-            startActivity(Intent(this, WelcomeTermsActivity::class.java))
-        }
-
-        binding.privacyTextView.handleUrlClicks { url ->
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            ContextCompat.startActivity(this, browserIntent, null)
-        }
+        binding.aboutContactText.handleUrlClicks(::onUrlClicked)
+        binding.aboutSupportText.handleUrlClicks(::onUrlClicked)
+        binding.termsTextView.handleUrlClicks(::onUrlClicked)
+        binding.privacyTextView.handleUrlClicks(::onUrlClicked)
 
         hideActionBarBack(isVisible = true)
         binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)

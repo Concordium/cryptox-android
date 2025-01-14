@@ -43,10 +43,13 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
             }
         }
 
-        binding.openUrlExplain.handleUrlClicks { url ->
+        fun onUrlClicked(url: String) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
+
+        binding.openUrlExplain.handleUrlClicks(::onUrlClicked)
+        binding.readMoreTextView.handleUrlClicks(::onUrlClicked)
 
         binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
