@@ -9,9 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.backend.BackendErrorException
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.data.AccountRepository
@@ -26,6 +28,7 @@ import com.concordium.wallet.data.export.AccountExport
 import com.concordium.wallet.data.export.EncryptedExportData
 import com.concordium.wallet.data.export.ExportData
 import com.concordium.wallet.data.export.IdentityExport
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.IdentityAttribute
 import com.concordium.wallet.data.model.IdentityStatus
@@ -34,7 +37,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
@@ -46,17 +48,19 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import javax.crypto.SecretKey
 
 class ImportViewModel(application: Application) :
     AndroidViewModel(application) {
 
+    private val session: Session = App.appCore.session
     private val identityProviderRepository = IdentityProviderRepository()
     private val proxyRepository = ProxyRepository()
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
-    private val session: Session = App.appCore.session
+    private val identityRepository: IdentityRepository =
+        IdentityRepository(session.walletStorage.database.identityDao())
+    private val accountRepository: AccountRepository =
+        AccountRepository(session.walletStorage.database.accountDao())
+    private val recipientRepository: RecipientRepository =
+        RecipientRepository(session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
 
     private val gson = App.appCore.gson
@@ -95,21 +99,13 @@ class ImportViewModel(application: Application) :
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
 
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-
-        val contractTokenDao = WalletDatabase.getDatabase(application).contractTokenDao()
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
-            contractTokensRepository = ContractTokensRepository(contractTokenDao),
+            contractTokensRepository = ContractTokensRepository(
+                App.appCore.session.walletStorage.database.contractTokenDao()
+            ),
         )
         defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
@@ -156,234 +152,239 @@ class ImportViewModel(application: Application) :
     }
 
     private suspend fun handleAuthPassword(password: String) {
-        // Decrypt the private data
-        val key =
-            App.appCore.getCurrentAuthenticationManager().derivePasswordKeyInBackground(password)
-        if (key == null) {
+        // Decrypt the master key
+        val decryptedMasterKey = runCatching {
+            App.appCore.auth.getMasterKey(password)
+        }.getOrNull()
+        if (decryptedMasterKey == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
             _waitingLiveData.postValue(false)
             return
         }
-        performImport(encryptedExportData, importPassword, key)
+        performImport(encryptedExportData, importPassword, decryptedMasterKey)
     }
 
     private suspend fun performImport(
         encryptedExportData: EncryptedExportData?,
         importPassword: String?,
-        secretKey: SecretKey
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (encryptedExportData == null || importPassword == null) {
-                _errorLiveData.postValue(Event(R.string.app_error_general))
-                return@launch
-            }
-            var exportData: ExportData?
-            try {
-                val decryptedImportData =
-                    ExportEncryptionHelper.decryptExportData(importPassword, encryptedExportData)
-                exportData = gson.fromJson(decryptedImportData, ExportData::class.java)
-            } catch (e: IllegalArgumentException) {
-                _waitingLiveData.postValue(false)
-                _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
-                return@launch
-            } catch (e: Exception) {
-                _waitingLiveData.postValue(false)
-                when (e) {
-                    is JsonIOException,
-                    is JsonSyntaxException -> {
-                        Log.e("Unexpected json format")
-                        _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
-                    }
-
-                    is EncryptionException -> {
-                        Log.e("Unexpected encryption/decryption error")
-                        _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
-                    }
-
-                    else -> throw e
-                }
-                return@launch
-            }
-            if (exportData == null || !exportData.hasRequiredData()) {
-                _waitingLiveData.postValue(false)
-                _errorAndFinishLiveData.postValue(Event(R.string.app_error_json))
-                return@launch
-            }
-
-            if (!exportData.hasRequiredIdentities()) {
-                _waitingLiveData.postValue(false)
-                _errorAndFinishLiveData.postValue(Event(R.string.app_import_missing_identities))
-                return@launch
-            }
-
-            val allowedEnvironments =
-                // To eliminate confusion of "CryptoX Stage" working on testnet chain,
-                // allow both testnet and stage exports to be used when using testnet or stage.
-                if (BuildConfig.ENV_NAME == "staging" || BuildConfig.ENV_NAME == "testnet")
-                    setOf("staging", "testnet")
-                else
-                    setOf(BuildConfig.EXPORT_CHAIN)
-
-            if (exportData.environment !in allowedEnvironments) {
-                _waitingLiveData.postValue(false)
-                _errorAndFinishLiveData.postValue(Event(R.string.app_error_wrong_environment))
-                return@launch
-            }
-
-            val exportValue = exportData.value
-            importResult = ImportResult()
-            // Recipients
-            val existingRecipientList = recipientRepository.getAll()
-            val recipientList = mutableListOf<Recipient>()
-            // There may be duplicates caused by old bugs that should be filtered out.
-            // As long as RecipientExport is a data class, distinct does the thing,
-            // also preserving the original order.
-            for (recipientExport in exportValue.recipients.distinct()) {
-                try {
-                    val recipient = Recipient(0, recipientExport.name, recipientExport.address)
-                    val isDuplicate = existingRecipientList.any { existingRecipient ->
-                        existingRecipient.name == recipient.name && existingRecipient.address == recipient.address
-                    }
-                    if (!isDuplicate) {
-                        recipientList.add(recipient)
-                    }
-                    importResult.addRecipientResult(
-                        ImportResult.RecipientImportResult(
-                            recipient.name,
-                            if (isDuplicate) ImportResult.Status.Duplicate else ImportResult.Status.Ok
-                        )
-                    )
-                } catch (e: Exception) {
-                    // In case the mandatory fields are not present
-                    importResult.addRecipientResult(
-                        ImportResult.RecipientImportResult(
-                            "",
-                            ImportResult.Status.Failed
-                        )
-                    )
-                }
-            }
-            recipientRepository.insertAll(recipientList)
-            // Identities and accounts
-            val existingIdentityList = identityRepository.getAll()
-            val existingAccountList = accountRepository.getAll()
-            nextIdentityIndicesByProviderId.clear()
-            exportValue.identities.forEach { identityExport ->
-                var identity: Identity? = null
-                var identityId: Long? = null
-                var identityImportResult =
-                    ImportResult.IdentityImportResult("", ImportResult.Status.Failed)
-                try {
-                    identity = encryptAndMapIdentity(identityExport, secretKey)
-                } catch (e: Exception) {
-                    // In case the mandatory fields are not present
-                    // Setting state is handled below
-                }
-                if (identity == null) {
-                    importResult.addIdentityResult(identityImportResult)
-                } else {
-                    // Find existing/duplicate Identity (based on idCredPub)
-                    val oldIdentity = existingIdentityList.firstOrNull { existingIdentity ->
-                        // Avoid that two identities without an IdentityObject gets matched
-                        !TextUtils.isEmpty(existingIdentity.identityObject?.preIdentityObject?.pubInfoForIp?.idCredPub) &&
-                                existingIdentity.identityObject?.preIdentityObject?.pubInfoForIp?.idCredPub == identity.identityObject?.preIdentityObject?.pubInfoForIp?.idCredPub
-                    }
-                    // Only save the imported identity, if it is not a duplicate
-                    identityId = oldIdentity?.id?.toLong() ?: identityRepository.insert(identity)
-                    val status =
-                        if (oldIdentity == null) ImportResult.Status.Ok else ImportResult.Status.Duplicate
-                    identityImportResult = ImportResult.IdentityImportResult(identity.name, status)
-                    importResult.addIdentityResult(identityImportResult)
-                }
-                // Accounts
-                val accountList = mutableListOf<Account>()
-                if (hasAccountList(identityExport)) {
-                    identityExport.accounts.forEachIndexed { credNumber, accountExport ->
-                        var account: Account? = null
-                        if (identityId != null) {
-                            try {
-                                // Credential number for an account can be set to the account index,
-                                // it doesn't matter while using legacy credentials creation.
-                                //
-                                // It may, however, break the derivation once the seed phrase feature
-                                // is added. In this case, there should be no merging import.
-                                account = encryptAndMapAccount(
-                                    accountExport,
-                                    identityId,
-                                    credNumber,
-                                    secretKey
-                                )
-                            } catch (e: Exception) {
-                                // In case the mandatory fields are not present
-                                // Setting state is handled below
-                            }
-                        }
-                        if (account == null) {
-                            val accountImportResult =
-                                ImportResult.AccountImportResult("", ImportResult.Status.Failed)
-                            identityImportResult.addAccountResult(accountImportResult)
-                        } else {
-                            var status = ImportResult.Status.Ok
-                            val existingDuplicate =
-                                existingAccountList.firstOrNull() { existingAccount -> existingAccount.address == account.address }
-                            if (existingDuplicate == null) {
-                                accountList.add(account)
-                            } else {
-                                // Replace with imported account if the existing is readonly - update the fields that are part of the AccountExport
-                                if (existingDuplicate.readOnly) {
-                                    existingDuplicate.readOnly = false
-                                    existingDuplicate.name = account.name
-                                    existingDuplicate.submissionId = account.submissionId
-                                    existingDuplicate.encryptedAccountData =
-                                        account.encryptedAccountData
-                                    existingDuplicate.revealedAttributes =
-                                        account.revealedAttributes
-                                    existingDuplicate.credential = account.credential
-                                    accountRepository.update(existingDuplicate)
-                                } else {
-                                    status = ImportResult.Status.Duplicate
-                                }
-                            }
-                            val accountImportResult =
-                                ImportResult.AccountImportResult(account.name, status)
-                            identityImportResult.addAccountResult(accountImportResult)
-                        }
-                    }
-                    accountRepository.insertAll(accountList)
-
-                    // Add default fungible tokens for the new accounts.
-                    // Updated read-only accounts are not affected,
-                    // as their tokens may be already managed by the user.
-                    accountList.forEach { account ->
-                        defaultFungibleTokensManager.addForAccount(account.address)
-                    }
-                    if (accountList.isNotEmpty()) {
-                        updateNotificationsSubscriptionUseCase()
-                    }
-                }
-                // Read-only accounts - even though there are no accounts in the import file, there can be accounts from other devices
-                // The account list used to check for existing account must include the ones that was just added for this identity
-                if (identityId != null) {
-                    accountList.addAll(existingAccountList)
-                    handleReadOnlyAccounts(
-                        accountList,
-                        identityExport,
-                        identityId,
-                        identityImportResult
-                    )
-                }
-            } // End of identity
-            confirmImport()
-            session.hasCompletedInitialSetup()
-            _waitingLiveData.postValue(false)
+        masterKey: ByteArray,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        if (encryptedExportData == null || importPassword == null) {
+            _errorLiveData.postValue(Event(R.string.app_error_general))
+            return@launch
         }
+        var exportData: ExportData?
+        try {
+            val decryptedImportData =
+                ExportEncryptionHelper.decryptExportData(importPassword, encryptedExportData)
+            exportData = gson.fromJson(decryptedImportData, ExportData::class.java)
+        } catch (e: IllegalArgumentException) {
+            _waitingLiveData.postValue(false)
+            _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
+            return@launch
+        } catch (e: Exception) {
+            _waitingLiveData.postValue(false)
+            when (e) {
+                is JsonIOException,
+                is JsonSyntaxException,
+                -> {
+                    Log.e("Unexpected json format")
+                    _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
+                }
+
+                is EncryptionException -> {
+                    Log.e("Unexpected encryption/decryption error")
+                    _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
+                }
+
+                else -> throw e
+            }
+            return@launch
+        }
+        if (exportData == null || !exportData.hasRequiredData()) {
+            _waitingLiveData.postValue(false)
+            _errorAndFinishLiveData.postValue(Event(R.string.app_error_json))
+            return@launch
+        }
+
+        if (!exportData.hasRequiredIdentities()) {
+            _waitingLiveData.postValue(false)
+            _errorAndFinishLiveData.postValue(Event(R.string.app_import_missing_identities))
+            return@launch
+        }
+
+        val allowedEnvironments =
+        // To eliminate confusion of "CryptoX Stage" working on testnet chain,
+            // allow both testnet and stage exports to be used when using testnet or stage.
+            if (BuildConfig.ENV_NAME == "staging" || BuildConfig.ENV_NAME == "testnet")
+                setOf("staging", "testnet")
+            else
+                setOf(BuildConfig.EXPORT_CHAIN)
+
+        if (exportData.environment !in allowedEnvironments) {
+            _waitingLiveData.postValue(false)
+            _errorAndFinishLiveData.postValue(Event(R.string.app_error_wrong_environment))
+            return@launch
+        }
+
+        SwitchActiveWalletTypeUseCase().invoke(
+            newWalletType = AppWallet.Type.FILE,
+        )
+        App.appCore.setup.finishInitialSetup()
+        App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+
+        val exportValue = exportData.value
+        importResult = ImportResult()
+        // Recipients
+        val existingRecipientList = recipientRepository.getAll()
+        val recipientList = mutableListOf<Recipient>()
+        // There may be duplicates caused by old bugs that should be filtered out.
+        // As long as RecipientExport is a data class, distinct does the thing,
+        // also preserving the original order.
+        for (recipientExport in exportValue.recipients.distinct()) {
+            try {
+                val recipient = Recipient(0, recipientExport.name, recipientExport.address)
+                val isDuplicate = existingRecipientList.any { existingRecipient ->
+                    existingRecipient.name == recipient.name && existingRecipient.address == recipient.address
+                }
+                if (!isDuplicate) {
+                    recipientList.add(recipient)
+                }
+                importResult.addRecipientResult(
+                    ImportResult.RecipientImportResult(
+                        recipient.name,
+                        if (isDuplicate) ImportResult.Status.Duplicate else ImportResult.Status.Ok
+                    )
+                )
+            } catch (e: Exception) {
+                // In case the mandatory fields are not present
+                importResult.addRecipientResult(
+                    ImportResult.RecipientImportResult(
+                        "",
+                        ImportResult.Status.Failed
+                    )
+                )
+            }
+        }
+        recipientRepository.insertAll(recipientList)
+        // Identities and accounts
+        val existingIdentityList = identityRepository.getAll()
+        val existingAccountList = accountRepository.getAll()
+        nextIdentityIndicesByProviderId.clear()
+        exportValue.identities.forEach { identityExport ->
+            var identity: Identity? = null
+            var identityId: Long? = null
+            var identityImportResult =
+                ImportResult.IdentityImportResult("", ImportResult.Status.Failed)
+            try {
+                identity = encryptAndMapIdentity(identityExport, masterKey)
+            } catch (e: Exception) {
+                // In case the mandatory fields are not present
+                // Setting state is handled below
+            }
+            if (identity == null) {
+                importResult.addIdentityResult(identityImportResult)
+            } else {
+                // Find existing/duplicate Identity (based on idCredPub)
+                val oldIdentity = existingIdentityList.firstOrNull { existingIdentity ->
+                    // Avoid that two identities without an IdentityObject gets matched
+                    !TextUtils.isEmpty(existingIdentity.identityObject?.preIdentityObject?.pubInfoForIp?.idCredPub) &&
+                            existingIdentity.identityObject?.preIdentityObject?.pubInfoForIp?.idCredPub == identity.identityObject?.preIdentityObject?.pubInfoForIp?.idCredPub
+                }
+                // Only save the imported identity, if it is not a duplicate
+                identityId = oldIdentity?.id?.toLong() ?: identityRepository.insert(identity)
+                val status =
+                    if (oldIdentity == null) ImportResult.Status.Ok else ImportResult.Status.Duplicate
+                identityImportResult = ImportResult.IdentityImportResult(identity.name, status)
+                importResult.addIdentityResult(identityImportResult)
+            }
+            // Accounts
+            val accountList = mutableListOf<Account>()
+            if (hasAccountList(identityExport)) {
+                identityExport.accounts.forEachIndexed { credNumber, accountExport ->
+                    var account: Account? = null
+                    if (identityId != null) {
+                        try {
+                            // Credential number for an account can be set to the account index,
+                            // it doesn't matter while using legacy credentials creation.
+                            //
+                            // It may, however, break the derivation once the seed phrase feature
+                            // is added. In this case, there should be no merging import.
+                            account = encryptAndMapAccount(
+                                accountExport,
+                                identityId,
+                                credNumber,
+                                masterKey
+                            )
+                        } catch (e: Exception) {
+                            // In case the mandatory fields are not present
+                            // Setting state is handled below
+                        }
+                    }
+                    if (account == null) {
+                        val accountImportResult =
+                            ImportResult.AccountImportResult("", ImportResult.Status.Failed)
+                        identityImportResult.addAccountResult(accountImportResult)
+                    } else {
+                        var status = ImportResult.Status.Ok
+                        val existingDuplicate =
+                            existingAccountList.firstOrNull() { existingAccount -> existingAccount.address == account.address }
+                        if (existingDuplicate == null) {
+                            accountList.add(account)
+                        } else {
+                            // Replace with imported account if the existing is readonly - update the fields that are part of the AccountExport
+                            if (existingDuplicate.readOnly) {
+                                existingDuplicate.readOnly = false
+                                existingDuplicate.name = account.name
+                                existingDuplicate.submissionId = account.submissionId
+                                existingDuplicate.encryptedAccountData =
+                                    account.encryptedAccountData
+                                existingDuplicate.revealedAttributes =
+                                    account.revealedAttributes
+                                existingDuplicate.credential = account.credential
+                                accountRepository.update(existingDuplicate)
+                            } else {
+                                status = ImportResult.Status.Duplicate
+                            }
+                        }
+                        val accountImportResult =
+                            ImportResult.AccountImportResult(account.name, status)
+                        identityImportResult.addAccountResult(accountImportResult)
+                    }
+                }
+                accountRepository.insertAll(accountList)
+
+                // Add default fungible tokens for the new accounts.
+                // Updated read-only accounts are not affected,
+                // as their tokens may be already managed by the user.
+                accountList.forEach { account ->
+                    defaultFungibleTokensManager.addForAccount(account.address)
+                }
+                if (accountList.isNotEmpty()) {
+                    updateNotificationsSubscriptionUseCase()
+                }
+            }
+            // Read-only accounts - even though there are no accounts in the import file, there can be accounts from other devices
+            // The account list used to check for existing account must include the ones that was just added for this identity
+            if (identityId != null) {
+                accountList.addAll(existingAccountList)
+                handleReadOnlyAccounts(
+                    accountList,
+                    identityExport,
+                    identityId,
+                    identityImportResult
+                )
+            }
+        } // End of identity
+        confirmImport()
+        _waitingLiveData.postValue(false)
     }
 
     private suspend fun handleReadOnlyAccounts(
         existingAccountList: List<Account>,
         identityExport: IdentityExport,
         identityId: Long,
-        identityImportResult: ImportResult.IdentityImportResult
+        identityImportResult: ImportResult.IdentityImportResult,
     ) {
         var globalParams: GlobalParams?
         try {
@@ -414,12 +415,11 @@ class ImportViewModel(application: Application) :
         startIndex: Int,
         existingAccountList: List<Account>,
         identityId: Long,
-        identityImportResult: ImportResult.IdentityImportResult
+        identityImportResult: ImportResult.IdentityImportResult,
     ) {
         val readOnlyAccountList = mutableListOf<Account>()
-        var shouldContinue = true
         var index = startIndex
-        while (index < possibleAccountList.size && shouldContinue) {
+        while (index < possibleAccountList.size) {
             try {
                 val possibleAccount = possibleAccountList[index]
                 val accountBalance =
@@ -485,11 +485,14 @@ class ImportViewModel(application: Application) :
 
     private suspend fun encryptAndMapIdentity(
         identityExport: IdentityExport,
-        secretKey: SecretKey
+        masterKey: ByteArray,
     ): Identity? {
         val privateIdObjectDataJson = gson.toJson(identityExport.privateIdObjectData)
-        val privateIdObjectDataEncrypted = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(secretKey, privateIdObjectDataJson)
+        val privateIdObjectDataEncrypted = App.appCore.auth
+            .encrypt(
+                masterKey = masterKey,
+                data = privateIdObjectDataJson.toByteArray(),
+            )
         if (privateIdObjectDataEncrypted == null) {
             Log.e("Could not encrypt privateIdObjectData for identity: ${identityExport.name}")
             return null
@@ -505,7 +508,7 @@ class ImportViewModel(application: Application) :
         accountExport: AccountExport,
         identityId: Long,
         credNumber: Int,
-        secretKey: SecretKey
+        masterKey: ByteArray,
     ): Account? {
 
         val accountDataJson = gson.toJson(
@@ -515,8 +518,11 @@ class ImportViewModel(application: Application) :
                 accountExport.encryptionSecretKey
             )
         )
-        val accountDataEncrypted = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(secretKey, accountDataJson)
+        val accountDataEncrypted = App.appCore.auth
+            .encrypt(
+                masterKey = masterKey,
+                data = accountDataJson.toByteArray(),
+            )
         if (accountDataEncrypted == null) {
             Log.e("Could not encrypt accountData for account: ${accountExport.name}")
             return null
@@ -527,7 +533,7 @@ class ImportViewModel(application: Application) :
 
     private suspend fun mapIdentityFromExport(
         identityExport: IdentityExport,
-        privateIdObjectDataEncrypted: String
+        privateIdObjectDataEncrypted: EncryptedData,
     ): Identity {
         // Correct indices for identities are important
         // when importing on top of the existing identities.
@@ -556,7 +562,7 @@ class ImportViewModel(application: Application) :
         accountExport: AccountExport,
         identityId: Long,
         credNumber: Int,
-        accountDataEncrypted: String
+        accountDataEncrypted: EncryptedData,
     ): Account {
         return Account(
             identityId = identityId.toInt(),
@@ -573,7 +579,7 @@ class ImportViewModel(application: Application) :
 
     private fun createReadOnlyAccount(
         possibleAccount: PossibleAccount,
-        identityId: Long
+        identityId: Long,
     ): Account {
         return Account(
             identityId = identityId.toInt(),
@@ -581,7 +587,7 @@ class ImportViewModel(application: Application) :
             address = possibleAccount.accountAddress,
             submissionId = "",
             transactionStatus = TransactionStatus.FINALIZED,
-            encryptedAccountData = "",
+            encryptedAccountData = null,
             credential = null,
             readOnly = true,
             credNumber = 0,

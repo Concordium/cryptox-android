@@ -7,11 +7,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -21,11 +23,13 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
+import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
+import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
@@ -34,6 +38,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     IdentityStatusDelegate by IdentityStatusDelegateImpl() {
 
     companion object {
+        const val EXTRA_IMPORT_FROM_FILE = "EXTRA_IMPORT_FROM_FILE"
+        const val EXTRA_IMPORT_FROM_SEED = "EXTRA_IMPORT_FROM_SEED"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
     }
 
@@ -43,6 +49,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private lateinit var viewModel: MainViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var walletConnectViewModel: WalletConnectViewModel
+    private lateinit var walletSwitchViewModel: WalletSwitchViewModel
     private var hasHandledPossibleImportFile = false
 
     //region Lifecycle
@@ -72,6 +79,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
 
         handlePossibleWalletConnectUri(intent)
+
+        if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
+            goToImportFromFile()
+        } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_SEED, false)) {
+            goToImportFromSeed()
+        }
     }
 
     override fun onResume() {
@@ -145,11 +158,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     // ************************************************************
 
     private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
+        val viewModelProvider = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[MainViewModel::class.java]
+        )
 
+        viewModel = viewModelProvider.get()
         viewModel.titleLiveData.observe(this, this::setActionBarTitle)
         viewModel.stateLiveData.observe(this) { state ->
             checkNotNull(state)
@@ -160,15 +174,15 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             replaceFragment(state)
         }
 
-        onboardingViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[OnboardingSharedViewModel::class.java]
+        walletConnectViewModel = viewModelProvider.get()
+        onboardingViewModel = viewModelProvider.get()
 
-        walletConnectViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[WalletConnectViewModel::class.java]
+        walletSwitchViewModel = viewModelProvider.get()
+        walletSwitchViewModel.switchesFlow.collectWhenStarted(this) {
+            // Force restart the activity with recreation of view models.
+            finishAffinity()
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
     private fun initializeViews() {
@@ -185,6 +199,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             authDelegate = this,
             viewModel = walletConnectViewModel,
         ).init()
+
+        binding.walletSwitchView.bind(walletSwitchViewModel)
     }
 
     //endregion
@@ -264,6 +280,19 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         if (walletConnectUri != null) {
             walletConnectViewModel.handleWcUri(walletConnectUri)
         }
+    }
+
+    private fun goToImportFromFile() {
+        val intent = Intent(this, ImportActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToImportFromSeed() {
+        val intent = Intent(this, WelcomeRecoverWalletActivity::class.java)
+        intent.putExtras(WelcomeRecoverWalletActivity.getBundle(
+            showFileOptions = false,
+        ))
+        startActivity(intent)
     }
     //endregion
 }

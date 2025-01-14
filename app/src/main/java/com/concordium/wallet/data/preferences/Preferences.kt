@@ -2,18 +2,19 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.concordium.wallet.App
+import com.google.gson.Gson
 import kotlin.reflect.KProperty
 
-open class Preferences {
+open class Preferences(context: Context, preferenceName: String) {
 
-    protected lateinit var sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
 
-    protected val editor: android.content.SharedPreferences.Editor
+    private val editor: SharedPreferences.Editor
         get() = sharedPreferences.edit()
 
     private val changeListeners = HashMap<Listener, String>()
-
-    constructor() {}
 
     interface Listener {
         fun onChange()
@@ -35,10 +36,6 @@ open class Preferences {
         ) = setBoolean(key, arg)
     }
 
-    constructor(context: Context, preferenceName: String, preferenceMode: Int) {
-        sharedPreferences = context.getSharedPreferences(preferenceName, preferenceMode)
-    }
-
     fun triggerChangeEvent(key: String) {
         for ((listener, value) in changeListeners) {
             if (value == key) {
@@ -53,11 +50,11 @@ open class Preferences {
         editor.commit()
     }
 
-    public fun addListener(key: String, listener: Listener) {
+    fun addListener(key: String, listener: Listener) {
         changeListeners.put(listener, key)
     }
 
-    public fun removeListener(listener: Listener) {
+    fun removeListener(listener: Listener) {
         changeListeners.remove(listener)
     }
 
@@ -139,4 +136,17 @@ open class Preferences {
     protected fun getLong(key: String): Long {
         return sharedPreferences.getLong(key, 0)
     }
+
+    protected fun <T> setJsonSerialized(
+        key: String,
+        value: T?,
+        gson: Gson = App.appCore.gson,
+    ) = setString(key, value?.let(gson::toJson))
+
+    protected inline fun <reified T> getJsonSerialized(
+        key: String,
+        gson: Gson = App.appCore.gson,
+    ): T? = runCatching {
+        getString(key)?.let { gson.fromJson(it, T::class.java) }
+    }.getOrNull()
 }

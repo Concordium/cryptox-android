@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.app.Application
 import android.net.Uri
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -41,7 +40,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
@@ -58,7 +56,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     lateinit var bakerDelegationData: BakerDelegationData
     private val proxyRepository = ProxyRepository()
-    private val transferRepository: TransferRepository
+    private val transferRepository =
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
@@ -115,11 +114,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private val _bakerPoolStatusLiveData = MutableLiveData<BakerPoolStatus?>()
     val bakerPoolStatusLiveData: MutableLiveData<BakerPoolStatus?>
         get() = _bakerPoolStatusLiveData
-
-    init {
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        transferRepository = TransferRepository(transferDao)
-    }
 
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData
@@ -462,13 +456,17 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         Log.d("decryptAndContinue")
         bakerDelegationData.account?.let { account ->
             val storageAccountDataEncrypted = account.encryptedAccountData
-            if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+            if (storageAccountDataEncrypted == null) {
                 _errorLiveData.value = Event(R.string.app_error_general)
                 _waitingLiveData.value = false
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-                .decryptInBackground(password, storageAccountDataEncrypted)
+            val decryptedJson = App.appCore.auth
+                .decrypt(
+                    password = password,
+                    encryptedData = storageAccountDataEncrypted,
+                )
+                ?.let(::String)
 
             if (decryptedJson != null) {
                 val credentialsOutput =
@@ -759,7 +757,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun bakerKeysJson(): String? {
+    private fun bakerKeysJson(): String? {
         _bakerKeysLiveData.value?.let { bakerKeys ->
             bakerKeys.bakerId = bakerDelegationData.account?.index
             return if (bakerKeys.toString()

@@ -14,13 +14,10 @@ import com.concordium.wallet.Constants
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
 import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.R
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.OfflineMockInterceptor
 import com.concordium.wallet.data.backend.ws.WsTransport
 import com.concordium.wallet.data.model.WsConnectionInfo
 import com.concordium.wallet.data.model.WsMessageResponse
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -43,10 +40,8 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
     private lateinit var shopDescription: TextView
     private lateinit var shopLogo: ImageView
     private var wsTransport: WsTransport? = null
-    private var accountRepository: AccountRepository? = null
     private var currentSiteInfo: WsConnectionInfo.SiteInfo? = null
     private var accountsPool: LinearLayout? = null
-    private var selectedAccount: Account? = null
 
     private val gson by lazy {
         Gson()
@@ -123,9 +118,6 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
             walletConnectPrefixes.any { connectUrl.startsWith(it) } ->
                 connectWc(connectUrl)
         }
-
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
 
         closeBtn?.visibility = View.VISIBLE
         closeBtn?.setOnClickListener {

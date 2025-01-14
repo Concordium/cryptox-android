@@ -273,14 +273,15 @@
     <string name="settings_overview_item_developer_options">Developer Options</string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
-    <string name="settings_overview_erase_wallet">Erase Wallet</string>
-    <string name="settings_overview_erase_wallet_confirmation_title">Erasing your wallet</string>
+    <string name="settings_overview_erase_data">Erase Data</string>
+    <string name="settings_overview_erase_data_confirmation_title">Erasing all data</string>
     <string name="settings_overview_erase_wallet_confirmation_message">
-        Your wallet will be erased from this device. However, you can restore it at any time
-        using the secret recovery phrase or the backup file. Proceed with erasing?
+        All your wallets will be erased from this device.
+        However, you can restore them at any time using the secret recovery phrase or the backup file.
+        Proceed with erasing?
     </string>
-    <string name="settings_overview_erase_wallet_continue">@string/dialog_yes</string>
-    <string name="settings_overview_erase_wallet_erased">The wallet has been successfully erased</string>
+    <string name="settings_overview_erase_data_continue">@string/dialog_yes</string>
+    <string name="settings_overview_erase_data_erased">All the data has been successfully erased</string>
     <string name="settings_overview_reveal_seed_phrase">Seed Phrase</string>
     <string name="settings_overview_reveal_seed">Wallet Private Key</string>
     <!-- Export -->
@@ -309,6 +310,9 @@
     <string name="about_contact">Website</string>
     <string name="about_contact_text">For more info about CryptoX Wallet you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
+    <string name="about_legal">Legal Information</string>
+    <string name="about_terms_link"><a href="#terms">Terms and Conditions</a></string>
+    <string name="about_privacy_link"><a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <!-- Import -->
     <string name="import_not_possible_when_using_phrase">File import is not possible when using a secret phrase</string>
     <string name="import_importing_progress">Importing…</string>
@@ -352,7 +356,6 @@
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="alterpassword_desc">By pressing Continue, you will be guided through setting up a new passcode. You will also get the option of enabling biometrics, or to continue without them.</string>
     <string name="alterpassword_confirm">Continue</string>
-    <string name="alterpassword_non_finalised_items">All identities and accounts must be finalized before passcode can be changed. Please wait, then try again.</string>
     <!-- ***** Recipient ***** -->
     <!-- Select recipient -->
     <string name="recipient_list_default_title">Address Book</string>
@@ -453,7 +456,7 @@
     <string name="wallet_connect_error_invalid_request">The WalletConnect request is invalid</string>
     <string name="wallet_connect_error_cryptography_failed">Unexpected cryptography error</string>
     <string name="wallet_connect_error_loading_failed">Could not load the required data</string>
-    <string name="wallet_connect_error_account_mismatch">The received transaction was not for the chosen account</string>
+    <string name="wallet_connect_error_account_not_found">The WalletConnect request account is not in this wallet</string>
     <string name="wallet_connect_error_response_failed">Could not send the response</string>
     <string name="wallet_connect_error_tx_submit_failed">Could not submit the transaction</string>
     <string name="wallet_connect_error_no_accounts">You must have at least one active account to continue</string>
@@ -631,7 +634,7 @@
     <string name="delegation_update_subtitle1">Updating your delegation</string>
     <string name="delegation_update_subtitle2">Pay day updates</string>
     <string name="delegation_update_subtitle3">Cooldowns</string>
-  
+
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
 
     <string name="delegation_status_title">Delegation status</string>
@@ -666,7 +669,7 @@
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Validator id %1$s</string>
@@ -794,7 +797,7 @@
 
     <string name="baker_registration_open_title">Add validator</string>
     <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your validator. Leave it blank if you don’t have any.</string>
-    <string name="baker_registration_open_read_more">You can read more about the metadata URL on <a href="https://developer.concordium.software">developer.concordium.software</a></string>
+    <string name="baker_registration_open_read_more">You can read more about the metadata URL on <a href="https://docs.concordium.com/en/mainnet/docs/mobile-wallet/add-baker-mw.html">docs.concordium.com</a></string>
     <string name="baker_registration_open_continue">Continue</string>
     <string name="baker_registration_open_url_hint">Paste your metadata URL here</string>
     <string name="baker_registration_open_url_invalid">Please enter a valid HTTP or HTTPS URL</string>
@@ -976,10 +979,6 @@
         Get updates on new features, discount and promo</string>
     <string name="notifications_permission_allow">Allow notifications</string>
     <string name="notifications_permission_deny">Not now</string>
-    <string name="import_file_wallet_title">Importing a file wallet</string>
-    <string name="import_file_wallet_details">Be aware that you can not create new accounts or identities in your file wallet. But after the import you will be able to connect a new or existing Concordium seed phrase wallet which has full functionality. After connecting you will be able to switch between your seed phrase wallet and your file wallet.</string>
-    <string name="import_file_wallet_import_button">Import</string>
-    <string name="import_file_wallet_go_back_button">Go back</string>
     <string name="import_wallet_okay_button">Okay</string>
     <string name="import_wallet_backup_file">Backup file</string>
     <string name="import_wallet_backup_file_description">• A file that can be exported and imported \n• Grants access to all connected accounts \n• Can be used to recover a file wallet \n• Used in older Concordium wallets</string>
@@ -1013,7 +1012,7 @@
     <string name="passcode_use_full_password">Use full password instead</string>
     <string name="passcode_backspace_button">Delete</string>
     <string name="passcode_biometrics_button">Use biometrics</string>
-    <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.software.com</string>
+    <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.com</string>
     <string name="passcode_create_setup_biometrics_title">Enable biometrics for next time?</string>
     <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sign in faster when you come back</string>
     <string name="passcode_create_setup_biometrics_allow">Enable biometrics</string>
@@ -1027,7 +1026,7 @@
     <string name="setup_wallet_seed_phrase_digital_copy">Digital copy</string>
     <string name="setup_wallet_seed_phrase_screenshot">Screenshot</string>
     <string name="setup_wallet_seed_phrase_copied">@string/copied</string>
-    <string name="setup_wallet_failed">Failed to set up the wallet, please contact \nsupport@concordium.software.com</string>
+    <string name="setup_wallet_failed">Failed to set up the wallet, please contact \nsupport@concordium.com</string>
     <string name="saved_seed_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
     <string name="saved_seed_phrase_reveal_seed_phrase_show">Show seed phrase</string>
     <string name="saved_seed_phrase_reveal_title">@string/your_seed_phrase</string>
@@ -1035,7 +1034,7 @@
     <string name="saved_seed_phrase_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_phrase_reveal_digital_copy">Digital copy</string>
     <string name="saved_seed_phrase_reveal_screenshot">Screenshot</string>
-    <string name="saved_seed_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_phrase_reveal_failed">Failed to reveal the phrase, please contact \nsupport@concordium.com</string>
     <string name="saved_seed_reveal_seed_copy">Copy to clipboard</string>
     <string name="saved_seed_reveal_seed_show">Show wallet private key</string>
     <string name="saved_seed_reveal_title">@string/your_wallet_seed</string>
@@ -1043,7 +1042,7 @@
     <string name="saved_seed_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_reveal_copy_and_keep">Copy and keep safe</string>
     <string name="saved_seed_reveal_screenshot">Screenshot</string>
-    <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.software.com</string>
+    <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.com</string>
 
     <!-- Identity proofs in WalletConnect -->
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
@@ -1191,4 +1190,87 @@
     <string name="onboarding_identity_verification_unsuccessful">Verification unsuccessful</string>
     <string name="onboarding_finalizing_account">Finalizing account</string>
     <string name="onboarding_identity_verification_status_icon">Identity verification status icon</string>
+
+    <string name="wallets_title">Wallets</string>
+    <string name="wallets_complexity_disclaimer">
+        Be aware that adding an additional wallet increases complexity.
+        This should only be used by experienced Concordium users who require access
+        to both a file wallet and a seed phrase wallet.
+    </string>
+    <string name="wallet_list_file_wallet">File wallet</string>
+    <string name="wallet_list_seed_wallet">Seed phrase wallet</string>
+    <string name="wallet_list_add_file_wallet">Add a file wallet</string>
+    <string name="wallet_list_add_seed_wallet">Add a seed phrase wallet</string>
+    <string name="wallet_list_status_active_selected">Active • Selected</string>
+    <string name="wallet_list_status_active">Active</string>
+    <string name="wallets_adding">Adding wallets</string>
+    <string name="wallets_adding_summary">You can now add and remove wallets.</string>
+    <string name="wallets_adding_explanation">
+        You can have a total of 2 wallets in CryptoX. They can be:\n
+         • 1 file wallet (imported via backup file)\n
+         • 1 seed phrase wallet (newly created or imported via either seed phrase or wallet private key)
+    </string>
+    <string name="wallets_adding_okay">Okay</string>
+    <string name="adding_seed_wallet">Adding a seed phrase wallet</string>
+    <string name="wallets_action_adding_seed_wallet">@string/adding_seed_wallet</string>
+    <string name="wallets_action_adding_seed_wallet_explanation">
+        You can add a new or existing Concordium seed phrase wallet.
+        After adding it you will be able to switch between your seed phrase wallet and your file wallet.
+        \n
+    </string>
+    <string name="wallets_action_adding_file_wallet">Adding a file wallet</string>
+    <string name="wallets_action_adding_file_wallet_explanation">
+        You can add an existing Concordium file wallet.
+        After adding it you will be able to switch between your seed phrase wallet and your file wallet.
+        \n\n
+        Be aware that you can not create new accounts or identities in your file wallet.
+    </string>
+    <string name="wallets_action_importing_file_wallet">Importing a file wallet</string>
+    <string name="wallets_action_importing_file_wallet_explanation">
+        Be aware that you can not create new accounts or identities in your file wallet.
+        \n\n
+        But after the import you will be able to connect a new or existing Concordium seed phrase wallet
+        which has full functionality. After connecting you will be able to switch
+        between your seed phrase wallet and your file wallet.
+    </string>
+    <string name="wallets_action_removing_wallet">Removing a wallet</string>
+    <string name="wallets_action_removing_wallet_explanation">
+        After removing a wallet you will not be able to access it in CryptoX.
+        But you can restore it whenever you like.
+    </string>
+    <string name="wallets_action_add_wallet">Add wallet</string>
+    <string name="wallets_action_import_wallet">Import</string>
+    <string name="wallets_action_go_back">Go back</string>
+    <string name="wallets_action_remove_wallet">Remove</string>
+    <string name="wallet_switch">Switch wallet</string>
+    <string name="wallet_switch_file_wallet_selected">File wallet is selected</string>
+    <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
+    <string name="wallets_remove_seed_wallet">Remove your seed phrase wallet</string>
+    <string name="wallets_remove_file_wallet">Remove your file wallet</string>
+    <string name="file_wallet_creation_limitation">File wallet limitations</string>
+    <string name="file_wallet_creation_limitation_explanation">
+        Be aware that you can not create new accounts or identities in your file wallet.
+        \n\n
+        We recommend that you migrate to a seed phrase wallet
+        in order to make use of the full range of CryptoX features.
+    </string>
+    <string name="file_wallet_creation_limitation_okay">Okay</string>
+    <string name="seed_wallet_adding_title">@string/adding_seed_wallet</string>
+    <string name="seed_wallet_adding_subtitle">There are two options available</string>
+    <string name="seed_wallet_adding_create_new_wallet_title">CREATE A NEW WALLET</string>
+    <string name="seed_wallet_adding_create_new_wallet_details">
+        You have to complete 2 easy steps to create your wallet:
+    </string>
+    <string name="seed_wallet_adding_create_new_wallet_step_1">Save seed phrase</string>
+    <string name="seed_wallet_adding_create_new_wallet_step_2">Verify identity</string>
+    <string name="seed_wallet_adding_create_wallet">Create Wallet</string>
+    <string name="seed_wallet_adding_import_wallet_title">IMPORT A WALLET</string>
+    <string name="seed_wallet_adding_import_wallet_details">
+       You can import your wallet with a seed phrase, or a wallet private key.
+    </string>
+    <string name="seed_wallet_adding_import_wallet">Import Wallet</string>
+    <string name="file_wallet_migration_disclaimer">
+        We recommend that you migrate to a seed phrase wallet
+        in order to make use of the full range of CryptoX features.
+    </string>
 </resources>

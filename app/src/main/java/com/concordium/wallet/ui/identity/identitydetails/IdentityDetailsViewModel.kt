@@ -4,21 +4,17 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.launch
 
 class IdentityDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
     lateinit var identity: Identity
-    private val identityRepository: IdentityRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     val identityChanged: MutableLiveData<Identity> by lazy { MutableLiveData<Identity>() }
-
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-    }
 
     fun initialize(identity: Identity) {
         this.identity = identity

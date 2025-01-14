@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.more.unshielding
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,7 +12,6 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
@@ -23,8 +21,7 @@ import java.math.BigInteger
 
 class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(application) {
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val accountUpdater: AccountUpdater by lazy {
         AccountUpdater(application, viewModelScope)
@@ -118,13 +115,17 @@ class UnshieldingAccountsViewModel(application: Application) : AndroidViewModel(
         _waitingLiveData.postValue(true)
 
         val storageAccountDataEncrypted = account.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             _errorLiveData.postValue(Event(R.string.app_error_general))
             _waitingLiveData.postValue(false)
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+        val decryptedJson = App.appCore.auth
+            .decrypt(
+                password=password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
 
         if (decryptedJson == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))

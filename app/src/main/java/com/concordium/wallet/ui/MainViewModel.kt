@@ -6,11 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
@@ -24,9 +21,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         ;
     }
 
-    private val identityRepository: IdentityRepository
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
-    private val session: Session = App.appCore.session
 
     var databaseVersionAllowed = true
 
@@ -41,15 +36,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
 
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-    }
-
     fun initialize() {
         try {
             val dbVersion =
-                WalletDatabase.getDatabase(getApplication()).openHelper.readableDatabase.version.toString()
+                App.appCore.session.walletStorage.database.openHelper.readableDatabase.version.toString()
         } catch (e: Exception) {
             Log.e("Database init failed. Missing migrations?")
             e.printStackTrace()
@@ -77,19 +67,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun shouldShowAuthentication(): Boolean {
-        session.isLoggedIn.value.let { return it == null || it == false }
+        App.appCore.session.isLoggedIn.value.let { return it == null || it == false }
     }
 
     fun shouldShowPasswordSetup(): Boolean {
-        return !session.hasSetupPassword
+        return !App.appCore.setup.isAuthSetupCompleted
     }
 
     fun shouldShowInitialSetup(): Boolean {
-        return session.hasSetupPassword && !session.hasCompletedInitialSetup
+        return !App.appCore.setup.isInitialSetupCompleted
     }
 
     fun hasCompletedOnboarding(): Boolean {
-        return session.hasCompleteOnboarding
+        return App.appCore.session.walletStorage.setupPreferences.getHasCompletedOnboarding()
     }
 
     fun startIdentityUpdate() {

@@ -1,6 +1,11 @@
 package com.concordium.wallet.data.room
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.IdentityObject
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.room.typeconverter.IdentityTypeConverters
@@ -26,7 +31,7 @@ data class Identity(
     @ColumnInfo(name = "identity_object")
     var identityObject: IdentityObject?,
     @ColumnInfo(name = "private_id_object_data_encrypted")
-    var privateIdObjectDataEncrypted: String, // Used for V0 key creation.
+    var privateIdObjectDataEncrypted: EncryptedData?, // Used for V0 key creation.
     @ColumnInfo(name = "identity_provider_id")
     var identityProviderId: Int,
     @ColumnInfo(name = "identity_index")

@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.more.unshielding
 
 import android.app.Application
-import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,7 +24,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -40,13 +38,11 @@ import kotlin.coroutines.resumeWithException
 
 class UnshieldingViewModel(application: Application) : AndroidViewModel(application) {
     private val accountRepository: AccountRepository by lazy {
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        AccountRepository(accountDao)
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
     private val proxyRepository: ProxyRepository by lazy(::ProxyRepository)
     private val transferRepository: TransferRepository by lazy {
-        val transferDao = WalletDatabase.getDatabase(application).transferDao()
-        TransferRepository(transferDao)
+        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     }
     private val accountUpdater: AccountUpdater by lazy {
         AccountUpdater(application, viewModelScope)
@@ -172,14 +168,18 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
         // This method is mostly a copypaste from former SendFundsViewModel.
 
         val storageAccountDataEncrypted = account.encryptedAccountData
-        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+        if (storageAccountDataEncrypted == null) {
             _errorLiveData.postValue(Event(R.string.app_error_general))
             _waitingLiveData.postValue(false)
             _isUnshieldEnabledLiveData.postValue(true)
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
-            .decryptInBackground(password, storageAccountDataEncrypted)
+        val decryptedJson = App.appCore.auth
+            .decrypt(
+                password=password,
+                encryptedData = storageAccountDataEncrypted,
+            )
+            ?.let(::String)
 
         if (decryptedJson == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))

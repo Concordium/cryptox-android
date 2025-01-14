@@ -10,21 +10,18 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSiteRepository
-import com.concordium.wallet.util.KeyCreationVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +49,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val _onrampActive = MutableStateFlow(false)
     val onrampActive = _onrampActive.asStateFlow()
 
+    private val _fileWalletMigrationVisible = MutableStateFlow(false)
+    val fileWalletMigrationVisible = _fileWalletMigrationVisible.asSharedFlow()
+
     private val zeroAccountBalances = TotalBalancesData(
         BigInteger.ZERO,
         BigInteger.ZERO,
@@ -70,18 +70,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val _listItemsLiveData = MutableLiveData<List<AccountsOverviewListItem>>()
     val listItemsLiveData: LiveData<List<AccountsOverviewListItem>> = _listItemsLiveData
 
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val keyCreationVersion: KeyCreationVersion
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository
     private val accountsObserver: Observer<List<AccountWithIdentity>>
-    private val notificationsPreferences: NotificationsPreferences
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
+    val isCreationLimitedForFileWallet: Boolean
+        get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
     private var updater: CountDownTimer? = null
-
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(application)
-    }
 
     enum class DialogToShow {
         UNSHIELDING,
@@ -89,10 +88,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _waitingLiveData.postValue(false)
@@ -115,13 +110,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.postValue(Event(stringRes))
             }
         })
-        keyCreationVersion = KeyCreationVersion(AuthPreferences(application))
         ccdOnrampSiteRepository = CcdOnrampSiteRepository()
         accountsObserver = Observer { accountsWithIdentity ->
             postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
-        notificationsPreferences = NotificationsPreferences(application)
+        _fileWalletMigrationVisible.tryEmit(App.appCore.session.activeWallet.type == AppWallet.Type.FILE)
         updateNotificationSubscription()
     }
 
@@ -131,31 +125,36 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountUpdater.dispose()
     }
 
-    fun updateState(notifyWaitingLiveData: Boolean = true) {
+    fun updateState(notifyWaitingLiveData: Boolean = true) = viewModelScope.launch(Dispatchers.IO) {
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
-        viewModelScope.launch(Dispatchers.IO) {
-            if (!keyCreationVersion.useV1) {
-                checkFileWallet(notifyWaitingLiveData)
-            } else {
-                val identityCount = identityRepository.getCount()
-                if (identityCount == 0) {
-                    postState(
-                        OnboardingState.VERIFY_IDENTITY,
-                        zeroAccountBalances,
-                        notifyWaitingLiveData
-                    )
-                } else {
-                    updateIdentityStatus(notifyWaitingLiveData)
-                }
-            }
+
+        if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
+            return@launch
+        }
+
+        when {
+            !App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed() ->
+                postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
+
+            identityRepository.getCount() == 0 ->
+                postState(
+                    OnboardingState.VERIFY_IDENTITY,
+                    zeroAccountBalances,
+                    notifyWaitingLiveData
+                )
+
+            else ->
+                updateIdentityStatus(notifyWaitingLiveData)
         }
     }
 
     private suspend fun postState(
         state: OnboardingState,
         balances: TotalBalancesData = zeroAccountBalances,
-        notifyWaitingLiveData: Boolean = true
+        notifyWaitingLiveData: Boolean = true,
     ) {
         _stateFlow.emit(state)
         _totalBalanceLiveData.postValue(balances)
@@ -193,22 +192,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    private suspend fun checkFileWallet(notifyWaitingLiveData: Boolean) {
-        val doneCount = identityRepository.getAllDone().size
-        if (doneCount > 0) {
-            App.appCore.session.hasCompletedOnboarding()
-            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-            showSingleDialogIfNeeded()
-            updateSubmissionStatesAndBalances()
-        } else {
-            postState(OnboardingState.SAVE_PHRASE, zeroAccountBalances, notifyWaitingLiveData)
-        }
-    }
-
     private suspend fun handleAccountCreation(notifyWaitingLiveData: Boolean) {
         val allAccounts = accountRepository.getAll()
         if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
-            App.appCore.session.hasCompletedOnboarding()
+            App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             showSingleDialogIfNeeded()
         } else {
@@ -237,12 +224,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         updater = null
     }
 
-    fun hasShowedInitialAnimation(): Boolean {
-        return App.appCore.session.getHasShowedInitialAnimation()
+    fun hasShownInitialAnimation(): Boolean {
+        return App.appCore.session.walletStorage.setupPreferences.getHasShownInitialAnimation()
     }
 
-    fun setHasShowedInitialAnimation() {
-        App.appCore.session.setHasShowedInitialAnimation()
+    fun setHasShownInitialAnimation() {
+        return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
     }
 
     private fun startUpdater(countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
@@ -277,11 +264,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         }
         return false
     }
-
-    fun checkUsingV1KeyCreation() =
-        check(keyCreationVersion.useV1) {
-            "Key creation V1 (seed-based) must be used to perform this action"
-        }
 
     private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
         val dialogsToShow = linkedSetOf<DialogToShow>()

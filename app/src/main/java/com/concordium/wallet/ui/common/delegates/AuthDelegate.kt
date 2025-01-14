@@ -27,16 +27,16 @@ class AuthDelegateImpl : AuthDelegate {
     ) {
         activity.showAuthentication(callback = object : BaseActivity.AuthenticationCallback {
             override fun getCipherForBiometrics(): Cipher? =
-                App.appCore.getCurrentAuthenticationManager()
-                    .initBiometricsCipherForDecryption()
+                App.appCore.auth
+                    .getBiometricsCipherForDecryption()
 
             override fun onCorrectPassword(password: String) =
                 onAuthenticated(password)
 
             override fun onCipher(cipher: Cipher) {
                 activity.lifecycleScope.launch(Dispatchers.IO) {
-                    val password = App.appCore.getCurrentAuthenticationManager()
-                        .checkPasswordInBackground(cipher)
+                    val password = App.appCore.auth
+                        .decryptPasswordWithBiometricsCipher(cipher)
                     if (password != null) {
                         withContext(Dispatchers.Main) {
                             onAuthenticated(password)

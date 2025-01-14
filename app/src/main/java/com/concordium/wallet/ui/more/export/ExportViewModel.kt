@@ -24,7 +24,6 @@ import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.util.Log
@@ -33,7 +32,6 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
-import javax.crypto.SecretKey
 
 class ExportViewModel(application: Application) :
     AndroidViewModel(application) {
@@ -42,14 +40,17 @@ class ExportViewModel(application: Application) :
         const val FILE_NAME = "export.concordiumwallet"
     }
 
-    private val identityRepository: IdentityRepository
-    private val accountRepository: AccountRepository
-    private val recipientRepository: RecipientRepository
+    private val identityRepository =
+        IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
 
     private val gson = App.appCore.gson
     private var _exportPassword: String = ""
 
-    var decryptKey: SecretKey? = null
+    private var decryptedMasterKey: ByteArray? = null
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -95,36 +96,25 @@ class ExportViewModel(application: Application) :
     val errorNonIdenticalRepeatPasswordLiveData: LiveData<Event<Boolean>>
         get() = _errorNonIdenticalRepeatPasswordLiveData
 
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
-        accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-    }
-
     fun initialize() {
     }
 
-    fun export(force: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val accountNamesFailed = mutableListOf<String>()
-            val identityList = identityRepository.getAllDone()
-            for (identity in identityList) {
-                val accountList = accountRepository.getAllByIdentityId(identity.id)
-                for (account in accountList) {
-                    if (account.transactionStatus != TransactionStatus.FINALIZED) {
-                        accountNamesFailed.add(account.name)
-                    }
+    fun export(force: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        val accountNamesFailed = mutableListOf<String>()
+        val identityList = identityRepository.getAllDone()
+        for (identity in identityList) {
+            val accountList = accountRepository.getAllByIdentityId(identity.id)
+            for (account in accountList) {
+                if (account.transactionStatus != TransactionStatus.FINALIZED) {
+                    accountNamesFailed.add(account.name)
                 }
             }
+        }
 
-            if (!force && accountNamesFailed.size> 0) {
-                _errorExportLiveData.postValue(Event(accountNamesFailed))
-            } else {
-                _showAuthenticationLiveData.postValue(Event(true))
-            }
+        if (!force && accountNamesFailed.size > 0) {
+            _errorExportLiveData.postValue(Event(accountNamesFailed))
+        } else {
+            _showAuthenticationLiveData.postValue(Event(true))
         }
     }
 
@@ -134,108 +124,130 @@ class ExportViewModel(application: Application) :
     }
 
     private suspend fun handleAuthPassword(password: String) {
-        // Decrypt the private data
-        val key = App.appCore.getCurrentAuthenticationManager().derivePasswordKeyInBackground(password)
-        if (key == null) {
+        // Decrypt the master key
+        this.decryptedMasterKey = runCatching {
+            App.appCore.auth.getMasterKey(password)
+        }.getOrNull()
+        if (decryptedMasterKey == null) {
             _errorLiveData.postValue(Event(R.string.app_error_encryption))
             _waitingLiveData.postValue(false)
             return
         }
-        decryptKey = key
 
         _showRequestPasswordLiveData.postValue(Event(true))
         _waitingLiveData.postValue(false)
     }
 
     fun finalizeEncryptionOfFile() {
-        val dKey = decryptKey
-        if (dKey != null) {
-            decryptAndContinue(dKey, _exportPassword)
+        val decryptedMasterKey = decryptedMasterKey
+
+        if (decryptedMasterKey != null) {
+            decryptAndContinue(decryptedMasterKey, _exportPassword)
         } else {
             _errorLiveData.postValue(Event(R.string.app_error_general))
             return
         }
     }
 
-    private fun decryptAndContinue(decryptKey: SecretKey, exportPassword: String) =
-        viewModelScope.launch(Dispatchers.IO) {
-            _waitingLiveData.postValue(true)
-            try {
-                // Get all data, parse, decrypt and generate file content
-                val identityExportList = mutableListOf<IdentityExport>()
-                val failedAccountAddressExportList = mutableListOf<String>()
-                val identityList = identityRepository.getAllDone()
-                for (identity in identityList) {
-                    val accountExportList = mutableListOf<AccountExport>()
-                    val accountList = accountRepository.getAllByIdentityId(identity.id)
-                    for (account in accountList) {
-                        if (account.readOnly) {
-                            // Skip read only accounts (they will be found when importing)
-                            continue
-                        }
-                        if (account.transactionStatus == TransactionStatus.FINALIZED) {
-                            val accountDataDecryped =
-                                App.appCore.getCurrentAuthenticationManager().decryptInBackground(
-                                    decryptKey,
-                                    account.encryptedAccountData
+    private fun decryptAndContinue(
+        masterKey: ByteArray, exportPassword: String,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        _waitingLiveData.postValue(true)
+        try {
+            // Get all data, parse, decrypt and generate file content
+            val identityExportList = mutableListOf<IdentityExport>()
+            val failedAccountAddressExportList = mutableListOf<String>()
+            val identityList = identityRepository.getAllDone()
+            for (identity in identityList) {
+                val accountExportList = mutableListOf<AccountExport>()
+                val accountList = accountRepository.getAllByIdentityId(identity.id)
+                for (account in accountList) {
+                    val storageAccountDataEncrypted = account.encryptedAccountData
+                    if (account.readOnly || storageAccountDataEncrypted == null) {
+                        // Skip read only accounts (they will be found when importing)
+                        continue
+                    }
+                    if (account.transactionStatus == TransactionStatus.FINALIZED) {
+                        val accountDataJsonDecrypted =
+                            App.appCore.auth
+                                .decrypt(
+                                    masterKey = masterKey,
+                                    encryptedData = storageAccountDataEncrypted,
                                 )
-                            val accountData =
-                                gson.fromJson(accountDataDecryped, StorageAccountData::class.java)
-                            val accountExport = mapAccountToExport(account, accountData)
-                            accountExportList.add(accountExport)
-                        } else {
-                            failedAccountAddressExportList.add(account.address)
-                        }
+                                ?.let(::String)
+                                ?: error("Failed decrypting account data: ${account.address}")
+                        val accountData =
+                            gson.fromJson(
+                                accountDataJsonDecrypted,
+                                StorageAccountData::class.java
+                            )
+                        val accountExport = mapAccountToExport(account, accountData)
+                        accountExportList.add(accountExport)
+                    } else {
+                        failedAccountAddressExportList.add(account.address)
                     }
-                    val privateIdObjectDataDecryped =
-                        App.appCore.getCurrentAuthenticationManager().decryptInBackground(
-                            decryptKey,
-                            identity.privateIdObjectDataEncrypted
+                }
+
+                val privateIdObjectDataDecrypted =
+                    App.appCore.auth
+                        .decrypt(
+                            masterKey = masterKey,
+                            encryptedData = identity.privateIdObjectDataEncrypted
+                                ?: error("V0 identity must have encrypted private ID object data")
                         )
-                    val privateIdObjectData =
-                        gson.fromJson(privateIdObjectDataDecryped, RawJson::class.java)
-                    val identityExport =
-                        mapIdentityToExport(identity, privateIdObjectData, accountExportList)
-                    identityExportList.add(identityExport)
-                }
-                // There may be duplicates caused by old bugs that should be filtered out.
-                // As long as RecipientExport is a data class, LinkedHashSet does the thing,
-                // also preserving the original order.
-                val recipientExportSet = linkedSetOf<RecipientExport>()
-                val recipientList = recipientRepository.getAll()
-                for (recipient in recipientList) {
-                    if (!failedAccountAddressExportList.contains(recipient.address)) {
-                        recipientExportSet.add(RecipientExport(recipient.name, recipient.address))
-                    }
-                }
-                val exportValue = ExportValue(identityExportList, recipientExportSet.toList())
-                val exportData = ExportData("concordium-mobile-wallet-data", 1, exportValue, BuildConfig.EXPORT_CHAIN)
-                val jsonOutput = gson.toJson(exportData)
-                Log.d("ExportData: $jsonOutput")
-
-                // Encrypt
-                val encryptedExportData =
-                    ExportEncryptionHelper.encryptExportData(exportPassword, jsonOutput)
-                val fileContent = gson.toJson(encryptedExportData)
-
-                // Save and share file
-                FileUtil.saveFile(App.appContext, FILE_NAME, fileContent)
-                _shareExportFileLiveData.postValue(Event(true))
-                _waitingLiveData.postValue(false)
-            } catch (e: Exception) {
-                _waitingLiveData.postValue(false)
-                when (e) {
-                    is JsonIOException,
-                    is JsonSyntaxException -> {
-                        _errorLiveData.postValue(Event(R.string.app_error_json))
-                    }
-                    is FileNotFoundException -> {
-                        _errorLiveData.postValue(Event(R.string.export_error_file))
-                    }
-                    else -> throw e
+                        ?.let(::String)
+                        ?: error("Failed decrypting ID private object data: ${identity.name}")
+                val privateIdObjectData =
+                    gson.fromJson(privateIdObjectDataDecrypted, RawJson::class.java)
+                val identityExport =
+                    mapIdentityToExport(identity, privateIdObjectData, accountExportList)
+                identityExportList.add(identityExport)
+            }
+            // There may be duplicates caused by old bugs that should be filtered out.
+            // As long as RecipientExport is a data class, LinkedHashSet does the thing,
+            // also preserving the original order.
+            val recipientExportSet = linkedSetOf<RecipientExport>()
+            val recipientList = recipientRepository.getAll()
+            for (recipient in recipientList) {
+                if (!failedAccountAddressExportList.contains(recipient.address)) {
+                    recipientExportSet.add(RecipientExport(recipient.name, recipient.address))
                 }
             }
+            val exportValue = ExportValue(identityExportList, recipientExportSet.toList())
+            val exportData = ExportData(
+                "concordium-mobile-wallet-data",
+                1,
+                exportValue,
+                BuildConfig.EXPORT_CHAIN
+            )
+            val jsonOutput = gson.toJson(exportData)
+            Log.d("ExportData: $jsonOutput")
+
+            // Encrypt
+            val encryptedExportData =
+                ExportEncryptionHelper.encryptExportData(exportPassword, jsonOutput)
+            val fileContent = gson.toJson(encryptedExportData)
+
+            // Save and share file
+            FileUtil.saveFile(App.appContext, FILE_NAME, fileContent)
+            _shareExportFileLiveData.postValue(Event(true))
+            _waitingLiveData.postValue(false)
+        } catch (e: Exception) {
+            _waitingLiveData.postValue(false)
+            when (e) {
+                is JsonIOException,
+                is JsonSyntaxException -> {
+                    _errorLiveData.postValue(Event(R.string.app_error_json))
+                }
+
+                is FileNotFoundException -> {
+                    _errorLiveData.postValue(Event(R.string.export_error_file))
+                }
+
+                else -> throw e
+            }
         }
+    }
 
     private fun mapIdentityToExport(
         identity: Identity,
@@ -252,7 +264,10 @@ class ExportViewModel(application: Application) :
         )
     }
 
-    private fun mapAccountToExport(account: Account, accountData: StorageAccountData): AccountExport {
+    private fun mapAccountToExport(
+        account: Account,
+        accountData: StorageAccountData
+    ): AccountExport {
         return AccountExport(
             account.name,
             account.address,

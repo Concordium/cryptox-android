@@ -9,6 +9,7 @@ import android.os.storage.StorageManager
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
@@ -19,7 +20,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
@@ -52,9 +52,12 @@ abstract class BaseActivity(
     var isActive = false
 
     private var backBtn: ImageView? = null
-    private var plusLeftBtn: ImageView? = null
-    private var plusRightBtn: ImageView? = null
+    private var plusLeftBtn: FrameLayout? = null
+    private var plusLeftBtnNotice: View? = null
+    private var plusRightBtn: FrameLayout? = null
+    private var plusRightBtnNotice: View? = null
     private var qrScanBtn: ImageView? = null
+    private var infoBtn: ImageView? = null
     protected var closeBtn: ImageView? = null
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
@@ -81,8 +84,11 @@ abstract class BaseActivity(
 
         backBtn = toolbar?.findViewById(R.id.toolbar_back_btn)
         plusLeftBtn = toolbar?.findViewById(R.id.toolbar_plus_btn)
+        plusLeftBtnNotice = toolbar?.findViewById(R.id.toolbar_plus_btn_notice)
         plusRightBtn = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact)
+        plusRightBtnNotice = toolbar?.findViewById(R.id.toolbar_plus_btn_add_contact_notice)
         qrScanBtn = toolbar?.findViewById(R.id.toolbar_qr_btn)
+        infoBtn = toolbar?.findViewById(R.id.toolbar_info_btn)
         closeBtn = toolbar?.findViewById(R.id.toolbar_close_btn)
         deleteBtn = toolbar?.findViewById(R.id.toolbar_delete_btn)
         settingsBtn = toolbar?.findViewById(R.id.toolbar_settings_btn)
@@ -96,15 +102,15 @@ abstract class BaseActivity(
         popup = Popup()
         dialogs = Dialogs()
 
-        App.appCore.session.isLoggedIn.observe(this, Observer<Boolean> { loggedin ->
-            if (App.appCore.session.hasSetupPassword) {
-                if (loggedin) {
+        App.appCore.session.isLoggedIn.observe(this) { loggedIn ->
+            if (App.appCore.setup.isAuthSetupCompleted) {
+                if (loggedIn) {
                     loggedIn()
                 } else {
                     loggedOut()
                 }
             }
-        })
+        }
     }
 
     override fun onResume() {
@@ -202,14 +208,29 @@ abstract class BaseActivity(
         }
     }
 
-    fun hideRightPlus(isVisible: Boolean, listener: View.OnClickListener? = null) {
-        plusRightBtn?.isVisible = isVisible
-        plusRightBtn?.setOnClickListener(listener)
+    fun hideInfo(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        infoBtn?.isVisible = isVisible
+        infoBtn?.setOnClickListener(listener)
     }
 
-    fun hideLeftPlus(isVisible: Boolean, listener: View.OnClickListener? = null) {
+    fun hideRightPlus(
+        isVisible: Boolean,
+        hasNotice: Boolean = false,
+        listener: View.OnClickListener? = null
+    ) {
+        plusRightBtn?.isVisible = isVisible
+        plusRightBtn?.setOnClickListener(listener)
+        plusRightBtnNotice?.isVisible = hasNotice
+    }
+
+    fun hideLeftPlus(
+        isVisible: Boolean,
+        hasNotice: Boolean = false,
+        listener: View.OnClickListener? = null
+    ) {
         plusLeftBtn?.isVisible = isVisible
         plusLeftBtn?.setOnClickListener(listener)
+        plusLeftBtnNotice?.isVisible = hasNotice
     }
 
     fun hideSettings(isVisible: Boolean, listener: View.OnClickListener? = null) {
@@ -271,8 +292,8 @@ abstract class BaseActivity(
     }
 
     fun showAuthentication(text: String = authenticateText(), callback: AuthenticationCallback) {
-        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
-        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
+        val useBiometrics = App.appCore.auth.isBiometricsUsed()
+        val usePasscode = App.appCore.auth.isPasscodeUsed()
         if (useBiometrics) {
             showBiometrics(text, usePasscode, callback)
         } else {
@@ -314,7 +335,10 @@ abstract class BaseActivity(
         }
     }
 
-    private fun createBiometricPrompt(text: String?, callback: AuthenticationCallback): BiometricPrompt {
+    private fun createBiometricPrompt(
+        text: String?,
+        callback: AuthenticationCallback
+    ): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(this)
 
         val callback = object : BiometricPromptCallback() {
@@ -345,8 +369,8 @@ abstract class BaseActivity(
     }
 
     fun authenticateText(): String {
-        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
-        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
+        val useBiometrics = App.appCore.auth.isBiometricsUsed()
+        val usePasscode = App.appCore.auth.isPasscodeUsed()
         return when {
             useBiometrics -> getString(R.string.auth_login_biometrics_dialog_subtitle)
             usePasscode -> getString(R.string.auth_login_biometrics_dialog_cancel_passcode)

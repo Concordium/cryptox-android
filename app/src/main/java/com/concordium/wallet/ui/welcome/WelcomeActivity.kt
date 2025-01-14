@@ -10,13 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.preferences.TrackingPreferences
+import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.databinding.ActivityWelcomeBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
-import com.concordium.wallet.ui.auth.passcode.PasscodeSetupActivity
+import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.uicore.handleUrlClicks
@@ -24,14 +23,13 @@ import com.concordium.wallet.uicore.handleUrlClicks
 class WelcomeActivity :
     BaseActivity(R.layout.activity_welcome),
     WelcomeAccountActivationLauncher {
-    private val session: Session = App.appCore.session
 
     private val binding: ActivityWelcomeBinding by lazy {
         ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private val trackingPreferences: TrackingPreferences by lazy {
-        TrackingPreferences(this)
+    private val trackingPreferences: AppTrackingPreferences by lazy {
+        AppTrackingPreferences(this)
     }
 
     private val passcodeSetupForCreateLauncher =
@@ -83,7 +81,7 @@ class WelcomeActivity :
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a new wallet.
                         passcodeSetupForCreateLauncher
-                            .launch(Intent(this, PasscodeSetupActivity::class.java))
+                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
                     } else {
                         gotoAccountOverview()
                     }
@@ -92,7 +90,7 @@ class WelcomeActivity :
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a import an existing wallet.
                         passcodeSetupForImportLauncher
-                            .launch(Intent(this, PasscodeSetupActivity::class.java))
+                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
                     } else {
                         goToImportWallet()
                     }
@@ -148,7 +146,7 @@ class WelcomeActivity :
     private fun gotoAccountOverview() {
         // hasCompletedInitialSetup has positive value at the fresh app start,
         // hence we can skip this screen if the user created the password.
-        session.hasCompletedInitialSetup()
+        App.appCore.setup.finishInitialSetup()
         finish()
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

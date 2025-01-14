@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-private const val PHRASE_KEY = "PHRASE_KEY"
 
 class OneStepSetupWalletViewModel(
     application: Application,
@@ -61,7 +60,7 @@ class OneStepSetupWalletViewModel(
     }
 
     private fun setUpPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {
-        val isSavedSuccessfully = AuthPreferences(getApplication())
+        val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
             .tryToSetEncryptedSeedPhrase(
                 seedPhraseString = checkNotNull(phraseString) {
                     "The phrase must be generated at this moment"
@@ -70,6 +69,11 @@ class OneStepSetupWalletViewModel(
             )
 
         if (isSavedSuccessfully) {
+            SwitchActiveWalletTypeUseCase().invoke(
+                newWalletType = AppWallet.Type.SEED,
+            )
+            App.appCore.setup.finishInitialSetup()
+
             mutableEventsFlow.emit(Event.GoToAccountOverview)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)
@@ -84,5 +88,6 @@ class OneStepSetupWalletViewModel(
 
     private companion object {
         private val PHRASE_WORD_COUNT = Mnemonics.WordCount.COUNT_24
+        private const val PHRASE_KEY = "PHRASE_KEY"
     }
 }

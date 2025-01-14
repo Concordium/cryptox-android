@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
@@ -37,12 +37,13 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun shouldShowBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
+        return App.appCore.auth.isBiometricsUsed()
     }
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher =
+                App.appCore.auth.getBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -53,36 +54,33 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun checkLogin(password: String) = viewModelScope.launch {
+    fun checkLogin(password: String?) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val res = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(password)
-        if (res) {
+        if (password != null && App.appCore.auth.checkPassword(password)) {
             loginSuccess()
         } else {
             _passwordErrorLiveData.value =
-                Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
+                Event(
+                    if (App.appCore.auth
+                            .isPasscodeUsed()
+                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                )
             _waitingLiveData.value = false
         }
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
-        _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
-        if (password != null) {
-            loginSuccess()
-        } else {
-            _passwordErrorLiveData.value =
-                Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
-            _waitingLiveData.value = false
-        }
+        checkLogin(
+            password = App.appCore.auth.decryptPasswordWithBiometricsCipher(cipher),
+        )
     }
 
     private fun loginSuccess() {
-        session.hasLoggedInUser()
+        session.setUserLoggedIn()
         _finishScreenLiveData.value = Event(true)
     }
 
     fun usePasscode(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().usePasscode()
+        return App.appCore.auth.isPasscodeUsed()
     }
 }

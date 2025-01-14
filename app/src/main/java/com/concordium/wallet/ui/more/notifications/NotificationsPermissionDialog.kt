@@ -11,9 +11,9 @@ import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
-import com.concordium.wallet.data.preferences.NotificationsPreferences
 import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
@@ -24,13 +24,10 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
     private lateinit var binding: DialogNotificationsPermissionBinding
 
-    private val notificationsPreferences: NotificationsPreferences by lazy {
-        NotificationsPreferences(requireContext())
-    }
+    private val walletNotificationsPreferences =
+        App.appCore.session.walletStorage.notificationsPreferences
 
-    private val updateNotificationsSubscriptionUseCase by lazy {
-        UpdateNotificationsSubscriptionUseCase(requireActivity().application)
-    }
+    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notificationPermissionsLauncher =
@@ -75,7 +72,7 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
         // Track showing the dialog once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
-            notificationsPreferences.hasEverShownPermissionDialog = true
+            walletNotificationsPreferences.hasEverShownPermissionDialog = true
         }
     }
 
@@ -85,9 +82,9 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
                     "\nisGranted=$isGranted"
         )
 
-        notificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
+        walletNotificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
 
-        if(isGranted) {
+        if (isGranted) {
             lifecycleScope.launchWhenStarted {
                 val success = updateNotificationsSubscriptionUseCase()
                 Log.d("success: $success")

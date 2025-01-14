@@ -4,19 +4,19 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 
 class NewAccountIdentityViewModel(application: Application) : AndroidViewModel(application) {
 
     lateinit var accountName: String
 
-    private val identityRepository: IdentityRepository
-    val identityListLiveData: LiveData<List<Identity>>
+    private val identityRepository = IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
+    val identityListLiveData = identityRepository.allDoneIdentities
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -25,12 +25,6 @@ class NewAccountIdentityViewModel(application: Application) : AndroidViewModel(a
     private val _errorDialogLiveData = MutableLiveData<Event<Int>>()
     val errorDialogLiveData: LiveData<Event<Int>>
         get() = _errorDialogLiveData
-
-    init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        identityListLiveData = identityRepository.allDoneIdentities
-    }
 
     fun initialize(accountName: String) {
         this.accountName = accountName

@@ -8,9 +8,10 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.preferences.NotificationsPreferences
+import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -24,18 +25,18 @@ class TransactionNotificationsManager(
         NotificationManagerCompat.from(context)
     }
 
-    private val notificationsPreferences: NotificationsPreferences by lazy {
-        NotificationsPreferences(context)
+    private val walletNotificationsPreferences: WalletNotificationsPreferences by lazy {
+        App.appCore.session.walletStorage.notificationsPreferences
     }
 
     private val areNotificationsEnabled: Boolean
         get() = notificationsManager.areNotificationsEnabled()
 
     private val areCcdTxNotificationsEnabled: Boolean
-        get() = areNotificationsEnabled && notificationsPreferences.areCcdTxNotificationsEnabled
+        get() = areNotificationsEnabled && walletNotificationsPreferences.areCcdTxNotificationsEnabled
 
     private val areCis2TxNotificationsEnabled: Boolean
-        get() = areNotificationsEnabled && notificationsPreferences.areCis2TxNotificationsEnabled
+        get() = areNotificationsEnabled && walletNotificationsPreferences.areCis2TxNotificationsEnabled
 
     @SuppressLint("MissingPermission")
     fun notifyCcdTransaction(

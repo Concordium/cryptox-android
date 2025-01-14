@@ -53,6 +53,22 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/wallets_layout"
+                style="@style/SettingsOverviewItem">
+
+                <TextView
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/wallets_title"
+                    app:drawableStartCompat="@drawable/ccx_ico_user_circle" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/address_book_layout"
                 style="@style/SettingsOverviewItem">
 
@@ -197,12 +213,12 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/erase_wallet_layout"
+                android:id="@+id/erase_data_layout"
                 style="@style/SettingsOverviewItem">
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/settings_overview_erase_wallet"
+                    android:text="@string/settings_overview_erase_data"
                     app:drawableStartCompat="@drawable/ccx_ico_file_shred" />
 
                 <View

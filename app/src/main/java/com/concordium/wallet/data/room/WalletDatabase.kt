@@ -1,17 +1,20 @@
 package com.concordium.wallet.data.room
 
 import android.content.Context
+import androidx.collection.LruCache
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
 import com.concordium.wallet.data.room.migrations.MIGRATION_7_8
 import com.concordium.wallet.data.room.migrations.MIGRATION_8_9
+import com.concordium.wallet.data.room.migrations.MIGRATION_9_10
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
@@ -30,7 +33,7 @@ import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
     ],
 )
 @TypeConverters(GlobalTypeConverters::class)
-public abstract class WalletDatabase : RoomDatabase() {
+abstract class WalletDatabase : RoomDatabase() {
 
     abstract fun identityDao(): IdentityDao
     abstract fun accountDao(): AccountDao
@@ -40,23 +43,36 @@ public abstract class WalletDatabase : RoomDatabase() {
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
-
-        const val VERSION_NUMBER = 9
-
-        // Singleton prevents multiple instances of database opening at the same time.
-        @Volatile
-        private var INSTANCE: WalletDatabase? = null
-
-        fun getDatabase(context: Context): WalletDatabase {
-            val tempInstance = INSTANCE
-            if (tempInstance != null) {
-                return tempInstance
+        const val VERSION_NUMBER = 10
+        private val instances = object : LruCache<String, WalletDatabase>(2) {
+            override fun entryRemoved(
+                evicted: Boolean,
+                key: String,
+                oldValue: WalletDatabase,
+                newValue: WalletDatabase?,
+            ) {
+                oldValue.close()
             }
-            synchronized(this) {
-                val instance = Room.databaseBuilder(
+        }
+
+        @Deprecated(
+            message = "Do not construct instances on your own",
+            replaceWith = ReplaceWith(
+                expression = "App.appCore.session.walletStorage.database",
+                imports = arrayOf("com.concordium.wallet.App"),
+            )
+        )
+        fun getDatabase(
+            context: Context,
+            fileNameSuffix: String = "",
+        ): WalletDatabase = synchronized(this) {
+            val name = "wallet_database$fileNameSuffix"
+
+            instances[name]
+                ?: Room.databaseBuilder(
                     context.applicationContext,
                     WalletDatabase::class.java,
-                    "wallet_database"
+                    "wallet_database$fileNameSuffix"
                 )
                     .fallbackToDestructiveMigration()
                     // See auto migrations in the @Database declaration.
@@ -66,11 +82,13 @@ public abstract class WalletDatabase : RoomDatabase() {
                         MIGRATION_5_6,
                         MIGRATION_7_8,
                         MIGRATION_8_9,
+                        MIGRATION_9_10(
+                            context = context,
+                            gson = AppCore.getGson(),
+                        ),
                     )
                     .build()
-                INSTANCE = instance
-                return instance
-            }
+                    .also { instances.put(name, it) }
         }
     }
 }

@@ -2,10 +2,13 @@ package com.concordium.wallet.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.more.import.ImportActivity
+import com.concordium.wallet.ui.multiwallet.WalletsActionConfirmationDialog
 import com.concordium.wallet.ui.seed.recover.RecoverSeedPhraseWalletActivity
 import com.concordium.wallet.ui.seed.recover.seed.RecoverSeedWalletActivity
 
@@ -24,9 +27,28 @@ class WelcomeRecoverWalletActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
         setActionBarTitle("")
+
+        supportFragmentManager.setFragmentResultListener(
+            WalletsActionConfirmationDialog.CONFIRMATION_REQUEST,
+            this,
+        ) { _, bundle ->
+            if (WalletsActionConfirmationDialog.getResult(bundle).isConfirmed) {
+                startActivity(
+                    Intent(this, ImportActivity::class.java).apply {
+                        putExtra(ImportActivity.EXTRA_GO_TO_ACCOUNTS_OVERVIEW_ON_SUCCESS, true)
+                    }
+                )
+            }
+        }
     }
 
     private fun initViews() {
+        binding.usePhraseLayout.isVisible =
+            intent.getBooleanExtra(EXTRA_SHOW_SEED_OPTIONS, true)
+        binding.useFileLayout.isVisible =
+            intent.getBooleanExtra(EXTRA_SHOW_FILE_OPTIONS, true)
+        binding.bottomAwareLayout.isVisible = binding.useFileLayout.isVisible
+
         binding.importSeedPhraseButton.setOnClickListener {
             goToPhraseRecovery()
         }
@@ -49,9 +71,9 @@ class WelcomeRecoverWalletActivity : BaseActivity(
     }
 
     private fun showImportFileWalletDialog() {
-        ImportFileWalletDialog().showSingle(
+        WalletsActionConfirmationDialog.importingFileWallet().showSingle(
             supportFragmentManager,
-            ImportFileWalletDialog.TAG
+            WalletsActionConfirmationDialog.TAG,
         )
     }
 
@@ -75,5 +97,22 @@ class WelcomeRecoverWalletActivity : BaseActivity(
 
     private fun goToSeedRecovery() {
         startActivity(Intent(this, RecoverSeedWalletActivity::class.java))
+    }
+
+    companion object {
+        private const val EXTRA_SHOW_SEED_OPTIONS = "show_seed_options"
+        private const val EXTRA_SHOW_FILE_OPTIONS = "show_file_options"
+
+        fun getBundle(
+            showSeedOptions: Boolean = true,
+            showFileOptions: Boolean = true,
+        ) = Bundle().apply {
+            require(showFileOptions || showSeedOptions) {
+                "No options to show"
+            }
+
+            putBoolean(EXTRA_SHOW_SEED_OPTIONS, showSeedOptions)
+            putBoolean(EXTRA_SHOW_FILE_OPTIONS, showFileOptions)
+        }
     }
 }
