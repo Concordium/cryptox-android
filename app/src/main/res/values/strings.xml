@@ -662,7 +662,7 @@
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Validator id %1$s</string>
@@ -790,7 +790,7 @@
 
     <string name="baker_registration_open_title">Add validator</string>
     <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your validator. Leave it blank if you don’t have any.</string>
-    <string name="baker_registration_open_read_more">You can read more about the metadata URL on <a href="https://developer.concordium.software">developer.concordium.software</a></string>
+    <string name="baker_registration_open_read_more">You can read more about the metadata URL on <a href="https://docs.concordium.com/en/mainnet/docs/mobile-wallet/add-baker-mw.html">docs.concordium.com</a></string>
     <string name="baker_registration_open_continue">Continue</string>
     <string name="baker_registration_open_url_hint">Paste your metadata URL here</string>
     <string name="baker_registration_open_url_invalid">Please enter a valid HTTP or HTTPS URL</string>

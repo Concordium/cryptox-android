@@ -10,6 +10,7 @@
 ### Fixed
 
 - Incorrect support email address in some error messages
+- Not working links to the documentation on some screens
 
 ### Removed
 
