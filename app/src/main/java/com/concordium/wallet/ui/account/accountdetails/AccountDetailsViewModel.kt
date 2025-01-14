@@ -225,7 +225,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
-            override fun onDone(totalBalances: TotalBalancesData ) {
+            override fun onDone(totalBalances: TotalBalancesData) {
                 _totalBalanceLiveData.value = account.balance
                 getLocalTransfers()
                 viewModelScope.launch {
@@ -326,7 +326,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val newTransactions: MutableList<Transaction> = ArrayList()
         for (remoteTransaction in remoteTransactionList) {
             val transaction = remoteTransaction.toTransaction()
-            transactionMappingHelper.addTitleToTransaction(transaction, remoteTransaction)
+            transactionMappingHelper.addTitleToTransaction(
+                transaction,
+                remoteTransaction,
+                getApplication()
+            )
             newTransactions.add(transaction)
         }
         // Find local transactions to merge

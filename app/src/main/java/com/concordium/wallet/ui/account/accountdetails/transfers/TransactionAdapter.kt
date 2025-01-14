@@ -40,7 +40,7 @@ class TransactionAdapter :
                 binding.costTextview,
                 binding.layoutMemo,
                 binding.memoTextview,
-                binding.amountTextview,
+//                binding.amountTextview,
                 binding.alertImageview,
                 binding.statusImageview,
             )

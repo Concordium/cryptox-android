@@ -154,7 +154,6 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.costTextview,
             transactionItem.layoutMemo,
             transactionItem.memoTextview,
-            transactionItem.amountTextview,
             transactionItem.alertImageview,
             transactionItem.statusImageview,
         )

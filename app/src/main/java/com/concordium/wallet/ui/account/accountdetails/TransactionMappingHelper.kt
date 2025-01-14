@@ -44,7 +44,7 @@ class TransactionMappingHelper(
         } else {
             // ...else transfer is always outgoing, so just use toAddress
             val recipientResult = findRecipientOrUseAddress(transfer.toAddress)
-            transaction.title = recipientResult.recipientOrAddress
+            transaction.title = ctx.getString(R.string.transaction_type_transfer)
             transaction.fromAddressTitle = account.name
             if (recipientResult.hasFoundRecipient) {
                 transaction.toAddressTitle = recipientResult.recipientOrAddress
@@ -54,7 +54,8 @@ class TransactionMappingHelper(
 
     fun addTitleToTransaction(
         transaction: Transaction,
-        remoteTransaction: RemoteTransaction
+        remoteTransaction: RemoteTransaction,
+        ctx: Context
     ) {
         var address: String? = null
         var recipientName: String? = null
@@ -69,7 +70,7 @@ class TransactionMappingHelper(
         }
         if (address != null) {
             val recipientResult = findRecipientOrUseAddress(address)
-            transaction.title = recipientResult.recipientOrAddress
+            transaction.title = ctx.getString(R.string.transaction_type_transfer)
             if (recipientResult.hasFoundRecipient) {
                 recipientName = recipientResult.recipientOrAddress
             }

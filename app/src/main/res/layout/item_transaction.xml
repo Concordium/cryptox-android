@@ -99,7 +99,7 @@
                     android:layout_marginEnd="6dp"
                     android:layout_toEndOf="@+id/subheader_textview"
                     android:src="@drawable/ic_time"
-                    app:tint="@color/cryptox_black_additional"
+                    app:tint="@color/mw24_blue_3_50"
                     tools:src="@drawable/ic_ok_x2"
                     tools:visibility="visible" />
             </RelativeLayout>
@@ -115,23 +115,13 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/amount_textview"
-                    style="@style/MW24_Typography_Main_Capture_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/mw24_blue_3_50"
-                    android:textSize="12sp"
-                    tools:text="Ͼ1.30 + "
-                    tools:visibility="visible" />
-
-                <TextView
                     android:id="@+id/cost_textview"
                     style="@style/MW24_Typography_Main_Capture_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/mw24_blue_3_50"
                     android:textSize="12sp"
-                    tools:text="Ͼ0.059 Fee"
+                    tools:text="with fee 0.059 CCD"
                     tools:visibility="visible" />
             </LinearLayout>
             <!-- end fee group -->
@@ -180,7 +170,7 @@
         android:id="@+id/arrow_imageview"
         style="@style/Image"
         android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_height="20dp"
         android:layout_centerVertical="true"
         android:src="@drawable/cryptox_ico_chevron_right"
         app:tint="@color/mw24_grey_4"

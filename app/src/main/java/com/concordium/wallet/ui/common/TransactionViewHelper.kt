@@ -24,7 +24,6 @@ object TransactionViewHelper {
         costTextView: TextView,
         memoLayout: LinearLayout,
         memoTextView: TextView,
-        amountTextView: TextView,
         alertImageView: ImageView,
         statusImageView: ImageView,
         showDate: Boolean = false,
@@ -46,9 +45,9 @@ object TransactionViewHelper {
             totalTextView.text = CurrencyUtil.formatGTU(total, withGStroke = false)
             val textColor = if (total.signum() > 0)
                 ContextCompat.getColor(
-                totalTextView.context,
-                R.color.mw24_green
-            ) else
+                    totalTextView.context,
+                    R.color.mw24_green
+                ) else
                 ContextCompat.getColor(
                     totalTextView.context,
                     R.color.cryptox_white_main
@@ -59,21 +58,18 @@ object TransactionViewHelper {
 
         fun showTransactionFeeText() {
             costTextView.visibility = View.VISIBLE
-            amountTextView.visibility = View.GONE
             costTextView.text =
                 costTextView.context.getString(R.string.account_details_shielded_transaction_fee)
         }
 
         fun hideCostLine() {
             costTextView.visibility = View.GONE
-            amountTextView.visibility = View.GONE
         }
 
         fun showCostLineWithAmounts() {
             // Subtotal and cost
             if (ta.subtotal != null && ta.cost != null) {
                 costTextView.visibility = View.VISIBLE
-                amountTextView.visibility = View.VISIBLE
 
                 val cost = ta.cost
                 var costPrefix = ""
@@ -85,18 +81,15 @@ object TransactionViewHelper {
                     costPrefix = "~"
                 }
 
-                amountTextView.text =
-                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = false)} - "
-                costTextView.text = "$costPrefix${
-                    CurrencyUtil.formatGTU(
-                        cost, withGStroke = false
-                    )
-                } ${costTextView.context.getString(R.string.account_details_fee)}"
+                costTextView.text = costTextView.context.getString(R.string.account_details_fee) +
+                        " $costPrefix${
+                            CurrencyUtil.formatGTU(
+                                cost, withGStroke = false
+                            )
+                        } " + costTextView.context.getString(R.string.accounts_overview_balance_suffix)
             } else {
                 costTextView.visibility = View.GONE
-                amountTextView.visibility = View.GONE
             }
-
         }
 
         //Clear first
@@ -139,19 +132,19 @@ object TransactionViewHelper {
             } else
             // update Smart Contract (show the fee as an estimate cost until the transaction is Finalized)
                 if (ta.isSmartContractUpdate()) {
-                setTotalView(ta.getTotalAmountForSmartContractUpdate())
-                showCostLineWithAmounts()
-            } else
-            // transferToPublic (show only the cost as total, no subtotal or fee on second row - clarified with Concordium)
-                if (ta.isTransferToPublic()) {
-                    setTotalView(ta.getTotalAmountForRegular())
-                    hideCostLine()
+                    setTotalView(ta.getTotalAmountForSmartContractUpdate())
+                    showCostLineWithAmounts()
                 } else
-                // encryptedTransfer (show only the cost as total, subtotal/cost row should be "Shielded transaction fee")
-                    if (ta.isEncryptedTransfer()) {
+                // transferToPublic (show only the cost as total, no subtotal or fee on second row - clarified with Concordium)
+                    if (ta.isTransferToPublic()) {
                         setTotalView(ta.getTotalAmountForRegular())
-                        showTransactionFeeText()
-                    }
+                        hideCostLine()
+                    } else
+                    // encryptedTransfer (show only the cost as total, subtotal/cost row should be "Shielded transaction fee")
+                        if (ta.isEncryptedTransfer()) {
+                            setTotalView(ta.getTotalAmountForRegular())
+                            showTransactionFeeText()
+                        }
         }
 
         // Alert image
