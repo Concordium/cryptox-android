@@ -9,6 +9,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -18,11 +19,14 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
+import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.cis2.TokenDetailsActivity
+import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -195,7 +199,9 @@ class AccountDetailsActivity : BaseActivity(
             onActivityClicked()
         }
 
-        initTabs()
+        replaceTokensFragment(getTokensFragment())
+        initContainer()
+
     }
 
     private fun initTitle() {
@@ -243,6 +249,7 @@ class AccountDetailsActivity : BaseActivity(
         }
         binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text =
             CurrencyUtil.formatGTU(viewModelAccountDetails.account.cooldownAmount)
+        setupOnrampBanner(active = true)
     }
 
     private fun setErrorMode() {
@@ -257,38 +264,43 @@ class AccountDetailsActivity : BaseActivity(
         binding.addressBtn.isEnabled = false
         binding.earnBtn.isEnabled = false
         binding.activityBtn.isEnabled = false
+        setupOnrampBanner(active = false)
     }
 
-    private fun initTabs() {
-        val adapter =
-            AccountDetailsPagerAdapter(
-                supportFragmentManager,
-                viewModelAccountDetails.account,
-                this
-            )
-        binding.accountDetailsPager.adapter = adapter
-        binding.accountDetailsTablayout.setupWithViewPager(binding.accountDetailsPager)
+    private fun getTokensFragment(): Fragment {
+        return when (viewModelAccountDetails.account.transactionStatus) {
+            TransactionStatus.ABSENT -> AccountDetailsErrorFragment()
+            TransactionStatus.COMMITTED -> AccountDetailsPendingFragment()
+            TransactionStatus.RECEIVED -> AccountDetailsPendingFragment()
+            else -> TokensFragment()
+        }
+    }
 
-        // Make the pager height match the container height except the buttons
-        // to enable full hide of the header card by scrolling.
+    private fun replaceTokensFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(binding.tokensFragmentContainer.id, fragment)
+            .commit()
+    }
+
+    private fun initContainer() {
         var handledContainerHeight = -1
         binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
             val containerHeight = binding.scrollView.measuredHeight
             val buttonsHeight = binding.buttonsBlock.measuredHeight
+            val onRampHeight = binding.onrampBanner.root.measuredHeight
             val buttonsMargin =
-                (binding.accountDetailsPager.layoutParams as MarginLayoutParams).topMargin
+                (binding.tokensFragmentContainer.layoutParams as MarginLayoutParams).topMargin
+            val onRampMargin =
+                (binding.onrampBanner.root.layoutParams as MarginLayoutParams).topMargin
 
             if (handledContainerHeight != containerHeight) {
                 handledContainerHeight = containerHeight
 
-                binding.accountDetailsPager.updateLayoutParams<ViewGroup.LayoutParams> {
-                    height = containerHeight - buttonsHeight - buttonsMargin
+                binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
+                    height =
+                        containerHeight - buttonsHeight - buttonsMargin - onRampMargin - onRampHeight
                 }
             }
-        }
-
-        if (shouldOpenTokens) {
-            binding.accountDetailsPager.setCurrentItem(adapter.getTokensPagePosition(), false)
         }
     }
 
@@ -366,6 +378,15 @@ class AccountDetailsActivity : BaseActivity(
         intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(TokenDetailsActivity.TOKEN, token)
         showTokenDetails.launch(intent)
+    }
+
+    private fun setupOnrampBanner(active: Boolean) {
+        binding.onrampBanner.root.setOnClickListener {
+            if (active)
+                onOnrampClicked()
+            else
+                showUnlockFeatureDialog()
+        }
     }
 
     private val showTokenDetails =

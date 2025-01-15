@@ -198,32 +198,22 @@
 
             </LinearLayout>
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/account_details_pager"
+            <include
+                android:id="@+id/onramp_banner"
+                layout="@layout/list_item_accounts_overview_ccd_onramp_banner"
                 android:layout_width="match_parent"
-                android:layout_height="210dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintBottom_toTopOf="@id/account_retry_button"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/buttonsBlock">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp" />
 
-                <!-- The height is set programmatically -->
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/account_details_tablayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:tabBackground="@drawable/cryptox_tab_background"
-                    app:tabIndicatorColor="@color/cryptox_white_main_50"
-                    app:tabIndicatorHeight="1dp"
-                    app:tabTextAppearance="@style/TabLayoutTextAppearance"
-                    app:tabTextColor="@color/cryptox_tab_text_color" />
-
-            </androidx.viewpager.widget.ViewPager>
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/tokens_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"/>
 
             <Button
                 android:id="@+id/account_retry_button"
-                style="@style/CryptoX_Button_Primary"
+                style="@style/MW24_Button_Primary"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="24dp"
@@ -232,7 +222,7 @@
 
             <Button
                 android:id="@+id/account_remove_button"
-                style="@style/CryptoX_Button_Primary"
+                style="@style/MW24_Button_Primary"
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="24dp"
