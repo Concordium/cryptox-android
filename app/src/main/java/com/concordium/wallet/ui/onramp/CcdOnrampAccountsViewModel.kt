@@ -18,7 +18,6 @@ class CcdOnrampAccountsViewModel(application: Application) : AndroidViewModel(ap
     val listItemsLiveData: LiveData<List<CcdOnrampAccountListItem>> = _listItemsLiveData
 
     init {
-        App.appCore.tracker.homeOnRampScreen()
         postItems()
     }
 

@@ -36,4 +36,8 @@ class NoOpAppTracker : AppTracker {
     override fun homeOnRampBannerClicked() = Log.d("No op")
     override fun homeUnlockFeatureDialog() = Log.d("No op")
     override fun homeTotalBalanceClicked() = Log.d("No op")
+    override fun homeOnRampSiteClicked(siteName: String) = Log.d("No op")
+    override fun aboutScreen() = Log.d("No op")
+    override fun aboutScreenLinkClicked(url: String) = Log.d("No op")
+    override fun homeNewsScreen() = Log.d("No op")
 }
