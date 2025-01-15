@@ -202,8 +202,12 @@
     <string name="account_details_title">Account details</string>
     <string name="account_details_transfers_title">Activity</string>
     <string name="account_details_identity_data_title">Identity Data</string>
+    <string name="account_details_buy">Buy</string>
     <string name="account_details_send">Send</string>
+    <string name="account_details_receive">Receive</string>
     <string name="account_details_address">Address</string>
+    <string name="account_details_earn">Earn</string>
+    <string name="account_details_activity">Activity</string>
     <string name="account_details_earn_rewards">Earn rewards</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
