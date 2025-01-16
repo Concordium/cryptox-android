@@ -86,6 +86,9 @@ data class Account(
 
     @ColumnInfo(name = "accountIndex")
     var index: Int? = null,
+
+    @ColumnInfo(name = "is_active", defaultValue = "0")
+    var isActive: Boolean = false
 ) : Serializable {
 
     companion object {
