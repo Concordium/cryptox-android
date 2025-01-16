@@ -223,7 +223,6 @@ class AccountDetailsActivity : BaseActivity(
 
         binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
         binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
-        binding.walletInfoCard.divider.visibility = View.VISIBLE
 
         viewModelAccountDetails.account.isBaking().also { isBaking ->
             binding.walletInfoCard.stakedLabel.isVisible = isBaking
@@ -324,10 +323,22 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.walletInfoCard.totalBalanceTextview.text =
-            CurrencyUtil.formatGTU(totalBalance)
-        binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.balanceAtDisposal)
+        binding.walletInfoCard.totalBalanceTextview.text = getString(
+            R.string.account_details_total_balance,
+            CurrencyUtil.formatAndRoundGTU(
+                value = totalBalance,
+                roundDecimals = 2
+            )
+        )
+        if (viewModelAccountDetails.account.balanceAtDisposal != totalBalance) {
+            binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
+            binding.walletInfoCard.atDisposalLabel.text = getString(
+                R.string.account_details_balance_at_disposal,
+                CurrencyUtil.formatGTU(viewModelAccountDetails.account.balanceAtDisposal)
+            )
+        } else {
+            binding.walletInfoCard.atDisposalLabel.visibility = View.GONE
+        }
     }
 
     private fun onOnrampClicked() {
@@ -369,7 +380,10 @@ class AccountDetailsActivity : BaseActivity(
 
     private fun onActivityClicked() {
         val intent = Intent(this, AccountDetailsTransfersActivity::class.java)
-        intent.putExtra(AccountDetailsTransfersActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+        intent.putExtra(
+            AccountDetailsTransfersActivity.EXTRA_ACCOUNT,
+            viewModelAccountDetails.account
+        )
         startActivity(intent)
     }
 

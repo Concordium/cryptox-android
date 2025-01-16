@@ -48,7 +48,6 @@ class ManageTokensTokenDetailsFragment : Fragment() {
             setTokenId(token.token)
             token.metadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
-                setImage(tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(token)
@@ -99,22 +98,6 @@ class ManageTokensTokenDetailsFragment : Fragment() {
             } else {
                 binding.details.contractIndex.text = tokenIndex
             }
-        }
-    }
-
-    private fun setImage(tokenMetadata: TokenMetadata) {
-        if (!tokenMetadata.display?.url.isNullOrBlank()) {
-            binding.details.imageTitle.visibility = View.VISIBLE
-            binding.details.image.visibility = View.VISIBLE
-
-            Glide.with(this)
-                .load(tokenMetadata.display?.url)
-                .placeholder(ThemedCircularProgressDrawable(binding.details.image.context))
-                .fitCenter()
-                .into(binding.details.image)
-        } else {
-            binding.details.imageTitle.visibility = View.GONE
-            binding.details.image.visibility = View.GONE
         }
     }
 

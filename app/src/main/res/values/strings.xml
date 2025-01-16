@@ -223,11 +223,16 @@
     <string name="account_smart_contract_update_pending">Invoke smart contract</string>
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
+    <string name="account_details_total_balance">%1$s CCD</string>
+    <string name="account_details_balance_at_disposal">%1$s CCD at disposal</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
     <string name="account_details_change_name_popup_cancel">Cancel</string>
     <string name="account_details_change_name_popup_save">Save</string>
     <string name="account_details_change_name_hint">Enter name</string>
+    <string name="account_details_raw_metadata">Show raw metadata</string>
+    <string name="account_details_ccd_token">CCD token</string>
+    <string name="account_token_details_decimals">0 – %1$s</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
     <!--  Account release schedule and filters -->
@@ -565,6 +570,7 @@
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_no_collectibles_added">No tokens have been added to this account yet</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
+    <string name="cis_hide_token">Hide token from account</string>
     <string name="cis_delete_dialog_title">Confirm removal</string>
     <string name="cis_delete_dialog_content">Delete this from wallet?</string>
     <string name="cis_delete_dialog_confirm">Delete</string>

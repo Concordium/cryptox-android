@@ -119,8 +119,7 @@ class TokensAccountDetailsAdapter(
         holder.binding.notice.isVisible = token.isNewlyReceived
 
         holder.binding.content.setOnClickListener {
-            if (!token.isCcd || !showManageButton)
-                tokenClickListener?.onRowClick(token)
+            tokenClickListener?.onRowClick(token)
         }
     }
 }

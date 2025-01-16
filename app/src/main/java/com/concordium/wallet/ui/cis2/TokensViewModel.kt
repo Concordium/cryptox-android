@@ -80,10 +80,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
             tokens.clear()
-            if (isFungible == true) {
-                // On fungible tab we add CCD as default at the top
-                tokens.add(getCCDDefaultToken(accountAddress))
-            }
+            // Add CCD as default at the top
+            tokens.add(getCCDDefaultToken(accountAddress))
             val contractTokens = contractTokensRepository.getTokens(
                 accountAddress = accountAddress,
                 isFungible = isFungible,

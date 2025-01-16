@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
@@ -90,13 +91,13 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
             setTokenId(token.token)
             setBalance(token)
             token.metadata?.let { tokenMetadata ->
-                setNameAndIcon(tokenMetadata)
-                setImage(tokenMetadata)
+                setNameAndIcon(token.isCcd, tokenMetadata)
                 setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(token)
             }
+            setHideButton(token.isCcd)
             if (token.isNewlyReceived) {
                 handleNewlyReceivedToken(token)
             }
@@ -162,7 +163,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         }
     }
 
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
+    private fun setNameAndIcon(isCCD: Boolean, tokenMetadata: TokenMetadata) {
         val name = tokenMetadata.name
         val thumbnail = tokenMetadata.thumbnail?.url
         binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
@@ -172,10 +173,15 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
                 .placeholder(ThemedCircularProgressDrawable(this))
                 .fitCenter()
                 .into(binding.includeAbout.icon)
+        } else if (isCCD) {
+            binding.includeAbout.icon.setImageResource(R.drawable.mw24_ic_ccd)
         } else {
             binding.includeAbout.icon.setImageResource(R.drawable.ic_token_no_image)
         }
-        binding.includeAbout.name.text = name
+        binding.includeAbout.name.text =
+            if (isCCD)
+                getString(R.string.account_details_ccd_token)
+            else name
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
@@ -192,21 +198,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         }
     }
 
-    private fun setImage(tokenMetadata: TokenMetadata) {
-        if (!tokenMetadata.display?.url.isNullOrBlank()) {
-            binding.includeAbout.imageTitle.visibility = View.VISIBLE
-            binding.includeAbout.image.visibility = View.VISIBLE
-            Glide.with(this)
-                .load(tokenMetadata.display?.url)
-                .placeholder(ThemedCircularProgressDrawable(this))
-                .fitCenter()
-                .into(binding.includeAbout.image)
-        } else {
-            binding.includeAbout.imageTitle.visibility = View.GONE
-            binding.includeAbout.image.visibility = View.GONE
-        }
-    }
-
     private fun setTicker(tokenMetadata: TokenMetadata) {
         if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.includeAbout.tokenHolder.visibility = View.VISIBLE
@@ -217,8 +208,16 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
     private fun setDecimals(token: Token) {
         if (!token.isUnique) {
             binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
-            binding.includeAbout.decimals.text = token.decimals.toString()
+            binding.includeAbout.decimals.text = getString(
+                R.string.account_token_details_decimals,
+                token.decimals.toString()
+            )
         }
+    }
+
+    private fun setHideButton(isCCD: Boolean) {
+        binding.includeAbout.deleteToken.isVisible = !isCCD
+        binding.includeAbout.rawMetadataBtn.isVisible = !isCCD
     }
 
     private fun showNewlyReceivedNotice(tokenName: String) {

@@ -2,197 +2,256 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/CryptoX_Container_Stroked"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/mw24_container_primary_background"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/name_and_icon_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_logo_placeholder" />
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/MW24_Typography_Text_Main"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/cryptox_white_main"
+                app:layout_constraintBottom_toBottomOf="@id/icon"
+                app:layout_constraintStart_toEndOf="@id/icon"
+                app:layout_constraintTop_toTopOf="@id/icon"
+                tools:text="Global Transaction Unit" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/description_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/cis_description"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/description"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="Some long description..." />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/ownership_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mw24_plain_white_10" />
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cis_ownership"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/ownership"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cis_not_owned"
+                android:textColor="@color/cryptox_white_main" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/token_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mw24_plain_white_10" />
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cis_token_symbol"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/token"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="wCCD" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/token_id_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mw24_plain_white_10" />
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cis_token_id"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/token_id"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="00" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/decimals_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mw24_plain_white_10" />
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cis_decimals"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/decimals"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="0 – 6" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/contract_index_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mw24_plain_white_10" />
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/cis_contract_index_subindex"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/contract_index"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="2059, 0" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </LinearLayout>
 
     <TextView
-        style="@style/CryptoX_Typography_Headline_Large"
-        android:text="@string/cis_about_token" />
+        android:id="@+id/raw_metadata_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:drawablePadding="8dp"
+        android:paddingVertical="4dp"
+        android:text="@string/account_details_raw_metadata"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/cryptox_white_main"
+        app:drawableStartCompat="@drawable/mw24_ic_raw_metadata"
+        app:drawableTint="@color/cryptox_white_main" />
 
     <TextView
-        android:id="@+id/image_title"
-        style="@style/CryptoX_Typography_Body_Medium"
-        android:layout_marginTop="16dp"
-        android:text="@string/cis_image" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="8dp"
-        android:scaleType="fitCenter"
-        tools:src="@drawable/ic_logo_placeholder" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/name_and_icon_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
-
-        <TextView
-            android:id="@+id/name_title"
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:text="@string/cis_name_and_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/name"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_width="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@id/icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name_title"
-            tools:text="Global Transaction Unit" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_logo_placeholder" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/ownership_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_marginTop="16dp"
-            android:text="@string/cis_ownership" />
-
-        <TextView
-            android:id="@+id/ownership"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_marginTop="8dp"
-            android:text="@string/cis_not_owned" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/description_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_marginTop="16dp"
-            android:text="@string/cis_description" />
-
-        <TextView
-            android:id="@+id/description"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_marginTop="8dp"
-            tools:text="Some long description..." />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/contract_index_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_marginTop="16dp"
-            android:text="@string/cis_contract_index_subindex" />
-
-        <TextView
-            android:id="@+id/contract_index"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_marginTop="8dp"
-            tools:text="2059, 0" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/token_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_marginTop="16dp"
-            android:text="@string/cis_token_symbol" />
-
-        <TextView
-            android:id="@+id/token"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_marginTop="8dp"
-            tools:text="wCCD" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/token_id_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_marginTop="16dp"
-            android:text="@string/cis_token_id" />
-
-        <TextView
-            android:id="@+id/token_id"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_marginTop="8dp"
-            tools:text="00" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/decimals_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <TextView
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_marginTop="16dp"
-            android:text="@string/cis_decimals" />
-
-        <TextView
-            android:id="@+id/decimals"
-            style="@style/CryptoX_Typography_Headline_Medium"
-            android:layout_marginTop="8dp"
-            tools:text="6" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-    <Button
         android:id="@+id/delete_token"
-        style="@style/Cryptox_Button_Secondary"
-        android:layout_width="match_parent"
-        android:layout_marginTop="20dp"
-        android:text="@string/cis_delete_token"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:drawablePadding="8dp"
+        android:paddingVertical="4dp"
+        android:text="@string/cis_hide_token"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/mw24_attention_red"
+        app:drawableStartCompat="@drawable/mw24_ic_eye_close"
+        app:drawableTint="@color/mw24_attention_red" />
 </LinearLayout>
