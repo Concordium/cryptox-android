@@ -32,11 +32,7 @@ class AccountsListActivity : BaseActivity(
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[AccountsOverviewViewModel::class.java]
 
-        viewModel.listItemsLiveData.observe(this) {
-            binding.accountsList.adapter = AccountsListItemAdapter(this, it)
-        }
         binding.createAccountButton.setOnClickListener { gotoCreateAccount() }
-
     }
 
     private fun gotoCreateAccount() {

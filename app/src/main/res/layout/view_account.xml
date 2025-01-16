@@ -137,7 +137,7 @@
             android:background="#0DEBF0F0" />
 
         <ImageButton
-            android:id="@+id/address_btn"
+            android:id="@+id/receive_btn"
             style="@style/CryptoX_ImageButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"

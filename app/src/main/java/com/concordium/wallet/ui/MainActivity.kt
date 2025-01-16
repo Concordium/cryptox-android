@@ -14,7 +14,7 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -230,7 +230,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun replaceFragment(state: MainViewModel.State) {
         val fragment = when (state) {
-            MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
+            MainViewModel.State.AccountOverview -> AccountDetailsFragment()
             MainViewModel.State.NewsOverview -> NewsOverviewFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
         }

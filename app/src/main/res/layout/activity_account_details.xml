@@ -7,21 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.account.accountdetails.AccountDetailsActivity">
 
-    <include
-        android:id="@+id/toolbar_layout"
-        layout="@layout/app_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,7 +90,6 @@
                         android:text="@string/account_details_send"
                         android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
                         android:textColor="@color/mw24_blue_2" />
-
                 </LinearLayout>
 
                 <View
@@ -112,7 +104,7 @@
                     tools:ignore="UseCompoundDrawables">
 
                     <ImageView
-                        android:id="@+id/address_btn"
+                        android:id="@+id/receive_btn"
                         android:layout_width="46dp"
                         android:layout_height="46dp"
                         android:background="@drawable/mw24_account_action_button_background"
@@ -209,7 +201,7 @@
                 android:id="@+id/tokens_fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"/>
+                android:layout_marginTop="40dp" />
 
             <Button
                 android:id="@+id/account_retry_button"

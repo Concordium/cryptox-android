@@ -8,21 +8,26 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentTokensBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokensBottomSheet
 
 class TokensFragment : Fragment() {
     private var _binding: FragmentTokensBinding? = null
     private val binding get() = _binding!!
-    val viewModel: TokensViewModel
-        get() = (requireActivity() as AccountDetailsActivity).viewModelTokens
-    private val accountAddress: String
-        get() = (requireActivity() as AccountDetailsActivity).viewModelAccountDetails.account.address
+    val viewModel: TokensViewModel by lazy {
+        ViewModelProvider(requireActivity())[TokensViewModel::class.java]
+    }
+    private val accountViewModel: AccountDetailsViewModel by lazy {
+        ViewModelProvider(requireActivity())[AccountDetailsViewModel::class.java]
+    }
+
     private var isFungible: Boolean? = null
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
     private var manageTokensBottomSheet: ManageTokensBottomSheet? = null
@@ -40,7 +45,7 @@ class TokensFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        viewModel.loadTokens(accountAddress, isFungible)
+        viewModel.loadTokens(accountViewModel.account.address, isFungible)
     }
 
     private fun initViews() {
@@ -84,34 +89,31 @@ class TokensFragment : Fragment() {
             tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
         viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) {
-            viewModel.loadTokens(accountAddress, isFungible)
+            viewModel.loadTokens(accountViewModel.account.address, isFungible)
         }
 
-//        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
-//            requireActivity().runOnUiThread {
-////                manageTokensBottomSheet?.dismiss()
-//                manageTokensBottomSheet = null
-//                if (anyChanges) {
-//                    Toast.makeText(
-//                        requireContext(),
-//                        R.string.cis_tokens_updated,
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                } else
-//                    Toast.makeText(
-//                        requireContext(),
-//                        R.string.cis_tokens_not_updated,
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//            }
-//        }
+        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
+            requireActivity().runOnUiThread {
+                manageTokensBottomSheet = null
+                if (anyChanges) {
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.cis_tokens_updated,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.cis_tokens_not_updated,
+                        Toast.LENGTH_SHORT
+                    ).show()
+            }
+        }
     }
 
     private fun showFindTokensDialog() {
-//        manageTokensBottomSheet = ManageTokensBottomSheet()
-//        manageTokensBottomSheet?.show(childFragmentManager, "")
         val intent = Intent(requireActivity(), ManageTokenListActivity::class.java)
-        intent.putExtra(ManageTokenListActivity.ACCOUNT, (requireActivity() as AccountDetailsActivity).viewModelAccountDetails.account)
+        intent.putExtra(ManageTokenListActivity.ACCOUNT, accountViewModel.account)
         startActivity(intent)
     }
 }

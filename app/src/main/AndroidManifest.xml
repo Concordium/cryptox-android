@@ -291,7 +291,8 @@
             android:name=".ui.account.accountqrcode.AccountQRCodeActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:screenOrientation="portrait" /> <!-- Transaction / Send funds -->
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" /> <!-- Transaction / Send funds -->
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
             android:launchMode="singleTop"
@@ -370,7 +371,8 @@
         <activity
             android:name=".ui.cis2.SendTokenActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.cis2.SendTokenReceiptActivity"
             android:launchMode="singleTop"
@@ -439,7 +441,8 @@
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
             android:launchMode="singleTop"
@@ -476,7 +479,8 @@
         <activity
             android:name=".ui.bakerdelegation.baker.BakerStatusActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegisterAmountActivity"
             android:launchMode="singleTop"

@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.account.accountdetails
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -10,152 +11,157 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity.Companion.RESULT_RETRY_ACCOUNT_CREATION
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
+import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewListItem
+import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewViewModel
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
-import com.concordium.wallet.ui.common.delegates.AuthDelegate
-import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import java.math.BigInteger
 
-class AccountDetailsActivity : BaseActivity(
-    R.layout.activity_account_details,
-    R.string.account_details_title
-), EarnDelegate by EarnDelegateImpl(), AuthDelegate by AuthDelegateImpl() {
+class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl() {
 
-    private val binding by lazy {
-        ActivityAccountDetailsBinding.bind(findViewById(R.id.root_layout))
+    private lateinit var binding: ActivityAccountDetailsBinding
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var viewModelAccountDetails: AccountDetailsViewModel
+    private lateinit var viewModelTokens: TokensViewModel
+    private lateinit var viewModelOverview: AccountsOverviewViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = ActivityAccountDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    lateinit var viewModelAccountDetails: AccountDetailsViewModel
-        private set
-    lateinit var viewModelTokens: TokensViewModel
-        private set
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    private val shouldOpenTokens: Boolean by lazy {
-        intent.getBooleanExtra(EXTRA_OPEN_TOKENS, false)
-    }
-    private val tokenToOpenUid: String? by lazy {
-        intent.getStringExtra(EXTRA_TOKEN_TO_OPEN_UID)
-    }
-
-    companion object {
-        const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
-        const val EXTRA_TOKEN_TO_OPEN_UID = "EXTRA_TOKEN_TO_OPEN_UID"
-        const val EXTRA_OPEN_TOKENS = "EXTRA_OPEN_TOKENS"
-        const val RESULT_RETRY_ACCOUNT_CREATION = 2
-    }
-
-    //region Lifecycle
-    // ************************************************************
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val account = intent.extras?.getSerializable(EXTRA_ACCOUNT) as Account
-        initializeViewModel()
-        viewModelAccountDetails.initialize(account)
+        initializeViewModels()
         initializeViewModelTokens()
-        initViews()
-        hideActionBarBack(isVisible = true)
-        hideSettings(isVisible = true) {
-            goToAccountSettings()
+
+        val baseActivity = (activity as BaseActivity)
+        baseActivity.hideQrScan(isVisible = true) {
+            if (mainViewModel.hasCompletedOnboarding()) {
+                baseActivity.startQrScanner()
+            } else {
+                baseActivity.showUnlockFeatureDialog()
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModelAccountDetails.populateTransferList()
-        viewModelAccountDetails.initiateFrequentUpdater()
+//        viewModelAccountDetails.populateTransferList()
+//        viewModelAccountDetails.initiateFrequentUpdater()
     }
 
     override fun onPause() {
         super.onPause()
         viewModelAccountDetails.stopFrequentUpdater()
     }
-    // endregion
 
-    //region Initialize
-    // ************************************************************
-
-    private fun initializeViewModel() {
+    private fun initializeViewModels() {
+        mainViewModel = ViewModelProvider(
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[MainViewModel::class.java]
         viewModelAccountDetails = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
+        viewModelOverview = ViewModelProvider(
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[AccountsOverviewViewModel::class.java]
 
-        viewModelAccountDetails.waitingLiveData.observe(this) { waiting ->
+        viewModelOverview.listItemsLiveData.observe(viewLifecycleOwner) {
+            val account = (it.first() as AccountsOverviewListItem.Account).accountWithIdentity.account
+            println("AccountDetailsFragment, initializeViewModels account: $account")
+            viewModelAccountDetails.initialize(account)
+
+            viewModelTokens.tokenData.account = account
+            viewModelTokens.loadTokensBalances()
+            initViews()
+        }
+
+        viewModelAccountDetails.waitingLiveData.observe(viewLifecycleOwner) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
         }
-        viewModelAccountDetails.errorLiveData.observe(this, object : EventObserver<Int>() {
-            override fun onUnhandledEvent(value: Int) {
-                showError(value)
-            }
-        })
-        viewModelAccountDetails.finishLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                finish()
-            }
-        })
-        viewModelAccountDetails.totalBalanceLiveData.observe(this, ::showTotalBalance)
+        viewModelAccountDetails.errorLiveData.observe(
+            viewLifecycleOwner,
+            object : EventObserver<Int>() {
+                override fun onUnhandledEvent(value: Int) {
+                    (requireActivity() as BaseActivity).showError(value)
+                }
+            })
+        viewModelAccountDetails.finishLiveData.observe(
+            viewLifecycleOwner,
+            object : EventObserver<Boolean>() {
+                override fun onUnhandledEvent(value: Boolean) {
+                    requireActivity().finish()
+                }
+            })
+        viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner, ::showTotalBalance)
 
-        viewModelAccountDetails.showPadLockLiveData.observe(this) {
-            invalidateOptionsMenu()
-        }
-
-        viewModelAccountDetails.accountUpdatedLiveData.observe(this) {
+        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
             // Update balances in the title and on the Tokens tab.
-            initTitle()
-            viewModelTokens.tokenData.account = viewModelAccountDetails.account
-            viewModelTokens.loadTokensBalances()
+//            initTitle()
+//            println("AccountDetailsFragment, initializeViewModels account: ${viewModelAccountDetails.account}")
         }
     }
 
     private fun initializeViewModelTokens() {
         viewModelTokens = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[TokensViewModel::class.java]
 
-        viewModelTokens.tokenData.account = viewModelAccountDetails.account
+//        viewModelTokens.tokenData.account = viewModelAccountDetails.account
+//        viewModelTokens.loadTokensBalances()
 
-        viewModelTokens.chooseToken.observe(this) { token ->
+        viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
             showTokenDetailsDialog(token)
         }
 
-        viewModelTokens.tokenBalances.observe(this, object : Observer<Boolean> {
-            override fun onChanged(t: Boolean) {
-                // Open the requested token once, when balances are loaded.
-                if (tokenToOpenUid != null) {
-                    viewModelTokens.tokenBalances.removeObserver(this)
-                    viewModelTokens.tokens
-                        .find { it.uid == tokenToOpenUid }
-                        ?.also(viewModelTokens.chooseToken::postValue)
-                }
-            }
-        })
+//        viewModelTokens.tokenBalances.observe(this, object : Observer<Boolean> {
+//            override fun onChanged(t: Boolean) {
+//                // Open the requested token once, when balances are loaded.
+//                if (tokenToOpenUid != null) {
+//                    viewModelTokens.tokenBalances.removeObserver(this)
+//                    viewModelTokens.tokens
+//                        .find { it.uid == tokenToOpenUid }
+//                        ?.also(viewModelTokens.chooseToken::postValue)
+//                }
+//            }
+//        })
     }
 
     private fun initViews() {
-        initTitle()
+//        initTitle()
         showWaiting(false)
         when (viewModelAccountDetails.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
@@ -172,8 +178,7 @@ class AccountDetailsActivity : BaseActivity(
             }
         }
         binding.accountRetryButton.setOnClickListener {
-            setResult(RESULT_RETRY_ACCOUNT_CREATION)
-            finish()
+            requireActivity().setResult(RESULT_RETRY_ACCOUNT_CREATION)
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
@@ -188,7 +193,7 @@ class AccountDetailsActivity : BaseActivity(
         }
 
         binding.receiveBtn.setOnClickListener {
-            onAddressClicked()
+            onReceiveClicked()
         }
 
         binding.earnBtn.setOnClickListener {
@@ -201,16 +206,6 @@ class AccountDetailsActivity : BaseActivity(
 
         replaceTokensFragment(getTokensFragment())
         initContainer()
-
-    }
-
-    private fun initTitle() {
-        setActionBarTitle(
-            getString(
-                R.string.account_details_title_regular_balance,
-                viewModelAccountDetails.account.getAccountName()
-            )
-        )
     }
 
     private fun setFinalizedMode() {
@@ -276,7 +271,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun replaceTokensFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
+        childFragmentManager.beginTransaction()
             .replace(binding.tokensFragmentContainer.id, fragment)
             .commit()
     }
@@ -303,10 +298,6 @@ class AccountDetailsActivity : BaseActivity(
         }
     }
 
-    //endregion
-
-    //region Control/UI
-    // ************************************************************
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
@@ -316,11 +307,11 @@ class AccountDetailsActivity : BaseActivity(
         }
     }
 
-    private fun goToAccountSettings() {
-        startActivity(Intent(this, AccountSettingsActivity::class.java).apply {
-            putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        })
-    }
+//    private fun goToAccountSettings() {
+//        startActivity(Intent(requireActivity(), AccountSettingsActivity::class.java).apply {
+//            putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+//        })
+//    }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
         binding.walletInfoCard.totalBalanceTextview.text = getString(
@@ -342,7 +333,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun onOnrampClicked() {
-        val intent = Intent(this, CcdOnrampSitesActivity::class.java)
+        val intent = Intent(requireActivity(), CcdOnrampSitesActivity::class.java)
         intent.putExtras(
             CcdOnrampSitesActivity.getBundle(
                 accountAddress = viewModelAccountDetails.account.address,
@@ -352,7 +343,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun onSendFundsClicked() {
-        val intent = Intent(this, SendTokenActivity::class.java)
+        val intent = Intent(requireActivity(), SendTokenActivity::class.java)
         intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(
             SendTokenActivity.TOKEN,
@@ -360,18 +351,18 @@ class AccountDetailsActivity : BaseActivity(
         )
         intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, this::class.java.canonicalName)
 
-        startActivityForResultAndHistoryCheck(intent)
+        (requireActivity() as BaseActivity).startActivityForResultAndHistoryCheck(intent)
     }
 
-    private fun onAddressClicked() {
-        val intent = Intent(this, AccountQRCodeActivity::class.java)
+    private fun onReceiveClicked() {
+        val intent = Intent(requireActivity(), AccountQRCodeActivity::class.java)
         intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
         startActivity(intent)
     }
 
     private fun onEarnClicked() {
         gotoEarn(
-            this,
+            requireActivity() as MainActivity,
             viewModelAccountDetails.account,
             viewModelAccountDetails.hasPendingDelegationTransactions,
             viewModelAccountDetails.hasPendingBakingTransactions
@@ -379,7 +370,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun onActivityClicked() {
-        val intent = Intent(this, AccountDetailsTransfersActivity::class.java)
+        val intent = Intent(requireActivity(), AccountDetailsTransfersActivity::class.java)
         intent.putExtra(
             AccountDetailsTransfersActivity.EXTRA_ACCOUNT,
             viewModelAccountDetails.account
@@ -388,7 +379,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun showTokenDetailsDialog(token: Token) {
-        val intent = Intent(this, TokenDetailsActivity::class.java)
+        val intent = Intent(requireActivity(), TokenDetailsActivity::class.java)
         intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(TokenDetailsActivity.TOKEN, token)
         showTokenDetails.launch(intent)
@@ -399,7 +390,7 @@ class AccountDetailsActivity : BaseActivity(
             if (active)
                 onOnrampClicked()
             else
-                showUnlockFeatureDialog()
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
     }
 
@@ -413,5 +404,4 @@ class AccountDetailsActivity : BaseActivity(
                 }
             }
         }
-    //endregion
 }
