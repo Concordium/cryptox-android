@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/mw24_container_primary_background"
     android:padding="18dp">
 
     <com.concordium.wallet.ui.account.accountsoverview.AccountItemNameAreaView
@@ -40,7 +39,7 @@
         android:id="@+id/balance_at_disposal_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="16dp"
         android:textAppearance="@style/MW24_Typography_Label_Main"
         android:textColor="@color/mw24_blue_3"
         app:autoSizeMaxTextSize="24sp"

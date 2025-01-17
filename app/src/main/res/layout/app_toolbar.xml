@@ -75,6 +75,36 @@
                     tools:visibility="visible" />
             </FrameLayout>
 
+            <LinearLayout
+                android:id="@+id/toolbar_account_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UseCompoundDrawables">
+
+                <TextView
+                    android:id="@+id/toolbar_account_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="4dp"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textColor="@color/cryptox_grey_additional"
+                    tools:text="Accout 1 / 6gk...k7o" />
+
+                <ImageView
+                    android:id="@+id/toolbar_account_btn_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:padding="8dp"
+                    android:visibility="gone"
+                    android:src="@drawable/mw24_ic_account_selector"
+                    app:tint="@color/cryptox_grey_additional" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/toolbar_title"
                 style="@style/MW24_Typography_Headline_Large"

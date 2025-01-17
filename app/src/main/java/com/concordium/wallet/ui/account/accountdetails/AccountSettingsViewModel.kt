@@ -14,10 +14,18 @@ class AccountSettingsViewModel(application: Application) : AndroidViewModel(appl
     lateinit var account: Account
 
     val accountUpdated: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
 
-    fun initialize(account: Account) {
-        this.account = account
+    init {
+        viewModelScope.launch {
+            account = accountRepository.getActive()
+        }
     }
+
+//    fun initialize(account: Account) {
+//        this.account = account
+//    }
 
     fun changeAccountName(name: String) {
         val accountRepository =

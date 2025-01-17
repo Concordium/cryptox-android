@@ -16,9 +16,11 @@
 
     <com.concordium.wallet.ui.account.accountsoverview.AccountView
         android:id="@+id/account_view"
-        style="@style/CCX_GradientCard_16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/mw24_container_primary_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         app:showButtons="false" />

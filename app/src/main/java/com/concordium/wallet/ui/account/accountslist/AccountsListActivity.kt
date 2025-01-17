@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAccountsListBinding
+import com.concordium.wallet.ui.account.accountdetails.AccountSettingsActivity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewViewModel
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -40,5 +41,8 @@ class AccountsListActivity : BaseActivity(
         startActivity(intent)
     }
 
+    private fun gotoAccountSettings() {
+        startActivity(Intent(this, AccountSettingsActivity::class.java))
+    }
 
 }

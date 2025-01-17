@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.account.accountsoverview
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
@@ -30,10 +31,15 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         binding.totalTextview.text =
             CurrencyUtil.formatAndRoundGTU(accountWithIdentity.account.balance, roundDecimals = 2)
 
-        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatAndRoundGTU(
-            accountWithIdentity.account.balanceAtDisposal,
-            roundDecimals = 2
-        )
+        if (accountWithIdentity.account.balanceAtDisposal != accountWithIdentity.account.balance) {
+            binding.balanceAtDisposalTextview.visibility = View.VISIBLE
+            binding.balanceAtDisposalTextview.text = CurrencyUtil.formatAndRoundGTU(
+                accountWithIdentity.account.balanceAtDisposal,
+                roundDecimals = 2
+            )
+        } else {
+            binding.balanceAtDisposalTextview.visibility = View.GONE
+        }
 
         binding.accountNameArea.setData(accountWithIdentity)
     }

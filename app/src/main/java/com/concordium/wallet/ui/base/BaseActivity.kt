@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,6 +59,9 @@ abstract class BaseActivity(
     private var plusRightBtnNotice: View? = null
     private var qrScanBtn: ImageView? = null
     private var infoBtn: ImageView? = null
+    private var accountBtn: LinearLayout? = null
+    private var accountBtnText: TextView? = null
+    private var accountBtnImage: ImageView? = null
     protected var closeBtn: ImageView? = null
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
@@ -92,6 +96,9 @@ abstract class BaseActivity(
         closeBtn = toolbar?.findViewById(R.id.toolbar_close_btn)
         deleteBtn = toolbar?.findViewById(R.id.toolbar_delete_btn)
         settingsBtn = toolbar?.findViewById(R.id.toolbar_settings_btn)
+        accountBtn = toolbar?.findViewById(R.id.toolbar_account_btn)
+        accountBtnText = toolbar?.findViewById(R.id.toolbar_account_label)
+        accountBtnImage = toolbar?.findViewById(R.id.toolbar_account_btn_image)
 
         setupActionBar(this, titleId)
 
@@ -236,6 +243,16 @@ abstract class BaseActivity(
     fun hideSettings(isVisible: Boolean, listener: View.OnClickListener? = null) {
         settingsBtn?.isVisible = isVisible
         settingsBtn?.setOnClickListener(listener)
+    }
+
+    fun hideAccountSelector(
+        isVisible: Boolean = false,
+        text: String,
+        listener: View.OnClickListener? = null) {
+        accountBtn?.isVisible = isVisible
+        accountBtnImage?.isVisible = isVisible
+        accountBtnText?.text = text
+        accountBtn?.setOnClickListener(listener)
     }
 //    fun hideClose(isVisible: Boolean) {
 //        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE

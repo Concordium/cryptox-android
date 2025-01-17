@@ -33,6 +33,9 @@ import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
@@ -101,6 +104,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val accountUpdatedLiveData: LiveData<Boolean>
         get() = _accountUpdatedLiveData
 
+    private val _newAccount = MutableSharedFlow<Account>()
+    val newAccount = _newAccount.asSharedFlow()
+
     init {
         initializeAccountUpdater()
 
@@ -111,8 +117,17 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch {
             account = accountRepository.getActive()
             _totalBalanceLiveData.postValue(account.balance)
+            _newAccount.emit(account)
             getIdentityProvider()
             Log.d("Account address: ${account.address}")
+        }
+    }
+
+    fun updateViews() {
+        viewModelScope.launch {
+            account = accountRepository.getActive()
+            _newAccount.emit(account)
+            _totalBalanceLiveData.postValue(account.balance)
         }
     }
 

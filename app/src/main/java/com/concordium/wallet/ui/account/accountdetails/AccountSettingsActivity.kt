@@ -30,9 +30,9 @@ class AccountSettingsActivity : BaseActivity(
         super.onCreate(savedInstanceState)
         binding = ActivityAccountSettingsBinding.bind(findViewById(R.id.root_layout))
         initializeViewModel()
-        viewModel.initialize(
-            account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
-        )
+//        viewModel.initialize(
+//            account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
+//        )
         hideActionBarBack(isVisible = true)
         initViews()
         initObservers()

@@ -18,6 +18,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity.Companion.RESULT_RETRY_ACCOUNT_CREATION
@@ -26,7 +27,6 @@ import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendi
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
-import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewListItem
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
@@ -64,10 +64,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         val baseActivity = (activity as BaseActivity)
 
-        baseActivity.hideLeftPlus(isVisible = true) {
-            gotoAccountsList()
-        }
-
         baseActivity.hideQrScan(isVisible = true) {
             if (mainViewModel.hasCompletedOnboarding()) {
                 baseActivity.startQrScanner()
@@ -77,11 +73,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-//    override fun onResume() {
-//        super.onResume()
+    override fun onResume() {
+        super.onResume()
+        viewModelAccountDetails.updateViews()
 //        viewModelAccountDetails.populateTransferList()
 //        viewModelAccountDetails.initiateFrequentUpdater()
-//    }
+    }
 
     override fun onPause() {
         super.onPause()
@@ -103,9 +100,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         )[AccountsOverviewViewModel::class.java]
 
         viewModelOverview.listItemsLiveData.observe(viewLifecycleOwner) {
-            viewModelTokens.tokenData.account = viewModelAccountDetails.account
-            viewModelTokens.loadTokensBalances()
-            initViews()
+//            viewModelTokens.tokenData.account = viewModelAccountDetails.account
+//            viewModelTokens.loadTokensBalances()
+//            initViews()
         }
 
         viewModelAccountDetails.waitingLiveData.observe(viewLifecycleOwner) { waiting ->
@@ -129,6 +126,19 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner, ::showTotalBalance)
 
+        viewModelAccountDetails.newAccount.collectWhenStarted(viewLifecycleOwner) { account ->
+            println("newAccount: ${account.address}")
+            viewModelTokens.tokenData.account = viewModelAccountDetails.account
+            viewModelTokens.loadTokensBalances()
+            initViews()
+            (requireActivity() as BaseActivity).hideAccountSelector(
+                isVisible = true,
+                text = account.getAccountName()
+            ) {
+                gotoAccountsList()
+            }
+        }
+
 //        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
             // Update balances in the title and on the Tokens tab.
 //            initTitle()
@@ -141,9 +151,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[TokensViewModel::class.java]
-
-//        viewModelTokens.tokenData.account = viewModelAccountDetails.account
-//        viewModelTokens.loadTokensBalances()
 
         viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
             showTokenDetailsDialog(token)
