@@ -187,7 +187,6 @@
                         android:textColor="@color/mw24_blue_2" />
 
                 </LinearLayout>
-
             </LinearLayout>
 
             <include
@@ -202,6 +201,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp" />
+
+            <com.concordium.wallet.ui.onboarding.OnboardingFragment
+                android:id="@+id/onboarding_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/onboarding_action_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/account_retry_button"

@@ -305,7 +305,7 @@ class OnboardingFragment @JvmOverloads constructor(
 
     private fun createFirstAccount(identity: Identity) {
         activity.lifecycleScope.launch(Dispatchers.IO) {
-            newAccountViewModel.initialize(Account.getDefaultName(""), identity)
+            newAccountViewModel.initialize(Account.getDefaultName(""), identity, true)
             newAccountViewModel.createAccount()
         }
     }

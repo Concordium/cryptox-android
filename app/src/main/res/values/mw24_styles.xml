@@ -126,6 +126,12 @@
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
 
+    <style name="MW24_CompoundButton_Checkbox" parent="CryptoX_CompoundButton_Checkbox">
+        <item name="android:button">@drawable/cryptox_checkbox_button</item>
+        <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
 
     <!-- region Buttons -->
     <style name="MW24_Button_Primary">

@@ -15,6 +15,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
+import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate

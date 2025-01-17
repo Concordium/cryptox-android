@@ -86,10 +86,15 @@
 
             <Button
                 android:id="@+id/view_on_explorer_button"
-                style="@style/CryptoX_Button_Text_Small"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
                 android:layout_marginHorizontal="18dp"
                 android:layout_marginTop="12dp"
                 android:text="@string/transaction_details_view_on_explorer"
+                android:textAppearance="@style/MW24_Typography_Text_Mid"
+                android:textColor="@color/cryptox_white_main"
+                android:background="@null"
+                android:drawablePadding="8dp"
                 app:drawableEndCompat="@drawable/cryptox_ico_arrow" />
 
             <View
