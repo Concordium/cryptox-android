@@ -25,6 +25,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
+import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
 import com.concordium.wallet.ui.account.accountdetails.transfers.HeaderItem
 import com.concordium.wallet.ui.account.accountdetails.transfers.TransactionItem
@@ -36,6 +37,10 @@ import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
@@ -50,9 +55,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private val proxyRepository = ProxyRepository()
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
-    private val transferRepository = TransferRepository(session.walletStorage.database.transferDao())
-    private val identityRepository = IdentityRepository(session.walletStorage.database.identityDao())
-    private val recipientRepository = RecipientRepository(session.walletStorage.database.recipientDao())
+    private val transferRepository =
+        TransferRepository(session.walletStorage.database.transferDao())
+    private val identityRepository =
+        IdentityRepository(session.walletStorage.database.identityDao())
+    private val recipientRepository =
+        RecipientRepository(session.walletStorage.database.recipientDao())
 
     private lateinit var transactionMappingHelper: TransactionMappingHelper
     private val accountUpdater = AccountUpdater(application, viewModelScope)

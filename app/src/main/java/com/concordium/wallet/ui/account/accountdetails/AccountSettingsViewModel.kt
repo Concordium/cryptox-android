@@ -23,9 +23,9 @@ class AccountSettingsViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-//    fun initialize(account: Account) {
-//        this.account = account
-//    }
+    fun initialize(account: Account) {
+        this.account = account
+    }
 
     fun changeAccountName(name: String) {
         val accountRepository =

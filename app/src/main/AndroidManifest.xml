@@ -303,7 +303,8 @@
             android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
             android:launchMode="singleTop"

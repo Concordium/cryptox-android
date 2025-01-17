@@ -162,6 +162,7 @@ class AccountsOverviewFragment : BaseFragment() {
             waiting?.let {
                 Log.d("waiting:$waiting")
                 showWaiting(waiting)
+                binding.accountRecyclerview.isClickable = waiting
             }
         }
         viewModel.errorLiveData.observe(viewLifecycleOwner, object : EventObserver<Int>() {
@@ -291,7 +292,7 @@ class AccountsOverviewFragment : BaseFragment() {
         val adapter = AccountsOverviewItemAdapter(
             accountViewClickListener = object : AccountView.OnItemClickListener {
                 override fun onCardClicked(account: Account) {
-                    gotoAccountDetails(account)
+                    selectAccount(account)
                 }
 
                 override fun onOnrampClicked(account: Account) {
@@ -385,11 +386,7 @@ class AccountsOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    private fun gotoAccountDetails(item: Account) {
-//        val intent = Intent(activity, AccountDetailsActivity::class.java)
-//        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
-//        startActivityForResult(intent, REQUEST_CODE_ACCOUNT_DETAILS)
-
+    private fun selectAccount(item: Account) {
         viewModel.activateAccount(item.address)
     }
 
