@@ -32,12 +32,14 @@
                 android:layout_marginHorizontal="20dp"
                 android:text="@string/accounts_overview_wallet_total"
                 android:textAppearance="@style/CCX_Typography_Body"
-                android:textColor="@color/ccx_neutral_tint_2" />
+                android:textColor="@color/ccx_neutral_tint_2"
+                android:visibility="gone"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/total_balance_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="4dp">
 
@@ -75,6 +77,7 @@
                 android:id="@+id/total_details_disposal_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="4dp">
 
@@ -104,10 +107,6 @@
                     app:layout_constraintStart_toEndOf="@id/accounts_overview_total_details_disposal" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <View
-                style="@style/CryptoX_Divider_Horizontal"
-                android:layout_marginTop="16dp" />
-
             <LinearLayout
                 android:id="@+id/file_wallet_migration_disclaimer_layout"
                 android:layout_width="match_parent"
@@ -115,6 +114,7 @@
                 android:layout_marginHorizontal="32dp"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
@@ -140,7 +140,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_vertical_margin"
-                android:layout_marginTop="24dp" />
+                android:layout_marginTop="24dp"
+                android:visibility="gone"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/account_recyclerview"

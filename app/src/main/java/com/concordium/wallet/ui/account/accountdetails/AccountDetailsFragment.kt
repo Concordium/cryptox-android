@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsError
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
+import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewListItem
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -62,6 +63,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         initializeViewModelTokens()
 
         val baseActivity = (activity as BaseActivity)
+
+        baseActivity.hideLeftPlus(isVisible = true) {
+            gotoAccountsList()
+        }
+
         baseActivity.hideQrScan(isVisible = true) {
             if (mainViewModel.hasCompletedOnboarding()) {
                 baseActivity.startQrScanner()
@@ -71,11 +77,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+//    override fun onResume() {
+//        super.onResume()
 //        viewModelAccountDetails.populateTransferList()
 //        viewModelAccountDetails.initiateFrequentUpdater()
-    }
+//    }
 
     override fun onPause() {
         super.onPause()
@@ -97,11 +103,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         )[AccountsOverviewViewModel::class.java]
 
         viewModelOverview.listItemsLiveData.observe(viewLifecycleOwner) {
-            val account = (it.first() as AccountsOverviewListItem.Account).accountWithIdentity.account
-            println("AccountDetailsFragment, initializeViewModels account: $account")
-            viewModelAccountDetails.initialize(account)
-
-            viewModelTokens.tokenData.account = account
+            viewModelTokens.tokenData.account = viewModelAccountDetails.account
             viewModelTokens.loadTokensBalances()
             initViews()
         }
@@ -127,11 +129,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner, ::showTotalBalance)
 
-        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
+//        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
             // Update balances in the title and on the Tokens tab.
 //            initTitle()
 //            println("AccountDetailsFragment, initializeViewModels account: ${viewModelAccountDetails.account}")
-        }
+//        }
     }
 
     private fun initializeViewModelTokens() {
@@ -161,7 +163,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initViews() {
-//        initTitle()
+        mainViewModel.setTitle("")
         showWaiting(false)
         when (viewModelAccountDetails.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
@@ -404,4 +406,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 }
             }
         }
+
+    private fun gotoAccountsList() {
+        val intent = Intent(activity, AccountsListActivity::class.java)
+        startActivity(intent)
+    }
 }

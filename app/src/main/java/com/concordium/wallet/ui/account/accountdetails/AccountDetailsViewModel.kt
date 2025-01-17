@@ -107,13 +107,13 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _transferListLiveData.observeForever {
             updateGTUDropState()
         }
-    }
 
-    fun initialize(account: Account) {
-        this.account = account
-        _totalBalanceLiveData.postValue(account.balance)
-        getIdentityProvider()
-        Log.d("Account address: ${account.address}")
+        viewModelScope.launch {
+            account = accountRepository.getActive()
+            _totalBalanceLiveData.postValue(account.balance)
+            getIdentityProvider()
+            Log.d("Account address: ${account.address}")
+        }
     }
 
     override fun onCleared() {

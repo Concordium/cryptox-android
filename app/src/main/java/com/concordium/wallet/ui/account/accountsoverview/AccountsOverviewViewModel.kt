@@ -303,4 +303,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             updateNotificationsSubscriptionUseCase()
         }
     }
+
+    fun activateAccount(address: String) = viewModelScope.launch {
+        accountRepository.activate(address)
+    }
 }

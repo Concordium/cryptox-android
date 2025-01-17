@@ -89,26 +89,26 @@ class AccountsOverviewFragment : BaseFragment() {
 
         val baseActivity = (activity as BaseActivity)
 
-        baseActivity.hideLeftPlus(
-            isVisible = true,
-            hasNotice = viewModel.isCreationLimitedForFileWallet,
-        ) {
-            if (viewModel.isCreationLimitedForFileWallet) {
-                showFileWalletCreationLimitation()
-            } else if (mainViewModel.hasCompletedOnboarding()) {
-                gotoCreateAccount()
-            } else {
-                baseActivity.showUnlockFeatureDialog()
-            }
-        }
+//        baseActivity.hideLeftPlus(
+//            isVisible = true,
+//            hasNotice = viewModel.isCreationLimitedForFileWallet,
+//        ) {
+//            if (viewModel.isCreationLimitedForFileWallet) {
+//                showFileWalletCreationLimitation()
+//            } else if (mainViewModel.hasCompletedOnboarding()) {
+//                gotoCreateAccount()
+//            } else {
+//                baseActivity.showUnlockFeatureDialog()
+//            }
+//        }
 
-        baseActivity.hideQrScan(isVisible = true) {
-            if (mainViewModel.hasCompletedOnboarding()) {
-                baseActivity.startQrScanner()
-            } else {
-                baseActivity.showUnlockFeatureDialog()
-            }
-        }
+//        baseActivity.hideQrScan(isVisible = true) {
+//            if (mainViewModel.hasCompletedOnboarding()) {
+//                baseActivity.startQrScanner()
+//            } else {
+//                baseActivity.showUnlockFeatureDialog()
+//            }
+//        }
     }
 
     override fun onResume() {
@@ -386,9 +386,11 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun gotoAccountDetails(item: Account) {
-        val intent = Intent(activity, AccountDetailsActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
-        startActivityForResult(intent, REQUEST_CODE_ACCOUNT_DETAILS)
+//        val intent = Intent(activity, AccountDetailsActivity::class.java)
+//        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
+//        startActivityForResult(intent, REQUEST_CODE_ACCOUNT_DETAILS)
+
+        viewModel.activateAccount(item.address)
     }
 
     private fun gotoCcdOnramp(item: Account) {

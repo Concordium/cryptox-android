@@ -70,7 +70,7 @@ class AccountDetailsActivity : BaseActivity(
         super.onCreate(savedInstanceState)
         val account = intent.extras?.getSerializable(EXTRA_ACCOUNT) as Account
         initializeViewModel()
-        viewModelAccountDetails.initialize(account)
+//        viewModelAccountDetails.initialize(account)
         initializeViewModelTokens()
         initViews()
         hideActionBarBack(isVisible = true)

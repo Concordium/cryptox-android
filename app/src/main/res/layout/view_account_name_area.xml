@@ -2,7 +2,6 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:background="@drawable/cryptox_gradient_card"
     tools:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
@@ -47,8 +46,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="@style/CCX_Typography_H3"
-            android:textColor="@color/ccx_neutral_tint_7"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_white_main"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/name_width_limit"
             app:layout_constraintHorizontal_bias="0"
@@ -65,11 +64,10 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="@style/CCX_Typography_CardLabel"
-            android:textColor="@color/ccx_mineral_blue_tint_2"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/mw24_blue_3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/name_textview"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Identity 1" />
 
@@ -84,6 +82,7 @@
         android:adjustViewBounds="true"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_baker"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/status_delegating"
         app:layout_constraintStart_toEndOf="@id/name_identity_layout"
@@ -98,6 +97,7 @@
         android:adjustViewBounds="true"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_delegating"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/status_read_only"
         app:layout_constraintStart_toEndOf="@id/status_baker"

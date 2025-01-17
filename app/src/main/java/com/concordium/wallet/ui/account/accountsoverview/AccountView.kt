@@ -22,10 +22,6 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         LayoutInflater.from(context).inflate(R.layout.view_account, this, true)
         binding = ViewAccountBinding.bind(this)
 
-        context.withStyledAttributes(attrs, R.styleable.AccountView) {
-            binding.buttonsLayout.isVisible =
-                getBoolean(R.styleable.AccountView_showButtons, true)
-        }
     }
 
     fun setAccount(accountWithIdentity: AccountWithIdentity) {
@@ -40,13 +36,6 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         )
 
         binding.accountNameArea.setData(accountWithIdentity)
-
-        binding.onrampBtn.isEnabled =
-            accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
-        binding.sendFundsBtn.isEnabled = !accountWithIdentity.account.readOnly
-                && accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
-        binding.receiveBtn.isEnabled =
-            accountWithIdentity.account.transactionStatus == TransactionStatus.FINALIZED
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
@@ -54,18 +43,6 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         if (onItemClickListener != null && account != null) {
             binding.root.setOnClickListener {
                 onItemClickListener.onCardClicked(account)
-            }
-
-            binding.onrampBtn.setOnClickListener {
-                onItemClickListener.onOnrampClicked(account)
-            }
-
-            binding.sendFundsBtn.setOnClickListener {
-                onItemClickListener.onSendClicked(account)
-            }
-
-            binding.receiveBtn.setOnClickListener {
-                onItemClickListener.onAddressClicked(account)
             }
         }
     }
