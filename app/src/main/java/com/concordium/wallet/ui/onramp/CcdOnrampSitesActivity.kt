@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -53,6 +54,10 @@ class CcdOnrampSitesActivity : BaseActivity(
 
     private fun onSiteClicked(site: CcdOnrampSite) {
         val accountAddress = viewModel.accountAddress
+
+        App.appCore.tracker.homeOnRampSiteClicked(
+            siteName = site.name,
+        )
 
         if (site.type == CcdOnrampSite.Type.DEX) {
             openSite(site = site)

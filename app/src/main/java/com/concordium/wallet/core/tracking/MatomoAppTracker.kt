@@ -108,6 +108,9 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
     override fun homeOnRampScreen() =
         trackScreenAndImpression(SCREEN_ONRAMP)
 
+    override fun homeOnRampSiteClicked(siteName: String) =
+        trackInteraction(SCREEN_HOME, siteName, INTERACTION_CLICKED)
+
     override fun homeOnRampBannerClicked() =
         trackInteraction(SCREEN_HOME, "OnRamp banner", INTERACTION_CLICKED)
 
@@ -116,6 +119,15 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
 
     override fun homeTotalBalanceClicked() =
         trackInteraction(SCREEN_HOME, "Wallet total balance", INTERACTION_CLICKED)
+
+    override fun aboutScreen() =
+        trackScreenAndImpression(SCREEN_ABOUT)
+
+    override fun aboutScreenLinkClicked(url: String) =
+        trackInteraction(SCREEN_ABOUT, url, INTERACTION_CLICKED)
+
+    override fun homeNewsScreen() =
+        trackScreenAndImpression(SCREEN_HOME_NEWS)
 
     private fun track() =
         TrackHelper.track()
@@ -178,6 +190,14 @@ class MatomoAppTracker(private val tracker: Tracker) : AppTracker {
         private val SCREEN_ONRAMP = Screen(
             title = "Home: OnRamp",
             path = "/home/onramp"
+        )
+        private val SCREEN_ABOUT = Screen(
+            title = "About",
+            path = "/about"
+        )
+        private val SCREEN_HOME_NEWS = Screen(
+            title = "Home: News",
+            path = "/home/news"
         )
 
         private val DIALOG_ACTIVATE_ACCOUNT = Screen(

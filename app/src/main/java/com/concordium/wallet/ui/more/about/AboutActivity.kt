@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAboutBinding
@@ -26,31 +27,39 @@ class AboutActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fun onUrlClicked(url: String) = when {
-            url == "#terms" -> {
-                startActivity(Intent(this, WelcomeTermsActivity::class.java))
-            }
+        App.appCore.tracker.aboutScreen()
 
-            url.startsWith("mailto") -> {
-                val emailIntent = Intent(Intent.ACTION_SENDTO)
-                emailIntent.data = Uri.parse(url)
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(url))
-                try {
-                    // start email intent
-                    startActivity(
-                        Intent.createChooser(
-                            emailIntent,
-                            getString(R.string.about_support)
-                        )
-                    )
-                } catch (e: Exception) {
-                    // Left empty on purpose
+        fun onUrlClicked(url: String) {
+            App.appCore.tracker.aboutScreenLinkClicked(
+                url = url,
+            )
+
+            when {
+                url == "#terms" -> {
+                    startActivity(Intent(this, WelcomeTermsActivity::class.java))
                 }
-            }
 
-            else -> {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                ContextCompat.startActivity(this, browserIntent, null)
+                url.startsWith("mailto") -> {
+                    val emailIntent = Intent(Intent.ACTION_SENDTO)
+                    emailIntent.data = Uri.parse(url)
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(url))
+                    try {
+                        // start email intent
+                        startActivity(
+                            Intent.createChooser(
+                                emailIntent,
+                                getString(R.string.about_support)
+                            )
+                        )
+                    } catch (e: Exception) {
+                        // Left empty on purpose
+                    }
+                }
+
+                else -> {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    ContextCompat.startActivity(this, browserIntent, null)
+                }
             }
         }
 
