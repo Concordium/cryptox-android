@@ -50,9 +50,8 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
         tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(
-            requireActivity(),
-            showManageButton = false,
-            dataSet = arrayOf(),
+            context = requireActivity(),
+            showManageButton = false
         )
         tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
 
@@ -72,14 +71,14 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
             showWaiting(waiting)
         }
         _viewModel.tokens.observe(viewLifecycleOwner) { tokens ->
-            tokensAccountDetailsAdapter.dataSet = tokens.toTypedArray()
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
+            tokensAccountDetailsAdapter.setData(tokens)
+//            tokensAccountDetailsAdapter.notifyDataSetChanged()
             _viewModelTokens.tokens = tokens as MutableList<Token>
             _viewModelTokens.loadTokensBalances()
         }
         _viewModelTokens.tokenBalances.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.dataSet = _viewModelTokens.tokens.toTypedArray()
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
+            tokensAccountDetailsAdapter.setData(_viewModelTokens.tokens)
+//            tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
     }
 

@@ -51,9 +51,8 @@ class TokensFragment : Fragment() {
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
         tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(
-            requireContext(),
+            context = requireContext(),
             showManageButton = true,
-            dataSet = arrayOf(),
         )
         tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
 
@@ -78,8 +77,7 @@ class TokensFragment : Fragment() {
     private fun initObservers() {
         viewModel.waiting.observe(viewLifecycleOwner) {
             binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
-            tokensAccountDetailsAdapter.dataSet = viewModel.tokens.toTypedArray()
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
+            tokensAccountDetailsAdapter.setData(viewModel.tokens)
             viewModel.loadTokensBalances()
         }
         viewModel.tokenDetails.observe(viewLifecycleOwner) {

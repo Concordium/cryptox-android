@@ -17,14 +17,14 @@ import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
     private val context: Context,
-    private val showManageButton: Boolean,
-    var dataSet: Array<Token>
+    private val showManageButton: Boolean
 ) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private var addButtonClickListener: () -> Unit = {}
     private val iconSize: Int by lazy {
         context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
     }
+    private val dataSet: MutableList<Token> = mutableListOf()
 
     inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -40,6 +40,13 @@ class TokensAccountDetailsAdapter(
 
     fun setManageButtonClickListener(clickListener: () -> Unit) {
         this.addButtonClickListener = clickListener
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(data: List<Token>) {
+        dataSet.clear()
+        dataSet.addAll(data)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = if (showManageButton) dataSet.size + 1 else dataSet.size
