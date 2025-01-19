@@ -25,7 +25,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
-import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
 import com.concordium.wallet.ui.account.accountdetails.transfers.HeaderItem
 import com.concordium.wallet.ui.account.accountdetails.transfers.TransactionItem
@@ -35,12 +34,7 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
@@ -121,22 +115,19 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _transferListLiveData.observeForever {
             updateGTUDropState()
         }
-
-        viewModelScope.launch {
-            account = accountRepository.getActive()
-            _totalBalanceLiveData.postValue(account.balance)
-            _newAccount.emit(account)
-            getIdentityProvider()
-            Log.d("Account address: ${account.address}")
-        }
+        getActiveAccount()
     }
 
-    fun updateViews() {
-        viewModelScope.launch {
-            account = accountRepository.getActive()
-            _newAccount.emit(account)
-            _totalBalanceLiveData.postValue(account.balance)
-        }
+    private fun getActiveAccount() = viewModelScope.launch {
+        val acc = accountRepository.getActive()
+        account = acc
+        _newAccount.emit(acc)
+        _totalBalanceLiveData.postValue(acc.balance)
+        getIdentityProvider()
+    }
+
+    fun updateAccount() {
+        getActiveAccount()
     }
 
     override fun onCleared() {

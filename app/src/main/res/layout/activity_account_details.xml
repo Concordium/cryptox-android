@@ -23,15 +23,44 @@
             android:layout_marginTop="10dp"
             android:orientation="vertical">
 
-            <include
-                android:id="@+id/wallet_info_card"
-                layout="@layout/wallet_info_card" />
+            <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                android:id="@+id/total_balance_textview"
+                style="@style/MW24_Typography_IBM_Balance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/accounts_overview_balance_placeholder"
+                android:textColor="@color/cryptox_deep_blue"
+                android:textSize="55sp"
+                app:autoSizeMaxTextSize="55sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="2sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/readonly_desc"
+                app:layout_constraintWidth_default="wrap"
+                tools:text="2,734.00 CCD" />
+
+            <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                android:id="@+id/at_disposal_label"
+                style="@style/MW24_Typography_Label_Main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/accounts_overview_balance_placeholder"
+                android:textColor="@color/cryptox_deep_blue"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/total_balance_textview"
+                tools:text="203.00 CCD at disposal"
+                tools:visibility="visible"/>
 
             <LinearLayout
                 android:id="@+id/buttonsBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="40dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -237,4 +266,17 @@
     <include
         android:id="@+id/progress"
         layout="@layout/progress" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/confetti_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="false"
+        app:lottie_rawRes="@raw/confetti" />
 </androidx.constraintlayout.widget.ConstraintLayout>

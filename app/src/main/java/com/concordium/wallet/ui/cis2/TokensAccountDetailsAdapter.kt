@@ -97,7 +97,7 @@ class TokensAccountDetailsAdapter(
                 .into(holder.binding.tokenIcon)
         } else if (token.isCcd) {
             Glide.with(context)
-                .load(R.drawable.cryptox_ico_ccd_light_40)
+                .load(R.drawable.mw24_ic_ccd)
                 .into(holder.binding.tokenIcon)
         } else {
             Glide.with(context)
@@ -116,9 +116,9 @@ class TokensAccountDetailsAdapter(
                     context.getString(R.string.cis_not_owned)
         } else {
             holder.binding.title.text = token.symbol
-            holder.binding.balance.text = CurrencyUtil.formatGTU(
-                token.balance,
-                token,
+            holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
+                value = token.balance,
+                roundDecimals = 2
             )
             holder.binding.subtitle.isVisible = false
         }

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -75,7 +74,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     override fun onResume() {
         super.onResume()
-        viewModelAccountDetails.updateViews()
+        viewModelAccountDetails.updateAccount()
 //        viewModelAccountDetails.populateTransferList()
 //        viewModelAccountDetails.initiateFrequentUpdater()
     }
@@ -99,11 +98,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountsOverviewViewModel::class.java]
 
-        viewModelOverview.listItemsLiveData.observe(viewLifecycleOwner) {
+//        viewModelOverview.listItemsLiveData.observe(viewLifecycleOwner) {
 //            viewModelTokens.tokenData.account = viewModelAccountDetails.account
 //            viewModelTokens.loadTokensBalances()
 //            initViews()
-        }
+//        }
 
         viewModelAccountDetails.waitingLiveData.observe(viewLifecycleOwner) { waiting ->
             waiting?.let {
@@ -128,7 +127,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         viewModelAccountDetails.newAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             println("newAccount: ${account.address}")
-            viewModelTokens.tokenData.account = viewModelAccountDetails.account
+            viewModelTokens.tokenData.account = account
             viewModelTokens.loadTokensBalances()
             initViews()
             (requireActivity() as BaseActivity).hideAccountSelector(
@@ -222,36 +221,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
         binding.receiveBtn.isEnabled = true
         binding.earnBtn.isEnabled = !viewModelAccountDetails.account.readOnly
-        binding.walletInfoCard.readonlyDesc.visibility =
-            if (viewModelAccountDetails.account.readOnly) View.VISIBLE else View.GONE
 
-        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
-        binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
-
-        viewModelAccountDetails.account.isBaking().also { isBaking ->
-            binding.walletInfoCard.stakedLabel.isVisible = isBaking
-            binding.walletInfoCard.accountsOverviewTotalDetailsStaked.isVisible = isBaking
-            binding.walletInfoCard.bakerIdLabel.isVisible = isBaking
-            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.isVisible = isBaking
-        }
-        binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.stakedAmount)
-        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
-            viewModelAccountDetails.account.baker?.bakerId?.toString()
-
-        viewModelAccountDetails.account.isDelegating().also { isDelegating ->
-            binding.walletInfoCard.delegatingLabel.isVisible = isDelegating
-            binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.isVisible = isDelegating
-        }
-        binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.delegatedAmount)
-
-        viewModelAccountDetails.account.hasCooldowns().also { hasCooldowns ->
-            binding.walletInfoCard.cooldownLabel.isVisible = hasCooldowns
-            binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.isVisible = hasCooldowns
-        }
-        binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.cooldownAmount)
         setupOnrampBanner(active = true)
     }
 
@@ -316,14 +286,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-//    private fun goToAccountSettings() {
-//        startActivity(Intent(requireActivity(), AccountSettingsActivity::class.java).apply {
-//            putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-//        })
-//    }
-
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.walletInfoCard.totalBalanceTextview.text = getString(
+        binding.totalBalanceTextview.text = getString(
             R.string.account_details_total_balance,
             CurrencyUtil.formatAndRoundGTU(
                 value = totalBalance,
@@ -331,13 +295,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             )
         )
         if (viewModelAccountDetails.account.balanceAtDisposal != totalBalance) {
-            binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
-            binding.walletInfoCard.atDisposalLabel.text = getString(
+            binding.atDisposalLabel.visibility = View.VISIBLE
+            binding.atDisposalLabel.text = getString(
                 R.string.account_details_balance_at_disposal,
-                CurrencyUtil.formatGTU(viewModelAccountDetails.account.balanceAtDisposal)
+                CurrencyUtil.formatAndRoundGTU(
+                    value = viewModelAccountDetails.account.balanceAtDisposal,
+                    roundDecimals = 2
+                )
             )
         } else {
-            binding.walletInfoCard.atDisposalLabel.visibility = View.GONE
+            binding.atDisposalLabel.visibility = View.GONE
         }
     }
 

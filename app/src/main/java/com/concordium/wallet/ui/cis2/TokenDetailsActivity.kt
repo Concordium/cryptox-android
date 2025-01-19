@@ -54,19 +54,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         Log.d("TOKEN : ${viewModel.tokenData}")
         Log.d("ACCOUNT : ${viewModel.tokenData.account}")
 
-        val tokenName = viewModel.tokenData.selectedToken?.metadata?.name
-        setActionBarTitle(
-            getString(
-                R.string.cis_token_details_title,
-                tokenName,
-                viewModel.tokenData.account?.getAccountName()
-            )
-        )
+        setActionBarTitle(getString(R.string.cis_token_details_balance))
         hideActionBarBack(true)
 
-        binding.includeButtons.send.isEnabled =
+        binding.actionButtons.sendFundsBtn.isEnabled =
             viewModel.tokenData.account.let { it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED }
-        binding.includeButtons.send.setOnClickListener {
+        binding.actionButtons.sendFundsBtn.setOnClickListener {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenData.account)
             intent.putExtra(SendTokenActivity.TOKEN, viewModel.tokenData.selectedToken)
@@ -76,7 +69,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
             )
             startActivityForResultAndHistoryCheck(intent)
         }
-        binding.includeButtons.receive.setOnClickListener {
+        binding.actionButtons.receiveBtn.setOnClickListener {
             val intent = Intent(this, AccountQRCodeActivity::class.java)
             intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModel.tokenData.account)
             startActivity(intent)
@@ -89,7 +82,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         viewModel.tokenData.selectedToken?.let { token ->
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
-            setBalance(token)
+            setBalances(token)
             token.metadata?.let { tokenMetadata ->
                 setNameAndIcon(token.isCcd, tokenMetadata)
                 setOwnership(token, tokenMetadata)
@@ -134,8 +127,67 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         builder.create().show()
     }
 
-    private fun setBalance(token: Token) {
-        binding.tokenAmount.text = CurrencyUtil.formatGTU(token.balance, token)
+    private fun setBalances(token: Token) {
+        binding.walletInfoCard.totalBalanceTextview.text =
+            CurrencyUtil.formatGTU(token.balance, token)
+
+        binding.actionButtons.onrampBtn.isEnabled = true
+        viewModel.tokenData.account?.readOnly?.let {
+            binding.actionButtons.sendFundsBtn.isEnabled = !it
+            binding.actionButtons.earnBtn.isEnabled = !it
+            binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
+        }
+        binding.actionButtons.receiveBtn.isEnabled = true
+        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
+        binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
+
+        if (token.isCcd) {
+            viewModel.tokenData.account?.balanceAtDisposal?.let {
+                binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
+                binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text =
+                    CurrencyUtil.formatGTU(it)
+            }
+
+            viewModel.tokenData.account?.isBaking().also { isBaking ->
+                isBaking?.let {
+                    binding.walletInfoCard.stakedLabel.isVisible = isBaking
+                    binding.walletInfoCard.accountsOverviewTotalDetailsStaked.isVisible = isBaking
+                    binding.walletInfoCard.bakerIdLabel.isVisible = isBaking
+                    binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.isVisible = isBaking
+                }
+            }
+            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
+                viewModel.tokenData.account?.baker?.bakerId?.toString()
+
+            viewModel.tokenData.account?.stakedAmount?.let {
+                binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text =
+                    CurrencyUtil.formatGTU(it)
+            }
+            viewModel.tokenData.account?.let {
+                it.isDelegating().also { delegating ->
+                    binding.walletInfoCard.delegatingLabel.isVisible = delegating
+                    binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.isVisible =
+                        delegating
+                }
+            }
+            viewModel.tokenData.account?.delegatedAmount?.let {
+                binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
+                    CurrencyUtil.formatGTU(it)
+            }
+            viewModel.tokenData.account?.let {
+                it.hasCooldowns().also { hasCooldown ->
+                    binding.walletInfoCard.cooldownLabel.isVisible = hasCooldown
+                    binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.isVisible =
+                        hasCooldown
+                }
+            }
+            viewModel.tokenData.account?.cooldownAmount?.let {
+                binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text =
+                    CurrencyUtil.formatGTU(it)
+            }
+        } else {
+            binding.walletInfoCard.disposalBlock.visibility = View.GONE
+        }
     }
 
     private fun setTokenId(tokenId: String) {

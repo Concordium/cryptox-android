@@ -198,10 +198,7 @@ class AccountDetailsActivity : BaseActivity(
         binding.activityBtn.setOnClickListener {
             onActivityClicked()
         }
-
-        replaceTokensFragment(getTokensFragment())
         initContainer()
-
     }
 
     private fun initTitle() {
@@ -218,36 +215,7 @@ class AccountDetailsActivity : BaseActivity(
         binding.sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
         binding.receiveBtn.isEnabled = true
         binding.earnBtn.isEnabled = !viewModelAccountDetails.account.readOnly
-        binding.walletInfoCard.readonlyDesc.visibility =
-            if (viewModelAccountDetails.account.readOnly) View.VISIBLE else View.GONE
 
-        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
-        binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
-
-        viewModelAccountDetails.account.isBaking().also { isBaking ->
-            binding.walletInfoCard.stakedLabel.isVisible = isBaking
-            binding.walletInfoCard.accountsOverviewTotalDetailsStaked.isVisible = isBaking
-            binding.walletInfoCard.bakerIdLabel.isVisible = isBaking
-            binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.isVisible = isBaking
-        }
-        binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.stakedAmount)
-        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
-            viewModelAccountDetails.account.baker?.bakerId?.toString()
-
-        viewModelAccountDetails.account.isDelegating().also { isDelegating ->
-            binding.walletInfoCard.delegatingLabel.isVisible = isDelegating
-            binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.isVisible = isDelegating
-        }
-        binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.delegatedAmount)
-
-        viewModelAccountDetails.account.hasCooldowns().also { hasCooldowns ->
-            binding.walletInfoCard.cooldownLabel.isVisible = hasCooldowns
-            binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.isVisible = hasCooldowns
-        }
-        binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text =
-            CurrencyUtil.formatGTU(viewModelAccountDetails.account.cooldownAmount)
         setupOnrampBanner(active = true)
     }
 
@@ -264,15 +232,6 @@ class AccountDetailsActivity : BaseActivity(
         binding.earnBtn.isEnabled = false
         binding.activityBtn.isEnabled = false
         setupOnrampBanner(active = false)
-    }
-
-    private fun getTokensFragment(): Fragment {
-        return when (viewModelAccountDetails.account.transactionStatus) {
-            TransactionStatus.ABSENT -> AccountDetailsErrorFragment()
-            TransactionStatus.COMMITTED -> AccountDetailsPendingFragment()
-            TransactionStatus.RECEIVED -> AccountDetailsPendingFragment()
-            else -> TokensFragment()
-        }
     }
 
     private fun replaceTokensFragment(fragment: Fragment) {
@@ -323,7 +282,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.walletInfoCard.totalBalanceTextview.text = getString(
+        binding.totalBalanceTextview.text = getString(
             R.string.account_details_total_balance,
             CurrencyUtil.formatAndRoundGTU(
                 value = totalBalance,
@@ -331,13 +290,13 @@ class AccountDetailsActivity : BaseActivity(
             )
         )
         if (viewModelAccountDetails.account.balanceAtDisposal != totalBalance) {
-            binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
-            binding.walletInfoCard.atDisposalLabel.text = getString(
+            binding.atDisposalLabel.visibility = View.VISIBLE
+            binding.atDisposalLabel.text = getString(
                 R.string.account_details_balance_at_disposal,
                 CurrencyUtil.formatGTU(viewModelAccountDetails.account.balanceAtDisposal)
             )
         } else {
-            binding.walletInfoCard.atDisposalLabel.visibility = View.GONE
+            binding.atDisposalLabel.visibility = View.GONE
         }
     }
 
