@@ -355,9 +355,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showTokenDetailsDialog(token: Token) {
-        val intent = Intent(requireActivity(), TokenDetailsActivity::class.java)
-        intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
-        intent.putExtra(TokenDetailsActivity.TOKEN, token)
+        val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
+            putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
+            putExtra(TokenDetailsActivity.TOKEN, token)
+            putExtra(TokenDetailsActivity.PENDING_DELEGATION, viewModelAccountDetails.hasPendingDelegationTransactions)
+            putExtra(TokenDetailsActivity.PENDING_VALIDATION, viewModelAccountDetails.hasPendingBakingTransactions)
+        }
         showTokenDetails.launch(intent)
     }
 

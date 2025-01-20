@@ -96,11 +96,13 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/earn_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
     <LinearLayout
+        android:id="@+id/earn_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -157,5 +159,12 @@
             android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
             android:textColor="@color/mw24_blue_2" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/earn_empty_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:visibility="gone"/>
 </LinearLayout>
 

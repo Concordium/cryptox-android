@@ -30,6 +30,8 @@ data class TokenData(
     var selectedToken: Token? = null,
     var contractIndex: String = "",
     var subIndex: String = "0",
+    var hasPendingDelegationTransactions: Boolean = false,
+    var hasPendingValidationTransactions: Boolean = false
 ) : Serializable
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
