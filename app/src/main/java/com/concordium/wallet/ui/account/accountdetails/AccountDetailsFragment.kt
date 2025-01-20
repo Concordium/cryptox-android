@@ -217,11 +217,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setFinalizedMode() {
-        binding.onrampBtn.isEnabled = true
-        binding.sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
-        binding.receiveBtn.isEnabled = true
-        binding.earnBtn.isEnabled = !viewModelAccountDetails.account.readOnly
-
+        binding.apply {
+            onrampBtn.isEnabled = true
+            sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
+            receiveBtn.isEnabled = true
+            earnBtn.isEnabled = !viewModelAccountDetails.account.readOnly
+            activityBtn.isEnabled = true
+        }
         setupOnrampBanner(active = true)
     }
 
@@ -232,11 +234,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setPendingMode() {
-        binding.onrampBtn.isEnabled = false
-        binding.sendFundsBtn.isEnabled = false
-        binding.receiveBtn.isEnabled = false
-        binding.earnBtn.isEnabled = false
-        binding.activityBtn.isEnabled = false
+        binding.apply {
+            onrampBtn.isEnabled = false
+            sendFundsBtn.isEnabled = false
+            receiveBtn.isEnabled = false
+            earnBtn.isEnabled = false
+            activityBtn.isEnabled = false
+        }
         setupOnrampBanner(active = false)
     }
 

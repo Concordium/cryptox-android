@@ -89,4 +89,8 @@
 
     </ScrollView>
 
+    <include
+        android:id="@+id/progress"
+        layout="@layout/progress" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

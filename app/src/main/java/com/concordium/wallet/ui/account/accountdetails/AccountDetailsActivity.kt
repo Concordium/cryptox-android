@@ -81,7 +81,7 @@ class AccountDetailsActivity : BaseActivity(
 
     override fun onResume() {
         super.onResume()
-        viewModelAccountDetails.populateTransferList()
+//        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
     }
 

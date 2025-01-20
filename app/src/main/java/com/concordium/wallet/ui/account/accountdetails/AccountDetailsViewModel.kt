@@ -31,6 +31,7 @@ import com.concordium.wallet.ui.account.accountdetails.transfers.TransactionItem
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,7 +48,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     var hasPendingDelegationTransactions: Boolean = false
     var hasPendingBakingTransactions: Boolean = false
 
-    private val proxyRepository = ProxyRepository()
+//    private val proxyRepository = ProxyRepository()
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val transferRepository =
         TransferRepository(session.walletStorage.database.transferDao())
@@ -111,10 +112,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     init {
         initializeAccountUpdater()
-
-        _transferListLiveData.observeForever {
-            updateGTUDropState()
-        }
         getActiveAccount()
     }
 
@@ -147,53 +144,53 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun requestGTUDrop() {
-        _waitingLiveData.value = true
-        proxyRepository.requestGTUDrop(
-            account.address,
-            {
-                _waitingLiveData.value = false
-                //populateTransferList()
-                createGTUDropTransfer(it.submissionId)
-            },
-            {
-                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-                _waitingLiveData.value = false
-            }
-        )
-    }
+//    fun requestGTUDrop() {
+//        _waitingLiveData.value = true
+//        proxyRepository.requestGTUDrop(
+//            account.address,
+//            {
+//                _waitingLiveData.value = false
+//                //populateTransferList()
+//                createGTUDropTransfer(it.submissionId)
+//            },
+//            {
+//                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+//                _waitingLiveData.value = false
+//            }
+//        )
+//    }
 
-    private fun updateGTUDropState() {
-        if (!BuildConfig.SHOW_GTU_DROP) {
-            _showGTUDropLiveData.value = false
-        } else {
-            _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
-        }
-    }
+//    private fun updateGTUDropState() {
+//        if (!BuildConfig.SHOW_GTU_DROP) {
+//            _showGTUDropLiveData.value = false
+//        } else {
+//            _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
+//        }
+//    }
 
-    private fun createGTUDropTransfer(submissionId: String) {
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
-        val createdAt = Date().time
-        val transfer = Transfer(
-            0,
-            account.id,
-            (-20000000000).toBigInteger(),
-            BigInteger.ZERO,
-            "",
-            account.address,
-            expiry,
-            "",
-            createdAt,
-            submissionId,
-            TransactionStatus.RECEIVED,
-            TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFER,
-            null,
-            0,
-            null
-        )
-        saveTransfer(transfer)
-    }
+//    private fun createGTUDropTransfer(submissionId: String) {
+//        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+//        val createdAt = Date().time
+//        val transfer = Transfer(
+//            0,
+//            account.id,
+//            (-20000000000).toBigInteger(),
+//            BigInteger.ZERO,
+//            "",
+//            account.address,
+//            expiry,
+//            "",
+//            createdAt,
+//            submissionId,
+//            TransactionStatus.RECEIVED,
+//            TransactionOutcome.UNKNOWN,
+//            TransactionType.TRANSFER,
+//            null,
+//            0,
+//            null
+//        )
+//        saveTransfer(transfer)
+//    }
 
     private fun saveTransfer(transfer: Transfer) = viewModelScope.launch {
         transferRepository.insert(transfer)
@@ -203,37 +200,38 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     //region Transaction list update/merge
     // ************************************************************
 
-    private fun clearTransactionListState() {
-        _transferListLiveData.value = null
-        nonMergedLocalTransactions.clear()
-        hasMoreRemoteTransactionsToLoad = true
-        lastRemoteTransaction = null
-        isLoadingTransactions = false
-        allowScrollToLoadMore = true
-        lastHeaderDate = null
-    }
+//    private fun clearTransactionListState() {
+//        _transferListLiveData.value = null
+//        nonMergedLocalTransactions.clear()
+//        hasMoreRemoteTransactionsToLoad = true
+//        lastRemoteTransaction = null
+//        isLoadingTransactions = false
+//        allowScrollToLoadMore = true
+//        lastHeaderDate = null
+//    }
 
     fun populateTransferList(notifyWaitingLiveData: Boolean = true) {
-        clearTransactionListState()
-        if (account.transactionStatus == TransactionStatus.FINALIZED) {
-            if (notifyWaitingLiveData) {
-                _waitingLiveData.value = true
-            }
-            viewModelScope.launch {
-                updateAccountFromRepository()
-                accountUpdater.updateForAccount(account)
-                val type =
-                    if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
-                EventBus.getDefault().post(
-                    BakerDelegationData(
-                        account,
-                        isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions,
-                        type = type
+        account?.let {
+            if (account.transactionStatus == TransactionStatus.FINALIZED) {
+                if (notifyWaitingLiveData) {
+                    _waitingLiveData.value = true
+                }
+                viewModelScope.launch {
+                    updateAccountFromRepository()
+                    accountUpdater.updateForAccount(account)
+                    val type =
+                        if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
+                    EventBus.getDefault().post(
+                        BakerDelegationData(
+                            account,
+                            isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions,
+                            type = type
+                        )
                     )
-                )
+                }
+            } else {
+                _totalBalanceLiveData.value = BigInteger.ZERO
             }
-        } else {
-            _totalBalanceLiveData.value = BigInteger.ZERO
         }
     }
 
@@ -296,115 +294,115 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 )
                 nonMergedLocalTransactions.add(transaction)
             }
-            loadRemoteTransactions(null)
+//            loadRemoteTransactions(null)
         }
     }
 
-    fun loadMoreRemoteTransactions(): Boolean {
-        val lastRemote = lastRemoteTransaction
-        if (isLoadingTransactions || !hasMoreRemoteTransactionsToLoad || lastRemote == null) {
-            return false
-        }
-        loadRemoteTransactions(lastRemote.id)
-        return true
-    }
+//    fun loadMoreRemoteTransactions(): Boolean {
+//        val lastRemote = lastRemoteTransaction
+//        if (isLoadingTransactions || !hasMoreRemoteTransactionsToLoad || lastRemote == null) {
+//            return false
+//        }
+//        loadRemoteTransactions(lastRemote.id)
+//        return true
+//    }
 
-    private fun loadRemoteTransactions(from: Int?) {
-        allowScrollToLoadMore = false
-        isLoadingTransactions = true
-        proxyRepository.getAccountTransactions(
-            account.address,
-            {
-                Log.d("Got more transactions")
-                hasMoreRemoteTransactionsToLoad = (it.count >= it.limit)
-                if (it.transactions.isNotEmpty()) {
-                    lastRemoteTransaction = it.transactions.last()
-                }
-                mergeTransactions(it.transactions)
-                isLoadingTransactions = false
-                // Its only for the initial load that it is relevant to disable loading state
-                _waitingLiveData.value = false
-            },
-            {
-                Log.d("Get more transactions failed")
-                isLoadingTransactions = false
-                // Its only for the initial load that it is relevant to disable loading state
-                _waitingLiveData.value = false
-                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-            }, from = from, limit = 100, includeRewards = getIncludeRewards()
-        )
-    }
+//    private fun loadRemoteTransactions(from: Int?) {
+//        allowScrollToLoadMore = false
+//        isLoadingTransactions = true
+//        proxyRepository.getAccountTransactions(
+//            account.address,
+//            {
+//                Log.d("Got more transactions")
+//                hasMoreRemoteTransactionsToLoad = (it.count >= it.limit)
+//                if (it.transactions.isNotEmpty()) {
+//                    lastRemoteTransaction = it.transactions.last()
+//                }
+//                mergeTransactions(it.transactions)
+//                isLoadingTransactions = false
+//                // Its only for the initial load that it is relevant to disable loading state
+//                _waitingLiveData.value = false
+//            },
+//            {
+//                Log.d("Get more transactions failed")
+//                isLoadingTransactions = false
+//                // Its only for the initial load that it is relevant to disable loading state
+//                _waitingLiveData.value = false
+//                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+//            }, from = from, limit = 100, includeRewards = getIncludeRewards()
+//        )
+//    }
 
-    private fun mergeTransactions(remoteTransactionList: List<RemoteTransaction>) {
-        // Convert remote transactions
-        val newTransactions: MutableList<Transaction> = ArrayList()
-        for (remoteTransaction in remoteTransactionList) {
-            val transaction = remoteTransaction.toTransaction()
-            transactionMappingHelper.addTitleToTransaction(
-                transaction,
-                remoteTransaction,
-                getApplication()
-            )
-            newTransactions.add(transaction)
-        }
-        // Find local transactions to merge
-        val localTransactionsToBeMerged: MutableList<Transaction> = ArrayList()
-        val localTransactionsToNotMerge: MutableList<Transaction> = ArrayList()
-        val lastRemoteTimestamp = getLastRemoteTransactionTimestamp()
-        for (ta in nonMergedLocalTransactions) {
-            if (ta.timeStamp.time >= lastRemoteTimestamp) {
-                localTransactionsToBeMerged.add(ta)
-            } else {
-                localTransactionsToNotMerge.add(ta)
-            }
-        }
-        nonMergedLocalTransactions = localTransactionsToNotMerge
-        // Merge
-        newTransactions.addAll(localTransactionsToBeMerged)
-        newTransactions.sortByDescending { it.timeStamp }
-        // Update list with all transactions to show
-        addToTransactionList(newTransactions)
-    }
+//    private fun mergeTransactions(remoteTransactionList: List<RemoteTransaction>) {
+//        // Convert remote transactions
+//        val newTransactions: MutableList<Transaction> = ArrayList()
+//        for (remoteTransaction in remoteTransactionList) {
+//            val transaction = remoteTransaction.toTransaction()
+//            transactionMappingHelper.addTitleToTransaction(
+//                transaction,
+//                remoteTransaction,
+//                getApplication()
+//            )
+//            newTransactions.add(transaction)
+//        }
+//        // Find local transactions to merge
+//        val localTransactionsToBeMerged: MutableList<Transaction> = ArrayList()
+//        val localTransactionsToNotMerge: MutableList<Transaction> = ArrayList()
+//        val lastRemoteTimestamp = getLastRemoteTransactionTimestamp()
+//        for (ta in nonMergedLocalTransactions) {
+//            if (ta.timeStamp.time >= lastRemoteTimestamp) {
+//                localTransactionsToBeMerged.add(ta)
+//            } else {
+//                localTransactionsToNotMerge.add(ta)
+//            }
+//        }
+//        nonMergedLocalTransactions = localTransactionsToNotMerge
+//        // Merge
+//        newTransactions.addAll(localTransactionsToBeMerged)
+//        newTransactions.sortByDescending { it.timeStamp }
+//        // Update list with all transactions to show
+//        addToTransactionList(newTransactions)
+//    }
 
-    private fun addToTransactionList(newTransactions: List<Transaction>) {
-        val transferList = _transferListLiveData.value ?: ArrayList()
-        val adapterList = transferList.toMutableList()
-        for (ta in newTransactions) {
-            val isAfterHeader = checkToAddHeaderItem(adapterList, ta)
-            adapterList.add(
-                TransactionItem(
-                    transaction = ta,
-                    isDividerVisible = !isAfterHeader,
-                )
-            )
-        }
-        _transferListLiveData.value = adapterList
-        updateGTUDropState()
-    }
+//    private fun addToTransactionList(newTransactions: List<Transaction>) {
+//        val transferList = _transferListLiveData.value ?: ArrayList()
+//        val adapterList = transferList.toMutableList()
+//        for (ta in newTransactions) {
+//            val isAfterHeader = checkToAddHeaderItem(adapterList, ta)
+//            adapterList.add(
+//                TransactionItem(
+//                    transaction = ta,
+//                    isDividerVisible = !isAfterHeader,
+//                )
+//            )
+//        }
+//        _transferListLiveData.value = adapterList
+//        updateGTUDropState()
+//    }
 
-    private fun checkToAddHeaderItem(
-        adapterList: MutableList<AdapterItem>,
-        transaction: Transaction
-    ): Boolean {
-        val lastDate = lastHeaderDate
-        val taDate = transaction.timeStamp
-        return if (lastDate == null || !DateTimeUtil.isSameDay(lastDate, taDate)) {
-            lastHeaderDate = taDate
-            adapterList.add(HeaderItem(DateTimeUtil.formatDateAsLocalMediumWithAltTexts(taDate)))
-            true
-        } else {
-            false
-        }
-    }
-
-    private fun getLastRemoteTransactionTimestamp(): Long {
-        val lastRemote = lastRemoteTransaction
-        return if (lastRemote == null) {
-            0
-        } else {
-            lastRemote.blockTime.toLong() * 1000
-        }
-    }
+//    private fun checkToAddHeaderItem(
+//        adapterList: MutableList<AdapterItem>,
+//        transaction: Transaction
+//    ): Boolean {
+//        val lastDate = lastHeaderDate
+//        val taDate = transaction.timeStamp
+//        return if (lastDate == null || !DateTimeUtil.isSameDay(lastDate, taDate)) {
+//            lastHeaderDate = taDate
+//            adapterList.add(HeaderItem(DateTimeUtil.formatDateAsLocalMediumWithAltTexts(taDate)))
+//            true
+//        } else {
+//            false
+//        }
+//    }
+//
+//    private fun getLastRemoteTransactionTimestamp(): Long {
+//        val lastRemote = lastRemoteTransaction
+//        return if (lastRemote == null) {
+//            0
+//        } else {
+//            lastRemote.blockTime.toLong() * 1000
+//        }
+//    }
 
     fun initiateFrequentUpdater() {
         updater.cancel()

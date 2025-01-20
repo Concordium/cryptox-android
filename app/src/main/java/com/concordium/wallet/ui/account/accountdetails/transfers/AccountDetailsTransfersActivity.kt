@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountDetailsTransfersBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
@@ -22,7 +24,7 @@ class AccountDetailsTransfersActivity : BaseActivity(
         ActivityAccountDetailsTransfersBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private lateinit var accountDetailsViewModel: AccountDetailsViewModel
+    private lateinit var transfersViewModel: AccountDetailsTransfersViewModel
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -33,14 +35,24 @@ class AccountDetailsTransfersActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
 
-        accountDetailsViewModel = ViewModelProvider(
+        val account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
+        initializeViewModel(account)
+        replaceFragment(getCurrentFragment(account))
+    }
+
+    private fun initializeViewModel(account: Account) {
+        transfersViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[AccountDetailsViewModel::class.java]
+        )[AccountDetailsTransfersViewModel::class.java]
 
-        accountDetailsViewModel.account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
+        transfersViewModel.initialize(account)
 
-        replaceFragment(getCurrentFragment(accountDetailsViewModel.account))
+        transfersViewModel.errorFlow.collectWhenStarted(this) { event ->
+            event.contentIfNotHandled?.let {
+                showError(it)
+            }
+        }
     }
 
     private fun getCurrentFragment(account: Account): Fragment {

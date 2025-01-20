@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
+import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
 
@@ -21,7 +23,7 @@ class AccountDetailsTransfersFragment : Fragment() {
     private var _binding: FragmentAccountDetailsTransfersBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var accountDetailsViewModel: AccountDetailsViewModel
+    private lateinit var transfersViewModel: AccountDetailsTransfersViewModel
     private lateinit var transactionAdapter: TransactionAdapter
 
     override fun onCreateView(
@@ -45,20 +47,30 @@ class AccountDetailsTransfersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        accountDetailsViewModel.populateTransferList()
+        transfersViewModel.populateTransferList()
+        transfersViewModel.initiateFrequentUpdater()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        transfersViewModel.stopFrequentUpdater()
     }
 
     private fun initializeViewModel() {
-        accountDetailsViewModel = ViewModelProvider(
+        transfersViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[AccountDetailsViewModel::class.java]
+        )[AccountDetailsTransfersViewModel::class.java]
 
-        accountDetailsViewModel.totalBalanceLiveData.observe(viewLifecycleOwner) {
-            transactionAdapter.notifyDataSetChanged()
+        transfersViewModel.totalBalanceFlow.collectWhenStarted(viewLifecycleOwner) {
+            transactionAdapter.onDataSetChanged()
         }
 
-        accountDetailsViewModel.transferListLiveData.observe(viewLifecycleOwner) { transferList ->
+        transfersViewModel.waitingFlow.collectWhenStarted(viewLifecycleOwner) { waiting ->
+            showWaiting(waiting)
+        }
+
+        transfersViewModel.transferListFlow.collectWhenStarted(viewLifecycleOwner) { transferList ->
             transferList?.let {
                 val filteredList = transferList.filterIndexed { index, currentItem ->
                     var result = true
@@ -72,10 +84,10 @@ class AccountDetailsTransfersFragment : Fragment() {
                 if (filteredList.isNotEmpty()) {
                     transactionAdapter.setData(filteredList)
                     transactionAdapter.removeFooter()
-                    if (accountDetailsViewModel.hasMoreRemoteTransactionsToLoad) {
+                    if (transfersViewModel.hasMoreRemoteTransactionsToLoad) {
                         transactionAdapter.addFooter()
                     }
-                    transactionAdapter.notifyDataSetChanged()
+                    transactionAdapter.onDataSetChanged()
                 }
 
                 if (filteredList.isEmpty()) {
@@ -84,19 +96,25 @@ class AccountDetailsTransfersFragment : Fragment() {
                     binding.noTransfersTextview.visibility = View.GONE
                 }
 
-                accountDetailsViewModel.allowScrollToLoadMore = true
+                transfersViewModel.allowScrollToLoadMore = true
             }
         }
 
-        accountDetailsViewModel.showGTUDropLiveData.observe(viewLifecycleOwner) { waiting ->
-            waiting?.let { show ->
-                if (show) {
-                    binding.gtuDropLayout.visibility = View.VISIBLE
-                    binding.gtuDropButton.isEnabled = true
-                } else {
-                    binding.gtuDropLayout.visibility = View.GONE
-                }
+        transfersViewModel.showGTUDropFlow.collectWhenStarted(viewLifecycleOwner) { show ->
+            if (show) {
+                binding.gtuDropLayout.visibility = View.VISIBLE
+                binding.gtuDropButton.isEnabled = true
+            } else {
+                binding.gtuDropLayout.visibility = View.GONE
             }
+        }
+    }
+
+    private fun showWaiting(waiting: Boolean) {
+        if (waiting) {
+            binding.progress.progressLayout.visibility = View.VISIBLE
+        } else {
+            binding.progress.progressLayout.visibility = View.GONE
         }
     }
 
@@ -136,7 +154,7 @@ class AccountDetailsTransfersFragment : Fragment() {
 
         binding.gtuDropButton.setOnClickListener {
             binding.gtuDropButton.isEnabled = false
-            accountDetailsViewModel.requestGTUDrop()
+            transfersViewModel.requestGTUDrop()
         }
 
         transactionAdapter = TransactionAdapter()
@@ -157,7 +175,7 @@ class AccountDetailsTransfersFragment : Fragment() {
                 val intent = Intent(activity, TransactionDetailsActivity::class.java)
                 intent.putExtra(
                     TransactionDetailsActivity.EXTRA_ACCOUNT,
-                    accountDetailsViewModel.account
+                    transfersViewModel.getAccount()
                 )
                 intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, item)
                 startActivity(intent)
@@ -168,13 +186,13 @@ class AccountDetailsTransfersFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (accountDetailsViewModel.allowScrollToLoadMore) {
+                if (transfersViewModel.allowScrollToLoadMore) {
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val visibleItemCount = layoutManager.childCount
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                        accountDetailsViewModel.loadMoreRemoteTransactions()
+                        transfersViewModel.loadMoreRemoteTransactions()
                     }
                 }
             }
