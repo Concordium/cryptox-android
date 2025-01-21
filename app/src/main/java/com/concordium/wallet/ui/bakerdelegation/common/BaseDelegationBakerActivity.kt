@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -8,7 +9,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -93,7 +94,8 @@ abstract class BaseDelegationBakerActivity(
         builder.setMessage(getString(R.string.delegation_remove_not_enough_funds_message))
         builder.setPositiveButton(getString(R.string.delegation_remove_not_enough_funds_ok)) { dialog, _ ->
             dialog.dismiss()
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+            startActivity(Intent(this, MainActivity::class.java))
+            finishAffinity()
         }
         builder.create().show()
     }

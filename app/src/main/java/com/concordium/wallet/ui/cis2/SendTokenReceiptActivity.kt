@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,6 +9,7 @@ import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -118,9 +120,9 @@ class SendTokenReceiptActivity : BaseActivity(
     }
 
     private fun onFinish() {
-        finishUntilClass(checkNotNull(intent.getStringExtra(PARENT_ACTIVITY)) {
-            "Missing $PARENT_ACTIVITY extra"
-        })
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finishAffinity()
     }
 
     private fun initObservers() {

@@ -6,7 +6,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegistrationCloseActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerUpdatePoolSettingsActivity
@@ -45,27 +45,27 @@ class BakerUpdateIntroFlow :
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
-        finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     private fun gotoUpdatePoolSettings() {
         val intent = Intent(this, BakerUpdatePoolSettingsActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
-        finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     private fun gotoUpdateBakerKeys() {
         val intent = Intent(this, BakerRegistrationCloseActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
-        finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     private fun gotoStopBaking() {
         val intent = Intent(this, BakerRemoveIntroFlow::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
-        finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 }

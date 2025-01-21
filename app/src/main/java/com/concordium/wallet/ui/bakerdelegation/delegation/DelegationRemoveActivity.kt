@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -7,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityDelegationRemoveBinding
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -113,7 +114,8 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
         )
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+            startActivity(Intent(this, MainActivity::class.java))
+            finishAffinity()
         }
         builder.create().show()
     }
