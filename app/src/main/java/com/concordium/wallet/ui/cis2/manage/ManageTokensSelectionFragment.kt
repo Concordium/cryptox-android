@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2.manage
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -129,7 +131,7 @@ class ManageTokensSelectionFragment : Fragment() {
         }
 
         binding.updateWithTokens.setOnClickListener {
-            _viewModel.updateWithSelectedTokens()
+            updateTokens()
         }
     }
 
@@ -162,5 +164,10 @@ class ManageTokensSelectionFragment : Fragment() {
             else
                 binding.nonSelected.visibility = View.INVISIBLE
         }
+    }
+
+    private fun updateTokens() {
+        _viewModel.updateWithSelectedTokens()
+        startActivity(Intent(requireContext(), MainActivity::class.java))
     }
 }

@@ -243,7 +243,7 @@
         app:drawableTint="@color/cryptox_white_main" />
 
     <TextView
-        android:id="@+id/delete_token"
+        android:id="@+id/hide_token"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

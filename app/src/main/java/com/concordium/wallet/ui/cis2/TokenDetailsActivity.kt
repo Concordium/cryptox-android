@@ -25,7 +25,6 @@ import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getSerializable
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
@@ -92,8 +91,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             onActivityClicked()
         }
 
-
-        binding.includeAbout.deleteToken.setOnClickListener {
+        binding.includeAbout.hideToken.setOnClickListener {
             showDeleteDialog()
         }
 
@@ -127,22 +125,11 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun showDeleteDialog() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.cis_delete_dialog_title)
-        builder.setMessage(getString(R.string.cis_delete_dialog_content))
-        builder.setPositiveButton(getString(R.string.cis_delete_dialog_confirm)) { dialog, _ ->
-            dialog.dismiss()
-            viewModel.deleteSelectedToken()
-            setResult(
-                Activity.RESULT_OK,
-                Intent().putExtra(CHANGED, true)
-            )
-            finish()
+        viewModel.tokenData.selectedToken?.symbol?.let {
+            HidingTokenDialog.newInstance(
+                HidingTokenDialog.getBundle(tokenName = it)
+            ).showSingle(supportFragmentManager, HidingTokenDialog.TAG)
         }
-        builder.setNegativeButton(getString(R.string.cis_delete_dialog_cancel)) { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.create().show()
     }
 
     private fun setBalances(token: Token) {
@@ -300,7 +287,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun setHideButton(isCCD: Boolean) {
-        binding.includeAbout.deleteToken.isVisible = !isCCD
+        binding.includeAbout.hideToken.isVisible = !isCCD
         binding.includeAbout.rawMetadataBtn.isVisible = !isCCD
     }
 
@@ -324,6 +311,21 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             val isKeepingToken = NewlyReceivedTokenNoticeDialog.getResult(bundle)
             if (!isKeepingToken) {
                 showDeleteDialog()
+            }
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            HidingTokenDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            val isHidingToken = HidingTokenDialog.getResult(bundle)
+            if (isHidingToken) {
+                viewModel.deleteSelectedToken()
+                setResult(
+                    Activity.RESULT_OK,
+                    Intent().putExtra(CHANGED, true)
+                )
+                finish()
             }
         }
     }

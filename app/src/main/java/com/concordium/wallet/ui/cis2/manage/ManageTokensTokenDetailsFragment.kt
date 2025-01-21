@@ -39,7 +39,7 @@ class ManageTokensTokenDetailsFragment : Fragment() {
     }
 
     private fun initViews() {
-        binding.details.deleteToken.visibility = View.GONE
+        binding.details.hideToken.visibility = View.GONE
         binding.backToList.setOnClickListener {
             _viewModel.stepPage(-1)
         }

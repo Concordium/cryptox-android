@@ -143,9 +143,10 @@
     </style>
 
     <style name="CryptoX_ImageButton">
-        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/mw24_dialog_close_background</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_margin">16dp</item>
         <item name="tint">@color/cryptox_button_secondary_text_color</item>
     </style>
 

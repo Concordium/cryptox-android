@@ -70,7 +70,6 @@ class AccountDetailsActivity : BaseActivity(
         super.onCreate(savedInstanceState)
         val account = intent.extras?.getSerializable(EXTRA_ACCOUNT) as Account
         initializeViewModel()
-//        viewModelAccountDetails.initialize(account)
         initializeViewModelTokens()
         initViews()
         hideActionBarBack(isVisible = true)
@@ -350,7 +349,6 @@ class AccountDetailsActivity : BaseActivity(
         val intent = Intent(this, TokenDetailsActivity::class.java)
         intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(TokenDetailsActivity.TOKEN, token)
-        showTokenDetails.launch(intent)
     }
 
     private fun setupOnrampBanner(active: Boolean) {
@@ -362,15 +360,5 @@ class AccountDetailsActivity : BaseActivity(
         }
     }
 
-    private val showTokenDetails =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val isChanged =
-                    it.data?.getBooleanExtra(TokenDetailsActivity.CHANGED, false) == true
-                if (isChanged) {
-                    viewModelTokens.updateWithSelectedTokensDone.postValue(true)
-                }
-            }
-        }
     //endregion
 }

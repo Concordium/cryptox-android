@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
@@ -19,9 +17,7 @@ import com.concordium.wallet.databinding.FragmentTokensBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
-import com.concordium.wallet.ui.cis2.manage.ManageTokensBottomSheet
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import com.concordium.wallet.uicore.toast.showGradientToast
 
 class TokensFragment : Fragment() {
     private var _binding: FragmentTokensBinding? = null
@@ -33,7 +29,6 @@ class TokensFragment : Fragment() {
 
     private var isFungible: Boolean? = null
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
-    private var manageTokensBottomSheet: ManageTokensBottomSheet? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,8 +66,8 @@ class TokensFragment : Fragment() {
 
     private fun initObservers() {
         accountViewModel.newAccount.collectWhenStarted(viewLifecycleOwner) { account ->
-            tokensAccountDetailsAdapter.setData(viewModel.tokens)
             viewModel.loadTokens(account.address, isFungible)
+            tokensAccountDetailsAdapter.setData(viewModel.tokens)
 
             tokensAccountDetailsAdapter.setManageButtonClickListener {
                 showFindTokensDialog(account)
@@ -93,31 +88,18 @@ class TokensFragment : Fragment() {
         viewModel.tokenBalances.observe(viewLifecycleOwner) {
             tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
-//        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) {
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                viewModel.loadTokens(accountViewModel.newAccount.first().address, isFungible)
-//            }
-//        }
 
         viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.loadTokens(accountViewModel.newAccount.first().address, isFungible)
-            }
-
-            requireActivity().runOnUiThread {
-                manageTokensBottomSheet = null
-                if (anyChanges) {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.cis_tokens_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.cis_tokens_not_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
+            if (anyChanges) {
+                requireContext().showGradientToast(
+                    R.drawable.mw24_ic_address_copy_check,
+                    getString(R.string.cis_tokens_updated)
+                )
+            } else {
+                requireContext().showGradientToast(
+                    R.drawable.mw24_ic_address_copy_check,
+                    getString(R.string.cis_tokens_not_updated)
+                )
             }
         }
     }

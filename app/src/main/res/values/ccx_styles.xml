@@ -24,7 +24,7 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/ccx_neutral_tint_1</item>
-        <item name="android:textAppearance">@style/CCX_Typography_Button_M</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Text_Mid</item>
         <item name="android:paddingHorizontal">24dp</item>
         <item name="android:minEms">5</item>
     </style>
