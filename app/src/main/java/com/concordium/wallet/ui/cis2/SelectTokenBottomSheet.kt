@@ -60,9 +60,6 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
             override fun onRowClick(token: Token) {
                 _viewModel.chooseToken.postValue(token)
             }
-
-            override fun onCheckBoxClick(token: Token) {
-            }
         })
     }
 
@@ -72,13 +69,11 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
         }
         _viewModel.tokens.observe(viewLifecycleOwner) { tokens ->
             tokensAccountDetailsAdapter.setData(tokens)
-//            tokensAccountDetailsAdapter.notifyDataSetChanged()
             _viewModelTokens.tokens = tokens as MutableList<Token>
             _viewModelTokens.loadTokensBalances()
         }
         _viewModelTokens.tokenBalances.observe(viewLifecycleOwner) {
             tokensAccountDetailsAdapter.setData(_viewModelTokens.tokens)
-//            tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
     }
 

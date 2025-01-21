@@ -58,9 +58,6 @@ class TokensFragment : Fragment() {
             override fun onRowClick(token: Token) {
                 viewModel.chooseToken.postValue(token)
             }
-
-            override fun onCheckBoxClick(token: Token) {
-            }
         })
     }
 
@@ -70,10 +67,10 @@ class TokensFragment : Fragment() {
             tokensAccountDetailsAdapter.setData(viewModel.tokens)
 
             tokensAccountDetailsAdapter.setManageButtonClickListener {
-                showFindTokensDialog(account)
+                gotoManageTokensList(account)
             }
             binding.noItemsManageTokens.setOnClickListener {
-                showFindTokensDialog(account)
+                gotoManageTokensList(account)
             }
         }
 
@@ -104,7 +101,7 @@ class TokensFragment : Fragment() {
         }
     }
 
-    private fun showFindTokensDialog(account: Account) {
+    private fun gotoManageTokensList(account: Account) {
         val intent = Intent(requireActivity(), ManageTokenListActivity::class.java)
         intent.putExtra(ManageTokenListActivity.ACCOUNT, account)
         startActivity(intent)

@@ -31,7 +31,6 @@ class TokensAccountDetailsAdapter(
 
     interface TokenClickListener {
         fun onRowClick(token: Token)
-        fun onCheckBoxClick(token: Token)
     }
 
     fun setTokenClickListener(tokenClickListener: TokenClickListener) {

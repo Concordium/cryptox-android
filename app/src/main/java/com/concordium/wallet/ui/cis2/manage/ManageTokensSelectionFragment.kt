@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -168,6 +167,11 @@ class ManageTokensSelectionFragment : Fragment() {
 
     private fun updateTokens() {
         _viewModel.updateWithSelectedTokens()
-        startActivity(Intent(requireContext(), MainActivity::class.java))
+        val intent = Intent(requireContext(), ManageTokenListActivity::class.java).apply {
+            putExtra(ManageTokenListActivity.ACCOUNT, _viewModel.tokenData.account)
+            putExtra(ManageTokenListActivity.LIST_UPDATED, true)
+        }
+        startActivity(intent)
+        requireActivity().finish()
     }
 }

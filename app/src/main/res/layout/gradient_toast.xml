@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/mw24_radial_gradient_background"
@@ -37,10 +37,31 @@
             android:gravity="center_vertical|start"
             android:maxLines="3"
             android:textColor="#212526"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toTopOf="@id/toast_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/toast_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Address copied" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/toast_description"
+            style="@style/MW24_Typography_Main_Capture_Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical|start"
+            android:maxLines="3"
+            android:textColor="#212526"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/toast_image"
+            app:layout_constraintTop_toBottomOf="@id/toast_title"
+            tools:text="Address copied"
+            tools:visibility="visible"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

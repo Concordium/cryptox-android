@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:layout_marginBottom="6dp"
+    android:background="@drawable/mw24_container_primary_background">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/token_icon"
+        android:layout_width="@dimen/cis_token_icon_size"
+        android:layout_height="@dimen/cis_token_icon_size"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/ic_logo_placeholder" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/MW24_Typography_Label_Main"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:ellipsize="end"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constraintBottom_toBottomOf="@id/token_icon"
+        app:layout_constraintEnd_toStartOf="@id/hide_btn"
+        app:layout_constraintStart_toEndOf="@id/token_icon"
+        app:layout_constraintTop_toTopOf="@id/token_icon"
+        tools:text="Wrapped Bitcoin" />
+
+    <TextView
+        android:id="@+id/hide_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="@string/cis_hide_token_item"
+        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+        android:textColor="@color/mw24_blue_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
