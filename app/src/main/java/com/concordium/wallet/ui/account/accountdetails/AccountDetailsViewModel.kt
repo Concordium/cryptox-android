@@ -52,8 +52,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val transferRepository =
         TransferRepository(session.walletStorage.database.transferDao())
-    private val identityRepository =
-        IdentityRepository(session.walletStorage.database.identityDao())
+//    private val identityRepository =
+//        IdentityRepository(session.walletStorage.database.identityDao())
     private val recipientRepository =
         RecipientRepository(session.walletStorage.database.recipientDao())
 
@@ -62,12 +62,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     // Transaction state
     private var nonMergedLocalTransactions: MutableList<Transaction> = ArrayList()
-    var hasMoreRemoteTransactionsToLoad = true
-        private set
-    private var lastRemoteTransaction: RemoteTransaction? = null
-    private var isLoadingTransactions = false
-    var allowScrollToLoadMore = true
-    private var lastHeaderDate: Date? = null
+//    var hasMoreRemoteTransactionsToLoad = true
+//        private set
+//    private var lastRemoteTransaction: RemoteTransaction? = null
+//    private var isLoadingTransactions = false
+//    var allowScrollToLoadMore = true
+//    private var lastHeaderDate: Date? = null
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -83,21 +83,21 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val finishLiveData: LiveData<Event<Boolean>>
         get() = _finishLiveData
 
-    private val _showGTUDropLiveData = MutableLiveData<Boolean>()
-    val showGTUDropLiveData: LiveData<Boolean>
-        get() = _showGTUDropLiveData
+//    private val _showGTUDropLiveData = MutableLiveData<Boolean>()
+//    val showGTUDropLiveData: LiveData<Boolean>
+//        get() = _showGTUDropLiveData
 
     private val _showPadLockLiveData = MutableLiveData<Boolean>()
     val showPadLockLiveData: LiveData<Boolean>
         get() = _showPadLockLiveData
 
-    private var _transferListLiveData = MutableLiveData<List<AdapterItem>?>()
-    val transferListLiveData: MutableLiveData<List<AdapterItem>?>
-        get() = _transferListLiveData
+//    private var _transferListLiveData = MutableLiveData<List<AdapterItem>?>()
+//    val transferListLiveData: MutableLiveData<List<AdapterItem>?>
+//        get() = _transferListLiveData
 
-    private var _identityLiveData = MutableLiveData<Identity?>()
-    val identityLiveData: MutableLiveData<Identity?>
-        get() = _identityLiveData
+//    private var _identityLiveData = MutableLiveData<Identity?>()
+//    val identityLiveData: MutableLiveData<Identity?>
+//        get() = _identityLiveData
 
     private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
     val totalBalanceLiveData: LiveData<BigInteger>
@@ -120,7 +120,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         account = acc
         _newAccount.emit(acc)
         _totalBalanceLiveData.postValue(acc.balance)
-        getIdentityProvider()
     }
 
     fun updateAccount() {
@@ -137,78 +136,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _finishLiveData.value = Event(true)
     }
 
-    private fun getIdentityProvider() {
-        viewModelScope.launch {
-            val identity = identityRepository.findById(account.identityId)
-            _identityLiveData.value = identity
-        }
-    }
-
-//    fun requestGTUDrop() {
-//        _waitingLiveData.value = true
-//        proxyRepository.requestGTUDrop(
-//            account.address,
-//            {
-//                _waitingLiveData.value = false
-//                //populateTransferList()
-//                createGTUDropTransfer(it.submissionId)
-//            },
-//            {
-//                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-//                _waitingLiveData.value = false
-//            }
-//        )
-//    }
-
-//    private fun updateGTUDropState() {
-//        if (!BuildConfig.SHOW_GTU_DROP) {
-//            _showGTUDropLiveData.value = false
-//        } else {
-//            _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
-//        }
-//    }
-
-//    private fun createGTUDropTransfer(submissionId: String) {
-//        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
-//        val createdAt = Date().time
-//        val transfer = Transfer(
-//            0,
-//            account.id,
-//            (-20000000000).toBigInteger(),
-//            BigInteger.ZERO,
-//            "",
-//            account.address,
-//            expiry,
-//            "",
-//            createdAt,
-//            submissionId,
-//            TransactionStatus.RECEIVED,
-//            TransactionOutcome.UNKNOWN,
-//            TransactionType.TRANSFER,
-//            null,
-//            0,
-//            null
-//        )
-//        saveTransfer(transfer)
-//    }
-
-    private fun saveTransfer(transfer: Transfer) = viewModelScope.launch {
-        transferRepository.insert(transfer)
-        populateTransferList()
-    }
-
     //region Transaction list update/merge
     // ************************************************************
-
-//    private fun clearTransactionListState() {
-//        _transferListLiveData.value = null
-//        nonMergedLocalTransactions.clear()
-//        hasMoreRemoteTransactionsToLoad = true
-//        lastRemoteTransaction = null
-//        isLoadingTransactions = false
-//        allowScrollToLoadMore = true
-//        lastHeaderDate = null
-//    }
 
     fun populateTransferList(notifyWaitingLiveData: Boolean = true) {
         account?.let {
@@ -264,16 +193,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private fun getIncludeRewards(): String {
-        if (session.getHasShowRewards(account.id) && !session.getHasShowFinalizationRewards(account.id)) {
-            return "allButFinalization"
-        }
-        if (session.getHasShowRewards(account.id) && session.getHasShowFinalizationRewards(account.id)) {
-            return "all"
-        }
-        return "none"
-    }
-
     fun getLocalTransfers() {
         viewModelScope.launch {
             hasPendingDelegationTransactions = false
@@ -297,6 +216,104 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 //            loadRemoteTransactions(null)
         }
     }
+
+    fun initiateFrequentUpdater() {
+        updater.cancel()
+        updater.start()
+    }
+
+    fun stopFrequentUpdater() {
+        updater.cancel()
+    }
+
+    private var updater =
+        object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
+            private var first = true
+            override fun onTick(millisUntilFinished: Long) {
+                if (first) { //ignore first tick
+                    first = false
+                    return
+                }
+                populateTransferList(false)
+            }
+
+            override fun onFinish() {
+            }
+        }
+
+//    private fun saveTransfer(transfer: Transfer) = viewModelScope.launch {
+//        transferRepository.insert(transfer)
+//        populateTransferList()
+//    }
+
+//    fun requestGTUDrop() {
+//        _waitingLiveData.value = true
+//        proxyRepository.requestGTUDrop(
+//            account.address,
+//            {
+//                _waitingLiveData.value = false
+//                //populateTransferList()
+//                createGTUDropTransfer(it.submissionId)
+//            },
+//            {
+//                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+//                _waitingLiveData.value = false
+//            }
+//        )
+//    }
+
+//    private fun updateGTUDropState() {
+//        if (!BuildConfig.SHOW_GTU_DROP) {
+//            _showGTUDropLiveData.value = false
+//        } else {
+//            _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
+//        }
+//    }
+
+//    private fun createGTUDropTransfer(submissionId: String) {
+//        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+//        val createdAt = Date().time
+//        val transfer = Transfer(
+//            0,
+//            account.id,
+//            (-20000000000).toBigInteger(),
+//            BigInteger.ZERO,
+//            "",
+//            account.address,
+//            expiry,
+//            "",
+//            createdAt,
+//            submissionId,
+//            TransactionStatus.RECEIVED,
+//            TransactionOutcome.UNKNOWN,
+//            TransactionType.TRANSFER,
+//            null,
+//            0,
+//            null
+//        )
+//        saveTransfer(transfer)
+//    }
+
+//    private fun clearTransactionListState() {
+//        _transferListLiveData.value = null
+//        nonMergedLocalTransactions.clear()
+//        hasMoreRemoteTransactionsToLoad = true
+//        lastRemoteTransaction = null
+//        isLoadingTransactions = false
+//        allowScrollToLoadMore = true
+//        lastHeaderDate = null
+//    }
+
+
+//    private fun getIncludeRewards(): String {
+//        if (session.getHasShowRewards(account.id) && !session.getHasShowFinalizationRewards(account.id)) {
+//            return "allButFinalization"
+//        }
+//        if (session.getHasShowRewards(account.id) && session.getHasShowFinalizationRewards(account.id)) {
+//            return "all"
+//        }
+//        return "none"
+//    }
 
 //    fun loadMoreRemoteTransactions(): Boolean {
 //        val lastRemote = lastRemoteTransaction
@@ -404,28 +421,5 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 //        }
 //    }
 
-    fun initiateFrequentUpdater() {
-        updater.cancel()
-        updater.start()
-    }
-
-    fun stopFrequentUpdater() {
-        updater.cancel()
-    }
-
-    private var updater =
-        object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
-            private var first = true
-            override fun onTick(millisUntilFinished: Long) {
-                if (first) { //ignore first tick
-                    first = false
-                    return
-                }
-                populateTransferList(false)
-            }
-
-            override fun onFinish() {
-            }
-        }
     // endregion
 }

@@ -138,11 +138,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
-//        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
-            // Update balances in the title and on the Tokens tab.
-//            initTitle()
-//            println("AccountDetailsFragment, initializeViewModels account: ${viewModelAccountDetails.account}")
-//        }
+        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
+            initViews()
+        }
     }
 
     private fun initializeViewModelTokens() {
@@ -362,8 +360,14 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
             putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
             putExtra(TokenDetailsActivity.TOKEN, token)
-            putExtra(TokenDetailsActivity.PENDING_DELEGATION, viewModelAccountDetails.hasPendingDelegationTransactions)
-            putExtra(TokenDetailsActivity.PENDING_VALIDATION, viewModelAccountDetails.hasPendingBakingTransactions)
+            putExtra(
+                TokenDetailsActivity.PENDING_DELEGATION,
+                viewModelAccountDetails.hasPendingDelegationTransactions
+            )
+            putExtra(
+                TokenDetailsActivity.PENDING_VALIDATION,
+                viewModelAccountDetails.hasPendingBakingTransactions
+            )
         }
         showTokenDetails.launch(intent)
     }
