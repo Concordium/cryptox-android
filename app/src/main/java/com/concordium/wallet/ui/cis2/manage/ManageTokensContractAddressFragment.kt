@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
@@ -16,7 +15,7 @@ class ManageTokensContractAddressFragment : Fragment() {
     private var _binding: FragmentManageTokensContractAddressBinding? = null
     private val binding get() = _binding!!
     private val _viewModel: TokensViewModel
-        get() = (parentFragment as ManageTokensBottomSheet).viewModel
+        get() = (parentFragment as ManageTokensMainFragment).viewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,

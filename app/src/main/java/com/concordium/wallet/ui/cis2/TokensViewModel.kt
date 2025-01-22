@@ -39,6 +39,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
         const val TOKENS_EMPTY = 1
+        const val TOKENS_SELECTED = 2
     }
 
     private var allowToLoadMore = true
@@ -361,7 +362,13 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val isSelectedNow = !token.isSelected
         (tokens.asSequence() + everFoundExactTokens.asSequence())
             .filter { it.token == token.token }
-            .forEach { it.isSelected = isSelectedNow }
+            .forEach {
+                it.isSelected = isSelectedNow
+                if (it.isSelected)
+                    lookForTokens.postValue(TOKENS_SELECTED)
+                else
+                    lookForTokens.postValue(TOKENS_OK)
+            }
     }
 
     fun checkExistingTokens() = viewModelScope.launch(Dispatchers.IO) {

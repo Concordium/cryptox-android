@@ -22,7 +22,7 @@ class ManageTokensSelectionFragment : Fragment() {
     private var _binding: FragmentManageTokensSelectionBinding? = null
     private val binding get() = _binding!!
     private val _viewModel: TokensViewModel
-        get() = (parentFragment as ManageTokensBottomSheet).viewModel
+        get() = (parentFragment as ManageTokensMainFragment).viewModel
     private lateinit var selectionAdapter: ManageTokensSelectionAdapter
     private var firstTime = true
 
@@ -78,45 +78,51 @@ class ManageTokensSelectionFragment : Fragment() {
             }
         })
 
-        with(binding.search.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)) {
-            setTextColor(ContextCompat.getColor(context, R.color.cryptox_white_main))
-            setHintTextColor(ContextCompat.getColor(context, R.color.cryptox_black_additional))
+        binding.searchLayout.setSearchListener {
+            selectionAdapter.dataSet = emptyArray()
+            selectionAdapter.notifyDataSetChanged()
+
+            _viewModel.lookForExactToken(
+                apparentTokenId = binding.searchLayout.getSearchText().trim(),
+                accountAddress = _viewModel.tokenData.account!!.address,
+            )
         }
-        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                selectionAdapter.dataSet = emptyArray()
-                selectionAdapter.notifyDataSetChanged()
 
-                _viewModel.lookForExactToken(
-                    apparentTokenId = query?.trim() ?: "",
-                    accountAddress = _viewModel.tokenData.account!!.address,
-                )
+//        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                selectionAdapter.dataSet = emptyArray()
+//                selectionAdapter.notifyDataSetChanged()
+//
+//                _viewModel.lookForExactToken(
+//                    apparentTokenId = query?.trim() ?: "",
+//                    accountAddress = _viewModel.tokenData.account!!.address,
+//                )
+//
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                if (newText.isNullOrBlank()) {
+//                    selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+//                    selectionAdapter.notifyDataSetChanged()
+//
+//                    _viewModel.dismissExactTokenLookup()
+//                }
+//                return true
+//            }
+//        })
 
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText.isNullOrBlank()) {
-                    selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
-                    selectionAdapter.notifyDataSetChanged()
-
-                    _viewModel.dismissExactTokenLookup()
-                }
-                return true
-            }
-        })
-
-        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                KeyboardUtil.hideKeyboard(requireActivity())
-            }
-        }
+//        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
+//            if (!hasFocus) {
+//                KeyboardUtil.hideKeyboard(requireActivity())
+//            }
+//        }
 
         selectionAdapter.setTokenClickListener(object :
             ManageTokensSelectionAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseTokenInfo.postValue(token)
-                _viewModel.stepPage(1)
+                gotoTokenDetails(token)
             }
 
             override fun onCheckBoxClick(token: Token) {
@@ -124,18 +130,15 @@ class ManageTokensSelectionFragment : Fragment() {
             }
         })
 
-        binding.back.setOnClickListener {
-            binding.search.setQuery("", false)
-            _viewModel.stepPage(-1)
-        }
-
-        binding.updateWithTokens.setOnClickListener {
+        binding.continueBtn.setOnClickListener {
             updateTokens()
         }
     }
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
+            binding.continueBtn.isEnabled = it == TokensViewModel.TOKENS_SELECTED
+            binding.searchLayout.isVisible = _viewModel.tokens.size > 1
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
         }
@@ -151,11 +154,7 @@ class ManageTokensSelectionFragment : Fragment() {
             selectionAdapter.notifyDataSetChanged()
         }
         _viewModel.hasExistingTokens.observe(viewLifecycleOwner) { hasExistingTokens ->
-            if (hasExistingTokens)
-                binding.updateWithTokens.text = getString(R.string.cis_update_tokens)
-            else
-                binding.updateWithTokens.text = getString(R.string.cis_add_tokens)
-            binding.updateWithTokens.isEnabled = true
+            binding.continueBtn.isEnabled = hasExistingTokens
         }
         _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
             if (nonSelected)
@@ -173,5 +172,12 @@ class ManageTokensSelectionFragment : Fragment() {
         }
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    private fun gotoTokenDetails(token: Token) {
+        val intent = Intent(requireContext(), AddTokenDetailsActivity::class.java).apply {
+            putExtra(AddTokenDetailsActivity.TOKEN, token)
+        }
+        startActivity(intent)
     }
 }

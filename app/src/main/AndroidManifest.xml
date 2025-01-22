@@ -566,10 +566,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"/>
         <activity android:name=".ui.cis2.manage.ManageTokenListActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"/>
         <activity android:name=".ui.cis2.manage.AddTokenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen"/>
+        <activity android:name=".ui.cis2.manage.AddTokenDetailsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"/>

@@ -522,6 +522,7 @@
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens">Add</string>
+    <string name="cis_add_tokens_continue">Continue</string>
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">This contract has no valid tokens</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>

@@ -6,11 +6,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ViewMw24InputFieldBinding
+import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 
 class InputFieldView @JvmOverloads constructor(
     context: Context,
@@ -32,8 +33,19 @@ class InputFieldView @JvmOverloads constructor(
                 iconTextEmpty = getDrawable(R.styleable.InputFieldView_iconTextEmpty)
                 iconTextFilled = getDrawable(R.styleable.InputFieldView_iconTextFilled)
 
-                binding.searchIcon.setImageDrawable(iconTextEmpty ?: ContextCompat.getDrawable(context, R.drawable.cryptox_ico_search))
+                binding.searchIcon.setImageDrawable(
+                    iconTextEmpty ?: ContextCompat.getDrawable(
+                        context,
+                        R.drawable.cryptox_ico_search
+                    )
+                )
 
+                binding.clearIcon.setImageDrawable(
+                    iconTextFilled ?: ContextCompat.getDrawable(
+                        context,
+                        R.drawable.mw24_ic_clear
+                    )
+                )
 
             } finally {
                 recycle()
@@ -61,19 +73,19 @@ class InputFieldView @JvmOverloads constructor(
             }
         }
 
-        binding.clearIcon.setOnClickListener { binding.edittext.setText("") }
+        binding.root.setOnClickListener {
+            showKeyboard(context, binding.edittext)
+        }
+
+        binding.clearIcon.setOnClickListener { clearSearchText() }
     }
 
     private fun updateIconFromText(text: CharSequence?) {
-        if (text.isNullOrEmpty()) {
-            binding.searchIcon.setImageDrawable(iconTextEmpty ?: ContextCompat.getDrawable(context, R.drawable.cryptox_ico_search))
-            binding.clearIcon.visibility = View.GONE
-            binding.searchIcon.visibility = View.VISIBLE
-        } else {
-            binding.clearIcon.setImageDrawable(iconTextFilled ?: ContextCompat.getDrawable(context, R.drawable.mw24_ic_clear))
-            binding.searchIcon.visibility = View.GONE
-            binding.clearIcon.visibility = View.VISIBLE
-        }
+        binding.clearIcon.isVisible = !text.isNullOrEmpty()
+    }
+
+    private fun clearSearchText() {
+        binding.edittext.setText("")
     }
 
     fun setLabelText(text: String) {
@@ -92,4 +104,17 @@ class InputFieldView @JvmOverloads constructor(
 
     fun getSearchText(): String = binding.edittext.text.toString()
 
+    fun setSearchText(text: String) = binding.edittext.setText(text)
+
+    fun setSearchListener(listener: OnClickListener) {
+        binding.searchIcon.setOnClickListener(listener)
+    }
+
+    fun setClearListener(listener: OnClickListener) {
+        binding.clearIcon.setOnClickListener(listener)
+    }
+
+    fun setTextChangeListener(textListener: TextWatcher) {
+        binding.edittext.addTextChangedListener(textListener)
+    }
 }

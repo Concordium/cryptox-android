@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="18dp"
+    android:paddingVertical="20dp">
+
+    <TextView
+        android:id="@+id/title_text_view"
+        style="@style/MW24_Typography_Text_Mid_Alternative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/mw24_blue_3_50"
+        android:text="@string/cis_manage_tokens"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!--  old   -->
+
+    <com.concordium.wallet.uicore.view.InputFieldView
+        android:id="@+id/search_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/mw24_input_field_background_default"
+        app:labelText="@string/cis_contract_index"
+        app:iconTextEmpty="@drawable/mw24_ic_search"
+        app:iconTextFilled="@drawable/mw24_ic_clear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_text_view" />
+
+    <TextView
+        android:id="@+id/error"
+        style="@style/MW24_Typography_Label_Main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/mw24_blue_3"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginVertical="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/look_btn"
+        tools:text="@string/cis_find_tokens_error"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/look_btn"
+        style="@style/MW24_Button_Primary"
+        android:layout_width="match_parent"
+        android:text="@string/cis_look_for_tokens"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/selection_fragment_container"
+        android:name="com.concordium.wallet.ui.cis2.manage.ManageTokensSelectionFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_layout" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

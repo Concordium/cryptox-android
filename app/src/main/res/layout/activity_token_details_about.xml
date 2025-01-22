@@ -250,8 +250,10 @@
         android:drawablePadding="8dp"
         android:paddingVertical="4dp"
         android:text="@string/cis_hide_token"
+        android:visibility="gone"
         android:textAppearance="@style/MW24_Typography_Label_Main"
         android:textColor="@color/mw24_attention_red"
         app:drawableStartCompat="@drawable/mw24_ic_eye_close"
-        app:drawableTint="@color/mw24_attention_red" />
+        app:drawableTint="@color/mw24_attention_red"
+        tools:visibility="visible"/>
 </LinearLayout>

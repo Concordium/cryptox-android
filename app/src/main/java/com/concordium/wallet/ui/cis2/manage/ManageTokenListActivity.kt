@@ -25,6 +25,8 @@ class ManageTokenListActivity : BaseActivity(
     private lateinit var viewModelTokens: TokensViewModel
     private lateinit var tokensAdapter: ManageTokensListAdapter
 
+    private lateinit var account: Account
+
     companion object {
         const val ACCOUNT = "ACCOUNT"
         const val LIST_UPDATED = "list_updated"
@@ -43,16 +45,20 @@ class ManageTokenListActivity : BaseActivity(
         initFragmentListener()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModelTokens.loadTokens(account.address)
+    }
+
     private fun initViewModel() {
         viewModelTokens = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[TokensViewModel::class.java]
 
-        val account = intent.getSerializable(ACCOUNT, Account::class.java)
+        account = intent.getSerializable(ACCOUNT, Account::class.java)
 
         viewModelTokens.tokenData.account = account
-        viewModelTokens.loadTokens(account.address)
 
         viewModelTokens.waiting.observe(this) {
             tokensAdapter.setData(viewModelTokens.tokens)
