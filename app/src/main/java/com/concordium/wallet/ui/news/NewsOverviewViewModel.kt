@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.backend.news.NewsfeedRepository
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NewsOverviewViewModel(application: Application) : AndroidViewModel(application) {
@@ -24,6 +23,7 @@ class NewsOverviewViewModel(application: Application) : AndroidViewModel(applica
     val isLoadingFailedVisibleLiveData: LiveData<Boolean> = _isLoadingFailedVisibleLiveData
 
     init {
+        App.appCore.tracker.homeNewsScreen()
         loadNews()
     }
 
