@@ -13,7 +13,7 @@ With CryptoX Wallet, you can:
 - Check your CCD release schedule (only for buyers)
 - Manage your addresses in the address book for fast and easy transactions
 - Export and import backups of your accounts, identities, address book, and keys
-- Import both phrase- and file-based wallets
+- Import both phrase- and file-based wallets simultaneously and switch between them
 - Send, receive and view CIS-2 tokens
 - Browse owned NFTs from [Spaceseven](https://spaceseven.com/marketplace)
 - Connect to Concordium dApps with WalletConnect
