@@ -18,10 +18,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="18dp"
             android:layout_marginTop="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <com.concordium.wallet.uicore.view.BalanceGradientTextView
                 android:id="@+id/total_balance_textview"
@@ -39,7 +43,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/readonly_desc"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="wrap"
                 tools:text="2,734.00 CCD" />
 
@@ -51,17 +55,22 @@
                 android:text="@string/accounts_overview_balance_placeholder"
                 android:textColor="@color/cryptox_deep_blue"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/total_balance_textview"
                 tools:text="203.00 CCD at disposal"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/buttonsBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/at_disposal_label">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -123,7 +132,7 @@
 
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1" />
 
                 <LinearLayout
@@ -155,7 +164,7 @@
 
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1" />
 
                 <LinearLayout
@@ -187,7 +196,7 @@
 
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1" />
 
                 <LinearLayout
@@ -223,25 +232,32 @@
                 layout="@layout/list_item_accounts_overview_ccd_onramp_banner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp" />
+                android:layout_marginTop="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonsBlock" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/tokens_fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp" />
+                android:layout_height="0dp"
+                android:layout_marginTop="40dp"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
 
             <com.concordium.wallet.ui.onboarding.OnboardingFragment
                 android:id="@+id/onboarding_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="40dp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/onboarding_action_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/onramp_banner"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <Button
                 android:id="@+id/account_retry_button"
@@ -250,7 +266,10 @@
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/account_details_retry_button"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <Button
                 android:id="@+id/account_remove_button"
@@ -259,7 +278,10 @@
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/account_details_remove_button"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </LinearLayout>
     </com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView>
 

@@ -10,36 +10,30 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.Session
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.BakerDelegationData
-import com.concordium.wallet.data.model.RemoteTransaction
 import com.concordium.wallet.data.model.Transaction
-import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
-import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
-import com.concordium.wallet.ui.account.accountdetails.transfers.HeaderItem
-import com.concordium.wallet.ui.account.accountdetails.transfers.TransactionItem
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
-import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.onboarding.OnboardingState
-import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.Log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
-import java.util.Date
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val session: Session = App.appCore.session
@@ -48,32 +42,27 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     var hasPendingDelegationTransactions: Boolean = false
     var hasPendingBakingTransactions: Boolean = false
 
-//    private val proxyRepository = ProxyRepository()
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val transferRepository =
         TransferRepository(session.walletStorage.database.transferDao())
-//    private val identityRepository =
-//        IdentityRepository(session.walletStorage.database.identityDao())
+
+    private val identityRepository =
+        IdentityRepository(session.walletStorage.database.identityDao())
+
     private val recipientRepository =
         RecipientRepository(session.walletStorage.database.recipientDao())
 
     private lateinit var transactionMappingHelper: TransactionMappingHelper
     private val accountUpdater = AccountUpdater(application, viewModelScope)
 
-    // Transaction state
     private var nonMergedLocalTransactions: MutableList<Transaction> = ArrayList()
-//    var hasMoreRemoteTransactionsToLoad = true
-//        private set
-//    private var lastRemoteTransaction: RemoteTransaction? = null
-//    private var isLoadingTransactions = false
-//    var allowScrollToLoadMore = true
-//    private var lastHeaderDate: Date? = null
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
 
-    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
+    private val _newFinalizedAccountFlow = MutableStateFlow("")
+    val newFinalizedAccountFlow = _newFinalizedAccountFlow.asStateFlow()
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -83,21 +72,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val finishLiveData: LiveData<Event<Boolean>>
         get() = _finishLiveData
 
-//    private val _showGTUDropLiveData = MutableLiveData<Boolean>()
-//    val showGTUDropLiveData: LiveData<Boolean>
-//        get() = _showGTUDropLiveData
-
     private val _showPadLockLiveData = MutableLiveData<Boolean>()
     val showPadLockLiveData: LiveData<Boolean>
         get() = _showPadLockLiveData
-
-//    private var _transferListLiveData = MutableLiveData<List<AdapterItem>?>()
-//    val transferListLiveData: MutableLiveData<List<AdapterItem>?>
-//        get() = _transferListLiveData
-
-//    private var _identityLiveData = MutableLiveData<Identity?>()
-//    val identityLiveData: MutableLiveData<Identity?>
-//        get() = _identityLiveData
 
     private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
     val totalBalanceLiveData: LiveData<BigInteger>
@@ -110,9 +87,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _newAccount = MutableSharedFlow<Account>()
     val newAccount = _newAccount.asSharedFlow()
 
+    private val _stateFlow = MutableSharedFlow<OnboardingState>()
+    val stateFlow = _stateFlow.asSharedFlow()
+
+    private val _identityFlow = MutableSharedFlow<Identity>()
+    val identityFlow = _identityFlow.asSharedFlow()
+
+    private var updater: CountDownTimer? = null
+
     init {
         initializeAccountUpdater()
-        getActiveAccount()
     }
 
     private fun getActiveAccount() = viewModelScope.launch {
@@ -136,11 +120,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _finishLiveData.value = Event(true)
     }
 
-    //region Transaction list update/merge
-    // ************************************************************
-
     fun populateTransferList(notifyWaitingLiveData: Boolean = true) {
-        account?.let {
+        if (::account.isInitialized) {
             if (account.transactionStatus == TransactionStatus.FINALIZED) {
                 if (notifyWaitingLiveData) {
                     _waitingLiveData.value = true
@@ -177,7 +158,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
-                    _newFinalizedAccountLiveData.value = accountName
+                    _newFinalizedAccountFlow.value = accountName
+                    postState(OnboardingState.DONE)
+                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                 }
             }
 
@@ -187,9 +170,18 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         })
     }
 
+    private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
+        if (notifyWaitingLiveData) {
+            _waitingLiveData.postValue(true)
+        }
+        accountUpdater.updateForAllAccounts()
+    }
+
     private suspend fun updateAccountFromRepository() {
-        accountRepository.findById(account.id)?.let { accountCandidate ->
-            account = accountCandidate
+        if (::account.isInitialized) {
+            accountRepository.findById(account.id)?.let { accountCandidate ->
+                account = accountCandidate
+            }
         }
     }
 
@@ -213,213 +205,103 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 )
                 nonMergedLocalTransactions.add(transaction)
             }
-//            loadRemoteTransactions(null)
         }
     }
 
+    fun updateState() = viewModelScope.launch(Dispatchers.IO) {
+        // Decide what state to show (visible buttons based on if there is any identities and accounts)
+        // Also update all accounts (and set the overall balance) if any exists.
+
+//        if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
+//            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+//            updateSubmissionStatesAndBalances()
+//            return@launch
+//        }
+
+        when {
+            !App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed() ->
+                postState(OnboardingState.SAVE_PHRASE)
+
+            identityRepository.getCount() == 0 ->
+                postState(
+                    OnboardingState.VERIFY_IDENTITY
+                )
+
+            else ->
+                updateIdentityStatus()
+        }
+    }
+
+    private suspend fun postState(state: OnboardingState) {
+        _stateFlow.emit(state)
+    }
+
+    private suspend fun updateIdentityStatus() {
+        val doneCount = identityRepository.getAllDone().size
+        when {
+            doneCount > 0 -> handleDoneIdentities()
+            identityRepository.getAllPending().isNotEmpty() -> postState(
+                OnboardingState.IDENTITY_IN_PROGRESS
+            )
+
+            else -> postState(
+                OnboardingState.IDENTITY_UNSUCCESSFUL
+            )
+        }
+    }
+
+    private suspend fun handleDoneIdentities() {
+        val accountCount = accountRepository.getCount()
+        if (accountCount == 0) {
+            val identity = identityRepository.getAllDone().first()
+            _identityFlow.emit(identity)
+            postState(OnboardingState.CREATE_ACCOUNT)
+        } else {
+            handleAccountCreation()
+        }
+    }
+
+    private suspend fun handleAccountCreation() {
+        val allAccounts = accountRepository.getAll()
+        if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
+            App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+            postState(OnboardingState.DONE)
+        } else {
+            postState(state = OnboardingState.FINALIZING_ACCOUNT)
+            viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
+        }
+        updateSubmissionStatesAndBalances()
+    }
+
     fun initiateFrequentUpdater() {
-        updater.cancel()
-        updater.start()
+        startUpdater()
     }
 
     fun stopFrequentUpdater() {
-        updater.cancel()
+        updater?.cancel()
+        updater = null
     }
 
-    private var updater =
-        object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
+    private fun restartUpdater(newInterval: Long) {
+        startUpdater(newInterval)
+    }
+
+    private fun startUpdater(countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
+        stopFrequentUpdater()
+        updater = object :
+            CountDownTimer(Long.MAX_VALUE, countdownInterval * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
                 if (first) { //ignore first tick
                     first = false
                     return
                 }
+                updateState()
                 populateTransferList(false)
             }
 
             override fun onFinish() {
             }
-        }
-
-//    private fun saveTransfer(transfer: Transfer) = viewModelScope.launch {
-//        transferRepository.insert(transfer)
-//        populateTransferList()
-//    }
-
-//    fun requestGTUDrop() {
-//        _waitingLiveData.value = true
-//        proxyRepository.requestGTUDrop(
-//            account.address,
-//            {
-//                _waitingLiveData.value = false
-//                //populateTransferList()
-//                createGTUDropTransfer(it.submissionId)
-//            },
-//            {
-//                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-//                _waitingLiveData.value = false
-//            }
-//        )
-//    }
-
-//    private fun updateGTUDropState() {
-//        if (!BuildConfig.SHOW_GTU_DROP) {
-//            _showGTUDropLiveData.value = false
-//        } else {
-//            _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
-//        }
-//    }
-
-//    private fun createGTUDropTransfer(submissionId: String) {
-//        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
-//        val createdAt = Date().time
-//        val transfer = Transfer(
-//            0,
-//            account.id,
-//            (-20000000000).toBigInteger(),
-//            BigInteger.ZERO,
-//            "",
-//            account.address,
-//            expiry,
-//            "",
-//            createdAt,
-//            submissionId,
-//            TransactionStatus.RECEIVED,
-//            TransactionOutcome.UNKNOWN,
-//            TransactionType.TRANSFER,
-//            null,
-//            0,
-//            null
-//        )
-//        saveTransfer(transfer)
-//    }
-
-//    private fun clearTransactionListState() {
-//        _transferListLiveData.value = null
-//        nonMergedLocalTransactions.clear()
-//        hasMoreRemoteTransactionsToLoad = true
-//        lastRemoteTransaction = null
-//        isLoadingTransactions = false
-//        allowScrollToLoadMore = true
-//        lastHeaderDate = null
-//    }
-
-
-//    private fun getIncludeRewards(): String {
-//        if (session.getHasShowRewards(account.id) && !session.getHasShowFinalizationRewards(account.id)) {
-//            return "allButFinalization"
-//        }
-//        if (session.getHasShowRewards(account.id) && session.getHasShowFinalizationRewards(account.id)) {
-//            return "all"
-//        }
-//        return "none"
-//    }
-
-//    fun loadMoreRemoteTransactions(): Boolean {
-//        val lastRemote = lastRemoteTransaction
-//        if (isLoadingTransactions || !hasMoreRemoteTransactionsToLoad || lastRemote == null) {
-//            return false
-//        }
-//        loadRemoteTransactions(lastRemote.id)
-//        return true
-//    }
-
-//    private fun loadRemoteTransactions(from: Int?) {
-//        allowScrollToLoadMore = false
-//        isLoadingTransactions = true
-//        proxyRepository.getAccountTransactions(
-//            account.address,
-//            {
-//                Log.d("Got more transactions")
-//                hasMoreRemoteTransactionsToLoad = (it.count >= it.limit)
-//                if (it.transactions.isNotEmpty()) {
-//                    lastRemoteTransaction = it.transactions.last()
-//                }
-//                mergeTransactions(it.transactions)
-//                isLoadingTransactions = false
-//                // Its only for the initial load that it is relevant to disable loading state
-//                _waitingLiveData.value = false
-//            },
-//            {
-//                Log.d("Get more transactions failed")
-//                isLoadingTransactions = false
-//                // Its only for the initial load that it is relevant to disable loading state
-//                _waitingLiveData.value = false
-//                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-//            }, from = from, limit = 100, includeRewards = getIncludeRewards()
-//        )
-//    }
-
-//    private fun mergeTransactions(remoteTransactionList: List<RemoteTransaction>) {
-//        // Convert remote transactions
-//        val newTransactions: MutableList<Transaction> = ArrayList()
-//        for (remoteTransaction in remoteTransactionList) {
-//            val transaction = remoteTransaction.toTransaction()
-//            transactionMappingHelper.addTitleToTransaction(
-//                transaction,
-//                remoteTransaction,
-//                getApplication()
-//            )
-//            newTransactions.add(transaction)
-//        }
-//        // Find local transactions to merge
-//        val localTransactionsToBeMerged: MutableList<Transaction> = ArrayList()
-//        val localTransactionsToNotMerge: MutableList<Transaction> = ArrayList()
-//        val lastRemoteTimestamp = getLastRemoteTransactionTimestamp()
-//        for (ta in nonMergedLocalTransactions) {
-//            if (ta.timeStamp.time >= lastRemoteTimestamp) {
-//                localTransactionsToBeMerged.add(ta)
-//            } else {
-//                localTransactionsToNotMerge.add(ta)
-//            }
-//        }
-//        nonMergedLocalTransactions = localTransactionsToNotMerge
-//        // Merge
-//        newTransactions.addAll(localTransactionsToBeMerged)
-//        newTransactions.sortByDescending { it.timeStamp }
-//        // Update list with all transactions to show
-//        addToTransactionList(newTransactions)
-//    }
-
-//    private fun addToTransactionList(newTransactions: List<Transaction>) {
-//        val transferList = _transferListLiveData.value ?: ArrayList()
-//        val adapterList = transferList.toMutableList()
-//        for (ta in newTransactions) {
-//            val isAfterHeader = checkToAddHeaderItem(adapterList, ta)
-//            adapterList.add(
-//                TransactionItem(
-//                    transaction = ta,
-//                    isDividerVisible = !isAfterHeader,
-//                )
-//            )
-//        }
-//        _transferListLiveData.value = adapterList
-//        updateGTUDropState()
-//    }
-
-//    private fun checkToAddHeaderItem(
-//        adapterList: MutableList<AdapterItem>,
-//        transaction: Transaction
-//    ): Boolean {
-//        val lastDate = lastHeaderDate
-//        val taDate = transaction.timeStamp
-//        return if (lastDate == null || !DateTimeUtil.isSameDay(lastDate, taDate)) {
-//            lastHeaderDate = taDate
-//            adapterList.add(HeaderItem(DateTimeUtil.formatDateAsLocalMediumWithAltTexts(taDate)))
-//            true
-//        } else {
-//            false
-//        }
-//    }
-//
-//    private fun getLastRemoteTransactionTimestamp(): Long {
-//        val lastRemote = lastRemoteTransaction
-//        return if (lastRemote == null) {
-//            0
-//        } else {
-//            lastRemote.blockTime.toLong() * 1000
-//        }
-//    }
-
-    // endregion
+        }.also { it.start() }
+    }
 }

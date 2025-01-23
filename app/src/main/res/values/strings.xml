@@ -391,7 +391,7 @@
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Delegating:</string>
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
-    <string name="accounts_overview_balance_placeholder">…</string>
+    <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>

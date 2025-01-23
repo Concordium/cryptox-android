@@ -17,10 +17,10 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity.Companion.RESULT_RETRY_ACCOUNT_CREATION
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
@@ -35,6 +35,9 @@ import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.onboarding.OnboardingFragment
+import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
+import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import java.math.BigInteger
 
@@ -44,7 +47,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModelAccountDetails: AccountDetailsViewModel
     private lateinit var viewModelTokens: TokensViewModel
-    private lateinit var viewModelOverview: AccountsOverviewViewModel
+    private lateinit var onboardingViewModel: OnboardingSharedViewModel
+    private lateinit var onboardingStatusCard: OnboardingFragment
+    private lateinit var onboardingBinding: FragmentOnboardingBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +57,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         savedInstanceState: Bundle?
     ): View {
         binding = ActivityAccountDetailsBinding.inflate(inflater, container, false)
+        onboardingBinding = FragmentOnboardingBinding.inflate(layoutInflater)
+        onboardingStatusCard = binding.onboardingLayout
+
         return binding.root
     }
 
@@ -60,6 +68,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         initializeViewModels()
         initializeViewModelTokens()
+        mainViewModel.setTitle("")
 
         val baseActivity = (activity as BaseActivity)
 
@@ -74,9 +83,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     override fun onResume() {
         super.onResume()
-        viewModelAccountDetails.updateAccount()
-//        viewModelAccountDetails.populateTransferList()
-//        viewModelAccountDetails.initiateFrequentUpdater()
+        viewModelAccountDetails.updateState()
+        viewModelAccountDetails.initiateFrequentUpdater()
     }
 
     override fun onPause() {
@@ -89,20 +97,35 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[MainViewModel::class.java]
+
         viewModelAccountDetails = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
-        viewModelOverview = ViewModelProvider(
+
+        onboardingViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[AccountsOverviewViewModel::class.java]
+        )[OnboardingSharedViewModel::class.java]
 
-//        viewModelOverview.listItemsLiveData.observe(viewLifecycleOwner) {
-//            viewModelTokens.tokenData.account = viewModelAccountDetails.account
-//            viewModelTokens.loadTokensBalances()
-//            initViews()
-//        }
+        viewModelAccountDetails.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
+            when (state) {
+                OnboardingState.DONE -> {
+                    viewModelAccountDetails.updateAccount()
+                    viewModelAccountDetails.initiateFrequentUpdater()
+                    showStateDefault()
+                }
+
+                else -> {
+                    onboardingStatusCard.updateViewsByState(state)
+                    showStateOnboarding()
+                }
+            }
+        }
+
+        viewModelAccountDetails.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
+            onboardingViewModel.setIdentity(identity)
+        }
 
         viewModelAccountDetails.waitingLiveData.observe(viewLifecycleOwner) { waiting ->
             waiting?.let {
@@ -126,9 +149,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner, ::showTotalBalance)
 
         viewModelAccountDetails.newAccount.collectWhenStarted(viewLifecycleOwner) { account ->
-            println("newAccount: ${account.address}")
             viewModelTokens.tokenData.account = account
-            viewModelTokens.loadTokensBalances()
+            viewModelTokens.loadTokens(account.address)
             initViews()
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
@@ -140,6 +162,22 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
             initViews()
+        }
+
+        viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
+            if (it.isNotEmpty())
+                setFinalizedMode()
+        }
+
+        onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
+            onboardingStatusCard.updateViewsByIdentityStatus(identity)
+        }
+        onboardingViewModel.updateState.collectWhenStarted(viewLifecycleOwner) { update ->
+            if (update)
+                viewModelAccountDetails.updateState()
+        }
+        onboardingViewModel.showLoading.collectWhenStarted(viewLifecycleOwner) { show ->
+            showWaiting(show)
         }
     }
 
@@ -167,22 +205,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initViews() {
-        mainViewModel.setTitle("")
         showWaiting(false)
-        when (viewModelAccountDetails.account.transactionStatus) {
-            TransactionStatus.ABSENT -> {
-                setErrorMode()
-            }
-
-            TransactionStatus.FINALIZED -> {
-                setFinalizedMode()
-            }
-
-            TransactionStatus.COMMITTED -> setPendingMode()
-            TransactionStatus.RECEIVED -> setPendingMode()
-            else -> {
-            }
-        }
         binding.accountRetryButton.setOnClickListener {
             requireActivity().setResult(RESULT_RETRY_ACCOUNT_CREATION)
         }
@@ -211,6 +234,21 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         replaceTokensFragment(getTokensFragment())
+
+        when (viewModelAccountDetails.account.transactionStatus) {
+            TransactionStatus.ABSENT -> {
+                setErrorMode()
+            }
+
+            TransactionStatus.FINALIZED -> {
+                setFinalizedMode()
+            }
+
+            TransactionStatus.COMMITTED -> setPendingMode()
+            TransactionStatus.RECEIVED -> setPendingMode()
+            else -> {
+            }
+        }
         initContainer()
     }
 
@@ -223,6 +261,25 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             activityBtn.isEnabled = true
         }
         setupOnrampBanner(active = true)
+    }
+
+    private fun showStateOnboarding() {
+        activity?.invalidateOptionsMenu()
+        binding.onboardingLayout.visibility = View.VISIBLE
+        binding.tokensFragmentContainer.visibility = View.GONE
+        showOnboarding(true)
+    }
+
+    private fun showStateDefault() {
+        activity?.invalidateOptionsMenu()
+        binding.onboardingLayout.visibility = View.GONE
+        binding.tokensFragmentContainer.visibility = View.VISIBLE
+        showOnboarding(false)
+    }
+
+    private fun showOnboarding(show: Boolean) {
+        val state = if (show) View.VISIBLE else View.GONE
+        binding.onboardingLayout.visibility = state
     }
 
     private fun setErrorMode() {
@@ -395,5 +452,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun gotoAccountsList() {
         val intent = Intent(activity, AccountsListActivity::class.java)
         startActivity(intent)
+    }
+
+    companion object {
+        const val RESULT_RETRY_ACCOUNT_CREATION = 2
     }
 }

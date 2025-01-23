@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.account.accountslist
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
@@ -27,14 +26,12 @@ class AccountsListActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         hideActionBarBack(isVisible = true)
-        hideSettings(isVisible = true) {
-            Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show()
-        }
         viewModelAccountDetails = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[AccountDetailsViewModel::class.java]
 
+        viewModelAccountDetails.updateAccount()
         viewModelAccountDetails.newAccount.collectWhenStarted(this) { account ->
             hideSettings(isVisible = true) {
                 gotoAccountSettings(account)

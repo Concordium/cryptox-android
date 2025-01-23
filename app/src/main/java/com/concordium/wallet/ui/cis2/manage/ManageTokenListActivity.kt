@@ -26,6 +26,7 @@ class ManageTokenListActivity : BaseActivity(
     private lateinit var tokensAdapter: ManageTokensListAdapter
 
     private lateinit var account: Account
+    private var listUpdated = false
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -48,6 +49,15 @@ class ManageTokenListActivity : BaseActivity(
     override fun onResume() {
         super.onResume()
         viewModelTokens.loadTokens(account.address)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        listUpdated = intent?.getBooleanExtra(LIST_UPDATED, false) == true
+        if (listUpdated) {
+            showToast(showDescription = false)
+        }
     }
 
     private fun initViewModel() {
@@ -86,8 +96,8 @@ class ManageTokenListActivity : BaseActivity(
                 onHideTokenClicked(token)
             }
         })
-        val listUpdated = intent.getBooleanExtra(LIST_UPDATED, false)
 
+        listUpdated = intent.getBooleanExtra(LIST_UPDATED, false)
         if (listUpdated) {
             showToast(showDescription = false)
         }

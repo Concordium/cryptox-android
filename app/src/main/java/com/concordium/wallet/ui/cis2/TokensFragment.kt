@@ -7,15 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentTokensBinding
-import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
 import com.concordium.wallet.uicore.toast.showGradientToast
 
@@ -25,9 +22,7 @@ class TokensFragment : Fragment() {
     private val viewModel: TokensViewModel by lazy {
         ViewModelProvider(requireActivity())[TokensViewModel::class.java]
     }
-    private val accountViewModel: AccountDetailsViewModel by viewModels()
 
-    private var isFungible: Boolean? = null
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
 
     override fun onCreateView(
@@ -62,22 +57,21 @@ class TokensFragment : Fragment() {
     }
 
     private fun initObservers() {
-        accountViewModel.newAccount.collectWhenStarted(viewLifecycleOwner) { account ->
-            viewModel.loadTokens(account.address, isFungible)
-            tokensAccountDetailsAdapter.setData(viewModel.tokens)
-
-            tokensAccountDetailsAdapter.setManageButtonClickListener {
-                gotoManageTokensList(account)
+        viewModel.waiting.observe(viewLifecycleOwner) { waiting ->
+            if (!waiting) {
+                println("tokensfragment newAccount: ${viewModel.tokenData.account?.address}")
+                binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
+                tokensAccountDetailsAdapter.setData(viewModel.tokens)
             }
-            binding.noItemsManageTokens.setOnClickListener {
-                gotoManageTokensList(account)
-            }
-        }
 
-        viewModel.waiting.observe(viewLifecycleOwner) {
-            binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
-            tokensAccountDetailsAdapter.setData(viewModel.tokens)
-            viewModel.loadTokensBalances()
+            viewModel.tokenData.account?.let { account ->
+                tokensAccountDetailsAdapter.setManageButtonClickListener {
+                    gotoManageTokensList(account)
+                }
+                binding.noItemsManageTokens.setOnClickListener {
+                    gotoManageTokensList(account)
+                }
+            }
         }
         viewModel.tokenDetails.observe(viewLifecycleOwner) {
             tokensAccountDetailsAdapter.notifyDataSetChanged()

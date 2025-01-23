@@ -197,7 +197,7 @@ class AccountDetailsActivity : BaseActivity(
         binding.activityBtn.setOnClickListener {
             onActivityClicked()
         }
-        initContainer()
+//        initContainer()
     }
 
     private fun initTitle() {
@@ -239,27 +239,27 @@ class AccountDetailsActivity : BaseActivity(
             .commit()
     }
 
-    private fun initContainer() {
-        var handledContainerHeight = -1
-        binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
-            val containerHeight = binding.scrollView.measuredHeight
-            val buttonsHeight = binding.buttonsBlock.measuredHeight
-            val onRampHeight = binding.onrampBanner.root.measuredHeight
-            val buttonsMargin =
-                (binding.tokensFragmentContainer.layoutParams as MarginLayoutParams).topMargin
-            val onRampMargin =
-                (binding.onrampBanner.root.layoutParams as MarginLayoutParams).topMargin
-
-            if (handledContainerHeight != containerHeight) {
-                handledContainerHeight = containerHeight
-
-                binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
-                    height =
-                        containerHeight - buttonsHeight - buttonsMargin - onRampMargin - onRampHeight
-                }
-            }
-        }
-    }
+//    private fun initContainer() {
+//        var handledContainerHeight = -1
+//        binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
+//            val containerHeight = binding.scrollView.measuredHeight
+//            val buttonsHeight = binding.buttonsBlock.measuredHeight
+//            val onRampHeight = binding.onrampBanner.root.measuredHeight
+//            val buttonsMargin =
+//                (binding.tokensFragmentContainer.layoutParams as MarginLayoutParams).topMargin
+//            val onRampMargin =
+//                (binding.onrampBanner.root.layoutParams as MarginLayoutParams).topMargin
+//
+//            if (handledContainerHeight != containerHeight) {
+//                handledContainerHeight = containerHeight
+//
+//                binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
+//                    height =
+//                        containerHeight - buttonsHeight - buttonsMargin - onRampMargin - onRampHeight
+//                }
+//            }
+//        }
+//    }
 
     //endregion
 
