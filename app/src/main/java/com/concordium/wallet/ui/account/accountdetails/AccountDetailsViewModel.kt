@@ -208,15 +208,15 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun updateState() = viewModelScope.launch(Dispatchers.IO) {
+    fun updateState(notifyWaitingLiveData: Boolean = true) = viewModelScope.launch(Dispatchers.IO) {
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
 
-//        if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
-//            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-//            updateSubmissionStatesAndBalances()
-//            return@launch
-//        }
+        if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
+            postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
+            return@launch
+        }
 
         when {
             !App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed() ->
@@ -232,8 +232,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private suspend fun postState(state: OnboardingState) {
+    private suspend fun postState(
+        state: OnboardingState,
+        notifyWaitingLiveData: Boolean = true,
+    ) {
         _stateFlow.emit(state)
+        if (notifyWaitingLiveData) {
+            _waitingLiveData.postValue(false)
+        }
     }
 
     private suspend fun updateIdentityStatus() {
