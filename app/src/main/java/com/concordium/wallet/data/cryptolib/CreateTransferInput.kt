@@ -28,5 +28,5 @@ data class CreateTransferInput(
     val bakerKeys: BakerKeys? = null,
     val transactionFeeCommission: Double? = null,
     val bakingRewardCommission: Double? = null,
-    val finalizationRewardCommission: Double? = null
+    val finalizationRewardCommission: Double? = null,
 ): Serializable

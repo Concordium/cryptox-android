@@ -31,7 +31,6 @@ import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.BakerPoolInfo
-import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_OPEN_FOR_ALL
 import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.SubmissionData
@@ -169,7 +168,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isOpenBaker(): Boolean {
-        return bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
+        return bakerDelegationData.bakerPoolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL
     }
 
     fun isUpdatingDelegation(): Boolean {
@@ -303,7 +302,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     fun loadTransactionFee(
         notifyObservers: Boolean,
         requestId: Int? = null,
-        metadataSizeForced: Int? = null
+        metadataSizeForced: Int? = null,
     ) {
         val amount = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
@@ -324,7 +323,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             }
 
             UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
-                if (metadataUrlHasChanged() || (openStatusHasChanged() && bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)) {
+                if (metadataUrlHasChanged() || (openStatusHasChanged() && bakerDelegationData.bakerPoolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL)) {
                     (bakerDelegationData.metadataUrl?.length ?: 0)
                 } else null
             }
@@ -472,15 +471,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 val credentialsOutput =
                     App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 if (bakerDelegationData.isBakerFlow())
-                    createBakingTransaction(
-                        credentialsOutput.accountKeys,
-                        credentialsOutput.encryptionSecretKey
-                    )
+                    createBakingTransaction(credentialsOutput.accountKeys)
                 else
-                    createDelegationTransaction(
-                        credentialsOutput.accountKeys,
-                        credentialsOutput.encryptionSecretKey
-                    )
+                    createDelegationTransaction(credentialsOutput.accountKeys)
             } else {
                 _errorLiveData.value = Event(R.string.app_error_encryption)
                 _waitingLiveData.value = false
@@ -488,7 +481,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private suspend fun createBakingTransaction(keys: AccountData, encryptionSecretKey: String?) {
+    private suspend fun createBakingTransaction(keys: AccountData) {
 
         val from = bakerDelegationData.account?.address
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
@@ -500,10 +493,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             _waitingLiveData.value = false
             return
         }
-
-        var encryptionSK: String? = null
-        if (bakerDelegationData.type != REMOVE_BAKER)
-            encryptionSK = encryptionSecretKey
 
         var capital: String? = null
         if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && stakedAmountHasChanged())
@@ -532,6 +521,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.bakingCommissionRate else null
         val finalizationRewardCommission =
             if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.finalizationCommissionRate else null
+
         val transferInput = CreateTransferInput(
             from,
             keys,
@@ -543,7 +533,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             null,
             null,
             null,
-            encryptionSK,
+            null,
             null,
             capital,
             restakeEarnings,
@@ -571,10 +561,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private suspend fun createDelegationTransaction(
-        keys: AccountData,
-        encryptionSecretKey: String?
-    ) {
+    private suspend fun createDelegationTransaction(keys: AccountData) {
         val from = bakerDelegationData.account?.address
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val energy = bakerDelegationData.energy
@@ -585,10 +572,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             _waitingLiveData.value = false
             return
         }
-
-        var encryptionSK: String? = null
-        if (bakerDelegationData.type != REMOVE_DELEGATION)
-            encryptionSK = encryptionSecretKey
 
         var capital: String? = null
         if (stakedAmountHasChanged())
@@ -630,7 +613,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             null,
             null,
             null,
-            encryptionSK,
+            null,
             null,
             capital,
             restakeEarnings,
@@ -654,7 +637,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private fun submitTransfer(
         transfer: CreateTransferOutput,
-        localTransactionType: TransactionType
+        localTransactionType: TransactionType,
     ) {
         _waitingLiveData.value = true
         submitTransaction?.dispose()
