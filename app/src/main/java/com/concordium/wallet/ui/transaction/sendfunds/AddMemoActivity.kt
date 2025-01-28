@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAddMemoBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -61,6 +62,15 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
+        binding.memoEdittext.setOnFocusChangeListener { _, hasFocus ->
+            binding.memoEdittext.background = if (hasFocus) {
+                ContextCompat.getDrawable(this, R.drawable.mw24_input_field_background_active)
+            } else {
+                ContextCompat.getDrawable(this, R.drawable.mw24_input_field_background_default)
+            }
+        }
+
         binding.confirmButton.setOnClickListener {
             val memoText = binding.memoEdittext.text.toString().trim()
             binding.memoEdittext.setText(memoText)

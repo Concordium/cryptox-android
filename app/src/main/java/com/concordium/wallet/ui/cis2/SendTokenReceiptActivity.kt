@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 class SendTokenReceiptActivity : BaseActivity(
     R.layout.activity_send_token_receipt,
-    R.string.cis_send_funds
+    R.string.cis_send_funds_confirmation
 ), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySendTokenReceiptBinding
     private val viewModel: SendTokenViewModel by viewModels()

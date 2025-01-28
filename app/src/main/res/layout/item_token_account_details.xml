@@ -94,7 +94,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_goneMarginEnd="12dp"
-            tools:text="BTC" />
+            tools:text="1234.35" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

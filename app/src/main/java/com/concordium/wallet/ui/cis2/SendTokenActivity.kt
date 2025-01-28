@@ -8,26 +8,24 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
-import com.concordium.wallet.Constants
+import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
-import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
+import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.getSerializable
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
 class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.cis_send_funds) {
@@ -48,6 +46,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
         initObservers()
+        initFragmentListener()
         initViews()
         hideActionBarBack(isVisible = true)
     }
@@ -70,9 +69,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         )
         initializeAmount()
         initializeMax()
-        initializeReceiver()
         initializeAddressBook()
-        initializeScanQrCode()
         initializeSend()
         initializeSearchToken()
         viewModel.getGlobalInfo()
@@ -80,18 +77,18 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun initializeSend() {
-        binding.send.setOnClickListener {
+        binding.continueBtn.setOnClickListener {
             send()
         }
     }
 
     private fun send() {
-        binding.send.isEnabled = false
+        binding.continueBtn.isEnabled = false
         gotoReceipt()
     }
 
     private fun initializeSearchToken() {
-        binding.token.setOnClickListener {
+        binding.content.setOnClickListener {
             selectTokenBottomSheet = SelectTokenBottomSheet.newInstance(viewModel, viewModelTokens)
             selectTokenBottomSheet?.show(supportFragmentManager, "")
         }
@@ -140,31 +137,17 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun enableSend(): Boolean {
-        binding.send.isEnabled = viewModel.canSend
-        return binding.send.isEnabled
-    }
-
-    private fun initializeReceiver() {
-        binding.receiver.doOnTextChanged { text, _, _, _ ->
-            onReceiverEntered(text?.toString() ?: "")
-        }
+        binding.continueBtn.isEnabled = viewModel.canSend
+        return binding.continueBtn.isEnabled
     }
 
     private fun initializeAddressBook() {
-        binding.addressBook.setOnClickListener {
+        binding.recipientLayout.setOnClickListener {
             val intent = Intent(this, RecipientListActivity::class.java)
             intent.putExtra(RecipientListActivity.EXTRA_SELECT_RECIPIENT_MODE, true)
             intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.sendTokenData.account)
             intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.sendTokenData.account)
             getResultRecipient.launch(intent)
-        }
-    }
-
-    private fun initializeScanQrCode() {
-        binding.scanQr.setOnClickListener {
-            val intent = Intent(this, ScanQRActivity::class.java)
-            intent.putExtra(Constants.Extras.EXTRA_ADD_CONTACT, true)
-            getResultScanQr.launch(intent)
         }
     }
 
@@ -190,23 +173,16 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     RecipientListActivity.EXTRA_RECIPIENT,
                     Recipient::class.java
                 )?.let { recipient ->
-                    binding.receiver.setText(recipient.address)
+                    viewModel.onReceiverEntered(recipient.address)
+                    binding.recipientPlaceholder.visibility = View.GONE
+                    binding.recipientNameLayout.visibility = View.VISIBLE
+                    binding.recipientAddress.text = recipient.address
+
                     if (recipient.name.isNotEmpty()) {
                         onReceiverNameFound(recipient.name)
                     }
                 }
             }
-        }
-
-    private val getResultScanQr =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            result
-                .takeIf { it.resultCode == Activity.RESULT_OK }
-                ?.data?.extras
-                ?.let(ScanQRActivity::getScannedQrContent)
-                ?.also { scannedQrContent ->
-                    binding.receiver.setText(scannedQrContent)
-                }
         }
 
     private fun clearMemo() =
@@ -230,17 +206,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
     }
 
-    private fun onReceiverEntered(input: String) {
-        viewModel.onReceiverEntered(input)
-        binding.receiverName.isVisible = false
-        binding.or.isInvisible = input.isNotEmpty()
-        enableSend()
-    }
-
     private fun onReceiverNameFound(name: String) {
         viewModel.onReceiverNameFound(name)
-        binding.receiverName.isVisible = true
-        binding.receiverName.text = name
+        binding.recipientName.visibility = View.VISIBLE
+        binding.recipientName.text = name
     }
 
     private fun initObservers() {
@@ -250,11 +219,9 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         viewModel.chooseToken.observe(this) { token ->
             selectTokenBottomSheet?.dismiss()
             selectTokenBottomSheet = null
-            binding.balanceTitle.text =
-                if (token.isUnique)
-                    getString(R.string.cis_token_quantity)
-                else
-                    getString(R.string.cis_token_balance, token.symbol).trim()
+
+            setTokenIcon(token)
+
             val decimals = token.decimals
             binding.balance.text =
                 CurrencyUtil.formatGTU(token.balance, token.isCcd, decimals)
@@ -277,26 +244,22 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
             if (!token.isCcd) {
                 binding.addMemo.visibility = View.GONE
+                binding.atDisposalLayout.visibility = View.GONE
+                binding.balance.visibility = View.VISIBLE
             } else {
                 binding.addMemo.visibility = View.VISIBLE
                 binding.addMemo.setOnClickListener {
                     if (viewModel.showMemoWarning()) {
-                        val builder = MaterialAlertDialogBuilder(this)
-                        builder.setTitle(getString(R.string.transaction_memo_warning_title))
-                        builder.setMessage(getString(R.string.transaction_memo_warning_text))
-                        builder.setNegativeButton(getString(R.string.transaction_memo_warning_dont_show)) { _, _ ->
-                            viewModel.dontShowMemoWarning()
-                            goToEnterMemo()
-                        }
-                        builder.setPositiveButton(getString(R.string.transaction_memo_warning_ok)) { _, _ ->
-                            goToEnterMemo()
-                        }
-                        builder.setCancelable(true)
-                        builder.create().show()
+                        MemoNoticeDialog().showSingle(
+                            supportFragmentManager,
+                            MemoNoticeDialog.TAG
+                        )
                     } else {
                         goToEnterMemo()
                     }
                 }
+                binding.atDisposalLayout.visibility = View.VISIBLE
+                binding.balance.visibility = View.GONE
             }
             // This also initiates fee loading.
             clearMemo()
@@ -308,10 +271,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 if (fee != null)
                     getString(
                         R.string.cis_estimated_fee,
-                        getString(
-                            R.string.amount,
-                            CurrencyUtil.formatGTU(fee, true)
-                        )
+                        CurrencyUtil.formatGTU(fee, true)
                     )
                 else
                     ""
@@ -325,6 +285,39 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setTokenIcon(token: Token) {
+        val tokenMetadata = token.metadata
+        if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
+            Glide.with(this)
+                .load(tokenMetadata.thumbnail.url)
+                .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
+                .placeholder(ThemedCircularProgressDrawable(this))
+                .fitCenter()
+                .into(binding.tokenIcon)
+        } else if (token.isCcd) {
+            Glide.with(this)
+                .load(R.drawable.mw24_ic_ccd)
+                .into(binding.tokenIcon)
+        } else {
+            Glide.with(this)
+                .load(R.drawable.ic_token_no_image)
+                .into(binding.tokenIcon)
+        }
+    }
+
+    private fun initFragmentListener() {
+        supportFragmentManager.setFragmentResultListener(
+            MemoNoticeDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            val showAgain = MemoNoticeDialog.getResult(bundle)
+            if (!showAgain) {
+                viewModel.dontShowMemoWarning()
+            }
+            goToEnterMemo()
         }
     }
 

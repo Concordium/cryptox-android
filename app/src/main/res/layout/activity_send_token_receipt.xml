@@ -163,9 +163,10 @@
 
         <Button
             android:id="@+id/send_funds"
-            style="@style/CryptoX_Button_Primary"
+            style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
-            android:text="@string/cis_send_funds" />
+            android:layout_height="wrap_content"
+            android:text="@string/cis_send_funds_preview" />
 
         <Button
             android:id="@+id/finish"
