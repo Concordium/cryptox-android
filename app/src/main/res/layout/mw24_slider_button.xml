@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/motionLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    app:currentState="@+id/start"
+    app:layoutDescription="@xml/mw24_slider_button_scene">
+
+    <View
+        android:id="@+id/slider_start_background"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:background="@drawable/mw24_slider_background_start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/slider_end_background"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:background="@drawable/mw24_slider_background_end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/slider_thumb"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/slider_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/cis_submit_transaction"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/cryptox_black_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/slider_thumb"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="1dp"
+        android:background="@drawable/mw24_thumb_background"
+        android:clickable="false"
+        android:contentDescription="@string/cis_slider_thumb"
+        android:focusable="false"
+        android:scaleType="center"
+        android:src="@drawable/ccx_ico_arrow_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/cryptox_grey_secondary" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

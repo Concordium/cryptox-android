@@ -14,6 +14,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,7 @@ class SendTokenReceiptActivity : BaseActivity(
     R.string.cis_send_funds_confirmation
 ), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySendTokenReceiptBinding
+    private lateinit var sliderButton: SliderButton
     private val viewModel: SendTokenViewModel by viewModels()
     private var receiptMode = false
 
@@ -46,20 +48,17 @@ class SendTokenReceiptActivity : BaseActivity(
     }
 
     private fun initViews() {
-        binding.transactionTitle.setText(
-            if (viewModel.sendTokenData.token!!.isCcd)
-                R.string.cis_transaction_send_funds
-            else
-                R.string.cis_transaction_send_tokens
-        )
-        binding.sender.text = viewModel.sendTokenData.account?.getAccountName()
-            .plus("\n\n")
-            .plus(viewModel.sendTokenData.account?.address)
+        sliderButton = binding.sendFunds
+        binding.senderName.text = viewModel.sendTokenData.account?.getAccountName()
+        binding.senderAddress.text = viewModel.sendTokenData.account?.address
         binding.amountTitle.text =
             if (viewModel.sendTokenData.token?.isUnique == true)
                 getString(R.string.cis_token_quantity)
             else
-                getString(R.string.cis_amount)
+                getString(
+                    R.string.cis_amount,
+                    viewModel.sendTokenData.token?.symbol
+                )
         binding.amount.text =
             CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, viewModel.sendTokenData.token)
         binding.receiver.text = viewModel.sendTokenData.receiver
@@ -80,42 +79,25 @@ class SendTokenReceiptActivity : BaseActivity(
                 showPageAsSendPrompt()
             }
         }
-        binding.sendFunds.setOnClickListener {
+        binding.sendFunds.setOnSliderCompleteListener {
             onSend()
         }
         binding.finish.setOnClickListener {
             onFinish()
         }
-        if (viewModel.sendTokenData.token!!.isCcd) {
-            binding.tokenTitle.visibility = View.GONE
-            binding.token.visibility = View.GONE
-        } else {
-            if (viewModel.sendTokenData.token?.isUnique == true) {
-                binding.token.text = viewModel.sendTokenData.token?.name
-            } else {
-                val symbol: String = viewModel.sendTokenData.token!!.symbol
-                if (symbol.isNotBlank())
-                    binding.token.text = symbol
-                else {
-                    binding.tokenTitle.visibility = View.GONE
-                    binding.token.visibility = View.GONE
-                }
-            }
-        }
         viewModel.sendTokenData.memo.let { encodedMemo ->
             if (encodedMemo != null) {
-                binding.memoTitle.visibility = View.VISIBLE
-                binding.memo.visibility = View.VISIBLE
+                binding.memoDivider.visibility = View.VISIBLE
+                binding.memoLayout.visibility = View.VISIBLE
                 binding.memo.text = CBORUtil.decodeHexAndCBOR(encodedMemo)
             } else {
-                binding.memoTitle.visibility = View.GONE
-                binding.memo.visibility = View.GONE
+                binding.memoDivider.visibility = View.GONE
+                binding.memoLayout.visibility = View.GONE
             }
         }
     }
 
     private fun onSend() {
-        binding.sendFunds.isEnabled = false
         viewModel.send()
     }
 
@@ -135,7 +117,7 @@ class SendTokenReceiptActivity : BaseActivity(
                 activity = this@SendTokenReceiptActivity,
                 onAuthenticated = viewModel::continueWithPassword,
                 onCanceled = {
-                    binding.sendFunds.isEnabled = true
+                    sliderButton.transitionToStart()
                 }
             )
         }
@@ -148,7 +130,6 @@ class SendTokenReceiptActivity : BaseActivity(
 
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
-            binding.sendFunds.isEnabled = true
         }
     }
 
@@ -157,7 +138,6 @@ class SendTokenReceiptActivity : BaseActivity(
         hideActionBarBack(isVisible = false)
         binding.sendFunds.visibility = View.GONE
         binding.finish.visibility = View.VISIBLE
-        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
     }
 
     private fun showPageAsSendPrompt() {
@@ -165,7 +145,6 @@ class SendTokenReceiptActivity : BaseActivity(
         hideActionBarBack(isVisible = true)
         binding.sendFunds.visibility = View.VISIBLE
         binding.finish.visibility = View.GONE
-        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.GONE
     }
 
     private fun showWaiting(waiting: Boolean) {
