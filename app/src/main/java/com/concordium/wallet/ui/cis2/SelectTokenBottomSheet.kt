@@ -5,17 +5,17 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.databinding.FragmentSelectTokenBottomSheetBinding
+import com.concordium.wallet.databinding.ActivitySelectTokenBinding
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class SelectTokenBottomSheet : BottomSheetDialogFragment(
-    R.layout.fragment_select_token_bottom_sheet
+    R.layout.activity_select_token
 ) {
     override fun getTheme() =
         R.style.AppBottomSheetDialogTheme
 
-    private var _binding: FragmentSelectTokenBottomSheetBinding? = null
+    private var _binding: ActivitySelectTokenBinding? = null
     private val binding get() = _binding!!
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
     private lateinit var _viewModel: SendTokenViewModel
@@ -36,7 +36,7 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentSelectTokenBottomSheetBinding.bind(view)
+        _binding = ActivitySelectTokenBinding.bind(view)
         initViews()
         initObservers()
         _viewModel.loadTokens(_viewModel.sendTokenData.account?.address ?: "")
@@ -48,12 +48,12 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
     }
 
     private fun initViews() {
-        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        binding.tokensList.layoutManager = LinearLayoutManager(activity)
         tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(
             context = requireActivity(),
             showManageButton = false
         )
-        tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
+        tokensAccountDetailsAdapter.also { binding.tokensList.adapter = it }
 
         tokensAccountDetailsAdapter.setTokenClickListener(object :
             TokensAccountDetailsAdapter.TokenClickListener {
@@ -78,6 +78,6 @@ class SelectTokenBottomSheet : BottomSheetDialogFragment(
     }
 
     private fun showWaiting(waiting: Boolean) {
-        binding.tokensFound.visibility = if (waiting) View.GONE else View.VISIBLE
+        binding.tokensList.visibility = if (waiting) View.GONE else View.VISIBLE
     }
 }

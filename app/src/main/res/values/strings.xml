@@ -526,7 +526,7 @@
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">This contract has no valid tokens</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
-    <string name="cis_select_token_title">Select token</string>
+    <string name="cis_select_token_title">Choose token</string>
     <string name="cis_loading_metadata_progress">Loading metadata…</string>
     <string name="cis_search">Search for token ID</string>
     <string name="cis_send_continue">Continue</string>

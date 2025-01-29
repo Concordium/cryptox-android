@@ -89,8 +89,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initializeSearchToken() {
         binding.content.setOnClickListener {
-            selectTokenBottomSheet = SelectTokenBottomSheet.newInstance(viewModel, viewModelTokens)
-            selectTokenBottomSheet?.show(supportFragmentManager, "")
+            val intent = Intent(this, SelectTokenActivity::class.java).apply {
+                putExtra(SelectTokenActivity.SELECT_TOKEN_ACCOUNT, viewModel.sendTokenData.account)
+            }
+            getResultToken.launch(intent)
         }
     }
 
@@ -181,6 +183,18 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     if (recipient.name.isNotEmpty()) {
                         onReceiverNameFound(recipient.name)
                     }
+                }
+            }
+        }
+
+    private val getResultToken =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getSerializable(
+                    SelectTokenActivity.SELECT_TOKEN_ACCOUNT,
+                    Token::class.java
+                )?.let { token ->
+                    viewModel.chooseToken.postValue(token)
                 }
             }
         }
