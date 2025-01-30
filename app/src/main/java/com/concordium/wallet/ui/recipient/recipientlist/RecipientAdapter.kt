@@ -155,7 +155,8 @@ class RecipientAdapter(private val callback: IListCallback) :
 
     private fun getFilteredList(allData: List<Recipient>, filterString: String): List<Recipient> {
         return allData.filter { recipient ->
-            recipient.name.toLowerCase().contains(filterString.toLowerCase())
+            recipient.name.lowercase().contains(filterString.lowercase()) ||
+                    recipient.address.lowercase().contains(filterString.lowercase())
         }
     }
 }

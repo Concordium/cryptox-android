@@ -42,6 +42,7 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
             }
             recipientsToShowLiveData
         }
+    private val cryptoLibrary = App.appCore.cryptoLibrary
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -59,5 +60,9 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
 
     fun deleteRecipient(recipient: Recipient) = viewModelScope.launch(Dispatchers.IO) {
         recipientRepository.delete(recipient)
+    }
+
+    fun validateRecipientAddress(address: String): Boolean {
+        return cryptoLibrary.checkAccountAddress(address)
     }
 }
