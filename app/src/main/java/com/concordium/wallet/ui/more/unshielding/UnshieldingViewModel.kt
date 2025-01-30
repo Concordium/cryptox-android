@@ -211,9 +211,6 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
                 transferRepository = transferRepository,
                 accountUpdater = accountUpdater,
             ),
-            capital = null,
-            restakeEarnings = null,
-            delegationTarget = null,
         )
         val createTransferOutput = App.appCore.cryptoLibrary.createTransfer(
             createTransferInput = createTransferInput,
