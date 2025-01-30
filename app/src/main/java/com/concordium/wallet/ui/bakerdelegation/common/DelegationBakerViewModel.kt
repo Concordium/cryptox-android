@@ -6,6 +6,26 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.sdk.crypto.bls.BLSPublicKey
+import com.concordium.sdk.crypto.bls.BLSSecretKey
+import com.concordium.sdk.crypto.ed25519.ED25519PublicKey
+import com.concordium.sdk.crypto.ed25519.ED25519SecretKey
+import com.concordium.sdk.crypto.vrf.VRFPublicKey
+import com.concordium.sdk.crypto.vrf.VRFSecretKey
+import com.concordium.sdk.responses.transactionstatus.OpenStatus
+import com.concordium.sdk.responses.transactionstatus.PartsPerHundredThousand
+import com.concordium.sdk.transactions.AccountTransaction
+import com.concordium.sdk.transactions.CCDAmount
+import com.concordium.sdk.transactions.ConfigureBakerKeysPayload
+import com.concordium.sdk.transactions.ConfigureBakerPayload
+import com.concordium.sdk.transactions.ConfigureBakerTransaction
+import com.concordium.sdk.transactions.Expiry
+import com.concordium.sdk.transactions.Hash
+import com.concordium.sdk.transactions.SignerEntry
+import com.concordium.sdk.transactions.TransactionFactory
+import com.concordium.sdk.transactions.TransactionSigner
+import com.concordium.sdk.types.AccountAddress
+import com.concordium.sdk.types.Nonce
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
@@ -24,7 +44,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
-import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
@@ -48,8 +67,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.math.BigInteger
 import java.util.Date
+import kotlin.math.roundToInt
 
 class DelegationBakerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -471,7 +492,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 val credentialsOutput =
                     App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 if (bakerDelegationData.isBakerFlow())
-                    createBakingTransaction(credentialsOutput.accountKeys)
+                    createBakingTransaction(credentialsOutput.accountKeys.getSignerEntry())
                 else
                     createDelegationTransaction(credentialsOutput.accountKeys)
             } else {
@@ -481,8 +502,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private suspend fun createBakingTransaction(keys: AccountData) {
-
+    private suspend fun createBakingTransaction(signer: SignerEntry) {
         val from = bakerDelegationData.account?.address
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val energy = bakerDelegationData.energy
@@ -516,49 +536,78 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
         val transactionFeeCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.transactionCommissionRate else null
+            if (commissionRatesHasChanged()) bakerDelegationData.transactionCommissionRate else null
         val bakingRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.bakingCommissionRate else null
+            if (commissionRatesHasChanged()) bakerDelegationData.bakingCommissionRate else null
         val finalizationRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.finalizationCommissionRate else null
+            if (commissionRatesHasChanged()) bakerDelegationData.finalizationCommissionRate else null
 
-        val transferInput = CreateTransferInput(
-            from,
-            keys,
-            null,
-            expiry,
-            null,
-            energy,
-            nonce.nonce,
-            null,
-            null,
-            null,
-            null,
-            null,
-            capital,
-            restakeEarnings,
-            null,
-            metadataUrl,
-            openStatus,
-            bakerKeys,
-            transactionFeeCommission,
-            bakingRewardCommission,
-            finalizationRewardCommission
-        )
+        val transaction: ConfigureBakerTransaction = try {
+            val configureBakerPayload = ConfigureBakerPayload
+                .builder()
+                .capital(capital?.let(CCDAmount::fromMicro))
+                .restakeEarnings(restakeEarnings)
+                .metadataUrl(metadataUrl)
+                .openForDelegation(
+                    when (openStatus) {
+                        BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL ->
+                            OpenStatus.OPEN_FOR_ALL
 
-        val output = App.appCore.cryptoLibrary.createTransfer(
-            transferInput,
-            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION
-        )
+                        BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW ->
+                            OpenStatus.CLOSED_FOR_NEW
 
-        if (output == null) {
+                        BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL ->
+                            OpenStatus.CLOSED_FOR_ALL
+
+                        else ->
+                            null
+                    }
+                )
+                .keysWithProofs(bakerKeys?.run {
+                    ConfigureBakerKeysPayload.getNewConfigureBakerKeysPayload(
+                        AccountAddress.from(from),
+                        com.concordium.sdk.crypto.bakertransactions.BakerKeys
+                            .builder()
+                            .signatureSignKey(ED25519SecretKey.from(signatureSignKey))
+                            .signatureVerifyKey(ED25519PublicKey.from(signatureVerifyKey))
+                            .electionPrivateKey(VRFSecretKey.from(electionPrivateKey))
+                            .electionVerifyKey(VRFPublicKey.from(electionVerifyKey))
+                            .aggregationSignKey(BLSSecretKey.from(aggregationSignKey))
+                            .aggregationVerifyKey(BLSPublicKey.from(aggregationVerifyKey))
+                            .build()
+                    )
+                })
+                .transactionFeeCommission(transactionFeeCommission?.let {
+                    PartsPerHundredThousand.from((it * 100000).roundToInt())
+                })
+                .bakingRewardCommission(bakingRewardCommission?.let {
+                    PartsPerHundredThousand.from((it * 100000).roundToInt())
+                })
+                .finalizationRewardCommission(finalizationRewardCommission?.let {
+                    PartsPerHundredThousand.from((it * 100000).roundToInt())
+                })
+//                TODO enable suspension/un-suspension
+//                .suspended(false)
+                .build()
+
+            TransactionFactory.newConfigureBaker()
+                .sender(AccountAddress.from(from))
+                .signer(TransactionSigner.from(signer))
+                .nonce(Nonce.from(nonce.nonce.toLong()))
+                .expiry(Expiry.from(expiry))
+                .payload(configureBakerPayload)
+                .build()
+        } catch (e: Exception) {
+            Log.e("Error creating transaction", e)
             _errorLiveData.value = Event(R.string.app_error_lib)
             _waitingLiveData.value = false
-        } else {
-            viewModelScope.launch {
-                submitTransfer(output, TransactionType.LOCAL_BAKER)
-            }
+            return
         }
+
+        submitConfigurationTransaction(
+            transaction = transaction,
+            localTransactionType = TransactionType.LOCAL_BAKER,
+        )
     }
 
     private suspend fun createDelegationTransaction(keys: AccountData) {
@@ -629,66 +678,71 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             _errorLiveData.value = Event(R.string.app_error_lib)
             _waitingLiveData.value = false
         } else {
-            viewModelScope.launch {
-                submitTransfer(output, TransactionType.LOCAL_DELEGATION)
-            }
+            // TODO replace with grpc
+//            viewModelScope.launch {
+//                submitTransfer(output, TransactionType.LOCAL_DELEGATION)
+//            }
         }
     }
 
-    private fun submitTransfer(
-        transfer: CreateTransferOutput,
+    private suspend fun submitConfigurationTransaction(
+        transaction: AccountTransaction,
         localTransactionType: TransactionType,
-    ) {
-        _waitingLiveData.value = true
-        submitTransaction?.dispose()
-        submitTransaction = proxyRepository.submitTransfer(
-            transfer,
-            {
-                Log.d("Success:$it")
-                bakerDelegationData.submissionId = it.submissionId
-                submissionStatus(localTransactionType)
-                // Do not disable waiting state yet
-            },
-            {
+    ) = withContext(Dispatchers.IO) {
+
+        val submissionId: String = try {
+            App.appCore.getGrpcClient()
+                .sendTransaction(transaction)
+                .asHex()
+        } catch (e: Exception) {
+            Log.e("Error submitting transaction", e)
+            withContext(Dispatchers.Main) {
                 _waitingLiveData.value = false
-                it.printStackTrace()
-                handleBackendError(it)
+                handleBackendError(e)
             }
+            return@withContext
+        }
+
+        Log.d("Transaction submitted: $submissionId")
+
+        bakerDelegationData.submissionId = submissionId
+
+        try {
+            // If the status is received,
+            // the transaction has been at least accepted as valid.
+            App.appCore.getGrpcClient()
+                .getBlockItemStatus(Hash.from(submissionId))
+        } catch (e: Exception) {
+            Log.e("Error checking submission status", e)
+            withContext(Dispatchers.Main) {
+                _waitingLiveData.value = false
+                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(e))
+            }
+            return@withContext
+        }
+
+        // Do not disable waiting state yet
+        finishTransferCreation(
+            submissionId = submissionId,
+            localTransactionType = localTransactionType,
         )
     }
 
-    private fun submissionStatus(localTransactionType: TransactionType) {
-        _waitingLiveData.value = true
-        transferSubmissionStatusRequest?.dispose()
-        transferSubmissionStatusRequest = bakerDelegationData.submissionId?.let { submissionId ->
-            proxyRepository.getTransferSubmissionStatus(submissionId,
-                { transferSubmissionStatus ->
-                    bakerDelegationData.transferSubmissionStatus = transferSubmissionStatus
-                    finishTransferCreation(localTransactionType)
-                    // Do not disable waiting state yet
-                },
-                {
-                    _waitingLiveData.value = false
-                    _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-                }
-            )
-        }
-    }
-
-    private fun finishTransferCreation(localTransactionType: TransactionType) {
+    private suspend fun finishTransferCreation(
+        submissionId: String,
+        localTransactionType: TransactionType,
+    ) = withContext(Dispatchers.Main) {
         val createdAt = Date().time
 
         val accountId = bakerDelegationData.account?.id
         val fromAddress = bakerDelegationData.account?.address
-        val submissionId = bakerDelegationData.submissionId
-        val transferSubmissionStatus = bakerDelegationData.transferSubmissionStatus
         val cost = bakerDelegationData.cost
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
-        if (transferSubmissionStatus == null || cost == null || accountId == null || fromAddress == null || submissionId == null) {
+        if (cost == null || accountId == null || fromAddress == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             _waitingLiveData.value = false
-            return
+            return@withContext
         }
 
         val transfer = Transfer(
@@ -710,10 +764,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             0,
             null
         )
-        saveNewTransfer(transfer)
-    }
 
-    private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
         transferRepository.insert(transfer)
         _waitingLiveData.value = false
         _transactionSuccessLiveData.value = true
