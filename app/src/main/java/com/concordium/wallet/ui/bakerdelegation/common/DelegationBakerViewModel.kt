@@ -514,33 +514,30 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             return
         }
 
-        var capital: String? = null
-        if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && stakedAmountHasChanged())
-            capital = bakerDelegationData.amount.toString()
+        val capital: String? = bakerDelegationData.amount
+            ?.toString()
+            ?.takeIf { bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && stakedAmountHasChanged() }
 
-        var restakeEarnings: Boolean? = null
-        if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged())
-            restakeEarnings = bakerDelegationData.restake
+        val restakeEarnings: Boolean? = bakerDelegationData.restake
+            .takeIf { bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged() }
 
-        val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER)
-            bakerDelegationData.metadataUrl ?: ""
-        else if (bakerDelegationData.type == UPDATE_BAKER_POOL && metadataUrlHasChanged())
-            bakerDelegationData.metadataUrl ?: ""
-        else
-            null
+        val metadataUrl = (bakerDelegationData.metadataUrl ?: "")
+            .takeIf { bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL && metadataUrlHasChanged() }
 
         val openStatus =
             if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_STAKE) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
 
-        val bakerKeys =
-            if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
+        val bakerKeys = bakerDelegationData.bakerKeys
+            .takeUnless { bakerDelegationData.type == REMOVE_BAKER }
 
-        val transactionFeeCommission =
-            if (commissionRatesHasChanged()) bakerDelegationData.transactionCommissionRate else null
-        val bakingRewardCommission =
-            if (commissionRatesHasChanged()) bakerDelegationData.bakingCommissionRate else null
-        val finalizationRewardCommission =
-            if (commissionRatesHasChanged()) bakerDelegationData.finalizationCommissionRate else null
+        val transactionFeeCommission = bakerDelegationData.transactionCommissionRate
+            .takeIf { commissionRatesHasChanged() }
+
+        val bakingRewardCommission = bakerDelegationData.bakingCommissionRate
+            .takeIf { commissionRatesHasChanged() }
+
+        val finalizationRewardCommission = bakerDelegationData.finalizationCommissionRate
+            .takeIf { commissionRatesHasChanged() }
 
         val transaction: ConfigureBakerTransaction = try {
             val configureBakerPayload = ConfigureBakerPayload
@@ -624,8 +621,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
 
         val capital: String? = bakerDelegationData.amount
-            .toString()
-            .takeIf { stakedAmountHasChanged() }
+            ?.toString()
+            ?.takeIf { stakedAmountHasChanged() }
 
         val restakeEarnings: Boolean? = bakerDelegationData.restake
             .takeIf { bakerDelegationData.type != REMOVE_DELEGATION && restakeHasChanged() }
