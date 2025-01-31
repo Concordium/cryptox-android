@@ -18,6 +18,9 @@ interface TransferDao {
     @Query("SELECT * FROM transfer_table WHERE id = :id")
     suspend fun findById(id: Int): Transfer?
 
+    @Query("SELECT * FROM transfer_table WHERE submission_id = :id")
+    suspend fun findBySubmissionId(id: String): Transfer?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg transfer: Transfer)
 

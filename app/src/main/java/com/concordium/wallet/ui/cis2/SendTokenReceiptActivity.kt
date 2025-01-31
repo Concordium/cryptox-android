@@ -6,7 +6,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
 import com.concordium.wallet.ui.MainActivity
@@ -14,6 +16,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.getSerializable
@@ -69,16 +72,20 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.fee.text =
             getString(
                 R.string.cis_estimated_fee,
-                getString(
-                    R.string.amount,
-                    CurrencyUtil.formatGTU(viewModel.sendTokenData.fee!!, false)
-                )
+                CurrencyUtil.formatGTU(viewModel.sendTokenData.fee!!, false)
             )
         CoroutineScope(Dispatchers.Default).launch {
             runOnUiThread {
                 showPageAsSendPrompt()
             }
         }
+        binding.statusAmount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount)
+        binding.transactionSymbol.text =
+            if (viewModel.sendTokenData.token?.isUnique == true)
+                getString(R.string.cis_token_quantity)
+            else
+                viewModel.sendTokenData.token?.symbol
+
         binding.sendFunds.setOnSliderCompleteListener {
             onSend()
         }
@@ -111,6 +118,10 @@ class SendTokenReceiptActivity : BaseActivity(
         viewModel.waiting.observe(this) { waiting ->
             showWaiting(waiting)
         }
+        viewModel.transactionWaiting.observe(this) {
+            if (it)
+                showPageAsReceipt(TransactionProcessingStatus.LOADING)
+        }
 
         viewModel.showAuthentication.observe(this) {
             showAuthentication(
@@ -123,31 +134,86 @@ class SendTokenReceiptActivity : BaseActivity(
         }
 
         viewModel.transactionReady.observe(this) { submissionId ->
-            binding.transactionHashView.isVisible = true
-            binding.transactionHashView.transactionHash = submissionId
-            showPageAsReceipt()
+            viewModel.getTransferBySubmissionId(submissionId)
+            showPageAsReceipt(TransactionProcessingStatus.SUCCESS)
         }
 
         viewModel.errorInt.observe(this) {
-            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+            showPageAsReceipt(TransactionProcessingStatus.FAIL)
+        }
+        viewModel.transaction.observe(this) { transaction ->
+            if (transaction != null)
+                binding.transactionDetails.setOnClickListener {
+                    gotoTransactionDetails(transaction)
+                }
         }
     }
 
-    private fun showPageAsReceipt() {
+    private fun showPageAsReceipt(status: TransactionProcessingStatus) {
         receiptMode = true
         hideActionBarBack(isVisible = false)
+        binding.sendMainLayout.visibility = View.GONE
+        binding.sendStatusLayout.visibility = View.VISIBLE
         binding.sendFunds.visibility = View.GONE
         binding.finish.visibility = View.VISIBLE
+
+        when (status) {
+            TransactionProcessingStatus.LOADING -> {
+                binding.apply {
+                    transactionStatusLabel.text = getString(R.string.cis_transaction_in_progress)
+                    transactionAnimation.setAnimation(R.raw.transaction_loading)
+                    transactionAnimation.repeatCount = LottieDrawable.INFINITE
+                    transactionAnimation.playAnimation()
+                    transactionDivider.visibility = View.GONE
+                    transactionDetails.visibility = View.GONE
+                }
+            }
+
+            TransactionProcessingStatus.SUCCESS -> {
+                binding.apply {
+                    transactionStatusLabel.text = getString(R.string.cis_transaction_success)
+                    transactionAnimation.setAnimation(R.raw.transaction_success)
+                    transactionAnimation.repeatCount = 0
+                    transactionAnimation.playAnimation()
+                    transactionDivider.visibility = View.VISIBLE
+                    transactionDetails.visibility = View.VISIBLE
+                }
+            }
+
+            TransactionProcessingStatus.FAIL -> {
+                binding.apply {
+                    transactionStatusLabel.text = getString(R.string.cis_transaction_fail)
+                    transactionAnimation.setAnimation(R.raw.transaction_fail)
+                    transactionAnimation.repeatCount = 0
+                    transactionAnimation.playAnimation()
+                    transactionDivider.visibility = View.VISIBLE
+                    transactionDetails.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     private fun showPageAsSendPrompt() {
         receiptMode = false
         hideActionBarBack(isVisible = true)
-        binding.sendFunds.visibility = View.VISIBLE
+        binding.sendStatusLayout.visibility = View.GONE
+        binding.sendMainLayout.visibility = View.VISIBLE
         binding.finish.visibility = View.GONE
+        binding.sendFunds.visibility = View.VISIBLE
     }
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
+    }
+
+    private fun gotoTransactionDetails(transaction: Transaction) {
+        val intent = Intent(this, TransactionDetailsActivity::class.java)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_ACCOUNT,
+            viewModel.sendTokenData.account
+        )
+        intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, transaction)
+        startActivity(intent)
     }
 }
