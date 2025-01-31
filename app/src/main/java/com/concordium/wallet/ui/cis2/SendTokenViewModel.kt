@@ -565,6 +565,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         )
         transactionWaiting.postValue(false)
         saveNewTransfer(transfer)
+        transaction.postValue(transfer.toTransaction())
         transactionReady.postValue(submissionId)
     }
 
@@ -580,12 +581,5 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
         transferRepository.insert(transfer)
-    }
-
-    fun getTransferBySubmissionId(submissionId: String) {
-        viewModelScope.launch {
-            val ttx = transferRepository.findBySubmissionId(submissionId)?.toTransaction()
-            transaction.postValue(ttx)
-        }
     }
 }

@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.account.accountdetails
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.ListPopupWindow.WRAP_CONTENT
+import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +30,6 @@ import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendi
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
-import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
@@ -83,6 +86,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     override fun onResume() {
         super.onResume()
+        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.updateState()
         viewModelAccountDetails.initiateFrequentUpdater()
     }
@@ -232,6 +236,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.activityBtn.setOnClickListener {
             onActivityClicked()
         }
+        binding.tooltipButton.setOnClickListener {
+            showTooltip(it)
+        }
 
         replaceTokensFragment(getTokensFragment())
 
@@ -250,6 +257,23 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
         initContainer()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showTooltip(anchorView: View) {
+        val inflater = LayoutInflater.from(anchorView.context)
+        val popupView = inflater.inflate(R.layout.tooltip_layout, null)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            binding.rootLayout.width / 2,
+            WRAP_CONTENT,
+            true
+        )
+
+        anchorView.doOnLayout {
+            popupWindow.showAsDropDown(anchorView)
+        }
     }
 
     private fun setFinalizedMode() {

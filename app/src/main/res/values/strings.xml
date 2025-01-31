@@ -232,6 +232,8 @@
     <string name="account_details_change_name_hint">Enter name</string>
     <string name="account_details_raw_metadata">Show raw metadata</string>
     <string name="account_details_ccd_token">CCD token</string>
+    <string name="account_details_tooltip_title">Total CCD balance</string>
+    <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>
     <string name="account_token_details_decimals">0 – %1$s</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
@@ -596,6 +598,7 @@
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
     <string name="cis_newly_received_notice_title">You received a new token</string>
+    <string name="cis_percent_earning">% Earning</string>
     <string name="template_cis_newly_received_notice_message">
         %1$s has not been listed in your wallet till this transaction.
         You can accept it or remove it from the list.

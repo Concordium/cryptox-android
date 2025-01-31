@@ -1,11 +1,12 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.withStyledAttributes
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.TransactionStatus
@@ -18,11 +19,19 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
     private var accountWithIdentity: AccountWithIdentity? = null
     private val binding: ViewAccountBinding
+    private val pulsateAnimator: ObjectAnimator
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_account, this, true)
         binding = ViewAccountBinding.bind(this)
 
+        pulsateAnimator = ObjectAnimator.ofFloat(
+            binding.accountVerificationStatusIcon,
+            "alpha",
+            1f,
+            0f,
+            1f
+        )
     }
 
     fun setAccount(accountWithIdentity: AccountWithIdentity) {
@@ -41,7 +50,37 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             binding.balanceAtDisposalTextview.visibility = View.GONE
         }
 
-        binding.accountNameArea.setData(accountWithIdentity)
+        binding.accountName.text =
+            if (accountWithIdentity.account.isInitial())
+                context.getString(
+                    R.string.view_account_name_initial,
+                    accountWithIdentity.account.getAccountName()
+                )
+            else
+                accountWithIdentity.account.getAccountName()
+
+        binding.identityName.text = accountWithIdentity.identity.name
+        binding.statusReadOnly.isVisible = accountWithIdentity.account.readOnly
+
+        binding.isEarning.isVisible =
+            (accountWithIdentity.account.isDelegating() || accountWithIdentity.account.isBaking())
+
+        when (accountWithIdentity.account.transactionStatus) {
+            TransactionStatus.COMMITTED,
+            TransactionStatus.RECEIVED -> {
+                binding.balanceLayout.visibility = View.GONE
+                binding.accountStatusLayout.visibility = View.VISIBLE
+                animateStatusIcon()
+            }
+
+            TransactionStatus.ABSENT -> {}
+            else -> {
+                binding.balanceLayout.visibility = View.VISIBLE
+                binding.accountStatusLayout.visibility = View.GONE
+                pulsateAnimator.end()
+            }
+        }
+
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
@@ -51,6 +90,16 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
                 onItemClickListener.onCardClicked(account)
             }
         }
+    }
+
+    private fun animateStatusIcon() {
+        pulsateAnimator.duration = 1500 // 1.5 second
+        pulsateAnimator.repeatCount = ObjectAnimator.INFINITE
+        pulsateAnimator.repeatMode = ObjectAnimator.REVERSE
+
+        // Add an interpolator for a smooth pulsating effect (ease-in-out)
+        pulsateAnimator.interpolator = AccelerateDecelerateInterpolator()
+        pulsateAnimator.start()
     }
 
     interface OnItemClickListener {

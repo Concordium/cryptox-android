@@ -133,13 +133,11 @@ class SendTokenReceiptActivity : BaseActivity(
             )
         }
 
-        viewModel.transactionReady.observe(this) { submissionId ->
-            viewModel.getTransferBySubmissionId(submissionId)
+        viewModel.transactionReady.observe(this) {
             showPageAsReceipt(TransactionProcessingStatus.SUCCESS)
         }
 
         viewModel.errorInt.observe(this) {
-//            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
             showPageAsReceipt(TransactionProcessingStatus.FAIL)
         }
         viewModel.transaction.observe(this) { transaction ->

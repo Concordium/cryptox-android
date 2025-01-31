@@ -139,7 +139,10 @@ class AccountDetailsTransfersFragment : Fragment() {
             val transaction: Transaction = it
             if (transaction.isRemoteTransaction()) {
                 if (transaction.origin != null && transaction.details != null) {
-                    if (transaction.origin.type != TransactionOriginType.Self && (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)) {
+                    if (transaction.origin.type != TransactionOriginType.Self &&
+                        (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER ||
+                                transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)
+                        ) {
                         result = false
                     }
                 }
