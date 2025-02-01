@@ -310,4 +310,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
         }.also { it.start() }
     }
+
+    fun hasShownInitialAnimation(): Boolean {
+        return App.appCore.session.walletStorage.setupPreferences.getHasShownInitialAnimation()
+    }
+
+    fun setHasShownInitialAnimation() {
+        return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
+    }
 }

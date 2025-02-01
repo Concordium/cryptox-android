@@ -29,6 +29,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
         android:id="@+id/accounts_container"
         android:name="com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment"
         app:layout_constraintStart_toStartOf="parent"

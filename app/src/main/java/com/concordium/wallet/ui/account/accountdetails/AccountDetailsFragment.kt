@@ -1,13 +1,18 @@
 package com.concordium.wallet.ui.account.accountdetails
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.animation.AccelerateInterpolator
 import android.widget.ListPopupWindow.WRAP_CONTENT
 import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
@@ -69,6 +74,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initTooltipBanner()
         initializeViewModels()
         initializeViewModelTokens()
         mainViewModel.setTitle("")
@@ -96,6 +102,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.stopFrequentUpdater()
     }
 
+    private fun initTooltipBanner() {
+        binding.tooltipButton.setOnClickListener {
+            showTooltip(it)
+        }
+    }
+
     private fun initializeViewModels() {
         mainViewModel = ViewModelProvider(
             requireActivity(),
@@ -118,6 +130,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                     viewModelAccountDetails.updateAccount()
                     viewModelAccountDetails.initiateFrequentUpdater()
                     showStateDefault()
+                    if (!viewModelAccountDetails.hasShownInitialAnimation()) {
+                        binding.confettiAnimation.visibility = View.VISIBLE
+                        binding.confettiAnimation.playAnimation()
+                    }
                 }
 
                 else -> {
@@ -210,6 +226,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun initViews() {
         showWaiting(false)
+        initializeAnimation()
+
         binding.accountRetryButton.setOnClickListener {
             requireActivity().setResult(RESULT_RETRY_ACCOUNT_CREATION)
         }
@@ -235,9 +253,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         binding.activityBtn.setOnClickListener {
             onActivityClicked()
-        }
-        binding.tooltipButton.setOnClickListener {
-            showTooltip(it)
         }
 
         replaceTokensFragment(getTokensFragment())
@@ -360,6 +375,41 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
+    private fun initializeAnimation() {
+        val handler = Handler(Looper.getMainLooper())
+        binding.confettiAnimation.addAnimatorListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(p0: Animator) {
+                handler.postDelayed({
+                    binding.confettiAnimation.animate()
+                        .setInterpolator(AccelerateInterpolator())
+                        .alpha(0f)
+                        .scaleXBy(0.3f)
+                        .scaleYBy(0.3f)
+                        .setDuration(900)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                cancelAnimation()
+                            }
+                        })
+                }, 800)
+            }
+
+            override fun onAnimationEnd(p0: Animator) {
+                cancelAnimation()
+            }
+        })
+
+        binding.confettiAnimation.addAnimatorPauseListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationPause(p0: Animator) {
+                cancelAnimation()
+            }
+        })
+    }
+
+    private fun cancelAnimation() {
+        viewModelAccountDetails.setHasShownInitialAnimation()
+        binding.confettiAnimation.visibility = View.GONE
+    }
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {

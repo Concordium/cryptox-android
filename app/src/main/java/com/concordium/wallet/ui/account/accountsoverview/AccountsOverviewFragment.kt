@@ -1,17 +1,11 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
-import android.view.animation.AccelerateInterpolator
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +16,6 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
@@ -44,7 +37,6 @@ import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.math.BigInteger
 
 class AccountsOverviewFragment : BaseFragment() {
 
@@ -97,14 +89,6 @@ class AccountsOverviewFragment : BaseFragment() {
 //                showFileWalletCreationLimitation()
 //            } else if (mainViewModel.hasCompletedOnboarding()) {
 //                gotoCreateAccount()
-//            } else {
-//                baseActivity.showUnlockFeatureDialog()
-//            }
-//        }
-
-//        baseActivity.hideQrScan(isVisible = true) {
-//            if (mainViewModel.hasCompletedOnboarding()) {
-//                baseActivity.startQrScanner()
 //            } else {
 //                baseActivity.showUnlockFeatureDialog()
 //            }
@@ -201,13 +185,6 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
         viewModel.onrampActive.collectWhenStarted(viewLifecycleOwner) { active ->
-            if (active) {
-                if (!viewModel.hasShownInitialAnimation()) {
-                    binding.confettiAnimation.visibility = View.VISIBLE
-                    binding.confettiAnimation.playAnimation()
-                }
-            }
-
             binding.onrampBanner.root.setOnClickListener {
                 App.appCore.tracker.homeOnRampBannerClicked()
 
@@ -277,7 +254,6 @@ class AccountsOverviewFragment : BaseFragment() {
             startActivity(Intent(requireActivity(), WalletsActivity::class.java))
         }
 
-        initializeAnimation()
         initializeList()
         updateMissingBackup()
     }
@@ -339,38 +315,6 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
     }
-
-    private fun initializeAnimation() {
-        val handler = Handler(Looper.getMainLooper())
-        binding.confettiAnimation.addAnimatorListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(p0: Animator) {
-                handler.postDelayed({
-                    binding.confettiAnimation.animate()
-                        .setInterpolator(AccelerateInterpolator())
-                        .alpha(0f)
-                        .scaleXBy(0.3f)
-                        .scaleYBy(0.3f)
-                        .setDuration(900)
-                        .setListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator) {
-                                cancelAnimation()
-                            }
-                        })
-                }, 800)
-            }
-
-            override fun onAnimationEnd(p0: Animator) {
-                cancelAnimation()
-            }
-        })
-
-        binding.confettiAnimation.addAnimatorPauseListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationPause(p0: Animator) {
-                cancelAnimation()
-            }
-        })
-    }
-
     //endregion
 
     //region Control/UI
@@ -437,94 +381,4 @@ class AccountsOverviewFragment : BaseFragment() {
         val state = if (show) View.VISIBLE else View.GONE
         binding.onboardingLayout.visibility = state
     }
-
-//    private fun showTotalBalance(totalBalance: BigInteger) {
-//        binding.totalBalanceTextview.text =
-//            CurrencyUtil.formatAndRoundGTU(
-//                value = totalBalance,
-//                roundDecimals = 2
-//            )
-//        updateTotalBalanceView()
-//    }
-//
-//    private fun showDisposalBalance(atDisposal: BigInteger) {
-//        binding.accountsOverviewTotalDetailsDisposal.text =
-//            CurrencyUtil.formatAndRoundGTU(
-//                value = atDisposal,
-//                roundDecimals = 2
-//            )
-//        updateBalanceAtDisposalView()
-//    }
-
-    private fun cancelAnimation() {
-        viewModel.setHasShownInitialAnimation()
-        binding.confettiAnimation.visibility = View.GONE
-    }
-
-//    // update balance TextView directly if balance value is too long
-//    private fun updateTotalBalanceView() {
-//        val availableWidth = binding.totalBalanceLayout.width - binding.totalBalanceSuffix.width
-//
-//        if (binding.totalBalanceTextview.width > availableWidth) {
-//            val constraintSet = ConstraintSet()
-//            constraintSet.clone(binding.totalBalanceLayout)
-//            constraintSet.apply {
-//                connect(
-//                    binding.totalBalanceTextview.id,
-//                    ConstraintSet.END,
-//                    binding.totalBalanceSuffix.id,
-//                    ConstraintSet.START
-//                )
-//                connect(
-//                    binding.totalBalanceSuffix.id,
-//                    ConstraintSet.END,
-//                    ConstraintSet.PARENT_ID,
-//                    ConstraintSet.END
-//                )
-//                constrainWidth(binding.totalBalanceTextview.id, ConstraintSet.MATCH_CONSTRAINT)
-//                setHorizontalChainStyle(
-//                    binding.totalBalanceLayout.id,
-//                    ConstraintSet.CHAIN_SPREAD_INSIDE
-//                )
-//                setMargin(binding.totalBalanceSuffix.id, ConstraintSet.BOTTOM, 0)
-//            }
-//            constraintSet.applyTo(binding.totalBalanceLayout)
-//        }
-//    }
-//
-//    // update disposable balance TextView directly if balance value is too long
-//    private fun updateBalanceAtDisposalView() {
-//        val availableWidth =
-//            binding.totalDetailsDisposalLayout.width - binding.accountsOverviewTotalDetailsDisposalSuffix.width
-//
-//        if (binding.accountsOverviewTotalDetailsDisposal.width > availableWidth) {
-//            val constraintSet = ConstraintSet()
-//            constraintSet.clone(binding.totalDetailsDisposalLayout)
-//            constraintSet.apply {
-//                connect(
-//                    binding.accountsOverviewTotalDetailsDisposal.id,
-//                    ConstraintSet.END,
-//                    binding.accountsOverviewTotalDetailsDisposalSuffix.id,
-//                    ConstraintSet.START
-//                )
-//                connect(
-//                    binding.accountsOverviewTotalDetailsDisposalSuffix.id,
-//                    ConstraintSet.END,
-//                    ConstraintSet.PARENT_ID,
-//                    ConstraintSet.END
-//                )
-//                constrainWidth(
-//                    binding.accountsOverviewTotalDetailsDisposal.id,
-//                    ConstraintSet.MATCH_CONSTRAINT
-//                )
-//                setHorizontalChainStyle(
-//                    binding.totalDetailsDisposalLayout.id,
-//                    ConstraintSet.CHAIN_SPREAD_INSIDE
-//                )
-//            }
-//            constraintSet.applyTo(binding.totalDetailsDisposalLayout)
-//        }
-//    }
-
-    //endregion
 }
