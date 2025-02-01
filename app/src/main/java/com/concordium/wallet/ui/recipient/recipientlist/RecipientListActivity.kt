@@ -5,14 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.Constants
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientListBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
+import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getSerializable
@@ -91,34 +94,18 @@ class RecipientListActivity :
 
     private fun initializeViews() {
         showWaiting(true)
-//        if (viewModel.selectRecipientMode) {
-//            setActionBarTitle(R.string.recipient_list_select_title)
-//        } else {
-//            // Hide shield/unshield function in address book
-//            binding.recipientShieldContainer.visibility = View.GONE
-//        }
         binding.scanQrIcon.setOnClickListener {
             gotoScanBarCode()
         }
 
         binding.recipientSearchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(txt: String?): Boolean {
-                txt?.let {
-                    accountAddress = it
-                    binding.continueBtn.isVisible = viewModel.validateRecipientAddress(it)
-                }
-                showSearchIcons(txt)
-                recipientAdapter.filter(txt)
+                onSearchTextChanged(txt)
                 return true
             }
 
             override fun onQueryTextChange(txt: String?): Boolean {
-                txt?.let {
-                    accountAddress = it
-                    binding.continueBtn.isVisible = viewModel.validateRecipientAddress(it)
-                }
-                showSearchIcons(txt)
-                recipientAdapter.filter(txt)
+                onSearchTextChanged(txt)
                 return true
             }
         })
@@ -152,6 +139,25 @@ class RecipientListActivity :
                 goBackToSendFunds(Recipient(it.id, it.name, it.address))
             }
         })*/
+    }
+
+    private val gerResultQRScan =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result?.data?.getStringExtra(Constants.Extras.EXTRA_SCANNED_QR_CONTENT)
+                    ?.let { address ->
+                        binding.recipientSearchview.setQuery(address, true)
+                    }
+            }
+        }
+
+    private fun onSearchTextChanged(text: String?) {
+        text?.let {
+            accountAddress = it
+            binding.continueBtn.isVisible = viewModel.validateRecipientAddress(it)
+        }
+        showSearchIcons(text)
+        recipientAdapter.filter(text)
     }
 
     private fun initializeList() {
@@ -194,9 +200,8 @@ class RecipientListActivity :
     }
 
     private fun gotoScanBarCode() {
-        val intent = Intent(this, RecipientActivity::class.java)
-        intent.putExtra(RecipientActivity.EXTRA_GOTO_SCAN_QR, true)
-        startActivity(intent)
+        val intent = Intent(this, ScanQRActivity::class.java)
+        gerResultQRScan.launch(intent)
     }
 
     private fun gotoNewRecipient() {

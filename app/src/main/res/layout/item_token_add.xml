@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp"
+    android:layout_marginBottom="8dp"
     android:background="@drawable/mw24_container_primary_background">
 
     <androidx.appcompat.widget.AppCompatImageView

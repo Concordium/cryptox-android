@@ -47,8 +47,6 @@ class SelectTokenActivity : BaseActivity(
             TokensAccountDetailsAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 goBackWithToken(token)
-//                viewModelSend.chooseToken.postValue(token)
-//                onBackPressedDispatcher.onBackPressed()
             }
         })
     }

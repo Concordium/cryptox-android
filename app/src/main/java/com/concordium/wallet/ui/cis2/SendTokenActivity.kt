@@ -32,7 +32,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private lateinit var binding: ActivitySendTokenBinding
     private val viewModel: SendTokenViewModel by viewModels()
     private val viewModelTokens: TokensViewModel by viewModels()
-    private var selectTokenBottomSheet: SelectTokenBottomSheet? = null
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -231,9 +230,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             showWaiting(waiting)
         }
         viewModel.chooseToken.observe(this) { token ->
-            selectTokenBottomSheet?.dismiss()
-            selectTokenBottomSheet = null
-
             setTokenIcon(token)
 
             val decimals = token.decimals
