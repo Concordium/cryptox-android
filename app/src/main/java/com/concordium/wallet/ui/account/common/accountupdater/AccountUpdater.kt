@@ -39,6 +39,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import retrofit2.HttpException
 import java.math.BigInteger
 
@@ -83,6 +85,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     private var transfersToDeleteList: MutableList<Transfer> = ArrayList()
 
     private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
+
+    private val mutex = Mutex()
 
     init {
 
@@ -129,7 +133,11 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     fun updateForAllAccounts() {
         PerformanceUtil.showDeltaTime()
-        reset()
+        viewModelScope.launch {
+            mutex.withLock {
+                reset()
+            }
+        }
         viewModelScope.launch {
             // Get all accounts
             accountList = accountRepository.getAll().toMutableList()
@@ -139,8 +147,10 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     fun updateForAccount(account: Account) {
         PerformanceUtil.showDeltaTime()
-        reset()
         viewModelScope.launch {
+            mutex.withLock {
+                reset()
+            }
             accountList.add(account)
             runUpdate()
         }
