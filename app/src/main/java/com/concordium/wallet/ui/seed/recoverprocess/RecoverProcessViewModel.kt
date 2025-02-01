@@ -420,9 +420,19 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         found.first().identity.name = identity.name
                 }
             }
+            activateFirstAccountIfNoneActive()
             recoverProcessData.identitiesWithAccounts = identitiesWithAccountsFound
             waiting.postValue(false)
             statusChanged.postValue(STATUS_DONE)
+        }
+    }
+
+    private suspend fun activateFirstAccountIfNoneActive() {
+        val allAccounts = accountRepository.getAll()
+        val activeAccount = accountRepository.getActive()
+
+        if (allAccounts.isNotEmpty() && activeAccount == null) {
+            accountRepository.activate(allAccounts.first().address)
         }
     }
 

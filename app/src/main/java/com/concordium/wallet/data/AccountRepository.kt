@@ -50,7 +50,7 @@ class AccountRepository(private val accountDao: AccountDao) {
         return accountDao.findByAddress(address)
     }
 
-    suspend fun getActive(): Account {
+    suspend fun getActive(): Account? {
         return accountDao.getActive()
     }
 

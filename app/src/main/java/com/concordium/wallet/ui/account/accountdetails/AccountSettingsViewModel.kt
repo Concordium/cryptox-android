@@ -19,7 +19,9 @@ class AccountSettingsViewModel(application: Application) : AndroidViewModel(appl
 
     init {
         viewModelScope.launch {
-            account = accountRepository.getActive()
+            accountRepository.getActive()?.let {
+                account = it
+            }
         }
     }
 

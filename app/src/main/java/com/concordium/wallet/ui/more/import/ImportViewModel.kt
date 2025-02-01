@@ -376,6 +376,7 @@ class ImportViewModel(application: Application) :
                 )
             }
         } // End of identity
+        activateFirstAccountIfNoneActive()
         confirmImport()
         _waitingLiveData.postValue(false)
     }
@@ -608,5 +609,14 @@ class ImportViewModel(application: Application) :
 
     fun finishImport(isSuccessful: Boolean) {
         _finishScreenLiveData.postValue(Event(isSuccessful))
+    }
+
+    private suspend fun activateFirstAccountIfNoneActive() {
+        val allAccounts = accountRepository.getAll()
+        val activeAccount = accountRepository.getActive()
+
+        if (allAccounts.isNotEmpty() && activeAccount == null) {
+            accountRepository.activate(allAccounts.first().address)
+        }
     }
 }

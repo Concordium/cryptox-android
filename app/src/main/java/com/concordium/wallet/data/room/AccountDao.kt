@@ -48,7 +48,7 @@ interface AccountDao {
     suspend fun findByAddress(address: String): Account?
 
     @Query("SELECT * FROM account_table WHERE is_active = 1")
-    suspend fun getActive(): Account
+    suspend fun getActive(): Account?
 
     @Query("UPDATE account_table SET is_active = CASE WHEN address = :address THEN 1 ELSE 0 END")
     suspend fun activate(address: String)

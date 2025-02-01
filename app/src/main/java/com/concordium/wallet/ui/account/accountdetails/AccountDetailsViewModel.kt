@@ -101,9 +101,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
-        account = acc
-        _newAccount.emit(acc)
-        _totalBalanceLiveData.postValue(acc.balance)
+        acc?.let {
+            account = it
+            _newAccount.emit(it)
+            _totalBalanceLiveData.postValue(it.balance)
+        }
     }
 
     fun updateAccount() {
@@ -274,6 +276,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             postState(OnboardingState.DONE)
         } else {
             postState(state = OnboardingState.FINALIZING_ACCOUNT)
+            _waitingLiveData.postValue(false)
             viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
         }
         updateSubmissionStatesAndBalances()

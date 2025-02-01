@@ -69,8 +69,9 @@
 
         <Button
             android:id="@+id/tryAgainButton"
-            style="@style/CCX_Button_Primary"
+            style="@style/MW24_Button_Primary"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_weight="0.5"
             android:gravity="center"
@@ -80,8 +81,9 @@
 
         <Button
             android:id="@+id/continueButton"
-            style="@style/CCX_Button_Primary.ArrowRight"
+            style="@style/MW24_Button_Primary"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_weight="0.5"
             android:text="@string/seed_phrase_recover_process_continue" />
