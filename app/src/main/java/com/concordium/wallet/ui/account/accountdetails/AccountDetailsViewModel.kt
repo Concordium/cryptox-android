@@ -93,10 +93,19 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _identityFlow = MutableSharedFlow<Identity>()
     val identityFlow = _identityFlow.asSharedFlow()
 
+    private val _fileWalletMigrationVisible = MutableStateFlow(false)
+    val fileWalletMigrationVisible = _fileWalletMigrationVisible.asStateFlow()
+
     private var updater: CountDownTimer? = null
+
+    val isCreationLimitedForFileWallet: Boolean
+        get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
 
     init {
         initializeAccountUpdater()
+        _fileWalletMigrationVisible.tryEmit(
+            App.appCore.session.activeWallet.type == AppWallet.Type.FILE
+        )
     }
 
     private fun getActiveAccount() = viewModelScope.launch {

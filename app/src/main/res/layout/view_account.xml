@@ -10,8 +10,8 @@
         android:id="@+id/account_name_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -34,17 +34,18 @@
             android:id="@+id/identity_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginHorizontal="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            app:layout_constraintHorizontal_bias="1"
             android:textAppearance="@style/MW24_Typography_Label_Main"
             android:textColor="@color/mw24_blue_3"
+            app:layout_goneMarginEnd="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/status_read_only"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/account_name"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Identity 1" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -116,15 +117,15 @@
             android:layout_marginStart="16dp"
             android:gravity="end"
             android:maxLines="1"
-            android:visibility="gone"
             android:text="@string/cis_percent_earning"
             android:textAppearance="@style/MW24_Typography_Label_Main"
             android:textColor="@color/mw24_blue_3"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/total_textview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="wrap"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -138,27 +139,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/account_name_area"
-        tools:ignore="UseCompoundDrawables"
-        tools:visibility="visible">
+        tools:ignore="UseCompoundDrawables">
 
-    <TextView
-        android:id="@+id/account_status_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="@string/onboarding_finalizing_account"
-        android:textAppearance="@style/MW24_Typography_Label_Main"
-        android:textColor="@color/cryptox_green_main" />
+        <TextView
+            android:id="@+id/account_status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="@string/onboarding_finalizing_account"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_green_main" />
 
-    <ImageView
-        android:id="@+id/account_verification_status_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="1dp"
-        android:src="@drawable/ccx_finalizing_account"
-        android:contentDescription="@string/onboarding_finalizing_account"/>
+        <ImageView
+            android:id="@+id/account_verification_status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="1dp"
+            android:contentDescription="@string/onboarding_finalizing_account"
+            android:src="@drawable/ccx_finalizing_account" />
 
     </LinearLayout>
 

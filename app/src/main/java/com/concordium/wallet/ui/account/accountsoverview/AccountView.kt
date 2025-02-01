@@ -104,8 +104,5 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
     interface OnItemClickListener {
         fun onCardClicked(account: Account)
-        fun onOnrampClicked(account: Account)
-        fun onSendClicked(account: Account)
-        fun onAddressClicked(account: Account)
     }
 }

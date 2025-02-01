@@ -7,10 +7,12 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountsListBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountSettingsActivity
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
 
 class AccountsListActivity : BaseActivity(
     R.layout.activity_accounts_list,
@@ -37,7 +39,20 @@ class AccountsListActivity : BaseActivity(
                 gotoAccountSettings(account)
             }
         }
-        binding.createAccountButton.setOnClickListener { gotoCreateAccount() }
+        binding.createAccountButton.setOnClickListener {
+            if (viewModelAccountDetails.isCreationLimitedForFileWallet) {
+                showFileWalletCreationLimitation()
+            } else {
+                gotoCreateAccount()
+            }
+        }
+    }
+
+    private fun showFileWalletCreationLimitation() {
+        FileWalletCreationLimitationDialog().showSingle(
+            supportFragmentManager,
+            FileWalletCreationLimitationDialog.TAG
+        )
     }
 
     private fun gotoCreateAccount() {

@@ -17,9 +17,11 @@ import android.widget.ListPopupWindow.WRAP_CONTENT
 import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
@@ -58,6 +60,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
+    // parameter for dynamic calculation of tokensFragmentContainer height
+    private var isFileWallet: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,6 +109,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun initTooltipBanner() {
         binding.tooltipButton.setOnClickListener {
             showTooltip(it)
+        }
+        listOf(binding.totalBalanceTextview, binding.atDisposalLabel).forEach {
+            it.setOnClickListener {
+                App.appCore.tracker.homeTotalBalanceClicked()
+            }
         }
     }
 
@@ -187,6 +196,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
             if (it.isNotEmpty())
                 setFinalizedMode()
+        }
+
+        viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
+            binding.fileWalletMigrationDisclaimerLayout.isVisible = it
+            isFileWallet = it
         }
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
@@ -358,18 +372,25 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
             val containerHeight = binding.scrollView.measuredHeight
             val buttonsHeight = binding.buttonsBlock.measuredHeight
+            val fileWalletDisclaimerHeight =
+                binding.fileWalletMigrationDisclaimerLayout.measuredHeight
             val onRampHeight = binding.onrampBanner.root.measuredHeight
             val buttonsMargin =
                 (binding.tokensFragmentContainer.layoutParams as MarginLayoutParams).topMargin
+            val fileWalletDisclaimerMargin =
+                (binding.fileWalletMigrationDisclaimerLayout.layoutParams as MarginLayoutParams).topMargin
             val onRampMargin =
                 (binding.onrampBanner.root.layoutParams as MarginLayoutParams).topMargin
 
             if (handledContainerHeight != containerHeight) {
                 handledContainerHeight = containerHeight
 
+                val scrollContainerHeight = containerHeight - buttonsHeight - buttonsMargin -
+                        onRampMargin - onRampHeight - fileWalletDisclaimerHeight -
+                        if (isFileWallet) fileWalletDisclaimerMargin else 0
+
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
-                    height =
-                        containerHeight - buttonsHeight - buttonsMargin - onRampMargin - onRampHeight
+                    height = scrollContainerHeight
                 }
             }
         }
