@@ -9,12 +9,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentTokensBinding
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
-import com.concordium.wallet.uicore.toast.showGradientToast
 
 class TokensFragment : Fragment() {
     private var _binding: FragmentTokensBinding? = null
@@ -40,6 +38,11 @@ class TokensFragment : Fragment() {
         initObservers()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTokensBalances()
+    }
+
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
         tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(
@@ -59,9 +62,7 @@ class TokensFragment : Fragment() {
     private fun initObservers() {
         viewModel.waiting.observe(viewLifecycleOwner) { waiting ->
             if (!waiting) {
-                println("tokensfragment newAccount: ${viewModel.tokenData.account?.address}")
                 binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
-                tokensAccountDetailsAdapter.setData(viewModel.tokens)
             }
 
             viewModel.tokenData.account?.let { account ->
@@ -73,25 +74,8 @@ class TokensFragment : Fragment() {
                 }
             }
         }
-        viewModel.tokenDetails.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
-        }
         viewModel.tokenBalances.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
-        }
-
-        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
-            if (anyChanges) {
-                requireContext().showGradientToast(
-                    R.drawable.mw24_ic_address_copy_check,
-                    getString(R.string.cis_tokens_updated)
-                )
-            } else {
-                requireContext().showGradientToast(
-                    R.drawable.mw24_ic_address_copy_check,
-                    getString(R.string.cis_tokens_not_updated)
-                )
-            }
+            tokensAccountDetailsAdapter.setData(viewModel.tokens)
         }
     }
 

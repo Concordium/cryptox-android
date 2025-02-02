@@ -29,7 +29,7 @@
         <TextView
             android:id="@+id/title"
             style="@style/MW24_Typography_Label_Main"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:ellipsize="end"
@@ -41,7 +41,7 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/token_icon"
             app:layout_constraintTop_toTopOf="@id/token_icon"
-            app:layout_constraintWidth_default="wrap"
+            app:layout_constrainedWidth="true"
             app:layout_goneMarginEnd="12dp"
             tools:text="wBTC" />
 

@@ -63,6 +63,7 @@ class SelectTokenActivity : BaseActivity(
         )[TokensViewModel::class.java]
 
         account = intent.getSerializable(SELECT_TOKEN_ACCOUNT, Account::class.java)
+        viewModelTokens.tokenData.account = account
         viewModelSend.loadTokens(account.address)
 
         viewModelSend.waiting.observe(this) { waiting ->

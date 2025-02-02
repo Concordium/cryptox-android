@@ -110,7 +110,7 @@
         <item name="android:textColor">#9DAEC3</item>
     </style>
 
-    <style name="MW24_Manage_Token_List_Button" parent="MW24_Typography_Label_Main">
+    <style name="MW24_Manage_Token_List_Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingVertical">4dp</item>
@@ -118,6 +118,7 @@
         <item name="android:drawablePadding">8dp</item>
         <item name="drawableStartCompat">@drawable/mw24_ic_manage_token_list</item>
         <item name="drawableTint">@color/cryptox_grey_additional</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
     </style>
 
     <style name="MW24_Receive_Funds_Account" parent="MW24_Typography_Label_Secondary">
