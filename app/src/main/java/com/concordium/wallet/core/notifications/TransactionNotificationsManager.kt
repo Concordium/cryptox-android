@@ -14,7 +14,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.util.Log
 import java.math.BigInteger
 
@@ -70,8 +70,9 @@ class TransactionNotificationsManager(
                 PendingIntent.getActivity(
                     context,
                     0,
-                    Intent(context, AccountDetailsActivity::class.java)
-                        .putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+                    Intent(context, MainActivity::class.java)
+                        .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
+                        .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                 )
@@ -117,16 +118,16 @@ class TransactionNotificationsManager(
                 PendingIntent.getActivity(
                     context,
                     0,
-                    Intent(context, AccountDetailsActivity::class.java)
-                        .putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
-                        .putExtra(AccountDetailsActivity.EXTRA_OPEN_TOKENS, true)
-                        .apply {
-                            // In case the token is already in the wallet,
-                            // open its details page.
-                            if (!token.isNewlyReceived) {
-                                putExtra(AccountDetailsActivity.EXTRA_TOKEN_TO_OPEN_UID, token.uid)
-                            }
-                        }
+                    Intent(context, MainActivity::class.java)
+                        .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
+                        .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
+//                        .apply {
+//                            // In case the token is already in the wallet,
+//                            // open its details page.
+//                            if (!token.isNewlyReceived) {
+//                                putExtra(AccountDetailsActivity.EXTRA_TOKEN_TO_OPEN_UID, token.uid)
+//                            }
+//                        }
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                 )

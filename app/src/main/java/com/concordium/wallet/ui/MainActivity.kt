@@ -15,7 +15,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
-import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -42,6 +41,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_IMPORT_FROM_FILE = "EXTRA_IMPORT_FROM_FILE"
         const val EXTRA_IMPORT_FROM_SEED = "EXTRA_IMPORT_FROM_SEED"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
+        const val EXTRA_ACTIVATE_ACCOUNT = "EXTRA_ACTIVATE_ACCOUNT"
+        const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
     }
 
     private val binding by lazy {
@@ -149,7 +150,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             this.intent = newIntent
             hasHandledPossibleImportFile = false
         }
-
+        handleNotificationReceived(newIntent)
         handlePossibleWalletConnectUri(newIntent)
     }
 
@@ -203,6 +204,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         ).init()
 
         binding.walletSwitchView.bind(walletSwitchViewModel)
+    }
+
+    private fun handleNotificationReceived(intent: Intent) {
+        if (intent.getBooleanExtra(EXTRA_ACTIVATE_ACCOUNT, false)) {
+            intent.getStringExtra(EXTRA_ACCOUNT_ADDRESS)?.let {
+                viewModel.activateAccount(it)
+            }
+        }
     }
 
     //endregion
