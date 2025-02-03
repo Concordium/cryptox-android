@@ -49,6 +49,7 @@ import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.util.ImageUtil
 import java.math.BigInteger
 
 class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl() {
@@ -183,7 +184,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             initViews()
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
-                text = account.getAccountName()
+                text = account.getAccountName(),
+                icon = ImageUtil.getIconById(requireContext(), account.iconId)
             ) {
                 gotoAccountsList()
             }

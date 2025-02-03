@@ -173,7 +173,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             hideLeftPlus(false)
             hideRightPlus(false)
             hideQrScan(false)
-            hideAccountSelector(false, "")
+            hideAccountSelector(false, "", null)
             replaceFragment(state)
         }
 

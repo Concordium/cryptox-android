@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.base
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -248,10 +249,14 @@ abstract class BaseActivity(
     fun hideAccountSelector(
         isVisible: Boolean = false,
         text: String,
-        listener: View.OnClickListener? = null) {
+        icon: Drawable?,
+        listener: View.OnClickListener? = null
+    ) {
         accountBtn?.isVisible = isVisible
         accountBtnImage?.isVisible = isVisible
+        accountBtnText?.isVisible = isVisible
         accountBtnText?.text = text
+        accountBtnText?.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
         accountBtn?.setOnClickListener(listener)
     }
 //    fun hideClose(isVisible: Boolean) {
