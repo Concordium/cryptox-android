@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Revamped UI across the entire app with improved visuals and usability.
+- Redesigned Main Screen with better navigation.
+
+### Added
+
+- A separate Accounts List Screen for easier account management.
+- A new Activity Screen with Transfers list
+
 ## [1.5.0] - 2025-01-22
 
 ### Added
