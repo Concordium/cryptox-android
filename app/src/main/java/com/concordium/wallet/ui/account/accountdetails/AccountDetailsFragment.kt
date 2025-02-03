@@ -100,6 +100,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.updateState()
         viewModelAccountDetails.initiateFrequentUpdater()
+        viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }
 
     override fun onPause() {
@@ -224,7 +225,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         )[TokensViewModel::class.java]
 
         viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
-            showTokenDetailsDialog(token)
+            token?.let {
+                showTokenDetailsDialog(it)
+            }
         }
 
 //        viewModelTokens.tokenBalances.observe(this, object : Observer<Boolean> {
