@@ -14,6 +14,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ViewAccountBinding
+import com.concordium.wallet.util.ImageUtil
 
 class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
@@ -50,6 +51,12 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             binding.balanceAtDisposalTextview.visibility = View.GONE
         }
 
+        binding.accountIcon.setImageDrawable(
+            ImageUtil.getIconById(
+                context,
+                accountWithIdentity.account.iconId
+            )
+        )
         binding.accountName.text =
             if (accountWithIdentity.account.isInitial())
                 context.getString(

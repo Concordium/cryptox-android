@@ -1,6 +1,7 @@
 package com.concordium.wallet.util
 
-import java.util.*
+import java.util.Date
+import java.util.Random
 
 object RandomUtil {
 
@@ -14,5 +15,9 @@ object RandomUtil {
             sb.append(charString[randomNumber])
         }
         return sb.toString()
+    }
+
+    fun getRandomInt(): Int {
+        return (1..9).random()
     }
 }

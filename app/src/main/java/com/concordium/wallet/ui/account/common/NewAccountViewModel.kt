@@ -32,6 +32,7 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.RandomUtil
 import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -253,7 +254,8 @@ open class NewAccountViewModel(application: Application) :
             encryptedAccountData = encryptedAccountData,
             credential = credential,
             credNumber = tempData.nextCredNumber ?: 0,
-            isActive = firstAccount
+            isActive = firstAccount,
+            iconId = RandomUtil.getRandomInt()
         )
         saveNewAccount(newAccount)
     }

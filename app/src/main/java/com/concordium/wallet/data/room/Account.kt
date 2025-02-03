@@ -88,7 +88,10 @@ data class Account(
     var index: Int? = null,
 
     @ColumnInfo(name = "is_active", defaultValue = "0")
-    var isActive: Boolean = false
+    var isActive: Boolean = false,
+
+    @ColumnInfo(name = "icon_id")
+    var iconId: Int = 1
 ) : Serializable {
 
     companion object {

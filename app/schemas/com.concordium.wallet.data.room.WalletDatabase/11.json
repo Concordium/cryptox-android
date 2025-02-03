@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "a0b006e72bded882f5db03c65eef1cf0",
+    "identityHash": "0e22dee09a1e54a2002034e1f1fa37ef",
     "entities": [
       {
         "tableName": "identity_table",
@@ -97,7 +97,7 @@
       },
       {
         "tableName": "account_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identity_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `address` TEXT NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `encrypted_account_data` TEXT, `credential` TEXT, `cred_number` INTEGER NOT NULL, `revealed_attributes` TEXT NOT NULL, `finalized_balance` TEXT NOT NULL, `balance_at_disposal` TEXT NOT NULL, `total_shielded_balance` TEXT NOT NULL, `finalized_encrypted_balance` TEXT, `current_balance_status` INTEGER NOT NULL, `read_only` INTEGER NOT NULL, `finalized_account_release_schedule` TEXT, `cooldowns` TEXT NOT NULL, `account_delegation` TEXT, `account_baker` TEXT, `accountIndex` INTEGER, `is_active` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identity_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `address` TEXT NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `encrypted_account_data` TEXT, `credential` TEXT, `cred_number` INTEGER NOT NULL, `revealed_attributes` TEXT NOT NULL, `finalized_balance` TEXT NOT NULL, `balance_at_disposal` TEXT NOT NULL, `total_shielded_balance` TEXT NOT NULL, `finalized_encrypted_balance` TEXT, `current_balance_status` INTEGER NOT NULL, `read_only` INTEGER NOT NULL, `finalized_account_release_schedule` TEXT, `cooldowns` TEXT NOT NULL, `account_delegation` TEXT, `account_baker` TEXT, `accountIndex` INTEGER, `is_active` INTEGER NOT NULL DEFAULT 0, `icon_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -231,6 +231,12 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
+          },
+          {
+            "fieldPath": "iconId",
+            "columnName": "icon_id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -500,7 +506,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a0b006e72bded882f5db03c65eef1cf0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0e22dee09a1e54a2002034e1f1fa37ef')"
     ]
   }
 }

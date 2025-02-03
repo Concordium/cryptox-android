@@ -14,10 +14,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/account_icon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:importantForAccessibility="no"
+            tools:src="@drawable/mw24_ic_account_profile_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/account_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
@@ -25,7 +36,7 @@
             android:textColor="@color/cryptox_white_main"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/account_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="wrap"
             tools:text="Savings 1 account (initial)" />
@@ -48,12 +59,12 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Identity 1" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/status_read_only"
             android:layout_width="17dp"
             android:layout_height="14dp"
             android:layout_marginStart="8dp"
-            android:importantForAccessibility="no"
+            android:contentDescription="@string/account_read_only"
             android:src="@drawable/ccx_ico_eye_open"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

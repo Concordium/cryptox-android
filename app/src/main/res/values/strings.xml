@@ -410,6 +410,7 @@
     <string name="account_release_schedule_copy_title">Transaction hash</string>
     <string name="account_release_schedule_no_data">No data</string>
     <string name="account_details_baker_id">Validator ID:</string>
+    <string name="account_read_only">Read only account</string>
     <string name="title_create_nft">Mint NFT</string>
     <string name="title_transfer_nft">Transfer NFT</string>
     <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
