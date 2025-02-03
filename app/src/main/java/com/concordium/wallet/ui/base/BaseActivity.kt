@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.App
@@ -60,7 +60,7 @@ abstract class BaseActivity(
     private var plusRightBtnNotice: View? = null
     private var qrScanBtn: ImageView? = null
     private var infoBtn: ImageView? = null
-    private var accountBtn: LinearLayout? = null
+    private var accountBtn: ConstraintLayout? = null
     private var accountBtnText: TextView? = null
     private var accountBtnImage: ImageView? = null
     protected var closeBtn: ImageView? = null
