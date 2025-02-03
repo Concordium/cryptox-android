@@ -186,6 +186,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun selectAccount(item: Account) {
         viewModel.activateAccount(item.address)
+        requireActivity().finish()
     }
 
     private fun showWaiting(waiting: Boolean) {

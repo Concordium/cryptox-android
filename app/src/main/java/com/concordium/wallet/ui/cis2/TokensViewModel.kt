@@ -94,7 +94,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     contractToken = it,
                     isSelected = true,
                 )
-            })
+            }.toSet())
             waiting.postValue(false)
         }
     }
@@ -134,7 +134,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             }
 
             tokens.clear()
-            tokens.addAll(pageTokens)
+            tokens.addAll(pageTokens.toSet())
             contractAddressLoading.postValue(false)
             allowToLoadMore = pageTokens.size >= pageLimit
 

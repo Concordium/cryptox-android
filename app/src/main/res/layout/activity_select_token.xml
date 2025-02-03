@@ -30,4 +30,8 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_token_account_details" />
+
+    <include
+        android:id="@+id/progress_layout"
+        layout="@layout/progress" />
 </androidx.constraintlayout.widget.ConstraintLayout>

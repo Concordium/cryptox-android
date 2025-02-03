@@ -70,7 +70,6 @@ class SelectTokenActivity : BaseActivity(
             showWaiting(waiting)
         }
         viewModelSend.tokens.observe(this) { tokens ->
-            tokensAccountDetailsAdapter.setData(tokens)
             viewModelTokens.tokens = tokens as MutableList<Token>
             viewModelTokens.loadTokensBalances()
         }

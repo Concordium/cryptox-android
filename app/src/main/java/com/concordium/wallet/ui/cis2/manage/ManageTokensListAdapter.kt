@@ -76,7 +76,7 @@ class ManageTokensListAdapter(
         }
 
         holder.binding.title.text =
-            tokenMetadata?.symbol ?: context.getString(R.string.cis_loading_metadata_progress)
+            tokenMetadata?.symbol ?: token.name
 
         holder.binding.hideBtn.isVisible = !token.isCcd
         holder.binding.hideBtn.setOnClickListener {

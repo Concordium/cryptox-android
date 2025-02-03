@@ -134,6 +134,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 readOnly = false,
                 releaseSchedule = null,
                 credNumber = 0,
+                iconId = 1
             )
         )
         accountList.add(
@@ -154,6 +155,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 readOnly = false,
                 releaseSchedule = null,
                 credNumber = 1,
+                iconId = 2
             )
         )
         accountList.add(
@@ -174,6 +176,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 readOnly = false,
                 releaseSchedule = null,
                 credNumber = 2,
+                iconId = 3
             )
         )
         accountList.add(
@@ -194,6 +197,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 readOnly = false,
                 releaseSchedule = null,
                 credNumber = 3,
+                iconId = 4
             )
         )
         accountRepository.insertAll(accountList)

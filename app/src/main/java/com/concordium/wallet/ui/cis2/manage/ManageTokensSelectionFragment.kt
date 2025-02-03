@@ -5,18 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
 import com.concordium.wallet.ui.cis2.TokensViewModel
-import com.concordium.wallet.util.KeyboardUtil
 
 class ManageTokensSelectionFragment : Fragment() {
     private var _binding: FragmentManageTokensSelectionBinding? = null

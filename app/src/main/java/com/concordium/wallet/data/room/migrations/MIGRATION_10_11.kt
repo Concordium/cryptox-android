@@ -17,7 +17,7 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
             )
         """)
 
-        database.execSQL("ALTER TABLE `account_table` ADD COLUMN `icon_id` INTEGER NOT NULL DEFAULT 1")
+        database.execSQL("ALTER TABLE `account_table` ADD COLUMN `icon_id` INTEGER NOT NULL")
         database.execSQL("""
             UPDATE `account_table` 
             SET `icon_id` = (abs(random()) % 9) + 1

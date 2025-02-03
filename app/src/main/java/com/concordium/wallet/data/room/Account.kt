@@ -91,7 +91,7 @@ data class Account(
     var isActive: Boolean = false,
 
     @ColumnInfo(name = "icon_id")
-    var iconId: Int = 1
+    var iconId: Int
 ) : Serializable {
 
     companion object {
