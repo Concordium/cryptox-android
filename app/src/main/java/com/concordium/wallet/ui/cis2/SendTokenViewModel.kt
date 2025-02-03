@@ -431,9 +431,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 transferRepository = transferRepository,
                 accountUpdater = accountUpdater,
             ),
-            null,
-            null,
-            null,
         )
 
         sendTokenData.createTransferInput = transferInput

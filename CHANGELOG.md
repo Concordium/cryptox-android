@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.5.0] - 2025-01-22
 
 ### Added
 
@@ -167,7 +167,9 @@
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.4.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.5.0...HEAD
+
+[1.5.0]: https://github.com/Concordium/cryptox-android/compare/1.4.0...1.5.0
 
 [1.4.0]: https://github.com/Concordium/cryptox-android/compare/1.3.2...1.4.0
 

@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.backend
 
 import com.concordium.wallet.AppConfig
+import com.concordium.wallet.BuildConfig
 import com.google.gson.Gson
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
@@ -12,17 +13,16 @@ import java.util.concurrent.TimeUnit
 
 class ProxyBackendConfig(val gson: Gson) {
 
-    val retrofit: Retrofit
-    val backend: ProxyBackend
-
-    init {
-        retrofit = initializeRetrofit(AppConfig.proxyBaseUrl)
-        backend = retrofit.create(ProxyBackend::class.java)
+    val retrofit: Retrofit by lazy {
+        initializeRetrofit()
+    }
+    val backend: ProxyBackend by lazy {
+        retrofit.create(ProxyBackend::class.java)
     }
 
-    private fun initializeRetrofit(baseUrl: String): Retrofit {
+    private fun initializeRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(BuildConfig.URL_PROXY_BASE)
             .client(initializeOkkHttp())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

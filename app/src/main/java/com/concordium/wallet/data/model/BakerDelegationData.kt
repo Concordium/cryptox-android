@@ -25,7 +25,6 @@ data class BakerDelegationData(
     var type: String
 ) : Serializable {
 
-    var transferSubmissionStatus: TransferSubmissionStatus? = null
     var submissionId: String? = null
     var energy: Long? = null
     var accountNonce: AccountNonce? = null

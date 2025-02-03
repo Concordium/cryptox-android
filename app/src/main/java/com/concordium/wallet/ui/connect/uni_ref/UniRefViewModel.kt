@@ -423,9 +423,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
                 transferRepository = transferRepository,
                 accountUpdater = accountUpdater,
             ),
-            null,
-            null,
-            null,
         )
 
         val transactionType =
