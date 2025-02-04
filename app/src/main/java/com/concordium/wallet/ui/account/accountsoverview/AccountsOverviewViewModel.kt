@@ -13,13 +13,11 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.math.BigInteger
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -31,10 +29,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
 
-    private val _showDialogLiveData = MutableLiveData<Event<DialogToShow>>()
-    val showDialogLiveData: LiveData<Event<DialogToShow>>
-        get() = _showDialogLiveData
-
     private val _listItemsLiveData = MutableLiveData<List<AccountsOverviewListItem>>()
     val listItemsLiveData: LiveData<List<AccountsOverviewListItem>> = _listItemsLiveData
 
@@ -44,11 +38,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountsObserver: Observer<List<AccountWithIdentity>>
     private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
     private var updater: CountDownTimer? = null
-
-    enum class DialogToShow {
-        UNSHIELDING,
-        ;
-    }
 
     init {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
@@ -135,22 +124,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
         }
         return false
-    }
-
-    private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
-        val dialogsToShow = linkedSetOf<DialogToShow>()
-
-        // Show unshielding notice if never shown and some accounts may need unshielding.
-        if (!App.appCore.session.isUnshieldingNoticeShown()
-            && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
-        ) {
-            dialogsToShow += DialogToShow.UNSHIELDING
-        }
-
-        // Show a single dialog if needed.
-        if (dialogsToShow.isNotEmpty()) {
-            _showDialogLiveData.postValue(Event(dialogsToShow.first()))
-        }
     }
 
     private fun postListItems(accountsWithIdentity: List<AccountWithIdentity>) {

@@ -38,6 +38,10 @@ import java.math.BigInteger
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val session: Session = App.appCore.session
 
+    enum class DialogToShow {
+        UNSHIELDING
+    }
+
     lateinit var account: Account
     var hasPendingDelegationTransactions: Boolean = false
     var hasPendingBakingTransactions: Boolean = false
@@ -83,6 +87,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private var _accountUpdatedLiveData = MutableLiveData<Boolean>()
     val accountUpdatedLiveData: LiveData<Boolean>
         get() = _accountUpdatedLiveData
+
+    private val _showDialogLiveData = MutableLiveData<Event<DialogToShow>>()
+    val showDialogLiveData: LiveData<Event<DialogToShow>>
+        get() = _showDialogLiveData
 
     private val _newAccount = MutableSharedFlow<Account>()
     val newAccount = _newAccount.asSharedFlow()
@@ -283,12 +291,28 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
             postState(OnboardingState.DONE)
+            showSingleDialogIfNeeded()
         } else {
             postState(state = OnboardingState.FINALIZING_ACCOUNT)
             _waitingLiveData.postValue(false)
             viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
         }
         updateSubmissionStatesAndBalances(false)
+    }
+
+    private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
+        val dialogsToShow = linkedSetOf<DialogToShow>()
+
+        // Show unshielding notice if never shown and some accounts may need unshielding.
+        if (!App.appCore.session.isUnshieldingNoticeShown()
+            && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
+        ) {
+            dialogsToShow += DialogToShow.UNSHIELDING
+        }
+        // Show a single dialog if needed.
+        if (dialogsToShow.isNotEmpty()) {
+            _showDialogLiveData.postValue(Event(dialogsToShow.first()))
+        }
     }
 
     fun initiateFrequentUpdater() {

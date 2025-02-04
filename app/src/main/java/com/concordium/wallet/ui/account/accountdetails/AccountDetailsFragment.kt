@@ -30,6 +30,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
@@ -37,6 +38,7 @@ import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendi
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
+import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
@@ -204,6 +206,20 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
             binding.fileWalletMigrationDisclaimerLayout.isVisible = it
             isFileWallet = it
+        }
+
+        viewModelAccountDetails.showDialogLiveData.observe(viewLifecycleOwner) { event ->
+            if (mainViewModel.hasCompletedOnboarding() && viewModelAccountDetails.hasShownInitialAnimation()) {
+                when (event.contentIfNotHandled) {
+                    AccountDetailsViewModel.DialogToShow.UNSHIELDING -> {
+                        UnshieldingNoticeDialog().showSingle(
+                            childFragmentManager,
+                            UnshieldingNoticeDialog.TAG
+                        )
+                    }
+                    null -> {}
+                }
+            }
         }
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->

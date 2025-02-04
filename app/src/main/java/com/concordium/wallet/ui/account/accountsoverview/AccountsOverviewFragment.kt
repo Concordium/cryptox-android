@@ -13,7 +13,6 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
-import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
@@ -113,20 +112,6 @@ class AccountsOverviewFragment : BaseFragment() {
                 showError(value)
             }
         })
-        viewModel.showDialogLiveData.observe(viewLifecycleOwner) { event ->
-            if (mainViewModel.hasCompletedOnboarding()) {
-                when (event.contentIfNotHandled) {
-                    AccountsOverviewViewModel.DialogToShow.UNSHIELDING -> {
-                        UnshieldingNoticeDialog().showSingle(
-                            childFragmentManager,
-                            UnshieldingNoticeDialog.TAG
-                        )
-                    }
-
-                    null -> {}
-                }
-            }
-        }
     }
 
     private fun initializeViews() {
