@@ -7,8 +7,11 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.RawMetadataDialog
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.getSerializable
 
 class AddTokenDetailsActivity : BaseActivity(
@@ -37,6 +40,7 @@ class AddTokenDetailsActivity : BaseActivity(
             setDescription(tokenMetadata)
             setTicker(tokenMetadata)
             setDecimals(token)
+            setRawMetadataButton(tokenMetadata)
         }
     }
 
@@ -97,6 +101,15 @@ class AddTokenDetailsActivity : BaseActivity(
         if (!token.isUnique) {
             binding.detailsLayout.decimalsHolder.visibility = View.VISIBLE
             binding.detailsLayout.decimals.text = token.decimals.toString()
+        }
+    }
+
+    private fun setRawMetadataButton(tokenMetadata: TokenMetadata) {
+        binding.detailsLayout.rawMetadataBtn.visibility = View.VISIBLE
+        binding.detailsLayout.rawMetadataBtn.setOnClickListener {
+            RawMetadataDialog.newInstance(
+                RawMetadataDialog.setBundle(rawMetadata = tokenMetadata.asJsonString())
+            ).showSingle(supportFragmentManager, RawMetadataDialog.TAG)
         }
     }
 

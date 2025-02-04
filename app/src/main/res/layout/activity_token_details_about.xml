@@ -239,8 +239,10 @@
         android:text="@string/account_details_raw_metadata"
         android:textAppearance="@style/MW24_Typography_Label_Main"
         android:textColor="@color/cryptox_white_main"
+        android:visibility="gone"
         app:drawableStartCompat="@drawable/mw24_ic_raw_metadata"
-        app:drawableTint="@color/cryptox_white_main" />
+        app:drawableTint="@color/cryptox_white_main"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/hide_token"

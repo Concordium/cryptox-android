@@ -24,6 +24,7 @@ import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 
@@ -105,6 +106,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(token)
+                setRawMetadataButton(tokenMetadata)
             }
             setHideButton(token.isCcd)
             if (token.isNewlyReceived) {
@@ -206,6 +208,14 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 earnLayout.isVisible = false
                 earnEmptyView.isVisible = true
             }
+        }
+    }
+
+    private fun setRawMetadataButton(tokenMetadata: TokenMetadata) {
+        binding.includeAbout.rawMetadataBtn.setOnClickListener {
+            RawMetadataDialog.newInstance(
+                RawMetadataDialog.setBundle(rawMetadata = tokenMetadata.asJsonString())
+            ).showSingle(supportFragmentManager, RawMetadataDialog.TAG)
         }
     }
 
