@@ -117,12 +117,14 @@
                     android:importantForAccessibility="no"
                     android:padding="8dp"
                     android:src="@drawable/mw24_ic_account_selector"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/toolbar_account_label"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cryptox_grey_additional" />
+                    app:tint="@color/cryptox_grey_additional"
+                    tools:visibility="visible"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
