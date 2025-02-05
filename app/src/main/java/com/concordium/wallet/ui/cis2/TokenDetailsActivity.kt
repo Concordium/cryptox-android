@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
@@ -101,7 +102,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             setTokenId(token.token)
             setBalances(token)
             token.metadata?.let { tokenMetadata ->
-                setNameAndIcon(token.isCcd, tokenMetadata)
+                setNameAndIcon(token.isCcd, token.isUnique, tokenMetadata)
                 setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
@@ -244,25 +245,33 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setNameAndIcon(isCCD: Boolean, tokenMetadata: TokenMetadata) {
-        val name = tokenMetadata.name
+    private fun setNameAndIcon(isCCD: Boolean, isUnique: Boolean, tokenMetadata: TokenMetadata) {
+        val name = if (isCCD) getString(R.string.account_details_ccd_token) else tokenMetadata.name
         val thumbnail = tokenMetadata.thumbnail?.url
+        val iconView = binding.includeAbout.icon
+
         binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
-        if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(ThemedCircularProgressDrawable(this))
-                .fitCenter()
-                .into(binding.includeAbout.icon)
-        } else if (isCCD) {
-            binding.includeAbout.icon.setImageResource(R.drawable.mw24_ic_ccd)
-        } else {
-            binding.includeAbout.icon.setImageResource(R.drawable.ic_token_no_image)
+        binding.includeAbout.name.text = name
+
+        when {
+            !thumbnail.isNullOrBlank() -> {
+                loadImage(iconView, thumbnail)
+                if (isUnique) {
+                    binding.includeAbout.nftIcon.visibility = View.VISIBLE
+                    loadImage(binding.includeAbout.nftIcon, thumbnail)
+                }
+            }
+            isCCD -> iconView.setImageResource(R.drawable.mw24_ic_ccd)
+            else -> iconView.setImageResource(R.drawable.ic_token_no_image)
         }
-        binding.includeAbout.name.text =
-            if (isCCD)
-                getString(R.string.account_details_ccd_token)
-            else name
+    }
+
+    private fun loadImage(view: AppCompatImageView, url: String) {
+        Glide.with(view.context)
+            .load(url)
+            .placeholder(ThemedCircularProgressDrawable(view.context))
+            .fitCenter()
+            .into(view)
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {

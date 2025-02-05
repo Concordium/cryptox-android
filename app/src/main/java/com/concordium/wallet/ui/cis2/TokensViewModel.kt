@@ -363,13 +363,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val isSelectedNow = !token.isSelected
         (tokens.asSequence() + everFoundExactTokens.asSequence())
             .filter { it.token == token.token }
-            .forEach {
-                it.isSelected = isSelectedNow
-                if (it.isSelected)
-                    lookForTokens.postValue(TOKENS_SELECTED)
-                else
-                    lookForTokens.postValue(TOKENS_OK)
-            }
+            .forEach { it.isSelected = isSelectedNow }
     }
 
     fun checkExistingTokens() = viewModelScope.launch(Dispatchers.IO) {

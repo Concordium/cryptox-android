@@ -132,7 +132,6 @@ class ManageTokensSelectionFragment : Fragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-            binding.continueBtn.isEnabled = it == TokensViewModel.TOKENS_SELECTED
             binding.searchLayout.isVisible = _viewModel.tokens.size > 1
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()

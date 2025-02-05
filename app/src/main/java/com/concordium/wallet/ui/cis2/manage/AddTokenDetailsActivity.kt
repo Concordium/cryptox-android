@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.cis2.manage
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
@@ -36,7 +37,7 @@ class AddTokenDetailsActivity : BaseActivity(
         setContractIndexAndSubIndex(token)
         setTokenId(token.token)
         token.metadata?.let { tokenMetadata ->
-            setNameAndIcon(tokenMetadata)
+            setNameAndIcon(tokenMetadata, token.isUnique)
             setDescription(tokenMetadata)
             setTicker(tokenMetadata)
             setDecimals(token)
@@ -58,21 +59,30 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
+    private fun setNameAndIcon(tokenMetadata: TokenMetadata, isUnique: Boolean) {
         val name = tokenMetadata.name
         val thumbnail = tokenMetadata.thumbnail?.url
         binding.detailsLayout.nameAndIconHolder.visibility = View.VISIBLE
 
         if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(ThemedCircularProgressDrawable(binding.detailsLayout.icon.context))
-                .fitCenter()
-                .into(binding.detailsLayout.icon)
-        } else if (thumbnail == "none") {
+            loadImage(binding.detailsLayout.icon, thumbnail)
+
+            if (isUnique) {
+                binding.detailsLayout.nftIcon.visibility = View.VISIBLE
+                loadImage(binding.detailsLayout.nftIcon, thumbnail)
+            }
+        } else {
             binding.detailsLayout.icon.setImageResource(R.drawable.ic_token_no_image)
         }
         binding.detailsLayout.name.text = name
+    }
+
+    private fun loadImage(view: AppCompatImageView, url: String) {
+        Glide.with(view.context)
+            .load(url)
+            .placeholder(ThemedCircularProgressDrawable(view.context))
+            .fitCenter()
+            .into(view)
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
