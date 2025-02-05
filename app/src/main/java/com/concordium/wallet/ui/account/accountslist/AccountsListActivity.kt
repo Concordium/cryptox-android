@@ -34,7 +34,7 @@ class AccountsListActivity : BaseActivity(
         )[AccountDetailsViewModel::class.java]
 
         viewModelAccountDetails.updateAccount()
-        viewModelAccountDetails.newAccount.collectWhenStarted(this) { account ->
+        viewModelAccountDetails.activeAccount.collectWhenStarted(this) { account ->
             hideSettings(isVisible = true) {
                 gotoAccountSettings(account)
             }

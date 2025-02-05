@@ -92,8 +92,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val showDialogLiveData: LiveData<Event<DialogToShow>>
         get() = _showDialogLiveData
 
-    private val _newAccount = MutableSharedFlow<Account>()
-    val newAccount = _newAccount.asSharedFlow()
+    private val _activeAccount = MutableSharedFlow<Account>()
+    val activeAccount = _activeAccount.asSharedFlow()
 
     private val _stateFlow = MutableSharedFlow<OnboardingState>()
     val stateFlow = _stateFlow.asSharedFlow()
@@ -120,7 +120,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val acc = accountRepository.getActive()
         acc?.let {
             account = it
-            _newAccount.emit(it)
+            _activeAccount.emit(it)
             _totalBalanceLiveData.postValue(it.balance)
         }
     }

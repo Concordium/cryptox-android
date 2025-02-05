@@ -83,7 +83,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         initTooltipBanner()
         initializeViewModels()
-        initializeViewModelTokens()
         mainViewModel.setTitle("")
 
         val baseActivity = (activity as BaseActivity)
@@ -131,6 +130,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
+
+        viewModelTokens = ViewModelProvider(
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[TokensViewModel::class.java]
 
         onboardingViewModel = ViewModelProvider(
             requireActivity(),
@@ -181,7 +185,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner, ::showTotalBalance)
 
-        viewModelAccountDetails.newAccount.collectWhenStarted(viewLifecycleOwner) { account ->
+        viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             viewModelTokens.tokenData.account = account
             viewModelTokens.loadTokens(account.address)
             initViews()
@@ -222,6 +226,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
+        viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
+            token?.let {
+                showTokenDetailsDialog(it)
+            }
+        }
+
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
         }
@@ -232,31 +242,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         onboardingViewModel.showLoading.collectWhenStarted(viewLifecycleOwner) { show ->
             showWaiting(show)
         }
-    }
-
-    private fun initializeViewModelTokens() {
-        viewModelTokens = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[TokensViewModel::class.java]
-
-        viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
-            token?.let {
-                showTokenDetailsDialog(it)
-            }
-        }
-
-//        viewModelTokens.tokenBalances.observe(this, object : Observer<Boolean> {
-//            override fun onChanged(t: Boolean) {
-//                // Open the requested token once, when balances are loaded.
-//                if (tokenToOpenUid != null) {
-//                    viewModelTokens.tokenBalances.removeObserver(this)
-//                    viewModelTokens.tokens
-//                        .find { it.uid == tokenToOpenUid }
-//                        ?.also(viewModelTokens.chooseToken::postValue)
-//                }
-//            }
-//        })
     }
 
     private fun initViews() {
