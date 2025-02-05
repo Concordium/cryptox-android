@@ -27,9 +27,14 @@ object TransactionViewHelper {
         alertImageView: ImageView,
         statusImageView: ImageView,
         showDate: Boolean = false,
+        isReceipt: Boolean = false
     ) {
         // Title
-        titleTextView.text = ta.title
+        titleTextView.text =
+            if (isReceipt)
+                titleTextView.context.getString(R.string.transaction_type_transfer)
+            else
+                ta.title
 
         memoTextView.text = ta.getDecryptedMemo()
         memoLayout.visibility = if (ta.hasMemo()) View.VISIBLE else View.GONE

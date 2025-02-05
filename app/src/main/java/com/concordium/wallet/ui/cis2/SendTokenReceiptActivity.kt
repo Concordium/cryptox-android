@@ -3,9 +3,7 @@ package com.concordium.wallet.ui.cis2
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
@@ -163,8 +161,7 @@ class SendTokenReceiptActivity : BaseActivity(
                     transactionAnimation.setAnimation(R.raw.transaction_loading)
                     transactionAnimation.repeatCount = LottieDrawable.INFINITE
                     transactionAnimation.playAnimation()
-                    transactionDivider.visibility = View.GONE
-                    transactionDetails.visibility = View.GONE
+                    showTransactionDetails(false)
                 }
             }
 
@@ -174,8 +171,7 @@ class SendTokenReceiptActivity : BaseActivity(
                     transactionAnimation.setAnimation(R.raw.transaction_success)
                     transactionAnimation.repeatCount = 0
                     transactionAnimation.playAnimation()
-                    transactionDivider.visibility = View.VISIBLE
-                    transactionDetails.visibility = View.VISIBLE
+                    showTransactionDetails(true)
                 }
             }
 
@@ -185,11 +181,16 @@ class SendTokenReceiptActivity : BaseActivity(
                     transactionAnimation.setAnimation(R.raw.transaction_fail)
                     transactionAnimation.repeatCount = 0
                     transactionAnimation.playAnimation()
-                    transactionDivider.visibility = View.VISIBLE
-                    transactionDetails.visibility = View.VISIBLE
+                    showTransactionDetails(false)
                 }
             }
         }
+    }
+
+    private fun showTransactionDetails(show: Boolean) {
+        val visibility = if (show) View.VISIBLE else View.GONE
+        binding.transactionDivider.visibility = visibility
+        binding.transactionDetails.visibility = visibility
     }
 
     private fun showPageAsSendPrompt() {
@@ -212,6 +213,7 @@ class SendTokenReceiptActivity : BaseActivity(
             viewModel.sendTokenData.account
         )
         intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, transaction)
+        intent.putExtra(TransactionDetailsActivity.EXTRA_IS_RECEIPT, true)
         startActivity(intent)
     }
 }
