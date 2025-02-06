@@ -45,4 +45,8 @@
             android:clickable="true"
             android:text="@string/cis_manage" />
     </LinearLayout>
+
+    <include android:id="@+id/loading"
+        layout="@layout/progress" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

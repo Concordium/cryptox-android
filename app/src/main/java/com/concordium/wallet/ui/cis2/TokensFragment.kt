@@ -40,16 +40,17 @@ class TokensFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTokensBalances()
+        // Scroll to first element when account changed
+        binding.tokensFound.smoothScrollToPosition(0)
     }
 
     private fun initViews() {
-        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        binding.tokensFound.layoutManager = LinearLayoutManager(requireContext())
         tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(
             context = requireContext(),
             showManageButton = true,
         )
-        tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
+        binding.tokensFound.adapter = tokensAccountDetailsAdapter
 
         tokensAccountDetailsAdapter.setTokenClickListener(object :
             TokensAccountDetailsAdapter.TokenClickListener {
@@ -74,9 +75,17 @@ class TokensFragment : Fragment() {
                 }
             }
         }
-        viewModel.tokenBalances.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.setData(viewModel.tokens)
+        viewModel.tokenBalances.observe(viewLifecycleOwner) { ready ->
+            showLoading(ready.not())
+            if (ready) {
+                binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
+                tokensAccountDetailsAdapter.setData(viewModel.tokens)
+            }
         }
+    }
+
+    private fun showLoading(show: Boolean) {
+        binding.loading.progressBar.isVisible = show
     }
 
     private fun gotoManageTokensList(account: Account) {

@@ -60,7 +60,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val lookForExactToken: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -440,10 +439,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun stepPage(by: Int) {
-        stepPageBy.postValue(by)
-    }
-
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
         val accountRepository =
             AccountRepository(App.appCore.session.walletStorage.database.accountDao())
@@ -457,6 +452,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             return
 
         viewModelScope.launch(Dispatchers.IO) {
+            tokenBalances.postValue(false)
             try {
                 loadTokensBalances(
                     tokensToUpdate = tokens,
@@ -465,6 +461,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 tokenBalances.postValue(true)
             } catch (e: Throwable) {
                 handleBackendError(e)
+                tokenBalances.postValue(true)
             }
         }
     }
@@ -489,7 +486,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun resetLookForTokens() {
         tokenData.contractIndex = String.Empty
-        stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
         lookForExactToken.value = TOKENS_NOT_LOADED
         everFoundExactTokens.clear()

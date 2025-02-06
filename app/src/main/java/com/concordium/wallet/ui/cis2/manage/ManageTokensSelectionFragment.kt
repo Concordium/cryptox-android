@@ -152,7 +152,7 @@ class ManageTokensSelectionFragment : Fragment() {
             selectionAdapter.notifyDataSetChanged()
         }
         _viewModel.hasExistingTokens.observe(viewLifecycleOwner) { hasExistingTokens ->
-            binding.continueBtn.isEnabled = hasExistingTokens
+            binding.continueBtn.isEnabled = true
         }
         _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
             if (nonSelected)

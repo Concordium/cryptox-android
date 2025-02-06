@@ -292,6 +292,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="40dp"
+                android:name="com.concordium.wallet.ui.cis2.TokensFragment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/onramp_banner"
+                app:layout_constraintVertical_bias="0" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/pending_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="40dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

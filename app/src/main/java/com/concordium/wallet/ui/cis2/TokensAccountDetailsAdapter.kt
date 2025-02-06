@@ -13,6 +13,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import com.concordium.wallet.util.Log
 import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
@@ -25,6 +26,7 @@ class TokensAccountDetailsAdapter(
         context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
     }
     private val dataSet: MutableList<Token> = mutableListOf()
+    private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
     inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -43,12 +45,14 @@ class TokensAccountDetailsAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Token>) {
+        Log.d("setData()")
         dataSet.clear()
         dataSet.addAll(data)
+        dataSize = data.size
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = if (showManageButton) dataSet.size + 1 else dataSet.size
+    override fun getItemCount() = if (showManageButton) dataSize + 1 else dataSize
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemTokenAccountDetailsBinding.inflate(
@@ -85,7 +89,6 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
-
         val tokenMetadata = token.metadata
         if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
             Glide.with(context)
@@ -115,6 +118,7 @@ class TokensAccountDetailsAdapter(
                     context.getString(R.string.cis_not_owned)
         } else {
             holder.binding.title.text = token.symbol
+            holder.binding.balance.isVisible = true
             holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
                 value = token.balance,
                 roundDecimals = 2
@@ -123,7 +127,6 @@ class TokensAccountDetailsAdapter(
         }
 
         holder.binding.notice.isVisible = token.isNewlyReceived
-
         holder.binding.content.setOnClickListener {
             tokenClickListener?.onRowClick(token)
         }

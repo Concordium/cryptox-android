@@ -233,7 +233,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
         if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
-            updateSubmissionStatesAndBalances()
+            getActiveAccount()
+            updateSubmissionStatesAndBalances(notifyWaitingLiveData)
             return@launch
         }
 
@@ -292,6 +293,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
             postState(OnboardingState.DONE)
             showSingleDialogIfNeeded()
+            getActiveAccount()
         } else {
             postState(state = OnboardingState.FINALIZING_ACCOUNT)
             _waitingLiveData.postValue(false)

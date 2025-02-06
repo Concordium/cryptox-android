@@ -43,7 +43,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.cis2.TokenDetailsActivity
-import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
@@ -82,6 +81,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         super.onViewCreated(view, savedInstanceState)
 
         initTooltipBanner()
+        initViews()
         initializeViewModels()
         mainViewModel.setTitle("")
 
@@ -98,10 +98,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     override fun onResume() {
         super.onResume()
-        viewModelAccountDetails.populateTransferList()
-        viewModelAccountDetails.updateState()
-        viewModelAccountDetails.initiateFrequentUpdater()
-        viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
+        updateWhenResumed()
     }
 
     override fun onPause() {
@@ -144,7 +141,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
             when (state) {
                 OnboardingState.DONE -> {
-                    viewModelAccountDetails.updateAccount()
                     viewModelAccountDetails.initiateFrequentUpdater()
                     showStateDefault()
                     if (!viewModelAccountDetails.hasShownInitialAnimation()) {
@@ -188,7 +184,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             viewModelTokens.tokenData.account = account
             viewModelTokens.loadTokens(account.address)
-            initViews()
+            updateViews(account.transactionStatus)
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
                 text = account.getAccountName(),
@@ -199,7 +195,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
-            initViews()
+            viewModelTokens.loadTokensBalances()
         }
 
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -245,8 +241,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initViews() {
-        showWaiting(false)
+        showWaiting(true)
         initializeAnimation()
+        initContainer()
 
         binding.accountRetryButton.setOnClickListener {
             requireActivity().setResult(RESULT_RETRY_ACCOUNT_CREATION)
@@ -274,24 +271,20 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.activityBtn.setOnClickListener {
             onActivityClicked()
         }
+    }
 
-        replaceTokensFragment(getTokensFragment())
+    private fun updateViews(transactionStatus: TransactionStatus) {
+        showWaiting(false)
 
-        when (viewModelAccountDetails.account.transactionStatus) {
-            TransactionStatus.ABSENT -> {
-                setErrorMode()
-            }
-
-            TransactionStatus.FINALIZED -> {
-                setFinalizedMode()
-            }
-
-            TransactionStatus.COMMITTED -> setPendingMode()
+        when (transactionStatus) {
+            TransactionStatus.ABSENT -> setErrorMode()
+            TransactionStatus.FINALIZED -> setFinalizedMode()
+            TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED -> setPendingMode()
-            else -> {
-            }
+            else -> {}
         }
-        initContainer()
+
+        replaceTokensFragment(getTokensFragment(transactionStatus))
     }
 
     @SuppressLint("InflateParams")
@@ -313,6 +306,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun setFinalizedMode() {
         binding.apply {
+            tokensFragmentContainer.visibility = View.VISIBLE
             onrampBtn.isEnabled = true
             sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
             receiveBtn.isEnabled = true
@@ -324,8 +318,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun showStateOnboarding() {
         activity?.invalidateOptionsMenu()
-        binding.onboardingLayout.visibility = View.VISIBLE
         binding.tokensFragmentContainer.visibility = View.GONE
+        binding.pendingFragmentContainer.visibility = View.GONE
+        binding.onboardingLayout.visibility = View.VISIBLE
         showOnboarding(true)
     }
 
@@ -333,6 +328,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         activity?.invalidateOptionsMenu()
         binding.onboardingLayout.visibility = View.GONE
         binding.tokensFragmentContainer.visibility = View.VISIBLE
+        binding.pendingFragmentContainer.visibility = View.GONE
         showOnboarding(false)
     }
 
@@ -358,19 +354,28 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         setupOnrampBanner(active = false)
     }
 
-    private fun getTokensFragment(): Fragment {
-        return when (viewModelAccountDetails.account.transactionStatus) {
+    private fun getTokensFragment(transactionStatus: TransactionStatus): Fragment? {
+        return when (transactionStatus) {
             TransactionStatus.ABSENT -> AccountDetailsErrorFragment()
             TransactionStatus.COMMITTED -> AccountDetailsPendingFragment()
             TransactionStatus.RECEIVED -> AccountDetailsPendingFragment()
-            else -> TokensFragment()
+            else -> null
         }
     }
 
-    private fun replaceTokensFragment(fragment: Fragment) {
-        childFragmentManager.beginTransaction()
-            .replace(binding.tokensFragmentContainer.id, fragment)
-            .commit()
+    private fun replaceTokensFragment(fragment: Fragment?) {
+        fragment?.let {
+            childFragmentManager.beginTransaction()
+                .replace(binding.pendingFragmentContainer.id, it)
+                .commit()
+        }
+    }
+
+    private fun updateWhenResumed() {
+        viewModelAccountDetails.populateTransferList()
+        viewModelAccountDetails.updateState()
+        viewModelAccountDetails.initiateFrequentUpdater()
+        viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }
 
     private fun initContainer() {
