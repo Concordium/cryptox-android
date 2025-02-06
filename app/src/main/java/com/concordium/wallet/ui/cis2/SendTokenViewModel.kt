@@ -45,7 +45,6 @@ import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.apache.commons.lang3.mutable.Mutable
 import java.io.Serializable
 import java.math.BigInteger
 import java.util.Date
@@ -349,7 +348,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             val storageAccountDataEncrypted = account.encryptedAccountData
             if (storageAccountDataEncrypted == null) {
                 errorInt.postValue(R.string.app_error_general)
-//                waiting.postValue(false)
                 transactionWaiting.postValue(false)
                 return
             }
@@ -366,7 +364,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 getAccountEncryptedKey(credentialsOutput)
             } else {
                 errorInt.postValue(R.string.app_error_encryption)
-//                waiting.postValue(false)
                 transactionWaiting.postValue(false)
             }
         }
@@ -390,7 +387,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     createTransaction(credentialsOutput.accountKeys)
             },
             failure = {
-//                waiting.postValue(false)
                 transactionWaiting.postValue(false)
                 handleBackendError(it)
             }
@@ -408,7 +404,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         if (nonce == null || energy == null || accountId == null || balance == null) {
             errorInt.postValue(R.string.app_error_general)
-//            waiting.postValue(false)
             transactionWaiting.postValue(false)
             return
         }
@@ -441,7 +436,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         if (output == null) {
             transactionWaiting.postValue(false)
             errorInt.postValue(R.string.app_error_general)
-//            waiting.postValue(false)
         } else {
             sendTokenData.createTransferOutput = output
             submitTransaction(output)
@@ -502,20 +496,17 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
-//        waiting.postValue(true)
         submitTransaction?.dispose()
         submitTransaction = proxyRepository.submitTransfer(
             transfer = createTransferOutput,
             success = {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
                 finishTransferCreation(it.submissionId)
-//                waiting.postValue(false)
                 transactionWaiting.postValue(false)
             },
             failure = {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
                 handleBackendError(it)
-//                waiting.postValue(false)
                 transactionWaiting.postValue(false)
             }
         )
@@ -533,7 +524,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val cost = sendTokenData.fee
 
         if (expiry == null || cost == null) {
-//            waiting.value = false
             transactionWaiting.postValue(false)
             return
         }
