@@ -106,6 +106,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             } else {
                 binding.balanceSymbol.alpha = 1f
             }
+            viewModel.loadEURRate()
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -125,10 +126,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 else -> false
             }
         }
-        listOf(binding.amount, binding.balanceSymbol).forEach {
-            it.setOnClickListener {
-                showKeyboard(this, binding.amount)
-            }
+        binding.balanceSymbol.setOnClickListener {
+            showKeyboard(this, binding.amount)
         }
     }
 
@@ -255,11 +254,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 // For owned NFTs, prefill the amount (quantity) which is 1
                 // for smoother experience.
                 binding.amount.setText("1")
-                binding.balanceSymbol.isVisible = false
+                binding.balanceSymbol.visibility = View.GONE
             } else {
                 // Clearing the text reveals the "0,00" hint.
                 binding.amount.text.clear()
-                binding.balanceSymbol.isVisible = true
+                binding.balanceSymbol.visibility = View.VISIBLE
             }
             binding.amount.decimals = decimals
             // For non-CCD tokens Max is always available.
@@ -270,6 +269,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 binding.addMemo.visibility = View.GONE
                 binding.atDisposalLayout.visibility = View.GONE
                 binding.balance.visibility = View.VISIBLE
+                binding.eurRate.visibility = View.GONE
             } else {
                 binding.addMemo.visibility = View.VISIBLE
                 binding.addMemo.setOnClickListener {
@@ -284,6 +284,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 }
                 binding.atDisposalLayout.visibility = View.VISIBLE
                 binding.balance.visibility = View.GONE
+                binding.eurRate.visibility = View.VISIBLE
             }
             // This also initiates fee loading.
             clearMemo()
@@ -309,6 +310,16 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.eurRateReady.observe(this) { rate ->
+            binding.eurRate.text =
+                if (rate != null)
+                    getString(
+                        R.string.cis_estimated_eur_rate,
+                        rate
+                    )
+                else
+                    ""
         }
     }
 

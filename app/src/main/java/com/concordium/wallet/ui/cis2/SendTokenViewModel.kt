@@ -99,6 +99,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionWaiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transaction: MutableLiveData<Transaction> by lazy { MutableLiveData<Transaction>() }
+    val eurRateReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
 
     val canSend: Boolean
         get() = with(sendTokenData) {
@@ -228,6 +229,17 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         sendTokenData.receiverName = name
     }
 
+    fun loadEURRate() {
+        if (sendTokenData.token == null)
+            return
+
+        if (sendTokenData.token!!.isCcd) {
+            viewModelScope.launch {
+                getTransferEURRate()
+            }
+        }
+    }
+
     fun loadTransactionFee() {
         if (sendTokenData.token == null)
             return
@@ -279,6 +291,23 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             atDisposal >= (sendTokenData.fee
                 ?: BigInteger.ZERO) && sendTokenData.token!!.balance >= sendTokenData.amount
         }
+    }
+
+    private fun getTransferEURRate() {
+        proxyRepository.getChainParameters(
+            success = { response ->
+                Log.d("sendTokenData.amount: ${sendTokenData.amount}, " +
+                        "denominator: ${response.microGtuPerEuro.denominator}, " +
+                        "numerator: ${response.microGtuPerEuro.numerator}")
+
+                val rate = (sendTokenData.amount.multiply(response.microGtuPerEuro.denominator))
+                    .divide(response.microGtuPerEuro.numerator)
+                eurRateReady.postValue(rate)
+            },
+            failure = {
+                handleBackendError(it)
+            }
+        )
     }
 
     private fun getTransferCostCCD() {
