@@ -73,13 +73,15 @@ class SelectTokenActivity : BaseActivity(
             viewModelTokens.tokens = tokens as MutableList<Token>
             viewModelTokens.loadTokensBalances()
         }
-        viewModelTokens.tokenBalances.observe(this) {
-            tokensAccountDetailsAdapter.setData(viewModelTokens.tokens)
+        viewModelTokens.tokenBalances.observe(this) { ready ->
+            showWaiting(ready.not())
+            if (ready)
+                tokensAccountDetailsAdapter.setData(viewModelTokens.tokens)
         }
     }
 
     private fun showWaiting(waiting: Boolean) {
-        binding.tokensList.visibility = if (waiting) View.GONE else View.VISIBLE
+        binding.loading.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 
     private fun goBackWithToken(token: Token) {
