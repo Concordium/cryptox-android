@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.KeyboardUtil
+import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 
@@ -100,6 +101,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             viewModel.sendTokenData.amount =
                 CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token)
                     ?: BigInteger.ZERO
+            if (it.toString().isEmpty()) {
+                binding.balanceSymbol.alpha = 0.5f
+            } else {
+                binding.balanceSymbol.alpha = 1f
+            }
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -117,6 +123,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 }
 
                 else -> false
+            }
+        }
+        listOf(binding.amount, binding.balanceSymbol).forEach {
+            it.setOnClickListener {
+                showKeyboard(this, binding.amount)
             }
         }
     }
@@ -244,13 +255,16 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 // For owned NFTs, prefill the amount (quantity) which is 1
                 // for smoother experience.
                 binding.amount.setText("1")
+                binding.balanceSymbol.isVisible = false
             } else {
                 // Clearing the text reveals the "0,00" hint.
                 binding.amount.text.clear()
+                binding.balanceSymbol.isVisible = true
             }
             binding.amount.decimals = decimals
             // For non-CCD tokens Max is always available.
             binding.sendAllButton.isEnabled = !token.isCcd
+            binding.balanceSymbol.text = token.symbol
 
             if (!token.isCcd) {
                 binding.addMemo.visibility = View.GONE
