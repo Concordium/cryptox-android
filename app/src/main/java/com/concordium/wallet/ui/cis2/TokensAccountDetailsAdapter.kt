@@ -13,7 +13,6 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
-import com.concordium.wallet.util.Log
 import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
@@ -45,7 +44,6 @@ class TokensAccountDetailsAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Token>) {
-        Log.d("setData()")
         dataSet.clear()
         dataSet.addAll(data)
         dataSize = data.size

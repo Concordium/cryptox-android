@@ -17,12 +17,12 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.reown.util.Empty
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Serializable
 
 data class TokenData(
@@ -80,20 +80,23 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         isFungible: Boolean? = null,
     ) {
         waiting.postValue(true)
-        CoroutineScope(Dispatchers.IO).launch {
-            tokens.clear()
-            // Add CCD as default at the top
-            tokens.add(getCCDDefaultToken(accountAddress))
+        viewModelScope.launch(Dispatchers.IO) {
+            val ccdToken = getCCDDefaultToken(accountAddress)
             val contractTokens = contractTokensRepository.getTokens(
                 accountAddress = accountAddress,
                 isFungible = isFungible,
             )
-            tokens.addAll(contractTokens.map {
-                Token(
-                    contractToken = it,
-                    isSelected = true,
-                )
-            })
+            withContext(Dispatchers.Main) {
+                tokens.clear()
+                // Add CCD as default at the top
+                tokens.add(ccdToken)
+                tokens.addAll(contractTokens.map {
+                    Token(
+                        contractToken = it,
+                        isSelected = true,
+                    )
+                })
+            }
             waiting.postValue(false)
         }
     }
