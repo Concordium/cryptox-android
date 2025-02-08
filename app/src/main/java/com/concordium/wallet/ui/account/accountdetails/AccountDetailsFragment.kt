@@ -19,7 +19,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -33,8 +32,6 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
-import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
@@ -51,6 +48,7 @@ import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.ImageUtil
+import kotlinx.coroutines.flow.first
 import java.math.BigInteger
 
 class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl() {
@@ -142,7 +140,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             when (state) {
                 OnboardingState.DONE -> {
                     viewModelAccountDetails.initiateFrequentUpdater()
-                    showStateDefault()
+                    viewModelAccountDetails.activeAccount.first().let {
+                        updateViews(it.transactionStatus)
+                    }
                     if (!viewModelAccountDetails.hasShownInitialAnimation()) {
                         binding.confettiAnimation.visibility = View.VISIBLE
                         binding.confettiAnimation.playAnimation()
@@ -199,8 +199,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it.isNotEmpty())
-                setFinalizedMode()
+            if (it.isNotEmpty()) {
+                viewModelAccountDetails.activeAccount.first().let { account ->
+                    viewModelTokens.loadTokens(account.address)
+                    viewModelTokens.loadTokensBalances()
+                }
+            }
         }
 
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
@@ -246,7 +250,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         initContainer()
 
         binding.accountRetryButton.setOnClickListener {
-            requireActivity().setResult(RESULT_RETRY_ACCOUNT_CREATION)
+            gotoAccountsList()
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
@@ -281,10 +285,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             TransactionStatus.FINALIZED -> setFinalizedMode()
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED -> setPendingMode()
-            else -> {}
+            else -> {
+                showStateDefault()
+            }
         }
-
-        replaceTokensFragment(getTokensFragment(transactionStatus))
     }
 
     @SuppressLint("InflateParams")
@@ -307,6 +311,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun setFinalizedMode() {
         binding.apply {
             tokensFragmentContainer.visibility = View.VISIBLE
+            pendingFragmentContainer.pendingLayout.visibility = View.GONE
+            pendingFragmentContainer.errorLayout.visibility = View.GONE
+            onboardingLayout.visibility = View.GONE
             onrampBtn.isEnabled = true
             sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
             receiveBtn.isEnabled = true
@@ -318,33 +325,39 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun showStateOnboarding() {
         activity?.invalidateOptionsMenu()
-        binding.tokensFragmentContainer.visibility = View.GONE
-        binding.pendingFragmentContainer.visibility = View.GONE
-        binding.onboardingLayout.visibility = View.VISIBLE
-        showOnboarding(true)
+        binding.apply {
+            tokensFragmentContainer.visibility = View.GONE
+            pendingFragmentContainer.pendingLayout.visibility = View.GONE
+            pendingFragmentContainer.errorLayout.visibility = View.GONE
+            onboardingLayout.visibility = View.VISIBLE
+        }
     }
 
     private fun showStateDefault() {
         activity?.invalidateOptionsMenu()
-        binding.onboardingLayout.visibility = View.GONE
-        binding.tokensFragmentContainer.visibility = View.VISIBLE
-        binding.pendingFragmentContainer.visibility = View.GONE
-        showOnboarding(false)
-    }
-
-    private fun showOnboarding(show: Boolean) {
-        val state = if (show) View.VISIBLE else View.GONE
-        binding.onboardingLayout.visibility = state
+        binding.apply {
+            onboardingLayout.visibility = View.GONE
+            tokensFragmentContainer.visibility = View.VISIBLE
+            pendingFragmentContainer.pendingLayout.visibility = View.GONE
+            pendingFragmentContainer.errorLayout.visibility = View.GONE
+        }
     }
 
     private fun setErrorMode() {
         setPendingMode()
-        binding.accountRetryButton.visibility = View.VISIBLE
-        binding.accountRemoveButton.visibility = View.VISIBLE
+        binding.apply {
+            pendingFragmentContainer.pendingLayout.visibility = View.GONE
+            pendingFragmentContainer.errorLayout.visibility = View.VISIBLE
+            accountRetryButton.visibility = View.VISIBLE
+            accountRemoveButton.visibility = View.VISIBLE
+        }
     }
 
     private fun setPendingMode() {
         binding.apply {
+            pendingFragmentContainer.pendingLayout.visibility = View.VISIBLE
+            tokensFragmentContainer.visibility = View.GONE
+            onboardingLayout.visibility = View.GONE
             onrampBtn.isEnabled = false
             sendFundsBtn.isEnabled = false
             receiveBtn.isEnabled = false
@@ -352,23 +365,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             activityBtn.isEnabled = false
         }
         setupOnrampBanner(active = false)
-    }
-
-    private fun getTokensFragment(transactionStatus: TransactionStatus): Fragment? {
-        return when (transactionStatus) {
-            TransactionStatus.ABSENT -> AccountDetailsErrorFragment()
-            TransactionStatus.COMMITTED -> AccountDetailsPendingFragment()
-            TransactionStatus.RECEIVED -> AccountDetailsPendingFragment()
-            else -> null
-        }
-    }
-
-    private fun replaceTokensFragment(fragment: Fragment?) {
-        fragment?.let {
-            childFragmentManager.beginTransaction()
-                .replace(binding.pendingFragmentContainer.id, it)
-                .commit()
-        }
     }
 
     private fun updateWhenResumed() {
@@ -397,7 +393,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 handledContainerHeight = containerHeight
 
                 val scrollContainerHeight = containerHeight - buttonsHeight - buttonsMargin -
-                        onRampMargin - onRampHeight - fileWalletDisclaimerHeight -
+                        onRampMargin - onRampHeight - fileWalletDisclaimerHeight - buttonsMargin -
                         if (isFileWallet) fileWalletDisclaimerMargin else 0
 
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {

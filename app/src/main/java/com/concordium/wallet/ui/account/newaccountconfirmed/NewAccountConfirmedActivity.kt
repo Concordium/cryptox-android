@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityNewAccountConfirmedBinding
-import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 
 class NewAccountConfirmedActivity : BaseActivity(
@@ -93,7 +93,7 @@ class NewAccountConfirmedActivity : BaseActivity(
 
     private fun gotoAccountOverview() {
         finish()
-        val intent = Intent(this, AccountsListActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         startActivity(intent)
     }

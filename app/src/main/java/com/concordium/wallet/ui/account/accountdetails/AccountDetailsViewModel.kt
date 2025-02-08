@@ -177,8 +177,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
-                    _newFinalizedAccountFlow.value = accountName
                     postState(OnboardingState.DONE)
+                    _newFinalizedAccountFlow.value = accountName
                     restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                 }
             }

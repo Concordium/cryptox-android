@@ -18,6 +18,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -46,12 +47,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
 
             override fun onNewAccountFinalized(accountName: String) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (App.appCore.session.isAccountsBackupPossible()) {
-                        App.appCore.session.setAccountsBackedUp(false)
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        if (App.appCore.session.isAccountsBackupPossible()) {
+                            App.appCore.session.setAccountsBackedUp(false)
+                        }
                     }
+                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                 }
-                restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
             }
 
             override fun onError(stringRes: Int) {

@@ -298,16 +298,16 @@
                 app:layout_constraintTop_toBottomOf="@id/onramp_banner"
                 app:layout_constraintVertical_bias="0" />
 
-            <androidx.fragment.app.FragmentContainerView
+            <include
                 android:id="@+id/pending_fragment_container"
+                layout="@layout/fragment_account_details_pending"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/account_retry_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/onramp_banner"
-                app:layout_constraintVertical_bias="0" />
+                app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
 
             <com.concordium.wallet.ui.onboarding.OnboardingFragment
                 android:id="@+id/onboarding_layout"

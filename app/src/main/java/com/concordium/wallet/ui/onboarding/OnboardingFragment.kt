@@ -84,9 +84,6 @@ class OnboardingFragment @JvmOverloads constructor(
                             activity = context as BaseActivity,
                             onAuthenticated = {
                                 newAccountViewModel.continueWithPassword(it)
-//                                activity.lifecycleScope.launch {
-//                                    onboardingViewModel.setShowLoading(true)
-//                                }
                             }
                         )
                     }
@@ -100,16 +97,12 @@ class OnboardingFragment @JvmOverloads constructor(
                         true
                     )
                     activity.lifecycleScope.launch {
-//                        onboardingViewModel.setShowLoading(false)
                         onboardingViewModel.setUpdateState(true)
                     }
                 }
             })
         newAccountViewModel.errorLiveData.observe(activity, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
-                activity.lifecycleScope.launch {
-//                    onboardingViewModel.setShowLoading(false)
-                }
                 (activity as BaseActivity).showError(value)
             }
         })

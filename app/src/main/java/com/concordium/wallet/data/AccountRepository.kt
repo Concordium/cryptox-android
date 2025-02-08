@@ -62,6 +62,10 @@ class AccountRepository(private val accountDao: AccountDao) {
         return accountDao.insert(account).first()
     }
 
+    suspend fun insertAndActivate(account: Account): Long {
+        return accountDao.insertAndActivate(account)
+    }
+
     suspend fun insertAll(accountList: List<Account>) {
         accountDao.insert(*accountList.toTypedArray())
     }

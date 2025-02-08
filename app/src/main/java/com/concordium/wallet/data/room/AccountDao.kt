@@ -56,6 +56,13 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg account: Account): List<Long>
 
+    @Transaction
+    suspend fun insertAndActivate(account: Account): Long {
+        val id = insert(account).first()
+        activate(account.address)
+        return id
+    }
+
     @Update
     suspend fun updateIdentity(vararg identity: Identity)
 

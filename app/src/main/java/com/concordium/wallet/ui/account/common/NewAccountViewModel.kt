@@ -261,7 +261,7 @@ open class NewAccountViewModel(application: Application) :
     }
 
     private fun saveNewAccount(account: Account) = viewModelScope.launch(Dispatchers.IO) {
-        val accountId = accountRepository.insert(account)
+        val accountId = accountRepository.insertAndActivate(account)
         account.id = accountId.toInt()
         // Also save a recipient representing this account
         recipientRepository.insert(Recipient(account))
