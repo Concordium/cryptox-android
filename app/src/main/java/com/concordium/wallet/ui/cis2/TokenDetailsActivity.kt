@@ -104,10 +104,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             token.metadata?.let { tokenMetadata ->
                 setNameAndIcon(token.isCcd, token.isUnique, tokenMetadata)
                 setOwnership(token, tokenMetadata)
-                setDescription(tokenMetadata)
+                setDescription(token.isCcd, tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(token)
-                setRawMetadataButton(tokenMetadata)
+                setRawMetadataButton(token.isCcd, tokenMetadata)
             }
             setHideButton(token.isCcd)
             if (token.isNewlyReceived) {
@@ -136,8 +136,11 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun setBalances(token: Token) {
-        binding.walletInfoCard.totalBalanceTextview.text =
+        binding.walletInfoCard.totalBalanceTextview.text = if (token.isCcd) {
+            CurrencyUtil.formatGTU(viewModel.tokenData.account?.balance!!, token)
+        } else {
             CurrencyUtil.formatGTU(token.balance, token)
+        }
 
         binding.actionButtons.onrampBtn.isEnabled = true
         viewModel.tokenData.account?.readOnly?.let {
@@ -167,11 +170,14 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                     binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.isVisible =
                         delegating
                 }
-
                 account.hasCooldowns().also { hasCooldown ->
                     binding.walletInfoCard.cooldownLabel.isVisible = hasCooldown
                     binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.isVisible =
                         hasCooldown
+                }
+                if (account.balance != account.balanceAtDisposal) {
+                    binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
+                    binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.visibility = View.VISIBLE
                 }
             }
 
@@ -183,7 +189,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
 
             viewModel.tokenData.account?.balanceAtDisposal?.let {
-                binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
                 binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text = getString(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
@@ -212,10 +217,13 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setRawMetadataButton(tokenMetadata: TokenMetadata) {
+    private fun setRawMetadataButton(isCCD: Boolean, tokenMetadata: TokenMetadata) {
         binding.includeAbout.rawMetadataBtn.setOnClickListener {
             RawMetadataDialog.newInstance(
-                RawMetadataDialog.setBundle(rawMetadata = tokenMetadata.asJsonString())
+                RawMetadataDialog.setBundle(
+                    rawMetadata = if (isCCD) getString(R.string.ccd_details_description)
+                    else tokenMetadata.asJsonString()
+                )
             ).showSingle(supportFragmentManager, RawMetadataDialog.TAG)
         }
     }
@@ -227,7 +235,11 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setDescription(tokenMetadata: TokenMetadata) {
+    private fun setDescription(isCCD: Boolean, tokenMetadata: TokenMetadata) {
+        if (isCCD) {
+            binding.includeAbout.descriptionHolder.visibility = View.VISIBLE
+            binding.includeAbout.description.text = getString(R.string.ccd_details_description)
+        }
         if (!tokenMetadata.description.isNullOrBlank()) {
             binding.includeAbout.descriptionHolder.visibility = View.VISIBLE
             binding.includeAbout.description.text = tokenMetadata.description
@@ -307,7 +319,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
 
     private fun setHideButton(isCCD: Boolean) {
         binding.includeAbout.hideToken.isVisible = !isCCD
-        binding.includeAbout.rawMetadataBtn.isVisible = !isCCD
     }
 
     private fun showNewlyReceivedNotice(tokenName: String) {

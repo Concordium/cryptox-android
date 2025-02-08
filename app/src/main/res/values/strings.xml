@@ -607,6 +607,7 @@
     </string>
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
+    <string name="ccd_details_description">CCD is the native token of the Concordium blockchain. Its main use cases are the payment of transaction fees, the payment for the execution of smart contracts, payments between users, payments for commercial transactions, staking, and the rewards offered to node operators.</string>
 
     <string name="your_wallet_seed">Your wallet private key</string>
     <string name="your_seed_phrase">Your seed phrase</string>

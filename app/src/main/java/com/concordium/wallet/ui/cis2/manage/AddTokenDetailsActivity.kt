@@ -115,7 +115,6 @@ class AddTokenDetailsActivity : BaseActivity(
     }
 
     private fun setRawMetadataButton(tokenMetadata: TokenMetadata) {
-        binding.detailsLayout.rawMetadataBtn.visibility = View.VISIBLE
         binding.detailsLayout.rawMetadataBtn.setOnClickListener {
             RawMetadataDialog.newInstance(
                 RawMetadataDialog.setBundle(rawMetadata = tokenMetadata.asJsonString())
