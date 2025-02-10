@@ -73,26 +73,36 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         setActionBarTitle(getString(R.string.cis_token_details_balance))
         hideActionBarBack(true)
 
-        binding.actionButtons.onrampBtn.setOnClickListener {
+        binding.ccdActionButtons.onrampBtn.setOnClickListener {
             onOnrampClicked()
         }
-        binding.actionButtons.sendFundsBtn.isEnabled =
+        binding.ccdActionButtons.sendFundsBtn.isEnabled =
             viewModel.tokenData.account.let {
                 it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED
             }
-        binding.actionButtons.sendFundsBtn.setOnClickListener {
+        binding.ccdActionButtons.sendFundsBtn.setOnClickListener {
             onSendClicked()
         }
-        binding.actionButtons.receiveBtn.setOnClickListener {
+        binding.ccdActionButtons.receiveBtn.setOnClickListener {
             onReceiveClicked()
         }
-        binding.actionButtons.earnBtn.setOnClickListener {
+        binding.ccdActionButtons.earnBtn.setOnClickListener {
             onEarnClicked()
         }
-        binding.actionButtons.activityBtn.setOnClickListener {
+        binding.ccdActionButtons.activityBtn.setOnClickListener {
             onActivityClicked()
         }
 
+        binding.cisTokenActionButtons.sendFundsBtn.isEnabled =
+            viewModel.tokenData.account.let {
+                it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED
+            }
+        binding.cisTokenActionButtons.sendFundsBtn.setOnClickListener {
+            onSendClicked()
+        }
+        binding.cisTokenActionButtons.receiveBtn.setOnClickListener {
+            onReceiveClicked()
+        }
         binding.includeAbout.hideToken.setOnClickListener {
             showDeleteDialog()
         }
@@ -142,17 +152,23 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             CurrencyUtil.formatGTU(token.balance, token)
         }
 
-        binding.actionButtons.onrampBtn.isEnabled = true
         viewModel.tokenData.account?.readOnly?.let {
-            binding.actionButtons.sendFundsBtn.isEnabled = !it
-            binding.actionButtons.earnBtn.isEnabled = !it
+            binding.ccdActionButtons.sendFundsBtn.isEnabled = !it
+            binding.cisTokenActionButtons.sendFundsBtn.isEnabled = !it
+            binding.ccdActionButtons.earnBtn.isEnabled = !it
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
-        binding.actionButtons.receiveBtn.isEnabled = true
-        binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
-        binding.walletInfoCard.disposalBlock.visibility = View.VISIBLE
+        binding.apply {
+            ccdActionButtons.onrampBtn.isEnabled = true
+            ccdActionButtons.receiveBtn.isEnabled = true
+            cisTokenActionButtons.receiveBtn.isEnabled = true
+            walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
+            walletInfoCard.disposalBlock.visibility = View.VISIBLE
+        }
 
         if (token.isCcd) {
+            binding.ccdActionButtons.root.visibility = View.VISIBLE
+            binding.cisTokenActionButtons.root.visibility = View.GONE
             binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
                 viewModel.tokenData.account?.baker?.bakerId?.toString()
 
@@ -208,11 +224,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 )
             }
         } else {
-            binding.walletInfoCard.disposalBlock.isVisible = false
-            binding.actionButtons.apply {
-                earnView.isVisible = false
-                earnLayout.isVisible = false
-                earnEmptyView.isVisible = true
+            binding.apply {
+                walletInfoCard.disposalBlock.isVisible = false
+                ccdActionButtons.root.visibility = View.GONE
+                cisTokenActionButtons.root.visibility = View.VISIBLE
             }
         }
     }
