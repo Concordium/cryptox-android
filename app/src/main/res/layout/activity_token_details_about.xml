@@ -248,9 +248,9 @@
         android:paddingVertical="4dp"
         android:text="@string/account_details_raw_metadata"
         android:textAppearance="@style/MW24_Typography_Label_Main"
-        android:textColor="@color/cryptox_white_main"
+        android:textColor="@color/mw24_primary_text_button_color"
         app:drawableStartCompat="@drawable/mw24_ic_raw_metadata"
-        app:drawableTint="@color/cryptox_white_main"/>
+        app:drawableTint="@color/mw24_primary_text_button_color"/>
 
     <TextView
         android:id="@+id/hide_token"

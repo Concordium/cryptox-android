@@ -114,10 +114,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingVertical">4dp</item>
-        <item name="android:textColor">@color/cryptox_grey_additional</item>
+        <item name="android:textColor">@color/mw24_primary_text_button_color</item>
         <item name="android:drawablePadding">8dp</item>
         <item name="drawableStartCompat">@drawable/mw24_ic_manage_token_list</item>
-        <item name="drawableTint">@color/cryptox_grey_additional</item>
+        <item name="drawableTint">@color/mw24_primary_text_button_color</item>
         <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
     </style>
 

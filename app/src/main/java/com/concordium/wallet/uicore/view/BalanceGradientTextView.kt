@@ -27,9 +27,9 @@ class BalanceGradientTextView @JvmOverloads constructor(
                 0f,
                 width / 1f,
                 intArrayOf(
-                    0xE69EF2EB.toInt(),
-                    0xE6EDDABF.toInt(),
-                    0xE6A49AE3.toInt(),
+                    0xFF9EF2EB.toInt(),
+                    0xFFEDDABF.toInt(),
+                    0xFFA49AE3.toInt(),
                 ),
                 null,
                 Shader.TileMode.CLAMP
