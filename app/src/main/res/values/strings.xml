@@ -601,6 +601,7 @@
     <string name="cis_search_balance">Your balance: %1$s</string>
     <string name="cis_newly_received_notice_title">You received a new token</string>
     <string name="cis_percent_earning">% Earning</string>
+    <string name="cis_percent">%</string>
     <string name="template_cis_newly_received_notice_message">
         %1$s has not been listed in your wallet till this transaction.
         You can accept it or remove it from the list.

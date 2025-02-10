@@ -79,7 +79,18 @@ class TokensFragment : Fragment() {
             showLoading(ready.not())
             if (ready) {
                 binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
-                tokensAccountDetailsAdapter.setData(viewModel.tokens)
+                tokensAccountDetailsAdapter.setData(
+                    viewModel.tokens.map { token ->
+                        if (token.isCcd) {
+                            token.copy(
+                                isEarning = viewModel.tokenData.account?.isDelegating()!! ||
+                                        viewModel.tokenData.account?.isBaking()!!
+                            )
+                        } else {
+                            token
+                        }
+                    }
+                )
             }
         }
     }

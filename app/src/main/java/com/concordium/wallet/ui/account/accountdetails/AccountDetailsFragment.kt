@@ -256,25 +256,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             viewModelAccountDetails.deleteAccountAndFinish()
         }
 
-        binding.onrampBtn.setOnClickListener {
-            onOnrampClicked()
-        }
-
-        binding.sendFundsBtn.setOnClickListener {
-            onSendFundsClicked()
-        }
-
-        binding.receiveBtn.setOnClickListener {
-            onReceiveClicked()
-        }
-
-        binding.earnBtn.setOnClickListener {
-            onEarnClicked()
-        }
-
-        binding.activityBtn.setOnClickListener {
-            onActivityClicked()
-        }
     }
 
     private fun updateViews(transactionStatus: TransactionStatus) {
@@ -309,6 +290,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setFinalizedMode() {
+        setActiveButtons()
         binding.apply {
             tokensFragmentContainer.visibility = View.VISIBLE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
@@ -325,6 +307,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun showStateOnboarding() {
         activity?.invalidateOptionsMenu()
+        setPendingButtons()
         binding.apply {
             tokensFragmentContainer.visibility = View.GONE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
@@ -335,6 +318,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun showStateDefault() {
         activity?.invalidateOptionsMenu()
+        setActiveButtons()
         binding.apply {
             onboardingLayout.visibility = View.GONE
             tokensFragmentContainer.visibility = View.VISIBLE
@@ -354,17 +338,51 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setPendingMode() {
+        setPendingButtons()
         binding.apply {
             pendingFragmentContainer.pendingLayout.visibility = View.VISIBLE
             tokensFragmentContainer.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
-            onrampBtn.isEnabled = false
-            sendFundsBtn.isEnabled = false
-            receiveBtn.isEnabled = false
-            earnBtn.isEnabled = false
-            activityBtn.isEnabled = false
         }
         setupOnrampBanner(active = false)
+    }
+
+    private fun setPendingButtons() {
+        binding.apply {
+            listOf(
+                onrampBtn,
+                sendFundsBtn,
+                receiveBtn,
+                earnBtn,
+                activityBtn
+            ).forEach {
+                it.setOnClickListener {
+                    (activity as BaseActivity).showUnlockFeatureDialog()
+                }
+            }
+        }
+    }
+
+    private fun setActiveButtons() {
+        binding.onrampBtn.setOnClickListener {
+            onOnrampClicked()
+        }
+
+        binding.sendFundsBtn.setOnClickListener {
+            onSendFundsClicked()
+        }
+
+        binding.receiveBtn.setOnClickListener {
+            onReceiveClicked()
+        }
+
+        binding.earnBtn.setOnClickListener {
+            onEarnClicked()
+        }
+
+        binding.activityBtn.setOnClickListener {
+            onActivityClicked()
+        }
     }
 
     private fun updateWhenResumed() {
@@ -501,8 +519,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         gotoEarn(
             requireActivity() as MainActivity,
             viewModelAccountDetails.account,
-            viewModelAccountDetails.hasPendingDelegationTransactions,
-            viewModelAccountDetails.hasPendingBakingTransactions
+            viewModelAccountDetails.hasPendingDelegationTransactions.value,
+            viewModelAccountDetails.hasPendingBakingTransactions.value
         )
     }
 
@@ -521,11 +539,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             putExtra(TokenDetailsActivity.TOKEN, token)
             putExtra(
                 TokenDetailsActivity.PENDING_DELEGATION,
-                viewModelAccountDetails.hasPendingDelegationTransactions
+                viewModelAccountDetails.hasPendingDelegationTransactions.value
             )
             putExtra(
                 TokenDetailsActivity.PENDING_VALIDATION,
-                viewModelAccountDetails.hasPendingBakingTransactions
+                viewModelAccountDetails.hasPendingBakingTransactions.value
             )
         }
         showTokenDetails.launch(intent)

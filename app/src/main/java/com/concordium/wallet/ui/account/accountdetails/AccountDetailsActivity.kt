@@ -1,14 +1,8 @@
 package com.concordium.wallet.ui.account.accountdetails
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,14 +13,11 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
-import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
-import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.cis2.TokenDetailsActivity
-import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -331,8 +322,8 @@ class AccountDetailsActivity : BaseActivity(
         gotoEarn(
             this,
             viewModelAccountDetails.account,
-            viewModelAccountDetails.hasPendingDelegationTransactions,
-            viewModelAccountDetails.hasPendingBakingTransactions
+            viewModelAccountDetails.hasPendingDelegationTransactions.value,
+            viewModelAccountDetails.hasPendingBakingTransactions.value
         )
     }
 

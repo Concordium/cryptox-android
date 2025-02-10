@@ -28,6 +28,7 @@ data class Token(
     var balance: BigInteger = BigInteger.ZERO,
     var isSelected: Boolean = false,
     var isNewlyReceived: Boolean = false,
+    var isEarning: Boolean = false
 ) : Serializable {
 
     val symbol: String
@@ -48,6 +49,7 @@ data class Token(
     constructor(
         contractToken: ContractToken,
         isSelected: Boolean = false,
+        isEarning: Boolean = false
     ) : this(
         uid = contractToken.id.toString(),
         token = contractToken.token,
@@ -56,6 +58,7 @@ data class Token(
         contractName = contractToken.contractName,
         isNewlyReceived = contractToken.isNewlyReceived,
         isSelected = isSelected,
+        isEarning = isEarning
     )
 
     companion object {

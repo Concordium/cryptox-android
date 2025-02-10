@@ -125,6 +125,7 @@ class TokensAccountDetailsAdapter(
         }
 
         holder.binding.notice.isVisible = token.isNewlyReceived
+        holder.binding.earningLabel.isVisible = token.isEarning
         holder.binding.content.setOnClickListener {
             tokenClickListener?.onRowClick(token)
         }

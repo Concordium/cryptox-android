@@ -43,8 +43,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     lateinit var account: Account
-    var hasPendingDelegationTransactions: Boolean = false
-    var hasPendingBakingTransactions: Boolean = false
 
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val transferRepository =
@@ -104,6 +102,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _fileWalletMigrationVisible = MutableStateFlow(false)
     val fileWalletMigrationVisible = _fileWalletMigrationVisible.asStateFlow()
 
+    private val _hasPendingDelegationTransactions = MutableStateFlow(false)
+    val hasPendingDelegationTransactions = _hasPendingDelegationTransactions.asStateFlow()
+
+    private val _hasPendingBakingTransactions = MutableStateFlow(false)
+    val hasPendingBakingTransactions = _hasPendingBakingTransactions.asStateFlow()
+
     private var updater: CountDownTimer? = null
 
     val isCreationLimitedForFileWallet: Boolean
@@ -153,7 +157,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     EventBus.getDefault().post(
                         BakerDelegationData(
                             account,
-                            isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions,
+                            isTransactionInProgress = hasPendingDelegationTransactions.value || hasPendingBakingTransactions.value,
                             type = type
                         )
                     )
@@ -204,18 +208,18 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun getLocalTransfers() {
+    private fun getLocalTransfers() {
         viewModelScope.launch {
-            hasPendingDelegationTransactions = false
-            hasPendingBakingTransactions = false
+            _hasPendingDelegationTransactions.emit(false)
+            _hasPendingBakingTransactions.emit(false)
             val recipientList = recipientRepository.getAll()
             transactionMappingHelper = TransactionMappingHelper(account, recipientList)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
                 if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
-                    hasPendingDelegationTransactions = true
+                    _hasPendingDelegationTransactions.emit(true)
                 if (transfer.transactionType == TransactionType.LOCAL_BAKER)
-                    hasPendingBakingTransactions = true
+                    _hasPendingBakingTransactions.emit(true)
                 val transaction = transfer.toTransaction()
                 transactionMappingHelper.addTitlesToTransaction(
                     transaction,

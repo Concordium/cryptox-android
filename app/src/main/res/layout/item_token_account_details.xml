@@ -45,6 +45,34 @@
             app:layout_goneMarginEnd="12dp"
             tools:text="wBTC" />
 
+        <LinearLayout
+            android:id="@+id/earning_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginHorizontal="8dp"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="@id/title"
+            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintStart_toEndOf="@id/title"
+            app:layout_constraintTop_toTopOf="@id/title">
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="3dp"
+                android:background="@drawable/simple_circle_bg"
+                android:backgroundTint="@color/cryptox_white_main" />
+
+            <TextView
+                style="@style/MW24_Typography_Label_Main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/cryptox_white_main"
+                android:text="@string/cis_percent" />
+        </LinearLayout>
+
         <View
             android:id="@+id/notice"
             android:layout_width="8dp"
