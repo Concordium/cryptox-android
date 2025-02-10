@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.account.accountdetails
 
 import android.app.Application
-import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,10 +26,13 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
@@ -108,7 +110,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _hasPendingBakingTransactions = MutableStateFlow(false)
     val hasPendingBakingTransactions = _hasPendingBakingTransactions.asStateFlow()
 
-    private var updater: CountDownTimer? = null
+    private var updaterJob: Job? = null
 
     val isCreationLimitedForFileWallet: Boolean
         get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
@@ -118,6 +120,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _fileWalletMigrationVisible.tryEmit(
             App.appCore.session.activeWallet.type == AppWallet.Type.FILE
         )
+    }
+
+    fun setShowOnrampBanner(show: Boolean) {
+        return App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(show)
+    }
+
+    fun isShowOnrampBanner(): Boolean {
+        return App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
     }
 
     private fun getActiveAccount() = viewModelScope.launch {
@@ -183,8 +193,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 viewModelScope.launch {
                     postState(OnboardingState.DONE)
                     _newFinalizedAccountFlow.value = accountName
-                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                 }
+                restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
             }
 
             override fun onError(stringRes: Int) {
@@ -301,7 +311,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         } else {
             postState(state = OnboardingState.FINALIZING_ACCOUNT)
             _waitingLiveData.postValue(false)
-            viewModelScope.launch { restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC) }
+            restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
         }
         updateSubmissionStatesAndBalances(false)
     }
@@ -326,32 +336,27 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun stopFrequentUpdater() {
-        updater?.cancel()
-        updater = null
+        updaterJob?.cancel()
+        updaterJob = null
     }
 
     private fun restartUpdater(newInterval: Long) {
         startUpdater(newInterval)
     }
 
-    private fun startUpdater(countdownInterval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
+    private fun startUpdater(interval: Long = BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC) {
         stopFrequentUpdater()
-        updater = object :
-            CountDownTimer(Long.MAX_VALUE, countdownInterval * 1000) {
-            private var first = true
-            override fun onTick(millisUntilFinished: Long) {
-                if (first) { //ignore first tick
-                    first = false
-                    return
-                }
+
+        updaterJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(interval * 1000) // Initial delay
+            while (isActive) {
                 updateState()
                 populateTransferList(false)
+                delay(interval * 1000)
             }
-
-            override fun onFinish() {
-            }
-        }.also { it.start() }
+        }
     }
+
 
     fun hasShownInitialAnimation(): Boolean {
         return App.appCore.session.walletStorage.setupPreferences.getHasShownInitialAnimation()

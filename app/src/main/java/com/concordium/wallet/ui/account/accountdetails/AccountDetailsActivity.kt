@@ -343,7 +343,7 @@ class AccountDetailsActivity : BaseActivity(
     }
 
     private fun setupOnrampBanner(active: Boolean) {
-        binding.onrampBanner.root.setOnClickListener {
+        binding.onrampBanner.setOnClickListener {
             if (active)
                 onOnrampClicked()
             else

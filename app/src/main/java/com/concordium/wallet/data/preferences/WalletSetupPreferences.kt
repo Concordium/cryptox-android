@@ -145,6 +145,14 @@ constructor(
         return getBoolean(PREFKEY_HAS_SHOWN_INITIAL_ANIMATION, false)
     }
 
+    fun setShowOnrampBanner(value: Boolean) {
+        setBoolean(PREFKEY_SHOW_ONRAMP_BANNER, value)
+    }
+
+    fun getShowOnrampBanner(): Boolean {
+        return getBoolean(PREFKEY_SHOW_ONRAMP_BANNER, true)
+    }
+
     private companion object {
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON =
@@ -152,5 +160,6 @@ constructor(
         const val PREFKEY_ENCRYPTED_SEED_HEX_JSON = "PREFKEY_ENCRYPTED_SEED_HEX_JSON"
         const val PREFKEY_HAS_COMPLETED_ONBOARDING = "PREFKEY_HAS_COMPLETED_ONBOARDING"
         const val PREFKEY_HAS_SHOWN_INITIAL_ANIMATION = "PREFKEY_HAS_SHOWN_INITIAL_ANIMATION"
+        const val PREFKEY_SHOW_ONRAMP_BANNER = "PREFKEY_SHOW_ONRAMP_BANNER"
     }
 }

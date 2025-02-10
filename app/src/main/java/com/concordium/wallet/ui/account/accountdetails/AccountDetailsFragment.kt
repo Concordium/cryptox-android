@@ -248,14 +248,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         showWaiting(true)
         initializeAnimation()
         initContainer()
-
         binding.accountRetryButton.setOnClickListener {
             gotoAccountsList()
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
         }
-
     }
 
     private fun updateViews(transactionStatus: TransactionStatus) {
@@ -292,6 +290,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun setFinalizedMode() {
         setActiveButtons()
         binding.apply {
+            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
             tokensFragmentContainer.visibility = View.VISIBLE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
@@ -309,6 +308,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         activity?.invalidateOptionsMenu()
         setPendingButtons()
         binding.apply {
+            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
             tokensFragmentContainer.visibility = View.GONE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
@@ -320,6 +320,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         activity?.invalidateOptionsMenu()
         setActiveButtons()
         binding.apply {
+            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
             onboardingLayout.visibility = View.GONE
             tokensFragmentContainer.visibility = View.VISIBLE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
@@ -340,6 +341,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun setPendingMode() {
         setPendingButtons()
         binding.apply {
+            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
             pendingFragmentContainer.pendingLayout.visibility = View.VISIBLE
             tokensFragmentContainer.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
@@ -399,20 +401,24 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             val buttonsHeight = binding.buttonsBlock.measuredHeight
             val fileWalletDisclaimerHeight =
                 binding.fileWalletMigrationDisclaimerLayout.measuredHeight
-            val onRampHeight = binding.onrampBanner.root.measuredHeight
+            val onRampHeight = if (viewModelAccountDetails.isShowOnrampBanner())
+                binding.onrampBanner.measuredHeight
+            else 0
             val buttonsMargin =
                 (binding.tokensFragmentContainer.layoutParams as MarginLayoutParams).topMargin
-            val fileWalletDisclaimerMargin =
+            val fileWalletDisclaimerMargin = if (isFileWallet)
                 (binding.fileWalletMigrationDisclaimerLayout.layoutParams as MarginLayoutParams).topMargin
-            val onRampMargin =
-                (binding.onrampBanner.root.layoutParams as MarginLayoutParams).topMargin
+            else 0
+            val onRampMargin = if (viewModelAccountDetails.isShowOnrampBanner())
+                    (binding.onrampBanner.layoutParams as MarginLayoutParams).topMargin
+            else 0
 
             if (handledContainerHeight != containerHeight) {
                 handledContainerHeight = containerHeight
 
                 val scrollContainerHeight = containerHeight - buttonsHeight - buttonsMargin -
-                        onRampMargin - onRampHeight - fileWalletDisclaimerHeight - buttonsMargin -
-                        if (isFileWallet) fileWalletDisclaimerMargin else 0
+                        fileWalletDisclaimerHeight - buttonsMargin - fileWalletDisclaimerMargin -
+                        onRampHeight - onRampMargin
 
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
                     height = scrollContainerHeight
@@ -550,12 +556,27 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setupOnrampBanner(active: Boolean) {
-        binding.onrampBanner.root.setOnClickListener {
+        binding.onrampBanner.setOnClickListener {
             if (active)
                 onOnrampClicked()
             else
                 (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
+        if (active) {
+            binding.closeImageView.setOnClickListener {
+                closeOnrampBanner()
+            }
+        } else {
+            binding.closeImageView.visibility = View.GONE
+        }
+    }
+
+    private fun closeOnrampBanner() {
+        binding.onrampBanner.visibility = View.GONE
+        viewModelAccountDetails.setShowOnrampBanner(false)
+        binding.rootLayout.invalidate()
+        binding.rootLayout.requestLayout()
+        initContainer()
     }
 
     private val showTokenDetails =
