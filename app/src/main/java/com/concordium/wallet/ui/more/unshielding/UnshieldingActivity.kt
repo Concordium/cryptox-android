@@ -70,12 +70,12 @@ class UnshieldingActivity : BaseActivity(
         viewModel.titleLiveData.observe(this, this::setActionBarTitle)
 
         viewModel.amountLiveData.observe(this) { amount ->
-            binding.shieldedAmountTextView.text = CurrencyUtil.formatGTU(amount, false)
+            binding.shieldedAmountTextView.text = CurrencyUtil.formatGTU(amount)
         }
 
         viewModel.transactionCostLiveData.observe(this) { cost ->
             binding.feeTextView.text =
-                getString(R.string.amount, CurrencyUtil.formatGTU(cost, false))
+                getString(R.string.amount, CurrencyUtil.formatGTU(cost))
         }
 
         viewModel.insufficientFundsLiveData.observe(

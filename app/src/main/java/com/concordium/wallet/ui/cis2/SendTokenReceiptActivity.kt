@@ -70,7 +70,7 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.fee.text =
             getString(
                 R.string.cis_estimated_fee,
-                CurrencyUtil.formatGTU(viewModel.sendTokenData.fee!!, false)
+                CurrencyUtil.formatGTU(viewModel.sendTokenData.fee!!)
             )
         CoroutineScope(Dispatchers.Default).launch {
             runOnUiThread {

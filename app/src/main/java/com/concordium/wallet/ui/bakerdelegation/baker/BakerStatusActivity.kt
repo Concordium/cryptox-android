@@ -54,7 +54,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         )
         addContent(
             R.string.baker_status_baker_stake,
-            CurrencyUtil.formatGTU(accountBaker.stakedAmount, true)
+            CurrencyUtil.formatGTU(accountBaker.stakedAmount)
         )
         addContent(R.string.baker_status_baker_id, accountBaker.bakerId.toString())
 

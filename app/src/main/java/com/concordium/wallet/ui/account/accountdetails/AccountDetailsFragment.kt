@@ -305,7 +305,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showStateOnboarding() {
-        activity?.invalidateOptionsMenu()
         setPendingButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
@@ -317,7 +316,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showStateDefault() {
-        activity?.invalidateOptionsMenu()
         setActiveButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
@@ -593,9 +591,5 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun gotoAccountsList() {
         val intent = Intent(activity, AccountsListActivity::class.java)
         startActivity(intent)
-    }
-
-    companion object {
-        const val RESULT_RETRY_ACCOUNT_CREATION = 2
     }
 }

@@ -25,18 +25,16 @@ object CurrencyUtil {
     //Format the Decimal value with comma separators for thousands
     private val formatter = DecimalFormat("#,###.######", DecimalFormatSymbols(Locale.US))
 
-    fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String =
-        formatGTU(value.toBigInteger(), withGStroke, decimals)
+    fun formatGTU(value: String, decimals: Int = 6): String =
+        formatGTU(value.toBigInteger(), decimals)
 
     fun formatGTU(value: BigInteger, token: Token?): String {
         val decimals = token?.decimals ?: 0
-        val withGStroke = token == null || token.isCcd
-        return formatGTU(value, withGStroke, decimals)
+        return formatGTU(value, decimals)
     }
 
     fun formatGTU(
         value: BigInteger,
-        withGStroke: Boolean = false,
         decimals: Int = 6,
         withCommas: Boolean = true
     ): String {

@@ -50,12 +50,12 @@ class StakeAmountInputValidator(
             StakeError.NOT_ENOUGH_FUND -> context.getString(R.string.delegation_register_delegation_not_enough_funds)
             StakeError.MINIMUM -> context.getString(
                 R.string.delegation_register_delegation_minimum,
-                CurrencyUtil.formatGTU(minimumValue ?: BigInteger.ZERO, false)
+                CurrencyUtil.formatGTU(minimumValue ?: BigInteger.ZERO)
             )
 
             StakeError.MAXIMUM -> context.getString(
                 R.string.delegation_register_delegation_maximum,
-                CurrencyUtil.formatGTU(maximumValue ?: BigInteger.ZERO, false)
+                CurrencyUtil.formatGTU(maximumValue ?: BigInteger.ZERO)
             )
 
             StakeError.POOL_LIMIT_REACHED -> context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)

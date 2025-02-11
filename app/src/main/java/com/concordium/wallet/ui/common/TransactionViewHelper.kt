@@ -47,7 +47,7 @@ object TransactionViewHelper {
         }
 
         fun setTotalView(total: BigInteger) {
-            totalTextView.text = CurrencyUtil.formatGTU(total, withGStroke = false)
+            totalTextView.text = CurrencyUtil.formatGTU(total)
             val textColor = if (total.signum() > 0)
                 ContextCompat.getColor(
                     totalTextView.context,
@@ -88,9 +88,7 @@ object TransactionViewHelper {
 
                 costTextView.text = costTextView.context.getString(R.string.account_details_fee) +
                         " $costPrefix${
-                            CurrencyUtil.formatGTU(
-                                cost, withGStroke = false
-                            )
+                            CurrencyUtil.formatGTU(cost)
                         } " + costTextView.context.getString(R.string.accounts_overview_balance_suffix)
             } else {
                 costTextView.visibility = View.GONE

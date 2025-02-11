@@ -79,7 +79,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         )
         addContent(
             R.string.delegation_status_content_delegation_amount,
-            CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
+            CurrencyUtil.formatGTU(accountDelegation.stakedAmount)
         )
 
         if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(

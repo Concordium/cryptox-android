@@ -65,7 +65,7 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
     private fun initObservers() {
         viewModel.chainParameters.observe(this) { chainParameters ->
             chainParameters?.let {
-                val minimum = CurrencyUtil.formatGTU(chainParameters.minimumEquityCapital, true)
+                val minimum = CurrencyUtil.formatGTU(chainParameters.minimumEquityCapital)
                 binding.tvBakerDescription.text =
                     getString(R.string.earn_baker_description, minimum)
                 showWaiting(false)

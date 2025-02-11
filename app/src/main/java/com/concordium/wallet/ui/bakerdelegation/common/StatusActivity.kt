@@ -133,7 +133,7 @@ abstract class StatusActivity(
                 pendingChange.newStake?.let { newStake ->
                     addContent(
                         getString(reduceStakeStringId),
-                        CurrencyUtil.formatGTU(newStake, true)
+                        CurrencyUtil.formatGTU(newStake)
                     )
                 }
             }

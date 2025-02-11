@@ -94,7 +94,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
                 .plus("\n\n")
                 .plus(viewModel.bakerDelegationData.account!!.address)
         binding.delegationAmountConfirmation.text =
-            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true)
+            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
         binding.targetPool.text =
             if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
         binding.rewardsWillBe.text =

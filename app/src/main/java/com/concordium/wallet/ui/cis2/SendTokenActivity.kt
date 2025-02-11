@@ -62,10 +62,9 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun initViews() {
-        binding.amount.hint = CurrencyUtil.formatGTU(BigInteger.ZERO, false)
+        binding.amount.hint = CurrencyUtil.formatGTU(BigInteger.ZERO)
         binding.atDisposal.text = CurrencyUtil.formatGTU(
-            viewModel.sendTokenData.account?.balanceAtDisposal ?: BigInteger.ZERO,
-            true
+            viewModel.sendTokenData.account?.balanceAtDisposal ?: BigInteger.ZERO
         )
         initializeAmount()
         initializeMax()
@@ -140,7 +139,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             }
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.sendTokenData.max ?: BigInteger.ZERO, false, decimals
+                    viewModel.sendTokenData.max ?: BigInteger.ZERO, decimals
                 )
             )
             enableSend()
@@ -244,7 +243,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
             val decimals = token.decimals
             binding.balance.text =
-                CurrencyUtil.formatGTU(token.balance, token.isCcd, decimals)
+                CurrencyUtil.formatGTU(token.balance, decimals)
             binding.token.text =
                 if (token.isUnique)
                     token.name
@@ -296,7 +295,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 if (fee != null)
                     getString(
                         R.string.cis_estimated_fee,
-                        CurrencyUtil.formatGTU(fee, true)
+                        CurrencyUtil.formatGTU(fee)
                     )
                 else
                     ""

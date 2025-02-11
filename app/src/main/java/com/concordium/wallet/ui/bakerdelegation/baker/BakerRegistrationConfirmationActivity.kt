@@ -183,7 +183,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
-                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true
+                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO
             )
         }
     }
