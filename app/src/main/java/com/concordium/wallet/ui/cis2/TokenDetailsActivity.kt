@@ -285,9 +285,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 loadImage(iconView, thumbnail)
                 if (isUnique) {
                     binding.includeAbout.nftIcon.visibility = View.VISIBLE
-                    loadImage(binding.includeAbout.nftIcon, thumbnail)
+                    tokenMetadata.display?.url?.let { loadImage(binding.includeAbout.nftIcon, it) }
                 }
             }
+            !thumbnail.isNullOrBlank() -> loadImage(iconView, thumbnail)
             isCCD -> iconView.setImageResource(R.drawable.mw24_ic_ccd)
             else -> iconView.setImageResource(R.drawable.ic_token_no_image)
         }

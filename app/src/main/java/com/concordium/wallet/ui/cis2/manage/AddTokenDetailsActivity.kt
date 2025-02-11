@@ -69,7 +69,7 @@ class AddTokenDetailsActivity : BaseActivity(
 
             if (isUnique) {
                 binding.detailsLayout.nftIcon.visibility = View.VISIBLE
-                loadImage(binding.detailsLayout.nftIcon, thumbnail)
+                tokenMetadata.display?.url?.let { loadImage(binding.detailsLayout.nftIcon, it) }
             }
         } else {
             binding.detailsLayout.icon.setImageResource(R.drawable.ic_token_no_image)
