@@ -434,7 +434,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val activeAccount = accountRepository.getActive()
 
         if (allAccounts.isNotEmpty() && activeAccount == null) {
-            accountRepository.activate(allAccounts.last().address)
+            accountRepository.activate(allAccounts.sortedBy { it.id }.last().address)
         }
     }
 
