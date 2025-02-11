@@ -32,7 +32,6 @@ import java.math.BigInteger
 class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.cis_send_funds) {
     private lateinit var binding: ActivitySendTokenBinding
     private val viewModel: SendTokenViewModel by viewModels()
-    private val viewModelTokens: TokensViewModel by viewModels()
 
     companion object {
         const val ACCOUNT = "ACCOUNT"

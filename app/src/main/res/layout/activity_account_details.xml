@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintVertical_weight="1"
-        app:layout_constraintBottom_toTopOf="@id/bottom_empty_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="18dp"
             android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -322,7 +321,6 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:contentDescription="@string/ccd_onramp_close_banner"
-                    android:text="@string/ccd_onramp_banner_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/mw24_ic_onramp_close" />
@@ -338,15 +336,13 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/onramp_banner"
-                app:layout_constraintVertical_bias="0" />
+                app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
 
             <include
                 android:id="@+id/pending_fragment_container"
                 layout="@layout/fragment_account_details_pending"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
                 app:layout_constraintBottom_toBottomOf="@id/account_retry_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

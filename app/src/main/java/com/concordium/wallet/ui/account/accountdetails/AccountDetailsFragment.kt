@@ -415,7 +415,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 handledContainerHeight = containerHeight
 
                 val scrollContainerHeight = containerHeight - buttonsHeight - buttonsMargin -
-                        fileWalletDisclaimerHeight - buttonsMargin - fileWalletDisclaimerMargin -
+                        fileWalletDisclaimerHeight - fileWalletDisclaimerMargin -
                         onRampHeight - onRampMargin
 
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
