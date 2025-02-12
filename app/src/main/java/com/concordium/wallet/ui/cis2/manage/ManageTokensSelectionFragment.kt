@@ -75,42 +75,12 @@ class ManageTokensSelectionFragment : Fragment() {
                 ) {
                     _viewModel.lookForTokens(
                         accountAddress = _viewModel.tokenData.account!!.address,
-                        from = _viewModel.tokens[_viewModel.tokens.size - 1].uid,
+                        from = _viewModel.tokens.last().uid,
                     )
                 }
             }
         })
         initSearch()
-
-//        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                selectionAdapter.dataSet = emptyArray()
-//                selectionAdapter.notifyDataSetChanged()
-//
-//                _viewModel.lookForExactToken(
-//                    apparentTokenId = query?.trim() ?: "",
-//                    accountAddress = _viewModel.tokenData.account!!.address,
-//                )
-//
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                if (newText.isNullOrBlank()) {
-//                    selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
-//                    selectionAdapter.notifyDataSetChanged()
-//
-//                    _viewModel.dismissExactTokenLookup()
-//                }
-//                return true
-//            }
-//        })
-
-//        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
-//            if (!hasFocus) {
-//                KeyboardUtil.hideKeyboard(requireActivity())
-//            }
-//        }
 
         selectionAdapter.setTokenClickListener(object :
             ManageTokensSelectionAdapter.TokenClickListener {
@@ -175,19 +145,9 @@ class ManageTokensSelectionFragment : Fragment() {
     private fun initSearch() {
         binding.searchLayout.apply {
             setInputType(InputType.TYPE_CLASS_TEXT)
-            setSearchListener {
-                selectionAdapter.dataSet = emptyArray()
-                selectionAdapter.notifyDataSetChanged()
+            setSearchListener { onSearch() }
+            setClearListener { setSearchText("") }
 
-                showWaiting(true)
-                _viewModel.lookForExactToken(
-                    apparentTokenId = binding.searchLayout.getSearchText().trim(),
-                    accountAddress = _viewModel.tokenData.account!!.address,
-                )
-            }
-            setClearListener {
-                setSearchText("")
-            }
             setTextChangeListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -204,14 +164,19 @@ class ManageTokensSelectionFragment : Fragment() {
                     }
                 }
             })
-            setOnSearchDoneListener {
-                showWaiting(true)
-                _viewModel.lookForExactToken(
-                    apparentTokenId = binding.searchLayout.getSearchText().trim(),
-                    accountAddress = _viewModel.tokenData.account!!.address,
-                )
-            }
+            setOnSearchDoneListener { onSearch() }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun onSearch() {
+        selectionAdapter.dataSet = emptyArray()
+        selectionAdapter.notifyDataSetChanged()
+        showWaiting(true)
+        _viewModel.lookForExactToken(
+            apparentTokenId = binding.searchLayout.getSearchText().trim(),
+            accountAddress = _viewModel.tokenData.account!!.address,
+        )
     }
 
     private fun updateTokens() {

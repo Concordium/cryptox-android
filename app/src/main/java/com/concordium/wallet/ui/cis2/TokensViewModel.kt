@@ -9,6 +9,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.toToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
@@ -107,6 +108,9 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         accountAddress: String,
         from: String? = null,
     ) = viewModelScope.launch(Dispatchers.IO) {
+        changedTokensList.clear()
+        selectedTokensChanged.postValue(changedTokensList.isNotEmpty())
+
         if (from != null && !allowToLoadMore)
             return@launch
 
@@ -172,9 +176,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 subIndex = tokenData.subIndex,
                 limit = limit,
                 from = tokenPageCursor,
-            ).tokens.onEach {
-                it.contractIndex = tokenData.contractIndex
-                it.subIndex = tokenData.subIndex
+            ).tokens
+                .map { it.toToken() }
+                .onEach {
+                    it.contractIndex = tokenData.contractIndex
+                    it.subIndex = tokenData.subIndex
+                }
+
+            pageTokens.forEach {
+                println("getFullyLoadedTokensPage, token: $it")
             }
 
             isLastTokenPage = pageTokens.size < limit

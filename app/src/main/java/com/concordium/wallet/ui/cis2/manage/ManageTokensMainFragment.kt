@@ -54,31 +54,6 @@ class ManageTokensMainFragment : Fragment(
         viewModel.contractAddressLoading.observe(viewLifecycleOwner) {
             showWaiting(it)
         }
-
-//            if (tokens != TokensViewModel.TOKENS_NOT_LOADED
-//                && viewModel.tokens.isNotEmpty()
-//                && binding.viewPager.currentItem == 0
-//            ) {
-//                binding.viewPager.currentItem++
-//            }
-
-//        viewModel.stepPageBy.observe(viewLifecycleOwner) {
-//            val targetPosition = binding.viewPager.currentItem + it
-//
-//            if (targetPosition == -1) {
-//                return@observe
-//            }
-//
-//            if (targetPosition >= 0 && targetPosition < (binding.viewPager.adapter?.itemCount
-//                    ?: 0)
-//            ) {
-//                binding.viewPager.currentItem = targetPosition
-//            }
-//
-//            if (binding.viewPager.currentItem == 0) {
-//                viewModel.tokens.clear()
-//            }
-//        }
     }
 
     private fun lookForTokens() {
