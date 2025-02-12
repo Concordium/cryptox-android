@@ -195,7 +195,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
-            viewModelTokens.loadTokensBalances()
+            if (it)
+                viewModelTokens.loadTokensBalances()
         }
 
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {

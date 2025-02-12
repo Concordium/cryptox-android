@@ -173,7 +173,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     )
                 }
             } else {
-                _totalBalanceLiveData.value = BigInteger.ZERO
+                _totalBalanceLiveData.postValue(BigInteger.ZERO)
             }
         }
     }
@@ -181,10 +181,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
-                _totalBalanceLiveData.value = account.balance
                 getLocalTransfers()
                 viewModelScope.launch {
                     updateAccountFromRepository()
+                    _totalBalanceLiveData.value = account.balance
                     _accountUpdatedLiveData.value = true
                 }
             }
