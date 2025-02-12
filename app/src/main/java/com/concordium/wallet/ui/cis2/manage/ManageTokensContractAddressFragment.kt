@@ -71,6 +71,7 @@ class ManageTokensContractAddressFragment : Fragment() {
             .takeUnless(String::isNullOrBlank)
             ?: return
 
+        showWaiting(true)
         KeyboardUtil.hideKeyboard(requireActivity())
 
         _viewModel.tokenData.contractIndex = contractIndex

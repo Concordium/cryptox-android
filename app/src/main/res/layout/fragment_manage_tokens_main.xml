@@ -53,6 +53,11 @@
         tools:text="@string/cis_find_tokens_error"
         tools:visibility="visible" />
 
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        />
+
     <Button
         android:id="@+id/look_btn"
         style="@style/MW24_Button_Primary"
@@ -62,12 +67,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <include
-        android:id="@+id/include_progress"
-        layout="@layout/progress"
-        android:visibility="gone"
-        tools:visibility="visible" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/selection_fragment_container"
@@ -80,6 +79,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_layout" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

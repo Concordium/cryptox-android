@@ -29,6 +29,7 @@
         android:autofillHints="Contract index"
         android:background="@null"
         android:inputType="number"
+        android:imeOptions="actionDone"
         android:textAppearance="@style/MW24_Typography_Text_Mid"
         android:textColor="@color/cryptox_white_main"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -117,4 +117,19 @@ class InputFieldView @JvmOverloads constructor(
     fun setTextChangeListener(textListener: TextWatcher) {
         binding.edittext.addTextChangedListener(textListener)
     }
+
+    fun setInputType(inputType: Int) {
+        binding.edittext.inputType = inputType
+    }
+
+    fun setOnSearchDoneListener(listener: () -> Unit) {
+        binding.edittext.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                listener.invoke()
+                true
+            } else {
+                false
+            }
+        }
+    }
 }

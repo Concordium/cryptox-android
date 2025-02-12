@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentManageTokensMainBinding
 import com.concordium.wallet.ui.cis2.TokensViewModel
@@ -36,21 +35,25 @@ class ManageTokensMainFragment : Fragment(
     }
 
     private fun initViews() {
-        binding.searchLayout.setSearchListener {
-            lookForTokens()
-        }
-        binding.searchLayout.setClearListener {
-            binding.searchLayout.setSearchText("")
-            viewModel.tokens.clear()
-            viewModel.lookForTokens.postValue(TOKENS_NOT_LOADED)
+        binding.searchLayout.apply {
+            setSearchListener { lookForTokens() }
+            setOnSearchDoneListener { lookForTokens() }
+            setClearListener {
+                binding.searchLayout.setSearchText("")
+                viewModel.tokens.clear()
+                viewModel.lookForTokens.postValue(TOKENS_NOT_LOADED)
+            }
         }
     }
 
     private fun initObservers() {
         viewModel.lookForTokens.observe(viewLifecycleOwner) { state ->
-            showWaiting(false)
             updateViews(state)
+        }
 
+        viewModel.contractAddressLoading.observe(viewLifecycleOwner) {
+            showWaiting(it)
+        }
 
 //            if (tokens != TokensViewModel.TOKENS_NOT_LOADED
 //                && viewModel.tokens.isNotEmpty()
@@ -58,7 +61,7 @@ class ManageTokensMainFragment : Fragment(
 //            ) {
 //                binding.viewPager.currentItem++
 //            }
-        }
+
 //        viewModel.stepPageBy.observe(viewLifecycleOwner) {
 //            val targetPosition = binding.viewPager.currentItem + it
 //
@@ -82,8 +85,6 @@ class ManageTokensMainFragment : Fragment(
         val contractIndex = binding.searchLayout.getSearchText()
             .takeUnless(String::isNullOrBlank)
             ?: return
-
-        showWaiting(true)
         KeyboardUtil.hideKeyboard(requireActivity())
 
         viewModel.tokenData.contractIndex = contractIndex
@@ -114,19 +115,6 @@ class ManageTokensMainFragment : Fragment(
                     binding.error.text = getString(R.string.cis_find_tokens_none)
                 else
                     binding.error.text = getString(R.string.cis_find_tokens_error)
-            }
-        }
-    }
-
-
-    private inner class LookForNewTokensAdapter : FragmentStateAdapter(this) {
-        override fun getItemCount(): Int = 2
-
-        override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                0 -> ManageTokensContractAddressFragment()
-                1 -> ManageTokensSelectionFragment()
-                else -> throw IndexOutOfBoundsException("Unsupported fragment position $position")
             }
         }
     }

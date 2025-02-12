@@ -50,6 +50,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     // Save found exact tokens to keep their selection once the search is dismissed.
     // For example, the user can look for multiple exact tokens and toggle them one by one.
     private val everFoundExactTokens: MutableList<Token> = mutableListOf()
+    private val changedTokensList: MutableList<Token> = mutableListOf()
     var exactToken: Token? = null
 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
@@ -64,6 +65,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
@@ -364,7 +366,16 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val isSelectedNow = !token.isSelected
         (tokens.asSequence() + everFoundExactTokens.asSequence())
             .filter { it.token == token.token }
-            .forEach { it.isSelected = isSelectedNow }
+            .forEach {
+                it.isSelected = isSelectedNow
+
+                if (changedTokensList.contains(it)) {
+                    changedTokensList.remove(it)
+                } else {
+                    changedTokensList.add(it)
+                }
+                selectedTokensChanged.postValue(changedTokensList.isNotEmpty())
+            }
     }
 
     fun checkExistingTokens() = viewModelScope.launch(Dispatchers.IO) {
@@ -388,8 +399,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     private fun updateTokens(loadedTokens: Iterable<Token>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
-                var anyChanges = false
-
                 val selectedTokens = loadedTokens.filter(Token::isSelected)
 
                 // Add each selected token if missing.
@@ -400,7 +409,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             selectedToken.contractIndex,
                             selectedToken.token
                         )
-
                     if (existingContractToken == null) {
                         contractTokensRepository.insert(
                             ContractToken(
@@ -414,11 +422,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                 isNewlyReceived = false,
                             )
                         )
-
-                        anyChanges = true
                     }
                 }
-
                 // As the loaded tokens list may be partial,
                 // we must only delete the unselected ones among loaded.
                 // Therefore, if there is an existing token but the user haven't scrolled to it
@@ -434,10 +439,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         contractIndex = tokenData.contractIndex,
                         token = loadedNotSelectedToken,
                     )
-                    anyChanges = true
                 }
-
-                updateWithSelectedTokensDone.postValue(anyChanges)
+                updateWithSelectedTokensDone.postValue(changedTokensList.isNotEmpty())
             }
         }
     }

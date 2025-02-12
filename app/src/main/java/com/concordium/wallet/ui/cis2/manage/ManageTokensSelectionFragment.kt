@@ -1,7 +1,11 @@
 package com.concordium.wallet.ui.cis2.manage
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,16 +80,7 @@ class ManageTokensSelectionFragment : Fragment() {
                 }
             }
         })
-
-        binding.searchLayout.setSearchListener {
-            selectionAdapter.dataSet = emptyArray()
-            selectionAdapter.notifyDataSetChanged()
-
-            _viewModel.lookForExactToken(
-                apparentTokenId = binding.searchLayout.getSearchText().trim(),
-                accountAddress = _viewModel.tokenData.account!!.address,
-            )
-        }
+        initSearch()
 
 //        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 //            override fun onQueryTextSubmit(query: String?): Boolean {
@@ -134,13 +129,16 @@ class ManageTokensSelectionFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
             binding.searchLayout.isVisible = _viewModel.tokens.size > 1
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
+            binding.searchLayout.setSearchText("")
         }
         _viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
+            showWaiting(false)
             binding.noTokensFound.isVisible = status == TokensViewModel.TOKENS_EMPTY
             if (status == TokensViewModel.TOKENS_OK) {
                 selectionAdapter.dataSet = arrayOf(checkNotNull(_viewModel.exactToken))
@@ -151,8 +149,8 @@ class ManageTokensSelectionFragment : Fragment() {
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
         }
-        _viewModel.hasExistingTokens.observe(viewLifecycleOwner) { hasExistingTokens ->
-            binding.continueBtn.isEnabled = true
+        _viewModel.selectedTokensChanged.observe(viewLifecycleOwner) { changed ->
+            binding.continueBtn.isEnabled = changed
         }
         _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
             if (nonSelected)
@@ -162,14 +160,70 @@ class ManageTokensSelectionFragment : Fragment() {
         }
     }
 
+    private fun showWaiting(show: Boolean) {
+        binding.includeProgress.progressBar.isVisible = show
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun resetSearch() {
+        selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        selectionAdapter.notifyDataSetChanged()
+        _viewModel.dismissExactTokenLookup()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initSearch() {
+        binding.searchLayout.apply {
+            setInputType(InputType.TYPE_CLASS_TEXT)
+            setSearchListener {
+                selectionAdapter.dataSet = emptyArray()
+                selectionAdapter.notifyDataSetChanged()
+
+                showWaiting(true)
+                _viewModel.lookForExactToken(
+                    apparentTokenId = binding.searchLayout.getSearchText().trim(),
+                    accountAddress = _viewModel.tokenData.account!!.address,
+                )
+            }
+            setClearListener {
+                setSearchText("")
+            }
+            setTextChangeListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    if (s.isNullOrBlank()) {
+                        resetSearch()
+                    }
+                }
+            })
+            setOnSearchDoneListener {
+                showWaiting(true)
+                _viewModel.lookForExactToken(
+                    apparentTokenId = binding.searchLayout.getSearchText().trim(),
+                    accountAddress = _viewModel.tokenData.account!!.address,
+                )
+            }
+        }
+    }
+
     private fun updateTokens() {
         _viewModel.updateWithSelectedTokens()
-        val intent = Intent(requireContext(), ManageTokenListActivity::class.java).apply {
-            putExtra(ManageTokenListActivity.ACCOUNT, _viewModel.tokenData.account)
-            putExtra(ManageTokenListActivity.LIST_UPDATED, true)
+        _viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { value ->
+            val intent = Intent(requireContext(), ManageTokenListActivity::class.java).apply {
+                putExtra(ManageTokenListActivity.ACCOUNT, _viewModel.tokenData.account)
+                putExtra(ManageTokenListActivity.LIST_UPDATED, value)
+            }
+            startActivity(intent)
+            requireActivity().finish()
         }
-        startActivity(intent)
-        requireActivity().finish()
     }
 
     private fun gotoTokenDetails(token: Token) {
