@@ -43,6 +43,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
         const val EXTRA_ACTIVATE_ACCOUNT = "EXTRA_ACTIVATE_ACCOUNT"
         const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
+        const val EXTRA_NOTIFICATION_TOKEN_ID = "EXTRA_NOTIFICATION_TOKEN_ID"
     }
 
     private val binding by lazy {
@@ -208,8 +209,13 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun handleNotificationReceived(intent: Intent) {
         if (intent.getBooleanExtra(EXTRA_ACTIVATE_ACCOUNT, false)) {
-            intent.getStringExtra(EXTRA_ACCOUNT_ADDRESS)?.let {
+            val address = intent.getStringExtra(EXTRA_ACCOUNT_ADDRESS)
+            val tokenId = intent.getStringExtra(EXTRA_NOTIFICATION_TOKEN_ID)
+            address?.let {
                 viewModel.activateAccount(it)
+                tokenId?.let {
+                    viewModel.setNotificationData(address, tokenId)
+                }
             }
         }
     }

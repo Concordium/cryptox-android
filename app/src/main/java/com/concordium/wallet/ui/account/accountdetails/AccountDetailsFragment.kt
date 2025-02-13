@@ -20,6 +20,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -48,7 +49,9 @@ import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.ImageUtil
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
 import java.math.BigInteger
 
 class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl() {
@@ -101,7 +104,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     override fun onPause() {
         super.onPause()
-        viewModelAccountDetails.stopFrequentUpdater()
+        resetWhenPaused()
     }
 
     private fun initTooltipBanner() {
@@ -222,10 +225,29 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                             UnshieldingNoticeDialog.TAG
                         )
                     }
+
                     null -> {}
                 }
             }
         }
+
+        combine(
+            mainViewModel.activeAccountAddress,
+            mainViewModel.notificationTokenId,
+            viewModelAccountDetails.activeAccount
+        ) { notificationAddress, tokenId, currentAccount ->
+            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
+                viewModelTokens.tokenBalances.observe(viewLifecycleOwner) { ready ->
+                    if (ready) {
+                        viewModelTokens.tokens.find { it.uid == tokenId }?.also {
+                            showTokenDetailsDialog(it)
+                        }
+                    }
+                }
+            } else {
+                viewModelTokens.tokenBalances.removeObservers(viewLifecycleOwner)
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
             token?.let {
@@ -265,6 +287,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             TransactionStatus.FINALIZED -> setFinalizedMode()
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED -> setPendingMode()
+
             else -> {
                 showStateDefault()
             }
@@ -393,6 +416,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }
 
+    private fun resetWhenPaused() {
+        if (
+            mainViewModel.activeAccountAddress.value.isNotEmpty() &&
+            mainViewModel.notificationTokenId.value.isNotEmpty()
+        ) {
+            mainViewModel.setNotificationData("", "")
+        }
+        viewModelAccountDetails.stopFrequentUpdater()
+    }
+
     private fun initContainer() {
         var handledContainerHeight = -1
         binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
@@ -409,7 +442,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 (binding.fileWalletMigrationDisclaimerLayout.layoutParams as MarginLayoutParams).topMargin
             else 0
             val onRampMargin = if (viewModelAccountDetails.isShowOnrampBanner())
-                    (binding.onrampBanner.layoutParams as MarginLayoutParams).topMargin
+                (binding.onrampBanner.layoutParams as MarginLayoutParams).topMargin
             else 0
 
             if (handledContainerHeight != containerHeight) {

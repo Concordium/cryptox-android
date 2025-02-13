@@ -121,13 +121,13 @@ class TransactionNotificationsManager(
                     Intent(context, MainActivity::class.java)
                         .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
                         .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
-//                        .apply {
-//                            // In case the token is already in the wallet,
-//                            // open its details page.
-//                            if (!token.isNewlyReceived) {
-//                                putExtra(AccountDetailsActivity.EXTRA_TOKEN_TO_OPEN_UID, token.uid)
-//                            }
-//                        }
+                        .apply {
+                            // In case the token is already in the wallet,
+                            // open its details page.
+                            if (!token.isNewlyReceived) {
+                                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN_ID, token.uid)
+                            }
+                        }
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                 )
