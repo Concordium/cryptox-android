@@ -16,7 +16,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -392,7 +392,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         intent.putExtra(SendTokenActivity.TOKEN, viewModel.tokenData.selectedToken)
         intent.putExtra(
             SendTokenActivity.PARENT_ACTIVITY,
-            AccountDetailsActivity::class.java.canonicalName
+            MainActivity::class.java.canonicalName
         )
         startActivityForResultAndHistoryCheck(intent)
     }

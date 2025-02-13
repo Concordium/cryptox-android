@@ -75,13 +75,13 @@ class AccountSettingsActivity : BaseActivity(
 
     private fun gotoTransferFilters(account: Account) {
         val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+        intent.putExtra(AccountTransactionsFiltersActivity.EXTRA_ACCOUNT, account)
         startActivity(intent)
     }
 
     private fun gotoAccountReleaseSchedule(account: Account) {
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+        intent.putExtra(AccountReleaseScheduleActivity.EXTRA_ACCOUNT, account)
         startActivity(intent)
     }
 

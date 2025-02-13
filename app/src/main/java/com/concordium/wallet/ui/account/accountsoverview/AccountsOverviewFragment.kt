@@ -14,8 +14,6 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
-import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.util.Log
@@ -23,10 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AccountsOverviewFragment : BaseFragment() {
-
-    companion object {
-        private const val REQUEST_CODE_ACCOUNT_DETAILS = 2000
-    }
 
     private var eventListener: Preferences.Listener? = null
     private lateinit var binding: FragmentAccountsOverviewBinding
@@ -74,16 +68,6 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         viewModel.stopUpdater()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_CODE_ACCOUNT_DETAILS) {
-            if (resultCode == AccountDetailsActivity.RESULT_RETRY_ACCOUNT_CREATION) {
-                gotoCreateAccount()
-            }
-        }
     }
     //endregion
 
@@ -161,11 +145,6 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoCreateAccount() {
-        val intent = Intent(activity, AccountsListActivity::class.java)
         startActivity(intent)
     }
 
