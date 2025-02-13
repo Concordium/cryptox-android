@@ -20,7 +20,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:background">@drawable/mw24_button_primary_modal_background</item>
-        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:gravity">center</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/ccx_neutral_tint_1</item>
         <item name="android:textAppearance">@style/MW24_Typography_Text_Mid</item>

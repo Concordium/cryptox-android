@@ -78,7 +78,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">19sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAppearance">@style/MW24_Typography_H4</item>
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
     <!-- endregion Typography -->
