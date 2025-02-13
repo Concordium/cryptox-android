@@ -87,6 +87,8 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
+        holder.binding.eurRate.visibility = View.GONE
+
         val tokenMetadata = token.metadata
         if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
             Glide.with(context)
@@ -99,6 +101,16 @@ class TokensAccountDetailsAdapter(
             Glide.with(context)
                 .load(R.drawable.mw24_ic_ccd)
                 .into(holder.binding.tokenIcon)
+
+            holder.binding.eurRate.visibility = View.VISIBLE
+            holder.binding.eurRate.text = if (showManageButton)
+                context.getString(
+                    R.string.cis_estimated_eur_rate,
+                    CurrencyUtil.toEURRate(token.balance, token.denominator, token.numerator)
+                )
+            else
+                context.getString(R.string.cis_at_disposal)
+
         } else {
             Glide.with(context)
                 .load(R.drawable.ic_token_no_image)
@@ -106,28 +118,32 @@ class TokensAccountDetailsAdapter(
         }
 
         if (token.isUnique) {
-            holder.binding.title.text = token.name
-            holder.binding.balance.isVisible = false
-            holder.binding.subtitle.isVisible = true
-            holder.binding.subtitle.text =
-                if (token.balance > BigInteger.ZERO)
-                    context.getString(R.string.cis_owned)
-                else
-                    context.getString(R.string.cis_not_owned)
+            holder.binding.apply {
+                title.text = token.name
+                balance.isVisible = false
+                subtitle.isVisible = true
+                subtitle.text =
+                    if (token.balance > BigInteger.ZERO)
+                        context.getString(R.string.cis_owned)
+                    else
+                        context.getString(R.string.cis_not_owned)
+            }
         } else {
             holder.binding.title.text = token.symbol
             holder.binding.balance.isVisible = true
             holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
                 value = token.balance,
-                roundDecimals = 2
+                roundDecimals = 2,
+                decimals = token.decimals
             )
             holder.binding.subtitle.isVisible = false
         }
-
-        holder.binding.notice.isVisible = token.isNewlyReceived
-        holder.binding.earningLabel.isVisible = token.isEarning
-        holder.binding.content.setOnClickListener {
-            tokenClickListener?.onRowClick(token)
+        holder.binding.apply {
+            notice.isVisible = token.isNewlyReceived
+            earningLabel.isVisible = token.isEarning
+            content.setOnClickListener {
+                tokenClickListener?.onRowClick(token)
+            }
         }
     }
 }

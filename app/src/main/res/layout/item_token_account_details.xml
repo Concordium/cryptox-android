@@ -120,9 +120,23 @@
             android:textColor="@color/cryptox_white_main"
             app:layout_constraintEnd_toStartOf="@id/arrow"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/eur_rate"
             app:layout_goneMarginEnd="12dp"
             tools:text="1234.35" />
+
+        <TextView
+            android:id="@+id/eur_rate"
+            style="@style/MW24_Typography_Main_Capture_Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/mw24_blue_3_50"
+            app:layout_constraintEnd_toEndOf="@id/balance"
+            app:layout_constraintTop_toBottomOf="@id/balance"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_goneMarginEnd="12dp"
+            tools:text="1234.35 EUR" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -33,6 +33,7 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
@@ -99,7 +100,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionWaiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transaction: MutableLiveData<Transaction> by lazy { MutableLiveData<Transaction>() }
-    val eurRateReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
+    val eurRateReady: MutableLiveData<String?> by lazy { MutableLiveData<String?>() }
 
     val canSend: Boolean
         get() = with(sendTokenData) {
@@ -296,13 +297,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private fun getTransferEURRate() {
         proxyRepository.getChainParameters(
             success = { response ->
-                Log.d("sendTokenData.amount: ${sendTokenData.amount}, " +
-                        "denominator: ${response.microGtuPerEuro.denominator}, " +
-                        "numerator: ${response.microGtuPerEuro.numerator}")
-
-                val rate = (sendTokenData.amount.multiply(response.microGtuPerEuro.denominator))
-                    .divide(response.microGtuPerEuro.numerator)
-                eurRateReady.postValue(rate)
+                eurRateReady.postValue(
+                    CurrencyUtil.toEURRate(
+                        sendTokenData.amount,
+                        response.microGtuPerEuro.denominator,
+                        response.microGtuPerEuro.numerator
+                    )
+                )
             },
             failure = {
                 handleBackendError(it)

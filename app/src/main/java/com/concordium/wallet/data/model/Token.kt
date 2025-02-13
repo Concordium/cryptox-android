@@ -28,7 +28,9 @@ data class Token(
     var balance: BigInteger = BigInteger.ZERO,
     var isSelected: Boolean = false,
     var isNewlyReceived: Boolean = false,
-    var isEarning: Boolean = false
+    var isEarning: Boolean = false,
+    var denominator: BigInteger = BigInteger.ZERO,
+    var numerator: BigInteger = BigInteger.ZERO
 ) : Serializable {
 
     val symbol: String
@@ -66,19 +68,24 @@ data class Token(
          * @return CCD as if it was a fungible token,
          * with the [account]'s at disposal balance.
          */
-        fun ccd(account: Account) =
-            Token(
-                uid = "CCD",
-                metadata = TokenMetadata(
-                    symbol = "CCD",
-                    decimals = 6,
-                    unique = false,
-                    name = null,
-                    description = null,
-                    thumbnail = null,
-                    display = null,
-                ),
-                balance = account.balanceAtDisposal,
-            )
+        fun ccd(
+            account: Account,
+            denominator: BigInteger = BigInteger.ZERO,
+            numerator: BigInteger = BigInteger.ZERO
+        ) = Token(
+            uid = "CCD",
+            metadata = TokenMetadata(
+                symbol = "CCD",
+                decimals = 6,
+                unique = false,
+                name = null,
+                description = null,
+                thumbnail = null,
+                display = null,
+            ),
+            balance = account.balanceAtDisposal,
+            denominator = denominator,
+            numerator = numerator
+        )
     }
 }

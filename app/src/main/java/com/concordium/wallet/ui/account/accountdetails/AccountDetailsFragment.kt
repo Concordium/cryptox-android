@@ -540,7 +540,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(
             SendTokenActivity.TOKEN,
-            Token.ccd(viewModelAccountDetails.account)
+            Token.ccd(viewModelAccountDetails.account, BigInteger.ZERO, BigInteger.ZERO)
         )
         intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, this::class.java.canonicalName)
 

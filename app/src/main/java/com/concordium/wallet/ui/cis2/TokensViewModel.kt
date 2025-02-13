@@ -23,8 +23,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.Serializable
+import kotlin.coroutines.resume
 
 data class TokenData(
     var account: Account? = null,
@@ -460,7 +462,24 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")
-        return Token.ccd(account)
+
+        return suspendCancellableCoroutine { continuation ->
+            proxyRepository.getChainParameters(
+                success = { response ->
+                    continuation.resume(
+                        Token.ccd(
+                            account,
+                            response.microGtuPerEuro.denominator,
+                            response.microGtuPerEuro.numerator
+                        )
+                    )
+                },
+                failure = { error ->
+                    handleBackendError(error)
+                    continuation.resume(Token.ccd(account))
+                }
+            )
+        }
     }
 
     fun loadTokensBalances() {

@@ -2,6 +2,7 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -78,10 +79,10 @@ object CurrencyUtil {
         return if (withCommas) formatGTUWithCommas(formattedString) else formattedString
     }
 
-    fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int): String {
+    fun formatAndRoundGTU(value: BigInteger, roundDecimals: Int, decimals: Int = 6): String {
         if (value == BigInteger.ZERO) return ZERO_AMOUNT
 
-        val bigDecimalValue = formatGTU(value)
+        val bigDecimalValue = formatGTU(value, decimals)
             .replace(",", "")
             .toBigDecimal()
             .setScale(roundDecimals, RoundingMode.HALF_DOWN)
@@ -119,6 +120,17 @@ object CurrencyUtil {
         // Remove the separator to get the value (because there are four decimals)
         val noDecimalSeparatorString = str.replace(".", "")
         return noDecimalSeparatorString.toBigInteger()
+    }
+
+    fun toEURRate(amount: BigInteger, denominator: BigInteger, numerator: BigInteger): String {
+        val amountBigDecimal = BigDecimal(amount)
+        val denominatorBigDecimal = BigDecimal(denominator)
+        val numeratorBigDecimal = BigDecimal(numerator)
+
+        return if (numeratorBigDecimal > BigDecimal.ZERO)
+            amountBigDecimal.multiply(denominatorBigDecimal)
+            .divide(numeratorBigDecimal, 2, RoundingMode.HALF_UP).toString()
+        else "0"
     }
 
     private fun checkGTUString(stringValue: String): Boolean {
