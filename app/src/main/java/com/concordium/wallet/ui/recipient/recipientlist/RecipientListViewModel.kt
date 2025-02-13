@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class RecipientListViewModel(application: Application) : AndroidViewModel(application) {
 
-    var account: Account? = null
-    var isShielded: Boolean = false
+    private var account: Account? = null
+    private var isShielded: Boolean = false
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     var selectRecipientMode = false
@@ -28,11 +28,13 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
             val filteredRecipientsLiveData = MutableLiveData<List<Recipient>>()
             val recipientsToShowLiveData = when {
                 selectRecipientMode -> {
-                    val filteredList = allRecipients.filter { recipient ->
-                        recipient.address != account?.address
+                    account?.let {
+                        val filteredList = allRecipients.filter { recipient ->
+                            recipient.address != it.address
+                        }
+                        filteredRecipientsLiveData.value = filteredList
+                        filteredRecipientsLiveData
                     }
-                    filteredRecipientsLiveData.value = filteredList
-                    filteredRecipientsLiveData
                 }
 
                 else -> {
