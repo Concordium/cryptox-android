@@ -237,6 +237,7 @@
     <string name="account_token_details_decimals">0 – %1$s</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
+    <string name="account_settings_name_changed">Account name changed</string>
     <!--  Account release schedule and filters -->
     <string name="account_transaction_filters_title">%1$s Transfer filters</string>
     <!-- Account QR -->

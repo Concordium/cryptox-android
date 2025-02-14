@@ -183,7 +183,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                     requireActivity().finish()
                 }
             })
-        viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner, ::showTotalBalance)
+        viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
+            showTotalBalance(it)
+            viewModelTokens.reloadCCDBalance()
+        }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             viewModelTokens.tokenData.account = account

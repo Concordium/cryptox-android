@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.account.accountdetails.AccountDetailsActivity">
+    android:layout_height="match_parent">
 
     <com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView
         android:id="@+id/scroll_view"
@@ -57,7 +56,7 @@
                     android:id="@+id/tooltip_button"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="16dp"
                     android:contentDescription="@string/account_details_tooltip_description"
                     android:padding="2dp"
                     android:src="@drawable/mw24_ic_tooltip_info"

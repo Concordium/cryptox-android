@@ -106,6 +106,26 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun reloadCCDBalance() {
+        viewModelScope.launch(Dispatchers.IO) {
+            tokenData.account?.address?.let {
+                val ccdToken = getCCDDefaultToken(it)
+                withContext(Dispatchers.Main) {
+                    val updatedTokens = tokens.map { token ->
+                        if (token.isCcd) {
+                            token.copy(balance = ccdToken.balance)
+                        } else {
+                            token
+                        }
+                    }
+                    tokens.clear()
+                    tokens.addAll(updatedTokens)
+                    tokenBalances.postValue(true)
+                }
+            }
+        }
+    }
+
     fun lookForTokens(
         accountAddress: String,
         from: String? = null,

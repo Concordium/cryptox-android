@@ -47,7 +47,10 @@ object TransactionViewHelper {
         }
 
         fun setTotalView(total: BigInteger) {
-            totalTextView.text = CurrencyUtil.formatGTU(total)
+            totalTextView.text = totalTextView.context.getString(
+                R.string.amount,
+                CurrencyUtil.formatGTU(total)
+            )
             val textColor = if (total.signum() > 0)
                 ContextCompat.getColor(
                     totalTextView.context,
