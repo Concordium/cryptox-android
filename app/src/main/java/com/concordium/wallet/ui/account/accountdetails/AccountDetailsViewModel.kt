@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -184,7 +185,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 getLocalTransfers()
                 viewModelScope.launch {
                     updateAccountFromRepository()
-                    _totalBalanceLiveData.value = account.balance
+                    if (::account.isInitialized) {
+                        _totalBalanceLiveData.value = account.balance
+                    }
                     _accountUpdatedLiveData.value = true
                 }
             }
@@ -223,8 +226,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             _hasPendingDelegationTransactions.emit(false)
             _hasPendingBakingTransactions.emit(false)
             val recipientList = recipientRepository.getAll()
-            transactionMappingHelper = TransactionMappingHelper(account, recipientList)
-            val transferList = transferRepository.getAllByAccountId(account.id)
+            transactionMappingHelper = TransactionMappingHelper(activeAccount.first(), recipientList)
+            val transferList = transferRepository.getAllByAccountId(activeAccount.first().id)
             for (transfer in transferList) {
                 if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
                     _hasPendingDelegationTransactions.emit(true)

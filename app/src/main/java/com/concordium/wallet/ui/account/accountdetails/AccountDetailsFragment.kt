@@ -26,6 +26,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
@@ -144,7 +145,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 OnboardingState.DONE -> {
                     viewModelAccountDetails.initiateFrequentUpdater()
                     viewModelAccountDetails.activeAccount.first().let {
-                        updateViews(it.transactionStatus)
+                        updateViews(it)
                     }
                     if (!viewModelAccountDetails.hasShownInitialAnimation()) {
                         binding.confettiAnimation.visibility = View.VISIBLE
@@ -187,7 +188,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             viewModelTokens.tokenData.account = account
             viewModelTokens.loadTokens(account.address)
-            updateViews(account.transactionStatus)
+            updateViews(account)
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
                 text = account.getAccountName(),
@@ -279,12 +280,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    private fun updateViews(transactionStatus: TransactionStatus) {
+    private fun updateViews(account: Account) {
         showWaiting(false)
 
-        when (transactionStatus) {
+        when (account.transactionStatus) {
             TransactionStatus.ABSENT -> setErrorMode()
-            TransactionStatus.FINALIZED -> setFinalizedMode()
+            TransactionStatus.FINALIZED -> setFinalizedMode(account)
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED -> setPendingMode()
 
@@ -311,7 +312,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    private fun setFinalizedMode() {
+    private fun setFinalizedMode(account: Account) {
         setActiveButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
@@ -320,9 +321,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             pendingFragmentContainer.errorLayout.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
             onrampBtn.isEnabled = true
-            sendFundsBtn.isEnabled = !viewModelAccountDetails.account.readOnly
+            sendFundsBtn.isEnabled = !account.readOnly
             receiveBtn.isEnabled = true
-            earnBtn.isEnabled = !viewModelAccountDetails.account.readOnly
+            earnBtn.isEnabled = !account.readOnly
             activityBtn.isEnabled = true
         }
         setupOnrampBanner(active = true)

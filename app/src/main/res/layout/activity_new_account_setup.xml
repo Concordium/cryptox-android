@@ -25,7 +25,7 @@
 
     <Button
         android:id="@+id/confirm_submit_button"
-        style="@style/CryptoX_Button_Primary"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="20dp"
