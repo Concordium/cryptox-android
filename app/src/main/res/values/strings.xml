@@ -394,7 +394,7 @@
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
     <string name="accounts_overview_total_details_disposal_amount">at disposal</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
-    <string name="accounts_overview_total_details_delegating">Delegating:</string>
+    <string name="accounts_overview_total_details_delegating">Earning:</string>
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
