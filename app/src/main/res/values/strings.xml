@@ -571,6 +571,7 @@
     <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Transaction fee ≈ %1$s CCD</string>
     <string name="cis_estimated_eur_rate">≈ %1$s EUR</string>
+    <string name="cis_eur_rate">%1$s EUR</string>
     <string name="cis_back_to_list">Back to list</string>
     <string name="cis_about_token">About the token</string>
     <string name="cis_name_and_icon">Name and icon</string>

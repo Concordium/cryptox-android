@@ -137,6 +137,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             account = it
             _activeAccount.emit(it)
             _totalBalanceLiveData.postValue(it.balance)
+
+            if (account.transactionStatus == TransactionStatus.COMMITTED ||
+                account.transactionStatus == TransactionStatus.RECEIVED) {
+                restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
+            }
         }
     }
 
@@ -195,9 +200,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
                     postState(OnboardingState.DONE)
+                    updateAccountFromRepository()
+                    updateAccount()
+                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                     _newFinalizedAccountFlow.value = accountName
                 }
-                restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
             }
 
             override fun onError(stringRes: Int) {
@@ -216,6 +223,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private suspend fun updateAccountFromRepository() {
         if (::account.isInitialized) {
             accountRepository.findById(account.id)?.let { accountCandidate ->
+                _activeAccount.emit(accountCandidate)
                 account = accountCandidate
             }
         }

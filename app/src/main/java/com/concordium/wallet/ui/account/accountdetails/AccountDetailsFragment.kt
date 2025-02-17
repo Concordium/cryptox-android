@@ -144,9 +144,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             when (state) {
                 OnboardingState.DONE -> {
                     viewModelAccountDetails.initiateFrequentUpdater()
-                    viewModelAccountDetails.activeAccount.first().let {
-                        updateViews(it)
-                    }
+                    updateViews(viewModelAccountDetails.activeAccount.first())
+
                     if (!viewModelAccountDetails.hasShownInitialAnimation()) {
                         binding.confettiAnimation.visibility = View.VISIBLE
                         binding.confettiAnimation.playAnimation()
@@ -208,10 +207,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                viewModelAccountDetails.activeAccount.first().let { account ->
-                    viewModelTokens.loadTokens(account.address)
-                    viewModelTokens.loadTokensBalances()
-                }
+                viewModelTokens.loadTokens(viewModelAccountDetails.activeAccount.first().address)
+                viewModelTokens.loadTokensBalances()
+                updateViews(viewModelAccountDetails.activeAccount.first())
             }
         }
 

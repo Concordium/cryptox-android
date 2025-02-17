@@ -105,7 +105,7 @@ class TokensAccountDetailsAdapter(
             holder.binding.eurRate.visibility = View.VISIBLE
             holder.binding.eurRate.text = if (showManageButton)
                 context.getString(
-                    R.string.cis_estimated_eur_rate,
+                    R.string.cis_eur_rate,
                     CurrencyUtil.toEURRate(token.balance, token.denominator, token.numerator)
                 )
             else
