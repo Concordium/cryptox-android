@@ -18,16 +18,15 @@ import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.getSerializable
+import com.concordium.wallet.util.getOptionalSerializable
 
 class RecipientListActivity :
     BaseActivity(R.layout.activity_recipient_list, R.string.recipient_list_default_title),
     INotification {
 
     companion object {
-        const val EXTRA_SELECT_RECIPIENT_MODE = "EXTRA_SELECT_RECIPIENT_MODE"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
-        const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
+        const val EXTRA_SENDER_ACCOUNT = "EXTRA_SENDER_ACCOUNT"
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
     }
 
@@ -37,8 +36,6 @@ class RecipientListActivity :
         ActivityRecipientListBinding.bind(findViewById(R.id.root_layout))
     }
     private lateinit var recipientAdapter: RecipientAdapter
-    private lateinit var account: Account
-    private var accountAddress: String = ""
 
     //region Lifecycle
     // ************************************************************
@@ -46,16 +43,14 @@ class RecipientListActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val selectRecipientMode = intent.getBooleanExtra(EXTRA_SELECT_RECIPIENT_MODE, false)
-        val isShielded = intent.getBooleanExtra(EXTRA_SHIELDED, false)
-        account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
-
         initializeViewModel()
-        if (::account.isInitialized)
-            viewModel.initialize(selectRecipientMode, isShielded, account)
-        else
-            viewModel.initialize(selectRecipientMode, isShielded, null)
-
+        viewModel.initialize(
+            isShielded = intent.getBooleanExtra(EXTRA_SHIELDED, false),
+            senderAccount = intent.getOptionalSerializable(
+                EXTRA_SENDER_ACCOUNT,
+                Account::class.java
+            )
+        )
         initializeViews()
 
         hideAddContact(isVisible = true) {
@@ -110,16 +105,6 @@ class RecipientListActivity :
             }
         })
 
-        binding.continueBtn.setOnClickListener {
-            goBackWithRecipient(
-                Recipient(
-                    id = 0,
-                    name = account.name,
-                    address = accountAddress
-                )
-            )
-        }
-
         listOf(binding.searchLayout, binding.searchIcon).forEach {
             it.setOnClickListener {
                 showKeyboard(this, binding.recipientSearchview)
@@ -127,18 +112,6 @@ class RecipientListActivity :
         }
 
         initializeList()
-
-        /*
-        viewModel.account?.let {
-            val shieldHeaderTextRes = if (viewModel.isShielded) R.string.recipient_list_unshield_amount else R.string.recipient_list_shield_amount
-            recipient_own_account.findViewById<TextView>(R.id.recipient_name_textview).setText(shieldHeaderTextRes)
-            recipient_own_account.findViewById<TextView>(R.id.recipient_address_textview).setText(it.address)
-        }
-        recipient_own_account.setOnClickListener(View.OnClickListener {
-            viewModel.account?.let {
-                goBackToSendFunds(Recipient(it.id, it.name, it.address))
-            }
-        })*/
     }
 
     private val gerResultQRScan =
@@ -152,9 +125,19 @@ class RecipientListActivity :
         }
 
     private fun onSearchTextChanged(text: String?) {
-        text?.let {
-            accountAddress = it
-            binding.continueBtn.isVisible = viewModel.validateRecipientAddress(it)
+        if (text != null) {
+            if (viewModel.canGoBackWithRecipientAddress(text)) {
+                binding.continueBtn.isVisible = true
+                binding.continueBtn.setOnClickListener {
+                    goBackWithRecipient(
+                        Recipient(
+                            address = text,
+                        )
+                    )
+                }
+            } else {
+                binding.continueBtn.isVisible = false
+            }
         }
         showSearchIcons(text)
         recipientAdapter.filter(text)
@@ -171,7 +154,7 @@ class RecipientListActivity :
             }
 
             override fun handleRowClick(item: Recipient) {
-                if (viewModel.selectRecipientMode) {
+                if (viewModel.canGoBackWithRecipientAddress(item.address)) {
                     goBackWithRecipient(item)
                 } else {
                     gotoEditRecipient(item)

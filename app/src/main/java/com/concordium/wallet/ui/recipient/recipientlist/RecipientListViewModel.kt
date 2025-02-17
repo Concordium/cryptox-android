@@ -15,26 +15,23 @@ import kotlinx.coroutines.launch
 
 class RecipientListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var account: Account? = null
+    private var senderAccount: Account? = null
     private var isShielded: Boolean = false
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
-    var selectRecipientMode = false
-        private set
 
     private val allRecipientsLiveData = recipientRepository.allRecipients
     val recipientListLiveData: LiveData<List<Recipient>>
         get() = allRecipientsLiveData.switchMap { allRecipients ->
             val filteredRecipientsLiveData = MutableLiveData<List<Recipient>>()
+            val senderAccount = this.senderAccount
             val recipientsToShowLiveData = when {
-                selectRecipientMode -> {
-                    account?.let {
-                        val filteredList = allRecipients.filter { recipient ->
-                            recipient.address != it.address
-                        }
-                        filteredRecipientsLiveData.value = filteredList
-                        filteredRecipientsLiveData
+                senderAccount != null -> {
+                    val filteredList = allRecipients.filter { recipient ->
+                        recipient.address != senderAccount.address
                     }
+                    filteredRecipientsLiveData.value = filteredList
+                    filteredRecipientsLiveData
                 }
 
                 else -> {
@@ -51,20 +48,18 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
         get() = _waitingLiveData
 
     fun initialize(
-        selectRecipientMode: Boolean,
-        shielded: Boolean,
-        account: Account?
+        isShielded: Boolean,
+        senderAccount: Account?,
     ) {
-        this.selectRecipientMode = selectRecipientMode
-        this.isShielded = shielded
-        this.account = account
+        this.isShielded = isShielded
+        this.senderAccount = senderAccount
     }
 
     fun deleteRecipient(recipient: Recipient) = viewModelScope.launch(Dispatchers.IO) {
         recipientRepository.delete(recipient)
     }
 
-    fun validateRecipientAddress(address: String): Boolean {
-        return cryptoLibrary.checkAccountAddress(address)
+    fun canGoBackWithRecipientAddress(address: String): Boolean {
+        return senderAccount != null && cryptoLibrary.checkAccountAddress(address)
     }
 }
