@@ -185,7 +185,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
-            viewModelTokens.reloadCCDBalance()
+            viewModelTokens.loadTokensBalances()
         }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->

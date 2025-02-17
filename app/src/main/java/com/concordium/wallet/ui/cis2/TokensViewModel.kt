@@ -69,6 +69,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+    val tokensReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
@@ -85,6 +86,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         isFungible: Boolean? = null,
     ) {
         waiting.postValue(true)
+        tokensReady.postValue(false)
         viewModelScope.launch(Dispatchers.IO) {
             val ccdToken = getCCDDefaultToken(accountAddress)
             val contractTokens = contractTokensRepository.getTokens(
@@ -102,27 +104,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 })
             }
+            tokensReady.postValue(true)
             waiting.postValue(false)
-        }
-    }
-
-    fun reloadCCDBalance() {
-        viewModelScope.launch(Dispatchers.IO) {
-            tokenData.account?.address?.let {
-                val ccdToken = getCCDDefaultToken(it)
-                withContext(Dispatchers.Main) {
-                    val updatedTokens = tokens.map { token ->
-                        if (token.isCcd) {
-                            token.copy(balance = ccdToken.balance)
-                        } else {
-                            token
-                        }
-                    }
-                    tokens.clear()
-                    tokens.addAll(updatedTokens)
-                    tokenBalances.postValue(true)
-                }
-            }
         }
     }
 
@@ -509,6 +492,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             tokenBalances.postValue(false)
             try {
+                val ccdToken = getCCDDefaultToken(tokenData.account!!.address)
+                tokens.find { it.isCcd }?.apply {
+                    balance = ccdToken.balance
+                    isEarning = ccdToken.isEarning
+                }
+
                 loadTokensBalances(
                     tokensToUpdate = tokens,
                     accountAddress = tokenData.account!!.address,

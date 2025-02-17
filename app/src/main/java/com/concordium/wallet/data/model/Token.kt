@@ -84,6 +84,7 @@ data class Token(
                 display = null,
             ),
             balance = account.balance,
+            isEarning = account.isBaking() || account.isDelegating(),
             denominator = denominator,
             numerator = numerator
         )
