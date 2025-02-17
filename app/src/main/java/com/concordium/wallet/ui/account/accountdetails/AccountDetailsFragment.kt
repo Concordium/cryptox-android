@@ -45,6 +45,7 @@ import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
@@ -278,6 +279,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
+        }
+        binding.fileWalletMigrationDisclaimerLayout.setOnClickListener {
+            startActivity(Intent(requireActivity(), WalletsActivity::class.java))
         }
     }
 
