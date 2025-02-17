@@ -35,6 +35,7 @@ import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.RandomUtil
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -330,7 +331,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     delegation = accountBalance.finalizedBalance.accountDelegation,
                     baker = accountBalance.finalizedBalance.accountBaker,
                     index = accountBalance.finalizedBalance.accountIndex,
-                    credNumber = credNumber
+                    credNumber = credNumber,
+                    iconId = RandomUtil.getRandomInt()
                 )
 
                 if (accountRepository.findByAddress(account.address) == null) {
@@ -420,9 +422,19 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         found.first().identity.name = identity.name
                 }
             }
+            activateFirstAccountIfNoneActive()
             recoverProcessData.identitiesWithAccounts = identitiesWithAccountsFound
             waiting.postValue(false)
             statusChanged.postValue(STATUS_DONE)
+        }
+    }
+
+    private suspend fun activateFirstAccountIfNoneActive() {
+        val allAccounts = accountRepository.getAll()
+        val activeAccount = accountRepository.getActive()
+
+        if (allAccounts.isNotEmpty() && activeAccount == null) {
+            accountRepository.activate(allAccounts.sortedBy { it.id }.last().address)
         }
     }
 

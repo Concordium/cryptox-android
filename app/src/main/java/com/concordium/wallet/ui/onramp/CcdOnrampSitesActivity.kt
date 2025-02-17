@@ -2,13 +2,13 @@ package com.concordium.wallet.ui.onramp
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.toast.showGradientToast
 
 class CcdOnrampSitesActivity : BaseActivity(
     R.layout.activity_ccd_onramp_sites,
@@ -33,7 +33,6 @@ class CcdOnrampSitesActivity : BaseActivity(
         initList()
 
         hideActionBarBack(isVisible = true)
-        setActionBarTitle("")
     }
 
     private fun initList() {
@@ -68,12 +67,10 @@ class CcdOnrampSitesActivity : BaseActivity(
                     site = site,
                     accountAddress = accountAddress,
                     onAccountAddressCopied = {
-                        Toast
-                            .makeText(
-                                this,
-                                getString(R.string.template_ccd_onramp_opening_site, site.name),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        showGradientToast(
+                            iconResId = R.drawable.mw24_ic_address_copy_check,
+                            title = getString(R.string.template_ccd_onramp_opening_site, site.name)
+                        )
                     }
                 )
             } else {

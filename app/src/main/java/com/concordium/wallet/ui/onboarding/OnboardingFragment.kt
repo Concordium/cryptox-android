@@ -67,15 +67,6 @@ class OnboardingFragment @JvmOverloads constructor(
     )
 
     init {
-        listOf(
-            binding.onrampBtn,
-            binding.sendFundsBtn,
-            binding.addressBtn,
-        ).forEach {
-            it.setOnClickListener {
-                showUnlockFeatureDialog()
-            }
-        }
         activity.lifecycleScope.launch {
             onboardingViewModel.identityFlow.collect { identity ->
                 binding.onboardingInnerActionButton.setOnClickListener {
@@ -93,9 +84,6 @@ class OnboardingFragment @JvmOverloads constructor(
                             activity = context as BaseActivity,
                             onAuthenticated = {
                                 newAccountViewModel.continueWithPassword(it)
-                                activity.lifecycleScope.launch {
-                                    onboardingViewModel.setShowLoading(true)
-                                }
                             }
                         )
                     }
@@ -109,16 +97,12 @@ class OnboardingFragment @JvmOverloads constructor(
                         true
                     )
                     activity.lifecycleScope.launch {
-                        onboardingViewModel.setShowLoading(false)
                         onboardingViewModel.setUpdateState(true)
                     }
                 }
             })
         newAccountViewModel.errorLiveData.observe(activity, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
-                activity.lifecycleScope.launch {
-                    onboardingViewModel.setShowLoading(false)
-                }
                 (activity as BaseActivity).showError(value)
             }
         })
@@ -314,7 +298,7 @@ class OnboardingFragment @JvmOverloads constructor(
 
     private fun createFirstAccount(identity: Identity) {
         activity.lifecycleScope.launch(Dispatchers.IO) {
-            newAccountViewModel.initialize(Account.getDefaultName(""), identity)
+            newAccountViewModel.initialize(Account.getDefaultName(""), identity, true)
             newAccountViewModel.createAccount()
         }
     }

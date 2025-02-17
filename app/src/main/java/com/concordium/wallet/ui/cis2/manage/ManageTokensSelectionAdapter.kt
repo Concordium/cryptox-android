@@ -72,7 +72,6 @@ class ManageTokensSelectionAdapter(
         } else {
             val tokenBalance = CurrencyUtil.formatGTU(
                 token.balance,
-                false,
                 token.decimals
             )
             holder.binding.subtitle.text =

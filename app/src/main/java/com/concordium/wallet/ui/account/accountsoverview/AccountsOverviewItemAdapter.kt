@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
-import com.concordium.wallet.data.room.AccountWithIdentity
 
 class AccountsOverviewItemAdapter(
     private val accountViewClickListener: AccountView.OnItemClickListener,
@@ -44,6 +44,13 @@ class AccountsOverviewItemAdapter(
                 val item = data[position] as AccountsOverviewListItem.Account
                 holder.accountView.setAccount(item.accountWithIdentity)
                 holder.accountView.setOnItemClickListener(accountViewClickListener)
+                holder.accountView.background = if (item.accountWithIdentity.account.isActive) ContextCompat.getDrawable(
+                    holder.accountView.context,
+                    R.drawable.mw24_item_account_background_active
+                ) else ContextCompat.getDrawable(
+                    holder.accountView.context,
+                    R.drawable.mw24_container_primary_background
+                )
             }
         }
     }
@@ -51,13 +58,6 @@ class AccountsOverviewItemAdapter(
     sealed class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         class Account(itemView: View) : ViewHolder(itemView) {
             val accountView = itemView as AccountView
-        }
-    }
-
-    class ItemViewHolder(val view: AccountView) : RecyclerView.ViewHolder(view) {
-        fun bind(item: AccountWithIdentity, onItemClickListener: AccountView.OnItemClickListener?) {
-            view.setAccount(item)
-            view.setOnItemClickListener(onItemClickListener)
         }
     }
 }

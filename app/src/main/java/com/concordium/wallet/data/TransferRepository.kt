@@ -20,6 +20,10 @@ class TransferRepository(private val transferDao: TransferDao) {
         return transferDao.findById(id)
     }
 
+    suspend fun findBySubmissionId(submissionId: String): Transfer? {
+        return transferDao.findBySubmissionId(submissionId)
+    }
+
     suspend fun insert(transfer: Transfer) {
         transferDao.insert(transfer)
     }

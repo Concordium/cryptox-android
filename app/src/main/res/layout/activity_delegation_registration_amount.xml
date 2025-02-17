@@ -73,7 +73,7 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/CCX_GradientCard_16"
+                style="@style/CryptoX_Container_TextCard"
                 android:layout_marginTop="16dp"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -82,7 +82,7 @@
                     android:id="@+id/amount_desc"
                     style="@style/CryptoX_Typography_Body_Medium"
                     android:text="@string/delegation_register_delegation_amount_enter_amount"
-                    android:textColor="@color/cryptox_black_secondary" />
+                    android:textColor="@color/cryptox_grey_secondary" />
 
                 <com.concordium.wallet.uicore.view.AmountEditText
                     android:id="@+id/amount"
@@ -100,7 +100,7 @@
                     android:id="@+id/amount_locked"
                     style="@style/CryptoX_Typography_Body_Medium"
                     android:text="@string/delegation_register_delegation_amount_locked"
-                    android:textColor="@color/cryptox_black_secondary"
+                    android:textColor="@color/cryptox_grey_secondary"
                     android:visibility="gone"
                     tools:visibility="visible" />
 

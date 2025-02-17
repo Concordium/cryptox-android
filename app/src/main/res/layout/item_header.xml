@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/CryptoX_Typography_Caption"
-    android:background="@color/cryptox_black_secondary"
+    style="@style/MW24_Typography_Additional_Capture_Small"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:textColor="@color/mw24_blue_3"
     android:gravity="center"
+    android:paddingTop="16dp"
     android:paddingBottom="8dp"
-    android:paddingTop="20dp"
     tools:text="Today" />

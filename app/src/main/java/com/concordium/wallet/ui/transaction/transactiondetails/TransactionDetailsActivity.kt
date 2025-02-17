@@ -22,6 +22,7 @@ import com.concordium.wallet.databinding.ActivityTransactionDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.TransactionViewHelper
 import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.getSerializable
 
 class TransactionDetailsActivity : BaseActivity(
     R.layout.activity_transaction_details,
@@ -31,12 +32,14 @@ class TransactionDetailsActivity : BaseActivity(
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
+        const val EXTRA_IS_RECEIPT = "EXTRA_IS_RECEIPT"
     }
 
     private lateinit var viewModel: TransactionDetailsViewModel
     private val binding by lazy {
         ActivityTransactionDetailsBinding.bind(findViewById(R.id.root_layout))
     }
+    private var isReceipt = false //always show "Transfer" title if show send receipt
 
     //region Lifecycle
     // ************************************************************
@@ -44,8 +47,10 @@ class TransactionDetailsActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val account = intent.extras?.getSerializable(EXTRA_ACCOUNT) as Account
-        val transaction = intent.extras?.getSerializable(EXTRA_TRANSACTION) as Transaction
+        val account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
+        val transaction = intent.getSerializable(EXTRA_TRANSACTION, Transaction::class.java)
+        isReceipt = intent.getBooleanExtra(EXTRA_IS_RECEIPT, false)
+
         initializeViewModel()
         viewModel.initialize(account, transaction)
         initViews()
@@ -77,7 +82,7 @@ class TransactionDetailsActivity : BaseActivity(
         })
         viewModel.showDetailsLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
-                showTransactionDetails()
+                showTransactionDetails(isReceipt)
             }
         })
     }
@@ -136,14 +141,15 @@ class TransactionDetailsActivity : BaseActivity(
         Toast.makeText(applicationContext, stringRes, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showTransactionDetails() {
+    private fun showTransactionDetails(isReceipt: Boolean) {
         binding.contentLayout.visibility = View.VISIBLE
-        showDetailsContent()
+        showDetailsContent(isReceipt)
     }
 
-    private fun showDetailsContent() {
+    private fun showDetailsContent(isReceipt: Boolean) {
         val transaction = viewModel.transaction
         val transactionItem = binding.transactionItem
+        binding.transactionItem.itemRootLayout.background = null
 
         TransactionViewHelper.show(
             transaction,
@@ -151,14 +157,16 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.subheaderTextview,
             transactionItem.totalTextview,
             transactionItem.costTextview,
+            transactionItem.layoutMemo,
             transactionItem.memoTextview,
-            transactionItem.amountTextview,
             transactionItem.alertImageview,
             transactionItem.statusImageview,
+            isReceipt = isReceipt
         )
         // Do not show the memo in the item,
         // it is shown below with ability to copy the value.
-        transactionItem.memoTextview.isVisible = false
+        transactionItem.layoutMemo.isVisible = false
+        transactionItem.arrowImageview.isVisible = false
 
         showDate(transaction)
         showRejectReason(transaction)

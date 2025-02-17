@@ -20,5 +20,6 @@
     <color name="ccx_neutral_tint_6">#141A1A</color>
     <color name="ccx_neutral_tint_7">#101414</color>
     <color name="ccx_neutral_tint_8">#BEBEBE</color>
+    <color name="ccx_neutral_tint_9">#BABEC7</color>
     <color name="ccx_import_seed_background">#14181D</color>
 </resources>

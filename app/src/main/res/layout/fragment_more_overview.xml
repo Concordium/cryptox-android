@@ -22,161 +22,261 @@
 
             <LinearLayout
                 android:id="@+id/unshielding_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_unshielding"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_unshielding"
                     app:drawableStartCompat="@drawable/ccx_ico_unshield" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/identities_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_identities"
-                    app:drawableStartCompat="@drawable/ccx_ico_file_shield_2" />
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_identities"
+                    app:drawableStartCompat="@drawable/ccx_ico_settings_idetntites" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/wallets_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
+                    style="@style/SettingsOverviewItemTextView"
                     android:text="@string/wallets_title"
                     app:drawableStartCompat="@drawable/ccx_ico_user_circle" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/address_book_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_address_book"
-                    app:drawableStartCompat="@drawable/ccx_ico_book" />
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_address_book"
+                    app:drawableStartCompat="@drawable/ccx_ico_settings_address_book" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/notifications_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_notifications"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_notifications"
                     app:drawableStartCompat="@drawable/ccx_ico_bell" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/export_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_export"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_export"
                     app:drawableStartCompat="@drawable/cryptox_ico_export" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/import_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_import"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_import"
                     app:drawableStartCompat="@drawable/cryptox_ico_import" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/recover_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_recover"
-                    app:drawableStartCompat="@drawable/ccx_ico_file_shield_3" />
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_recover"
+                    app:drawableStartCompat="@drawable/ccx_ico_settings_recovery" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/seed_phrase_reveal_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_reveal_seed_phrase"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_reveal_seed_phrase"
                     app:drawableStartCompat="@drawable/ccx_ico_eye_open" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/seed_reveal_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_reveal_seed"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_reveal_seed"
                     app:drawableStartCompat="@drawable/ccx_ico_eye_open" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/alter_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_alter_password"
-                    app:drawableStartCompat="@drawable/ccx_ico_key_2" />
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_alter_password"
+                    app:drawableStartCompat="@drawable/ccx_ico_settings_biometrics" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/wallet_connect_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_clear_wallet_connect"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_clear_wallet_connect"
                     app:drawableStartCompat="@drawable/ccx_ico_trash_2" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/erase_data_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_erase_data"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_erase_data"
                     app:drawableStartCompat="@drawable/ccx_ico_file_shred" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/tracking_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_analytics"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_analytics"
                     app:drawableStartCompat="@drawable/ccx_ico_chart_donut" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nft_layout"
+                style="@style/SettingsOverviewItem">
+
+                <TextView
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_nft"
+                    app:drawableStartCompat="@drawable/ccx_ico_settings_nft" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/cryptox_grey_main"
+                    android:alpha="0.2"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/about_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_about"
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_about"
                     app:drawableStartCompat="@drawable/ccx_ico_information_circle_contained" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/dev_layout"
-                style="@style/MoreOverviewItem">
+                style="@style/SettingsOverviewItem">
 
                 <TextView
-                    style="@style/MoreOverviewItemTextView"
-                    android:text="@string/more_overview_item_developer_options" />
+                    style="@style/SettingsOverviewItemTextView"
+                    android:text="@string/settings_overview_item_developer_options" />
 
             </LinearLayout>
         </LinearLayout>

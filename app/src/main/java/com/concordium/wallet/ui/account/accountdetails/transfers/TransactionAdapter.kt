@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.account.accountdetails.transfers
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.concordium.wallet.ui.common.TransactionViewHelper
 import com.concordium.wallet.uicore.recyclerview.BaseAdapter
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderListener
 
+@SuppressLint("NotifyDataSetChanged")
 class TransactionAdapter :
     BaseAdapter<AdapterItem>(mutableListOf()),
     PinnedHeaderListener {
@@ -38,8 +40,9 @@ class TransactionAdapter :
                 binding.subheaderTextview,
                 binding.totalTextview,
                 binding.costTextview,
+                binding.layoutMemo,
                 binding.memoTextview,
-                binding.amountTextview,
+//                binding.amountTextview,
                 binding.alertImageview,
                 binding.statusImageview,
             )
@@ -55,6 +58,10 @@ class TransactionAdapter :
     fun setData(data: List<AdapterItem>) {
         clear()
         addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun onDataSetChanged() {
         notifyDataSetChanged()
     }
 

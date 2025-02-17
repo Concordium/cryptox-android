@@ -7,7 +7,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.databinding.ActivityFailedBinding
 import com.concordium.wallet.ui.MainActivity
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.BackendErrorHandler
 
@@ -109,7 +108,7 @@ class FailedActivity : BaseActivity(
                 startActivity(intent)
             }
             FailedViewModel.Source.Transfer -> {
-                val intent = Intent(this, AccountDetailsActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
             }

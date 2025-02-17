@@ -16,24 +16,29 @@
 
     <com.concordium.wallet.ui.account.accountsoverview.AccountView
         android:id="@+id/account_view"
-        style="@style/CCX_GradientCard_16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
         android:layout_marginTop="10dp"
+        android:background="@drawable/mw24_container_primary_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         app:showButtons="false" />
 
     <TextView
-        style="@style/CryptoX_Typography_Body_Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
         android:layout_marginTop="22dp"
         android:text="@string/new_account_confirmed_info"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/mw24_blue_3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_view" />
 
     <Button
         android:id="@+id/confirm_button"
-        style="@style/CryptoX_Button_Primary"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="20dp"

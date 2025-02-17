@@ -2,7 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation.introflow
 
 import android.content.Intent
 import com.concordium.wallet.R
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRemoveActivity
@@ -20,7 +20,7 @@ class DelegationRemoveIntroFlowActivity :
         val intent = Intent(this, DelegationRemoveActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
-        finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     override fun getLink(position: Int): String {

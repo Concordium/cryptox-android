@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/mw24_container_primary_background"
+    android:padding="18dp"
+    android:layout_marginBottom="4dp"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/account_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/account_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Account 1 / 6gk...k7o" />
+
+        <View
+            android:id="@+id/account_empty_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintEnd_toStartOf="@id/identity_name"
+            app:layout_constraintStart_toEndOf="@id/account_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/identity_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/mw24_blue_3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Identity 1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/balance_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/account_total_balance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/mw24_blue_3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2,734,547" />
+
+        <TextView
+            android:id="@+id/account_balance_at_disposal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/mw24_blue_3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/account_total_balance"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text=" · 103,017 " />
+
+        <View
+            android:id="@+id/balance_empty_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintEnd_toStartOf="@id/earning_percent"
+            app:layout_constraintStart_toEndOf="@id/account_balance_at_disposal"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/earning_percent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/mw24_blue_3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="% Earning" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

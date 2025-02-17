@@ -30,6 +30,7 @@ import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
+import com.concordium.wallet.ui.tokens.provider.NFTActivity
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -98,7 +99,7 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun initializeViews() {
         binding.progress.progressLayout.visibility = View.GONE
-        mainViewModel.setTitle(getString(R.string.more_overview_title))
+        mainViewModel.setTitle(getString(R.string.settings_overview_title))
 
         binding.devLayout.visibility = View.GONE
         binding.devLayout.setOnClickListener {
@@ -188,6 +189,13 @@ class MoreOverviewFragment : BaseFragment() {
             openTrackingPreferences()
         }
 
+        binding.nftLayout.setOnClickListener {
+            if (mainViewModel.hasCompletedOnboarding())
+                gotoNFT()
+            else
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
+        }
+
         binding.aboutLayout.setOnClickListener {
             about()
         }
@@ -216,7 +224,7 @@ class MoreOverviewFragment : BaseFragment() {
             MoreOverviewViewModel.Event.ShowDataErasedMessage ->
                 Toast.makeText(
                     requireContext(),
-                    R.string.more_overview_erase_data_erased,
+                    R.string.settings_overview_erase_data_erased,
                     Toast.LENGTH_SHORT
                 )
                     .show()
@@ -268,9 +276,10 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun showConfirmEraseData() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.more_overview_erase_data_confirmation_title)
-            .setMessage(getString(R.string.more_overview_erase_wallet_confirmation_message))
-            .setPositiveButton(getString(R.string.more_overview_erase_data_continue)) { _, _ ->
+            .setTitle(R.string.settings_overview_erase_data_confirmation_title)
+            .setMessage(getString(R.string.settings_overview_erase_wallet_confirmation_message))
+            .setPositiveButton(getString(R.string.settings_overview_erase_data_continue)) { _, _ ->
+
                 viewModel.onEraseContinueClicked()
             }
             .setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel), null)
@@ -299,6 +308,11 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun gotoNFT() {
+        val intent = Intent(activity, NFTActivity::class.java)
         startActivity(intent)
     }
 

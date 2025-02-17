@@ -113,7 +113,7 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
                 val atDisposalBalance = acc.balanceAtDisposal
                 v.findViewById<TextView>(R.id.accBalance).text = getString(
                     R.string.acc_balance_placeholder,
-                    CurrencyUtil.formatGTU(atDisposalBalance, true)
+                    CurrencyUtil.formatGTU(atDisposalBalance)
                 )
                 accountsPool?.addView(v)
                 v.setOnClickListener {

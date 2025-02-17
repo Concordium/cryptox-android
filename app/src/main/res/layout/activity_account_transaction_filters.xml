@@ -14,24 +14,28 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        style="@style/CryptoX_Container_TextCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical"
+        android:background="@drawable/mw24_container_stroked_background"
         android:padding="20dp">
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/filter_show_rewards"
-            style="@style/CryptoX_CompoundButton_Checkbox"
+            style="@style/MW24_CompoundButton_Checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/transactions_filters_show_rewards"
             tools:checked="false" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/filter_show_finalizations_rewards"
-            style="@style/CryptoX_CompoundButton_Checkbox"
-            android:layout_marginTop="10dp"
+            style="@style/MW24_CompoundButton_Checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="@string/transactions_filters_show_finalizations_rewards"
             tools:checked="false" />
 

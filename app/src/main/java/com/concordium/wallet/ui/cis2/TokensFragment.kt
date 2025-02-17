@@ -1,29 +1,27 @@
 package com.concordium.wallet.ui.cis2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentTokensBinding
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
-import com.concordium.wallet.ui.cis2.manage.ManageTokensBottomSheet
+import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
 
 class TokensFragment : Fragment() {
     private var _binding: FragmentTokensBinding? = null
     private val binding get() = _binding!!
-    val viewModel: TokensViewModel
-        get() = (requireActivity() as AccountDetailsActivity).viewModelTokens
-    private val accountAddress: String
-        get() = (requireActivity() as AccountDetailsActivity).viewModelAccountDetails.account.address
-    private var isFungible: Boolean? = null
+    private val viewModel: TokensViewModel by lazy {
+        ViewModelProvider(requireActivity())[TokensViewModel::class.java]
+    }
+
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
-    private var manageTokensBottomSheet: ManageTokensBottomSheet? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,75 +36,72 @@ class TokensFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        viewModel.loadTokens(accountAddress, isFungible)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Scroll to first element when account changed
+        binding.tokensFound.smoothScrollToPosition(0)
     }
 
     private fun initViews() {
-        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        binding.tokensFound.layoutManager = LinearLayoutManager(requireContext())
         tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(
-            requireContext(),
+            context = requireContext(),
             showManageButton = true,
-            dataSet = arrayOf(),
         )
-        tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
+        binding.tokensFound.adapter = tokensAccountDetailsAdapter
 
         tokensAccountDetailsAdapter.setTokenClickListener(object :
             TokensAccountDetailsAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 viewModel.chooseToken.postValue(token)
             }
-
-            override fun onCheckBoxClick(token: Token) {
-            }
         })
-
-        tokensAccountDetailsAdapter.setManageButtonClickListener {
-            showFindTokensDialog()
-        }
-        binding.noItemsManageTokens.setOnClickListener {
-            showFindTokensDialog()
-        }
     }
 
     private fun initObservers() {
-        viewModel.waiting.observe(viewLifecycleOwner) {
-            binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
-            tokensAccountDetailsAdapter.dataSet = viewModel.tokens.toTypedArray()
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
-            viewModel.loadTokensBalances()
-        }
-        viewModel.tokenDetails.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
-        }
-        viewModel.tokenBalances.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.notifyDataSetChanged()
-        }
-        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) {
-            viewModel.loadTokens(accountAddress, isFungible)
-        }
+        viewModel.waiting.observe(viewLifecycleOwner) { waiting ->
+            if (!waiting) {
+                binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
+            }
 
-        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { anyChanges ->
-            requireActivity().runOnUiThread {
-                manageTokensBottomSheet?.dismiss()
-                manageTokensBottomSheet = null
-                if (anyChanges) {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.cis_tokens_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.cis_tokens_not_updated,
-                        Toast.LENGTH_SHORT
-                    ).show()
+            viewModel.tokenData.account?.let { account ->
+                tokensAccountDetailsAdapter.setManageButtonClickListener {
+                    gotoManageTokensList(account)
+                }
+                binding.noItemsManageTokens.setOnClickListener {
+                    gotoManageTokensList(account)
+                }
+            }
+        }
+        viewModel.tokenBalances.observe(viewLifecycleOwner) { ready ->
+            showLoading(ready.not())
+            if (ready) {
+                binding.noItemsLayout.isVisible = viewModel.tokens.isEmpty()
+                tokensAccountDetailsAdapter.setData(
+                    viewModel.tokens.map { token ->
+                        if (token.isCcd) {
+                            token.copy(
+                                isEarning = viewModel.tokenData.account?.isDelegating()!! ||
+                                        viewModel.tokenData.account?.isBaking()!!
+                            )
+                        } else {
+                            token
+                        }
+                    }
+                )
             }
         }
     }
 
-    private fun showFindTokensDialog() {
-        manageTokensBottomSheet = ManageTokensBottomSheet()
-        manageTokensBottomSheet?.show(childFragmentManager, "")
+    private fun showLoading(show: Boolean) {
+        binding.loading.progressBar.isVisible = show
+    }
+
+    private fun gotoManageTokensList(account: Account) {
+        val intent = Intent(requireActivity(), ManageTokenListActivity::class.java)
+        intent.putExtra(ManageTokenListActivity.ACCOUNT, account)
+        startActivity(intent)
     }
 }

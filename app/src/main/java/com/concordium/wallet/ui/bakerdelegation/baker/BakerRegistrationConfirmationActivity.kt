@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -11,7 +12,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBinding
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -182,7 +183,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
-                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true
+                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO
             )
         }
     }
@@ -334,7 +335,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
         builder.setPositiveButton(getString(R.string.baker_notice_ok)) { dialog, _ ->
             dialog.dismiss()
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+            startActivity(Intent(this, MainActivity::class.java))
+            finishAffinity()
         }
         builder.create().show()
     }

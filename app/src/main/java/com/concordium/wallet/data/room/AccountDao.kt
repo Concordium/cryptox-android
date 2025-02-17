@@ -47,8 +47,21 @@ interface AccountDao {
     @Query("SELECT * FROM account_table WHERE address = :address")
     suspend fun findByAddress(address: String): Account?
 
+    @Query("SELECT * FROM account_table WHERE is_active = 1")
+    suspend fun getActive(): Account?
+
+    @Query("UPDATE account_table SET is_active = CASE WHEN address = :address THEN 1 ELSE 0 END")
+    suspend fun activate(address: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg account: Account): List<Long>
+
+    @Transaction
+    suspend fun insertAndActivate(account: Account): Long {
+        val id = insert(account).first()
+        activate(account.address)
+        return id
+    }
 
     @Update
     suspend fun updateIdentity(vararg identity: Identity)

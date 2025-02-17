@@ -191,7 +191,7 @@
         android:text="@string/welcome_terms"
         android:textAppearance="@style/CCX_Typography_Body"
         android:textColor="@color/ccx_neutral_tint_1"
-        android:textColorLink="@color/ccx_neutral_tint_1"
+        android:textColorLink="@color/mw24_primary_text_button_color"
         app:layout_constraintBottom_toTopOf="@id/activity_tracking_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/terms_check_box">
@@ -230,7 +230,8 @@
 
     <Button
         android:id="@+id/get_started_button"
-        style="@style/CCX_Button_Primary.ArrowRight"
+        style="@style/MW24_Button_Primary"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"

@@ -89,26 +89,26 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         binding.balanceAmount.text =
             getString(
                 R.string.amount,
-                CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
+                CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
             )
         binding.delegationAmount.text = getString(
             R.string.amount,
-            CurrencyUtil.formatGTU(BigInteger.ZERO, true)
+            CurrencyUtil.formatGTU(BigInteger.ZERO)
         )
         viewModel.bakerDelegationData.account?.let { account ->
             account.delegation?.let { accountDelegation ->
                 binding.delegationAmount.text =
-                    CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
+                    CurrencyUtil.formatGTU(accountDelegation.stakedAmount)
             }
         }
 
         binding.poolLimit.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                CurrencyUtil.formatGTU(it.delegatedCapitalCap, true)
+                CurrencyUtil.formatGTU(it.delegatedCapitalCap)
             }
         binding.currentPool.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                CurrencyUtil.formatGTU(it.delegatedCapital, true)
+                CurrencyUtil.formatGTU(it.delegatedCapital)
             }
 
         binding.poolRegistrationContinue.isEnabled = false
@@ -188,7 +188,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amount.setText(viewModel.bakerDelegationData.account?.delegation?.stakedAmount?.let {
                 CurrencyUtil.formatGTU(
                     value = it,
-                    withGStroke = false,
                     withCommas = false
                 )
             })

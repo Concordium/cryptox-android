@@ -78,7 +78,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">19sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAppearance">@style/MW24_Typography_H4</item>
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
     <!-- endregion Typography -->
@@ -96,17 +96,17 @@
         <item name="android:drawablePadding">13sp</item>
     </style>
 
-    <style name="Cryptox_Button_Secondary_Small">
-        <item name="android:layout_height">37dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">@drawable/cryptox_button_secondary_small_background</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/cryptox_button_secondary_text_color</item>
-        <item name="android:paddingHorizontal">20dp</item>
-        <item name="android:drawablePadding">8sp</item>
-    </style>
+<!--    <style name="Cryptox_Button_Secondary_Small">-->
+<!--        <item name="android:layout_height">37dp</item>-->
+<!--        <item name="android:layout_width">wrap_content</item>-->
+<!--        <item name="android:background">@drawable/cryptox_button_secondary_small_background</item>-->
+<!--        <item name="android:textAllCaps">false</item>-->
+<!--        <item name="android:textSize">14sp</item>-->
+<!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+<!--        <item name="android:textColor">@color/cryptox_button_secondary_text_color</item>-->
+<!--        <item name="android:paddingHorizontal">20dp</item>-->
+<!--        <item name="android:drawablePadding">8sp</item>-->
+<!--    </style>-->
 
     <style name="CryptoX_Button_Primary">
         <item name="android:layout_height">53dp</item>
@@ -143,9 +143,10 @@
     </style>
 
     <style name="CryptoX_ImageButton">
-        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/mw24_dialog_close_background</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_margin">16dp</item>
         <item name="tint">@color/cryptox_button_secondary_text_color</item>
     </style>
 
@@ -196,7 +197,7 @@
     </style>
 
     <style name="CryptoX_Container_TextCard">
-        <item name="android:background">@drawable/cryptox_container_textcard_background</item>
+        <item name="android:background">@drawable/mw24_container_primary_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -247,7 +248,7 @@
 
     <style name="CryptoX_Onboarding_Progress_Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_height">11dp</item>
         <item name="android:progressDrawable">@drawable/ccx_onboarding_progress_bar</item>
         <item name="android:max">100</item>
         <item name="android:min">0</item>

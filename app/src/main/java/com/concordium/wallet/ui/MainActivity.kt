@@ -14,7 +14,7 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -26,7 +26,6 @@ import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
-import com.concordium.wallet.ui.tokens.provider.ProvidersOverviewFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
@@ -42,6 +41,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_IMPORT_FROM_FILE = "EXTRA_IMPORT_FROM_FILE"
         const val EXTRA_IMPORT_FROM_SEED = "EXTRA_IMPORT_FROM_SEED"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
+        const val EXTRA_ACTIVATE_ACCOUNT = "EXTRA_ACTIVATE_ACCOUNT"
+        const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
+        const val EXTRA_NOTIFICATION_TOKEN_ID = "EXTRA_NOTIFICATION_TOKEN_ID"
     }
 
     private val binding by lazy {
@@ -58,7 +60,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set theme to default to remove launcher theme.
-        setTheme(R.style.CCX_MainScreen)
+        setTheme(R.style.MW24_MainScreen)
 
         super.onCreate(savedInstanceState)
 
@@ -149,7 +151,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             this.intent = newIntent
             hasHandledPossibleImportFile = false
         }
-
+        handleNotificationReceived(newIntent)
         handlePossibleWalletConnectUri(newIntent)
     }
 
@@ -172,6 +174,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             hideLeftPlus(false)
             hideRightPlus(false)
             hideQrScan(false)
+            hideAccountSelector(false, "", null)
             replaceFragment(state)
         }
 
@@ -193,7 +196,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             onNavigationItemSelected(it)
         }
         hideActionBarBack(false)
-        binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
 
         WalletConnectView(
             activity = this,
@@ -203,6 +205,19 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         ).init()
 
         binding.walletSwitchView.bind(walletSwitchViewModel)
+    }
+
+    private fun handleNotificationReceived(intent: Intent) {
+        if (intent.getBooleanExtra(EXTRA_ACTIVATE_ACCOUNT, false)) {
+            val address = intent.getStringExtra(EXTRA_ACCOUNT_ADDRESS)
+            val tokenId = intent.getStringExtra(EXTRA_NOTIFICATION_TOKEN_ID)
+            address?.let {
+                viewModel.activateAccount(it)
+                tokenId?.let {
+                    viewModel.setNotificationData(address, tokenId)
+                }
+            }
+        }
     }
 
     //endregion
@@ -225,7 +240,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
             R.id.menuitem_news -> MainViewModel.State.NewsOverview
-            R.id.menuitem_tokens -> MainViewModel.State.TokensOverview
             R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
@@ -233,16 +247,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun replaceFragment(state: MainViewModel.State) {
         val fragment = when (state) {
-            MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
+            MainViewModel.State.AccountOverview -> AccountDetailsFragment()
             MainViewModel.State.NewsOverview -> NewsOverviewFragment()
-            MainViewModel.State.TokensOverview -> {
-                if (viewModel.hasCompletedOnboarding()) {
-                    ProvidersOverviewFragment()
-                } else {
-                    showUnlockFeatureDialog()
-                    null
-                }
-            }
             MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment)

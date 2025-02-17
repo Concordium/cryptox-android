@@ -26,12 +26,15 @@ import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -95,6 +98,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>(null) }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transactionWaiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transaction: MutableLiveData<Transaction> by lazy { MutableLiveData<Transaction>() }
+    val eurRateReady: MutableLiveData<String?> by lazy { MutableLiveData<String?>() }
 
     val canSend: Boolean
         get() = with(sendTokenData) {
@@ -143,11 +149,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         waiting.postValue(true)
         globalParamsRequest?.dispose()
         globalParamsRequest = proxyRepository.getIGlobalInfo(
-            {
+            success = {
                 sendTokenData.globalParams = it.value
                 waiting.postValue(false)
             },
-            {
+            failure = {
                 waiting.postValue(false)
                 handleBackendError(it)
             }
@@ -160,12 +166,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         waiting.postValue(true)
         accountBalanceRequest?.dispose()
-        accountBalanceRequest = proxyRepository.getAccountBalance(sendTokenData.account!!.address,
-            {
+        accountBalanceRequest = proxyRepository.getAccountBalance(
+            accountAddress = sendTokenData.account!!.address,
+            success = {
                 sendTokenData.accountBalance = it
                 waiting.postValue(false)
             },
-            {
+            failure = {
                 waiting.postValue(false)
                 handleBackendError(it)
             }
@@ -175,13 +182,14 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun send() {
         waiting.postValue(true)
         accountNonceRequest?.dispose()
-        accountNonceRequest = proxyRepository.getAccountNonce(sendTokenData.account?.address ?: "",
-            {
+        accountNonceRequest = proxyRepository.getAccountNonce(
+            accountAddress = sendTokenData.account?.address ?: "",
+            success = {
                 waiting.postValue(false)
                 sendTokenData.accountNonce = it
                 showAuthentication.postValue(true)
             },
-            {
+            failure = {
                 waiting.postValue(false)
                 handleBackendError(it)
             })
@@ -220,6 +228,17 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun onReceiverNameFound(name: String) {
         sendTokenData.receiverName = name
+    }
+
+    fun loadEURRate() {
+        if (sendTokenData.token == null)
+            return
+
+        if (sendTokenData.token!!.isCcd) {
+            viewModelScope.launch {
+                getTransferEURRate()
+            }
+        }
     }
 
     fun loadTransactionFee() {
@@ -273,6 +292,23 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             atDisposal >= (sendTokenData.fee
                 ?: BigInteger.ZERO) && sendTokenData.token!!.balance >= sendTokenData.amount
         }
+    }
+
+    private fun getTransferEURRate() {
+        proxyRepository.getChainParameters(
+            success = { response ->
+                eurRateReady.postValue(
+                    CurrencyUtil.toEURRate(
+                        sendTokenData.amount,
+                        response.microGtuPerEuro.denominator,
+                        response.microGtuPerEuro.numerator
+                    )
+                )
+            },
+            failure = {
+                handleBackendError(it)
+            }
+        )
     }
 
     private fun getTransferCostCCD() {
@@ -333,7 +369,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun continueWithPassword(password: String) = viewModelScope.launch {
-        waiting.postValue(true)
+        transactionWaiting.postValue(true)
         decryptAndContinue(password)
     }
 
@@ -342,7 +378,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             val storageAccountDataEncrypted = account.encryptedAccountData
             if (storageAccountDataEncrypted == null) {
                 errorInt.postValue(R.string.app_error_general)
-                waiting.postValue(false)
+                transactionWaiting.postValue(false)
                 return
             }
             val decryptedJson = App.appCore.auth
@@ -358,15 +394,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 getAccountEncryptedKey(credentialsOutput)
             } else {
                 errorInt.postValue(R.string.app_error_encryption)
-                waiting.postValue(false)
+                transactionWaiting.postValue(false)
             }
         }
     }
 
     private suspend fun getAccountEncryptedKey(credentialsOutput: StorageAccountData) {
         proxyRepository.getAccountEncryptedKey(
-            sendTokenData.receiver,
-            {
+            accountAddress = sendTokenData.receiver,
+            success = {
                 sendTokenData.receiverPublicKey = it.accountEncryptionKey
                 sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
@@ -380,8 +416,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 else
                     createTransaction(credentialsOutput.accountKeys)
             },
-            {
-                waiting.postValue(false)
+            failure = {
+                transactionWaiting.postValue(false)
                 handleBackendError(it)
             }
         )
@@ -398,7 +434,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         if (nonce == null || energy == null || accountId == null || balance == null) {
             errorInt.postValue(R.string.app_error_general)
-            waiting.postValue(false)
+            transactionWaiting.postValue(false)
             return
         }
 
@@ -428,8 +464,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
 
         if (output == null) {
+            transactionWaiting.postValue(false)
             errorInt.postValue(R.string.app_error_general)
-            waiting.postValue(false)
         } else {
             sendTokenData.createTransferOutput = output
             submitTransaction(output)
@@ -467,12 +503,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     receiveName = sendTokenData.token!!.contractName + ".transfer"
                 )
                 val accountTransactionInput = CreateAccountTransactionInput(
-                    expiry,
-                    sendTokenData.account!!.address,
-                    keys,
-                    sendTokenData.accountNonce!!.nonce,
-                    payload,
-                    "Update"
+                    expiry = expiry,
+                    from = sendTokenData.account!!.address,
+                    keys = keys,
+                    nonce = sendTokenData.accountNonce!!.nonce,
+                    payload = payload,
+                    type = "Update"
                 )
                 val accountTransactionOutput =
                     App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
@@ -490,18 +526,18 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
-        waiting.postValue(true)
         submitTransaction?.dispose()
-        submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
-            {
+        submitTransaction = proxyRepository.submitTransfer(
+            transfer = createTransferOutput,
+            success = {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
                 finishTransferCreation(it.submissionId)
-                waiting.postValue(false)
+                transactionWaiting.postValue(false)
             },
-            {
+            failure = {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
                 handleBackendError(it)
-                waiting.postValue(false)
+                transactionWaiting.postValue(false)
             }
         )
     }
@@ -518,7 +554,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val cost = sendTokenData.fee
 
         if (expiry == null || cost == null) {
-            waiting.value = false
+            transactionWaiting.postValue(false)
             return
         }
         val createdAt = Date().time
@@ -544,8 +580,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             0,
             sendTokenData.accountNonce
         )
-        waiting.postValue(false)
+        transactionWaiting.postValue(false)
         saveNewTransfer(transfer)
+        transaction.postValue(transfer.toTransaction())
         transactionReady.postValue(submissionId)
     }
 

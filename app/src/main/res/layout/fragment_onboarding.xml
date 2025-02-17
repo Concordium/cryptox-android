@@ -9,22 +9,13 @@
         android:id="@+id/onboarding_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:background="@drawable/ccx_onboarding_status_card_background"
+        app:layout_constraintVertical_bias="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:importantForAccessibility="no"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_onboarding_status_background"
-            app:layout_constraintBottom_toBottomOf="@id/onboarding_content_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/onboarding_action_button">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/onboarding_content_layout"
@@ -34,7 +25,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="18dp"
             android:paddingBottom="9dp"
-            app:layout_constraintBottom_toTopOf="@id/divider"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -109,67 +100,6 @@
                 tools:targetApi="p" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="0dp"
-            android:layout_height="1.5dp"
-            android:background="@color/cryptox_black_additional"
-            app:layout_constraintBottom_toTopOf="@id/action_buttons_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/action_buttons_layout"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <ImageView
-                android:id="@+id/onramp_btn"
-                style="@style/CryptoX_OnboardingImageButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/ccd_onramp_title"
-                android:tooltipText="@string/ccd_onramp_title"
-                app:srcCompat="@drawable/ccx_ico_plus_circle" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginVertical="1dp"
-                android:background="#0DEBF0F0" />
-
-            <ImageView
-                android:id="@+id/send_funds_btn"
-                style="@style/CryptoX_OnboardingImageButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/account_details_send"
-                android:tooltipText="@string/account_details_send"
-                app:srcCompat="@drawable/ccx_ico_send" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginVertical="1dp"
-                android:background="#0DEBF0F0" />
-
-            <ImageView
-                android:id="@+id/address_btn"
-                style="@style/CryptoX_OnboardingImageButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/account_details_address"
-                android:tooltipText="@string/account_details_address"
-                app:srcCompat="@drawable/ccx_ico_qr" />
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
@@ -177,6 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginVertical="12dp"
+        app:layout_constraintVertical_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/onboarding_card"
@@ -184,9 +115,9 @@
 
     <Button
         android:id="@+id/onboarding_action_button"
-        style="@style/CCX_Button_Primary.ArrowRight"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/accounts_overview_create_identity"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

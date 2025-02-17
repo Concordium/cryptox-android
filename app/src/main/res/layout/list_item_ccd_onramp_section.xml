@@ -6,5 +6,5 @@
     android:paddingTop="42dp"
     android:paddingBottom="16dp"
     android:textAppearance="@style/CCX_Typography_Caption"
-    android:textColor="@color/ccx_neutral_tint_3"
+    android:textColor="@color/cryptox_black_additional"
     tools:text="@string/ccd_onramp_site_type_payment_gateway" />

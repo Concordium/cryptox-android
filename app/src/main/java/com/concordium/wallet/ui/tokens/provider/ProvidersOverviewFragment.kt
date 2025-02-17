@@ -52,7 +52,7 @@ class ProvidersOverviewFragment : BaseFragment(), ProviderItemView.IProviderItem
         initializeViewModel()
         initializeViews()
 
-        (requireActivity() as BaseActivity).hideLeftPlus(isVisible = true) {
+        (requireActivity() as BaseActivity).hideAddContact(isVisible = true) {
             addProviderResult.launch(Intent(requireContext(), AddProviderActivity::class.java))
         }
 

@@ -53,17 +53,15 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
                 CurrencyUtil.formatGTU(
                     value = viewModel.bakerDelegationData.account?.baker?.stakedAmount
                         ?: BigInteger.ZERO,
-                    withGStroke = true,
                     withCommas = false
                 )
             )
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
         binding.bakerAmount.text = CurrencyUtil.formatGTU(
-            viewModel.bakerDelegationData.account?.baker?.stakedAmount ?: BigInteger.ZERO,
-            true
+            viewModel.bakerDelegationData.account?.baker?.stakedAmount ?: BigInteger.ZERO
         )
 
         viewModel.transactionFeeLiveData.observe(this) { response ->

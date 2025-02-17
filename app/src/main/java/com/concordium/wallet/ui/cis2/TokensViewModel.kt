@@ -9,6 +9,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.toToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
@@ -17,19 +18,23 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.reown.util.Empty
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.io.Serializable
+import kotlin.coroutines.resume
 
 data class TokenData(
     var account: Account? = null,
     var selectedToken: Token? = null,
     var contractIndex: String = "",
     var subIndex: String = "0",
+    var hasPendingDelegationTransactions: Boolean = false,
+    var hasPendingValidationTransactions: Boolean = false
 ) : Serializable
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
@@ -37,6 +42,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
         const val TOKENS_EMPTY = 1
+        const val TOKENS_SELECTED = 2
     }
 
     private var allowToLoadMore = true
@@ -47,6 +53,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     // Save found exact tokens to keep their selection once the search is dismissed.
     // For example, the user can look for multiple exact tokens and toggle them one by one.
     private val everFoundExactTokens: MutableList<Token> = mutableListOf()
+    private val changedTokensList: MutableList<Token> = mutableListOf()
     var exactToken: Token? = null
 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
@@ -57,11 +64,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val lookForExactToken: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
@@ -78,23 +85,44 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         isFungible: Boolean? = null,
     ) {
         waiting.postValue(true)
-        CoroutineScope(Dispatchers.IO).launch {
-            tokens.clear()
-            if (isFungible == true) {
-                // On fungible tab we add CCD as default at the top
-                tokens.add(getCCDDefaultToken(accountAddress))
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            val ccdToken = getCCDDefaultToken(accountAddress)
             val contractTokens = contractTokensRepository.getTokens(
                 accountAddress = accountAddress,
                 isFungible = isFungible,
             )
-            tokens.addAll(contractTokens.map {
-                Token(
-                    contractToken = it,
-                    isSelected = true,
-                )
-            })
+            withContext(Dispatchers.Main) {
+                tokens.clear()
+                // Add CCD as default at the top
+                tokens.add(ccdToken)
+                tokens.addAll(contractTokens.map {
+                    Token(
+                        contractToken = it,
+                        isSelected = true,
+                    )
+                })
+            }
             waiting.postValue(false)
+        }
+    }
+
+    fun reloadCCDBalance() {
+        viewModelScope.launch(Dispatchers.IO) {
+            tokenData.account?.address?.let {
+                val ccdToken = getCCDDefaultToken(it)
+                withContext(Dispatchers.Main) {
+                    val updatedTokens = tokens.map { token ->
+                        if (token.isCcd) {
+                            token.copy(balance = ccdToken.balance)
+                        } else {
+                            token
+                        }
+                    }
+                    tokens.clear()
+                    tokens.addAll(updatedTokens)
+                    tokenBalances.postValue(true)
+                }
+            }
         }
     }
 
@@ -102,6 +130,9 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         accountAddress: String,
         from: String? = null,
     ) = viewModelScope.launch(Dispatchers.IO) {
+        changedTokensList.clear()
+        selectedTokensChanged.postValue(changedTokensList.isNotEmpty())
+
         if (from != null && !allowToLoadMore)
             return@launch
 
@@ -167,9 +198,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 subIndex = tokenData.subIndex,
                 limit = limit,
                 from = tokenPageCursor,
-            ).tokens.onEach {
-                it.contractIndex = tokenData.contractIndex
-                it.subIndex = tokenData.subIndex
+            ).tokens
+                .map { it.toToken() }
+                .onEach {
+                    it.contractIndex = tokenData.contractIndex
+                    it.subIndex = tokenData.subIndex
+                }
+
+            pageTokens.forEach {
+                println("getFullyLoadedTokensPage, token: $it")
             }
 
             isLastTokenPage = pageTokens.size < limit
@@ -361,7 +398,16 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val isSelectedNow = !token.isSelected
         (tokens.asSequence() + everFoundExactTokens.asSequence())
             .filter { it.token == token.token }
-            .forEach { it.isSelected = isSelectedNow }
+            .forEach {
+                it.isSelected = isSelectedNow
+
+                if (changedTokensList.contains(it)) {
+                    changedTokensList.remove(it)
+                } else {
+                    changedTokensList.add(it)
+                }
+                selectedTokensChanged.postValue(changedTokensList.isNotEmpty())
+            }
     }
 
     fun checkExistingTokens() = viewModelScope.launch(Dispatchers.IO) {
@@ -385,8 +431,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     private fun updateTokens(loadedTokens: Iterable<Token>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
-                var anyChanges = false
-
                 val selectedTokens = loadedTokens.filter(Token::isSelected)
 
                 // Add each selected token if missing.
@@ -397,7 +441,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             selectedToken.contractIndex,
                             selectedToken.token
                         )
-
                     if (existingContractToken == null) {
                         contractTokensRepository.insert(
                             ContractToken(
@@ -411,11 +454,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                 isNewlyReceived = false,
                             )
                         )
-
-                        anyChanges = true
                     }
                 }
-
                 // As the loaded tokens list may be partial,
                 // we must only delete the unselected ones among loaded.
                 // Therefore, if there is an existing token but the user haven't scrolled to it
@@ -431,16 +471,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         contractIndex = tokenData.contractIndex,
                         token = loadedNotSelectedToken,
                     )
-                    anyChanges = true
                 }
-
-                updateWithSelectedTokensDone.postValue(anyChanges)
+                updateWithSelectedTokensDone.postValue(changedTokensList.isNotEmpty())
             }
         }
-    }
-
-    fun stepPage(by: Int) {
-        stepPageBy.postValue(by)
     }
 
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
@@ -448,7 +482,24 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")
-        return Token.ccd(account)
+
+        return suspendCancellableCoroutine { continuation ->
+            proxyRepository.getChainParameters(
+                success = { response ->
+                    continuation.resume(
+                        Token.ccd(
+                            account,
+                            response.microGtuPerEuro.denominator,
+                            response.microGtuPerEuro.numerator
+                        )
+                    )
+                },
+                failure = { error ->
+                    handleBackendError(error)
+                    continuation.resume(Token.ccd(account))
+                }
+            )
+        }
     }
 
     fun loadTokensBalances() {
@@ -456,6 +507,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             return
 
         viewModelScope.launch(Dispatchers.IO) {
+            tokenBalances.postValue(false)
             try {
                 loadTokensBalances(
                     tokensToUpdate = tokens,
@@ -464,6 +516,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 tokenBalances.postValue(true)
             } catch (e: Throwable) {
                 handleBackendError(e)
+                tokenBalances.postValue(true)
             }
         }
     }
@@ -488,7 +541,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun resetLookForTokens() {
         tokenData.contractIndex = String.Empty
-        stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
         lookForExactToken.value = TOKENS_NOT_LOADED
         everFoundExactTokens.clear()

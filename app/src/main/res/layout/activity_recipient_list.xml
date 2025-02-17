@@ -19,68 +19,105 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/loop"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/mw24_container_stroked_background"
+            android:paddingVertical="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <TextView
+                android:id="@+id/search_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/recipient_list_search_label"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_blue_3_50"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/scan_qr_icon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/recipient_list_search_hint"
+                android:padding="2dp"
+                android:src="@drawable/mw24_ic_scan_qr"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/recipient_list_search_hint"
+                android:padding="4dp"
+                android:src="@drawable/cryptox_ico_search"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <SearchView
+                android:id="@+id/recipient_searchview"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:editTextColor="@color/cryptox_white_main"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
+                android:searchIcon="@null"
+                android:theme="@style/MW24_Typography_Text_Mid"
+                app:layout_constraintEnd_toStartOf="@id/scan_qr_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_label" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/category_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
-            android:src="@drawable/cryptox_ico_search"
-            app:layout_constraintBottom_toBottomOf="@+id/recipient_searchview"
+            android:layout_marginTop="32dp"
+            android:text="@string/recipient_list_default_title"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_white_main"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/recipient_searchview" />
-
-        <SearchView
-            android:id="@+id/recipient_searchview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginEnd="18dp"
-            android:iconifiedByDefault="false"
-            android:queryBackground="@android:color/transparent"
-            android:queryHint="@string/recipient_list_search_hint"
-            android:searchIcon="@null"
-            android:theme="@style/SearchView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/loop"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/recipient_shield_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recipient_searchview"
-            tools:visibility="visible">
-
-            <!--include
-                android:id="@+id/recipient_own_account"
-                layout="@layout/item_recipient" /-->
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/search_or_shield_bottom_barrier"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="recipient_searchview,recipient_shield_container" />
+            app:layout_constraintTop_toBottomOf="@id/search_layout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="16dp"
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_or_shield_bottom_barrier"
+            app:layout_constraintTop_toBottomOf="@+id/category_label"
             tools:listitem="@layout/item_recipient"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/continue_btn"
+            style="@style/MW24_Button_Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/recipient_list_continue"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -43,6 +43,7 @@ import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.uicore.Formatter
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.RandomUtil
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
@@ -376,6 +377,7 @@ class ImportViewModel(application: Application) :
                 )
             }
         } // End of identity
+        activateFirstAccountIfNoneActive()
         confirmImport()
         _waitingLiveData.postValue(false)
     }
@@ -574,6 +576,7 @@ class ImportViewModel(application: Application) :
             revealedAttributes = mapRevealedAttributes(accountExport.revealedAttributes),
             credential = accountExport.credential,
             credNumber = credNumber,
+            iconId = RandomUtil.getRandomInt()
         )
     }
 
@@ -591,6 +594,7 @@ class ImportViewModel(application: Application) :
             credential = null,
             readOnly = true,
             credNumber = 0,
+            iconId = RandomUtil.getRandomInt()
         )
     }
 
@@ -608,5 +612,14 @@ class ImportViewModel(application: Application) :
 
     fun finishImport(isSuccessful: Boolean) {
         _finishScreenLiveData.postValue(Event(isSuccessful))
+    }
+
+    private suspend fun activateFirstAccountIfNoneActive() {
+        val allAccounts = accountRepository.getAll()
+        val activeAccount = accountRepository.getActive()
+
+        if (allAccounts.isNotEmpty() && activeAccount == null) {
+            accountRepository.activate(allAccounts.sortedBy { it.id }.first().address)
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.base
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.App
@@ -58,6 +60,9 @@ abstract class BaseActivity(
     private var plusRightBtnNotice: View? = null
     private var qrScanBtn: ImageView? = null
     private var infoBtn: ImageView? = null
+    private var accountBtn: ConstraintLayout? = null
+    private var accountBtnText: TextView? = null
+    private var accountBtnImage: ImageView? = null
     protected var closeBtn: ImageView? = null
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
@@ -92,6 +97,9 @@ abstract class BaseActivity(
         closeBtn = toolbar?.findViewById(R.id.toolbar_close_btn)
         deleteBtn = toolbar?.findViewById(R.id.toolbar_delete_btn)
         settingsBtn = toolbar?.findViewById(R.id.toolbar_settings_btn)
+        accountBtn = toolbar?.findViewById(R.id.toolbar_account_btn)
+        accountBtnText = toolbar?.findViewById(R.id.toolbar_account_label)
+        accountBtnImage = toolbar?.findViewById(R.id.toolbar_account_btn_image)
 
         setupActionBar(this, titleId)
 
@@ -236,6 +244,20 @@ abstract class BaseActivity(
     fun hideSettings(isVisible: Boolean, listener: View.OnClickListener? = null) {
         settingsBtn?.isVisible = isVisible
         settingsBtn?.setOnClickListener(listener)
+    }
+
+    fun hideAccountSelector(
+        isVisible: Boolean = false,
+        text: String,
+        icon: Drawable?,
+        listener: View.OnClickListener? = null
+    ) {
+        accountBtn?.isVisible = isVisible
+        accountBtnImage?.isVisible = isVisible
+        accountBtnText?.isVisible = isVisible
+        accountBtnText?.text = text
+        accountBtnText?.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+        accountBtn?.setOnClickListener(listener)
     }
 //    fun hideClose(isVisible: Boolean) {
 //        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE

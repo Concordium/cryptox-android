@@ -71,7 +71,6 @@ class AboutActivity : BaseActivity(
         binding.privacyTextView.handleUrlClicks(::onUrlClicked)
 
         hideActionBarBack(isVisible = true)
-        binding.toolbarLayout.toolbarTitle.setTextAppearance(R.style.CCX_Typography_PageTitle)
     }
 
     //endregion

@@ -51,4 +51,10 @@
         <attr name="numberOfDots" format="integer" />
         <attr name="filledDots" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="InputFieldView">
+        <attr name="labelText" format="string" />
+        <attr name="iconTextEmpty" format="reference" />
+        <attr name="iconTextFilled" format="reference" />
+    </declare-styleable>
 </resources>

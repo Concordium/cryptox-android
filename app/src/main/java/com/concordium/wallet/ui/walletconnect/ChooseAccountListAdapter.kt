@@ -47,7 +47,7 @@ class ChooseAccountListAdapter(private val context: Context, var arrayList: List
         val atDisposalBalance = account.balanceAtDisposal
         holder.binding.accBalance.text = context.getString(
             R.string.acc_balance_placeholder,
-            CurrencyUtil.formatGTU(atDisposalBalance, true)
+            CurrencyUtil.formatGTU(atDisposalBalance)
         )
 
         holder.binding.root.setOnClickListener {

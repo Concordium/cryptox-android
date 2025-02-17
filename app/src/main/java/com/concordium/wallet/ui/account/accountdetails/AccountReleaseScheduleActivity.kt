@@ -83,8 +83,7 @@ class AccountReleaseScheduleActivity : BaseActivity(
         viewModel.scheduledReleasesLiveData.observe(this) { list ->
 
             binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
-                viewModel.account.releaseSchedule?.total ?: BigInteger.ZERO,
-                true
+                viewModel.account.releaseSchedule?.total ?: BigInteger.ZERO
             )
 
             binding.accountReleaseScheduleList.removeAllViews()
@@ -122,7 +121,7 @@ class AccountReleaseScheduleActivity : BaseActivity(
                     }
                 }
 
-                view.amount.text = CurrencyUtil.formatGTU(release.amount.toBigInteger(), true)
+                view.amount.text = CurrencyUtil.formatGTU(release.amount.toBigInteger())
                 binding.accountReleaseScheduleList.addView(view.root)
             }
 

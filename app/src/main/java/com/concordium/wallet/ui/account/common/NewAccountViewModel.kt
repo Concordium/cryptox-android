@@ -32,6 +32,7 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.RandomUtil
 import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +51,7 @@ open class NewAccountViewModel(application: Application) :
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
     private var accountSubmissionStatusRequest: BackendRequest<AccountSubmissionStatus>? = null
+    private var firstAccount: Boolean = false
 
     private var tempData = TempData()
     lateinit var accountName: String
@@ -75,9 +77,10 @@ open class NewAccountViewModel(application: Application) :
     val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
         get() = _gotoFailedLiveData
 
-    open fun initialize(accountName: String, identity: Identity) {
+    open fun initialize(accountName: String, identity: Identity, firstAccount: Boolean = false) {
         this.accountName = accountName
         this.identity = identity
+        this.firstAccount = firstAccount
     }
 
     class TempData {
@@ -114,13 +117,13 @@ open class NewAccountViewModel(application: Application) :
         _waitingLiveData.postValue(true)
         globalParamsRequest?.dispose()
         globalParamsRequest = identityProviderRepository.getIGlobalInfo(
-            {
+            success = {
                 App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
                 tempData.globalParams = it.value
                 _showAuthenticationLiveData.postValue(Event(true))
                 _waitingLiveData.postValue(false)
             },
-            {
+            failure = {
                 _waitingLiveData.postValue(false)
                 handleBackendError(it)
             }
@@ -251,12 +254,14 @@ open class NewAccountViewModel(application: Application) :
             encryptedAccountData = encryptedAccountData,
             credential = credential,
             credNumber = tempData.nextCredNumber ?: 0,
+            isActive = firstAccount,
+            iconId = RandomUtil.getRandomInt()
         )
         saveNewAccount(newAccount)
     }
 
     private fun saveNewAccount(account: Account) = viewModelScope.launch(Dispatchers.IO) {
-        val accountId = accountRepository.insert(account)
+        val accountId = accountRepository.insertAndActivate(account)
         account.id = accountId.toInt()
         // Also save a recipient representing this account
         recipientRepository.insert(Recipient(account))

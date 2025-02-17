@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -10,7 +11,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmationBinding
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -93,7 +94,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
                 .plus("\n\n")
                 .plus(viewModel.bakerDelegationData.account!!.address)
         binding.delegationAmountConfirmation.text =
-            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true)
+            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
         binding.targetPool.text =
             if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
         binding.rewardsWillBe.text =
@@ -214,7 +215,8 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
 
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+            startActivity(Intent(this, MainActivity::class.java))
+            finishAffinity()
         }
         builder.create().show()
     }

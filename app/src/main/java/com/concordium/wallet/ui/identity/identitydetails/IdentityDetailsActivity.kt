@@ -8,7 +8,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentityDetailsBinding
-import com.concordium.wallet.databinding.DialogEdittextBinding
+import com.concordium.wallet.databinding.DialogIdentityEdittextBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -82,7 +82,7 @@ class IdentityDetailsActivity : BaseActivity(
         val builder = MaterialAlertDialogBuilder(this)
         builder.setTitle(getString(R.string.identity_details_change_name_popup_title))
         builder.setMessage(getString(R.string.identity_details_change_name_popup_subtitle))
-        val view = DialogEdittextBinding.inflate(LayoutInflater.from(builder.context))
+        val view = DialogIdentityEdittextBinding.inflate(LayoutInflater.from(builder.context))
         val input = view.inputEdittext
         input.setText(viewModel.identity.name)
         input.hint = getString(R.string.identity_details_change_name_hint)

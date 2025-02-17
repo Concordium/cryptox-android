@@ -11,6 +11,7 @@ import com.concordium.wallet.databinding.DialogEdittextBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.export.ExportAccountKeysActivity
 import com.concordium.wallet.ui.more.export.ExportTransactionLogActivity
+import com.concordium.wallet.uicore.toast.showGradientToast
 import com.concordium.wallet.util.getSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -75,13 +76,13 @@ class AccountSettingsActivity : BaseActivity(
 
     private fun gotoTransferFilters(account: Account) {
         val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+        intent.putExtra(AccountTransactionsFiltersActivity.EXTRA_ACCOUNT, account)
         startActivity(intent)
     }
 
     private fun gotoAccountReleaseSchedule(account: Account) {
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+        intent.putExtra(AccountReleaseScheduleActivity.EXTRA_ACCOUNT, account)
         startActivity(intent)
     }
 
@@ -108,6 +109,10 @@ class AccountSettingsActivity : BaseActivity(
         builder.setView(view.root)
         builder.setPositiveButton(getString(R.string.account_details_change_name_popup_save)) { _, _ ->
             viewModel.changeAccountName(input.text.toString())
+            showGradientToast(
+                R.drawable.mw24_ic_address_copy_check,
+                getString(R.string.account_settings_name_changed)
+            )
         }
         builder.setNegativeButton(getString(R.string.account_details_change_name_popup_cancel)) { dialog, _ ->
             dialog.cancel()

@@ -27,35 +27,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
 
-        <LinearLayout
-            style="@style/CryptoX_Container_TextCard"
+        <include
+            android:id="@+id/wallet_info_card"
+            layout="@layout/wallet_info_card" />
+
+        <include
+            android:id="@+id/ccd_action_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="20dp"
+            layout="@layout/token_details_action_buttons" />
 
-            <TextView
-                android:id="@+id/token_amount"
-                style="@style/CryptoX_Typography_TitleLarge"
-                android:layout_width="match_parent"
-                android:layout_marginTop="24dp"
-                android:gravity="center"
-                android:lines="1"
-                android:paddingHorizontal="20dp"
-                app:autoSizeMaxTextSize="42sp"
-                app:autoSizeMinTextSize="14sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform"
-                tools:text="100.15" />
-
-            <include
-                android:id="@+id/include_buttons"
-                layout="@layout/activity_token_details_buttons" />
-        </LinearLayout>
+        <include
+            android:id="@+id/cis_token_action_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            layout="@layout/cis_token_details_action_buttons" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp">
+            android:layout_marginVertical="20dp">
 
             <include
                 android:id="@+id/include_about"

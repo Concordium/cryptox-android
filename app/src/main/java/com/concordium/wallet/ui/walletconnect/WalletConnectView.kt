@@ -269,8 +269,7 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
-                    selectedAccount.balanceAtDisposal,
-                    true
+                    selectedAccount.balanceAtDisposal
                 )
             )
         }
@@ -362,8 +361,7 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
-                    account.balanceAtDisposal,
-                    true
+                    account.balanceAtDisposal
                 )
             )
         }
@@ -477,8 +475,7 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
-                    account.balanceAtDisposal,
-                    true
+                    account.balanceAtDisposal
                 )
             )
         }

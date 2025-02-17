@@ -17,21 +17,21 @@ import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
     private val context: Context,
-    private val showManageButton: Boolean,
-    var dataSet: Array<Token>
+    private val showManageButton: Boolean
 ) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private var addButtonClickListener: () -> Unit = {}
     private val iconSize: Int by lazy {
         context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
     }
+    private val dataSet: MutableList<Token> = mutableListOf()
+    private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
     inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     interface TokenClickListener {
         fun onRowClick(token: Token)
-        fun onCheckBoxClick(token: Token)
     }
 
     fun setTokenClickListener(tokenClickListener: TokenClickListener) {
@@ -42,7 +42,15 @@ class TokensAccountDetailsAdapter(
         this.addButtonClickListener = clickListener
     }
 
-    override fun getItemCount() = if (showManageButton) dataSet.size + 1 else dataSet.size
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(data: List<Token>) {
+        dataSet.clear()
+        dataSet.addAll(data)
+        dataSize = data.size
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount() = if (showManageButton) dataSize + 1 else dataSize
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemTokenAccountDetailsBinding.inflate(
@@ -79,6 +87,7 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
+        holder.binding.eurRate.visibility = View.GONE
 
         val tokenMetadata = token.metadata
         if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
@@ -90,8 +99,18 @@ class TokensAccountDetailsAdapter(
                 .into(holder.binding.tokenIcon)
         } else if (token.isCcd) {
             Glide.with(context)
-                .load(R.drawable.cryptox_ico_ccd_light_40)
+                .load(R.drawable.mw24_ic_ccd)
                 .into(holder.binding.tokenIcon)
+
+            holder.binding.eurRate.visibility = View.VISIBLE
+            holder.binding.eurRate.text = if (showManageButton)
+                context.getString(
+                    R.string.cis_eur_rate,
+                    CurrencyUtil.toEURRate(token.balance, token.denominator, token.numerator)
+                )
+            else
+                context.getString(R.string.cis_at_disposal)
+
         } else {
             Glide.with(context)
                 .load(R.drawable.ic_token_no_image)
@@ -99,28 +118,32 @@ class TokensAccountDetailsAdapter(
         }
 
         if (token.isUnique) {
-            holder.binding.title.text = token.name
-            holder.binding.subtitle.isVisible = true
-            holder.binding.subtitle.text =
-                if (token.balance > BigInteger.ZERO)
-                    context.getString(R.string.cis_owned)
-                else
-                    context.getString(R.string.cis_not_owned)
+            holder.binding.apply {
+                title.text = token.name
+                balance.isVisible = false
+                subtitle.isVisible = true
+                subtitle.text =
+                    if (token.balance > BigInteger.ZERO)
+                        context.getString(R.string.cis_owned)
+                    else
+                        context.getString(R.string.cis_not_owned)
+            }
         } else {
-            holder.binding.title.text = "${
-                CurrencyUtil.formatGTU(
-                    token.balance,
-                    token,
-                )
-            } ${token.symbol}"
+            holder.binding.title.text = token.symbol
+            holder.binding.balance.isVisible = true
+            holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
+                value = token.balance,
+                roundDecimals = 2,
+                decimals = token.decimals
+            )
             holder.binding.subtitle.isVisible = false
         }
-
-        holder.binding.notice.isVisible = token.isNewlyReceived
-
-        holder.binding.content.setOnClickListener {
-            if (!token.isCcd || !showManageButton)
+        holder.binding.apply {
+            notice.isVisible = token.isNewlyReceived
+            earningLabel.isVisible = token.isEarning
+            content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)
+            }
         }
     }
 }

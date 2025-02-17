@@ -15,12 +15,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
+        android:alpha="0.8"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textAppearance="@style/CCX_Typography_H2"
-        android:textColor="@color/ccx_neutral_tint_1"
+        android:textAppearance="@style/CCX_Typography_H3_Bold"
+        android:textColor="@color/cryptox_white_main"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@id/external_icon_image_view"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="CCD Trading tournament — part 4 (the best one)" />
@@ -34,29 +36,40 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ccx_ico_external_link_20" />
 
-    <ImageView
-        android:id="@+id/thumbnail_image_view"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/thumbnail_image_view_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:importantForAccessibility="no"
+        app:cardCornerRadius="8dp"
         app:layout_constraintDimensionRatio="H,2:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_text_view"
-        tools:background="@color/ccx_neutral_tint_3"
-        tools:srcCompat="@drawable/crypto_x_logo" />
+        app:layout_constraintTop_toBottomOf="@id/title_text_view">
+
+        <ImageView
+            android:id="@+id/thumbnail_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            app:layout_constraintDimensionRatio="H,2:1"
+            tools:background="@color/ccx_neutral_tint_3"
+            tools:srcCompat="@drawable/crypto_x_logo" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/description_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:alpha="0.8"
         android:ellipsize="end"
+        android:lineHeight="22sp"
         android:maxLines="3"
         android:textAppearance="@style/CCX_Typography_Body"
-        android:textColor="@color/ccx_neutral_tint_2"
-        app:layout_constraintTop_toBottomOf="@id/thumbnail_image_view"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constraintTop_toBottomOf="@id/thumbnail_image_view_layout"
+        tools:targetApi="p"
         tools:text="Reality Verified: Blockchain's Role in creating a safer AI world" />
 
     <TextView
@@ -65,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:textAppearance="@style/CCX_Typography_Item"
-        android:textColor="@color/ccx_neutral_tint_3"
+        android:textColor="#9DACA9"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/description_text_view"

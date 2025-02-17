@@ -92,9 +92,9 @@ class NewAccountConfirmedActivity : BaseActivity(
     }
 
     private fun gotoAccountOverview() {
-        finishAffinity()
+        finish()
         val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         startActivity(intent)
     }
 

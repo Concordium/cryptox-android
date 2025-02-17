@@ -175,6 +175,8 @@
     <string name="unshielding_notice_title">Transaction Shielding is going away</string>
     <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
     <string name="unshielding_notice_unshield">Unshield assets</string>
+    <string name="accounts_list_title">Your Accounts</string>
+    <string name="accounts_list_create_new_account">Create new account</string>
     <!-- New account name -->
     <string name="new_account_name_title">Create new account</string>
     <string name="new_account_set_name">Set account name</string>
@@ -200,12 +202,16 @@
     <string name="account_details_title">Account details</string>
     <string name="account_details_transfers_title">Activity</string>
     <string name="account_details_identity_data_title">Identity Data</string>
+    <string name="account_details_buy">Buy</string>
     <string name="account_details_send">Send</string>
+    <string name="account_details_receive">Receive</string>
     <string name="account_details_address">Address</string>
+    <string name="account_details_earn">Earn</string>
+    <string name="account_details_activity">Activity</string>
     <string name="account_details_earn_rewards">Earn rewards</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
-    <string name="account_details_fee">fee</string>
+    <string name="account_details_fee">with fee</string>
     <string name="account_details_header_today">Today</string>
     <string name="account_details_header_yesterday">Yesterday</string>
     <string name="account_details_gtu_drop_header">TESTNET CCD DROP</string>
@@ -217,20 +223,29 @@
     <string name="account_smart_contract_update_pending">Invoke smart contract</string>
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
+    <string name="account_details_total_balance">%1$s CCD</string>
+    <string name="account_details_balance_at_disposal">%1$s CCD at disposal</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
     <string name="account_details_change_name_popup_cancel">Cancel</string>
     <string name="account_details_change_name_popup_save">Save</string>
     <string name="account_details_change_name_hint">Enter name</string>
+    <string name="account_details_raw_metadata">Show raw metadata</string>
+    <string name="account_details_ccd_token">CCD token</string>
+    <string name="account_details_tooltip_title">Total CCD balance</string>
+    <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>
+    <string name="account_token_details_decimals">0 – %1$s</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
+    <string name="account_settings_name_changed">Account name changed</string>
     <!--  Account release schedule and filters -->
     <string name="account_transaction_filters_title">%1$s Transfer filters</string>
     <!-- Account QR -->
-    <string name="account_qr_code_title">Address</string>
+    <string name="account_qr_code_title">Receive funds</string>
     <string name="account_qr_code_share">Share</string>
     <string name="account_qr_code_copy">Copy</string>
     <string name="account_qr_code_copied">Address copied</string>
+    <string name="account_qr_code_to_account">to %1$s</string>
     <!-- ***** Transaction / Send funds ***** -->
     <!-- Send funds -->
     <string name="send_funds_title">Send Funds</string>
@@ -256,30 +271,31 @@
     <string name="transaction_details_view_on_explorer">View transaction on block explorer</string>
     <!-- ***** More ***** -->
     <!-- More overview -->
-    <string name="more_overview_title">More</string>
-    <string name="more_overview_item_unshielding">Funds to Unshield</string>
-    <string name="more_overview_item_identities">Identities</string>
-    <string name="more_overview_item_address_book">Address Book</string>
-    <string name="more_overview_item_export">Export</string>
-    <string name="more_overview_item_import">Import</string>
-    <string name="more_overview_item_about">About</string>
-    <string name="more_overview_item_analytics">Analytics</string>
-    <string name="more_overview_item_notifications">Notifications</string>
-    <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
-    <string name="more_overview_item_developer_options">Developer Options</string>
-    <string name="more_overview_item_clear_wallet_connect">Clear WalletConnect</string>
-    <string name="more_overview_item_recover">Recovery</string>
-    <string name="more_overview_erase_data">Erase Data</string>
-    <string name="more_overview_erase_data_confirmation_title">Erasing all data</string>
-    <string name="more_overview_erase_wallet_confirmation_message">
+    <string name="settings_overview_title">Wallet Settings</string>
+    <string name="settings_overview_item_unshielding">Funds to Unshield</string>
+    <string name="settings_overview_item_identities">Identities</string>
+    <string name="settings_overview_item_address_book">Address Book</string>
+    <string name="settings_overview_item_export">Export</string>
+    <string name="settings_overview_item_import">Import</string>
+    <string name="settings_overview_item_about">About</string>
+    <string name="settings_overview_item_analytics">Analytics</string>
+    <string name="settings_overview_item_nft">NFT</string>
+    <string name="settings_overview_item_notifications">Notifications</string>
+    <string name="settings_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
+    <string name="settings_overview_item_developer_options">Developer Options</string>
+    <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
+    <string name="settings_overview_item_recover">Recovery</string>
+    <string name="settings_overview_erase_data">Erase Data</string>
+    <string name="settings_overview_erase_data_confirmation_title">Erasing all data</string>
+    <string name="settings_overview_erase_wallet_confirmation_message">
         All your wallets will be erased from this device.
         However, you can restore them at any time using the secret recovery phrase or the backup file.
         Proceed with erasing?
     </string>
-    <string name="more_overview_erase_data_continue">@string/dialog_yes</string>
-    <string name="more_overview_erase_data_erased">All the data has been successfully erased</string>
-    <string name="more_overview_reveal_seed_phrase">Seed Phrase</string>
-    <string name="more_overview_reveal_seed">Wallet Private Key</string>
+    <string name="settings_overview_erase_data_continue">@string/dialog_yes</string>
+    <string name="settings_overview_erase_data_erased">All the data has been successfully erased</string>
+    <string name="settings_overview_reveal_seed_phrase">Seed Phrase</string>
+    <string name="settings_overview_reveal_seed">Wallet Private Key</string>
     <!-- Export -->
     <string name="export_title">Export</string>
     <string name="export_confirm">Export</string>
@@ -355,8 +371,10 @@
     <!-- ***** Recipient ***** -->
     <!-- Select recipient -->
     <string name="recipient_list_default_title">Address Book</string>
-    <string name="recipient_list_select_title">Select Recipient</string>
+    <string name="recipient_list_select_title">Choose recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
+    <string name="recipient_list_search_label">Recipient Address</string>
+    <string name="recipient_list_continue">Continue</string>
     <!-- New recipient -->
     <string name="recipient_edit_title">Edit Address</string>
     <string name="recipient_new_title">New Recipient</string>
@@ -378,7 +396,7 @@
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Delegating:</string>
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
-    <string name="accounts_overview_balance_placeholder">…</string>
+    <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
@@ -393,6 +411,7 @@
     <string name="account_release_schedule_copy_title">Transaction hash</string>
     <string name="account_release_schedule_no_data">No data</string>
     <string name="account_details_baker_id">Validator ID:</string>
+    <string name="account_read_only">Read only account</string>
     <string name="title_create_nft">Mint NFT</string>
     <string name="title_transfer_nft">Transfer NFT</string>
     <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
@@ -424,7 +443,7 @@
 
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_empty_warning_text">You did not provide any memoId. Continue without it?</string>
-    <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
+    <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction is permanent, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_continue">Continue</string>
     <string name="transaction_memo_warning_ok">Okay</string>
@@ -500,50 +519,66 @@
     <string name="transaction_submitted">Transaction submitted!</string>
 
     <string name="cis_tab_tokens">Tokens</string>
-    <string name="cis_manage">Manage</string>
-    <string name="cis_manage_tokens">Manage tokens</string>
+    <string name="cis_manage">Manage token list</string>
+    <string name="cis_manage_tokens">Enter a contract index to add tokens.</string>
+    <string name="cis_manage_token_list">Manage token list</string>
+    <string name="cis_add_token_title">Add token</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
+    <string name="cis_token_details_balance">Balance</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens">Add</string>
+    <string name="cis_add_tokens_continue">Continue</string>
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">This contract has no valid tokens</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
-    <string name="cis_select_token_title">Select token</string>
+    <string name="cis_select_token_title">Choose token</string>
     <string name="cis_loading_metadata_progress">Loading metadata…</string>
     <string name="cis_search">Search for token ID</string>
     <string name="cis_send_continue">Continue</string>
     <string name="cis_send_funds">Send funds</string>
+    <string name="cis_send_funds_confirmation">Confirmation</string>
+    <string name="cis_send_funds_preview">Preview</string>
     <string name="cis_currently_available_amounts">Currently available amounts</string>
     <string name="cis_token_balance">%1$s balance</string>
     <string name="cis_token_quantity">Quantity</string>
-    <string name="cis_at_disposal">CCD at disposal</string>
-    <string name="cis_send_all"><u>Send all</u></string>
+    <string name="cis_at_disposal">At disposal</string>
+    <string name="cis_recipient_placeholder">Select a recipient</string>
+    <string name="cis_max"><u>Max</u></string>
     <string name="cis_send_token">Token:</string>
     <string name="cis_send_address">Address</string>
     <string name="cis_send_paste_recipient_address">Paste recipient address</string>
     <string name="cis_send_or">or</string>
     <string name="cis_address_book">Address book</string>
     <string name="cis_scan_qr">Scan QR</string>
-    <string name="cis_add_memo">Add memo</string>
+    <string name="cis_add_memo">Add a memo</string>
     <string name="cis_memo">Memo</string>
     <string name="cis_transaction_send_funds">Transaction: Send funds</string>
     <string name="cis_transaction_send_tokens">Transaction: Send tokens</string>
     <string name="cis_sender">Sender</string>
-    <string name="cis_amount">Amount</string>
+    <string name="cis_amount">Amount (%1$s):</string>
     <string name="cis_token">Token</string>
     <string name="cis_token_symbol">Symbol</string>
     <string name="cis_token_id">Token ID</string>
     <string name="cis_receiver">Receiver</string>
-    <string name="cis_finish">@string/finish</string>
+    <string name="cis_finish">Close</string>
+    <string name="cis_transaction_in_progress">Transaction in progress</string>
+    <string name="cis_transaction_success">You’ve sent</string>
+    <string name="cis_transaction_fail">Transaction failed to send</string>
+    <string name="cis_transaction_details">Transaction details</string>
+    <string name="cis_submit_transaction">Submit transaction</string>
+    <string name="cis_slider_thumb">Slider thumb</string>
     <string name="cis_back">Back</string>
-    <string name="cis_estimated_fee">Estimated transaction fee:\n%1$s</string>
+    <string name="cis_estimated_fee">Transaction fee ≈ %1$s CCD</string>
+    <string name="cis_estimated_eur_rate">≈ %1$s EUR</string>
+    <string name="cis_eur_rate">%1$s EUR</string>
     <string name="cis_back_to_list">Back to list</string>
     <string name="cis_about_token">About the token</string>
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_image">Image</string>
     <string name="cis_description">Description</string>
-    <string name="cis_contract_index">Contract index, subindex</string>
+    <string name="cis_contract_index">Contract index</string>
+    <string name="cis_contract_index_subindex">Contract index, subindex</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>
@@ -551,21 +586,31 @@
     <string name="cis_no_tokens_found">No tokens found</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens</string>
     <string name="cis_tokens_updated">Token list updated</string>
+    <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_no_collectibles_added">No tokens have been added to this account yet</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
+    <string name="cis_hide_token">Hide token from account</string>
+    <string name="cis_hide_token_item">Hide token</string>
+    <string name="cis_hide_token_title">Hiding a token</string>
+    <string name="cis_hide_token_body">Are you sure you want to hide %1$s token from your wallet?</string>
+    <string name="cis_hide_token_confirm">Yes, hide it</string>
+    <string name="cis_hide_token_cancel">Go back</string>
     <string name="cis_delete_dialog_title">Confirm removal</string>
     <string name="cis_delete_dialog_content">Delete this from wallet?</string>
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
     <string name="cis_newly_received_notice_title">You received a new token</string>
+    <string name="cis_percent_earning">% Earning</string>
+    <string name="cis_percent">%</string>
     <string name="template_cis_newly_received_notice_message">
         %1$s has not been listed in your wallet till this transaction.
         You can accept it or remove it from the list.
     </string>
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
+    <string name="ccd_details_description">CCD is the native token of the Concordium blockchain. Its main use cases are the payment of transaction fees, the payment for the execution of smart contracts, payments between users, payments for commercial transactions, staking, and the rewards offered to node operators.</string>
 
     <string name="your_wallet_seed">Your wallet private key</string>
     <string name="your_seed_phrase">Your seed phrase</string>
@@ -1127,7 +1172,7 @@
     <string name="tracking_permission_message">@string/tracking_motivation</string>
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
-    <string name="ccd_onramp_title">CCD Listings</string>
+    <string name="ccd_onramp_title">Buy CCD</string>
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
@@ -1150,8 +1195,9 @@
     <string name="template_ccd_onramp_opening_site">Account address copied. Opening %1$s…</string>
     <string name="ccd_onramp_accounts_title">Select Account</string>
     <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
-    <string name="ccd_onramp_banner_title">Where is CCD available?</string>
-    <string name="ccd_onramp_banner_content">CCD is listed in the following exchanges and services. <u>See more</u></string>
+    <string name="ccd_onramp_banner_title">Get your CCD</string>
+    <string name="ccd_onramp_banner_content">And be part of a safer digital future</string>
+    <string name="ccd_onramp_close_banner">Close the banner</string>
     <string name="notifications_preferences_title">Notifications</string>
     <string name="notifications_preferences_ccd_transactions">CCD transactions</string>
     <string name="notifications_preferences_cis2_transactions">CIS-2 token transactions</string>
@@ -1159,7 +1205,7 @@
     <string name="announcements_notification_channel_name">Announcements</string>
     <string name="template_transaction_received_notification_title">You received %1$s</string>
     <string name="transaction_received_notification_text">See the transaction details in your wallet</string>
-    <string name="news_overview_title">Concordium News</string>
+    <string name="news_overview_title">Discover</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
     <plurals name="days_left">
@@ -1171,7 +1217,7 @@
     <string name="unlock_feature_title">Unlock this feature</string>
     <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
     <string name="unlock_feature_go_back_button">Go back</string>
-
+    
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>
     <string name="onboarding_status_card_description_second">Final step: Verify your identity</string>

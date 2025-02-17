@@ -6,167 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView
-        android:id="@+id/scroll_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/account_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="-16dp"
         android:clipToPadding="false"
-        android:fadingEdge="vertical"
-        android:fillViewport="true"
-        android:requiresFadingEdge="vertical"
-        app:layout_constraintBottom_toTopOf="@id/missing_backup"
+        android:paddingTop="20dp"
+        android:paddingHorizontal="18dp"
+        android:scrollbars="none"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:paddingBottom="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:text="@string/accounts_overview_wallet_total"
-                android:textAppearance="@style/CCX_Typography_Body"
-                android:textColor="@color/ccx_neutral_tint_2" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/total_balance_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="4dp">
-
-                <TextView
-                    android:id="@+id/total_balance_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/accounts_overview_balance_placeholder"
-                    android:textAppearance="@style/CCX_Typography_Display"
-                    android:textColor="@color/ccx_mineral_blue_tint_1"
-                    app:autoSizeMaxTextSize="28sp"
-                    app:autoSizeMinTextSize="14sp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="224235.2443" />
-
-                <TextView
-                    android:id="@+id/total_balance_suffix"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:text="@string/accounts_overview_balance_suffix"
-                    android:textAppearance="@style/CCX_Typography_Caption"
-                    android:textColor="@color/ccx_mineral_blue_tint_1"
-                    app:layout_constraintBottom_toBottomOf="@id/total_balance_textview"
-                    app:layout_constraintStart_toEndOf="@id/total_balance_textview" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/total_details_disposal_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="4dp">
-
-                <TextView
-                    android:id="@+id/accounts_overview_total_details_disposal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/accounts_overview_balance_placeholder"
-                    android:textAppearance="@style/CCX_Typography_Body"
-                    android:textColor="@color/ccx_mineral_blue_tint_1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="224.28" />
-
-                <TextView
-                    android:id="@+id/accounts_overview_total_details_disposal_suffix"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="@string/accounts_overview_total_details_disposal_amount"
-                    android:textAppearance="@style/CCX_Typography_Body"
-                    android:textColor="@color/ccx_mineral_blue_tint_1"
-                    app:layout_constraintBottom_toBottomOf="@id/accounts_overview_total_details_disposal"
-                    app:layout_constraintStart_toEndOf="@id/accounts_overview_total_details_disposal" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <View
-                style="@style/CryptoX_Divider_Horizontal"
-                android:layout_marginTop="16dp" />
-
-            <LinearLayout
-                android:id="@+id/file_wallet_migration_disclaimer_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                tools:ignore="UseCompoundDrawables">
-
-                <ImageView
-                    android:layout_width="16sp"
-                    android:layout_height="16sp"
-                    android:layout_marginTop="2sp"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ccx_ico_information_circle_contained" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="@string/file_wallet_migration_disclaimer"
-                    android:textAppearance="@style/CCX_Typography_Body"
-                    android:textColor="@color/cryptox_white_main" />
-            </LinearLayout>
-
-            <include
-                android:id="@+id/onramp_banner"
-                layout="@layout/list_item_accounts_overview_ccd_onramp_banner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_vertical_margin"
-                android:layout_marginTop="24dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/account_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="210dp"
-                android:layout_marginTop="16dp"
-                android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/activity_vertical_margin"
-                android:scrollbars="none"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/list_item_accounts_overview_account">
-                <!-- The height is set programmatically -->
-            </androidx.recyclerview.widget.RecyclerView>
-
-            <com.concordium.wallet.ui.onboarding.OnboardingFragment
-                android:id="@+id/onboarding_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="16dp"
-                app:layout_constraintBottom_toTopOf="@id/onboarding_action_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
-    </com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/list_item_accounts_overview_account">
+    </androidx.recyclerview.widget.RecyclerView>
 
     <include
         android:id="@+id/progress"
@@ -195,18 +49,4 @@
             android:textSize="14sp" />
 
     </LinearLayout>
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/confetti_animation"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="false"
-        app:lottie_rawRes="@raw/confetti" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

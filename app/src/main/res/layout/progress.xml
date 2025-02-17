@@ -19,9 +19,12 @@
 
     <TextView
         android:id="@+id/message_text_view"
-        style="@style/CryptoX_Typography_Body_Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/cryptox_grey_secondary"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progress_bar"

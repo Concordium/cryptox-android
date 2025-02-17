@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
+import com.concordium.wallet.data.room.migrations.MIGRATION_10_11
 import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
@@ -43,7 +44,7 @@ abstract class WalletDatabase : RoomDatabase() {
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
-        const val VERSION_NUMBER = 10
+        const val VERSION_NUMBER = 11
         private val instances = object : LruCache<String, WalletDatabase>(2) {
             override fun entryRemoved(
                 evicted: Boolean,
@@ -86,6 +87,7 @@ abstract class WalletDatabase : RoomDatabase() {
                             context = context,
                             gson = AppCore.getGson(),
                         ),
+                        MIGRATION_10_11
                     )
                     .build()
                     .also { instances.put(name, it) }

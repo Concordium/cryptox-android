@@ -5,29 +5,93 @@
     android:layout_height="match_parent"
     tools:context="com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment">
 
-    <ImageView
-        android:id="@+id/pending_imageview"
-        style="@style/Image"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/ic_pending"
-        app:layout_constraintBottom_toTopOf="@+id/pending_textview"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <TextView
-        android:id="@+id/pending_textview"
-        style="@style/CryptoX_Typography_Body_Medium"
-        android:gravity="center"
-        android:padding="@dimen/activity_vertical_margin"
-        android:text="@string/account_details_pending_msg"
+    <LinearLayout
+        android:id="@+id/pending_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pending_imageview" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseCompoundDrawables"
+        tools:visibility="visible">
 
+        <ImageView
+            android:id="@+id/pending_imageview"
+            style="@style/Image"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_pending"
+            app:layout_constraintBottom_toTopOf="@+id/pending_textview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/pending_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/activity_vertical_margin"
+            android:text="@string/account_details_pending_msg"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pending_imageview" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/error_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/error_imageview"
+            style="@style/Image"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_status_problem"
+            app:layout_constraintBottom_toTopOf="@+id/error_textview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/error_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/account_details_error_msg"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/error_imageview" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

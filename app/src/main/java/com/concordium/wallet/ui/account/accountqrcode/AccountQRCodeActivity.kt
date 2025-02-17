@@ -7,12 +7,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.toast.showGradientToast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
@@ -59,7 +59,8 @@ class AccountQRCodeActivity :
         if (qrImage != null) {
             binding.addressQrImageview.setImageBitmap(qrImage)
         }
-        binding.accountTitleTextview.text = viewModel.account.getAccountName() + ":"
+        binding.accountTitleTextview.text =
+            getString(R.string.account_qr_code_to_account, viewModel.account.getAccountName())
         binding.addressQrTextview.text = viewModel.account.address
         binding.shareLayout.setOnClickListener {
             shareAddress()
@@ -88,21 +89,24 @@ class AccountQRCodeActivity :
         val clipData = ClipData.newPlainText("txt", viewModel.account.address)
         clipboardManager.setPrimaryClip(clipData)
 
-        binding.copiedMessageTextView.isVisible = true
+        showGradientToast(
+            iconResId = R.drawable.mw24_ic_address_copy_check,
+            title = getString(R.string.account_qr_code_copied)
+        )
     }
 
     private fun generateQR(qrCodeContent: String): Bitmap? {
         try {
             val writer = QRCodeWriter()
             val bitMatrix: BitMatrix =
-                writer.encode(qrCodeContent, BarcodeFormat.QR_CODE, 512, 512)
+                writer.encode(qrCodeContent, BarcodeFormat.QR_CODE, 256, 256)
             val width = bitMatrix.width
             val height = bitMatrix.height
             val pixels = IntArray(width * height)
             for (y in 0 until height) {
                 val offset = y * width
                 for (x in 0 until width) {
-                    pixels[offset + x] = if (bitMatrix[x, y]) Color.BLACK else Color.TRANSPARENT
+                    pixels[offset + x] = if (bitMatrix[x, y]) Color.WHITE else Color.TRANSPARENT
                 }
             }
 

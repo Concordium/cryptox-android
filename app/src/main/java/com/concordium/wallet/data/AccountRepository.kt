@@ -50,8 +50,20 @@ class AccountRepository(private val accountDao: AccountDao) {
         return accountDao.findByAddress(address)
     }
 
+    suspend fun getActive(): Account? {
+        return accountDao.getActive()
+    }
+
+    suspend fun activate(address: String) {
+        accountDao.activate(address)
+    }
+
     suspend fun insert(account: Account): Long {
         return accountDao.insert(account).first()
+    }
+
+    suspend fun insertAndActivate(account: Account): Long {
+        return accountDao.insertAndActivate(account)
     }
 
     suspend fun insertAll(accountList: List<Account>) {

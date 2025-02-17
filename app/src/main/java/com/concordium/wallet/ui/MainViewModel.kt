@@ -6,10 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,7 +20,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
         AccountOverview,
         NewsOverview,
-        TokensOverview,
         More,
         ;
     }
@@ -33,6 +35,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _stateLiveData = MutableLiveData<State>()
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
+
+    private val _notificationTokenId = MutableStateFlow("")
+    val notificationTokenId = _notificationTokenId.asStateFlow()
+
+    private val _activeAccountAddress = MutableStateFlow("")
+    val activeAccountAddress = _activeAccountAddress.asStateFlow()
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
@@ -81,6 +89,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun hasCompletedOnboarding(): Boolean {
         return App.appCore.session.walletStorage.setupPreferences.getHasCompletedOnboarding()
+    }
+
+    fun activateAccount(address: String) {
+        val accountRepository =
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+
+        viewModelScope.launch {
+            accountRepository.activate(address)
+        }
+    }
+
+    fun setNotificationData(address: String, id: String) = viewModelScope.launch {
+        _activeAccountAddress.emit(address)
+        _notificationTokenId.emit(id)
     }
 
     fun startIdentityUpdate() {

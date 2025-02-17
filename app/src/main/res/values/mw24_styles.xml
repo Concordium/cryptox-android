@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- region Screens -->
+    <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+
+    <style name="MW24_Screen" parent="CCX_Screen">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+
+    <style name="MW24_WelcomeScreen" parent="CCX_WelcomeScreen">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+
+    <style name="MW24_MainScreen" parent="CCX_MainScreen">
+        <item name="android:windowBackground">@color/cryptox_black_main</item>
+    </style>
+    <!-- end region -->
+
+
+    <!-- region Typography -->
+    <style name="MW24_Typography_Headline_Large">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="MW24_Typography_H3">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="MW24_Typography_H4">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">19sp</item>
+    </style>
+
+    <style name="MW24_Typography_Text_Main">
+        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="MW24_Typography_Label_Main">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="MW24_Typography_Label_Secondary">
+        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="MW24_Typography_Text_Mid">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="MW24_Typography_Text_Mid_Alternative">
+        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="MW24_Typography_Additional_Capture_Small">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="MW24_Typography_Main_Capture_Small">
+        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="MW24_Typography_IBM_Balance">
+        <item name="android:fontFamily">@font/ibm_w500</item>
+        <item name="android:textSize">55sp</item>
+    </style>
+
+    <!-- end region -->
+
+
+    <style name="MW24_AccountSettingsItemTextView" parent="MW24_Typography_Headline_Large">
+        <item name="android:layout_marginVertical">20dp</item>
+        <item name="drawableEndCompat">@null</item>
+    </style>
+
+    <style name="MW24_Container_Primary">
+        <item name="android:background">@drawable/mw24_container_primary_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MW24_Receive_Funds_Action_Button">
+        <item name="android:background">@drawable/mw24_account_receive_funds_button_background</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+        <item name="drawableTint">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Main_Capture_Small">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#9DAEC3</item>
+    </style>
+
+    <style name="MW24_Manage_Token_List_Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:textColor">@color/mw24_primary_text_button_color</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="drawableStartCompat">@drawable/mw24_ic_manage_token_list</item>
+        <item name="drawableTint">@color/mw24_primary_text_button_color</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
+    </style>
+
+    <style name="MW24_Receive_Funds_Account" parent="MW24_Typography_Label_Secondary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+    <style name="MW24_CompoundButton_Checkbox" parent="CryptoX_CompoundButton_Checkbox">
+        <item name="android:button">@drawable/mw24_checkbox_button</item>
+        <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
+        <item name="android:textColor">@color/cryptox_white_main</item>
+    </style>
+
+
+    <!-- region Buttons -->
+    <style name="MW24_Button_Primary">
+        <item name="android:layout_height">53dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/mw24_button_primary_background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
+        <item name="android:textColor">@color/mw24_button_primary_text_color</item>
+        <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+    <style name="MW24_Button_Secondary">
+        <item name="android:layout_height">53dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/mw24_button_secondary_background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
+        <item name="android:textColor">@color/mw24_button_secondary_text_color</item>
+        <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+    <!-- end region -->
+
+</resources>
