@@ -153,9 +153,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private fun initializeAddressBook() {
         binding.recipientLayout.setOnClickListener {
             val intent = Intent(this, RecipientListActivity::class.java)
-            intent.putExtra(RecipientListActivity.EXTRA_SELECT_RECIPIENT_MODE, true)
             intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.sendTokenData.account)
-            intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.sendTokenData.account)
+            intent.putExtra(RecipientListActivity.EXTRA_SENDER_ACCOUNT, viewModel.sendTokenData.account)
             getResultRecipient.launch(intent)
         }
     }
@@ -189,6 +188,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
                     if (recipient.name.isNotEmpty()) {
                         onReceiverNameFound(recipient.name)
+                    } else {
+                        binding.recipientName.visibility = View.GONE
                     }
                 }
             }

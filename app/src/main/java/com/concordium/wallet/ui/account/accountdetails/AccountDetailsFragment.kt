@@ -45,6 +45,7 @@ import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
@@ -64,6 +65,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
+
     // parameter for dynamic calculation of tokensFragmentContainer height
     private var isFileWallet: Boolean = false
 
@@ -184,13 +186,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
-            viewModelTokens.reloadCCDBalance()
+            viewModelTokens.loadTokensBalances()
         }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
+            updateViews(account)
             viewModelTokens.tokenData.account = account
             viewModelTokens.loadTokens(account.address)
-            updateViews(account)
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
                 text = account.getAccountName(),
@@ -200,16 +202,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
-        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
-            if (it)
+        viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
+            if (it) {
                 viewModelTokens.loadTokensBalances()
+            }
         }
 
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                viewModelTokens.loadTokens(viewModelAccountDetails.activeAccount.first().address)
-                viewModelTokens.loadTokensBalances()
                 updateViews(viewModelAccountDetails.activeAccount.first())
+                viewModelTokens.loadTokens(viewModelAccountDetails.activeAccount.first().address)
             }
         }
 
@@ -278,6 +280,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
+        }
+        binding.fileWalletMigrationDisclaimerLayout.setOnClickListener {
+            startActivity(Intent(requireActivity(), WalletsActivity::class.java))
         }
     }
 
@@ -412,8 +417,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun updateWhenResumed() {
-        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.updateState()
+        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
         viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }

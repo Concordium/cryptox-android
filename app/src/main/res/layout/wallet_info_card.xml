@@ -55,7 +55,6 @@
             android:id="@+id/at_disposal_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@string/accounts_overview_total_details_disposal"
             android:visibility="gone"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"

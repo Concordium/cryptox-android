@@ -10,8 +10,9 @@ data class Recipient(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     var name: String,
-    var address: String
+    var address: String,
 ) : Serializable {
+
     constructor(
         account: Account,
         id: Int = 0,
@@ -19,5 +20,13 @@ data class Recipient(
         id = id,
         name = account.getAccountName(),
         address = account.address,
+    )
+
+    constructor(
+        address: String,
+    ) : this(
+        id = 0,
+        name = "",
+        address = address,
     )
 }

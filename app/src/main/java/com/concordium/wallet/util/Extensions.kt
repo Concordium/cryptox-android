@@ -2,7 +2,6 @@ package com.concordium.wallet.util
 
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import java.io.Serializable
 import java.math.BigInteger
 
@@ -27,12 +26,12 @@ fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): 
     }
 }
 
-fun <T : Serializable?> Bundle.getSerializableFromBundle(key: String, m_class: Class<T>): T {
+fun <T : Serializable?> Intent.getOptionalSerializable(key: String, m_class: Class<T>): T? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        this.getSerializable(key, m_class)!!
+        this.getSerializableExtra(key, m_class)
     else {
         @Suppress("DEPRECATION", "UNCHECKED_CAST")
-        this.getSerializable(key) as T
+        this.getSerializableExtra(key) as? T
     }
 }
 
