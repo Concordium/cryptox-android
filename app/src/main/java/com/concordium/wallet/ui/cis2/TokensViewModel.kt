@@ -106,7 +106,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 })
             }
-            awaitAll(async { loadTokensBalances() })
+            loadTokensBalances()
             waiting.postValue(false)
         }
     }
