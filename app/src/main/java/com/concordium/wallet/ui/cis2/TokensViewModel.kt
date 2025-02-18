@@ -69,8 +69,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
-    val tokensReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
+    private var loadTokensJob: Job? = null
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
         ContractTokensRepository(
@@ -85,9 +85,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         accountAddress: String,
         isFungible: Boolean? = null,
     ) {
-        waiting.postValue(true)
-        tokensReady.postValue(false)
-        viewModelScope.launch(Dispatchers.IO) {
+        loadTokensJob?.cancel()
+        loadTokensJob = null
+
+        loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
+            waiting.postValue(true)
             val ccdToken = getCCDDefaultToken(accountAddress)
             val contractTokens = contractTokensRepository.getTokens(
                 accountAddress = accountAddress,
@@ -104,7 +106,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 })
             }
-            tokensReady.postValue(true)
+            awaitAll(async { loadTokensBalances() })
             waiting.postValue(false)
         }
     }

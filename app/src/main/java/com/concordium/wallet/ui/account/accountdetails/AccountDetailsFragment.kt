@@ -65,6 +65,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
+
     // parameter for dynamic calculation of tokensFragmentContainer height
     private var isFileWallet: Boolean = false
 
@@ -189,9 +190,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
+            updateViews(account)
             viewModelTokens.tokenData.account = account
             viewModelTokens.loadTokens(account.address)
-            updateViews(account)
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
                 text = account.getAccountName(),
@@ -201,16 +202,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
-        viewModelAccountDetails.accountUpdatedLiveData.observe(viewLifecycleOwner) {
-            if (it)
+        viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
+            if (it) {
                 viewModelTokens.loadTokensBalances()
+            }
         }
 
         viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                viewModelTokens.loadTokens(viewModelAccountDetails.activeAccount.first().address)
-                viewModelTokens.loadTokensBalances()
                 updateViews(viewModelAccountDetails.activeAccount.first())
+                viewModelTokens.loadTokens(viewModelAccountDetails.activeAccount.first().address)
             }
         }
 
@@ -416,8 +417,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun updateWhenResumed() {
-        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.updateState()
+        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
         viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }

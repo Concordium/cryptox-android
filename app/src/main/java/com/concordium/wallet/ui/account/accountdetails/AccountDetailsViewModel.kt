@@ -77,17 +77,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val finishLiveData: LiveData<Event<Boolean>>
         get() = _finishLiveData
 
-    private val _showPadLockLiveData = MutableLiveData<Boolean>()
-    val showPadLockLiveData: LiveData<Boolean>
-        get() = _showPadLockLiveData
-
     private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
     val totalBalanceLiveData: LiveData<BigInteger>
         get() = _totalBalanceLiveData
 
-    private var _accountUpdatedLiveData = MutableLiveData<Boolean>()
-    val accountUpdatedLiveData: LiveData<Boolean>
-        get() = _accountUpdatedLiveData
+    private var _accountUpdatedFlow = MutableStateFlow(false)
+    val accountUpdatedFlow = _accountUpdatedFlow.asStateFlow()
 
     private val _showDialogLiveData = MutableLiveData<Event<DialogToShow>>()
     val showDialogLiveData: LiveData<Event<DialogToShow>>
@@ -166,7 +161,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     _waitingLiveData.value = true
                 }
                 viewModelScope.launch {
-                    updateAccountFromRepository()
                     accountUpdater.updateForAccount(account)
                     val type =
                         if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
@@ -193,15 +187,15 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     if (::account.isInitialized) {
                         _totalBalanceLiveData.value = account.balance
                     }
-                    _accountUpdatedLiveData.value = true
+                    _accountUpdatedFlow.emit(true)
                 }
             }
 
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
-                    postState(OnboardingState.DONE)
+                    getActiveAccount()
                     updateAccountFromRepository()
-                    updateAccount()
+                    postState(OnboardingState.DONE)
                     restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
                     _newFinalizedAccountFlow.value = accountName
                 }
@@ -223,7 +217,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private suspend fun updateAccountFromRepository() {
         if (::account.isInitialized) {
             accountRepository.findById(account.id)?.let { accountCandidate ->
-                _activeAccount.emit(accountCandidate)
                 account = accountCandidate
             }
         }
@@ -316,9 +309,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val allAccounts = accountRepository.getAll()
         if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+            getActiveAccount()
             postState(OnboardingState.DONE)
             showSingleDialogIfNeeded()
-            getActiveAccount()
         } else {
             postState(state = OnboardingState.FINALIZING_ACCOUNT)
             _waitingLiveData.postValue(false)
