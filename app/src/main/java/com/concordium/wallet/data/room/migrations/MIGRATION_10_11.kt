@@ -14,7 +14,7 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
             WHERE `id` = (
                 SELECT `id` 
                 FROM `account_table`
-                ORDER BY `id` ASC
+                ORDER BY `id` DESC
                 LIMIT 1
             )
         """)

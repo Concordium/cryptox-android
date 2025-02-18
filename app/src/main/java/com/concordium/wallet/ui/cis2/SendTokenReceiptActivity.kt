@@ -77,7 +77,10 @@ class SendTokenReceiptActivity : BaseActivity(
                 showPageAsSendPrompt()
             }
         }
-        binding.statusAmount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount)
+        binding.statusAmount.text = CurrencyUtil.formatGTU(
+            viewModel.sendTokenData.amount,
+            viewModel.sendTokenData.token
+        )
         binding.transactionSymbol.text =
             if (viewModel.sendTokenData.token?.isUnique == true)
                 getString(R.string.cis_token_quantity)
