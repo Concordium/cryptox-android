@@ -213,12 +213,12 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/erase_data_layout"
+                android:id="@+id/remove_wallet_layout"
                 style="@style/SettingsOverviewItem">
 
                 <TextView
                     style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/settings_overview_erase_data"
+                    android:text="@string/settings_overview_remove_wallet"
                     app:drawableStartCompat="@drawable/ccx_ico_file_shred" />
 
                 <View

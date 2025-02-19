@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
@@ -228,12 +227,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         menuItem.isChecked = true
 
-        val state = getState(menuItem)
-        if (state != null) {
-            viewModel.setState(state)
-            return true
-        }
-        return false
+        val state = getState(menuItem) ?: return false
+
+        if (viewModel.stateLiveData.value == state) return false
+        viewModel.setState(state)
+        return true
     }
 
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
@@ -246,19 +244,19 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun replaceFragment(state: MainViewModel.State) {
-        val fragment = when (state) {
+        val existingFragment = supportFragmentManager.findFragmentByTag(state.name)
+
+        val fragment = existingFragment ?: when (state) {
             MainViewModel.State.AccountOverview -> AccountDetailsFragment()
             MainViewModel.State.NewsOverview -> NewsOverviewFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
         }
-        replaceFragment(fragment)
-    }
 
-    private fun replaceFragment(fragment: Fragment?) {
-        if (fragment == null) return
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment)
-        transaction.commit()
+        if (existingFragment == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment, state.name)
+                .commit()
+        }
     }
 
     //endregion
