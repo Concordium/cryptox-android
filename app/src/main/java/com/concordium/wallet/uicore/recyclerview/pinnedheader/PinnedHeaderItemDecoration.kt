@@ -10,36 +10,45 @@ class PinnedHeaderItemDecoration(private val listener: PinnedHeaderListener) :
     RecyclerView.ItemDecoration() {
 
     private var headerHeight: Int = 0
+    private var cachedHeader: View? = null
+    private var cachedHeaderPosition: Int = RecyclerView.NO_POSITION
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 
         val topChild = parent.getChildAt(0) ?: return
-
         val topChildPosition = parent.getChildAdapterPosition(topChild)
-        if (topChildPosition == RecyclerView.NO_POSITION) {
-            return
+        if (topChildPosition == RecyclerView.NO_POSITION) return
+
+        val headerPosition = listener.getHeaderPositionForItem(topChildPosition)
+        val currentHeader = if (cachedHeaderPosition == headerPosition && cachedHeader != null) {
+            cachedHeader!!
+        } else {
+            getHeaderViewForItem(headerPosition, parent)
         }
 
-        val currentHeader = getHeaderViewForItem(topChildPosition, parent)
         fixLayoutSize(parent, currentHeader)
         val contactPoint = currentHeader.bottom
-        val childInContact = getChildInContact(parent, contactPoint) ?: return
+        val childInContact = getChildInContact(parent, contactPoint)
 
-        if (listener.isHeader(parent.getChildAdapterPosition(childInContact))) {
+        if (childInContact != null && listener.isHeader(parent.getChildAdapterPosition(childInContact))) {
             moveHeader(c, currentHeader, childInContact)
-            return
+        } else {
+            drawHeader(c, currentHeader)
         }
-
-        drawHeader(c, currentHeader)
     }
 
     private fun getHeaderViewForItem(itemPosition: Int, parent: RecyclerView): View {
         val headerPosition = listener.getHeaderPositionForItem(itemPosition)
-        val layoutResId = listener.getHeaderLayout(headerPosition)
-        val header = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
-        listener.bindHeaderData(header, headerPosition)
-        return header
+
+        if (cachedHeaderPosition != headerPosition || cachedHeader == null) {
+            val layoutResId = listener.getHeaderLayout(headerPosition)
+            val header = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
+            listener.bindHeaderData(header, headerPosition)
+            cachedHeader = header
+            cachedHeaderPosition = headerPosition
+        }
+        return cachedHeader!!
     }
 
     private fun drawHeader(c: Canvas, header: View) {
@@ -57,18 +66,9 @@ class PinnedHeaderItemDecoration(private val listener: PinnedHeaderListener) :
     }
 
     private fun getChildInContact(parent: RecyclerView, contactPoint: Int): View? {
-        var childInContact: View? = null
-        for (i in 0 until parent.childCount) {
-            val child = parent.getChildAt(i)
-            if (child.bottom > contactPoint) {
-                if (child.top <= contactPoint) {
-                    // This child overlaps the contactPoint
-                    childInContact = child
-                    break
-                }
-            }
-        }
-        return childInContact
+        return (0 until parent.childCount)
+            .map { parent.getChildAt(it) }
+            .firstOrNull { it.bottom > contactPoint && it.top <= contactPoint }
     }
 
     /**
