@@ -285,7 +285,7 @@
     <string name="settings_overview_item_developer_options">Developer Options</string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
-    <string name="settings_overview_erase_data">Erase Data</string>
+    <string name="settings_overview_remove_wallet">Remove wallet</string>
     <string name="settings_overview_erase_data_confirmation_title">Erasing all data</string>
     <string name="settings_overview_erase_wallet_confirmation_message">
         All your wallets will be erased from this device.
