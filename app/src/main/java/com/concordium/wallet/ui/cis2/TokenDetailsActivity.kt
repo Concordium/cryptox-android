@@ -147,9 +147,11 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
 
     private fun setBalances(token: Token) {
         binding.walletInfoCard.totalBalanceTextview.text = if (token.isCcd) {
-            CurrencyUtil.formatGTU(viewModel.tokenData.account?.balance!!, token)
+            CurrencyUtil.formatGTU(viewModel.tokenData.account?.balance!!, token) +
+                    " ${token.symbol}"
         } else {
-            CurrencyUtil.formatGTU(token.balance, token)
+            CurrencyUtil.formatGTU(token.balance, token) +
+                    " ${token.symbol}"
         }
 
         viewModel.tokenData.account?.readOnly?.let {

@@ -191,15 +191,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 }
             }
 
-            override fun onNewAccountFinalized(accountName: String) {
-                viewModelScope.launch {
-                    getActiveAccount()
-                    updateAccountFromRepository()
-                    postState(OnboardingState.DONE)
-                    restartUpdater(BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC)
-                    _newFinalizedAccountFlow.value = accountName
-                }
-            }
+            override fun onNewAccountFinalized(accountName: String) { }
 
             override fun onError(stringRes: Int) {
                 _errorLiveData.value = Event(stringRes)

@@ -208,13 +208,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
-        viewModelAccountDetails.newFinalizedAccountFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                updateViews(viewModelAccountDetails.activeAccount.first())
-                viewModelTokens.loadTokens(viewModelAccountDetails.activeAccount.first().address)
-            }
-        }
-
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
             binding.fileWalletMigrationDisclaimerLayout.isVisible = it
             isFileWallet = it
