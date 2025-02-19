@@ -271,11 +271,6 @@
             android:parentActivityName=".ui.account.newaccountidentity.NewAccountIdentityActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.account.newaccountconfirmed.NewAccountConfirmedActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"

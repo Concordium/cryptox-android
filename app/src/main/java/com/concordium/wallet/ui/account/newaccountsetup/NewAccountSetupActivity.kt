@@ -11,7 +11,7 @@ import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityNewAccountSetupBinding
-import com.concordium.wallet.ui.account.newaccountconfirmed.NewAccountConfirmedActivity
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -86,7 +86,7 @@ class NewAccountSetupActivity : BaseActivity(
         })
         viewModel.gotoAccountCreatedLiveData.observe(this, object : EventObserver<Account>() {
             override fun onUnhandledEvent(value: Account) {
-                gotoNewAccountConfirmed(value)
+                gotoNewAccountConfirmed()
             }
         })
         viewModel.gotoFailedLiveData.observe(
@@ -126,9 +126,9 @@ class NewAccountSetupActivity : BaseActivity(
         }
     }
 
-    private fun gotoNewAccountConfirmed(account: Account) {
-        val intent = Intent(this, NewAccountConfirmedActivity::class.java)
-        intent.putExtra(NewAccountConfirmedActivity.EXTRA_ACCOUNT, account)
+    private fun gotoNewAccountConfirmed() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         startActivity(intent)
     }
 
