@@ -12,6 +12,7 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentMoreOverviewBinding
 import com.concordium.wallet.extension.collect
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
@@ -20,6 +21,8 @@ import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewAc
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
+import com.concordium.wallet.ui.more.dialog.ClearWalletConnectDialog
+import com.concordium.wallet.ui.more.dialog.RemoveWalletDialog
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPreferencesActivity
@@ -32,7 +35,6 @@ import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
 import com.concordium.wallet.ui.tokens.provider.NFTActivity
 import com.concordium.wallet.ui.welcome.WelcomeActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MoreOverviewFragment : BaseFragment() {
 
@@ -65,6 +67,7 @@ class MoreOverviewFragment : BaseFragment() {
 
         initializeViews()
         subscribeToEvents()
+        initObservers()
 
         (requireActivity() as BaseActivity).hideLeftPlus(isVisible = false)
     }
@@ -235,6 +238,33 @@ class MoreOverviewFragment : BaseFragment() {
             }
         }
     }
+
+    private fun initObservers() {
+        parentFragmentManager.setFragmentResultListener(
+            ClearWalletConnectDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            val isClearWalletConnect = ClearWalletConnectDialog.getResult(bundle)
+            if (isClearWalletConnect) {
+                viewModel.deleteWCDatabaseAndExit()
+
+                Toast.makeText(
+                    requireContext(),
+                    R.string.wallet_connect_database_cleared,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        parentFragmentManager.setFragmentResultListener(
+            RemoveWalletDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (RemoveWalletDialog.getResult(bundle)) {
+                viewModel.onEraseContinueClicked()
+            }
+        }
+    }
     //endregion
 
     //region Control/UI
@@ -249,41 +279,17 @@ class MoreOverviewFragment : BaseFragment() {
     }
 
     private fun clearWalletConnectAndRestart() {
-        showConfirmDeleteWalletConnect()
-    }
-
-    private fun showConfirmDeleteWalletConnect() {
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        builder.setTitle(R.string.wallet_connect_clear_data_warning_title)
-        builder.setMessage(getString(R.string.wallet_connect_clear_data_warning_message))
-        builder.setPositiveButton(getString(R.string.wallet_connect_clear_data_warning_ok)) { _, _ ->
-            viewModel.deleteWCDatabaseAndExit()
-            Toast.makeText(
-                requireContext(),
-                R.string.wallet_connect_database_cleared,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        builder.setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel)) { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.create().show()
+        ClearWalletConnectDialog().showSingle(
+            parentFragmentManager,
+            ClearWalletConnectDialog.TAG
+        )
     }
 
     private fun eraseDataAndExit() {
-        showConfirmEraseData()
-    }
-
-    private fun showConfirmEraseData() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.settings_overview_erase_data_confirmation_title)
-            .setMessage(getString(R.string.settings_overview_erase_wallet_confirmation_message))
-            .setPositiveButton(getString(R.string.settings_overview_erase_data_continue)) { _, _ ->
-
-                viewModel.onEraseContinueClicked()
-            }
-            .setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel), null)
-            .show()
+        RemoveWalletDialog().showSingle(
+            parentFragmentManager,
+            RemoveWalletDialog.TAG
+        )
     }
 
     private fun gotoDevConfig() {
