@@ -11,5 +11,6 @@ data class AccountBaker(
     val pendingChange: PendingChange?,
     val bakerAggregationVerifyKey: String,
     val bakerElectionVerifyKey: String,
-    val bakerSignatureVerifyKey: String
+    val bakerSignatureVerifyKey: String,
+    val isSuspended: Boolean,
 ) : Serializable
