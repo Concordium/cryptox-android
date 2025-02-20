@@ -105,7 +105,7 @@
                 style="@style/CryptoX_Container_Information.TextView"
                 android:text="@string/export_transaction_log_no_content" />
 
-            <Space
+            <View
                 android:layout_width="0dp"
                 android:layout_height="20dp" />
         </LinearLayout>
@@ -123,21 +123,21 @@
 
         <Button
             android:id="@+id/generate"
-            style="@style/CryptoX_Button_Primary"
+            style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/export_transaction_log_save" />
 
         <Button
             android:id="@+id/cancel"
-            style="@style/Cryptox_Button_Secondary"
+            style="@style/MW24_Button_Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/export_transaction_log_cancel" />
 
         <Button
             android:id="@+id/done"
-            style="@style/CryptoX_Button_Primary"
+            style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/export_transaction_log_done" />

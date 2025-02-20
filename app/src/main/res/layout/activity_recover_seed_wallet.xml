@@ -65,7 +65,7 @@
 
             <Button
                 android:id="@+id/continueButton"
-                style="@style/CCX_Button_Primary.ArrowRight"
+                style="@style/MW24_Button_Primary"
                 android:layout_width="match_parent"
                 android:layout_marginVertical="30dp"
                 android:text="@string/seed_recover_continue" />
