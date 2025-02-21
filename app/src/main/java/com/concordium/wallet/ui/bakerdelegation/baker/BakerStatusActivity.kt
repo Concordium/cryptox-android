@@ -44,8 +44,16 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             return
         }
 
-        binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
-        setContentTitle(R.string.baker_status_baker_registered_title)
+        if (accountBaker.isPrimedForSuspension) {
+            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
+            setContentTitle(R.string.baker_status_baker_primed_for_suspension_title)
+        } else if (accountBaker.isSuspended) {
+            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
+            setContentTitle(R.string.baker_status_baker_suspended_title)
+        } else {
+            binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
+            setContentTitle(R.string.baker_status_baker_registered_title)
+        }
 
         addContent(
             titleRes = R.string.baker_status_baker_account,

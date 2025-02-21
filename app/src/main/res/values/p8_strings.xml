@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="baker_status_baker_primed_for_suspension_title">Your validator is primed for suspension</string>
+    <string name="baker_status_baker_suspended_title">Your validator is suspended</string>
+</resources>
