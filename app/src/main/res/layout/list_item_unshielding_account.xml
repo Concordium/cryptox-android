@@ -46,7 +46,7 @@
 
     <Button
         android:id="@+id/unshield_button"
-        style="@style/CCX_Button_Primary"
+        style="@style/MW24_Button_Primary"
         android:layout_height="44dp"
         android:text="@string/unshielding_accounts_unshield"
         android:textSize="15sp"
