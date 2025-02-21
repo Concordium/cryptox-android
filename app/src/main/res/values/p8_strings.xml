@@ -2,4 +2,9 @@
 <resources>
     <string name="baker_status_baker_primed_for_suspension_title">Your validator is primed for suspension</string>
     <string name="baker_status_baker_suspended_title">Your validator is suspended</string>
+    <string name="update_baker_settings_menu_suspend_baking">Suspend validation</string>
+    <string name="update_baker_settings_menu_resume_baking">Resume validation</string>
+    <string name="baker_registration_confirmation_resume_title">Resume validation</string>
+    <string name="baker_registration_confirmation_resume_transaction">Transaction: Resume validation</string>
+    <string name="baker_registration_confirmation_resume_account_to_stop">Account to resume validation</string>
 </resources>

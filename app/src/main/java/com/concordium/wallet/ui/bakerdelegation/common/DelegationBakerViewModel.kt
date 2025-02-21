@@ -209,6 +209,23 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account?.delegation?.pendingChange != null || bakerDelegationData.account?.baker?.pendingChange != null
     }
 
+    fun isSuspended(): Boolean {
+        return bakerDelegationData.account?.delegation?.delegationTarget?.isBakerSuspended == true
+                || bakerDelegationData.account?.baker?.isSuspended == true
+    }
+
+    fun isPrimedForSuspension(): Boolean {
+        return bakerDelegationData.account?.baker?.isPrimedForSuspension == true
+    }
+
+    fun isValidatorSuspendable(): Boolean {
+        return bakerDelegationData.account?.baker?.isSuspended != true
+    }
+
+    fun isValidatorResumable(): Boolean {
+        return bakerDelegationData.account?.baker?.isSuspended == true
+    }
+
     fun atDisposal(): BigInteger {
         var staked: BigInteger = BigInteger.ZERO
         bakerDelegationData.account?.delegation?.let {
@@ -441,7 +458,13 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun prepareTransaction() {
-        if (bakerDelegationData.amount == null && bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL) {
+        if (bakerDelegationData.amount == null
+            && bakerDelegationData.isSuspended == null
+            && bakerDelegationData.type != UPDATE_BAKER_KEYS
+            && bakerDelegationData.type != UPDATE_BAKER_POOL
+            || bakerDelegationData.isSuspended != null
+            && bakerDelegationData.type != CONFIGURE_BAKER
+        ) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return
         }
@@ -539,6 +562,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val finalizationRewardCommission = bakerDelegationData.finalizationCommissionRate
             .takeIf { commissionRatesHasChanged() }
 
+        val suspended = bakerDelegationData.isSuspended
+            ?.takeIf { bakerDelegationData.type == CONFIGURE_BAKER }
+
         val transaction: ConfigureBakerTransaction = try {
             val configureBakerPayload = ConfigureBakerPayload
                 .builder()
@@ -583,8 +609,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 .finalizationRewardCommission(finalizationRewardCommission?.let {
                     PartsPerHundredThousand.from((it * 100000).roundToInt())
                 })
-//                TODO enable suspension/un-suspension
-//                .suspended(false)
+                .suspended(suspended)
                 .build()
 
             TransactionFactory.newConfigureBaker()

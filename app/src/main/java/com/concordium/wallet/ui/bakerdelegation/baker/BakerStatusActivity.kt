@@ -8,6 +8,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -44,10 +45,10 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             return
         }
 
-        if (accountBaker.isPrimedForSuspension) {
+        if (viewModel.isPrimedForSuspension()) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.baker_status_baker_primed_for_suspension_title)
-        } else if (accountBaker.isSuspended) {
+        } else if (viewModel.isSuspended()) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.baker_status_baker_suspended_title)
         } else {
@@ -125,7 +126,11 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
     private fun openChangeBakerStatusBottomSheet() {
         ChangeBakerStatusBottomSheet
-            .newInstance(isStopEnabled = !viewModel.isInCoolDown())
+            .newInstance(
+                isStopEnabled = !viewModel.isInCoolDown(),
+                isSuspendAvailable = viewModel.isValidatorSuspendable(),
+                isResumeAvailable = viewModel.isValidatorResumable(),
+            )
             .show(supportFragmentManager, ChangeBakerStatusBottomSheet.REQUEST_KEY)
     }
 
@@ -142,6 +147,9 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
             R.id.update_keys_button ->
                 gotoBakerUpdateIntroFlow(ProxyRepository.UPDATE_BAKER_KEYS)
+
+            R.id.resume_button ->
+                gotoBakerResume()
 
             R.id.stop_button ->
                 gotoBakerRemoveIntroFlow()
@@ -173,5 +181,19 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             viewModel.bakerDelegationData
         )
         startActivityForResultAndHistoryCheck(intent)
+    }
+
+    private fun gotoBakerResume() {
+        menuDialog?.dismiss()
+        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        viewModel.bakerDelegationData.type = ProxyRepository.CONFIGURE_BAKER
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData.copy().apply {
+                isSuspended = false
+            }
+        )
+        startActivityForResultAndHistoryCheck(intent)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 }

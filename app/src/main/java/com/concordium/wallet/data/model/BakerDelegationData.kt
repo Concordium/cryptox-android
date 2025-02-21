@@ -43,6 +43,7 @@ data class BakerDelegationData(
     var passiveDelegation: PassiveDelegation? = null
     var cost: BigInteger? = null
     var metadataUrl: String? = null
+    var isSuspended: Boolean? = null
 
     fun isUpdateBaker(): Boolean {
         return type == UPDATE_BAKER_STAKE || type == UPDATE_BAKER_POOL || type == UPDATE_BAKER_KEYS || type == CONFIGURE_BAKER
