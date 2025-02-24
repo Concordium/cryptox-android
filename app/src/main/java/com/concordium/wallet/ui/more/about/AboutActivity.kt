@@ -70,6 +70,16 @@ class AboutActivity : BaseActivity(
         binding.termsTextView.handleUrlClicks(::onUrlClicked)
         binding.privacyTextView.handleUrlClicks(::onUrlClicked)
 
+        binding.telegramButton.setOnClickListener {
+            openSocial(TELEGRAM_LINK)
+        }
+        binding.twitterButton.setOnClickListener {
+            openSocial(TWITTER_LINK)
+        }
+        binding.discordButton.setOnClickListener {
+            openSocial(DISCORD_LINK)
+        }
+
         hideActionBarBack(isVisible = true)
     }
 
@@ -77,5 +87,16 @@ class AboutActivity : BaseActivity(
 
     override fun loggedOut() {
         // No need to show auth, there is no wallet-related logic on this screen.
+    }
+
+    private fun openSocial(link: String) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+        ContextCompat.startActivity(this, browserIntent, null)
+    }
+
+    companion object {
+        private const val TELEGRAM_LINK = "https://t.me/ConcordiumNews"
+        private const val TWITTER_LINK = "https://x.com/ConcordiumNet"
+        private const val DISCORD_LINK = "https://discord.com/invite/GpKGE2hCFx"
     }
 }

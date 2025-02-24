@@ -323,6 +323,10 @@
     <string name="about_contact_text">For more info about CryptoX Wallet you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
     <string name="about_legal">Legal Information</string>
+    <string name="about_social_networks">Social</string>
+    <string name="about_telegram">Telegram button</string>
+    <string name="about_twitter">X (formerly Twitter) button</string>
+    <string name="about_discord">Discord button</string>
     <string name="about_terms_link"><a href="#terms">Terms and Conditions</a></string>
     <string name="about_privacy_link"><a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
     <!-- Import -->
