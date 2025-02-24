@@ -7,4 +7,7 @@
     <string name="baker_registration_confirmation_resume_title">Resume validation</string>
     <string name="baker_registration_confirmation_resume_transaction">Transaction: Resume validation</string>
     <string name="baker_registration_confirmation_resume_account_to_stop">Account to resume validation</string>
+    <string name="baker_registration_confirmation_suspend_title">Suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_transaction">Transaction: Suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_account_to_stop">Account to suspend validation</string>
 </resources>

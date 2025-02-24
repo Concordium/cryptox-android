@@ -151,6 +151,9 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             R.id.resume_button ->
                 gotoBakerResume()
 
+            R.id.suspend_button ->
+                gotoBakerSuspend()
+
             R.id.stop_button ->
                 gotoBakerRemoveIntroFlow()
 
@@ -191,6 +194,20 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData.copy().apply {
                 isSuspended = false
+            }
+        )
+        startActivityForResultAndHistoryCheck(intent)
+        finishUntilClass(MainActivity::class.java.canonicalName)
+    }
+
+    private fun gotoBakerSuspend() {
+        menuDialog?.dismiss()
+        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        viewModel.bakerDelegationData.type = ProxyRepository.CONFIGURE_BAKER
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData.copy().apply {
+                isSuspended = true
             }
         )
         startActivityForResultAndHistoryCheck(intent)

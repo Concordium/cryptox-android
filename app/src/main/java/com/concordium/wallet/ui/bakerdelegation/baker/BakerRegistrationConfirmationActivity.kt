@@ -103,6 +103,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             CONFIGURE_BAKER -> {
                 if (viewModel.bakerDelegationData.isSuspended == false) {
                     updateViewsResumeBaker()
+                } else if (viewModel.bakerDelegationData.isSuspended == true){
+                    updateViewsSuspendBaker()
                 }
             }
         }
@@ -184,6 +186,15 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             getString(R.string.baker_registration_confirmation_resume_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_resume_account_to_stop)
+        hideCommissionRates()
+    }
+
+    private fun updateViewsSuspendBaker() {
+        setActionBarTitle(R.string.baker_registration_confirmation_suspend_title)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_suspend_transaction)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_suspend_account_to_stop)
         hideCommissionRates()
     }
 
