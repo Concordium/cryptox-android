@@ -3,13 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="18dp">
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/notice"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/simple_circle_bg"
+        android:backgroundTint="@color/cryptox_pinky_main"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/account_name_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,10 +30,10 @@
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:importantForAccessibility="no"
-            tools:src="@drawable/mw24_ic_account_profile_1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/mw24_ic_account_profile_1" />
 
         <TextView
             android:id="@+id/account_name"
@@ -34,12 +45,12 @@
             android:singleLine="true"
             android:textAppearance="@style/MW24_Typography_Label_Main"
             android:textColor="@color/cryptox_white_main"
-            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/identity_name"
             app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/account_icon"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/identity_name"
             app:layout_constraintWidth_default="wrap"
             tools:text="Savings 1 account (initial)" />
 
@@ -49,17 +60,17 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:ellipsize="end"
+            android:gravity="end"
+            android:maxLength="16"
             android:maxLines="1"
             android:singleLine="true"
-            android:maxLength="16"
-            android:gravity="end"
             android:textAppearance="@style/MW24_Typography_Label_Main"
             android:textColor="@color/mw24_blue_3"
-            app:layout_goneMarginEnd="0dp"
-            app:layout_constraintWidth_default="wrap"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/status_read_only"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap"
+            app:layout_goneMarginEnd="0dp"
             tools:text="Identity 1" />
 
         <ImageView
@@ -81,7 +92,9 @@
         android:id="@+id/balance_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
