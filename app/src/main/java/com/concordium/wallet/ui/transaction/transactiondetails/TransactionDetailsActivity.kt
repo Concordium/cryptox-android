@@ -21,6 +21,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityTransactionDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.TransactionViewHelper
+import com.concordium.wallet.uicore.toast.showGradientToast
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.getSerializable
 
@@ -98,26 +99,6 @@ class TransactionDetailsActivity : BaseActivity(
         binding.memoLayout.visibility = View.GONE
         binding.transactionDateLayout.visibility = View.GONE
 
-        val onClickListener = object : TransactionDetailsEntryView.OnCopyClickListener {
-            override fun onCopyClicked(title: String, value: String) {
-                val clipboard: ClipboardManager =
-                    getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(title, value)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.transaction_details_value_copied, title.trim(':')),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-        binding.fromAddressLayout.enableCopy(onClickListener)
-        binding.toAddressLayout.enableCopy(onClickListener)
-        binding.transactionHashLayout.enableCopy(onClickListener)
-        binding.blockHashLayout.enableCopy(onClickListener)
-        binding.memoLayout.enableCopy(onClickListener)
-        binding.detailsLayout.enableCopy(onClickListener)
-
         binding.viewOnExplorerButton.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.getExplorerUrl()))
             ContextCompat.startActivity(this, browserIntent, null)
@@ -128,6 +109,18 @@ class TransactionDetailsActivity : BaseActivity(
 
     //region Control/UI
     // ************************************************************
+
+    private fun onCopyClicked(title: String, value: String) {
+        val clipboard: ClipboardManager =
+            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(title, value)
+        clipboard.setPrimaryClip(clip)
+
+        showGradientToast(
+            iconResId = R.drawable.mw24_ic_address_copy_check,
+            title = getString(R.string.transaction_details_value_copied, title.trim(':'))
+        )
+    }
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
@@ -177,12 +170,44 @@ class TransactionDetailsActivity : BaseActivity(
         showEvents(transaction)
         showMemo(transaction)
         showExplorerButton(transaction)
+
+        enableCopy(transaction)
+    }
+
+    private fun enableCopy(ta: Transaction) {
+        if (ta.transactionHash != null) {
+            binding.copyButton.setOnClickListener {
+                onCopyClicked(
+                    getString(R.string.transaction_details_transaction_hash),
+                    ta.transactionHash!!
+                )
+            }
+        } else {
+            ta.blockHashes?.let {
+                val blockHashesString = StringBuilder("")
+                var isFirst = true
+                for (blockHash in it) {
+                    if (!isFirst) {
+                        blockHashesString.append("\n\n")
+                    }
+                    blockHashesString.append(blockHash)
+                    isFirst = false
+                }
+                binding.copyButton.setOnClickListener {
+                    onCopyClicked(
+                        getString(R.string.transaction_details_block_hash),
+                        blockHashesString.toString()
+                    )
+                }
+            }
+        }
     }
 
     private fun showDate(ta: Transaction) {
         val time = DateTimeUtil.formatDateAsLocalMediumWithTime(ta.timeStamp)
         binding.transactionDateLayout.visibility = View.VISIBLE
         binding.transactionDateLayout.setValue(time)
+        binding.transactionDateLayout.setDivider(false)
     }
 
     private fun showMemo(ta: Transaction) {
