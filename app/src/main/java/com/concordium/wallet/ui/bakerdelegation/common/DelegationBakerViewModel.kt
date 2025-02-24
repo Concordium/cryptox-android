@@ -163,7 +163,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             return true
         if (bakerDelegationData.isBakerPool && !bakerDelegationData.oldDelegationIsBaker)
             return true
-        if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker && bakerDelegationData.poolId != (bakerDelegationData.oldDelegationTargetPoolId?.toString()
+        if (bakerDelegationData.isBakerPool && bakerDelegationData.poolId != (bakerDelegationData.oldDelegationTargetPoolId?.toString()
                 ?: "")
         )
             return true
@@ -200,7 +200,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isSuspended(): Boolean {
-        return bakerDelegationData.account.delegation?.delegationTarget?.isBakerSuspended == true
+        return bakerDelegationData.account.delegation?.isSuspended == true
                 || bakerDelegationData.account.baker?.isSuspended == true
     }
 

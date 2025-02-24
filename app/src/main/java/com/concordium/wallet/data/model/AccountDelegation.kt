@@ -8,4 +8,5 @@ data class AccountDelegation(
     val stakedAmount: BigInteger, // the amount that is currently staked
     val delegationTarget: DelegationTarget,
     val pendingChange: PendingChange?, // if present indicates that the delegator is in a cooldown due to removal or a change of stake. If present, the value is an object with the fields
+    val isSuspended: Boolean, // if the current pool validator is suspended
 ) : Serializable
