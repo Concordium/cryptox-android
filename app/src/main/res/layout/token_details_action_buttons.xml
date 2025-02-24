@@ -101,7 +101,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/earn_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -118,16 +118,29 @@
             android:tooltipText="@string/account_details_earn_rewards"
             app:srcCompat="@drawable/mw24_ic_earn_btn" />
 
+        <View
+            android:id="@+id/earn_btn_notice"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_alignTop="@id/earn_btn"
+            android:layout_alignEnd="@id/earn_btn"
+            android:layout_gravity="top|end"
+            android:layout_margin="3dp"
+            android:background="@drawable/simple_circle_bg"
+            android:backgroundTint="@color/cryptox_pinky_main" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/earn_btn"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="2dp"
             android:text="@string/account_details_earn"
             android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
             android:textColor="@color/mw24_blue_2" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <View
         android:layout_width="0dp"
@@ -165,6 +178,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </LinearLayout>
 

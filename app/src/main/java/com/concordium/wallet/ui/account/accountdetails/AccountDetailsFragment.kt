@@ -72,7 +72,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = ActivityAccountDetailsBinding.inflate(inflater, container, false)
         onboardingBinding = FragmentOnboardingBinding.inflate(layoutInflater)
@@ -286,7 +286,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             TransactionStatus.ABSENT -> setErrorMode()
             TransactionStatus.FINALIZED -> setFinalizedMode(account)
             TransactionStatus.COMMITTED,
-            TransactionStatus.RECEIVED -> setPendingMode()
+            TransactionStatus.RECEIVED,
+            -> setPendingMode()
 
             else -> {
                 showStateDefault()
@@ -323,6 +324,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             sendFundsBtn.isEnabled = !account.readOnly
             receiveBtn.isEnabled = true
             earnBtn.isEnabled = !account.readOnly
+            earnBtnNotice.isVisible = account.isBakerPrimedForSuspension || account.isBakerSuspended
             activityBtn.isEnabled = true
         }
         setupOnrampBanner(active = true)
