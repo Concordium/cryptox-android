@@ -199,20 +199,19 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account.delegation?.pendingChange != null || bakerDelegationData.account.baker?.pendingChange != null
     }
 
-    fun isSuspended(): Boolean {
-        return bakerDelegationData.account.delegation?.isSuspended == true
-                || bakerDelegationData.account.baker?.isSuspended == true
+    fun isBakerSuspended(): Boolean {
+        return bakerDelegationData.account.isBakerSuspended
     }
 
-    fun isPrimedForSuspension(): Boolean {
-        return bakerDelegationData.account.baker?.isPrimedForSuspension == true
+    fun isBakerPrimedForSuspension(): Boolean {
+        return bakerDelegationData.account.isBakerPrimedForSuspension
     }
 
-    fun isValidatorSuspendable(): Boolean {
+    fun isBakerSuspendable(): Boolean {
         return bakerDelegationData.account.baker?.isSuspended != true
     }
 
-    fun isValidatorResumable(): Boolean {
+    fun isBakerResumable(): Boolean {
         return bakerDelegationData.account.baker?.isSuspended == true
     }
 

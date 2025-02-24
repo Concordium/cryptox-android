@@ -45,10 +45,10 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             return
         }
 
-        if (viewModel.isPrimedForSuspension()) {
+        if (viewModel.isBakerPrimedForSuspension()) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.baker_status_baker_primed_for_suspension_title)
-        } else if (viewModel.isSuspended()) {
+        } else if (viewModel.isBakerSuspended()) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.baker_status_baker_suspended_title)
         } else {
@@ -127,8 +127,8 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         ChangeBakerStatusBottomSheet
             .newInstance(
                 isStopEnabled = !viewModel.isInCoolDown(),
-                isSuspendAvailable = viewModel.isValidatorSuspendable(),
-                isResumeAvailable = viewModel.isValidatorResumable(),
+                isSuspendAvailable = viewModel.isBakerSuspendable(),
+                isResumeAvailable = viewModel.isBakerResumable(),
             )
             .show(supportFragmentManager, ChangeBakerStatusBottomSheet.REQUEST_KEY)
     }
