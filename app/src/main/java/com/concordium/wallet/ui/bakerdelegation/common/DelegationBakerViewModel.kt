@@ -372,6 +372,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             targetChange = targetChange,
             metadataSize = metadataSize,
             openStatus = openStatus,
+            suspended = bakerDelegationData.toSetBakerSuspended,
             success = {
                 bakerDelegationData.energy = it.energy
                 bakerDelegationData.cost = it.cost
