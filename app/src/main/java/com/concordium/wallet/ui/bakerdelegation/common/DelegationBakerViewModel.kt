@@ -332,10 +332,24 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         requestId: Int? = null,
         metadataSizeForced: Int? = null,
     ) {
-        val amount = when (bakerDelegationData.type) {
-            UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
-            else -> null
-        }
+        val suspended: Boolean? =
+            if (bakerDelegationData.type == CONFIGURE_BAKER)
+                bakerDelegationData.toSetBakerSuspended
+            else
+                null
+
+        val amount =
+            if (suspended != null)
+                null
+            else if (bakerDelegationData.type in setOf(
+                    UPDATE_DELEGATION,
+                    UPDATE_BAKER_STAKE,
+                    CONFIGURE_BAKER
+                )
+            )
+                bakerDelegationData.amount
+            else
+                null
 
         val restake = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> if (restakeHasChanged()) bakerDelegationData.restake else null
@@ -372,7 +386,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             targetChange = targetChange,
             metadataSize = metadataSize,
             openStatus = openStatus,
-            suspended = bakerDelegationData.toSetBakerSuspended,
+            suspended = suspended,
             success = {
                 bakerDelegationData.energy = it.energy
                 bakerDelegationData.cost = it.cost
