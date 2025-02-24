@@ -211,7 +211,7 @@ class MoreOverviewFragment : BaseFragment() {
             clearWalletConnectAndRestart()
         }
 
-        binding.removeWalletLayout.setOnClickListener {
+        binding.eraseDataLayout.setOnClickListener {
             eraseDataAndExit()
         }
     }
