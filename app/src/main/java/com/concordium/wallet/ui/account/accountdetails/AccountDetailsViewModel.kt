@@ -12,21 +12,17 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
-import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.BakerDelegationData
-import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +31,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
@@ -54,20 +49,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val identityRepository =
         IdentityRepository(session.walletStorage.database.identityDao())
 
-    private val recipientRepository =
-        RecipientRepository(session.walletStorage.database.recipientDao())
-
-    private lateinit var transactionMappingHelper: TransactionMappingHelper
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-
-    private var nonMergedLocalTransactions: MutableList<Transaction> = ArrayList()
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
-
-    private val _newFinalizedAccountFlow = MutableStateFlow("")
-    val newFinalizedAccountFlow = _newFinalizedAccountFlow.asStateFlow()
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -88,7 +74,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val showDialogLiveData: LiveData<Event<DialogToShow>>
         get() = _showDialogLiveData
 
-    private val _activeAccount = MutableSharedFlow<Account>()
+    private val _activeAccount = MutableSharedFlow<Account>(
+        replay = 1,
+        extraBufferCapacity = Int.MAX_VALUE,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
     val activeAccount = _activeAccount.asSharedFlow()
 
     private val _stateFlow = MutableSharedFlow<OnboardingState>()
@@ -134,7 +124,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             _totalBalanceLiveData.postValue(it.balance)
 
             if (account.transactionStatus == TransactionStatus.COMMITTED ||
-                account.transactionStatus == TransactionStatus.RECEIVED) {
+                account.transactionStatus == TransactionStatus.RECEIVED
+            ) {
                 restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
             }
         }
@@ -162,15 +153,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 }
                 viewModelScope.launch {
                     accountUpdater.updateForAccount(account)
-                    val type =
-                        if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
-                    EventBus.getDefault().post(
-                        BakerDelegationData(
-                            account,
-                            isTransactionInProgress = hasPendingDelegationTransactions.value || hasPendingBakingTransactions.value,
-                            type = type
-                        )
-                    )
                 }
             } else {
                 _totalBalanceLiveData.postValue(BigInteger.ZERO)
@@ -181,7 +163,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
-                getLocalTransfers()
+                checkLocalTransfers()
                 viewModelScope.launch {
                     updateAccountFromRepository()
                     if (::account.isInitialized) {
@@ -191,7 +173,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 }
             }
 
-            override fun onNewAccountFinalized(accountName: String) { }
+            override fun onNewAccountFinalized(accountName: String) {}
 
             override fun onError(stringRes: Int) {
                 _errorLiveData.value = Event(stringRes)
@@ -214,26 +196,15 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private fun getLocalTransfers() {
-        viewModelScope.launch {
-            _hasPendingDelegationTransactions.emit(false)
-            _hasPendingBakingTransactions.emit(false)
-            val recipientList = recipientRepository.getAll()
-            transactionMappingHelper = TransactionMappingHelper(activeAccount.first(), recipientList)
-            val transferList = transferRepository.getAllByAccountId(activeAccount.first().id)
-            for (transfer in transferList) {
-                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
-                    _hasPendingDelegationTransactions.emit(true)
-                if (transfer.transactionType == TransactionType.LOCAL_BAKER)
-                    _hasPendingBakingTransactions.emit(true)
-                val transaction = transfer.toTransaction()
-                transactionMappingHelper.addTitlesToTransaction(
-                    transaction,
-                    transfer,
-                    getApplication()
-                )
-                nonMergedLocalTransactions.add(transaction)
-            }
+    private fun checkLocalTransfers() = viewModelScope.launch {
+        _hasPendingDelegationTransactions.emit(false)
+        _hasPendingBakingTransactions.emit(false)
+        val transferList = transferRepository.getAllByAccountId(activeAccount.first().id)
+        for (transfer in transferList) {
+            if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
+                _hasPendingDelegationTransactions.emit(true)
+            if (transfer.transactionType == TransactionType.LOCAL_BAKER)
+                _hasPendingBakingTransactions.emit(true)
         }
     }
 

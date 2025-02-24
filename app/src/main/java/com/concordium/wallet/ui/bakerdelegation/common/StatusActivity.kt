@@ -13,9 +13,6 @@ import com.concordium.wallet.databinding.DelegationbakerStatusBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 abstract class StatusActivity(
     titleId: Int = R.string.app_name
@@ -30,25 +27,6 @@ abstract class StatusActivity(
 
         initializeViewModel()
         viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
-        initView()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // subscribe to messages from AccountDetailsViewModel
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // unsubscribe from messages from AccountDetailsViewModel
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(bakerDelegationData: BakerDelegationData) {
-        // receive message from AccountDetailsViewModel
-        viewModel.bakerDelegationData = bakerDelegationData
         initView()
     }
 

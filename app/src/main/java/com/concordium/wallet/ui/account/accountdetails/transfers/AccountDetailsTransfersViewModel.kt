@@ -3,8 +3,6 @@ package com.concordium.wallet.ui.account.accountdetails.transfers
 import android.app.Application
 import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -14,7 +12,6 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.RemoteTransaction
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -32,7 +29,6 @@ import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
 import java.util.Date
 
@@ -56,8 +52,6 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
     var allowScrollToLoadMore = true
     var hasMoreRemoteTransactionsToLoad = true
         private set
-    private var hasPendingDelegationTransactions: Boolean = false
-    private var hasPendingBakingTransactions: Boolean = false
 
     private lateinit var account: Account
 
@@ -105,24 +99,20 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
         })
     }
 
-    private fun getLocalTransfers() {
-        viewModelScope.launch {
-            hasPendingDelegationTransactions = false
-            hasPendingBakingTransactions = false
-            val recipientList = recipientRepository.getAll()
-            transactionMappingHelper = TransactionMappingHelper(account, recipientList)
-            val transferList = transferRepository.getAllByAccountId(account.id)
-            for (transfer in transferList) {
-                val transaction = transfer.toTransaction()
-                transactionMappingHelper.addTitlesToTransaction(
-                    transaction,
-                    transfer,
-                    getApplication()
-                )
-                nonMergedLocalTransactions.add(transaction)
-            }
-            loadRemoteTransactions(null)
+    private fun getLocalTransfers() = viewModelScope.launch {
+        val recipientList = recipientRepository.getAll()
+        transactionMappingHelper = TransactionMappingHelper(account, recipientList)
+        val transferList = transferRepository.getAllByAccountId(account.id)
+        for (transfer in transferList) {
+            val transaction = transfer.toTransaction()
+            transactionMappingHelper.addTitlesToTransaction(
+                transaction,
+                transfer,
+                getApplication()
+            )
+            nonMergedLocalTransactions.add(transaction)
         }
+        loadRemoteTransactions(null)
     }
 
     fun loadMoreRemoteTransactions(): Boolean {
@@ -227,7 +217,7 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
 
     private fun checkToAddHeaderItem(
         adapterList: MutableList<AdapterItem>,
-        transaction: Transaction
+        transaction: Transaction,
     ): Boolean {
         val lastDate = lastHeaderDate
         val taDate = transaction.timeStamp
@@ -249,15 +239,6 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
             viewModelScope.launch {
                 updateAccountFromRepository()
                 accountUpdater.updateForAccount(account)
-                val type =
-                    if (account.delegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
-                EventBus.getDefault().post(
-                    BakerDelegationData(
-                        account,
-                        isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions,
-                        type = type
-                    )
-                )
             }
         } else {
             _totalBalanceFlow.value = BigInteger.ZERO
