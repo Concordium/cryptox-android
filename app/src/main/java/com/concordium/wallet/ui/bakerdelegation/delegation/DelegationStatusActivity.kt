@@ -46,7 +46,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         clearState()
 
         val account = viewModel.bakerDelegationData.account
-        val accountDelegation = account?.delegation
+        val accountDelegation = account.delegation
 
         binding.statusButtonBottom.text = getString(R.string.delegation_status_update)
 
@@ -58,7 +58,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
             return
         }
 
-        if (account == null || accountDelegation == null) {
+        if (accountDelegation == null) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
@@ -100,7 +100,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
             getString(R.string.delegation_status_at_disposal)
         )
 
-        viewModel.bakerDelegationData.account?.delegation?.pendingChange?.let { pendingChange ->
+        viewModel.bakerDelegationData.account.delegation?.pendingChange?.let { pendingChange ->
             addPendingChange(
                 pendingChange,
                 R.string.delegation_status_effective_time,
@@ -112,8 +112,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
-        viewModel.bakerDelegationData.account?.cooldowns
-            ?.also(::addCooldowns)
+        addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
         binding.statusButtonTop.visibility = View.VISIBLE
         binding.statusButtonTop.text = getString(R.string.delegation_status_stop)

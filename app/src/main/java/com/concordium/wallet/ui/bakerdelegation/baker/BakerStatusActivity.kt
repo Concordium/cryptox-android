@@ -22,7 +22,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         clearState()
 
         val account = viewModel.bakerDelegationData.account
-        val accountBaker = account?.baker
+        val accountBaker = account.baker
 
         binding.statusButtonBottom.text = getString(R.string.baker_status_change_baking_status)
 
@@ -34,7 +34,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             return
         }
 
-        if (account == null || accountBaker == null) {
+        if (accountBaker == null) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
             setContentTitle(R.string.baker_status_no_baker_title)
             setEmptyState(getString(R.string.baker_status_no_baker))
@@ -100,8 +100,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             )
         }
 
-        viewModel.bakerDelegationData.account?.cooldowns
-            ?.also(::addCooldowns)
+        addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
         binding.statusButtonBottom.setOnClickListener {
             openChangeBakerStatusBottomSheet()
@@ -193,7 +192,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData.copy().apply {
-                isSuspended = false
+                toSetBakerSuspended = false
             }
         )
         startActivityForResultAndHistoryCheck(intent)
@@ -207,7 +206,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData.copy().apply {
-                isSuspended = true
+                toSetBakerSuspended = true
             }
         )
         startActivityForResultAndHistoryCheck(intent)

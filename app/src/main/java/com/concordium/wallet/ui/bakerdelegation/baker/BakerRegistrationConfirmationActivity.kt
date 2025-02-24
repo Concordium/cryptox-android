@@ -73,8 +73,9 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding.submitBakerTransaction.text =
             getString(R.string.baker_registration_confirmation_submit)
         binding.accountToBakeFrom.text =
-            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account?.address ?: "")
+            viewModel.bakerDelegationData.account.name
+                .plus("\n\n")
+                .plus(viewModel.bakerDelegationData.account.address)
         binding.estimatedTransactionFee.visibility = View.VISIBLE
 
         when (viewModel.bakerDelegationData.type) {
@@ -83,8 +84,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             }
 
             UPDATE_BAKER_KEYS -> {
-                viewModel.bakerDelegationData.amount =
-                    viewModel.bakerDelegationData.account?.baker?.stakedAmount
                 updateViewsUpdateBakerKeys()
             }
 
@@ -101,9 +100,9 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             }
 
             CONFIGURE_BAKER -> {
-                if (viewModel.bakerDelegationData.isSuspended == false) {
+                if (viewModel.bakerDelegationData.toSetBakerSuspended == false) {
                     updateViewsResumeBaker()
-                } else if (viewModel.bakerDelegationData.isSuspended == true){
+                } else if (viewModel.bakerDelegationData.toSetBakerSuspended == true){
                     updateViewsSuspendBaker()
                 }
             }

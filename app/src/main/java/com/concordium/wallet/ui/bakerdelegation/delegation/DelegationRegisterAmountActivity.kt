@@ -95,7 +95,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             R.string.amount,
             CurrencyUtil.formatGTU(BigInteger.ZERO)
         )
-        viewModel.bakerDelegationData.account?.let { account ->
+        viewModel.bakerDelegationData.account.let { account ->
             account.delegation?.let { accountDelegation ->
                 binding.delegationAmount.text =
                     CurrencyUtil.formatGTU(accountDelegation.stakedAmount)
@@ -160,13 +160,13 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             minimumValue = if (viewModel.isUpdatingDelegation()) BigInteger.ZERO else BigInteger.ONE,
             maximumValue = null,
             oldStakedAmount = null,
-            balance = viewModel.bakerDelegationData.account?.balance ?: BigInteger.ZERO,
+            balance = viewModel.bakerDelegationData.account.balance,
             atDisposal = viewModel.atDisposal(),
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             poolLimit = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
-            previouslyStakedInPool = viewModel.bakerDelegationData.account?.delegation?.stakedAmount,
+            previouslyStakedInPool = viewModel.bakerDelegationData.account.delegation?.stakedAmount,
             isInCoolDown = viewModel.isInCoolDown(),
-            oldPoolId = viewModel.bakerDelegationData.account?.delegation?.delegationTarget?.bakerId,
+            oldPoolId = viewModel.bakerDelegationData.account.delegation?.delegationTarget?.bakerId,
             newPoolId = viewModel.bakerDelegationData.poolId
         )
     }
@@ -181,11 +181,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amount.isEnabled = false
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
-            viewModel.bakerDelegationData.oldStakedAmount =
-                viewModel.bakerDelegationData.account?.delegation?.stakedAmount
             binding.amountDesc.text =
                 getString(R.string.delegation_update_delegation_amount_enter_amount)
-            binding.amount.setText(viewModel.bakerDelegationData.account?.delegation?.stakedAmount?.let {
+            binding.amount.setText(viewModel.bakerDelegationData.account.delegation?.stakedAmount?.let {
                 CurrencyUtil.formatGTU(
                     value = it,
                     withCommas = false
@@ -214,7 +212,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             when {
                 !hasChanges() -> showNoChange()
                 amountToStake.signum() == 0 -> showNewAmountZero()
-                amountToStake < (viewModel.bakerDelegationData.account?.delegation?.stakedAmount
+                amountToStake < (viewModel.bakerDelegationData.account.delegation?.stakedAmount
                     ?: BigInteger.ZERO) -> showReduceWarning()
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
