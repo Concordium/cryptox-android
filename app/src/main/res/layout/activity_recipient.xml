@@ -76,7 +76,7 @@
 
                 <Button
                     android:id="@+id/save_button"
-                    style="@style/CryptoX_Button_Primary"
+                    style="@style/MW24_Button_Primary"
                     android:layout_width="0dp"
                     android:layout_margin="@dimen/activity_vertical_margin"
                     android:text="@string/recipient_save_button"

@@ -87,9 +87,8 @@ class ExportAccountKeysActivity : BaseActivity(
             ClipData.newPlainText("key", viewModel.accountDataKeys.level0.keys.keys.signKey)
         clipboardManager.setPrimaryClip(clipData)
 
-        binding.copyButton.visibility = View.INVISIBLE
-        binding.copyButtonTextView.text = getString(R.string.setup_wallet_seed_phrase_copied)
-        binding.copyButtonTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        binding.copyButton.text = getString(R.string.setup_wallet_seed_phrase_copied)
+        binding.copyButton.setCompoundDrawablesRelativeWithIntrinsicBounds(
             ContextCompat.getDrawable(this, R.drawable.cryptox_ico_check_16),
             null,
             null,
