@@ -48,7 +48,7 @@
         <TextView
             android:id="@+id/toast_description"
             style="@style/MW24_Typography_Main_Capture_Small"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="4dp"
@@ -61,6 +61,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/toast_image"
             app:layout_constraintTop_toBottomOf="@id/toast_title"
+            app:layout_constraintWidth_default="wrap"
             tools:text="Address copied"
             tools:visibility="visible"/>
 
