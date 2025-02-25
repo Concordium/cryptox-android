@@ -31,8 +31,8 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.observe
 import com.concordium.wallet.extension.showSingle
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
@@ -184,6 +184,18 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                     requireActivity().finish()
                 }
             })
+        viewModelAccountDetails.goToEarnLiveData.observe(
+            viewLifecycleOwner,
+            object : EventObserver<AccountDetailsViewModel.GoToEarnPayload>() {
+                override fun onUnhandledEvent(value: AccountDetailsViewModel.GoToEarnPayload) {
+                    gotoEarn(
+                        activity = requireActivity() as BaseActivity,
+                        account = value.account,
+                        hasPendingDelegationTransactions = value.hasPendingDelegationTransactions,
+                        hasPendingBakingTransactions = value.hasPendingBakingTransactions,
+                    )
+                }
+            })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
             viewModelTokens.loadTokensBalances()
@@ -211,6 +223,23 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
             binding.fileWalletMigrationDisclaimerLayout.isVisible = it
             isFileWallet = it
+        }
+
+        viewModelAccountDetails.suspensionNotice.collectWhenStarted(viewLifecycleOwner) { notice ->
+            binding.earnBtnNotice.isVisible = notice != null && notice.isForCurrentAccount
+            binding.suspensionNotice.isVisible = notice != null
+
+            if (notice == null) {
+                return@collectWhenStarted
+            }
+
+            binding.suspensionNotice.text = when (notice) {
+                is AccountDetailsViewModel.SuspensionNotice.PrimedForSuspension ->
+                    getString(R.string.account_details_suspension_notice_primed_for_suspension)
+
+                is AccountDetailsViewModel.SuspensionNotice.Suspended ->
+                    getString(R.string.account_details_suspension_notice_primed_for_suspension)
+            }
         }
 
         viewModelAccountDetails.showDialogLiveData.observe(viewLifecycleOwner) { event ->
@@ -277,6 +306,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.fileWalletMigrationDisclaimerLayout.setOnClickListener {
             startActivity(Intent(requireActivity(), WalletsActivity::class.java))
         }
+        binding.suspensionNotice.setOnClickListener {
+            viewModelAccountDetails.onSuspensionNoticeClicked()
+        }
     }
 
     private fun updateViews(account: Account) {
@@ -324,7 +356,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             sendFundsBtn.isEnabled = !account.readOnly
             receiveBtn.isEnabled = true
             earnBtn.isEnabled = !account.readOnly
-            earnBtnNotice.isVisible = account.isBakerPrimedForSuspension || account.isBakerSuspended
             activityBtn.isEnabled = true
         }
         setupOnrampBanner(active = true)
@@ -403,7 +434,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         binding.earnBtn.setOnClickListener {
-            onEarnClicked()
+            viewModelAccountDetails.onEarnClicked()
         }
 
         binding.activityBtn.setOnClickListener {
@@ -555,15 +586,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         startActivity(intent)
     }
 
-    private fun onEarnClicked() {
-        gotoEarn(
-            requireActivity() as MainActivity,
-            viewModelAccountDetails.account,
-            viewModelAccountDetails.hasPendingDelegationTransactions.value,
-            viewModelAccountDetails.hasPendingBakingTransactions.value
-        )
-    }
-
     private fun onActivityClicked() {
         val intent = Intent(requireActivity(), AccountDetailsTransfersActivity::class.java)
         intent.putExtra(
@@ -579,11 +601,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             putExtra(TokenDetailsActivity.TOKEN, token)
             putExtra(
                 TokenDetailsActivity.PENDING_DELEGATION,
-                viewModelAccountDetails.hasPendingDelegationTransactions.value
+                viewModelAccountDetails.hasPendingDelegationTransactions
             )
             putExtra(
                 TokenDetailsActivity.PENDING_VALIDATION,
-                viewModelAccountDetails.hasPendingBakingTransactions.value
+                viewModelAccountDetails.hasPendingBakingTransactions
             )
         }
         showTokenDetails.launch(intent)

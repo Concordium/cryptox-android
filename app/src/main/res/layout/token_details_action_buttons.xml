@@ -127,7 +127,9 @@
             android:layout_gravity="top|end"
             android:layout_margin="3dp"
             android:background="@drawable/simple_circle_bg"
-            android:backgroundTint="@color/cryptox_pinky_main" />
+            android:backgroundTint="@color/mw24_attention_red"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <TextView
             android:layout_width="wrap_content"

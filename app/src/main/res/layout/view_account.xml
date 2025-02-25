@@ -12,8 +12,10 @@
         android:layout_margin="8dp"
         android:background="@drawable/simple_circle_bg"
         android:backgroundTint="@color/cryptox_pinky_main"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/account_name_area"

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="baker_status_baker_primed_for_suspension_title">Your validator is primed for suspension</string>
-    <string name="baker_status_baker_suspended_title">Your validator has been suspended</string>
+    <string name="your_validator_has_been_suspended">Your validator has been suspended</string>
+    <string name="your_validator_is_primed_for_suspension">Your validator has been suspended</string>
+    <string name="baker_status_baker_primed_for_suspension_title">@string/your_validator_is_primed_for_suspension</string>
+    <string name="baker_status_baker_suspended_title">@string/your_validator_has_been_suspended</string>
     <string name="update_baker_settings_menu_suspend_baking">Suspend validation</string>
     <string name="update_baker_settings_menu_resume_baking">Resume validation</string>
     <string name="baker_registration_confirmation_resume_title">Resume validation</string>
@@ -10,5 +12,7 @@
     <string name="baker_registration_confirmation_suspend_title">Suspend validation</string>
     <string name="baker_registration_confirmation_suspend_transaction">Transaction: Suspend validation</string>
     <string name="baker_registration_confirmation_suspend_account_to_stop">Account to suspend validation</string>
-    <string name="delegation_status_content_suspended_title">Your validator has been suspended</string>
+    <string name="delegation_status_content_suspended_title">@string/your_validator_has_been_suspended</string>
+    <string name="account_details_suspension_notice_suspended">@string/your_validator_has_been_suspended</string>
+    <string name="account_details_suspension_notice_primed_for_suspension">@string/your_validator_is_primed_for_suspension</string>
 </resources>

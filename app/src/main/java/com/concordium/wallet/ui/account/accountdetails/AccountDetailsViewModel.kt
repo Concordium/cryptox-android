@@ -20,6 +20,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onboarding.OnboardingState
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -39,6 +40,20 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     enum class DialogToShow {
         UNSHIELDING
     }
+
+    sealed class SuspensionNotice(
+        val isForCurrentAccount: Boolean,
+    ) {
+        class PrimedForSuspension(isCurrentAccount: Boolean) : SuspensionNotice(isCurrentAccount)
+
+        class Suspended(isCurrentAccount: Boolean) : SuspensionNotice(isCurrentAccount)
+    }
+
+    class GoToEarnPayload(
+        val account: Account,
+        val hasPendingDelegationTransactions: Boolean,
+        val hasPendingBakingTransactions: Boolean,
+    )
 
     lateinit var account: Account
 
@@ -62,6 +77,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _finishLiveData = MutableLiveData<Event<Boolean>>()
     val finishLiveData: LiveData<Event<Boolean>>
         get() = _finishLiveData
+
+    private val _goToEarnLiveData = MutableLiveData<Event<GoToEarnPayload>>()
+    val goToEarnLiveData: LiveData<Event<GoToEarnPayload>>
+        get() = _goToEarnLiveData
 
     private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
     val totalBalanceLiveData: LiveData<BigInteger>
@@ -90,11 +109,13 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _fileWalletMigrationVisible = MutableStateFlow(false)
     val fileWalletMigrationVisible = _fileWalletMigrationVisible.asStateFlow()
 
-    private val _hasPendingDelegationTransactions = MutableStateFlow(false)
-    val hasPendingDelegationTransactions = _hasPendingDelegationTransactions.asStateFlow()
+    private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
+    val suspensionNotice = _suspensionNotice.asStateFlow()
 
-    private val _hasPendingBakingTransactions = MutableStateFlow(false)
-    val hasPendingBakingTransactions = _hasPendingBakingTransactions.asStateFlow()
+    var hasPendingBakingTransactions = false
+        private set
+    var hasPendingDelegationTransactions = false
+        private set
 
     private var updaterJob: Job? = null
 
@@ -163,7 +184,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
-                checkLocalTransfers()
+                checkBakingDelegationStatus()
                 viewModelScope.launch {
                     updateAccountFromRepository()
                     if (::account.isInitialized) {
@@ -196,15 +217,43 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private fun checkLocalTransfers() = viewModelScope.launch {
-        _hasPendingDelegationTransactions.emit(false)
-        _hasPendingBakingTransactions.emit(false)
-        val transferList = transferRepository.getAllByAccountId(activeAccount.first().id)
+    private fun checkBakingDelegationStatus() = viewModelScope.launch {
+        hasPendingBakingTransactions = false
+        hasPendingDelegationTransactions = false
+
+        val currentAccount = activeAccount.first()
+        val transferList = transferRepository.getAllByAccountId(currentAccount.id)
+
         for (transfer in transferList) {
             if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
-                _hasPendingDelegationTransactions.emit(true)
+                hasPendingDelegationTransactions = true
             if (transfer.transactionType == TransactionType.LOCAL_BAKER)
-                _hasPendingBakingTransactions.emit(true)
+                hasPendingBakingTransactions = true
+        }
+
+        val allAccounts = accountRepository.getAllDone()
+        val accountWithSuspendedBakerIds = allAccounts
+            .filter(Account::isBakerSuspended)
+            .mapTo(mutableSetOf(), Account::id)
+        val accountWithBakerPrimedForSuspensionIds = allAccounts
+            .filter(Account::isBakerPrimedForSuspension)
+            .mapTo(mutableSetOf(), Account::id)
+
+        // Show a suspension notice if any accounts have baker suspended or primed for suspension.
+        if (accountWithSuspendedBakerIds.isNotEmpty()) {
+            _suspensionNotice.emit(
+                SuspensionNotice.Suspended(
+                    isCurrentAccount = currentAccount.id in accountWithSuspendedBakerIds,
+                )
+            )
+        } else if (accountWithBakerPrimedForSuspensionIds.isNotEmpty()) {
+            _suspensionNotice.emit(
+                SuspensionNotice.PrimedForSuspension(
+                    isCurrentAccount = currentAccount.id in accountWithBakerPrimedForSuspensionIds,
+                )
+            )
+        } else {
+            _suspensionNotice.emit(null)
         }
     }
 
@@ -270,6 +319,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private suspend fun handleAccountCreation() {
         val allAccounts = accountRepository.getAll()
+
         if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
             getActiveAccount()
@@ -331,5 +381,50 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     fun setHasShownInitialAnimation() {
         return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
+    }
+
+    fun onEarnClicked() {
+        goToEarnIfPossible()
+    }
+
+    fun onSuspensionNoticeClicked() = viewModelScope.launch {
+        if (suspensionNotice.value?.isForCurrentAccount == true) {
+            goToEarnIfPossible()
+            return@launch
+        }
+
+        val accountRequiringAction: Account? = accountRepository
+            .getAllDone()
+            .let { accounts ->
+                accounts.find(Account::isBakerSuspended)
+                    ?: accounts.find(Account::isBakerPrimedForSuspension)
+            }
+
+        if (accountRequiringAction == null) {
+            Log.w("Can't find account requiring action")
+            return@launch
+        }
+
+        // Switch account to the one requiring action and go to earn.
+        accountRepository.activate(accountRequiringAction.address)
+        getActiveAccount().join()
+        goToEarnIfPossible()
+    }
+
+    private fun goToEarnIfPossible() {
+        if (account.readOnly) {
+            Log.d("Not going to earn for a read-only account")
+            return
+        }
+
+        _goToEarnLiveData.postValue(
+            Event(
+                GoToEarnPayload(
+                    account = account,
+                    hasPendingBakingTransactions = hasPendingBakingTransactions,
+                    hasPendingDelegationTransactions = hasPendingDelegationTransactions,
+                )
+            )
+        )
     }
 }
