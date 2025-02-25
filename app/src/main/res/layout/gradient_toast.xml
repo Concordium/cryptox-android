@@ -31,7 +31,7 @@
         <TextView
             android:id="@+id/toast_title"
             style="@style/MW24_Typography_Label_Main"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:gravity="center_vertical|start"
@@ -42,6 +42,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/toast_image"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap"
             tools:text="Address copied" />
 
         <TextView
