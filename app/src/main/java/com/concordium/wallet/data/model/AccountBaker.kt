@@ -13,5 +13,5 @@ data class AccountBaker(
     val bakerElectionVerifyKey: String,
     val bakerSignatureVerifyKey: String,
     val isSuspended: Boolean,
-    val isPrimedForSuspension: Boolean,
+    val isPrimedForSuspension: Boolean?, // Missing effectively means it is not primed for suspension.
 ) : Serializable

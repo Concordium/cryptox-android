@@ -90,7 +90,7 @@ interface ProxyBackend {
     @GET("v1/accBalance/{accountAddress}")
     suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
 
-    @GET("v1/accTransactions/{accountAddress}")
+    @GET("v2/accTransactions/{accountAddress}")
     fun accountTransactions(
         @Path("accountAddress") accountAddress: String,
         @Query("order") order: String? = null,
