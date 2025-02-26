@@ -2,9 +2,11 @@ package com.concordium.wallet.ui.multiwallet
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.databinding.ActivityWalletsBinding
@@ -39,6 +41,21 @@ class WalletsActivity : BaseActivity(
         hideInfo(isVisible = true) {
             WalletsAddingBottomSheet()
                 .showSingle(supportFragmentManager, WalletsAddingBottomSheet.TAG)
+        }
+        hideRightPlus(
+            isVisible = BuildConfig.DEBUG,
+            hasNotice = true,
+        ) {
+            Toast
+                .makeText(
+                    this,
+                    "This button is for devs, it is not present in production",
+                    Toast.LENGTH_LONG
+                )
+                .show()
+            WalletsActionConfirmationDialog
+                .addingSeedWallet()
+                .showSingle(supportFragmentManager, WalletsActionConfirmationDialog.TAG)
         }
     }
 

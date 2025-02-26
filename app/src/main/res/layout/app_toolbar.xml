@@ -124,7 +124,7 @@
                     app:layout_constraintStart_toEndOf="@id/toolbar_account_label"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/cryptox_grey_additional"
-                    tools:visibility="visible"/>
+                    tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -165,8 +165,9 @@
 
                 <ImageView
                     android:id="@+id/toolbar_info_btn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
                     android:src="@drawable/ccx_ico_information_circle_contained"
                     android:visibility="gone"
                     app:tint="@color/cryptox_white_main"
