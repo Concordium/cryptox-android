@@ -112,8 +112,11 @@ data class Account(
     val cooldownAmount: BigInteger
         get() = cooldowns.sumOf(AccountCooldown::amount)
 
+    val isDelegationBakerSuspended: Boolean
+        get() = delegation?.isSuspended == true
+
     val isBakerSuspended: Boolean
-        get() = baker?.isSuspended == true || delegation?.isSuspended == true
+        get() = baker?.isSuspended == true
 
     val isBakerPrimedForSuspension: Boolean
         get() = baker?.isPrimedForSuspension == true

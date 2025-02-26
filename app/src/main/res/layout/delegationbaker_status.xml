@@ -74,7 +74,7 @@
                     app:layout_constraintEnd_toEndOf="@id/status_text_view"
                     app:layout_constraintStart_toStartOf="@id/status_text_view"
                     app:layout_constraintTop_toBottomOf="@id/status_empty_text_view"
-                    tools:text="@string/validation_primed_for_suspension_validator_explanation"
+                    tools:text="@string/validation_primed_for_suspension_baker_explanation"
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

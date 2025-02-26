@@ -89,7 +89,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
 
         binding.ccdActionButtons.earnBtnNotice.isVisible =
             viewModel.tokenData.account.let {
-                it != null && (it.isBakerSuspended || it.isBakerPrimedForSuspension)
+                it != null && (it.isBakerSuspended || it.isBakerPrimedForSuspension || it.isDelegationBakerSuspended)
             }
         binding.ccdActionButtons.earnBtn.setOnClickListener {
             onEarnClicked()

@@ -31,7 +31,6 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.extension.observe
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
@@ -226,7 +225,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.suspensionNotice.collectWhenStarted(viewLifecycleOwner) { notice ->
-            binding.earnBtnNotice.isVisible = notice != null && notice.isForCurrentAccount
+            binding.earnBtnNotice.isVisible = notice != null && notice.isCurrentAccountAffected
             binding.suspensionNotice.isVisible = notice != null
 
             if (notice == null) {
@@ -234,11 +233,14 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
 
             binding.suspensionNotice.text = when (notice) {
-                is AccountDetailsViewModel.SuspensionNotice.PrimedForSuspension ->
+                is AccountDetailsViewModel.SuspensionNotice.BakerPrimedForSuspension ->
                     getString(R.string.account_details_suspension_notice_primed_for_suspension)
 
-                is AccountDetailsViewModel.SuspensionNotice.Suspended ->
-                    getString(R.string.account_details_suspension_notice_suspended)
+                is AccountDetailsViewModel.SuspensionNotice.BakerSuspended ->
+                    getString(R.string.account_details_suspension_notice_baker_suspended)
+
+                is AccountDetailsViewModel.SuspensionNotice.DelegatorsBakerSuspended ->
+                    getString(R.string.account_details_suspension_notice_delegation_baker_suspended)
             }
         }
 

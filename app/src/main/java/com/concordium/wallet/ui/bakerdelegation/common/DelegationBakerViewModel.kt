@@ -201,6 +201,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun isBakerSuspended(): Boolean {
         return bakerDelegationData.account.isBakerSuspended
+                || bakerDelegationData.account.isDelegationBakerSuspended
     }
 
     fun isBakerPrimedForSuspension(): Boolean {

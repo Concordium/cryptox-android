@@ -42,11 +42,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     sealed class SuspensionNotice(
-        val isForCurrentAccount: Boolean,
+        val isCurrentAccountAffected: Boolean,
     ) {
-        class PrimedForSuspension(isCurrentAccount: Boolean) : SuspensionNotice(isCurrentAccount)
+        class BakerPrimedForSuspension(isCurrentAccountAffected: Boolean) :
+            SuspensionNotice(isCurrentAccountAffected)
 
-        class Suspended(isCurrentAccount: Boolean) : SuspensionNotice(isCurrentAccount)
+        class BakerSuspended(isCurrentAccountAffected: Boolean) :
+            SuspensionNotice(isCurrentAccountAffected)
+
+        class DelegatorsBakerSuspended(isCurrentAccountAffected: Boolean) :
+            SuspensionNotice(isCurrentAccountAffected)
     }
 
     class GoToEarnPayload(
@@ -231,25 +236,37 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 hasPendingBakingTransactions = true
         }
 
-        val allAccounts = accountRepository.getAllDone()
+        val allAccounts = accountRepository.getAllDone().asSequence()
         val accountWithSuspendedBakerIds = allAccounts
             .filter(Account::isBakerSuspended)
             .mapTo(mutableSetOf(), Account::id)
         val accountWithBakerPrimedForSuspensionIds = allAccounts
             .filter(Account::isBakerPrimedForSuspension)
             .mapTo(mutableSetOf(), Account::id)
+        val accountWithSuspendedDelegationBakerIds = allAccounts
+            .filter(Account::isDelegationBakerSuspended)
+            .mapTo(mutableSetOf(), Account::id)
+        val isCurrentAccountAffected = currentAccount.id in
+                (accountWithSuspendedBakerIds +
+                        accountWithBakerPrimedForSuspensionIds +
+                        accountWithSuspendedDelegationBakerIds)
 
-        // Show a suspension notice if any accounts have baker suspended or primed for suspension.
         if (accountWithSuspendedBakerIds.isNotEmpty()) {
             _suspensionNotice.emit(
-                SuspensionNotice.Suspended(
-                    isCurrentAccount = currentAccount.id in accountWithSuspendedBakerIds,
+                SuspensionNotice.BakerSuspended(
+                    isCurrentAccountAffected = isCurrentAccountAffected,
                 )
             )
         } else if (accountWithBakerPrimedForSuspensionIds.isNotEmpty()) {
             _suspensionNotice.emit(
-                SuspensionNotice.PrimedForSuspension(
-                    isCurrentAccount = currentAccount.id in accountWithBakerPrimedForSuspensionIds,
+                SuspensionNotice.BakerPrimedForSuspension(
+                    isCurrentAccountAffected = isCurrentAccountAffected,
+                )
+            )
+        } else if (accountWithSuspendedDelegationBakerIds.isNotEmpty()) {
+            _suspensionNotice.emit(
+                SuspensionNotice.DelegatorsBakerSuspended(
+                    isCurrentAccountAffected = isCurrentAccountAffected,
                 )
             )
         } else {
@@ -388,16 +405,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun onSuspensionNoticeClicked() = viewModelScope.launch {
-        if (suspensionNotice.value?.isForCurrentAccount == true) {
-            goToEarnIfPossible()
-            return@launch
-        }
-
         val accountRequiringAction: Account? = accountRepository
             .getAllDone()
             .let { accounts ->
                 accounts.find(Account::isBakerSuspended)
                     ?: accounts.find(Account::isBakerPrimedForSuspension)
+                    ?: accounts.find(Account::isDelegationBakerSuspended)
             }
 
         if (accountRequiringAction == null) {
@@ -405,9 +418,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             return@launch
         }
 
-        // Switch account to the one requiring action and go to earn.
-        accountRepository.activate(accountRequiringAction.address)
-        getActiveAccount().join()
+        // Switch account to the one requiring action, if needed..
+        if (accountRequiringAction.id != account.id) {
+            accountRepository.activate(accountRequiringAction.address)
+            getActiveAccount().join()
+        }
+
         goToEarnIfPossible()
     }
 
