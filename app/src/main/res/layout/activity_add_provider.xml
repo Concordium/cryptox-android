@@ -47,12 +47,12 @@
 
                 <TextView
                     android:id="@+id/desc1"
-                    style="@style/CryptoX_Typography_Default"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:justificationMode="inter_word"
                     android:text="@string/add_provider_description"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ico_info"
@@ -60,11 +60,11 @@
 
                 <TextView
                     android:id="@+id/desc2"
-                    style="@style/CryptoX_Typography_Default"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:justificationMode="inter_word"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ico_info"
@@ -72,12 +72,12 @@
                     tools:text="Url: spaceseven.com" />
 
                 <TextView
-                    style="@style/CryptoX_Typography_Default"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:justificationMode="inter_word"
                     android:text="Name: Spaceseven"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ico_info"
@@ -129,7 +129,7 @@
 
     <Button
         android:id="@+id/confirm_button"
-        style="@style/CryptoX_Button_Primary"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="20dp"

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.getResourceIdOrThrow
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ViewTransactionDetailsEntryBinding
 import com.concordium.wallet.uicore.Formatter
@@ -73,24 +74,7 @@ class TransactionDetailsEntryView : ConstraintLayout {
             if (formatAsFirstEight) Formatter.formatAsFirstEight(value) else value
     }
 
-    fun enableCopy(onCopyClickListener: OnCopyClickListener) {
-        listener = onCopyClickListener
-        binding.copyImageview.visibility = View.VISIBLE
-        binding.copyImageview.setOnClickListener {
-            fullValue?.let { value ->
-                val title = binding.titleTextview.text.toString()
-                listener?.onCopyClicked(title, value)
-            }
-        }
+    fun setDivider(visible: Boolean = true) {
+        binding.divider.isVisible = visible
     }
-
-    //region Listener
-
-    interface OnCopyClickListener {
-        fun onCopyClicked(title: String, value: String)
-    }
-
-    private var listener: OnCopyClickListener? = null
-
-    //endregion
 }

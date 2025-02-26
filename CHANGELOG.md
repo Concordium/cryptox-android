@@ -1,15 +1,25 @@
 # Changelog
 
-## [Unreleased]
-
-### Changed
-
-- Revamped UI across the entire app with improved visuals and usability.
-- Redesigned Main Screen with better navigation.
+## [1.6.1] - 2025-02-25
 
 ### Added
 
-- A separate Accounts List Screen for easier account management.
+- Social networks links (Telegram, X, Discord)
+
+### Changed
+
+- Replaced system dialogs with new gradient style dialogs
+
+## [1.6.0] - 2025-02-20
+
+### Changed
+
+- Revamped UI across the entire app with improved visuals and usability
+- Redesigned Main Screen with better navigation
+
+### Added
+
+- A separate Accounts List Screen for easier account management
 - A new Activity Screen with Transfers list
 
 ## [1.5.0] - 2025-01-22
@@ -179,7 +189,11 @@
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.5.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.6.1...HEAD
+
+[1.6.1]: https://github.com/Concordium/cryptox-android/compare/1.6.0...1.6.1
+
+[1.6.0]: https://github.com/Concordium/cryptox-android/compare/1.5.0...1.6.0
 
 [1.5.0]: https://github.com/Concordium/cryptox-android/compare/1.4.0...1.5.0
 

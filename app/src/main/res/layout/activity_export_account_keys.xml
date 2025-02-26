@@ -49,7 +49,7 @@
 
                 <Button
                     android:id="@+id/reveal_button"
-                    style="@style/CryptoX_Button_Primary"
+                    style="@style/MW24_Button_Primary"
                     android:layout_width="match_parent"
                     android:layout_marginTop="20dp"
                     android:text="@string/export_account_keys_reveal" />
@@ -88,27 +88,15 @@
 
                     <Button
                         android:id="@+id/copy_button"
-                        style="@style/Cryptox_Button_Secondary"
+                        style="@style/MW24_Button_Secondary"
                         android:layout_width="match_parent"
-                        android:textAllCaps="false" />
-
-                    <!-- The text and icon are changed programmatically -->
-
-                    <TextView
-                        android:id="@+id/copy_button_text_view"
-                        style="@style/Cryptox_Button_Secondary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@null"
-                        android:gravity="center"
-                        android:paddingHorizontal="0dp"
-                        android:text="@string/export_account_keys_copy" />
+                        android:textAllCaps="false"
+                        android:text="@string/export_account_keys_copy"/>
                 </FrameLayout>
 
                 <Button
                     android:id="@+id/export_button"
-                    style="@style/CryptoX_Button_Primary"
+                    style="@style/MW24_Button_Primary"
                     android:layout_width="0dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="20dp"
@@ -123,7 +111,7 @@
 
     <Button
         android:id="@+id/done"
-        style="@style/Cryptox_Button_Secondary"
+        style="@style/MW24_Button_Secondary"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="20dp"
