@@ -15,58 +15,68 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/balance_layout"
-        style="@style/CryptoX_Container_TextCard"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="10dp"
-        android:padding="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
-
-        <ImageView
-            android:id="@+id/status_icon_image_view"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:importantForAccessibility="no"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/cryptox_ico_successfully" />
-
-        <TextView
-            android:id="@+id/status_text_view"
-            style="@style/CryptoX_Typography_Headline_Large"
-            android:layout_width="0dp"
-            android:layout_marginStart="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/status_icon_image_view"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Delegation registered" />
-
-        <TextView
-            android:id="@+id/status_empty_text_view"
-            style="@style/CryptoX_Typography_Body_Medium"
-            android:layout_width="0dp"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/cryptox_grey_additional"
-            app:layout_constraintEnd_toEndOf="@id/status_text_view"
-            app:layout_constraintStart_toStartOf="@id/status_text_view"
-            app:layout_constraintTop_toBottomOf="@id/status_text_view"
-            tools:text="Empty" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/button_layout"
-        app:layout_constraintTop_toBottomOf="@id/balance_layout">
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/CryptoX_Container_TextCard"
+                android:layout_marginHorizontal="18dp"
+                android:padding="20dp">
+
+                <ImageView
+                    android:id="@+id/status_icon_image_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:importantForAccessibility="no"
+                    app:layout_constraintBottom_toBottomOf="@id/status_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/status_text_view"
+                    app:srcCompat="@drawable/cryptox_ico_successfully" />
+
+                <TextView
+                    android:id="@+id/status_text_view"
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_width="0dp"
+                    android:layout_marginStart="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/status_icon_image_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Delegation registered" />
+
+                <TextView
+                    android:id="@+id/status_empty_text_view"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/cryptox_grey_additional"
+                    app:layout_constraintEnd_toEndOf="@id/status_text_view"
+                    app:layout_constraintStart_toStartOf="@id/status_text_view"
+                    app:layout_constraintTop_toBottomOf="@id/status_text_view"
+                    tools:text="Empty" />
+
+                <TextView
+                    android:id="@+id/status_explanation_text_view"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/cryptox_grey_additional"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/status_text_view"
+                    app:layout_constraintStart_toStartOf="@id/status_text_view"
+                    app:layout_constraintTop_toBottomOf="@id/status_empty_text_view"
+                    tools:text="@string/validation_primed_for_suspension_baker_explanation"
+                    tools:visibility="visible" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/status_list_container"
@@ -74,6 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="12dp" />

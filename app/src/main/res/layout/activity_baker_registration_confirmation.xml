@@ -26,16 +26,6 @@
             android:paddingHorizontal="18dp"
             android:paddingTop="10dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/grace_period"
-                style="@style/CryptoX_Container_Information.TextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:visibility="gone"
-                tools:text="You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time."
-                tools:visibility="visible" />
-
             <LinearLayout
                 style="@style/CryptoX_Container_Stroked"
                 android:layout_marginBottom="16dp"

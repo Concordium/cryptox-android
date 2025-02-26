@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AccountCooldown
@@ -13,12 +14,9 @@ import com.concordium.wallet.databinding.DelegationbakerStatusBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 abstract class StatusActivity(
-    titleId: Int = R.string.app_name
+    titleId: Int = R.string.app_name,
 ) : BaseActivity(R.layout.delegationbaker_status, titleId) {
     protected lateinit var binding: DelegationbakerStatusBinding
     protected lateinit var viewModel: DelegationBakerViewModel
@@ -30,25 +28,6 @@ abstract class StatusActivity(
 
         initializeViewModel()
         viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
-        initView()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // subscribe to messages from AccountDetailsViewModel
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // unsubscribe from messages from AccountDetailsViewModel
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(bakerDelegationData: BakerDelegationData) {
-        // receive message from AccountDetailsViewModel
-        viewModel.bakerDelegationData = bakerDelegationData
         initView()
     }
 
@@ -71,7 +50,7 @@ abstract class StatusActivity(
         title: String,
         text: String,
         titleTextColor: Int? = null,
-        visibleDivider: Boolean = true
+        visibleDivider: Boolean = true,
     ) {
         binding.statusEmptyTextView.visibility = View.GONE
         binding.statusListContainer.visibility = View.VISIBLE
@@ -101,6 +80,11 @@ abstract class StatusActivity(
         binding.statusListContainer.addView(delegationBakerStatusBinding.root)
     }
 
+    fun setExplanation(explanation: String) {
+        binding.statusExplanationTextView.isVisible = true
+        binding.statusExplanationTextView.text = explanation
+    }
+
     fun setEmptyState(text: String) {
         binding.statusEmptyTextView.text = text
         binding.statusEmptyTextView.visibility = View.VISIBLE
@@ -112,6 +96,7 @@ abstract class StatusActivity(
         binding.statusListContainer.removeAllViews()
         binding.statusButtonTop.isEnabled = true
         binding.statusButtonBottom.isEnabled = true
+        binding.statusExplanationTextView.isVisible = false
     }
 
     protected fun addPendingChange(
@@ -119,7 +104,7 @@ abstract class StatusActivity(
         dateStringId: Int,
         takeEffectOnStringId: Int,
         removeStakeStringId: Int,
-        reduceStakeStringId: Int
+        reduceStakeStringId: Int,
     ) {
         pendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
             val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")

@@ -45,6 +45,12 @@ enum class TransactionType {
     @SerializedName("deployModule")
     DEPLOY_MODULE,
 
+    @SerializedName("validatorPrimedForSuspension")
+    VALIDATOR_PRIMED_FOR_SUSPENSION,
+
+    @SerializedName("validatorSuspended")
+    VALIDATOR_SUSPENDED,
+
     // This has been added to have a default value
     @SerializedName("unknown")
     UNKNOWN,

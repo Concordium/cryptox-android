@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityDelegationRemoveBinding
 import com.concordium.wallet.ui.MainActivity
@@ -34,8 +33,9 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
 
     override fun initViews() {
         binding.accountToRemoveDelegateFrom.text =
-            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account?.address ?: "")
+            viewModel.bakerDelegationData.account.name
+                .plus("\n\n")
+                .plus(viewModel.bakerDelegationData.account.address)
         binding.estimatedTransactionFee.text = ""
 
         binding.submitDelegationTransaction.setOnClickListener {
@@ -53,11 +53,11 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
         )
         initializeShowAuthenticationLiveData()
 
-        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.transactionSuccessLiveData.observe(this) { waiting ->
             waiting?.let {
                 showPageAsReceipt()
             }
-        })
+        }
 
         viewModel.loadTransactionFee(true)
 
@@ -73,7 +73,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
             showNotEnoughFunds()
         } else {
             if (viewModel.bakerDelegationData.isBakerPool) {
-                viewModel.bakerDelegationData.account?.delegation?.delegationTarget?.bakerId?.let {
+                viewModel.bakerDelegationData.account.delegation?.delegationTarget?.bakerId?.let {
                     viewModel.setPoolID(it.toString())
                 }
             }

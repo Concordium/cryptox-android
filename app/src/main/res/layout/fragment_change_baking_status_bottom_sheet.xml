@@ -36,6 +36,20 @@
         android:text="@string/update_baker_settings_menu_update_baker_keys" />
 
     <Button
+        android:id="@+id/suspend_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:text="@string/update_baker_settings_menu_suspend_baking" />
+
+    <Button
+        android:id="@+id/resume_button"
+        style="@style/Cryptox_Button_Secondary"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:text="@string/update_baker_settings_menu_resume_baking" />
+
+    <Button
         android:id="@+id/stop_button"
         style="@style/Cryptox_Button_Secondary"
         android:layout_width="match_parent"

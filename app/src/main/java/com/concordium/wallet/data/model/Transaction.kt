@@ -26,7 +26,7 @@ data class Transaction(
     val submissionId: String?,
     val origin: TransactionOrigin?,
     val details: TransactionDetails?,
-    val encrypted: TransactionEncrypted?
+    val encrypted: TransactionEncrypted?,
 ) : Serializable {
 
     fun isRemoteTransaction(): Boolean {
@@ -65,6 +65,14 @@ data class Transaction(
         return origin?.type == TransactionOriginType.Self
     }
 
+    fun isBakerSuspension(): Boolean {
+        return details?.type == TransactionType.VALIDATOR_SUSPENDED
+    }
+
+    fun isBakerPrimingForSuspension(): Boolean {
+        return details?.type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
+    }
+
     fun getTotalAmountForRegular(): BigInteger {
         if (transactionStatus == TransactionStatus.ABSENT) {
             return BigInteger.ZERO
@@ -78,11 +86,11 @@ data class Transaction(
         return if (cost == null) BigInteger.ZERO else -cost
     }
 
-    fun getDecryptedMemo(): String{
+    fun getDecryptedMemo(): String {
         return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
     }
 
-    fun hasMemo(): Boolean{
+    fun hasMemo(): Boolean {
         return details?.memo?.isNotEmpty() == true
     }
 }

@@ -51,6 +51,10 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             binding.balanceAtDisposalTextview.visibility = View.GONE
         }
 
+        binding.notice.isVisible = accountWithIdentity.account.isBakerSuspended
+                || accountWithIdentity.account.isBakerPrimedForSuspension
+                || accountWithIdentity.account.isDelegationBakerSuspended
+
         binding.accountIcon.setImageDrawable(
             ImageUtil.getIconById(
                 context,

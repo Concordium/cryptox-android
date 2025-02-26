@@ -29,13 +29,10 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
     override fun initViews() {
         super.initViews()
 
-        viewModel.bakerDelegationData.oldMetadataUrl =
-            viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.metadataUrl
-
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             setActionBarTitle(R.string.baker_update_pool_settings_title)
             binding.openUrlExplain.setText(R.string.baker_update_pool_settings_open_url_explain)
-            viewModel.bakerDelegationData.account?.baker?.bakerPoolInfo?.metadataUrl?.let {
+            viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.metadataUrl?.let {
                 binding.currentUrl.text =
                     getString(R.string.baker_update_pool_settings_current_url, it)
                 binding.currentUrl.visibility = View.VISIBLE

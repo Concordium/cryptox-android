@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
@@ -40,12 +39,12 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
 
     override fun initViews() {
         super.initViews()
-        viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
+        viewModel.chainParametersLoadedLiveData.observe(this) { success ->
             success?.let {
                 updateViews()
                 showWaiting(binding.includeProgress.progressLayout, false)
             }
-        })
+        }
         showWaiting(binding.includeProgress.progressLayout, true)
         viewModel.loadChainParameters()
     }
@@ -90,9 +89,9 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         }
 
         binding.accountToDelegateFrom.text =
-            viewModel.bakerDelegationData.account!!.getAccountName()
+            viewModel.bakerDelegationData.account.getAccountName()
                 .plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account!!.address)
+                .plus(viewModel.bakerDelegationData.account.address)
         binding.delegationAmountConfirmation.text =
             CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
         binding.targetPool.text =

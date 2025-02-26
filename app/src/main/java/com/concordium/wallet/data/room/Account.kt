@@ -91,7 +91,7 @@ data class Account(
     var isActive: Boolean = false,
 
     @ColumnInfo(name = "icon_id")
-    var iconId: Int
+    var iconId: Int,
 ) : Serializable {
 
     companion object {
@@ -111,6 +111,15 @@ data class Account(
 
     val cooldownAmount: BigInteger
         get() = cooldowns.sumOf(AccountCooldown::amount)
+
+    val isDelegationBakerSuspended: Boolean
+        get() = delegation?.isSuspended == true
+
+    val isBakerSuspended: Boolean
+        get() = baker?.isSuspended == true
+
+    val isBakerPrimedForSuspension: Boolean
+        get() = baker?.isPrimedForSuspension == true
 
     fun isInitial(): Boolean {
         if (readOnly || isBaking() || isDelegating()) {
@@ -151,10 +160,12 @@ data class Account(
             return false
         }
 
-        val isShieldedBalanceUnknown = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
-                || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
-        val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
-                && shieldedBalance.signum() > 0
+        val isShieldedBalanceUnknown =
+            encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
+                    || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
+        val isShieldedBalancePositive =
+            encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
+                    && shieldedBalance.signum() > 0
         return isShieldedBalanceUnknown || isShieldedBalancePositive
     }
 }

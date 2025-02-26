@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
@@ -72,8 +73,9 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding.submitBakerTransaction.text =
             getString(R.string.baker_registration_confirmation_submit)
         binding.accountToBakeFrom.text =
-            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account?.address ?: "")
+            viewModel.bakerDelegationData.account.name
+                .plus("\n\n")
+                .plus(viewModel.bakerDelegationData.account.address)
         binding.estimatedTransactionFee.visibility = View.VISIBLE
 
         when (viewModel.bakerDelegationData.type) {
@@ -82,8 +84,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             }
 
             UPDATE_BAKER_KEYS -> {
-                viewModel.bakerDelegationData.amount =
-                    viewModel.bakerDelegationData.account?.baker?.stakedAmount
                 updateViewsUpdateBakerKeys()
             }
 
@@ -97,6 +97,14 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
             REMOVE_BAKER -> {
                 updateViewsRemoveBaker()
+            }
+
+            CONFIGURE_BAKER -> {
+                if (viewModel.bakerDelegationData.toSetBakerSuspended == false) {
+                    updateViewsResumeBaker()
+                } else if (viewModel.bakerDelegationData.toSetBakerSuspended == true){
+                    updateViewsSuspendBaker()
+                }
             }
         }
 
@@ -120,7 +128,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsRegisterBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_title)
-        binding.gracePeriod.text = getString(R.string.baker_registration_confirmation_explain)
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_register_confirmation_receipt_title)
         showAmount()
@@ -133,7 +140,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsUpdateBakerKeys() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_keys_title)
-        binding.gracePeriod.visibility = View.GONE
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
         binding.accountToBakeTitle.text =
@@ -155,9 +161,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsUpdateBakerStake() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_stake_title)
-        if (viewModel.isUpdateDecreaseAmount()) binding.gracePeriod.text =
-            getString(R.string.baker_registration_confirmation_update_stake_update_decrease_explain)
-        else binding.gracePeriod.visibility = View.GONE
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
         binding.accountToBakeTitle.text =
@@ -169,12 +172,28 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsRemoveBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
-        binding.gracePeriod.text =
-            getString(R.string.baker_registration_confirmation_remove_are_you_sure)
         binding.delegationTransactionTitle.text =
             getString(R.string.baker_registration_confirmation_remove_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+        hideCommissionRates()
+    }
+
+    private fun updateViewsResumeBaker() {
+        setActionBarTitle(R.string.baker_registration_confirmation_resume_title)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_resume_transaction)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_resume_account_to_stop)
+        hideCommissionRates()
+    }
+
+    private fun updateViewsSuspendBaker() {
+        setActionBarTitle(R.string.baker_registration_confirmation_suspend_title)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_suspend_transaction)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_suspend_account_to_stop)
         hideCommissionRates()
     }
 
@@ -287,7 +306,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         hideActionBarBack(isVisible = false)
         binding.submitBakerTransaction.visibility = View.GONE
         binding.submitBakerFinish.visibility = View.VISIBLE
-        binding.gracePeriod.visibility = View.GONE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let { submissionId ->
             binding.transactionHashView.isVisible = true

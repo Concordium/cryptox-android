@@ -49,7 +49,7 @@ class ProxyRepository {
     fun submitCredential(
         credentialWrapper: CredentialWrapper,
         success: (SubmissionData) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<SubmissionData> {
         val call = backend.submitCredential(credentialWrapper)
         call.enqueue(object : BackendCallback<SubmissionData>() {
@@ -76,7 +76,7 @@ class ProxyRepository {
     fun getAccountSubmissionStatus(
         submissionId: String,
         success: (AccountSubmissionStatus) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<AccountSubmissionStatus> {
         val call = backend.accountSubmissionStatus(submissionId)
         call.enqueue(object : BackendCallback<AccountSubmissionStatus>() {
@@ -100,7 +100,7 @@ class ProxyRepository {
     fun getAccountNonce(
         accountAddress: String,
         success: (AccountNonce) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<AccountNonce> {
         val call = backend.accountNonce(accountAddress)
         call.enqueue(object : BackendCallback<AccountNonce>() {
@@ -124,7 +124,7 @@ class ProxyRepository {
     fun submitTransfer(
         transfer: CreateTransferOutput,
         success: (SubmissionData) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<SubmissionData> {
         val call = backend.submitTransfer(transfer)
         call.enqueue(object : BackendCallback<SubmissionData>() {
@@ -153,7 +153,7 @@ class ProxyRepository {
     fun getTransferSubmissionStatus(
         submissionId: String,
         success: (TransferSubmissionStatus) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<TransferSubmissionStatus> {
         val call = backend.transferSubmissionStatus(submissionId)
         call.enqueue(object : BackendCallback<TransferSubmissionStatus>() {
@@ -183,6 +183,7 @@ class ProxyRepository {
         targetChange: Boolean? = null,
         metadataSize: Int? = null,
         openStatus: String? = null,
+        suspended: Boolean? = null,
         sender: String? = null,
         contractIndex: Int? = null,
         contractSubindex: Int? = null,
@@ -190,7 +191,7 @@ class ProxyRepository {
         parameter: String? = null,
         executionNRGBuffer: Int? = null,
         success: (TransactionCost) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<TransactionCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
@@ -203,6 +204,7 @@ class ProxyRepository {
             targetArg,
             metadataSize,
             openStatus,
+            suspended,
             sender,
             contractIndex,
             contractSubindex,
@@ -228,7 +230,7 @@ class ProxyRepository {
 
     fun getChainParameters(
         success: (ChainParameters) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<ChainParameters> {
         val call = backend.chainParameters()
         call.enqueue(object : BackendCallback<ChainParameters>() {
@@ -254,7 +256,7 @@ class ProxyRepository {
     fun getBakerPool(
         bakerId: String,
         success: (BakerPoolStatus) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<BakerPoolStatus> {
         val call = backend.bakerPool(bakerId)
         call.enqueue(object : BackendCallback<BakerPoolStatus>() {
@@ -281,7 +283,7 @@ class ProxyRepository {
     fun getAccountBalance(
         accountAddress: String,
         success: (AccountBalance) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<AccountBalance> {
         val call = backend.accountBalance(accountAddress)
         call.enqueue(object : BackendCallback<AccountBalance>() {
@@ -309,7 +311,7 @@ class ProxyRepository {
         order: String? = "desc",
         from: Int? = null,
         limit: Int? = null,
-        includeRewards: String? = "all"
+        includeRewards: String? = "all",
     ): BackendRequest<AccountTransactions> {
         val call = backend.accountTransactions(accountAddress, order, from, limit, includeRewards)
         call.enqueue(object : BackendCallback<AccountTransactions>() {
@@ -333,7 +335,7 @@ class ProxyRepository {
     fun requestGTUDrop(
         accountAddress: String,
         success: (SubmissionData) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<SubmissionData> {
         val call = backend.requestGTUDrop(accountAddress)
         call.enqueue(object : BackendCallback<SubmissionData>() {
@@ -356,7 +358,7 @@ class ProxyRepository {
 
     fun getIGlobalInfo(
         success: (GlobalParamsWrapper) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<GlobalParamsWrapper> {
         val call = App.appCore.getProxyBackend().getGlobalInfo()
         call.enqueue(object : BackendCallback<GlobalParamsWrapper>() {
@@ -380,7 +382,7 @@ class ProxyRepository {
     fun getAccountEncryptedKey(
         accountAddress: String,
         success: (AccountKeyData) -> Unit,
-        failure: ((Throwable) -> Unit)?
+        failure: ((Throwable) -> Unit)?,
     ): BackendRequest<AccountKeyData> {
         val call = App.appCore.getProxyBackend().getAccountEncryptedKey(accountAddress)
         call.enqueue(object : BackendCallback<AccountKeyData>() {

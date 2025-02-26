@@ -66,12 +66,13 @@ interface ProxyBackend {
         @Query("target") target: String? = null,
         @Query("metadataSize") metadataSize: Int? = null,
         @Query("openStatus") openStatus: String? = null,
+        @Query("suspended") suspended: Boolean? = null,
         @Query("sender") sender: String? = null,
         @Query("contractIndex") contractIndex: Int? = null,
         @Query("contractSubindex") contractSubindex: Int? = null,
         @Query("receiveName") receiveName: String? = null,
         @Query("parameter") parameter: String? = null,
-        @Query("executionNRGBuffer") executionNRGBuffer: Int? = null
+        @Query("executionNRGBuffer") executionNRGBuffer: Int? = null,
     ): Call<TransactionCost>
 
     @GET("v0/chainParameters")
@@ -89,13 +90,13 @@ interface ProxyBackend {
     @GET("v1/accBalance/{accountAddress}")
     suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
 
-    @GET("v1/accTransactions/{accountAddress}")
+    @GET("v2/accTransactions/{accountAddress}")
     fun accountTransactions(
         @Path("accountAddress") accountAddress: String,
         @Query("order") order: String? = null,
         @Query("from") from: Int? = null,
         @Query("limit") limit: Int? = null,
-        @Query("includeRewards") includeRewards: String? = null
+        @Query("includeRewards") includeRewards: String? = null,
     ): Call<AccountTransactions>
 
     @PUT("v0/testnetGTUDrop/{accountAddress}")
@@ -121,14 +122,14 @@ interface ProxyBackend {
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Query("from") from: String? = null,
-        @Query("limit") limit: Int? = null
+        @Query("limit") limit: Int? = null,
     ): CIS2Tokens
 
     @GET("v1/CIS2TokenMetadata/{index}/{subIndex}")
     suspend fun cis2TokenMetadataV1(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
-        @Query("tokenId") tokenId: String
+        @Query("tokenId") tokenId: String,
     ): CIS2TokensMetadata
 
     @GET("v1/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
@@ -136,6 +137,6 @@ interface ProxyBackend {
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Path("accountAddress") accountAddress: String,
-        @Query("tokenId") tokenId: String
+        @Query("tokenId") tokenId: String,
     ): CIS2TokensBalances
 }

@@ -87,7 +87,7 @@ abstract class WalletDatabase : RoomDatabase() {
                             context = context,
                             gson = AppCore.getGson(),
                         ),
-                        MIGRATION_10_11
+                        MIGRATION_10_11,
                     )
                     .build()
                     .also { instances.put(name, it) }

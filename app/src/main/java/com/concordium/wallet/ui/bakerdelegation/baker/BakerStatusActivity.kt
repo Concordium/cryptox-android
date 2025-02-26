@@ -8,6 +8,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -21,7 +22,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         clearState()
 
         val account = viewModel.bakerDelegationData.account
-        val accountBaker = account?.baker
+        val accountBaker = account.baker
 
         binding.statusButtonBottom.text = getString(R.string.baker_status_change_baking_status)
 
@@ -33,7 +34,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             return
         }
 
-        if (account == null || accountBaker == null) {
+        if (accountBaker == null) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
             setContentTitle(R.string.baker_status_no_baker_title)
             setEmptyState(getString(R.string.baker_status_no_baker))
@@ -44,8 +45,18 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             return
         }
 
-        binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
-        setContentTitle(R.string.baker_status_baker_registered_title)
+        if (viewModel.isBakerPrimedForSuspension()) {
+            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
+            setContentTitle(R.string.baker_status_baker_primed_for_suspension_title)
+            setExplanation(getString(R.string.validation_primed_for_suspension_baker_explanation))
+        } else if (viewModel.isBakerSuspended()) {
+            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
+            setContentTitle(R.string.baker_status_baker_suspended_title)
+            setExplanation(getString(R.string.validation_suspended_baker_explanation))
+        } else {
+            binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
+            setContentTitle(R.string.baker_status_baker_registered_title)
+        }
 
         addContent(
             titleRes = R.string.baker_status_baker_account,
@@ -91,8 +102,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             )
         }
 
-        viewModel.bakerDelegationData.account?.cooldowns
-            ?.also(::addCooldowns)
+        addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
         binding.statusButtonBottom.setOnClickListener {
             openChangeBakerStatusBottomSheet()
@@ -117,7 +127,11 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
     private fun openChangeBakerStatusBottomSheet() {
         ChangeBakerStatusBottomSheet
-            .newInstance(isStopEnabled = !viewModel.isInCoolDown())
+            .newInstance(
+                isStopEnabled = !viewModel.isInCoolDown(),
+                isSuspendAvailable = viewModel.isBakerSuspendable(),
+                isResumeAvailable = viewModel.isBakerResumable(),
+            )
             .show(supportFragmentManager, ChangeBakerStatusBottomSheet.REQUEST_KEY)
     }
 
@@ -134,6 +148,12 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
             R.id.update_keys_button ->
                 gotoBakerUpdateIntroFlow(ProxyRepository.UPDATE_BAKER_KEYS)
+
+            R.id.resume_button ->
+                gotoBakerResume()
+
+            R.id.suspend_button ->
+                gotoBakerSuspend()
 
             R.id.stop_button ->
                 gotoBakerRemoveIntroFlow()
@@ -165,5 +185,33 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
             viewModel.bakerDelegationData
         )
         startActivityForResultAndHistoryCheck(intent)
+    }
+
+    private fun gotoBakerResume() {
+        menuDialog?.dismiss()
+        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        viewModel.bakerDelegationData.type = ProxyRepository.CONFIGURE_BAKER
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData.copy().apply {
+                toSetBakerSuspended = false
+            }
+        )
+        startActivityForResultAndHistoryCheck(intent)
+        finishUntilClass(MainActivity::class.java.canonicalName)
+    }
+
+    private fun gotoBakerSuspend() {
+        menuDialog?.dismiss()
+        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        viewModel.bakerDelegationData.type = ProxyRepository.CONFIGURE_BAKER
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData.copy().apply {
+                toSetBakerSuspended = true
+            }
+        )
+        startActivityForResultAndHistoryCheck(intent)
+        finishUntilClass(MainActivity::class.java.canonicalName)
     }
 }

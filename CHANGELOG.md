@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Ability to manually suspend and resume your validation
+- Display of the suspension warning, for both validators and delegators
+- Ability to see automatic validation suspension status changes in the Activity
+  (Primed for suspension, Suspended)
+
 ## [1.6.1] - 2025-02-25
 
 ### Added
