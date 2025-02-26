@@ -815,6 +815,7 @@
     <string name="baker_intro_subtitle1">Become a validator</string>
     <string name="baker_intro_subtitle2">The node</string>
     <string name="baker_intro_subtitle3">Opening a pool</string>
+    <string name="baker_intro_subtitle4">Suspension</string>
 
     <string name="baker_registration_title">Register validator</string>
     <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to it.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
