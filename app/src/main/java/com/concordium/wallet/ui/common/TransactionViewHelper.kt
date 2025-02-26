@@ -27,7 +27,7 @@ object TransactionViewHelper {
         alertImageView: ImageView,
         statusImageView: ImageView,
         showDate: Boolean = false,
-        isReceipt: Boolean = false
+        isReceipt: Boolean = false,
     ) {
         // Title
         titleTextView.text =
@@ -35,6 +35,13 @@ object TransactionViewHelper {
                 titleTextView.context.getString(R.string.transaction_type_transfer)
             else
                 ta.title
+        titleTextView.setTextColor(
+            if (ta.isBakerSuspension() || ta.isBakerPrimingForSuspension()) {
+                ContextCompat.getColor(titleTextView.context, R.color.mw24_attention_red)
+            } else {
+                ContextCompat.getColor(titleTextView.context, R.color.cryptox_white_main)
+            }
+        )
 
         memoTextView.text = ta.getDecryptedMemo()
         memoLayout.visibility = if (ta.hasMemo()) View.VISIBLE else View.GONE
