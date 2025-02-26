@@ -238,7 +238,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                     getString(R.string.account_details_suspension_notice_primed_for_suspension)
 
                 is AccountDetailsViewModel.SuspensionNotice.Suspended ->
-                    getString(R.string.account_details_suspension_notice_primed_for_suspension)
+                    getString(R.string.account_details_suspension_notice_suspended)
             }
         }
 

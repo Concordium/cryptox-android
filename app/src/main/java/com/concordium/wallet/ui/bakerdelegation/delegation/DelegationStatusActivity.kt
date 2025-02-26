@@ -72,6 +72,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         if (viewModel.isBakerSuspended()) {
             binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.delegation_status_content_suspended_title)
+            setExplanation(getString(R.string.validation_suspended_delegator_explanation))
         } else {
             binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
             setContentTitle(R.string.delegation_status_content_registered_title)
