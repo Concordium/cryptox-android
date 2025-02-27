@@ -14,7 +14,8 @@ class BakerRegistrationIntroFlow :
         return intArrayOf(
             R.string.baker_intro_subtitle1,
             R.string.baker_intro_subtitle2,
-            R.string.baker_intro_subtitle3
+            R.string.baker_intro_subtitle3,
+            R.string.baker_intro_subtitle4,
         )
     }
 
