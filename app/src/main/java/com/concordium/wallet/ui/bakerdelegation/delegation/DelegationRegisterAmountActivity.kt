@@ -10,10 +10,11 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.concordium.wallet.ui.bakerdelegation.dialog.DelegationWarningDialog
 import java.math.BigInteger
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
@@ -26,6 +27,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         binding = ActivityDelegationRegistrationAmountBinding.bind(findViewById(R.id.root_layout))
         hideActionBarBack(isVisible = true)
         initViews()
+        initObservers()
     }
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
@@ -155,6 +157,17 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             }
     }
 
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            DelegationWarningDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (DelegationWarningDialog.getResult(bundle)) {
+                continueToConfirmation()
+            }
+        }
+    }
+
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
         return StakeAmountInputValidator(
             minimumValue = if (viewModel.isUpdatingDelegation()) BigInteger.ZERO else BigInteger.ONE,
@@ -238,30 +251,36 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     private fun showNewAmountZero() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_amount_zero_title)
-        builder.setMessage(getString(R.string.delegation_amount_zero_message))
-        builder.setPositiveButton(getString(R.string.delegation_amount_zero_continue)) { _, _ -> continueToConfirmation() }
-        builder.setNegativeButton(getString(R.string.delegation_amount_zero_new_stake)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        DelegationWarningDialog.newInstance(
+            DelegationWarningDialog.setBundle(
+                title = getString(R.string.delegation_amount_zero_title),
+                description = getString(R.string.delegation_amount_zero_message),
+                confirmButton = getString(R.string.delegation_amount_zero_continue),
+                denyButton = getString(R.string.delegation_amount_zero_new_stake)
+            )
+        ).showSingle(supportFragmentManager, DelegationWarningDialog.TAG)
     }
 
     private fun showReduceWarning() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_register_delegation_reduce_warning_title)
-        builder.setMessage(getString(R.string.delegation_register_delegation_reduce_warning_content))
-        builder.setPositiveButton(getString(R.string.delegation_register_delegation_reduce_warning_ok)) { _, _ -> continueToConfirmation() }
-        builder.setNegativeButton(getString(R.string.delegation_register_delegation_reduce_warning_cancel)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        DelegationWarningDialog.newInstance(
+            DelegationWarningDialog.setBundle(
+                title = getString(R.string.delegation_register_delegation_reduce_warning_title),
+                description = getString(R.string.delegation_register_delegation_reduce_warning_content),
+                confirmButton = getString(R.string.delegation_register_delegation_reduce_warning_ok),
+                denyButton = getString(R.string.delegation_register_delegation_reduce_warning_cancel)
+            )
+        ).showSingle(supportFragmentManager, DelegationWarningDialog.TAG)
     }
 
     private fun show95PercentWarning() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_more_than_95_title)
-        builder.setMessage(getString(R.string.delegation_more_than_95_message))
-        builder.setPositiveButton(getString(R.string.delegation_more_than_95_continue)) { _, _ -> continueToConfirmation() }
-        builder.setNegativeButton(getString(R.string.delegation_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        DelegationWarningDialog.newInstance(
+            DelegationWarningDialog.setBundle(
+                title = getString(R.string.delegation_more_than_95_title),
+                description = getString(R.string.delegation_more_than_95_message),
+                confirmButton = getString(R.string.delegation_more_than_95_continue),
+                denyButton = getString(R.string.delegation_more_than_95_new_stake)
+            )
+        ).showSingle(supportFragmentManager, DelegationWarningDialog.TAG)
     }
 
     private fun continueToConfirmation() {
