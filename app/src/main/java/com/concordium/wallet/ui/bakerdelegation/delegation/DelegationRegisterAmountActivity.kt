@@ -14,7 +14,7 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import com.concordium.wallet.ui.bakerdelegation.dialog.DelegationWarningDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationWarningDialog
 import java.math.BigInteger
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(

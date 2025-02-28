@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -13,10 +12,11 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBinding
-import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
+import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerErrorDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerNoticeDialog
 import com.concordium.wallet.util.UnitConvertUtil
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 import java.text.DecimalFormat
 
@@ -41,6 +41,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding = ActivityBakerRegistrationConfirmationBinding.bind(findViewById(R.id.root_layout))
         hideActionBarBack(isVisible = true)
         initViews()
+        initObservers()
     }
 
     override fun onBackPressed() {
@@ -293,6 +294,17 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         }
     }
 
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            BakerErrorDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (BakerErrorDialog.getResult(bundle)) {
+                onContinueClicked()
+            }
+        }
+    }
+
     private fun onContinueClicked() {
         if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)) {
             showNotEnoughFunds()
@@ -314,9 +326,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     }
 
     private fun showNotice() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.baker_notice_title)
-
         var noticeMessage = getString(R.string.baker_notice_message)
 
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
@@ -349,33 +358,19 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             )
         }
 
-        builder.setMessage(noticeMessage)
-
-        builder.setPositiveButton(getString(R.string.baker_notice_ok)) { dialog, _ ->
-            dialog.dismiss()
-            startActivity(Intent(this, MainActivity::class.java))
-            finishAffinity()
-        }
-        builder.create().show()
+        BakerNoticeDialog.newInstance(
+            BakerNoticeDialog.setBundle(noticeMessage)
+        ).showSingle(supportFragmentManager, BakerNoticeDialog.TAG)
     }
 
     override fun errorLiveData(value: Int) {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_register_delegation_failed_title)
         val messageFromWalletProxy = getString(value)
-        builder.setMessage(
-            getString(
-                R.string.baker_register_transaction_failed, messageFromWalletProxy
+
+        BakerErrorDialog.newInstance(
+            BakerErrorDialog.setBundle(
+                getString(R.string.baker_register_transaction_failed, messageFromWalletProxy)
             )
-        )
-        builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
-            dialog.dismiss()
-            onContinueClicked()
-        }
-        builder.setNegativeButton(getString(R.string.delegation_register_delegation_failed_later)) { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.create().show()
+        ).showSingle(supportFragmentManager, BakerErrorDialog.TAG)
     }
 
     override fun showWaiting(progressLayout: View, waiting: Boolean) {

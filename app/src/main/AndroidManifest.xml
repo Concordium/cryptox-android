@@ -414,10 +414,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterPoolActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

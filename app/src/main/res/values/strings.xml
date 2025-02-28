@@ -678,6 +678,14 @@
     <string name="delegation_update_subtitle3">Cooldowns</string>
 
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
+    <string name="delegation_remove_description">
+        Stopping your delegation is subject to a cooldown period, in which the stake cannot be spent or transferred.
+        \n\n
+        At the end of the cooldown period, the delegated amount is unlocked on your public balance, and
+        the funds will be at disposal again.
+    </string>
+    <string name="delegation_validation_go_back_button">Go back</string>
+    <string name="delegation_validation_continue_button">Continue</string>
 
     <string name="delegation_status_title">Earn</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
@@ -920,7 +928,13 @@
     <string name="baker_update_intro_subtitle5">Update validator keys</string>
 
     <string name="baker_remove_intro_flow_title">Validating</string>
-    <string name="baker_remove_intro_subtitle1">Stop validating</string>
+    <string name="baker_remove_intro_subtitle1">Stop validation</string>
+    <string name="baker_remove_intro_description">
+        If you stop validating there is a cooldown period, after which the full stake amount will be unlocked on your public balance.
+        \n\nIf your pool has any delegators, they will be automatically moved to passive delegation.
+        \n\nDeregistering the validator does not shut down your node. You must shut down the node in a separate
+        action if you no longer wish to run a node on the Concordium blockchain.
+    </string>
 
     <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>
     <string name="update_baker_settings_menu_update_pool_settings">Update pool settings</string>

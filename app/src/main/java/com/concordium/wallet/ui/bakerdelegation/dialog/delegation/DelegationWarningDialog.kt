@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.bakerdelegation.dialog
+package com.concordium.wallet.ui.bakerdelegation.dialog.delegation
 
 import android.os.Bundle
 import android.view.LayoutInflater

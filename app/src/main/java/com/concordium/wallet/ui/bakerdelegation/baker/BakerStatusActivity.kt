@@ -11,11 +11,12 @@ import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
+import com.concordium.wallet.ui.bakerdelegation.dialog.baker.StopValidationDialog
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import java.math.BigInteger
 
 class BakerStatusActivity : StatusActivity(R.string.baker_status_title), FragmentResultListener {
     private var menuDialog: AlertDialog? = null
@@ -68,7 +69,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         )
         addContent(
             R.string.baker_status_baker_stake,
-            CurrencyUtil.formatGTU(accountBaker.stakedAmount)
+            getString(R.string.amount, CurrencyUtil.formatGTU(accountBaker.stakedAmount))
         )
         addContent(R.string.baker_status_baker_id, accountBaker.bakerId.toString())
 
@@ -107,12 +108,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
         addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
         initButtons()
-
-        supportFragmentManager.setFragmentResultListener(
-            ChangeBakerStatusBottomSheet.REQUEST_KEY,
-            this,
-            this
-        )
+        initObservers()
     }
 
     private fun initButtons() {
@@ -121,7 +117,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         }
 
         binding.actionButtonsLayout.stopBtn.setOnClickListener {
-            gotoBakerRemoveIntroFlow()
+            showBakerRemoveDialog()
         }
 
         binding.actionButtonsLayout.suspendBtn.setOnClickListener {
@@ -130,6 +126,23 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
         binding.actionButtonsLayout.resumeBtn.setOnClickListener {
             gotoBakerResume()
+        }
+    }
+
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            ChangeBakerStatusBottomSheet.REQUEST_KEY,
+            this,
+            this
+        )
+
+        supportFragmentManager.setFragmentResultListener(
+            StopValidationDialog.ACTION_CONTINUE,
+            this
+        ) { _, bundle ->
+            if (StopValidationDialog.getResult(bundle)) {
+                gotoBakerRemove()
+            }
         }
     }
 
@@ -181,16 +194,22 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         startActivityForResultAndHistoryCheck(intent)
     }
 
-    private fun gotoBakerRemoveIntroFlow() {
-        menuDialog?.dismiss()
-        val intent = Intent(this, BakerRemoveIntroFlow::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+    private fun gotoBakerRemove() {
         viewModel.bakerDelegationData.type = ProxyRepository.REMOVE_BAKER
-        intent.putExtra(
-            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-            viewModel.bakerDelegationData
-        )
+        viewModel.bakerDelegationData.amount = BigInteger.ZERO
+        viewModel.bakerDelegationData.metadataUrl = null
+
+        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
+        finishUntilClass(MainActivity::class.java.canonicalName)
+    }
+
+    private fun showBakerRemoveDialog() {
+        StopValidationDialog().showSingle(
+            supportFragmentManager,
+            StopValidationDialog.TAG
+        )
     }
 
     private fun gotoBakerResume() {
