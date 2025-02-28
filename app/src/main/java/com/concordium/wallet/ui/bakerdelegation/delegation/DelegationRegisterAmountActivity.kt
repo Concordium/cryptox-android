@@ -32,7 +32,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         binding.amountError.visibility = View.VISIBLE
-        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED || stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
+        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED ||
+            stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN
+        ) {
             binding.poolLimitTitle.setTextColor(getColor(R.color.cryptox_pinky_main))
             binding.poolLimit.setTextColor(getColor(R.color.cryptox_pinky_main))
         } else {

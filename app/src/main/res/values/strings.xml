@@ -679,7 +679,7 @@
 
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
 
-    <string name="delegation_status_title">Delegation status</string>
+    <string name="delegation_status_title">Earn</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
     <string name="delegation_status_content_empty_desc">This account has no delegation registered. You can register a delegation with the button below.</string>
     <string name="delegation_status_continue">Continue</string>
@@ -845,7 +845,7 @@
     <string name="baker_registration_open_url_hint">Paste your metadata URL here</string>
     <string name="baker_registration_open_url_invalid">Please enter a valid HTTP or HTTPS URL</string>
 
-    <string name="baker_status_title">Validator status</string>
+    <string name="baker_status_title">Validation</string>
     <string name="baker_status_register_baker">Register validator</string>
     <string name="baker_status_no_baker_title">This account has no validator registered.</string>
     <string name="baker_status_no_baker">This account has no validator registered. You can register a validator with the button below.</string>
@@ -1346,4 +1346,10 @@
     <string name="validation_suspended_delegator_explanation">
         Your delegation amount does not earn rewards until validation is resumed.
     </string>
+    <string name="earn_status_stop_button">Stop</string>
+    <string name="earn_status_update_button">Update</string>
+    <string name="delegation_status_suspend_button">Suspend</string>
+    <string name="delegation_status_resume_button">Resume</string>
+    <string name="confirmation_bottom_sheet_delete_button">Delete</string>
+    <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
 </resources>

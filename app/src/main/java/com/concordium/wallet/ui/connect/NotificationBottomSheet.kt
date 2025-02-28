@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.connect
 
 import android.content.Context
-import android.widget.ImageView
 import android.widget.TextView
 import com.concordium.wallet.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -13,7 +12,6 @@ class NotificationBottomSheet(context: Context, callback: ITransactionResult) : 
         INFO, ERROR, WARNING
     }
 
-    private val closeButton: ImageView?
     private val titleTv: TextView?
     private val descriptionTv: TextView?
 
@@ -26,11 +24,6 @@ class NotificationBottomSheet(context: Context, callback: ITransactionResult) : 
 
         titleTv = findViewById(R.id.title)
         descriptionTv = findViewById(R.id.description)
-
-        closeButton = findViewById(R.id.closeButton)
-        closeButton?.setOnClickListener {
-            callback.onResultBottomSheetDismissed()
-        }
 
         setOnDismissListener {
             callback.onResultBottomSheetDismissed()

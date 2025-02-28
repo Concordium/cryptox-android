@@ -2,12 +2,14 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentResultListener
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
@@ -24,8 +26,6 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         val account = viewModel.bakerDelegationData.account
         val accountBaker = account.baker
 
-        binding.statusButtonBottom.text = getString(R.string.baker_status_change_baking_status)
-
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
             addWaitingForTransaction(
                 R.string.baker_status_baker_waiting_title,
@@ -35,7 +35,6 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         }
 
         if (accountBaker == null) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
             setContentTitle(R.string.baker_status_no_baker_title)
             setEmptyState(getString(R.string.baker_status_no_baker))
             binding.statusButtonBottom.text = getString(R.string.baker_status_register_baker)
@@ -46,15 +45,19 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         }
 
         if (viewModel.isBakerPrimedForSuspension()) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.baker_status_baker_primed_for_suspension_title)
             setExplanation(getString(R.string.validation_primed_for_suspension_baker_explanation))
+            binding.actionButtonsLayout.suspendLayout.visibility = View.VISIBLE
+            binding.actionButtonsLayout.resumeLayout.visibility = View.GONE
         } else if (viewModel.isBakerSuspended()) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.baker_status_baker_suspended_title)
             setExplanation(getString(R.string.validation_suspended_baker_explanation))
+            binding.actionButtonsLayout.suspendLayout.visibility = View.GONE
+            binding.actionButtonsLayout.resumeLayout.visibility = View.VISIBLE
         } else {
-            binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
+            binding.statusLayout.visibility = View.GONE
+            binding.actionButtonsLayout.suspendLayout.visibility = View.VISIBLE
+            binding.actionButtonsLayout.resumeLayout.visibility = View.GONE
             setContentTitle(R.string.baker_status_baker_registered_title)
         }
 
@@ -103,16 +106,31 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         }
 
         addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
-
-        binding.statusButtonBottom.setOnClickListener {
-            openChangeBakerStatusBottomSheet()
-        }
+        initButtons()
 
         supportFragmentManager.setFragmentResultListener(
             ChangeBakerStatusBottomSheet.REQUEST_KEY,
             this,
             this
         )
+    }
+
+    private fun initButtons() {
+        binding.actionButtonsLayout.updateBtn.setOnClickListener {
+            openChangeBakerStatusBottomSheet()
+        }
+
+        binding.actionButtonsLayout.stopBtn.setOnClickListener {
+            gotoBakerRemoveIntroFlow()
+        }
+
+        binding.actionButtonsLayout.suspendBtn.setOnClickListener {
+            gotoBakerSuspend()
+        }
+
+        binding.actionButtonsLayout.resumeBtn.setOnClickListener {
+            gotoBakerResume()
+        }
     }
 
     private fun continueToBakerAmount() {
@@ -126,13 +144,10 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
     }
 
     private fun openChangeBakerStatusBottomSheet() {
-        ChangeBakerStatusBottomSheet
-            .newInstance(
-                isStopEnabled = !viewModel.isInCoolDown(),
-                isSuspendAvailable = viewModel.isBakerSuspendable(),
-                isResumeAvailable = viewModel.isBakerResumable(),
-            )
-            .show(supportFragmentManager, ChangeBakerStatusBottomSheet.REQUEST_KEY)
+        ChangeBakerStatusBottomSheet().showSingle(
+            supportFragmentManager,
+            ChangeBakerStatusBottomSheet.REQUEST_KEY
+        )
     }
 
     override fun onFragmentResult(requestKey: String, result: Bundle) {
@@ -148,15 +163,6 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
             R.id.update_keys_button ->
                 gotoBakerUpdateIntroFlow(ProxyRepository.UPDATE_BAKER_KEYS)
-
-            R.id.resume_button ->
-                gotoBakerResume()
-
-            R.id.suspend_button ->
-                gotoBakerSuspend()
-
-            R.id.stop_button ->
-                gotoBakerRemoveIntroFlow()
 
             else ->
                 error("Unknown button clicked")

@@ -42,13 +42,10 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
     }
 
     override fun initView() {
-
         clearState()
 
         val account = viewModel.bakerDelegationData.account
         val accountDelegation = account.delegation
-
-        binding.statusButtonBottom.text = getString(R.string.delegation_status_update)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
             addWaitingForTransaction(
@@ -59,7 +56,6 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         }
 
         if (accountDelegation == null) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
             binding.statusButtonBottom.text = getString(R.string.delegation_status_continue)
@@ -70,12 +66,10 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         }
 
         if (viewModel.isBakerSuspended()) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.delegation_status_content_suspended_title)
             setExplanation(getString(R.string.validation_suspended_delegator_explanation))
         } else {
-            binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
-            setContentTitle(R.string.delegation_status_content_registered_title)
+            binding.statusLayout.visibility = View.GONE
         }
 
         addContent(
@@ -114,16 +108,13 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
                 R.string.delegation_status_content_delegation_will_be_stopped,
                 R.string.delegation_status_new_amount
             )
-            binding.statusButtonTop.isEnabled =
+            binding.actionButtonsLayout.stopBtn.isEnabled =
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
         addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
-        binding.statusButtonTop.visibility = View.VISIBLE
-        binding.statusButtonTop.text = getString(R.string.delegation_status_stop)
-
-        binding.statusButtonTop.setOnClickListener {
+        binding.actionButtonsLayout.stopBtn.setOnClickListener {
             continueToDelete()
         }
 
@@ -133,7 +124,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
             }
         }
 
-        binding.statusButtonBottom.setOnClickListener {
+        binding.actionButtonsLayout.updateBtn.setOnClickListener {
             continueToUpdate()
         }
 
