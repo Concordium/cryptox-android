@@ -53,6 +53,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
                 R.string.delegation_status_waiting_to_finalize_title,
                 R.string.delegation_status_waiting_to_finalize
             )
+            binding.actionButtonsLayout.root.visibility = View.GONE
             return
         }
 

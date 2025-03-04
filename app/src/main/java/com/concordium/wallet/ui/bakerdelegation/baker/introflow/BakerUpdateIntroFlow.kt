@@ -32,7 +32,6 @@ class BakerUpdateIntroFlow :
                 UPDATE_BAKER_STAKE -> gotoUpdateBakerStake()
                 UPDATE_BAKER_POOL -> gotoUpdatePoolSettings()
                 UPDATE_BAKER_KEYS -> gotoUpdateBakerKeys()
-                REMOVE_BAKER -> gotoStopBaking()
             }
         }
     }
@@ -57,13 +56,6 @@ class BakerUpdateIntroFlow :
 
     private fun gotoUpdateBakerKeys() {
         val intent = Intent(this, BakerRegistrationCloseActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
-        startActivityForResultAndHistoryCheck(intent)
-        finishUntilClass(MainActivity::class.java.canonicalName)
-    }
-
-    private fun gotoStopBaking() {
-        val intent = Intent(this, BakerRemoveIntroFlow::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
         finishUntilClass(MainActivity::class.java.canonicalName)

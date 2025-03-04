@@ -32,6 +32,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
                 R.string.baker_status_baker_waiting_title,
                 R.string.baker_status_baker_waiting
             )
+            binding.actionButtonsLayout.root.visibility = View.GONE
             return
         }
 

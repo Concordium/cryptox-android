@@ -10,7 +10,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityEarnInfoBinding
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.CooldownView
@@ -36,7 +35,6 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
         initViews()
         initializeViewModel()
         initObservers()
-        showWaiting(true)
         viewModel.loadChainParameters()
     }
 
@@ -50,7 +48,7 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
             )
             startActivityForResultAndHistoryCheck(intent)
         }
-        binding.btnDelegation.setOnClickListener {
+        binding.btnReadMore.setOnClickListener {
             val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
             intent.putExtra(
@@ -63,15 +61,6 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
     }
 
     private fun initObservers() {
-        viewModel.chainParameters.observe(this) { chainParameters ->
-            chainParameters?.let {
-                val minimum = CurrencyUtil.formatGTU(chainParameters.minimumEquityCapital)
-                binding.tvBakerDescription.text =
-                    getString(R.string.earn_baker_description, minimum)
-                showWaiting(false)
-                binding.scrollViewInfo.visibility = View.VISIBLE
-            }
-        }
         viewModel.error.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showWaiting(false)

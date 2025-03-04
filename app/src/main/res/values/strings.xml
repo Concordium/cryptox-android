@@ -657,10 +657,16 @@
     <string name="earn_subtitle">Below are two options for earning rewards on CryptoX Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
-    <string name="earn_delegation_title">Delegation</string>
-    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other validators. There is no minimum amount of CCD required when delegating.</string>
-    <string name="earn_delegation_button">Continue to delegation setup</string>
-    <string name="earn_baker_button">Continue to validator setup</string>
+    <string name="earn_delegation_title">Earn 4–6% APY on your CCD</string>
+    <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
+    <string name="earn_delegation_rewarded_description">As a validator you participate in the network by producing blocks on the Concordium network.</string>
+    <string name="earn_delegation_options_title">Multiple options to choose from</string>
+    <string name="earn_delegation_options_description">As a validator you participate in the network by producing blocks on the Concordium network.</string>
+    <string name="earn_delegation_update_title">Update with ease</string>
+    <string name="earn_delegation_update_description">As a validator you participate in the network by producing blocks on the Concordium network.</string>
+    <string name="start_earning_button">Start earning</string>
+    <string name="read_more_button">Read more</string>
+    <string name="earn_baker_button">Or become a validator (advanced)</string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
 
     <!-- Delegation intro -->

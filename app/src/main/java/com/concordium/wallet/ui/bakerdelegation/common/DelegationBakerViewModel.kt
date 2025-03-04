@@ -661,7 +661,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerDelegationData.type == REGISTER_DELEGATION
                 || bakerDelegationData.type == UPDATE_DELEGATION && poolHasChanged()
             ) {
-                if (bakerDelegationData.isBakerPool)
+                if (bakerDelegationData.isBakerPool && bakerDelegationData.poolId.isNotEmpty())
                     com.concordium.sdk.responses.transactionstatus.DelegationTarget
                         .newBakerDelegationTarget(BakerId.from(bakerDelegationData.poolId.toLong()))
                 else
