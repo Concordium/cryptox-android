@@ -11,7 +11,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionSource
-import com.concordium.wallet.data.model.TransferSubmissionStatus
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.ui.common.BackendErrorHandler
 
@@ -19,7 +19,7 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
 
     private val proxyRepository = ProxyRepository()
 
-    private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
+    private var transferSubmissionStatusRequest: BackendRequest<SubmissionStatusResponse>? = null
     lateinit var account: Account
     lateinit var transaction: Transaction
 
@@ -63,7 +63,7 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     private fun loadTransferSubmissionStatus(submissionId: String) {
         _waitingLiveData.value = true
         transferSubmissionStatusRequest?.dispose()
-        transferSubmissionStatusRequest = proxyRepository.getTransferSubmissionStatus(submissionId,
+        transferSubmissionStatusRequest = proxyRepository.getSubmissionStatus(submissionId,
             {
                 // Update the transaction - the changes are not saved (they will be updated elsewhere)
                 transaction.transactionHash = it.transactionHash

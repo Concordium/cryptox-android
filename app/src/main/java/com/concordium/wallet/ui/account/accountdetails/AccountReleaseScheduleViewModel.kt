@@ -5,9 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
 import kotlinx.coroutines.Dispatchers
@@ -17,10 +15,6 @@ class AccountReleaseScheduleViewModel(application: Application) : AndroidViewMod
 
     lateinit var account: Account
     var isShielded: Boolean = false
-
-    private val proxyRepository = ProxyRepository()
-
-    private val gson = App.appCore.gson
 
     // Transaction state
     private val _waitingLiveData = MutableLiveData<Boolean>()
@@ -38,9 +32,6 @@ class AccountReleaseScheduleViewModel(application: Application) : AndroidViewMod
     private var _scheduledReleasesLiveData = MutableLiveData<List<Schedule>>()
     val scheduledReleasesLiveData: LiveData<List<Schedule>>
         get() = _scheduledReleasesLiveData
-
-    init {
-    }
 
     fun initialize(account: Account, isShielded: Boolean) {
         this.account = account

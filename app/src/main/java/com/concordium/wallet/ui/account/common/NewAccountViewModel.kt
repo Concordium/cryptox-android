@@ -19,12 +19,12 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.CreateCredentialOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.EncryptedData
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -50,7 +50,7 @@ open class NewAccountViewModel(application: Application) :
 
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
-    private var accountSubmissionStatusRequest: BackendRequest<AccountSubmissionStatus>? = null
+    private var accountSubmissionStatusRequest: BackendRequest<SubmissionStatusResponse>? = null
     private var firstAccount: Boolean = false
 
     private var tempData = TempData()

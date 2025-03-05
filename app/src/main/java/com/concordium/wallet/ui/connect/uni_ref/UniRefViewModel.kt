@@ -30,7 +30,7 @@ import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.model.TransferSubmissionStatus
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -70,7 +70,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
 
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
-    private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
+    private var transferSubmissionStatusRequest: BackendRequest<SubmissionStatusResponse>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
     private var recipientEncryptedKeyRequest: BackendRequest<AccountKeyData>? = null
@@ -119,7 +119,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         var accountNonce: AccountNonce? = null
         var nrgCcdAmount: Long = 0
         var submissionId: String? = null
-        var transferSubmissionStatus: TransferSubmissionStatus? = null
+        var transferSubmissionStatus: SubmissionStatusResponse? = null
         var expiry: Long? = null
         var globalParams: GlobalParams? = null
         var createTransferOutput: CreateTransferOutput? = null
@@ -499,7 +499,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private fun submissionStatus(submissionId: String) {
         transferSubmissionStatusRequest?.dispose()
         transferSubmissionStatusRequest =
-            proxyRepository.getTransferSubmissionStatus(submissionId,
+            proxyRepository.getSubmissionStatus(submissionId,
                 {
                     tempData.transferSubmissionStatus = it
                     finishTransferCreation()

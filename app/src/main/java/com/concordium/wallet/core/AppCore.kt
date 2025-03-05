@@ -121,6 +121,7 @@ class AppCore(val app: App) {
         return proxyBackendConfig.backend
     }
 
+    @Deprecated("It's better to use ProxyBackend, as it is backed by a reliable node")
     fun getGrpcClient(): ClientV2 {
         return grpcBackendConfig.client
     }

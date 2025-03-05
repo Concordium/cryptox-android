@@ -2,7 +2,7 @@ package com.concordium.wallet.data.model
 
 import java.math.BigInteger
 
-data class TransferSubmissionStatus(
+data class SubmissionStatusResponse(
     val status: TransactionStatus,
     val outcome: TransactionOutcome?,
     val amount: BigInteger?,
