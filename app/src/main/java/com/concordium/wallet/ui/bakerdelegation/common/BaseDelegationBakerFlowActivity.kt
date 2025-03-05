@@ -17,12 +17,6 @@ abstract class BaseDelegationBakerFlowActivity(titleId: Int) :
         }
     }
 
-    abstract fun getTitles(): IntArray
-
-    override fun getMaxPages(): Int {
-        return getTitles().size
-    }
-
     override fun getPageTitle(position: Int): Int {
         return getTitles()[position]
     }

@@ -15,7 +15,6 @@ import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntro
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.dialog.baker.StopValidationDialog
-import com.concordium.wallet.ui.common.GenericFlowActivity
 import java.math.BigInteger
 
 class BakerStatusActivity : StatusActivity(R.string.baker_status_title), FragmentResultListener {
@@ -149,7 +148,6 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
 
     private fun continueToBakerAmount() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData
@@ -186,7 +184,6 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
     private fun gotoBakerUpdateIntroFlow(bakerSettingsMenuItem: String) {
         menuDialog?.dismiss()
         val intent = Intent(this, BakerUpdateIntroFlow::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.bakerDelegationData.type = bakerSettingsMenuItem
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,

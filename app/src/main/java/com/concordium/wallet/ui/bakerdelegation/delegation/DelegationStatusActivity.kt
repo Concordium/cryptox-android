@@ -15,7 +15,6 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.StopDelegationDialog
-import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 
@@ -167,7 +166,6 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
 
     private fun continueToUpdate() {
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.bakerDelegationData.type = UPDATE_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)

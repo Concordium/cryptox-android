@@ -19,6 +19,10 @@ class BakerRegistrationIntroFlow :
         )
     }
 
+    override fun getButtonText(): String = getString(R.string.baker_start_validation_button)
+
+    override fun isButtonEnabled(): Boolean = false
+
     override fun gotoContinue() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)

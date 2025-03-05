@@ -671,6 +671,7 @@
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
+    <string name="delegation_intro_flow_learn_about">Learn about earning</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
     <string name="delegation_intro_subtitle2">Delegation models</string>
     <string name="delegation_intro_subtitle3">Validator pools</string>
@@ -709,6 +710,7 @@
 
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
+    <string name="delegation_update_delegation_button">Update delegation</string>
     <string name="delegation_remove_delegation_title">Remove delegation</string>
     <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
 
@@ -832,6 +834,7 @@
     <string name="baker_intro_subtitle4">Suspension</string>
 
     <string name="baker_registration_title">Register validator</string>
+    <string name="baker_start_validation_button">Start validating</string>
     <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to it.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
     <string name="baker_pool_settings_explain">When you open your validator as a pool, you earn commissions of stake delegated to your pool from other accounts:</string>
     <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
@@ -927,6 +930,8 @@
     <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Reducing your stake is subject to a cooldown period, in which the stake cannot be spent or transferred</string>
 
     <string name="baker_update_intro_flow_title">Validating</string>
+    <string name="baker_update_title">Update validation</string>
+    <string name="baker_update_button">Update validation</string>
     <string name="baker_update_intro_subtitle1">Updating validator settings</string>
     <string name="baker_update_intro_subtitle2">Update validator stake</string>
     <string name="baker_update_intro_subtitle3" tools:ignore="TypographyFractions">Update pool settings (1/2)</string>

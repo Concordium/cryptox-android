@@ -11,12 +11,13 @@ import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityEarnInfoBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.CooldownView
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
+import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterPoolActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.common.GenericFlowActivity
 
 class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn_title) {
     private lateinit var binding: ActivityEarnInfoBinding
@@ -40,22 +41,13 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
 
     private fun initViews() {
         binding.btnBaker.setOnClickListener {
-            val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
-            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(
-                DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-                BakerDelegationData(account, type = ProxyRepository.REGISTER_BAKER)
-            )
-            startActivityForResultAndHistoryCheck(intent)
+            gotoStartValidating()
+        }
+        binding.btnStartEarning.setOnClickListener {
+            gotoStartEarning()
         }
         binding.btnReadMore.setOnClickListener {
-            val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
-            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(
-                DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-                BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
-            )
-            startActivityForResultAndHistoryCheck(intent)
+            gotoReadMore()
         }
         addCooldowns(account.cooldowns)
     }
@@ -63,7 +55,6 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
     private fun initObservers() {
         viewModel.error.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
-                showWaiting(false)
                 showError(value)
             }
         })
@@ -78,10 +69,6 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
         viewModel
     }
 
-    private fun showWaiting(waiting: Boolean) {
-        binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
-    }
-
     private fun addCooldowns(cooldowns: Collection<AccountCooldown>) {
         binding.cooldownListContainer.removeAllViews()
         cooldowns.forEach { cooldown ->
@@ -94,5 +81,33 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
             cooldownView.setCooldown(cooldown)
             binding.cooldownListContainer.addView(cooldownView)
         }
+    }
+
+    private fun gotoStartEarning() {
+        val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
+        )
+        startActivityForResultAndHistoryCheck(intent)
+        finishUntilClass(MainActivity::class.java.canonicalName)
+    }
+
+    private fun gotoReadMore() {
+        val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
+        )
+        startActivityForResultAndHistoryCheck(intent)
+    }
+
+    private fun gotoStartValidating() {
+        val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            BakerDelegationData(account, type = ProxyRepository.REGISTER_BAKER)
+        )
+        startActivityForResultAndHistoryCheck(intent)
     }
 }

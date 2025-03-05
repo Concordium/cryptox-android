@@ -8,7 +8,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterPoolActivity
 
 class DelegationUpdateIntroFlowActivity :
-    BaseDelegationBakerFlowActivity(R.string.delegation_intro_flow_title) {
+    BaseDelegationBakerFlowActivity(R.string.delegation_update_delegation_title) {
 
     override fun getTitles(): IntArray {
         return intArrayOf(
@@ -17,6 +17,10 @@ class DelegationUpdateIntroFlowActivity :
             R.string.delegation_update_subtitle3
         )
     }
+
+    override fun getButtonText(): String = getString(R.string.delegation_update_delegation_button)
+
+    override fun isButtonEnabled(): Boolean = true
 
     override fun gotoContinue() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)

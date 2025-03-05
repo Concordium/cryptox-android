@@ -10,7 +10,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.databinding.ActivityBakerRegistrationOpenBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
-import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -76,7 +75,6 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
         } else {
             Intent(this, BakerRegistrationCloseActivity::class.java)
         }
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData

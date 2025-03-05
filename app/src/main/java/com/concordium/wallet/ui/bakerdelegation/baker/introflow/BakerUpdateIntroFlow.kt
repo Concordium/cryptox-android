@@ -14,7 +14,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowAc
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 
 class BakerUpdateIntroFlow :
-    BaseDelegationBakerFlowActivity(R.string.baker_update_intro_flow_title) {
+    BaseDelegationBakerFlowActivity(R.string.baker_update_title) {
 
     override fun getTitles(): IntArray {
         return intArrayOf(
@@ -25,6 +25,10 @@ class BakerUpdateIntroFlow :
             R.string.baker_update_intro_subtitle5
         )
     }
+
+    override fun getButtonText(): String = getString(R.string.baker_update_button)
+
+    override fun isButtonEnabled(): Boolean = false
 
     override fun gotoContinue() {
         bakerDelegationData?.type?.let { type ->

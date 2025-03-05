@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="40dp"
     android:paddingHorizontal="18dp">
 
     <LinearLayout
@@ -14,7 +15,8 @@
 
         <TextView
             android:id="@+id/title"
-            style="@style/CryptoX_Typography_Headline_Large"
+            android:textAppearance="@style/MW24_Typography_Text_Main"
+            android:textColor="@color/cryptox_white_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="[Before you continue]" />

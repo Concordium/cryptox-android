@@ -1,9 +1,16 @@
+@font-face {
+    font-family: 'Satoshi';
+    src: url('file:///android_asset/fonts/w400.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 html, body {
-    font-family: 'Roboto';
-    font-size: 15px;
+    font-family: 'Satoshi';
+    font-size: 12px;
     font-weight: 400;
     text-align: left;
-    color: #D4D6DC;
+    color: #9DAEC3;
     background-color: transparent;
     padding: 0px;
     margin: 0px;

@@ -13,7 +13,6 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegist
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
@@ -236,7 +235,6 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             Intent(this, BakerRegistrationConfirmationActivity::class.java)
         else
             Intent(this, BakerRegistrationActivity::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData
