@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.backend.repository
 
+import com.concordium.sdk.transactions.Transaction
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
@@ -7,7 +8,6 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountKeyData
 import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.AccountTransactions
 import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.CIS2Tokens
@@ -17,9 +17,13 @@ import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionCost
-import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.util.Log
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigInteger
 
 class ProxyRepository {
@@ -46,6 +50,23 @@ class ProxyRepository {
         const val CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS = 20
     }
 
+    /**
+     * Submits [transaction] crafted by the Java SDK
+     * through a reliable node behind the wallet-proxy.
+     *
+     * @see getSubmissionStatus
+     */
+    suspend fun submitSdkTransaction(
+        transaction: Transaction,
+    ): SubmissionData =
+        backend.submitRawTransaction(
+            transactionBytesBody = transaction
+                .bytes
+                .toRequestBody(
+                    contentType = "application/octet-stream".toMediaType(),
+                ),
+        )
+
     fun submitCredential(
         credentialWrapper: CredentialWrapper,
         success: (SubmissionData) -> Unit,
@@ -64,33 +85,6 @@ class ProxyRepository {
         })
 
         return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
-
-    suspend fun getAccountSubmissionStatusSuspended(submissionId: String) =
-        backend.accountSubmissionStatusSuspended(submissionId)
-
-    fun getAccountSubmissionStatus(
-        submissionId: String,
-        success: (AccountSubmissionStatus) -> Unit,
-        failure: ((Throwable) -> Unit)?,
-    ): BackendRequest<AccountSubmissionStatus> {
-        val call = backend.accountSubmissionStatus(submissionId)
-        call.enqueue(object : BackendCallback<AccountSubmissionStatus>() {
-
-            override fun onResponseData(response: AccountSubmissionStatus) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-
-        return BackendRequest<AccountSubmissionStatus>(
             call = call,
             success = success,
             failure = failure
@@ -147,18 +141,18 @@ class ProxyRepository {
         )
     }
 
-    suspend fun getTransferSubmissionStatusSuspended(submissionId: String) =
-        backend.transferSubmissionStatusSuspended(submissionId)
+    suspend fun getSubmissionStatus(submissionId: String) =
+        backend.submissionStatusSuspended(submissionId)
 
-    fun getTransferSubmissionStatus(
+    fun getSubmissionStatus(
         submissionId: String,
-        success: (TransferSubmissionStatus) -> Unit,
+        success: (SubmissionStatusResponse) -> Unit,
         failure: ((Throwable) -> Unit)?,
-    ): BackendRequest<TransferSubmissionStatus> {
-        val call = backend.transferSubmissionStatus(submissionId)
-        call.enqueue(object : BackendCallback<TransferSubmissionStatus>() {
+    ): BackendRequest<SubmissionStatusResponse> {
+        val call = backend.submissionStatus(submissionId)
+        call.enqueue(object : BackendCallback<SubmissionStatusResponse>() {
 
-            override fun onResponseData(response: TransferSubmissionStatus) {
+            override fun onResponseData(response: SubmissionStatusResponse) {
                 success(response)
             }
 
@@ -167,7 +161,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<TransferSubmissionStatus>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
