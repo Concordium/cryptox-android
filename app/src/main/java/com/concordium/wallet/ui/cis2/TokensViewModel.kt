@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toToken
@@ -23,10 +24,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.Serializable
-import kotlin.coroutines.resume
 
 data class TokenData(
     var account: Account? = null,
@@ -34,10 +35,14 @@ data class TokenData(
     var contractIndex: String = "",
     var subIndex: String = "0",
     var hasPendingDelegationTransactions: Boolean = false,
-    var hasPendingValidationTransactions: Boolean = false
+    var hasPendingValidationTransactions: Boolean = false,
 ) : Serializable
 
-class TokensViewModel(application: Application) : AndroidViewModel(application) {
+class TokensViewModel(
+    application: Application,
+) : AndroidViewModel(application),
+    KoinComponent {
+
     companion object {
         const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
@@ -77,6 +82,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             App.appCore.session.walletStorage.database.contractTokenDao()
         )
     }
+    private val tokenPriceRepository by inject<TokenPriceRepository>()
 
     /**
      * @param isFungible if set, allows loading only fungible or non-fungible
@@ -467,24 +473,13 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")
+        val eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
+            .getOrNull()
 
-        return suspendCancellableCoroutine { continuation ->
-            proxyRepository.getChainParameters(
-                success = { response ->
-                    continuation.resume(
-                        Token.ccd(
-                            account,
-                            response.microGtuPerEuro.denominator,
-                            response.microGtuPerEuro.numerator
-                        )
-                    )
-                },
-                failure = { error ->
-                    handleBackendError(error)
-                    continuation.resume(Token.ccd(account))
-                }
-            )
-        }
+        return Token.ccd(
+            account,
+            eurPerMicroCcd = eurPerMicroCcd,
+        )
     }
 
     fun loadTokensBalances() {

@@ -11,6 +11,7 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
@@ -46,6 +47,8 @@ import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.io.Serializable
 import java.math.BigInteger
 import java.util.Date
@@ -70,15 +73,20 @@ data class SendTokenData(
     var receiverPublicKey: String? = null,
     var globalParams: GlobalParams? = null,
     var accountBalance: AccountBalance? = null,
-    var newSelfEncryptedAmount: String? = null
+    var newSelfEncryptedAmount: String? = null,
 ) : Serializable
 
-class SendTokenViewModel(application: Application) : AndroidViewModel(application), Serializable {
+class SendTokenViewModel(
+    application: Application,
+) : AndroidViewModel(application),
+    KoinComponent {
+
     companion object {
         const val SEND_TOKEN_DATA = "SEND_TOKEN_DATA"
     }
 
     private val proxyRepository = ProxyRepository()
+    private val tokenPriceRepository by inject<TokenPriceRepository>()
     private val transferRepository =
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
@@ -235,9 +243,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             return
 
         if (sendTokenData.token!!.isCcd) {
-            viewModelScope.launch {
-                getTransferEURRate()
-            }
+            getTransferEURRate()
         }
     }
 
@@ -294,21 +300,18 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun getTransferEURRate() {
-        proxyRepository.getChainParameters(
-            success = { response ->
+    private fun getTransferEURRate() = viewModelScope.launch {
+        tokenPriceRepository
+            .getEurPerMicroCcd()
+            .onSuccess { eurPerMicroCcd ->
                 eurRateReady.postValue(
                     CurrencyUtil.toEURRate(
                         sendTokenData.amount,
-                        response.microGtuPerEuro.denominator,
-                        response.microGtuPerEuro.numerator
+                        eurPerMicroCcd,
                     )
                 )
-            },
-            failure = {
-                handleBackendError(it)
             }
-        )
+            .onFailure(::handleBackendError)
     }
 
     private fun getTransferCostCCD() {

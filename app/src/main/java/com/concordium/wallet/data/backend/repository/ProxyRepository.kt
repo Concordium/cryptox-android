@@ -13,7 +13,6 @@ import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.CIS2Tokens
 import com.concordium.wallet.data.model.CIS2TokensBalances
 import com.concordium.wallet.data.model.CIS2TokensMetadata
-import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
@@ -222,28 +221,7 @@ class ProxyRepository {
         )
     }
 
-    fun getChainParameters(
-        success: (ChainParameters) -> Unit,
-        failure: ((Throwable) -> Unit)?,
-    ): BackendRequest<ChainParameters> {
-        val call = backend.chainParameters()
-        call.enqueue(object : BackendCallback<ChainParameters>() {
-            override fun onResponseData(response: ChainParameters) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-        return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
-
-    suspend fun getChainParametersSuspended() = backend.chainParametersSuspended()
+    suspend fun getChainParameters() = backend.chainParameters()
 
     suspend fun getPassiveDelegationSuspended() = backend.passiveDelegationSuspended()
 
