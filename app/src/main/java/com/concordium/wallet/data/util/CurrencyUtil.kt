@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.util
 
+import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigDecimal
@@ -37,7 +38,7 @@ object CurrencyUtil {
     fun formatGTU(
         value: BigInteger,
         decimals: Int = 6,
-        withCommas: Boolean = true
+        withCommas: Boolean = true,
     ): String {
         if (value == BigInteger.ZERO) return ZERO_AMOUNT
         if (decimals <= 0) return value.toString()
@@ -122,15 +123,15 @@ object CurrencyUtil {
         return noDecimalSeparatorString.toBigInteger()
     }
 
-    fun toEURRate(amount: BigInteger, denominator: BigInteger, numerator: BigInteger): String {
+    fun toEURRate(amount: BigInteger, eurPerUnit: SimpleFraction): String {
         val amountBigDecimal = BigDecimal(amount)
-        val denominatorBigDecimal = BigDecimal(denominator)
-        val numeratorBigDecimal = BigDecimal(numerator)
+        val denominatorBigDecimal = BigDecimal(eurPerUnit.denominator)
+        val numeratorBigDecimal = BigDecimal(eurPerUnit.numerator)
 
-        return if (numeratorBigDecimal > BigDecimal.ZERO)
-            amountBigDecimal.multiply(denominatorBigDecimal)
-            .divide(numeratorBigDecimal, 2, RoundingMode.HALF_UP).toString()
-        else "0"
+        return amountBigDecimal
+            .multiply(numeratorBigDecimal)
+            .divide(denominatorBigDecimal, 2, RoundingMode.HALF_UP)
+            .toString()
     }
 
     private fun checkGTUString(stringValue: String): Boolean {

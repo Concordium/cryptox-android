@@ -29,8 +29,10 @@ data class Token(
     var isSelected: Boolean = false,
     var isNewlyReceived: Boolean = false,
     var isEarning: Boolean = false,
-    var denominator: BigInteger = BigInteger.ZERO,
-    var numerator: BigInteger = BigInteger.ZERO
+    /**
+     * Number of EUR per smallest token unit.
+     */
+    val eurPerUnit: SimpleFraction? = null,
 ) : Serializable {
 
     val symbol: String
@@ -51,7 +53,7 @@ data class Token(
     constructor(
         contractToken: ContractToken,
         isSelected: Boolean = false,
-        isEarning: Boolean = false
+        isEarning: Boolean = false,
     ) : this(
         uid = contractToken.id.toString(),
         token = contractToken.token,
@@ -70,8 +72,7 @@ data class Token(
          */
         fun ccd(
             account: Account,
-            denominator: BigInteger = BigInteger.ZERO,
-            numerator: BigInteger = BigInteger.ZERO
+            eurPerMicroCcd: SimpleFraction? = null,
         ) = Token(
             uid = "CCD",
             metadata = TokenMetadata(
@@ -85,8 +86,7 @@ data class Token(
             ),
             balance = account.balance,
             isEarning = account.isBaking() || account.isDelegating(),
-            denominator = denominator,
-            numerator = numerator
+            eurPerUnit = eurPerMicroCcd,
         )
     }
 }

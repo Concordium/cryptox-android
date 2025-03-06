@@ -10,7 +10,6 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
@@ -204,10 +203,7 @@ class WalletConnectSignTransactionRequestHandler(
                 getSimpleTransferCost()
 
             is AccountTransactionPayload.Update -> {
-                val chainParameters: ChainParameters =
-                    checkNotNull(proxyRepository.getChainParametersSuspended().body()) {
-                        "Failed loading chain parameters"
-                    }
+                val chainParameters = proxyRepository.getChainParameters()
 
                 val maxEnergy: Long =
                     if (transactionPayload.maxEnergy != null) {

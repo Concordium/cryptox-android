@@ -76,10 +76,7 @@ interface ProxyBackend {
     ): Call<TransactionCost>
 
     @GET("v0/chainParameters")
-    fun chainParameters(): Call<ChainParameters>
-
-    @GET("v0/chainParameters")
-    suspend fun chainParametersSuspended(): Response<ChainParameters>
+    suspend fun chainParameters(): ChainParameters
 
     @GET("v0/passiveDelegation")
     suspend fun passiveDelegationSuspended(): Response<PassiveDelegation>

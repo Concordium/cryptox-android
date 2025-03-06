@@ -399,17 +399,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         )
     }
 
-    fun loadChainParameters() {
-        proxyRepository.getChainParameters(
-            {
-                bakerDelegationData.chainParameters = it
-                _chainParametersLoadedLiveData.value = true
-            },
-            {
-                _chainParametersLoadedLiveData.value = false
-                handleBackendError(it)
-            }
-        )
+    fun loadChainParameters() = viewModelScope.launch {
+        try {
+            bakerDelegationData.chainParameters = proxyRepository.getChainParameters()
+            _chainParametersLoadedLiveData.value = true
+        } catch (e: Exception){
+            _chainParametersLoadedLiveData.value = false
+            handleBackendError(e)
+        }
     }
 
     fun loadChainParametersPassiveDelegationAndPossibleBakerPool() {
@@ -427,14 +424,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                     }
                 },
                 async(Dispatchers.IO) {
-                    val response = proxyRepository.getChainParametersSuspended()
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            bakerDelegationData.chainParameters = it
-                        }
-                    } else {
-                        val error = ErrorParser.parseError(response)
-                        _errorLiveData.value = error?.let { Event(it.error) }
+                    try {
+                        bakerDelegationData.chainParameters=proxyRepository.getChainParameters()
+                    } catch (e: Exception){
+                        handleBackendError(e)
                     }
                 }
             )
