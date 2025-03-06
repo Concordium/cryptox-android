@@ -31,22 +31,24 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
 
         reStakeOptions.clearAll()
         reStakeOptions.addControl(
-            getString(R.string.delegation_register_delegation_yes_add),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.delegation_register_delegation_yes_add),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(true)
                     baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
                 }
-            }, initiallyReStake
+            },
+            initiallySelected = initiallyReStake
         )
         reStakeOptions.addControl(
-            getString(R.string.delegation_register_delegation_no_add),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.delegation_register_delegation_no_add),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(false)
                     baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
                 }
-            }, !initiallyReStake
+            },
+            initiallySelected = !initiallyReStake
         )
     }
 

@@ -272,16 +272,14 @@
 
     <!-- region Segmented control -->
     <style name="CryptoX_SegmentedControl">
-        <item name="android:background">@drawable/cryptox_segmented_control_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">36dp</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
     <style name="CryptoX_SegmentedControl_Button">
-        <item name="android:background">@drawable/cryptox_segmented_control_button_background</item>
         <item name="android:textColor">@color/cryptox_segmented_control_button_text</item>
         <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
         <item name="android:layout_width">0dp</item>

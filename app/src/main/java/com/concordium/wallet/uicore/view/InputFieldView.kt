@@ -33,13 +33,7 @@ class InputFieldView @JvmOverloads constructor(
                 iconTextEmpty = getDrawable(R.styleable.InputFieldView_iconTextEmpty)
                 iconTextFilled = getDrawable(R.styleable.InputFieldView_iconTextFilled)
 
-                binding.searchIcon.setImageDrawable(
-                    iconTextEmpty ?: ContextCompat.getDrawable(
-                        context,
-                        R.drawable.cryptox_ico_search
-                    )
-                )
-
+                binding.searchIcon.setImageDrawable(iconTextEmpty)
                 binding.clearIcon.setImageDrawable(
                     iconTextFilled ?: ContextCompat.getDrawable(
                         context,

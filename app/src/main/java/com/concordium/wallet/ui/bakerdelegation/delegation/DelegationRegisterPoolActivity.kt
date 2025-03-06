@@ -3,11 +3,11 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
@@ -22,7 +22,7 @@ import com.concordium.wallet.util.KeyboardUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
-    R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title
+    R.layout.activity_delegation_registration_pool, R.string.delegation_register_staking_mode
 ) {
     private lateinit var binding: ActivityDelegationRegistrationPoolBinding
     private lateinit var lPoolControl: View
@@ -37,8 +37,8 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
 
     override fun onResume() {
         super.onResume()
-        if (!binding.poolId.text.isNullOrBlank())
-            viewModel.setPoolID(binding.poolId.text.toString())
+        if (binding.poolId.getSearchText().isNotBlank())
+            viewModel.setPoolID(binding.poolId.getSearchText())
     }
 
     fun showError() {
@@ -51,7 +51,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
 
     private fun showDetailedPage() {
         val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData
+        )
         startActivityForResultAndHistoryCheck(intent)
     }
 
@@ -59,51 +62,58 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         showWaiting(binding.includeProgress.progressLayout, false)
 
         binding.poolOptions.clearAll()
-        bakerPoolControl = binding.poolOptions.addControl(
-            getString(R.string.delegation_register_delegation_pool_baker),
-            object : SegmentedControlView.OnItemClickListener {
-                override fun onItemClicked() {
-                    binding.poolId.setText("")
-                    viewModel.selectBakerPool()
-                    updateVisibilities()
-                }
-            },
-            viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool())
-        )
         lPoolControl = binding.poolOptions.addControl(
-            getString(R.string.delegation_register_delegation_passive),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.delegation_register_delegation_passive),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectLPool()
                     updateVisibilities()
                 }
             },
-            viewModel.isLPool()
+            initiallySelected = viewModel.isLPool()
+        )
+        bakerPoolControl = binding.poolOptions.addControl(
+            title = getString(R.string.delegation_register_delegation_pool_baker),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
+                override fun onItemClicked() {
+                    binding.poolId.setSearchText("")
+                    viewModel.selectBakerPool()
+                    updateVisibilities()
+                }
+            },
+            initiallySelected = viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool())
         )
 
-        binding.poolId.setText(viewModel.getPoolId())
-        binding.poolId.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                KeyboardUtil.hideKeyboard(this)
-                onContinueClicked()
-                @Suppress("UNUSED_EXPRESSION")
-                true
-            }
-            false
+        binding.poolId.setSearchText(viewModel.getPoolId())
+        binding.poolId.setOnSearchDoneListener {
+            KeyboardUtil.hideKeyboard(this)
+            onContinueClicked()
         }
 
         binding.poolRegistrationContinue.setOnClickListener {
             onContinueClicked()
         }
 
-        binding.poolId.doOnTextChanged { text, _, _, _ ->
-            if (text != null && text.isNotEmpty())
-                viewModel.setPoolID(text.toString())
-            else if (viewModel.bakerDelegationData.oldDelegationTargetPoolId != null)
-                viewModel.setPoolID(viewModel.bakerDelegationData.oldDelegationTargetPoolId.toString())
-            updateVisibilities()
-        }
+        binding.poolId.setTextChangeListener(
+            object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    if (s.isNullOrBlank().not()) {
+                        viewModel.setPoolID(s.toString())
+                    } else if (viewModel.bakerDelegationData.oldDelegationTargetPoolId != null)
+                        viewModel.setPoolID(viewModel.bakerDelegationData.oldDelegationTargetPoolId.toString())
+                    updateVisibilities()
+                }
+            }
+        )
         updateContent()
         updateVisibilities()
 
@@ -162,21 +172,25 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
     }
 
     private fun updateVisibilities() {
-        binding.poolId.hint =
-            if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(
-                R.string.delegation_register_delegation_pool_id_hint_update
-            )
+        binding.poolId.setLabelText(
+            if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null)
+                getString(R.string.delegation_register_delegation_pool_id_hint)
+            else
+                getString(
+                    R.string.delegation_register_delegation_pool_id_hint_update
+                )
+        )
         binding.poolId.visibility =
             if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
-        if (viewModel.bakerDelegationData.isLPool) binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive) else binding.poolDesc.setText(
-            R.string.delegation_register_delegation_desc
-        )
+        if (viewModel.bakerDelegationData.isLPool) binding.poolDesc.text = ""
+        else binding.poolDesc.setText(R.string.delegation_register_delegation_desc)
         binding.poolDesc.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
         binding.poolRegistrationContinue.isEnabled =
-            getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || binding.poolId.text.isNotEmpty()
+            getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool ||
+                    binding.poolId.getSearchText().isNotEmpty()
         hideError()
     }
 
@@ -213,7 +227,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
 
     private fun gotoStopDelegation() {
         val intent = Intent(this, DelegationRemoveActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData
+        )
         startActivityForResultAndHistoryCheck(intent)
     }
 }

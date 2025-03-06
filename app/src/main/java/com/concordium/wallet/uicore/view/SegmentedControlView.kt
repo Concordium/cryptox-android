@@ -4,13 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.forEach
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.bakerdelegation.common.SegmentedLayoutView
 
 class SegmentedControlView : LinearLayout {
-    private var onItemClickListener: OnItemClickListener? = null
 
     constructor (context: Context) : super(context, null, R.style.CryptoX_SegmentedControl) {
         init(null)
@@ -34,9 +33,9 @@ class SegmentedControlView : LinearLayout {
     @Suppress("UNUSED_PARAMETER")
     private fun init(attrs: AttributeSet?) {
         if (isInEditMode) {
-            addControl("My test 1", null, false)
-            addControl("My test 2", null, true)
-            addControl("My test 3", null, false)
+            addControl("My test 1", null, "", false)
+            addControl("My test 2", null, "", true)
+            addControl("My test 3", null, "", false)
         }
     }
 
@@ -47,24 +46,32 @@ class SegmentedControlView : LinearLayout {
     fun addControl(
         title: String,
         clickListener: OnItemClickListener?,
+        earningPercent: String = "",
         initiallySelected: Boolean
     ): View {
-        val view =
-            LayoutInflater.from(context).inflate(R.layout.segmented_text_item, this, false) as Button
-        view.text = title
-        view.isSelected = initiallySelected
+        val view = LayoutInflater.from(context).inflate(
+            R.layout.segmented_view,
+            this,
+            false
+        ) as SegmentedLayoutView
+        view.setLayout(
+            title = title,
+            earningPercent = earningPercent,
+            selected = initiallySelected
+        )
+        view.onCheck(initiallySelected)
         view.setOnClickListener {
-            selectItem(it as Button)
+            selectItem(it as SegmentedLayoutView)
             clickListener?.onItemClicked()
         }
         addView(view)
         return view
     }
 
-    fun selectItem(item: Button) {
+    private fun selectItem(item: SegmentedLayoutView) {
         forEach { child ->
-            child as Button
-            child.isSelected = child == item
+            child as SegmentedLayoutView
+            child.onCheck(child == item)
         }
     }
 

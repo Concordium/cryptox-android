@@ -709,6 +709,7 @@
     <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validating on</string>
 
     <string name="delegation_register_delegation_title">Register delegation</string>
+    <string name="delegation_register_staking_mode">Staking mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_update_delegation_button">Update delegation</string>
     <string name="delegation_remove_delegation_title">Remove delegation</string>
@@ -726,15 +727,15 @@
     <string name="delegation_status_content_cooldown_time">Cooldown time:</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit <a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Validator id %1$s</string>
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
-    <string name="delegation_register_delegation_pool_baker">Validator</string>
-    <string name="delegation_register_delegation_passive">Passive</string>
+    <string name="delegation_register_delegation_pool_baker">Validator pool</string>
+    <string name="delegation_register_delegation_passive">Passive delegation</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
 

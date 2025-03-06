@@ -33,33 +33,33 @@ class BakerUpdatePoolSettingsActivity : BaseDelegationBakerActivity(
         binding.poolOptions.clearAll()
 
         binding.poolOptions.addControl(
-            getString(R.string.baker_update_pool_settings_option_open),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.baker_update_pool_settings_option_open),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
             },
-            viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
+            initiallySelected = viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
         )
         if (viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus != OPEN_STATUS_CLOSED_FOR_ALL) {
             binding.poolOptions.addControl(
-                getString(R.string.baker_update_pool_settings_option_close_for_new),
-                object : SegmentedControlView.OnItemClickListener {
+                title = getString(R.string.baker_update_pool_settings_option_close_for_new),
+                clickListener = object : SegmentedControlView.OnItemClickListener {
                     override fun onItemClicked() {
                         viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_NEW))
                     }
                 },
-                viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW
+                initiallySelected = viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW
             )
         }
         binding.poolOptions.addControl(
-            getString(R.string.baker_update_pool_settings_option_close),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.baker_update_pool_settings_option_close),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
             },
-            viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
+            initiallySelected = viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
         )
 
         when (viewModel.bakerDelegationData.account.baker?.bakerPoolInfo?.openStatus) {
