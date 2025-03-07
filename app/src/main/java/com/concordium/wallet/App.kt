@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.core.notifications.AnnouncementNotificationManager
+import com.concordium.wallet.data.backend.price.tokenPriceModule
 import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.util.Log
 import com.reown.android.Core
@@ -12,6 +13,9 @@ import com.reown.android.relay.ConnectionType
 import com.reown.android.relay.NetworkClientTimeout
 import com.reown.sign.client.Sign
 import com.reown.sign.client.SignClient
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
@@ -33,6 +37,16 @@ class App : Application() {
 
     private fun initialize() {
         appContext = this
+
+        startKoin {
+            androidLogger()
+            androidContext(this@App)
+
+            modules(
+                tokenPriceModule,
+            )
+        }
+
         initAppCore()
         initWalletConnect()
         appCore.tracker.installation(this)

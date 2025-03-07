@@ -4,7 +4,6 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountKeyData
 import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.AccountTransactions
 import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.CIS2Tokens
@@ -17,8 +16,9 @@ import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.model.PassiveDelegation
 import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionCost
-import com.concordium.wallet.data.model.TransferSubmissionStatus
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -29,6 +29,12 @@ import retrofit2.http.Query
 
 interface ProxyBackend {
 
+    /**
+     * Submits a transaction serialized as Block item (version, signature, header, payload).
+     */
+    @PUT("v0/submitRawTransaction")
+    suspend fun submitRawTransaction(@Body transactionBytesBody: RequestBody): SubmissionData
+
     @PUT("v0/submitCredential")
     fun submitCredential(@Body credential: CredentialWrapper): Call<SubmissionData>
 
@@ -38,12 +44,6 @@ interface ProxyBackend {
     @GET("v0/bakerPool/{poolId}")
     suspend fun bakerPoolSuspended(@Path("poolId") poolId: String): Response<BakerPoolStatus>
 
-    @GET("v0/submissionStatus/{submissionId}")
-    fun accountSubmissionStatus(@Path("submissionId") submissionId: String): Call<AccountSubmissionStatus>
-
-    @GET("v0/submissionStatus/{submissionId}")
-    suspend fun accountSubmissionStatusSuspended(@Path("submissionId") submissionId: String): AccountSubmissionStatus
-
     @GET("v0/accNonce/{accountAddress}")
     fun accountNonce(@Path("accountAddress") accountAddress: String): Call<AccountNonce>
 
@@ -51,10 +51,10 @@ interface ProxyBackend {
     fun submitTransfer(@Body transfer: CreateTransferOutput): Call<SubmissionData>
 
     @GET("v0/submissionStatus/{submissionId}")
-    fun transferSubmissionStatus(@Path("submissionId") submissionId: String): Call<TransferSubmissionStatus>
+    fun submissionStatus(@Path("submissionId") submissionId: String): Call<SubmissionStatusResponse>
 
     @GET("v0/submissionStatus/{submissionId}")
-    suspend fun transferSubmissionStatusSuspended(@Path("submissionId") submissionId: String): TransferSubmissionStatus
+    suspend fun submissionStatusSuspended(@Path("submissionId") submissionId: String): SubmissionStatusResponse
 
     @GET("v0/transactionCost")
     fun transferCost(
@@ -76,10 +76,7 @@ interface ProxyBackend {
     ): Call<TransactionCost>
 
     @GET("v0/chainParameters")
-    fun chainParameters(): Call<ChainParameters>
-
-    @GET("v0/chainParameters")
-    suspend fun chainParametersSuspended(): Response<ChainParameters>
+    suspend fun chainParameters(): ChainParameters
 
     @GET("v0/passiveDelegation")
     suspend fun passiveDelegationSuspended(): Response<PassiveDelegation>

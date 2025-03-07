@@ -17,7 +17,7 @@ import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
     private val context: Context,
-    private val showManageButton: Boolean
+    private val showManageButton: Boolean,
 ) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private var addButtonClickListener: () -> Unit = {}
@@ -103,14 +103,22 @@ class TokensAccountDetailsAdapter(
                 .into(holder.binding.tokenIcon)
 
             holder.binding.eurRate.visibility = View.VISIBLE
-            holder.binding.eurRate.text = if (showManageButton)
-                context.getString(
-                    R.string.cis_eur_rate,
-                    CurrencyUtil.toEURRate(token.balance, token.denominator, token.numerator)
-                )
-            else
-                context.getString(R.string.cis_at_disposal)
-
+            holder.binding.eurRate.text =
+                if (showManageButton) {
+                    if (token.eurPerUnit != null) {
+                        context.getString(
+                            R.string.cis_eur_rate,
+                            CurrencyUtil.toEURRate(
+                                token.balance,
+                                token.eurPerUnit
+                            )
+                        )
+                    } else {
+                        ""
+                    }
+                } else {
+                    context.getString(R.string.cis_at_disposal)
+                }
         } else {
             Glide.with(context)
                 .load(R.drawable.ic_token_no_image)

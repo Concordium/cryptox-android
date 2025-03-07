@@ -23,7 +23,6 @@ import com.concordium.sdk.transactions.ConfigureBakerTransaction
 import com.concordium.sdk.transactions.ConfigureDelegationPayload
 import com.concordium.sdk.transactions.ConfigureDelegationTransaction
 import com.concordium.sdk.transactions.Expiry
-import com.concordium.sdk.transactions.Hash
 import com.concordium.sdk.transactions.SignerEntry
 import com.concordium.sdk.transactions.TransactionFactory
 import com.concordium.sdk.transactions.TransactionSigner
@@ -399,17 +398,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         )
     }
 
-    fun loadChainParameters() {
-        proxyRepository.getChainParameters(
-            {
-                bakerDelegationData.chainParameters = it
-                _chainParametersLoadedLiveData.value = true
-            },
-            {
-                _chainParametersLoadedLiveData.value = false
-                handleBackendError(it)
-            }
-        )
+    fun loadChainParameters() = viewModelScope.launch {
+        try {
+            bakerDelegationData.chainParameters = proxyRepository.getChainParameters()
+            _chainParametersLoadedLiveData.value = true
+        } catch (e: Exception){
+            _chainParametersLoadedLiveData.value = false
+            handleBackendError(e)
+        }
     }
 
     fun loadChainParametersPassiveDelegationAndPossibleBakerPool() {
@@ -427,14 +423,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                     }
                 },
                 async(Dispatchers.IO) {
-                    val response = proxyRepository.getChainParametersSuspended()
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            bakerDelegationData.chainParameters = it
-                        }
-                    } else {
-                        val error = ErrorParser.parseError(response)
-                        _errorLiveData.value = error?.let { Event(it.error) }
+                    try {
+                        bakerDelegationData.chainParameters=proxyRepository.getChainParameters()
+                    } catch (e: Exception){
+                        handleBackendError(e)
                     }
                 }
             )
@@ -707,9 +699,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     ) = withContext(Dispatchers.IO) {
 
         val submissionId: String = try {
-            App.appCore.getGrpcClient()
-                .sendTransaction(transaction)
-                .asHex()
+            proxyRepository
+                .submitSdkTransaction(transaction)
+                .submissionId
         } catch (e: Exception) {
             Log.e("Error submitting transaction", e)
             withContext(Dispatchers.Main) {
@@ -723,11 +715,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
         bakerDelegationData.submissionId = submissionId
 
-        try {
-            // If the status is received,
-            // the transaction has been at least accepted as valid.
-            App.appCore.getGrpcClient()
-                .getBlockItemStatus(Hash.from(submissionId))
+        val submissionStatus =try {
+            proxyRepository
+                .getSubmissionStatus(submissionId)
+                .status
         } catch (e: Exception) {
             Log.e("Error checking submission status", e)
             withContext(Dispatchers.Main) {
@@ -740,12 +731,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         // Do not disable waiting state yet
         finishTransferCreation(
             submissionId = submissionId,
+            submissionStatus = submissionStatus,
             localTransactionType = localTransactionType,
         )
     }
 
     private suspend fun finishTransferCreation(
         submissionId: String,
+        submissionStatus: TransactionStatus,
         localTransactionType: TransactionType,
     ) = withContext(Dispatchers.Main) {
         val createdAt = Date().time
@@ -772,7 +765,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             "",
             createdAt,
             submissionId,
-            TransactionStatus.UNKNOWN,
+            submissionStatus,
             TransactionOutcome.UNKNOWN,
             localTransactionType,
             //but amount is negative so it is listed as incoming positive

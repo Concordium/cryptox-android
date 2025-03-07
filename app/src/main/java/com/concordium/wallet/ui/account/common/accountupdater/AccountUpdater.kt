@@ -15,12 +15,11 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountEncryptedAmount
-import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.EncryptedAmount
 import com.concordium.wallet.data.room.Recipient
@@ -46,12 +45,12 @@ import java.math.BigInteger
 
 class AccountUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
     data class AccountSubmissionStatusRequestData(
-        val deferred: Deferred<AccountSubmissionStatus>,
+        val deferred: Deferred<SubmissionStatusResponse>,
         val account: Account
     )
 
     data class TransferSubmissionStatusRequestData(
-        val deferred: Deferred<TransferSubmissionStatus>,
+        val deferred: Deferred<SubmissionStatusResponse>,
         val transfer: Transfer
     )
 
@@ -198,7 +197,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         )
                     ) {
                         val deferred = async {
-                            proxyRepository.getAccountSubmissionStatusSuspended(account.submissionId)
+                            proxyRepository.getSubmissionStatus(account.submissionId)
                         }
                         val requestData = AccountSubmissionStatusRequestData(
                             deferred,
@@ -270,7 +269,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         || transfer.transactionStatus == TransactionStatus.UNKNOWN
                     ) {
                         val deferred = async {
-                            proxyRepository.getTransferSubmissionStatusSuspended(transfer.submissionId)
+                            proxyRepository.getSubmissionStatus(transfer.submissionId)
                         }
                         val requestData = TransferSubmissionStatusRequestData(
                             deferred,
