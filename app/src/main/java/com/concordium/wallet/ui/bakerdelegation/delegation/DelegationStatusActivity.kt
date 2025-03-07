@@ -158,7 +158,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
     }
 
     private fun continueToCreate() {
-        val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
         viewModel.bakerDelegationData.type = REGISTER_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)

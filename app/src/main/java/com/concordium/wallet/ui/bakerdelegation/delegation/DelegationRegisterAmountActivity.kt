@@ -8,7 +8,9 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
+import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBinding
 import com.concordium.wallet.extension.showSingle
@@ -30,6 +32,11 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         hideActionBarBack(isVisible = true)
         initViews()
         initObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkDelegationType()
     }
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
@@ -100,6 +107,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
         binding.poolRegistrationContinue.setOnClickListener {
             onContinueClicked()
+        }
+
+        binding.delegationTypeLayout.setOnClickListener {
+            gotoDelegationTypeSelection()
         }
 
         binding.balanceAmount.text =
@@ -307,5 +318,24 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             viewModel.bakerDelegationData
         )
         startActivityForResultAndHistoryCheck(intent)
+    }
+
+    private fun checkDelegationType() {
+        val delegationType = if (viewModel.bakerDelegationData.isLPool)
+            getString(R.string.delegation_register_delegation_passive)
+        else if (viewModel.bakerDelegationData.isBakerPool)
+            getString(R.string.delegation_register_delegation_pool_baker)
+        else
+            getString(R.string.delegation_register_staking_mode)
+        binding.delegationTypeTitle.text = delegationType
+    }
+
+    private fun gotoDelegationTypeSelection() {
+        val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            BakerDelegationData(viewModel.bakerDelegationData.account, type = ProxyRepository.REGISTER_DELEGATION)
+        )
+        startActivity(intent)
     }
 }

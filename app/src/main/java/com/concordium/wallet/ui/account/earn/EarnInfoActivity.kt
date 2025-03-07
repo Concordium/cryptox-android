@@ -15,7 +15,7 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.CooldownView
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
-import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterPoolActivity
+import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
 
@@ -84,7 +84,7 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
     }
 
     private fun gotoStartEarning() {
-        val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
