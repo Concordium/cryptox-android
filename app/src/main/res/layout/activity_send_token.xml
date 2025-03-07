@@ -78,6 +78,7 @@
                     android:id="@+id/send_all_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:gravity="center_vertical|end"
                     android:text="@string/cis_max"
                     android:textAppearance="@style/MW24_Typography_Label_Main"

@@ -95,6 +95,12 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             } else {
                 binding.balanceSymbol.alpha = 1f
             }
+            binding.amount.toString().let {
+
+            }
+            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.let { amount ->
+                viewModel.loadEURRate(amount)
+            }
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -113,17 +119,19 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             gotoDelegationTypeSelection()
         }
 
+        binding.maxAmountButton.setOnClickListener {
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.getMaxDelegationBalance()))
+        }
+
         binding.balanceAmount.text =
             getString(
                 R.string.amount,
                 CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
             )
-        binding.delegationAmount.text = getString(
-            R.string.amount,
-            CurrencyUtil.formatGTU(BigInteger.ZERO)
-        )
+
         viewModel.bakerDelegationData.account.let { account ->
             account.delegation?.let { accountDelegation ->
+                binding.amountsLayout.visibility = View.VISIBLE
                 binding.delegationAmount.text =
                     CurrencyUtil.formatGTU(accountDelegation.stakedAmount)
             }
@@ -173,6 +181,16 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 }
             }
         })
+        viewModel.eurRateLiveData.observe(this) { rate ->
+            binding.eurRate.text =
+                if (rate != null)
+                    getString(
+                        R.string.cis_estimated_eur_rate,
+                        rate
+                    )
+                else
+                    ""
+        }
 
         baseDelegationBakerRegisterAmountListener =
             object : BaseDelegationBakerRegisterAmountListener {
@@ -250,6 +268,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 amountToStake.signum() == 0 -> showNewAmountZero()
                 amountToStake < (viewModel.bakerDelegationData.account.delegation?.stakedAmount
                     ?: BigInteger.ZERO) -> showReduceWarning()
+
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
@@ -334,7 +353,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-            BakerDelegationData(viewModel.bakerDelegationData.account, type = ProxyRepository.REGISTER_DELEGATION)
+            BakerDelegationData(
+                account = viewModel.bakerDelegationData.account,
+                type = ProxyRepository.REGISTER_DELEGATION
+            )
         )
         startActivity(intent)
     }

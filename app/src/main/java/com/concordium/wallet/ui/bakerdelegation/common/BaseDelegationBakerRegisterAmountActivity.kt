@@ -40,7 +40,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
 
     protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {
         setAmountHint(amount)
-        if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
+        if (amount.text.toString().isNotBlank()) {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
             val stakeError = stakeAmountInputValidator.validate(
                 CurrencyUtil.toGTUValue(amount.text.toString()),

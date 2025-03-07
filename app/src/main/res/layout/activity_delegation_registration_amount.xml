@@ -65,7 +65,7 @@
                     android:textAppearance="@style/MW24_Typography_IBM_Balance"
                     android:textSize="36sp"
                     app:layout_constraintBottom_toBottomOf="@id/amount"
-                    app:layout_constraintEnd_toStartOf="@id/send_all_button"
+                    app:layout_constraintEnd_toStartOf="@id/max_amount_button"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toEndOf="@id/amount"
                     app:layout_constraintTop_toTopOf="@id/amount"
@@ -74,9 +74,10 @@
                     tools:targetApi="p" />
 
                 <TextView
-                    android:id="@+id/send_all_button"
+                    android:id="@+id/max_amount_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:gravity="center_vertical|end"
                     android:text="@string/cis_max"
                     android:textAppearance="@style/MW24_Typography_Label_Main"
@@ -93,14 +94,12 @@
                     android:layout_marginTop="8dp"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/mw24_blue_3_50"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toStartOf="@id/pool_estimated_transaction_fee"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/amount"
                     app:layout_constraintWidth_default="wrap"
-                    tools:text="@string/cis_estimated_eur_rate"
-                    tools:visibility="visible" />
+                    tools:text="@string/cis_estimated_eur_rate"/>
 
                 <TextView
                     android:id="@+id/pool_estimated_transaction_fee"
@@ -191,6 +190,60 @@
                     app:layout_constraintTop_toBottomOf="@id/balance_amount" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <LinearLayout
+                android:id="@+id/amounts_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/delegation_amount_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/delegation_register_delegation_amount_delegation" />
+
+                <TextView
+                    android:id="@+id/delegation_amount"
+                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:layout_marginTop="8dp"
+                    tools:text="50" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/pool_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:text="@string/delegation_register_delegation_amount_current_pool" />
+
+                <TextView
+                    android:id="@+id/current_pool"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_marginTop="8dp"
+                    tools:text="132.955" />
+
+                <TextView
+                    android:id="@+id/pool_limit_title"
+                    style="@style/CryptoX_Typography_Body_Medium"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/delegation_register_delegation_amount_pool_pool" />
+
+                <TextView
+                    android:id="@+id/pool_limit"
+                    style="@style/CryptoX_Typography_Headline_Medium"
+                    android:layout_marginTop="8dp"
+                    tools:text="400" />
+
+            </LinearLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/delegation_type_layout"
                 android:layout_width="match_parent"
@@ -243,58 +296,6 @@
                     app:tint="@color/mw24_grey_4" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <LinearLayout
-                android:id="@+id/amounts_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
-
-                <TextView
-                    android:id="@+id/delegation_amount_title"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/delegation_register_delegation_amount_delegation" />
-
-                <TextView
-                    android:id="@+id/delegation_amount"
-                    style="@style/CryptoX_Typography_Headline_Large"
-                    android:layout_marginTop="8dp"
-                    tools:text="50" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/pool_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:text="@string/delegation_register_delegation_amount_current_pool" />
-
-                <TextView
-                    android:id="@+id/current_pool"
-                    style="@style/CryptoX_Typography_Headline_Medium"
-                    android:layout_marginTop="8dp"
-                    tools:text="132.955" />
-
-                <TextView
-                    android:id="@+id/pool_limit_title"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/delegation_register_delegation_amount_pool_pool" />
-
-                <TextView
-                    android:id="@+id/pool_limit"
-                    style="@style/CryptoX_Typography_Headline_Medium"
-                    android:layout_marginTop="8dp"
-                    tools:text="400" />
-
-            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
