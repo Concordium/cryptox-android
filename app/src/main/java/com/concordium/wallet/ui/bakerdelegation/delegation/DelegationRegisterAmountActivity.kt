@@ -17,7 +17,7 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationWarningDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.WarningDialog
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import java.math.BigInteger
 
@@ -132,8 +132,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         viewModel.bakerDelegationData.account.let { account ->
             account.delegation?.let { accountDelegation ->
                 binding.amountsLayout.visibility = View.VISIBLE
-                binding.delegationAmount.text =
+                binding.delegationAmount.text = getString(
+                    R.string.amount,
                     CurrencyUtil.formatGTU(accountDelegation.stakedAmount)
+                )
             }
         }
 
@@ -202,10 +204,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     private fun initObservers() {
         supportFragmentManager.setFragmentResultListener(
-            DelegationWarningDialog.ACTION_REQUEST,
+            WarningDialog.ACTION_REQUEST,
             this
         ) { _, bundle ->
-            if (DelegationWarningDialog.getResult(bundle)) {
+            if (WarningDialog.getResult(bundle)) {
                 continueToConfirmation()
             }
         }
@@ -293,36 +295,36 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     private fun showNewAmountZero() {
-        DelegationWarningDialog.newInstance(
-            DelegationWarningDialog.setBundle(
+        WarningDialog.newInstance(
+            WarningDialog.setBundle(
                 title = getString(R.string.delegation_amount_zero_title),
                 description = getString(R.string.delegation_amount_zero_message),
                 confirmButton = getString(R.string.delegation_amount_zero_continue),
                 denyButton = getString(R.string.delegation_amount_zero_new_stake)
             )
-        ).showSingle(supportFragmentManager, DelegationWarningDialog.TAG)
+        ).showSingle(supportFragmentManager, WarningDialog.TAG)
     }
 
     private fun showReduceWarning() {
-        DelegationWarningDialog.newInstance(
-            DelegationWarningDialog.setBundle(
+        WarningDialog.newInstance(
+            WarningDialog.setBundle(
                 title = getString(R.string.delegation_register_delegation_reduce_warning_title),
                 description = getString(R.string.delegation_register_delegation_reduce_warning_content),
                 confirmButton = getString(R.string.delegation_register_delegation_reduce_warning_ok),
                 denyButton = getString(R.string.delegation_register_delegation_reduce_warning_cancel)
             )
-        ).showSingle(supportFragmentManager, DelegationWarningDialog.TAG)
+        ).showSingle(supportFragmentManager, WarningDialog.TAG)
     }
 
     private fun show95PercentWarning() {
-        DelegationWarningDialog.newInstance(
-            DelegationWarningDialog.setBundle(
+        WarningDialog.newInstance(
+            WarningDialog.setBundle(
                 title = getString(R.string.delegation_more_than_95_title),
                 description = getString(R.string.delegation_more_than_95_message),
                 confirmButton = getString(R.string.delegation_more_than_95_continue),
                 denyButton = getString(R.string.delegation_more_than_95_new_stake)
             )
-        ).showSingle(supportFragmentManager, DelegationWarningDialog.TAG)
+        ).showSingle(supportFragmentManager, WarningDialog.TAG)
     }
 
     private fun continueToConfirmation() {

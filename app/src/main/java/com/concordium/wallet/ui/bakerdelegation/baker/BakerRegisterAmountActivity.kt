@@ -9,9 +9,11 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityBakerRegistrationAmountBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
+import com.concordium.wallet.ui.bakerdelegation.dialog.WarningDialog
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
@@ -36,6 +38,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         binding = ActivityBakerRegistrationAmountBinding.bind(findViewById(R.id.root_layout))
         hideActionBarBack(isVisible = true)
         initViews()
+        initObservers()
     }
 
     override fun initViews() {
@@ -107,6 +110,17 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
         } catch (ex: Exception) {
             handleBackendError(ex)
+        }
+    }
+
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            WarningDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (WarningDialog.getResult(bundle)) {
+                gotoNextPage()
+            }
         }
     }
 
@@ -220,12 +234,14 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
     }
 
     private fun show95PercentWarning() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.baker_more_than_95_title)
-        builder.setMessage(getString(R.string.baker_more_than_95_message))
-        builder.setPositiveButton(getString(R.string.baker_more_than_95_continue)) { _, _ -> gotoNextPage() }
-        builder.setNegativeButton(getString(R.string.baker_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        WarningDialog.newInstance(
+            WarningDialog.setBundle(
+                title = getString(R.string.baker_more_than_95_title),
+                description = getString(R.string.baker_more_than_95_message),
+                confirmButton = getString(R.string.baker_more_than_95_continue),
+                denyButton = getString(R.string.baker_more_than_95_new_stake)
+            )
+        ).showSingle(supportFragmentManager, WarningDialog.TAG)
     }
 
     private fun gotoNextPage() {

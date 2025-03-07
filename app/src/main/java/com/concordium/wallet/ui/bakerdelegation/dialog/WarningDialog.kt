@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.bakerdelegation.dialog.delegation
+package com.concordium.wallet.ui.bakerdelegation.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogDelegationWarningBinding
 
-class DelegationWarningDialog : AppCompatDialogFragment() {
+class WarningDialog : AppCompatDialogFragment() {
 
     override fun getTheme(): Int = R.style.CCX_Dialog
 
@@ -65,7 +65,7 @@ class DelegationWarningDialog : AppCompatDialogFragment() {
         private const val CONFIRM_BUTTON = "confirm_button"
         private const val DENY_BUTTON = "deny_button"
 
-        fun newInstance(bundle: Bundle) = DelegationWarningDialog().apply {
+        fun newInstance(bundle: Bundle) = WarningDialog().apply {
             arguments = bundle
         }
 
