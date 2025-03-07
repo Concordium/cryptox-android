@@ -132,10 +132,14 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/baker_registration_amount_explain" />
 
-            <com.concordium.wallet.uicore.view.SegmentedControlView
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/restake_options"
-                style="@style/CryptoX_SegmentedControl"
-                android:layout_marginTop="16dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:trackTint="@color/ccx_switch_track_color"
+                app:layout_constraintBottom_toBottomOf="@id/pool_restake_rewards"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/pool_restake_rewards" />
 
         </LinearLayout>
     </ScrollView>

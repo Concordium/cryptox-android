@@ -708,7 +708,7 @@
     <string name="delegation_status_effective_time">%1$s at %2$s</string>
     <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validating on</string>
 
-    <string name="delegation_register_delegation_title">Register delegation</string>
+    <string name="delegation_register_delegation_title">Earn</string>
     <string name="delegation_register_staking_mode">Staking mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_update_delegation_button">Update delegation</string>
@@ -755,7 +755,8 @@
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_amount_do_you_want">Add the rewards to your delegated amount automatically?\n\nIf you decline, amounts will be at disposal on your account balance at each pay day.</string>
+    <string name="delegation_register_delegation_restake_rewards">Restake rewards</string>
+    <string name="delegation_register_delegation_amount_do_you_want">I want to automatically add my staking rewards to my stake amount.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>

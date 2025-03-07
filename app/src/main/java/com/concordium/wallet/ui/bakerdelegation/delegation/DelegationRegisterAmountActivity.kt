@@ -1,10 +1,11 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import androidx.core.widget.doOnTextChanged
+import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
@@ -15,6 +16,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegist
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationWarningDialog
+import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import java.math.BigInteger
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
@@ -62,6 +64,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     private fun showConfirmationPage() {
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initViews() {
         super.initViews()
         super.initReStakeOptionsView(binding.restakeOptions)
@@ -77,13 +80,22 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             false
         }
         setAmountHint(binding.amount)
-        binding.amount.doOnTextChanged { _, _, _, _ ->
+        binding.amount.addTextChangedListener {
             validateAmountInput(binding.amount, binding.amountError)
             binding.poolRegistrationContinue.isEnabled = hasChanges()
+            if (it.toString().isEmpty()) {
+                binding.balanceSymbol.alpha = 0.5f
+            } else {
+                binding.balanceSymbol.alpha = 1f
+            }
         }
-        binding.amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.amount.text.isEmpty()) binding.amount.hint = ""
-            else setAmountHint(binding.amount)
+        binding.amount.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                showKeyboard(this, binding.amount)
+            }
+        }
+        binding.balanceSymbol.setOnClickListener {
+            showKeyboard(this, binding.amount)
         }
 
         binding.poolRegistrationContinue.setOnClickListener {
@@ -125,7 +137,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 showWaiting(binding.includeProgress.progressLayout, false)
                 binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
                 binding.poolEstimatedTransactionFee.text = getString(
-                    R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                    R.string.cis_estimated_fee,
                     CurrencyUtil.formatGTU(validateFee ?: BigInteger.ZERO)
                 )
                 binding.poolRegistrationContinue.isEnabled = true
@@ -196,8 +208,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amount.isEnabled = false
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
-            binding.amountDesc.text =
-                getString(R.string.delegation_update_delegation_amount_enter_amount)
             binding.amount.setText(viewModel.bakerDelegationData.account.delegation?.stakedAmount?.let {
                 CurrencyUtil.formatGTU(
                     value = it,

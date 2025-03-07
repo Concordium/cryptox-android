@@ -109,8 +109,12 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             enableSend()
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && viewModel.sendTokenData.amount.signum() == 0)
-                binding.amount.setText("")
+            if (hasFocus) {
+                if (viewModel.sendTokenData.amount.signum() == 0) {
+                    binding.amount.setText("")
+                }
+                showKeyboard(this, binding.amount)
+            }
         }
         binding.amount.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
