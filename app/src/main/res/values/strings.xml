@@ -747,6 +747,7 @@
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
     <string name="delegation_register_delegation_amount_balance">Balance</string>
+    <string name="delegation_register_delegation_amount_available_label">Available for staking</string>
     <string name="delegation_register_delegation_amount_delegation">Delegation</string>
     <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
