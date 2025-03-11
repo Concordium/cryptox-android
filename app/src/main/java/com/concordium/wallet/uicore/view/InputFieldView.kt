@@ -96,9 +96,9 @@ class InputFieldView @JvmOverloads constructor(
         updateIconFromText(binding.edittext.text)
     }
 
-    fun getSearchText(): String = binding.edittext.text.toString()
+    fun getText(): String = binding.edittext.text.toString()
 
-    fun setSearchText(text: String) = binding.edittext.setText(text)
+    fun setText(text: String) = binding.edittext.setText(text)
 
     fun setSearchListener(listener: OnClickListener) {
         binding.searchIcon.setOnClickListener(listener)

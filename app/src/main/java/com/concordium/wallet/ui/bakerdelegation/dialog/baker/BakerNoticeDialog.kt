@@ -15,7 +15,10 @@ class BakerNoticeDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int = R.style.CCX_Dialog
 
     private lateinit var binding: DialogBakerNoticeDialogBinding
-    private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE)?: "" }
+    private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE) ?: "" }
+    private val redirectToMainActivity: Boolean by lazy {
+        arguments?.getBoolean(REDIRECT_TO_MAIN) ?: true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,21 +36,28 @@ class BakerNoticeDialog : AppCompatDialogFragment() {
 
         binding.okButton.setOnClickListener {
             dismiss()
-            startActivity(Intent(requireContext(), MainActivity::class.java))
-            requireActivity().finishAffinity()
+            if (redirectToMainActivity) {
+                startActivity(Intent(requireContext(), MainActivity::class.java))
+                requireActivity().finishAffinity()
+            }
         }
     }
 
     companion object {
         const val TAG = "BakerNoticeDialog"
         private const val NOTICE_MESSAGE = "notice_message"
+        private const val REDIRECT_TO_MAIN = "redirect_to_main"
 
         fun newInstance(bundle: Bundle) = BakerNoticeDialog().apply {
             arguments = bundle
         }
 
-        fun setBundle(noticeMessage: String) = Bundle().apply {
+        fun setBundle(
+            noticeMessage: String,
+            redirectToMainActivity: Boolean = true
+        ) = Bundle().apply {
             putString(NOTICE_MESSAGE, noticeMessage)
+            putBoolean(REDIRECT_TO_MAIN, redirectToMainActivity)
         }
     }
 }

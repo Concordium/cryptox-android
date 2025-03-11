@@ -18,20 +18,20 @@ import java.text.ParseException
 import java.util.Locale
 import kotlin.math.roundToInt
 
-
 class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
-    R.layout.activity_baker_settings, R.string.baker_registration_title
+    R.layout.activity_baker_settings, R.string.baker_registration_pool_title
 ) {
     private lateinit var binding: ActivityBakerSettingsBinding
 
     /**
      * Formats values in range [[0.0; 1.0]].
      */
-    private val percentNumberFormat = (DecimalFormat.getNumberInstance(Locale.US) as DecimalFormat).apply {
-        multiplier = 100
-        minimumFractionDigits = PERCENT_FORMAT_DECIMALS
-        maximumFractionDigits = PERCENT_FORMAT_DECIMALS
-    }
+    private val percentNumberFormat =
+        (DecimalFormat.getNumberInstance(Locale.US) as DecimalFormat).apply {
+            multiplier = 100
+            minimumFractionDigits = PERCENT_FORMAT_DECIMALS
+            maximumFractionDigits = PERCENT_FORMAT_DECIMALS
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +61,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
         var isDynamicChange = false
         transactionFeeValue.decimals = PERCENT_FORMAT_DECIMALS
         if (transactionRange.min != transactionRange.max) {
-            transactionFeeGroup.visibility = View.VISIBLE
-            transactionFeeMin.text = getMinRangeText(transactionRange.min)
-            transactionFeeMax.text = getMaxRangeText(transactionRange.max)
+            feeLayout.visibility = View.VISIBLE
 
             transactionFeeValue.afterTextChanged { textAmount ->
                 if (!transactionFeeValue.hasFocus()) {
@@ -126,7 +124,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
                 })
             }
         } else {
-            transactionFeeGroup.visibility = View.GONE
+            feeLayout.visibility = View.GONE
             transactionFeeValue.isEnabled = false
             transactionFeeValue.setText(percentNumberFormat.format(transactionRange.max))
         }
@@ -138,9 +136,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
         var isDynamicChange = false
         bakingValue.decimals = PERCENT_FORMAT_DECIMALS
         if (bakingRange.min != bakingRange.max) {
-            bakingGroup.visibility = View.VISIBLE
-            bakingMin.text = getMinRangeText(bakingRange.min)
-            bakingMax.text = getMaxRangeText(bakingRange.max)
+            rewardLayout.visibility = View.VISIBLE
 
             bakingValue.afterTextChanged { textAmount ->
                 if (!bakingValue.hasFocus()) {
@@ -202,7 +198,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
                 })
             }
         } else {
-            bakingGroup.visibility = View.GONE
+            rewardLayout.visibility = View.GONE
             bakingValue.isEnabled = false
             bakingValue.setText(percentNumberFormat.format(bakingRange.max))
         }
@@ -259,12 +255,6 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity(
 
     private fun getPercentageFromProgress(progress: Int) =
         percentNumberFormat.format(progress.toDouble() / RATE_RANGE_FRACTION_MULTIPLIER)
-
-    private fun getMinRangeText(value: Double) =
-        getString(R.string.baking_pool_range_min, percentNumberFormat.format(value))
-
-    private fun getMaxRangeText(value: Double) =
-        getString(R.string.baking_pool_range_max, percentNumberFormat.format(value))
 
     override fun initViews() {
         binding.bakerRegistrationContinue.setOnClickListener {

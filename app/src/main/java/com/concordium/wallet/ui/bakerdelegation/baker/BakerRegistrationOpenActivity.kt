@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
@@ -14,7 +15,7 @@ import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.KeyboardUtil
 
 class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
-    R.layout.activity_baker_registration_open, R.string.baker_registration_open_title
+    R.layout.activity_baker_registration_open, R.string.baker_registration_metadata_title
 ) {
     private lateinit var binding: ActivityBakerRegistrationOpenBinding
 
@@ -39,17 +40,18 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
             }
         }
 
+        binding.openUrl.setInputType(InputType.TYPE_TEXT_VARIATION_URI)
+
         fun onUrlClicked(url: String) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
 
         binding.openUrlExplain.handleUrlClicks(::onUrlClicked)
-        binding.readMoreTextView.handleUrlClicks(::onUrlClicked)
 
         binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
-            viewModel.bakerDelegationData.metadataUrl = binding.openUrl.text?.toString()
+            viewModel.bakerDelegationData.metadataUrl = binding.openUrl.getText()
             validate()
         }
     }

@@ -37,8 +37,8 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
 
     override fun onResume() {
         super.onResume()
-        if (binding.poolId.getSearchText().isNotBlank())
-            viewModel.setPoolID(binding.poolId.getSearchText())
+        if (binding.poolId.getText().isNotBlank())
+            viewModel.setPoolID(binding.poolId.getText())
     }
 
     fun showError() {
@@ -76,7 +76,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             title = getString(R.string.delegation_register_delegation_pool_baker),
             clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
-                    binding.poolId.setSearchText("")
+                    binding.poolId.setText("")
                     viewModel.selectBakerPool()
                     updateVisibilities()
                 }
@@ -84,7 +84,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             initiallySelected = viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool())
         )
 
-        binding.poolId.setSearchText(viewModel.getPoolId())
+        binding.poolId.setText(viewModel.getPoolId())
         binding.poolId.setOnSearchDoneListener {
             KeyboardUtil.hideKeyboard(this)
             onContinueClicked()
@@ -190,7 +190,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         }
         binding.poolRegistrationContinue.isEnabled =
             getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool ||
-                    binding.poolId.getSearchText().isNotEmpty()
+                    binding.poolId.getText().isNotEmpty()
         hideError()
     }
 

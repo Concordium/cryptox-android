@@ -39,7 +39,7 @@ class ManageTokensMainFragment : Fragment(
             setSearchListener { lookForTokens() }
             setOnSearchDoneListener { lookForTokens() }
             setClearListener {
-                binding.searchLayout.setSearchText("")
+                binding.searchLayout.setText("")
                 viewModel.tokens.clear()
                 viewModel.lookForTokens.postValue(TOKENS_NOT_LOADED)
             }
@@ -57,7 +57,7 @@ class ManageTokensMainFragment : Fragment(
     }
 
     private fun lookForTokens() {
-        val contractIndex = binding.searchLayout.getSearchText()
+        val contractIndex = binding.searchLayout.getText()
             .takeUnless(String::isNullOrBlank)
             ?: return
         KeyboardUtil.hideKeyboard(requireActivity())

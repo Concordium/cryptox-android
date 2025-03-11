@@ -8,12 +8,13 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.databinding.ActivityBakerRegistrationCloseBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerNoticeDialog
 
 class BakerRegistrationCloseActivity : BaseDelegationBakerActivity(
-    R.layout.activity_baker_registration_close, R.string.baker_registration_title
+    R.layout.activity_baker_registration_close, R.string.baker_registration_validator_keys_title
 ) {
     private lateinit var binding: ActivityBakerRegistrationCloseBinding
 
@@ -61,12 +62,12 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity(
     }
 
     private fun showNotice() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.baker_registration_export_notice_title)
-        builder.setMessage(getString(R.string.baker_registration_export_notice_message))
-        builder.setPositiveButton(getString(R.string.baker_registration_export_notice_ok)) { dialog, _ -> dialog.dismiss() }
-        builder.setCancelable(false)
-        builder.create().show()
+        BakerNoticeDialog.newInstance(
+            BakerNoticeDialog.setBundle(
+                noticeMessage = getString(R.string.baker_registration_export_notice_message),
+                redirectToMainActivity = false
+            )
+        ).showSingle(supportFragmentManager, BakerNoticeDialog.TAG)
     }
 
     private fun startExport() {

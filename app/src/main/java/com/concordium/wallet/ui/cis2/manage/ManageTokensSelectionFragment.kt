@@ -105,7 +105,7 @@ class ManageTokensSelectionFragment : Fragment() {
             binding.searchLayout.isVisible = _viewModel.tokens.size > 1
             selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
-            binding.searchLayout.setSearchText("")
+            binding.searchLayout.setText("")
         }
         _viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
             showWaiting(false)
@@ -146,7 +146,7 @@ class ManageTokensSelectionFragment : Fragment() {
         binding.searchLayout.apply {
             setInputType(InputType.TYPE_CLASS_TEXT)
             setSearchListener { onSearch() }
-            setClearListener { setSearchText("") }
+            setClearListener { setText("") }
 
             setTextChangeListener(object : TextWatcher {
                 override fun beforeTextChanged(
@@ -174,7 +174,7 @@ class ManageTokensSelectionFragment : Fragment() {
         selectionAdapter.notifyDataSetChanged()
         showWaiting(true)
         _viewModel.lookForExactToken(
-            apparentTokenId = binding.searchLayout.getSearchText().trim(),
+            apparentTokenId = binding.searchLayout.getText().trim(),
             accountAddress = _viewModel.tokenData.account!!.address,
         )
     }

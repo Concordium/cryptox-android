@@ -154,7 +154,7 @@
     </style>
 
     <style name="SeekBarTheme">
-        <item name="colorAccent">@color/cryptox_white_main</item>
-        <item name="colorControlNormal">@color/cryptox_white_main</item>
+        <item name="android:thumb">@drawable/seekbar_thumb</item>
+        <item name="android:progressDrawable">@drawable/seekbar_progress</item>
     </style>
 </resources>
