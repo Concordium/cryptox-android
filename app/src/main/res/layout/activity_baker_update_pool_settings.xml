@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
@@ -32,26 +32,28 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/baker_update_pool_settings_explain"
-                    android:textColor="@color/cryptox_grey_additional" />
-
-                <TextView
-                    android:id="@+id/pool_settings_current_status"
-                    style="@style/CryptoX_Typography_Headline_Medium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    tools:text="@string/baker_update_pool_settings_current_status_open" />
-
                 <com.concordium.wallet.uicore.view.SegmentedControlView
                     android:id="@+id/pool_options"
                     style="@style/CryptoX_SegmentedControl"
                     android:layout_marginTop="12dp" />
+
+                <TextView
+                    android:id="@+id/pool_settings_current_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textAppearance="@style/MW24_Typography_Text_Mid"
+                    android:textColor="@color/cryptox_white_main"
+                    tools:text="@string/baker_update_pool_settings_current_status_open" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/baker_update_pool_settings_explain"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_2" />
+
             </LinearLayout>
 
             <Button

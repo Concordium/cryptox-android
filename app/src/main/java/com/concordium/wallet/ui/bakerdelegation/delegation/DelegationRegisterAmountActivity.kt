@@ -95,9 +95,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             } else {
                 binding.balanceSymbol.alpha = 1f
             }
-            binding.amount.toString().let {
-
-            }
             CurrencyUtil.toGTUValue(binding.amount.text.toString())?.let { amount ->
                 viewModel.loadEURRate(amount)
             }
