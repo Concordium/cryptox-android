@@ -60,4 +60,8 @@ class SliderButton @JvmOverloads constructor(
     fun setOnSliderCompleteListener(listener: () -> Unit) {
         onSliderCompleteListener = listener
     }
+
+    fun setText(buttonText: String) {
+        binding.sliderText.text = buttonText
+    }
 }

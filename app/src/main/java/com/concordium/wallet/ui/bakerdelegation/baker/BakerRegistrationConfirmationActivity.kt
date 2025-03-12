@@ -16,9 +16,11 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerErrorDialog
 import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerNoticeDialog
+import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.UnitConvertUtil
 import java.math.BigInteger
 import java.text.DecimalFormat
+import java.util.Locale
 
 class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     R.layout.activity_baker_registration_confirmation,
@@ -27,14 +29,16 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     private var receiptMode = false
 
     private lateinit var binding: ActivityBakerRegistrationConfirmationBinding
+    private lateinit var sliderButton: SliderButton
 
     /**
      * Formats values in range [[0.0; 1.0]].
      */
-    private val percentFormat = (DecimalFormat.getPercentInstance() as DecimalFormat).apply {
-        minimumFractionDigits = PERCENT_FORMAT_DECIMALS
-        maximumFractionDigits = PERCENT_FORMAT_DECIMALS
-    }
+    private val percentFormat =
+        (DecimalFormat.getPercentInstance(Locale.US) as DecimalFormat).apply {
+            minimumFractionDigits = PERCENT_FORMAT_DECIMALS
+            maximumFractionDigits = PERCENT_FORMAT_DECIMALS
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +55,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     override fun initViews() {
         super.initViews()
+        sliderButton = binding.submitBakerTransaction
         showWaiting(binding.includeProgress.progressLayout, true)
         loadFee()
     }
@@ -61,7 +66,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
                 showWaiting(binding.includeProgress.progressLayout, false)
                 updateViews()
                 binding.estimatedTransactionFee.text = getString(
-                    R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                    R.string.amount,
                     CurrencyUtil.formatGTU(it)
                 )
             }
@@ -70,9 +75,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     }
 
     private fun updateViews() {
-
-        binding.submitBakerTransaction.text =
-            getString(R.string.baker_registration_confirmation_submit)
         binding.accountToBakeFrom.text =
             viewModel.bakerDelegationData.account.name
                 .plus("\n\n")
@@ -103,13 +105,13 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             CONFIGURE_BAKER -> {
                 if (viewModel.bakerDelegationData.toSetBakerSuspended == false) {
                     updateViewsResumeBaker()
-                } else if (viewModel.bakerDelegationData.toSetBakerSuspended == true){
+                } else if (viewModel.bakerDelegationData.toSetBakerSuspended == true) {
                     updateViewsSuspendBaker()
                 }
             }
         }
 
-        binding.submitBakerTransaction.setOnClickListener {
+        binding.submitBakerTransaction.setOnSliderCompleteListener {
             onContinueClicked()
         }
 
@@ -129,8 +131,10 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsRegisterBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_register_confirmation_receipt_title)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_button)
+        )
+        binding.bakerRegisterTitle.visibility = View.VISIBLE
         showAmount()
         showRewards()
         showPoolStatus()
@@ -141,20 +145,22 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsUpdateBakerKeys() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_keys_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_update_affected_account)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_update_keys_button)
+        )
         showKeys()
         showCommissionRates()
     }
 
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_update_affected_account)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_update_pool_button)
+        )
         showPoolStatus()
         showCommissionRates()
         showMetaUrl()
@@ -162,10 +168,11 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsUpdateBakerStake() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_stake_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_update_stake_update)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_update_stake_button)
+        )
         showAmount()
         showRewards()
         showCommissionRates()
@@ -173,28 +180,31 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsRemoveBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_registration_confirmation_remove_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_remove_button)
+        )
         hideCommissionRates()
     }
 
     private fun updateViewsResumeBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_resume_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_registration_confirmation_resume_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_resume_account_to_stop)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_resume_button)
+        )
         hideCommissionRates()
     }
 
     private fun updateViewsSuspendBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_suspend_title)
-        binding.delegationTransactionTitle.text =
-            getString(R.string.baker_registration_confirmation_suspend_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_suspend_account_to_stop)
+        binding.submitBakerTransaction.setText(
+            getString(R.string.baker_registration_confirmation_suspend_button)
+        )
         hideCommissionRates()
     }
 
@@ -318,7 +328,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         hideActionBarBack(isVisible = false)
         binding.submitBakerTransaction.visibility = View.GONE
         binding.submitBakerFinish.visibility = View.VISIBLE
-        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let { submissionId ->
             binding.transactionHashView.isVisible = true
             binding.transactionHashView.transactionHash = submissionId
