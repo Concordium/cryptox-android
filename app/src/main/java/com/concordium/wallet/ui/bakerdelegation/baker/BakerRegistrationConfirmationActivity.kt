@@ -1,8 +1,8 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
@@ -10,12 +10,14 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerErrorDialog
 import com.concordium.wallet.ui.bakerdelegation.dialog.baker.BakerNoticeDialog
+import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.UnitConvertUtil
 import java.math.BigInteger
@@ -128,6 +130,15 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
                 showPageAsReceipt()
             }
         }
+        viewModel.transaction.observe(this) { transaction ->
+            transaction?.let {
+                binding.resultLayout.transactionDivider.visibility = View.VISIBLE
+                binding.resultLayout.transactionDetailsButton.visibility = View.VISIBLE
+                binding.resultLayout.transactionDetailsButton.setOnClickListener {
+                    gotoTransactionDetails(transaction)
+                }
+            }
+        }
     }
 
     private fun updateViewsRegisterBaker() {
@@ -142,6 +153,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         showCommissionRates()
         showMetaUrl()
         showKeys()
+        showResultAmount(getString(R.string.baker_register_confirmation_receipt_success))
     }
 
     private fun updateViewsUpdateBakerKeys() {
@@ -151,6 +163,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding.submitBakerTransaction.setText(
             getString(R.string.baker_registration_confirmation_update_keys_button)
         )
+        binding.resultLayout.receiptTitle.text =
+            getString(R.string.baker_registration_confirmation_update_keys_success)
         showKeys()
         showCommissionRates()
     }
@@ -162,6 +176,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding.submitBakerTransaction.setText(
             getString(R.string.baker_registration_confirmation_update_pool_button)
         )
+        binding.resultLayout.receiptTitle.text =
+            getString(R.string.baker_registration_confirmation_update_pool_success)
         showPoolStatus()
         showCommissionRates()
         showMetaUrl()
@@ -177,6 +193,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         showAmount()
         showRewards()
         showCommissionRates()
+        showResultAmount(getString(R.string.baker_registration_confirmation_update_stake_success))
     }
 
     private fun updateViewsRemoveBaker() {
@@ -189,6 +206,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             submitBakerTransaction.setText(
                 getString(R.string.baker_registration_confirmation_remove_button)
             )
+            resultLayout.receiptTitle.text =
+                getString(R.string.baker_registration_confirmation_remove_success)
         }
     }
 
@@ -203,6 +222,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             submitBakerTransaction.setText(
                 getString(R.string.baker_registration_confirmation_resume_button)
             )
+            resultLayout.receiptTitle.text =
+                getString(R.string.baker_registration_confirmation_resume_success)
         }
     }
 
@@ -217,15 +238,30 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             submitBakerTransaction.setText(
                 getString(R.string.baker_registration_confirmation_suspend_button)
             )
+            resultLayout.receiptTitle.text =
+                getString(R.string.baker_registration_confirmation_suspend_success)
         }
     }
 
     private fun showAmount() {
         if (viewModel.stakedAmountHasChanged()) {
-            binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
-            binding.bakerAmountConfirmation.visibility = View.VISIBLE
-            binding.bakerAmountConfirmationDivider.visibility = View.VISIBLE
-            binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
+            binding.apply {
+                delegationAmountConfirmationTitle.visibility = View.VISIBLE
+                bakerAmountConfirmation.visibility = View.VISIBLE
+                bakerAmountConfirmationDivider.visibility = View.VISIBLE
+                bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
+                    viewModel.bakerDelegationData.amount ?: BigInteger.ZERO
+                )
+            }
+        }
+    }
+
+    private fun showResultAmount(amountDescription: String) {
+        binding.apply {
+            resultLayout.amountLayout.visibility = View.VISIBLE
+            resultLayout.receiptTitle.visibility = View.GONE
+            resultLayout.amountDescription.text = amountDescription
+            resultLayout.amount.text = CurrencyUtil.formatGTU(
                 viewModel.bakerDelegationData.amount ?: BigInteger.ZERO
             )
         }
@@ -233,25 +269,31 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun showRewards() {
         if (viewModel.restakeHasChanged()) {
-            binding.rewardsWillBeTitle.visibility = View.VISIBLE
-            binding.rewardsWillBe.visibility = View.VISIBLE
-            binding.rewardsWillBeDivider.visibility = View.VISIBLE
-            binding.rewardsWillBe.text =
-                if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(
-                    R.string.baker_register_confirmation_receipt_at_disposal
-                )
+            binding.apply {
+                rewardsWillBeTitle.visibility = View.VISIBLE
+                rewardsWillBe.visibility = View.VISIBLE
+                rewardsWillBeDivider.visibility = View.VISIBLE
+                rewardsWillBe.text =
+                    if (viewModel.bakerDelegationData.restake)
+                        getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount)
+                    else
+                        getString(R.string.baker_register_confirmation_receipt_at_disposal)
+            }
         }
     }
 
     private fun showPoolStatus() {
         if (viewModel.openStatusHasChanged()) {
-            binding.poolStatusTitle.visibility = View.VISIBLE
-            binding.poolStatus.visibility = View.VISIBLE
-            binding.poolStatusDivider.visibility = View.VISIBLE
-            binding.poolStatus.text =
-                if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(
-                    R.string.baker_register_confirmation_receipt_pool_status_closed
-                )
+            binding.apply {
+                poolStatusTitle.visibility = View.VISIBLE
+                poolStatus.visibility = View.VISIBLE
+                poolStatusDivider.visibility = View.VISIBLE
+                poolStatus.text =
+                    if (viewModel.isOpenBaker())
+                        getString(R.string.baker_register_confirmation_receipt_pool_status_open)
+                    else
+                        getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
+            }
         }
     }
 
@@ -300,32 +342,36 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     }
 
     private fun showKeys() {
-        binding.electionVerifyKeyTitle.visibility = View.VISIBLE
-        binding.electionVerifyKey.visibility = View.VISIBLE
-        binding.electionVerifyKeyDivider.visibility = View.VISIBLE
-        binding.signatureVerifyKeyTitle.visibility = View.VISIBLE
-        binding.signatureVerifyKey.visibility = View.VISIBLE
-        binding.signatureVerifyKeyDivider.visibility = View.VISIBLE
-        binding.aggregationVerifyKeyTitle.visibility = View.VISIBLE
-        binding.aggregationVerifyKey.visibility = View.VISIBLE
-        binding.aggregationVerifyKeyDivider.visibility = View.VISIBLE
-        binding.electionVerifyKey.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
-        binding.signatureVerifyKey.text =
-            viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
-        binding.aggregationVerifyKey.text =
-            viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
+        binding.apply {
+            electionVerifyKeyTitle.visibility = View.VISIBLE
+            electionVerifyKey.visibility = View.VISIBLE
+            electionVerifyKeyDivider.visibility = View.VISIBLE
+            signatureVerifyKeyTitle.visibility = View.VISIBLE
+            signatureVerifyKey.visibility = View.VISIBLE
+            signatureVerifyKeyDivider.visibility = View.VISIBLE
+            aggregationVerifyKeyTitle.visibility = View.VISIBLE
+            aggregationVerifyKey.visibility = View.VISIBLE
+            aggregationVerifyKeyDivider.visibility = View.VISIBLE
+            electionVerifyKey.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
+            signatureVerifyKey.text =
+                viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
+            aggregationVerifyKey.text =
+                viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
+        }
     }
 
     private fun showMetaUrl() {
         if (viewModel.metadataUrlHasChanged()) {
-            binding.metaDataUrlTitle.visibility = View.VISIBLE
-            binding.metaDataUrl.visibility = View.VISIBLE
-            binding.metaDataDivider.visibility = View.VISIBLE
-            if ((viewModel.bakerDelegationData.metadataUrl?.length
-                    ?: 0) > 0
-            ) binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl
-            else binding.metaDataUrl.text =
-                getString(R.string.baker_update_pool_settings_url_removed)
+            binding.apply {
+                metaDataUrlTitle.visibility = View.VISIBLE
+                metaDataUrl.visibility = View.VISIBLE
+                metaDataDivider.visibility = View.VISIBLE
+            }
+            if ((viewModel.bakerDelegationData.metadataUrl?.length ?: 0) > 0)
+                binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl
+            else
+                binding.metaDataUrl.text =
+                    getString(R.string.baker_update_pool_settings_url_removed)
         }
     }
 
@@ -351,11 +397,14 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     private fun showPageAsReceipt() {
         receiptMode = true
         hideActionBarBack(isVisible = false)
-        binding.submitBakerTransaction.visibility = View.GONE
-        binding.submitBakerFinish.visibility = View.VISIBLE
-        viewModel.bakerDelegationData.submissionId?.let { submissionId ->
-            binding.transactionHashView.isVisible = true
-            binding.transactionHashView.transactionHash = submissionId
+        binding.apply {
+            submitBakerTransaction.visibility = View.GONE
+            submitBakerFinish.visibility = View.VISIBLE
+            receiptLayout.visibility = View.GONE
+            bakerRegisterTitle.visibility = View.GONE
+            changeStatusLayout.statusLayout.visibility = View.GONE
+            resultLayout.resultLayout.visibility = View.VISIBLE
+            resultLayout.transactionAnimation.playAnimation()
         }
     }
 
@@ -410,6 +459,20 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     override fun showWaiting(progressLayout: View, waiting: Boolean) {
         super.showWaiting(progressLayout, waiting)
         binding.submitBakerTransaction.isEnabled = !waiting
+    }
+
+    private fun gotoTransactionDetails(transaction: Transaction) {
+        val intent = Intent(this, TransactionDetailsActivity::class.java)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_ACCOUNT,
+            viewModel.bakerDelegationData.account
+        )
+        intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, transaction)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_RECEIPT_TITLE,
+            getString(R.string.account_baking_pending)
+        )
+        startActivity(intent)
     }
 
     private companion object {

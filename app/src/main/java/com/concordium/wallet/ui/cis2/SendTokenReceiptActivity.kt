@@ -216,7 +216,10 @@ class SendTokenReceiptActivity : BaseActivity(
             viewModel.sendTokenData.account
         )
         intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, transaction)
-        intent.putExtra(TransactionDetailsActivity.EXTRA_IS_RECEIPT, true)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_RECEIPT_TITLE,
+            getString(R.string.transaction_type_transfer)
+        )
         startActivity(intent)
     }
 }

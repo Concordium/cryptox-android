@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/status_layout"
+    android:id="@+id/result_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp"
@@ -21,7 +21,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/transaction_success" />
+        app:lottie_rawRes="@raw/transaction_success"
+        app:lottie_repeatCount="0" />
 
     <TextView
         android:id="@+id/receipt_title"
@@ -41,9 +42,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/receipt_title">
+        app:layout_constraintTop_toBottomOf="@id/receipt_title"
+        tools:visibility="visible">
 
         <View
             android:id="@+id/amount_divider"
@@ -55,20 +58,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/change_status_description"
+            android:id="@+id/amount_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:gravity="center"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/cryptox_white_main"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/amount_divider"
             app:layout_goneMarginTop="22dp"
-            tools:text="Your validation is registered"
-            tools:visibility="visible" />
+            tools:text="Your validation is registered" />
 
         <com.concordium.wallet.uicore.view.BalanceGradientTextView
             android:id="@+id/amount"
@@ -86,7 +87,7 @@
             app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/change_status_description"
+            app:layout_constraintTop_toBottomOf="@id/amount_description"
             tools:text="12,600.00" />
 
         <TextView
@@ -94,12 +95,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="@string/app_gstroke"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/cryptox_white_main"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/amount"
-            tools:text="CCD" />
+            app:layout_constraintTop_toBottomOf="@id/amount" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
@@ -108,9 +109,11 @@
         android:layout_height="1dp"
         android:layout_marginTop="30dp"
         android:background="@color/mw24_plain_white_10"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount_layout" />
+        app:layout_constraintTop_toBottomOf="@id/amount_layout"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/transaction_details_button"
@@ -118,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:drawablePadding="8dp"
+        android:padding="8dp"
         android:paddingVertical="4dp"
         android:text="@string/cis_transaction_details"
         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"

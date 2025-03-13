@@ -52,12 +52,14 @@ import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.data.util.FileUtil
+import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
@@ -139,6 +141,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private val _eurRateLiveData = MutableLiveData<String?>()
     val eurRateLiveData: LiveData<String?>
         get() = _eurRateLiveData
+
+    private val _transaction = MutableLiveData<Transaction?>()
+    val transaction: LiveData<Transaction?>
+        get() = _transaction
 
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData
@@ -809,6 +815,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         )
 
         transferRepository.insert(transfer)
+        _transaction.postValue(transfer.toTransaction())
         _waitingLiveData.value = false
         _transactionSuccessLiveData.value = true
     }
