@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.bakerdelegation.common
+package com.concordium.wallet.ui.bakerdelegation.common.segmentedview
 
 import android.content.Context
 import android.util.AttributeSet
@@ -11,7 +11,7 @@ import com.concordium.wallet.databinding.SegmentedLayoutItemBinding
 class SegmentedLayoutView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : ConstraintLayout(context, attrs) {
+) : ConstraintLayout(context, attrs), SegmentedView {
 
     private val binding: SegmentedLayoutItemBinding
 
@@ -20,7 +20,7 @@ class SegmentedLayoutView @JvmOverloads constructor(
         binding = SegmentedLayoutItemBinding.bind(this)
     }
 
-    fun setLayout(title: String, earningPercent: String = "", selected: Boolean) {
+    override fun setLayout(title: String, earningPercent: String, selected: Boolean) {
         binding.title.text = title
         binding.earningPercent.apply {
             text = earningPercent
@@ -29,7 +29,7 @@ class SegmentedLayoutView @JvmOverloads constructor(
         binding.checkbox.isChecked = selected
     }
 
-    fun onCheck(selected: Boolean) {
+    override fun onCheck(selected: Boolean) {
         binding.checkbox.isChecked = selected
     }
 }

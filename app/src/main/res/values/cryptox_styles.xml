@@ -271,7 +271,7 @@
     <!-- endregion Input -->
 
     <!-- region Segmented control -->
-    <style name="CryptoX_SegmentedControl">
+    <style name="CryptoX_Segmented_Layout_Control">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">36dp</item>
@@ -279,16 +279,22 @@
         <item name="android:gravity">center_horizontal</item>
     </style>
 
+    <style name="CryptoX_Segmented_Button_Control">
+        <item name="android:background">@drawable/cryptox_segmented_control_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
     <style name="CryptoX_SegmentedControl_Button">
+        <item name="android:background">@drawable/cryptox_segmented_control_button_background</item>
         <item name="android:textColor">@color/cryptox_segmented_control_button_text</item>
-        <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_margin">2dp</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:paddingVertical">0dp</item>
-        <item name="android:minHeight">0dp</item>
+        <item name="android:minHeight">40dp</item>
     </style>
     <!-- endregion Segmented control -->
 </resources>

@@ -34,7 +34,7 @@
 
                 <com.concordium.wallet.uicore.view.SegmentedControlView
                     android:id="@+id/pool_options"
-                    style="@style/CryptoX_SegmentedControl"
+                    style="@style/CryptoX_Segmented_Layout_Control"
                     android:layout_marginTop="12dp" />
 
                 <TextView

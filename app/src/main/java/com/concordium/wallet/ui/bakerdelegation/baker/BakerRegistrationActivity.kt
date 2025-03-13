@@ -12,7 +12,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.uicore.view.SegmentedControlView
 
 class BakerRegistrationActivity : BaseDelegationBakerActivity(
-    R.layout.activity_baker_registration, R.string.baker_registration_title
+    R.layout.activity_baker_registration, R.string.baker_registration_open_pool_title
 ) {
     private lateinit var binding: ActivityBakerRegistrationBinding
 
@@ -32,6 +32,7 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity(
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
             },
+            isButtonControl = true,
             initiallySelected = viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL || viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == null
         )
         binding.bakerOptions.addControl(
@@ -41,6 +42,7 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity(
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
             },
+            isButtonControl = true,
             initiallySelected = viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
         )
 
