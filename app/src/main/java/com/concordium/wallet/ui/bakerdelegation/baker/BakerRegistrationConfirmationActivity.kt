@@ -69,16 +69,17 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
                 )
+                binding.changeStatusLayout.changeStatusFee.text = getString(
+                    R.string.cis_estimated_fee,
+                    CurrencyUtil.formatGTU(it)
+                )
             }
         }
         viewModel.loadTransactionFee(true)
     }
 
     private fun updateViews() {
-        binding.accountToBakeFrom.text =
-            viewModel.bakerDelegationData.account.name
-                .plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account.address)
+        binding.accountToBakeFrom.text = viewModel.bakerDelegationData.account.address
         binding.estimatedTransactionFee.visibility = View.VISIBLE
 
         when (viewModel.bakerDelegationData.type) {
@@ -180,38 +181,50 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
 
     private fun updateViewsRemoveBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
-        binding.accountToBakeTitle.text =
-            getString(R.string.baker_registration_confirmation_remove_account_to_stop)
-        binding.submitBakerTransaction.setText(
-            getString(R.string.baker_registration_confirmation_remove_button)
-        )
-        hideCommissionRates()
+        binding.apply {
+            receiptLayout.visibility = View.GONE
+            changeStatusLayout.statusLayout.visibility = View.VISIBLE
+            changeStatusLayout.changeStatusTitle.text =
+                getString(R.string.baker_registration_confirmation_remove_label)
+            submitBakerTransaction.setText(
+                getString(R.string.baker_registration_confirmation_remove_button)
+            )
+        }
     }
 
     private fun updateViewsResumeBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_resume_title)
-        binding.accountToBakeTitle.text =
-            getString(R.string.baker_registration_confirmation_resume_account_to_stop)
-        binding.submitBakerTransaction.setText(
-            getString(R.string.baker_registration_confirmation_resume_button)
-        )
-        hideCommissionRates()
+        binding.apply {
+            receiptLayout.visibility = View.GONE
+            changeStatusLayout.statusLayout.visibility = View.VISIBLE
+            changeStatusLayout.changeStatusDescription.visibility = View.VISIBLE
+            changeStatusLayout.changeStatusTitle.text =
+                getString(R.string.baker_registration_confirmation_resume_label)
+            submitBakerTransaction.setText(
+                getString(R.string.baker_registration_confirmation_resume_button)
+            )
+        }
     }
 
     private fun updateViewsSuspendBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_suspend_title)
-        binding.accountToBakeTitle.text =
-            getString(R.string.baker_registration_confirmation_suspend_account_to_stop)
-        binding.submitBakerTransaction.setText(
-            getString(R.string.baker_registration_confirmation_suspend_button)
-        )
-        hideCommissionRates()
+        binding.apply {
+            receiptLayout.visibility = View.GONE
+            changeStatusLayout.statusLayout.visibility = View.VISIBLE
+            changeStatusLayout.changeStatusDescription.visibility = View.VISIBLE
+            changeStatusLayout.changeStatusTitle.text =
+                getString(R.string.baker_registration_confirmation_suspend_label)
+            submitBakerTransaction.setText(
+                getString(R.string.baker_registration_confirmation_suspend_button)
+            )
+        }
     }
 
     private fun showAmount() {
         if (viewModel.stakedAmountHasChanged()) {
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
+            binding.bakerAmountConfirmationDivider.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
                 viewModel.bakerDelegationData.amount ?: BigInteger.ZERO
             )
@@ -222,6 +235,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         if (viewModel.restakeHasChanged()) {
             binding.rewardsWillBeTitle.visibility = View.VISIBLE
             binding.rewardsWillBe.visibility = View.VISIBLE
+            binding.rewardsWillBeDivider.visibility = View.VISIBLE
             binding.rewardsWillBe.text =
                 if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(
                     R.string.baker_register_confirmation_receipt_at_disposal
@@ -233,6 +247,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         if (viewModel.openStatusHasChanged()) {
             binding.poolStatusTitle.visibility = View.VISIBLE
             binding.poolStatus.visibility = View.VISIBLE
+            binding.poolStatusDivider.visibility = View.VISIBLE
             binding.poolStatus.text =
                 if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(
                     R.string.baker_register_confirmation_receipt_pool_status_closed
@@ -250,21 +265,25 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
             if (viewModel.bakerDelegationData.transactionCommissionRate != null) {
                 transactionFeeTitle.visibility = View.VISIBLE
                 transactionFeeStatus.visibility = View.VISIBLE
+                transactionFeeDivider.visibility = View.VISIBLE
                 transactionFeeStatus.text =
                     percentFormat.format(viewModel.bakerDelegationData.transactionCommissionRate)
             } else {
                 transactionFeeTitle.visibility = View.GONE
                 transactionFeeStatus.visibility = View.GONE
+                transactionFeeDivider.visibility = View.GONE
             }
 
             if (viewModel.bakerDelegationData.bakingCommissionRate != null) {
                 bakingTitle.visibility = View.VISIBLE
                 bakingStatus.visibility = View.VISIBLE
+                bakingDivider.visibility = View.VISIBLE
                 bakingStatus.text =
                     percentFormat.format(viewModel.bakerDelegationData.bakingCommissionRate)
             } else {
                 bakingTitle.visibility = View.GONE
                 bakingStatus.visibility = View.GONE
+                bakingDivider.visibility = View.GONE
             }
         }
     }
@@ -273,18 +292,23 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         binding.apply {
             transactionFeeTitle.visibility = View.GONE
             transactionFeeStatus.visibility = View.GONE
+            transactionFeeDivider.visibility = View.GONE
             bakingTitle.visibility = View.GONE
             bakingStatus.visibility = View.GONE
+            bakingDivider.visibility = View.GONE
         }
     }
 
     private fun showKeys() {
         binding.electionVerifyKeyTitle.visibility = View.VISIBLE
         binding.electionVerifyKey.visibility = View.VISIBLE
+        binding.electionVerifyKeyDivider.visibility = View.VISIBLE
         binding.signatureVerifyKeyTitle.visibility = View.VISIBLE
         binding.signatureVerifyKey.visibility = View.VISIBLE
+        binding.signatureVerifyKeyDivider.visibility = View.VISIBLE
         binding.aggregationVerifyKeyTitle.visibility = View.VISIBLE
         binding.aggregationVerifyKey.visibility = View.VISIBLE
+        binding.aggregationVerifyKeyDivider.visibility = View.VISIBLE
         binding.electionVerifyKey.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
         binding.signatureVerifyKey.text =
             viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
@@ -296,6 +320,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
         if (viewModel.metadataUrlHasChanged()) {
             binding.metaDataUrlTitle.visibility = View.VISIBLE
             binding.metaDataUrl.visibility = View.VISIBLE
+            binding.metaDataDivider.visibility = View.VISIBLE
             if ((viewModel.bakerDelegationData.metadataUrl?.length
                     ?: 0) > 0
             ) binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl

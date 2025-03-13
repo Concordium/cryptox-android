@@ -41,9 +41,10 @@
                 android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                 android:textColor="@color/mw24_blue_2"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/receipt_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -70,10 +71,13 @@
                     tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
 
                 <View
+                    android:id="@+id/baker_amount_confirmation_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/delegation_amount_confirmation_title"
@@ -98,10 +102,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/rewards_will_be_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/rewards_will_be_title"
@@ -126,10 +133,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/pool_status_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/pool_status_title"
@@ -154,10 +164,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/transaction_fee_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/transaction_fee_title"
@@ -182,10 +195,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/baking_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/baking_title"
@@ -210,10 +226,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/meta_data_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/meta_data_url_title"
@@ -238,10 +257,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/election_verify_key_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/election_verify_key_title"
@@ -266,10 +288,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/signature_verify_key_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/signature_verify_key_title"
@@ -294,10 +319,13 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/aggregation_verify_key_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/mw24_plain_white_10" />
+                    android:background="@color/mw24_plain_white_10"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/aggregation_verify_key_title"
@@ -322,6 +350,7 @@
                     tools:visibility="visible" />
 
                 <View
+                    android:id="@+id/estimated_transaction_fee_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
@@ -354,8 +383,15 @@
                     android:layout_marginTop="16dp"
                     android:visibility="gone"
                     tools:visibility="visible" />
-
             </LinearLayout>
+
+            <include
+                android:id="@+id/change_status_layout"
+                layout="@layout/baker_delegation_change_status_item" />
+
+            <include
+                android:id="@+id/result_layout"
+                layout="@layout/baker_delegation_receipt_view" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

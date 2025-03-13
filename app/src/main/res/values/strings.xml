@@ -830,7 +830,7 @@
     <string name="delegation_amount_too_large_while_in_cooldown">Your delegation amount is too large for this pool.</string>
 
     <!-- Validator intro -->
-    <string name="baker_intro_flow_title">Become a validator</string>
+    <string name="baker_intro_flow_title">Learn about validation</string>
     <string name="baker_intro_subtitle1">Become a validator</string>
     <string name="baker_intro_subtitle2">The node</string>
     <string name="baker_intro_subtitle3">Opening a pool</string>
@@ -929,7 +929,8 @@
     <string name="baker_register_confirmation_receipt_at_disposal">Added to disposable amount</string>
     <string name="baker_register_confirmation_receipt_meta_data_url">Metadata URL</string>
     <string name="baker_register_transaction_failed">Your validating transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
-    <string name="baker_registration_confirmation_remove_title">Stop validating</string>
+    <string name="baker_registration_confirmation_remove_title">Validation</string>
+    <string name="baker_registration_confirmation_remove_label">Stop validation</string>
     <string name="baker_registration_confirmation_remove_button">Stop validation</string>
     <string name="baker_registration_confirmation_remove_are_you_sure">Are you sure you want to make the following transaction to stop validating?</string>
     <string name="baker_registration_confirmation_remove_transaction">Transaction: Stop validating</string>
@@ -965,6 +966,16 @@
         \n\nDeregistering the validator does not shut down your node. You must shut down the node in a separate
         action if you no longer wish to run a node on the Concordium blockchain.
     </string>
+
+    <string name="baker_suspend_validation_dialog_title">Important</string>
+    <string name="baker_suspend_validation_dialog_description">
+        You are about to self-suspend your validation.\n\nPlease be aware that:\n\n
+        • Suspended nodes don’t earn rewards\n\n
+        • Your delegators will stop earning rewards\n\n
+        • Your delegators will be notified about the suspension\n\n
+    </string>
+    <string name="baker_suspend_validation_dialog_go_back_button">Go back</string>
+    <string name="baker_suspend_validation_dialog_button">Continue</string>
 
     <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>
     <string name="update_baker_settings_menu_update_pool_settings">Update pool settings</string>
@@ -1371,14 +1382,17 @@
     <string name="baker_status_baker_suspended_title">@string/your_validation_has_been_suspended</string>
     <string name="update_baker_settings_menu_suspend_baking">Suspend validation</string>
     <string name="update_baker_settings_menu_resume_baking">Resume validation</string>
-    <string name="baker_registration_confirmation_resume_title">Resume validation</string>
+    <string name="baker_registration_confirmation_resume_title">Validation</string>
+    <string name="baker_registration_confirmation_resume_label">Resume validation</string>
     <string name="baker_registration_confirmation_resume_button">Resume</string>
     <string name="baker_registration_confirmation_resume_transaction">Transaction: Resume validation</string>
     <string name="baker_registration_confirmation_resume_account_to_stop">Account to resume validation</string>
-    <string name="baker_registration_confirmation_suspend_title">Suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_title">Validation</string>
+    <string name="baker_registration_confirmation_suspend_label">Suspend validation</string>
     <string name="baker_registration_confirmation_suspend_button">Suspend</string>
     <string name="baker_registration_confirmation_suspend_transaction">Transaction: Suspend validation</string>
     <string name="baker_registration_confirmation_suspend_account_to_stop">Account to suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_resume_description">Effective from next payday</string>
     <string name="delegation_status_content_suspended_title">@string/your_validator_has_been_suspended</string>
     <string name="account_details_suspension_notice_baker_suspended">@string/your_validation_has_been_suspended</string>
     <string name="account_details_suspension_notice_delegation_baker_suspended">@string/your_validator_has_been_suspended</string>

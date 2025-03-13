@@ -437,28 +437,34 @@
         <activity
             android:name=".ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationCloseActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationOpenActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerPoolSettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerStatusActivity"
             android:launchMode="singleTop"
@@ -467,11 +473,13 @@
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegisterAmountActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationConfirmationActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerUpdatePoolSettingsActivity"
             android:launchMode="singleTop"

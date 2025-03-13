@@ -15,6 +15,7 @@ import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntro
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.dialog.baker.StopValidationDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.baker.SuspendValidationDialog
 import java.math.BigInteger
 
 class BakerStatusActivity : StatusActivity(R.string.baker_status_title), FragmentResultListener {
@@ -121,7 +122,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         }
 
         binding.actionButtonsLayout.suspendBtn.setOnClickListener {
-            gotoBakerSuspend()
+            showBakerSuspendDialog()
         }
 
         binding.actionButtonsLayout.resumeBtn.setOnClickListener {
@@ -142,6 +143,15 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         ) { _, bundle ->
             if (StopValidationDialog.getResult(bundle)) {
                 gotoBakerRemove()
+            }
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            SuspendValidationDialog.ACTION_SUSPEND_CONTINUE,
+            this
+        ) { _, bundle ->
+            if (SuspendValidationDialog.getResult(bundle)) {
+                gotoBakerSuspend()
             }
         }
     }
@@ -222,6 +232,13 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         )
         startActivityForResultAndHistoryCheck(intent)
         finishUntilClass(MainActivity::class.java.canonicalName)
+    }
+
+    private fun showBakerSuspendDialog() {
+        SuspendValidationDialog().showSingle(
+            supportFragmentManager,
+            SuspendValidationDialog.TAG
+        )
     }
 
     private fun gotoBakerSuspend() {
