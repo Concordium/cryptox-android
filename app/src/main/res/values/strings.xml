@@ -713,10 +713,13 @@
     <string name="delegation_register_staking_mode">Staking mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_update_delegation_button">Update delegation</string>
+    <string name="delegation_update_delegation_success">Your delegation is updated</string>
     <string name="delegation_remove_delegation_title">Earn</string>
     <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered</string>
+    <string name="delegation_status_content_registered_button">Submit delegation</string>
+    <string name="delegation_status_content_registered_success">You are delegating</string>
     <string name="delegation_status_content_delegating_account">Delegating account</string>
     <string name="delegation_status_content_delegation_amount">Delegation amount</string>
     <string name="delegation_status_content_target_pool">Target</string>
@@ -736,6 +739,7 @@
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
     <string name="delegation_register_delegation_pool_baker">Validator pool</string>
+    <string name="delegation_register_delegation_pool_baker_id">Validator pool: %1$s</string>
     <string name="delegation_register_delegation_passive">Passive delegation</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
@@ -774,7 +778,7 @@
     </plurals>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
-    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Delegation amount</string>
+    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Amount (CCD):</string>
     <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
@@ -797,7 +801,7 @@
     <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
 
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
-    <string name="delegation_register_delegation_finish">Finish</string>
+    <string name="delegation_register_delegation_close">Close</string>
     <string name="delegation_register_delegation_failed_title">Transaction failed</string>
     <string name="delegation_register_delegation_failed_message">Your delegation transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
     <string name="delegation_register_delegation_failed_try_again">Try again</string>

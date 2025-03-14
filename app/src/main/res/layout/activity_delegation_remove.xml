@@ -98,7 +98,7 @@
             android:id="@+id/submit_delegation_finish"
             style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
-            android:text="@string/delegation_register_delegation_finish"
+            android:text="@string/delegation_register_delegation_close"
             android:visibility="gone" />
     </RelativeLayout>
 

@@ -424,7 +424,8 @@
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRemoveActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
             android:launchMode="singleTop"
