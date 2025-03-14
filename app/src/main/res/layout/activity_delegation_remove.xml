@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
@@ -10,13 +11,19 @@
         layout="@layout/app_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar_layout"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/button_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,92 +33,77 @@
             android:paddingTop="10dp"
             android:paddingBottom="20dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/delegation_remove_text"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/delegation_remove_text" />
-
-                <LinearLayout
-                    style="@style/CryptoX_Container_Stroked"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <include
-                        android:id="@+id/include_transaction_submitted_header"
-                        layout="@layout/transaction_submitted_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp" />
-
-                    <TextView
-                        android:id="@+id/delegation_transaction_title"
-                        style="@style/CryptoX_Typography_Headline_Large"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/delegation_remove_confirm_title" />
-
-                    <TextView
-                        style="@style/CryptoX_Typography_Body_Medium"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/delegation_remove_account" />
-
-                    <TextView
-                        android:id="@+id/account_to_remove_delegate_from"
-                        style="@style/CryptoX_Typography_Headline_Medium"
-                        android:layout_marginTop="8dp"
-                        tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
-
-                    <TextView
-                        android:id="@+id/estimated_transaction_fee"
-                        style="@style/CryptoX_Typography_Body_Medium"
-                        android:layout_marginTop="16dp"
-                        tools:text="Estimated transaction fee:\nϾ0.0059" />
-
-                    <com.concordium.wallet.uicore.view.TransactionSubmittedHashView
-                        android:id="@+id/transaction_hash_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/button_container"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/receipt_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="20dp"
+                android:background="@drawable/mw24_container_stroked_background"
+                android:padding="18dp">
 
-                <Button
-                    android:id="@+id/submit_delegation_transaction"
-                    style="@style/CryptoX_Button_Primary"
-                    android:layout_width="match_parent"
-                    android:text="@string/delegation_register_delegation_submit_delegation_transaction" />
+                <TextView
+                    android:id="@+id/change_status_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="@string/delegation_remove_confirm_title"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textColor="@color/cryptox_white_main"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-                <Button
-                    android:id="@+id/submit_delegation_finish"
-                    style="@style/CryptoX_Button_Primary"
-                    android:layout_width="match_parent"
-                    android:text="@string/delegation_register_delegation_finish"
-                    android:visibility="gone" />
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/estimated_transaction_fee"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_grey_4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/change_status_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Transaction fee ≈ 0.00053 CCD" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <include
+                android:id="@+id/include_result_layout"
+                layout="@layout/baker_delegation_receipt_view" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.concordium.wallet.uicore.button.SliderButton
+            android:id="@+id/submit_delegation_transaction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/submit_delegation_finish"
+            style="@style/MW24_Button_Primary"
+            android:layout_width="match_parent"
+            android:text="@string/delegation_register_delegation_finish"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <include
         android:id="@+id/include_progress"
         layout="@layout/progress"
         tools:visibility="gone" />
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

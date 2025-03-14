@@ -56,7 +56,7 @@ abstract class BaseDelegationBakerActivity(
             response?.first?.let {
                 estimatedTransactionFee.text =
                     getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                        R.string.cis_estimated_fee,
                         CurrencyUtil.formatGTU(it)
                     )
                 showWaiting(progressLayout, false)
