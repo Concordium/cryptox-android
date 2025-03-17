@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:textAppearance="@style/MW24_Typography_Text_Mid"
-                android:textColor="@color/mw24_blue_2"
+                android:textColor="@color/cryptox_white_main"
                 tools:text="Current target: 2323" />
 
             <com.concordium.wallet.uicore.view.SegmentedControlView

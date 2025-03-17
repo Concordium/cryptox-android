@@ -8,9 +8,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBinding
 import com.concordium.wallet.extension.showSingle
@@ -167,7 +165,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         loadTransactionFee()
 
         binding.poolInfo.visibility =
-            if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+            if (viewModel.isBakerPool() || (viewModel.bakerDelegationData.isBakerPool))
+                View.VISIBLE else View.GONE
 
         updateContent()
 
@@ -183,10 +182,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         viewModel.eurRateLiveData.observe(this) { rate ->
             binding.eurRate.text =
                 if (rate != null)
-                    getString(
-                        R.string.cis_estimated_eur_rate,
-                        rate
-                    )
+                    getString(R.string.cis_estimated_eur_rate, rate)
                 else
                     ""
         }
@@ -339,24 +335,36 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     private fun checkDelegationType() {
-        val delegationType = if (viewModel.bakerDelegationData.isLPool)
-            getString(R.string.delegation_register_delegation_passive)
-        else if (viewModel.bakerDelegationData.isBakerPool)
-            getString(R.string.delegation_register_delegation_pool_baker)
-        else
-            getString(R.string.delegation_register_staking_mode)
-        binding.delegationTypeTitle.text = delegationType
+        val delegationTypeText: String
+        when {
+            viewModel.bakerDelegationData.isLPool -> {
+                delegationTypeText = getString(R.string.delegation_register_delegation_passive)
+            }
+            viewModel.bakerDelegationData.isBakerPool -> {
+                delegationTypeText = getString(R.string.delegation_register_delegation_pool_baker)
+            }
+            viewModel.isUpdatingDelegation() -> {
+                delegationTypeText = if (viewModel.isLPool())
+                    getString(R.string.delegation_register_delegation_passive)
+                else
+                    getString(R.string.delegation_register_delegation_pool_baker)
+            }
+            else -> {
+                delegationTypeText = getString(R.string.delegation_register_staking_mode)
+                binding.delegationTypeTitle.setTextAppearance(R.style.MW24_Typography_Text_Mid)
+                binding.delegationTypeTitle.setTextColor(getColor(R.color.mw24_blue_3_50))
+            }
+        }
+
+        binding.delegationTypeTitle.text = delegationTypeText
     }
 
     private fun gotoDelegationTypeSelection() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-            BakerDelegationData(
-                account = viewModel.bakerDelegationData.account,
-                type = ProxyRepository.REGISTER_DELEGATION
-            )
+            viewModel.bakerDelegationData
         )
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 }

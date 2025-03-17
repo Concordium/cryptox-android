@@ -16,7 +16,7 @@ import java.math.BigInteger
 data class BakerDelegationData(
     val account: Account,
     var isLPool: Boolean = false,
-    var isBakerPool: Boolean = true,
+    var isBakerPool: Boolean = false,
     var isTransactionInProgress: Boolean = false,
     var bakerKeys: BakerKeys? = null,
     var type: String,

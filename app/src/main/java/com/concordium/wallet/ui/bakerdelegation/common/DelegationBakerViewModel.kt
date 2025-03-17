@@ -231,6 +231,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account.baker?.isSuspended == true
     }
 
+    fun isInitialSetup(): Boolean {
+        return (!bakerDelegationData.isBakerPool && !bakerDelegationData.isLPool)
+    }
+
     fun atDisposal(): BigInteger {
         var staked: BigInteger = BigInteger.ZERO
         bakerDelegationData.account.delegation?.let {
@@ -290,8 +294,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun validatePoolId() {
-        if (bakerDelegationData.isLPool) {
+        if (bakerDelegationData.isLPool || isInitialSetup()) {
             bakerDelegationData.bakerPoolStatus = null
+            bakerDelegationData.isLPool = true
             _showDetailedLiveData.value = Event(true)
         } else {
             _waitingLiveData.value = true

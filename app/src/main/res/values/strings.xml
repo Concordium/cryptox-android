@@ -659,14 +659,15 @@
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
     <string name="earn_delegation_title">Earn 4–6% APY on your CCD</string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
-    <string name="earn_delegation_rewarded_description">As a validator you participate in the network by producing blocks on the Concordium network.</string>
-    <string name="earn_delegation_options_title">Multiple options to choose from</string>
-    <string name="earn_delegation_options_description">As a validator you participate in the network by producing blocks on the Concordium network.</string>
+    <string name="earn_delegation_rewarded_description">Stake your CCD to earn rewards. Rewards can be restaked automatically.</string>
+    <string name="earn_delegation_options_title">Earn your way</string>
+    <string name="earn_delegation_options_description">You can delegate to an open pool of your choice, or stake using passive delegation.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
-    <string name="earn_delegation_update_description">As a validator you participate in the network by producing blocks on the Concordium network.</string>
+    <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
     <string name="start_earning_button">Start earning</string>
     <string name="read_more_button">Read more</string>
     <string name="earn_baker_button">Or become a validator (advanced)</string>
+    <string name="earn_notice">Estimated APY based on past results. Actual returns may vary.</string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
 
     <!-- Delegation intro -->

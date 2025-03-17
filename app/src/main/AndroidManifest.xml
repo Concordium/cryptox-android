@@ -416,11 +416,13 @@
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterPoolActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterAmountActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRemoveActivity"
             android:launchMode="singleTop"
@@ -434,7 +436,8 @@
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow"
             android:launchMode="singleTop"

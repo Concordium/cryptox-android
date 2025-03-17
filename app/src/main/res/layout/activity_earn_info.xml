@@ -166,10 +166,19 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/earn_notice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/earn_notice"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_blue_2"/>
+
+            <TextView
                 android:id="@+id/btnBaker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="24dp"
                 android:drawablePadding="8dp"
                 android:paddingVertical="8dp"
                 android:text="@string/earn_baker_button"
