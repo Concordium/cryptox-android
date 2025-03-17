@@ -13,11 +13,11 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmationBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationErrorDialog
 import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationNoticeDialog
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.UnitConvertUtil
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
 class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
@@ -35,6 +35,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         setContentView(binding.root)
         hideActionBarBack(isVisible = true)
         initViews()
+        initObservers()
     }
 
     override fun onBackPressed() {
@@ -160,24 +161,28 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         viewModel.loadTransactionFee(true)
     }
 
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            DelegationErrorDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (DelegationErrorDialog.getResult(bundle)) {
+                onContinueClicked()
+            }
+        }
+    }
+
     override fun errorLiveData(value: Int) {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_register_delegation_failed_title)
         val messageFromWalletProxy = getString(value)
-        builder.setMessage(
-            getString(
-                R.string.delegation_register_delegation_failed_message,
-                messageFromWalletProxy
+
+        DelegationErrorDialog.newInstance(
+            DelegationErrorDialog.setBundle(
+                getString(
+                    R.string.delegation_register_delegation_failed_message,
+                    messageFromWalletProxy
+                )
             )
-        )
-        builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
-            dialog.dismiss()
-            onContinueClicked()
-        }
-        builder.setNegativeButton(getString(R.string.delegation_register_delegation_failed_later)) { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.create().show()
+        ).showSingle(supportFragmentManager, DelegationErrorDialog.TAG)
     }
 
     private fun showPageAsReceipt() {

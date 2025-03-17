@@ -9,6 +9,7 @@ import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
+import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBinding
 import com.concordium.wallet.extension.showSingle
@@ -17,6 +18,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.bakerdelegation.dialog.WarningDialog
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
+import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
@@ -35,6 +37,18 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     override fun onResume() {
         super.onResume()
         checkDelegationType()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        if (intent.getBooleanExtra(UPDATE_DATA, false)) {
+            viewModel.bakerDelegationData = intent.getSerializable(
+                DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+                BakerDelegationData::class.java
+            )
+            initViews()
+        }
     }
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
@@ -136,11 +150,17 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
         binding.poolLimit.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                CurrencyUtil.formatGTU(it.delegatedCapitalCap)
+                getString(
+                    R.string.amount,
+                    CurrencyUtil.formatGTU(it.delegatedCapitalCap)
+                )
             }
         binding.currentPool.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                CurrencyUtil.formatGTU(it.delegatedCapital)
+                getString(
+                    R.string.amount,
+                    CurrencyUtil.formatGTU(it.delegatedCapital)
+                )
             }
 
         binding.poolRegistrationContinue.isEnabled = false
@@ -335,20 +355,26 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     private fun checkDelegationType() {
+        binding.delegationTypeTitle.setTextAppearance(R.style.MW24_Typography_Text_Main)
+        binding.delegationTypeTitle.setTextColor(getColor(R.color.cryptox_white_main))
+
         val delegationTypeText: String
         when {
             viewModel.bakerDelegationData.isLPool -> {
                 delegationTypeText = getString(R.string.delegation_register_delegation_passive)
             }
+
             viewModel.bakerDelegationData.isBakerPool -> {
                 delegationTypeText = getString(R.string.delegation_register_delegation_pool_baker)
             }
+
             viewModel.isUpdatingDelegation() -> {
                 delegationTypeText = if (viewModel.isLPool())
                     getString(R.string.delegation_register_delegation_passive)
                 else
                     getString(R.string.delegation_register_delegation_pool_baker)
             }
+
             else -> {
                 delegationTypeText = getString(R.string.delegation_register_staking_mode)
                 binding.delegationTypeTitle.setTextAppearance(R.style.MW24_Typography_Text_Mid)
@@ -366,5 +392,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             viewModel.bakerDelegationData
         )
         startActivityForResultAndHistoryCheck(intent)
+    }
+
+    companion object {
+        const val UPDATE_DATA = "update_data"
     }
 }

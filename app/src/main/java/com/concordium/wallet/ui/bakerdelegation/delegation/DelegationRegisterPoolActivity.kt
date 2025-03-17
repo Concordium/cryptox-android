@@ -49,11 +49,15 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
 
     private fun showDetailedPage() {
         val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
-        intent.putExtra(
-            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-            viewModel.bakerDelegationData
-        )
-        startActivityForResultAndHistoryCheck(intent)
+        intent.apply {
+            putExtra(
+                DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+                viewModel.bakerDelegationData
+            )
+            putExtra(DelegationRegisterAmountActivity.UPDATE_DATA, true)
+            setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        startActivity(intent)
         finish()
     }
 
