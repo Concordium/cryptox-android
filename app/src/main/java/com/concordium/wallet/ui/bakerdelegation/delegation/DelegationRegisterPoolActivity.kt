@@ -38,10 +38,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         if (binding.poolId.getText().isNotBlank())
             viewModel.setPoolID(binding.poolId.getText())
 
-        if (viewModel.isInitialSetup()) {
+        if (checkIsPassiveMode()) {
             viewModel.selectLPool()
-            updateVisibilities()
         }
+        updateVisibilities()
     }
 
     fun showError() {
@@ -79,8 +79,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                     KeyboardUtil.hideKeyboard(this@DelegationRegisterPoolActivity)
                 }
             },
-            initiallySelected = if (viewModel.isInitialSetup()) true
-            else viewModel.bakerDelegationData.isLPool
+            initiallySelected = checkIsPassiveMode()
         )
         binding.poolOptions.addControl(
             title = getString(R.string.delegation_register_delegation_pool_baker),
@@ -91,7 +90,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                     updateVisibilities()
                 }
             },
-            initiallySelected = viewModel.bakerDelegationData.isBakerPool
+            initiallySelected = checkIsPassiveMode().not()
         )
 
         binding.poolId.setText(viewModel.getPoolId())
@@ -188,7 +187,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                     R.string.delegation_register_delegation_pool_id_hint_update
                 )
         )
-        binding.poolId.isVisible = viewModel.bakerDelegationData.isBakerPool
+        binding.poolId.isVisible = checkIsPassiveMode().not()
 
         if (viewModel.bakerDelegationData.isLPool || viewModel.isInitialSetup())
             binding.poolDesc.text = ""
@@ -203,6 +202,16 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                 getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool ||
                 binding.poolId.getText().isNotEmpty()
         hideError()
+    }
+
+    private fun checkIsPassiveMode(): Boolean {
+        return when {
+            viewModel.bakerDelegationData.isLPool -> true
+            viewModel.bakerDelegationData.isBakerPool -> false
+            viewModel.isLPool() -> true
+            viewModel.isBakerPool() -> false
+            else -> true
+        }
     }
 
     private fun onContinueClicked() {

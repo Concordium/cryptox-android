@@ -218,8 +218,12 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     private fun updatePoolInfo() {
         binding.poolInfo.visibility =
-            if (viewModel.bakerDelegationData.isBakerPool)
-                View.VISIBLE else View.GONE
+            when {
+                viewModel.bakerDelegationData.isBakerPool -> View.VISIBLE
+                viewModel.bakerDelegationData.isLPool -> View.GONE
+                viewModel.isBakerPool() -> View.VISIBLE
+                else -> View.GONE
+            }
 
         binding.poolLimit.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
