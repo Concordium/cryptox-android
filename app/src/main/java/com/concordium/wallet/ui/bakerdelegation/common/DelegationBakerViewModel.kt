@@ -294,9 +294,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun validatePoolId() {
-        if (bakerDelegationData.isLPool || isInitialSetup()) {
+        if (bakerDelegationData.isLPool) {
             bakerDelegationData.bakerPoolStatus = null
-            bakerDelegationData.isLPool = true
             _showDetailedLiveData.value = Event(true)
         } else {
             _waitingLiveData.value = true
@@ -742,6 +741,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         transaction: AccountTransaction,
         localTransactionType: TransactionType,
     ) = withContext(Dispatchers.IO) {
+
+        Log.d("transaction: $transaction")
 
         val submissionId: String = try {
             proxyRepository

@@ -801,6 +801,11 @@
     <string name="delegation_more_than_95_continue">Continue</string>
     <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
 
+    <string name="delegation_select_delegation_title">Warning</string>
+    <string name="delegation_select_delegation_message">Staking mode not selected</string>
+    <string name="delegation_select_delegation_continue">Select staking mode</string>
+    <string name="delegation_select_delegation_later">Later</string>
+
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
     <string name="delegation_register_delegation_close">Close</string>
     <string name="delegation_register_delegation_failed_title">Transaction failed</string>

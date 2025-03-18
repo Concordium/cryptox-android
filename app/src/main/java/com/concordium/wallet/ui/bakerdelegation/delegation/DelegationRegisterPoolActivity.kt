@@ -37,6 +37,11 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         super.onResume()
         if (binding.poolId.getText().isNotBlank())
             viewModel.setPoolID(binding.poolId.getText())
+
+        if (viewModel.isInitialSetup()) {
+            viewModel.selectLPool()
+            updateVisibilities()
+        }
     }
 
     fun showError() {

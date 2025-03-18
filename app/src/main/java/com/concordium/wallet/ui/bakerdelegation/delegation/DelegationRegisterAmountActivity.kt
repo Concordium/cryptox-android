@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -17,6 +18,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegist
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.bakerdelegation.dialog.WarningDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationStakingModeDialog
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
@@ -78,9 +80,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     override fun loadTransactionFee() {
         viewModel.loadTransactionFee(true)
-    }
-
-    private fun showConfirmationPage() {
     }
 
     @SuppressLint("SetTextI18n")
@@ -147,21 +146,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 )
             }
         }
-
-        binding.poolLimit.text =
-            viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                getString(
-                    R.string.amount,
-                    CurrencyUtil.formatGTU(it.delegatedCapitalCap)
-                )
-            }
-        binding.currentPool.text =
-            viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                getString(
-                    R.string.amount,
-                    CurrencyUtil.formatGTU(it.delegatedCapital)
-                )
-            }
+        updatePoolInfo()
 
         binding.poolRegistrationContinue.isEnabled = false
         binding.amount.isEnabled = false
@@ -184,10 +169,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
         loadTransactionFee()
 
-        binding.poolInfo.visibility =
-            if (viewModel.isBakerPool() || (viewModel.bakerDelegationData.isBakerPool))
-                View.VISIBLE else View.GONE
-
         updateContent()
 
         initializeWaitingLiveData(binding.includeProgress.progressLayout)
@@ -195,7 +176,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    showConfirmationPage()
+                    updatePoolInfo()
                 }
             }
         })
@@ -224,6 +205,36 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 continueToConfirmation()
             }
         }
+
+        supportFragmentManager.setFragmentResultListener(
+            DelegationStakingModeDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (DelegationStakingModeDialog.getResult(bundle)) {
+                gotoDelegationTypeSelection()
+            }
+        }
+    }
+
+    private fun updatePoolInfo() {
+        binding.poolInfo.visibility =
+            if (viewModel.bakerDelegationData.isBakerPool)
+                View.VISIBLE else View.GONE
+
+        binding.poolLimit.text =
+            viewModel.bakerDelegationData.bakerPoolStatus?.let {
+                getString(
+                    R.string.amount,
+                    CurrencyUtil.formatGTU(it.delegatedCapitalCap)
+                )
+            }
+        binding.currentPool.text =
+            viewModel.bakerDelegationData.bakerPoolStatus?.let {
+                getString(
+                    R.string.amount,
+                    CurrencyUtil.formatGTU(it.delegatedCapital)
+                )
+            }
     }
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
@@ -258,6 +269,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                     withCommas = false
                 )
             })
+            viewModel.validatePoolId()
         }
     }
 
@@ -289,6 +301,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             }
         } else {
             when {
+                viewModel.isInitialSetup() -> showSelectStakingModeWarning()
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
@@ -338,6 +351,13 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 denyButton = getString(R.string.delegation_more_than_95_new_stake)
             )
         ).showSingle(supportFragmentManager, WarningDialog.TAG)
+    }
+
+    private fun showSelectStakingModeWarning() {
+        DelegationStakingModeDialog().showSingle(
+            supportFragmentManager,
+            DelegationStakingModeDialog.TAG
+        )
     }
 
     private fun continueToConfirmation() {
