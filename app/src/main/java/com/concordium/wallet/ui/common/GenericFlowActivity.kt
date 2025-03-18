@@ -6,6 +6,7 @@ import androidx.fragment.app.commit
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityIntroFlowBinding
 import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
+import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationNoticeFragment
 import com.concordium.wallet.ui.base.BaseActivity
 
 abstract class GenericFlowActivity(
@@ -31,6 +32,10 @@ abstract class GenericFlowActivity(
 
     private fun initViews() {
         binding.introFlowContainer.removeAllViews()
+        if (showNotice()) {
+            addFragment(BakerRegistrationNoticeFragment(), binding.introFlowContainer.id)
+        }
+
         getTitles().forEachIndexed { index, _ ->
             addFragment(
                 WebViewPageFragment.newInstance(getLink(index), getPageTitle(index)),
@@ -72,6 +77,8 @@ abstract class GenericFlowActivity(
     abstract fun getButtonText(): String
 
     abstract fun isButtonEnabled(): Boolean
+
+    open fun showNotice(): Boolean = false
 
     //endregion
 }

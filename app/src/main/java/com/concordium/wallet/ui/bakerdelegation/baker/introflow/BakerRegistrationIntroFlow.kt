@@ -23,6 +23,8 @@ class BakerRegistrationIntroFlow :
 
     override fun isButtonEnabled(): Boolean = false
 
+    override fun showNotice(): Boolean = true
+
     override fun gotoContinue() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)

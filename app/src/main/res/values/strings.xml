@@ -847,6 +847,7 @@
     <string name="baker_intro_subtitle2">The node</string>
     <string name="baker_intro_subtitle3">Opening a pool</string>
     <string name="baker_intro_subtitle4">Suspension</string>
+    <string name="baker_intro_notice">NOTE: A single account cannot both be a validator and delegator, but it is possible to stop one and change to the other.</string>
 
     <string name="baker_registration_title">Register validator</string>
     <string name="baker_registration_metadata_title">Metadata</string>
