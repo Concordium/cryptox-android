@@ -153,6 +153,14 @@ constructor(
         return getBoolean(PREFKEY_SHOW_ONRAMP_BANNER, true)
     }
 
+    fun setShowEarnBanner(show: Boolean) {
+        setBoolean(PREFKEY_SHOW_EARN_BANNER, show)
+    }
+
+    fun getShowEarnBanner(): Boolean {
+        return getBoolean(PREFKEY_SHOW_EARN_BANNER, true)
+    }
+
     private companion object {
         const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON =
@@ -161,5 +169,6 @@ constructor(
         const val PREFKEY_HAS_COMPLETED_ONBOARDING = "PREFKEY_HAS_COMPLETED_ONBOARDING"
         const val PREFKEY_HAS_SHOWN_INITIAL_ANIMATION = "PREFKEY_HAS_SHOWN_INITIAL_ANIMATION"
         const val PREFKEY_SHOW_ONRAMP_BANNER = "PREFKEY_SHOW_ONRAMP_BANNER"
+        const val PREFKEY_SHOW_EARN_BANNER = "PREFKEY_SHOW_EARN_BANNER"
     }
 }

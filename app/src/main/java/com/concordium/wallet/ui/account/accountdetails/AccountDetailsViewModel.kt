@@ -142,6 +142,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         return App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
     }
 
+    fun setShowEarnBanner(show: Boolean) {
+        return App.appCore.session.walletStorage.setupPreferences.setShowEarnBanner(show)
+    }
+
+    fun isShowEarnBanner(): Boolean {
+        return App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
+    }
+
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
         acc?.let {
