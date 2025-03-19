@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Revamped UI across the delegation and validation flow
+
 ## [1.7.0] - 2025-03-03
 
 ### Added
