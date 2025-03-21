@@ -15,10 +15,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_container"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginBottom="20dp"
+        android:paddingVertical="20dp"
         app:layout_constraintBottom_toTopOf="@id/pool_registration_continue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
@@ -85,6 +85,7 @@
                 android:layout_marginTop="16dp"
                 android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                 android:textColor="@color/mw24_blue_2"
+                android:textColorLink="@color/mw24_blue_2"
                 tools:text="@string/delegation_register_delegation_desc" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -92,11 +93,14 @@
     <Button
         android:id="@+id/pool_registration_continue"
         style="@style/MW24_Button_Primary"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_marginHorizontal="18dp"
         android:layout_marginVertical="20dp"
         android:text="@string/delegation_register_delegation_continue"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scroll_container" />
 
     <include
         android:id="@+id/include_progress"

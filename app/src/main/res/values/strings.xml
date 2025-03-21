@@ -664,6 +664,11 @@
     <string name="earn_delegation_options_description">You can delegate to an open pool of your choice, or stake using passive delegation.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
     <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
+    <plurals name="earn_delegation_update_description">
+        <item quantity="one">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d day applies</item>
+        <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
+    </plurals>
+
     <string name="start_earning_button">Start earning</string>
     <string name="read_more_button">Read more</string>
     <string name="earn_baker_button">Or become a validator (advanced)</string>
@@ -1424,8 +1429,7 @@
         Once your node is active you will no longer be primed for suspension.
     </string>
     <string name="validation_suspended_baker_explanation">
-        Your node does not earn rewards at the moment.\n\nTo lift the suspension and earn rewards again
-        ensure your node is up-to-date and click “Resume\u00A0validation” in the “Change\u00A0validating\u00A0status” menu.
+        Your node does not earn rewards at the moment.\n\nTo lift the suspension and earn rewards again ensure your node is up-to-date and click “Resume”.
     </string>
     <string name="validation_suspended_delegator_explanation">
         Your delegation amount does not earn rewards until validation is resumed.

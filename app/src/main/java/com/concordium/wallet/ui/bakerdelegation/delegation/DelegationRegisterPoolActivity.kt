@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -68,30 +69,6 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
 
     override fun initViews() {
         showWaiting(binding.includeProgress.progressLayout, false)
-
-        binding.poolOptions.clearAll()
-        binding.poolOptions.addControl(
-            title = getString(R.string.delegation_register_delegation_passive),
-            clickListener = object : SegmentedControlView.OnItemClickListener {
-                override fun onItemClicked() {
-                    viewModel.selectLPool()
-                    updateVisibilities()
-                    KeyboardUtil.hideKeyboard(this@DelegationRegisterPoolActivity)
-                }
-            },
-            initiallySelected = checkIsPassiveMode()
-        )
-        binding.poolOptions.addControl(
-            title = getString(R.string.delegation_register_delegation_pool_baker),
-            clickListener = object : SegmentedControlView.OnItemClickListener {
-                override fun onItemClicked() {
-                    binding.poolId.setText("")
-                    viewModel.selectBakerPool()
-                    updateVisibilities()
-                }
-            },
-            initiallySelected = checkIsPassiveMode().not()
-        )
 
         binding.poolId.setText(viewModel.getPoolId())
         binding.poolId.setOnSearchDoneListener {
@@ -178,7 +155,32 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateVisibilities() {
+        binding.poolOptions.clearAll()
+        binding.poolOptions.addControl(
+            title = getString(R.string.delegation_register_delegation_passive),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
+                override fun onItemClicked() {
+                    viewModel.selectLPool()
+                    updateVisibilities()
+                    KeyboardUtil.hideKeyboard(this@DelegationRegisterPoolActivity)
+                }
+            },
+            initiallySelected = checkIsPassiveMode()
+        )
+        binding.poolOptions.addControl(
+            title = getString(R.string.delegation_register_delegation_pool_baker),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
+                override fun onItemClicked() {
+                    binding.poolId.setText("")
+                    viewModel.selectBakerPool()
+                    updateVisibilities()
+                }
+            },
+            initiallySelected = checkIsPassiveMode().not()
+        )
+
         binding.poolId.setLabelText(
             if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null)
                 getString(R.string.delegation_register_delegation_pool_id_hint)

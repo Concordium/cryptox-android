@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.account.earn
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -18,6 +17,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.util.UnitConvertUtil
 
 class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn_title) {
     private lateinit var binding: ActivityEarnInfoBinding
@@ -58,6 +58,17 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
                 showError(value)
             }
         })
+        viewModel.chainParameters.observe(this) { chainParameters ->
+            chainParameters?.delegatorCooldown?.let {
+                val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(it)
+                binding.updateDescription.text =
+                    resources.getQuantityString(
+                        R.plurals.earn_delegation_update_description,
+                        gracePeriod,
+                        gracePeriod
+                    )
+            }
+        }
     }
 
     private fun initializeViewModel() {
