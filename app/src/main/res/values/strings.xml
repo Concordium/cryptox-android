@@ -657,7 +657,7 @@
     <string name="earn_subtitle">Below are two options for earning rewards on CryptoX Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
-    <string name="earn_delegation_title">Earn up to <font color='#24D4AB'>5% APY</font> on your CCD</string>
+    <string name="earn_delegation_title">Earn up to <font color='#24D4AB'>6%</font></string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
     <string name="earn_delegation_rewarded_description">Stake your CCD to earn rewards. Rewards can be restaked automatically.</string>
     <string name="earn_delegation_options_title">Earn your way</string>
@@ -749,6 +749,7 @@
     <string name="delegation_register_delegation_passive">Passive delegation</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
+    <string name="delegation_register_delegation_error">Staking mode not selected</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
@@ -1441,6 +1442,6 @@
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
     
-    <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>5%</font> APY</string>
+    <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
 </resources>

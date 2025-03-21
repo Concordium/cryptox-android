@@ -318,6 +318,14 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/staking_mode_error"
+                style="@style/CryptoX_Typography_Body_Medium.Error"
+                android:layout_marginTop="8dp"
+                android:text="@string/delegation_register_delegation_error"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

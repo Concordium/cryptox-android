@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -18,7 +18,6 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegist
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.bakerdelegation.dialog.WarningDialog
-import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationStakingModeDialog
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
@@ -50,6 +49,11 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 BakerDelegationData::class.java
             )
             initViews()
+            validateAmountInput(binding.amount, binding.amountError)
+            showStakingModeError(
+                viewModel.bakerDelegationData.isLPool.not() &&
+                        viewModel.bakerDelegationData.isBakerPool.not()
+            )
         }
     }
 
@@ -205,15 +209,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 continueToConfirmation()
             }
         }
-
-        supportFragmentManager.setFragmentResultListener(
-            DelegationStakingModeDialog.ACTION_REQUEST,
-            this
-        ) { _, bundle ->
-            if (DelegationStakingModeDialog.getResult(bundle)) {
-                gotoDelegationTypeSelection()
-            }
-        }
     }
 
     private fun updatePoolInfo() {
@@ -266,7 +261,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amountLocked.visibility = View.VISIBLE
             binding.amount.isEnabled = false
         }
-        if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
+        if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION &&
+            binding.amount.text.toString().isEmpty()
+        ) {
             binding.amount.setText(viewModel.bakerDelegationData.account.delegation?.stakedAmount?.let {
                 CurrencyUtil.formatGTU(
                     value = it,
@@ -305,7 +302,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             }
         } else {
             when {
-                viewModel.isInitialSetup() -> showSelectStakingModeWarning()
+                viewModel.isInitialSetup() -> showStakingModeError(true)
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
@@ -357,13 +354,6 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         ).showSingle(supportFragmentManager, WarningDialog.TAG)
     }
 
-    private fun showSelectStakingModeWarning() {
-        DelegationStakingModeDialog().showSingle(
-            supportFragmentManager,
-            DelegationStakingModeDialog.TAG
-        )
-    }
-
     private fun continueToConfirmation() {
         viewModel.bakerDelegationData.amount =
             CurrencyUtil.toGTUValue(binding.amount.text.toString())
@@ -407,6 +397,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         }
 
         binding.delegationTypeTitle.text = delegationTypeText
+    }
+
+    private fun showStakingModeError(isVisible: Boolean) {
+        binding.stakingModeError.isVisible = isVisible
     }
 
     private fun gotoDelegationTypeSelection() {
