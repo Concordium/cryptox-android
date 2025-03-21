@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.bakerdelegation.baker.introflow
 
 import android.content.Intent
 import com.concordium.wallet.R
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
@@ -41,7 +40,7 @@ class BakerUpdateIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_update_intro_flow_en_" + (position + 1) + ".html"
+        return "baker_update_intro_flow_en_" + (position + 1) + ".html"
     }
 
     private fun gotoUpdateBakerStake() {

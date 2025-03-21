@@ -33,6 +33,6 @@ class BakerRegistrationIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_intro_flow_en_" + (position + 1) + ".html"
+        return "baker_intro_flow_en_" + (position + 1) + ".html"
     }
 }

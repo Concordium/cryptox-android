@@ -21,11 +21,13 @@
             android:layout_height="wrap_content"
             tools:text="[Before you continue]" />
 
-        <!-- WebView content has its internal top padding -->
-        <WebView
-            android:id="@+id/webview_content"
+        <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textColor="@color/mw24_blue_2"
+            tools:text="A staking pool is managed by an individual validator. Running a pool allows a validator to attract more stake and thus increate chances of being selected to produce a block. Validators earn a commission from the delegators upon producing a block. Delegating to a staking pool is usually more profitable than passive delegation, but there is also a risk of losing out on rewards if the validator is not running properly. It is therefore a good idea to keep an eye on the validator's performance. You can read more about how to investigate a validator's performance on our documentation website."/>
     </LinearLayout>
 </FrameLayout>

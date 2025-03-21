@@ -34,6 +34,6 @@ class DelegationCreateIntroFlowActivity :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/delegation_intro_flow_en_" + (position + 1) + ".html"
+        return "delegation_intro_flow_en_" + (position + 1) + ".html"
     }
 }

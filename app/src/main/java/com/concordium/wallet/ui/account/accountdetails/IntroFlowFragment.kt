@@ -1,17 +1,20 @@
 package com.concordium.wallet.ui.account.accountdetails
 
-import android.graphics.Color
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.concordium.wallet.databinding.FragmentWebviewPageBinding
+import com.concordium.wallet.databinding.FragmentIntroFlowBinding
+import com.concordium.wallet.uicore.handleUrlClicks
 
-class WebViewPageFragment : Fragment() {
-    private var _binding: FragmentWebviewPageBinding? = null
+class IntroFlowFragment : Fragment() {
+    private var _binding: FragmentIntroFlowBinding? = null
     private val binding get() = _binding!!
 
     private val link: String
@@ -29,10 +32,15 @@ class WebViewPageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentWebviewPageBinding.inflate(inflater, container, false)
-        binding.webviewContent.loadUrl(link)
-        binding.webviewContent.setBackgroundColor(Color.TRANSPARENT)
-        binding.title.text = Html.fromHtml(resources.getString(title))
+        _binding = FragmentIntroFlowBinding.inflate(inflater, container, false)
+
+        val linkText = requireContext().assets.open(link).bufferedReader().use { it.readText() }
+        binding.title.text = Html.fromHtml(resources.getString(title), Html.FROM_HTML_MODE_LEGACY)
+        binding.description.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
+        binding.description.handleUrlClicks { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            ContextCompat.startActivity(requireContext(), browserIntent, null)
+        }
         return binding.root
     }
 
@@ -45,7 +53,7 @@ class WebViewPageFragment : Fragment() {
         private const val LINK_EXTRA = "link"
         private const val TITLE_EXTRA = "title"
 
-        fun newInstance(link: String, @StringRes title: Int) = WebViewPageFragment().apply {
+        fun newInstance(link: String, @StringRes title: Int) = IntroFlowFragment().apply {
             arguments = Bundle().apply {
                 putString(LINK_EXTRA, link)
                 putInt(TITLE_EXTRA, title)

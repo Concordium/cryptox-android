@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityIntroFlowBinding
-import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
+import com.concordium.wallet.ui.account.accountdetails.IntroFlowFragment
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationNoticeFragment
 import com.concordium.wallet.ui.base.BaseActivity
 
@@ -38,7 +38,7 @@ abstract class GenericFlowActivity(
 
         getTitles().forEachIndexed { index, _ ->
             addFragment(
-                WebViewPageFragment.newInstance(getLink(index), getPageTitle(index)),
+                IntroFlowFragment.newInstance(getLink(index), getPageTitle(index)),
                 binding.introFlowContainer.id
             )
         }

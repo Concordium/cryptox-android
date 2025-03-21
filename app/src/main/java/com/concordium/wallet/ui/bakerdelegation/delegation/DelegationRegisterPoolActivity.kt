@@ -61,7 +61,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                 viewModel.bakerDelegationData
             )
             putExtra(DelegationRegisterAmountActivity.UPDATE_DATA, true)
-            setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         startActivity(intent)
         finish()
