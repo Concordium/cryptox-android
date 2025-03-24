@@ -350,6 +350,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun setFinalizedMode(account: Account) {
         setActiveButtons()
+        initSwipeToRefresh()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner() &&
                     account.balance == BigInteger.ZERO
@@ -381,6 +382,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun showStateDefault(account: Account) {
         setActiveButtons()
         setupEarnBanner(account)
+        initSwipeToRefresh()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner() &&
                     account.balance == BigInteger.ZERO
@@ -466,6 +468,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             mainViewModel.setNotificationData("", "")
         }
         viewModelAccountDetails.stopFrequentUpdater()
+    }
+
+    private fun initSwipeToRefresh() {
+        binding.rootLayout.setOnRefreshListener {
+            updateWhenResumed()
+            binding.rootLayout.isRefreshing = false
+        }
     }
 
     private fun initContainer(isEarning: Boolean = false) {
