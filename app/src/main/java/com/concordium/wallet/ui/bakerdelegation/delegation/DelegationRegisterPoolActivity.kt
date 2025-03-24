@@ -191,7 +191,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         )
         binding.poolId.isVisible = checkIsPassiveMode().not()
 
-        if (viewModel.bakerDelegationData.isLPool || viewModel.isInitialSetup())
+        if (checkIsPassiveMode())
             binding.poolDesc.text = ""
         else
             binding.poolDesc.setText(R.string.delegation_register_delegation_desc)

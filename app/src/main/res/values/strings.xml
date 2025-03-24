@@ -672,7 +672,7 @@
     <string name="start_earning_button">Start earning</string>
     <string name="read_more_button">Read more</string>
     <string name="earn_baker_button">Or become a validator (advanced)</string>
-    <string name="earn_notice">Estimated APY based on past results. Actual returns may vary.</string>
+    <string name="earn_notice">Estimated rewards are based on past results. Actual returns may vary.</string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
 
     <!-- Delegation intro -->
@@ -736,8 +736,8 @@
     <string name="delegation_status_content_inactive_stake_description">You don’t receive rewards from this part of stake now, this amount will be at disposal after cooldown period.</string>
     <string name="delegation_status_content_cooldown_time">Cooldown time:</string>
 
-    <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_intro">Delegate to an open pool of your choice, or stake your CCD using passive delegation.</string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
     <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit <a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
@@ -769,7 +769,7 @@
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
     <string name="delegation_register_delegation_restake_rewards">Restake rewards</string>
-    <string name="delegation_register_delegation_amount_do_you_want">I want to automatically add my staking rewards to my stake amount.</string>
+    <string name="delegation_register_delegation_amount_do_you_want">Automatically reinvest rewards to compound your staking returns over time.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
