@@ -126,9 +126,9 @@ abstract class StatusActivity(
     }
 
     protected fun addWaitingForTransaction(contentTitleStringId: Int, emptyStateStringId: Int) {
-        binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
         binding.statusButtonTop.isEnabled = false
         binding.statusButtonBottom.isEnabled = false
+        binding.statusTextView.setTextColor(getColor(R.color.cryptox_white_main))
         setContentTitle(contentTitleStringId)
         setEmptyState(getString(emptyStateStringId))
     }

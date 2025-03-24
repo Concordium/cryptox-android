@@ -65,8 +65,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
 
-    // parameter for dynamic calculation of tokensFragmentContainer height
+    // parameters for dynamic calculation of tokensFragmentContainer height
     private var isFileWallet: Boolean = false
+    private var isZeroBalance: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -198,6 +199,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
             viewModelTokens.loadTokensBalances()
+            updateBannersVisibility(viewModelAccountDetails.account)
         }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
@@ -211,6 +213,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             ) {
                 gotoAccountsList()
             }
+            isZeroBalance = account.balance == BigInteger.ZERO
         }
 
         viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
@@ -298,7 +301,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun initViews() {
         showWaiting(true)
         initializeAnimation()
-        initContainer()
         binding.accountRetryButton.setOnClickListener {
             gotoAccountsList()
         }
@@ -324,7 +326,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             -> setPendingMode()
 
             else -> {
-                showStateDefault()
+                showStateDefault(account)
             }
         }
     }
@@ -349,7 +351,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun setFinalizedMode(account: Account) {
         setActiveButtons()
         binding.apply {
-            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
+            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner() &&
+                    account.balance == BigInteger.ZERO
             tokensFragmentContainer.visibility = View.VISIBLE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
@@ -361,6 +364,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             activityBtn.isEnabled = true
         }
         setupOnrampBanner(active = true)
+        setupEarnBanner(account)
     }
 
     private fun showStateOnboarding() {
@@ -374,10 +378,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    private fun showStateDefault() {
+    private fun showStateDefault(account: Account) {
         setActiveButtons()
+        setupEarnBanner(account)
         binding.apply {
-            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
+            onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner() &&
+                    account.balance == BigInteger.ZERO
             onboardingLayout.visibility = View.GONE
             tokensFragmentContainer.visibility = View.VISIBLE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
@@ -399,6 +405,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         setPendingButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
+            includeEarnBanner.earnBanner.isVisible = false
             pendingFragmentContainer.pendingLayout.visibility = View.VISIBLE
             tokensFragmentContainer.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
@@ -461,14 +468,14 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.stopFrequentUpdater()
     }
 
-    private fun initContainer() {
+    private fun initContainer(isEarning: Boolean = false) {
         var handledContainerHeight = -1
         binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
             val containerHeight = binding.scrollView.measuredHeight
             val buttonsHeight = binding.buttonsBlock.measuredHeight
             val fileWalletDisclaimerHeight =
                 binding.fileWalletMigrationDisclaimerLayout.measuredHeight
-            val onRampHeight = if (viewModelAccountDetails.isShowOnrampBanner())
+            val onRampHeight = if (viewModelAccountDetails.isShowOnrampBanner() && isZeroBalance)
                 binding.onrampBanner.measuredHeight
             else 0
             val buttonsMargin =
@@ -476,8 +483,15 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             val fileWalletDisclaimerMargin = if (isFileWallet)
                 (binding.fileWalletMigrationDisclaimerLayout.layoutParams as MarginLayoutParams).topMargin
             else 0
-            val onRampMargin = if (viewModelAccountDetails.isShowOnrampBanner())
+            val onRampMargin = if (viewModelAccountDetails.isShowOnrampBanner() && isZeroBalance)
                 (binding.onrampBanner.layoutParams as MarginLayoutParams).topMargin
+            else 0
+            val earnBannerHeight = if (viewModelAccountDetails.isShowEarnBanner() && !isZeroBalance)
+                binding.includeEarnBanner.earnBanner.measuredHeight
+            else 0
+            val earnBannerMargin = if (viewModelAccountDetails.isShowEarnBanner() &&
+                !isZeroBalance && !isEarning)
+                (binding.includeEarnBanner.earnBanner.layoutParams as MarginLayoutParams).topMargin
             else 0
 
             if (handledContainerHeight != containerHeight) {
@@ -485,7 +499,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
                 val scrollContainerHeight = containerHeight - buttonsHeight - buttonsMargin -
                         fileWalletDisclaimerHeight - fileWalletDisclaimerMargin -
-                        onRampHeight - onRampMargin
+                        onRampHeight - onRampMargin - earnBannerHeight - earnBannerMargin
 
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
                     height = scrollContainerHeight
@@ -620,21 +634,56 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             else
                 (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
-        if (active) {
-            binding.closeImageView.setOnClickListener {
+        binding.closeImageView.setOnClickListener {
+            if (active) {
                 closeOnrampBanner()
             }
-        } else {
-            binding.closeImageView.visibility = View.GONE
         }
     }
 
     private fun closeOnrampBanner() {
         binding.onrampBanner.visibility = View.GONE
         viewModelAccountDetails.setShowOnrampBanner(false)
+        setupEarnBanner()
+    }
+
+    private fun setupEarnBanner(account: Account = viewModelAccountDetails.account) {
+        binding.includeEarnBanner.earnBanner.isVisible = viewModelAccountDetails.isEarnBannerVisible()
+        binding.includeEarnBanner.earnBanner.setOnClickListener {
+            viewModelAccountDetails.onEarnClicked()
+        }
+        binding.includeEarnBanner.closeImageView.setOnClickListener {
+            closeEarnBanner()
+        }
+        updateScrollContainerView(isEarning = (account.isBaking() || account.isDelegating()))
+    }
+
+    private fun closeEarnBanner() {
+        binding.includeEarnBanner.earnBanner.visibility = View.GONE
+        viewModelAccountDetails.setShowEarnBanner(false)
+        updateScrollContainerView()
+    }
+
+    private fun updateScrollContainerView(isEarning: Boolean = false) {
         binding.rootLayout.invalidate()
         binding.rootLayout.requestLayout()
-        initContainer()
+        initContainer(isEarning)
+    }
+
+    private fun updateBannersVisibility(account: Account) {
+        binding.includeEarnBanner.earnBanner.isVisible = (
+                viewModelAccountDetails.isShowEarnBanner() &&
+                        account.balance > BigInteger.ZERO &&
+                        account.isDelegating().not() &&
+                        account.isBaking().not()
+                )
+
+        binding.onrampBanner.isVisible = (
+                viewModelAccountDetails.isShowOnrampBanner() &&
+                        account.balance == BigInteger.ZERO
+                )
+
+        updateScrollContainerView(account.isDelegating() || account.isBaking())
     }
 
     private val showTokenDetails =

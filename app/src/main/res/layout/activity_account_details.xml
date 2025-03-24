@@ -49,7 +49,7 @@
                     app:drawableEndCompat="@drawable/mw24_ic_arrow_right_24"
                     app:layout_constraintBottom_toTopOf="@id/total_balance_textview"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/account_details_suspension_notice_suspended"
+                    tools:text="@string/your_validation_has_been_suspended"
                     tools:visibility="visible" />
 
                 <com.concordium.wallet.uicore.view.BalanceGradientTextView
@@ -347,7 +347,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="@string/ccd_onramp_banner_content"
-                    android:textAppearance="@style/CCX_Typography_Caption"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="@id/title_text_view"
                     app:layout_constraintStart_toStartOf="@id/title_text_view"
@@ -363,6 +363,10 @@
                     app:srcCompat="@drawable/mw24_ic_onramp_close" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <include
+                android:id="@+id/include_earn_banner"
+                layout="@layout/earn_banner_view" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/tokens_fragment_container"

@@ -23,7 +23,6 @@ class ConfirmationBottomSheet(context: Context, callback: INotification) : Botto
 
     private val btnCancel: Button?
     private val btnDelete: Button?
-    private val closeButton: ImageView?
     private val titleTv: TextView?
     private val descriptionTv: TextView?
     private var data: Any? = null
@@ -42,11 +41,6 @@ class ConfirmationBottomSheet(context: Context, callback: INotification) : Botto
         btnCancel = findViewById(R.id.btnCancel)
         btnDelete = findViewById(R.id.btnDelete)
 
-        closeButton = findViewById(R.id.closeButton)
-        closeButton?.setOnClickListener {
-            this.dismiss()
-            callback.cancelDeleteContact()
-        }
         btnCancel?.setOnClickListener {
             this.dismiss()
             callback.cancelDeleteContact()

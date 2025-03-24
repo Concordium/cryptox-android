@@ -12,7 +12,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.uicore.view.SegmentedControlView
 
 class BakerRegistrationActivity : BaseDelegationBakerActivity(
-    R.layout.activity_baker_registration, R.string.baker_registration_title
+    R.layout.activity_baker_registration, R.string.baker_registration_open_pool_title
 ) {
     private lateinit var binding: ActivityBakerRegistrationBinding
 
@@ -26,22 +26,24 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity(
     override fun initViews() {
         binding.bakerOptions.clearAll()
         binding.bakerOptions.addControl(
-            getString(R.string.baker_registration_open),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.baker_registration_open),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
             },
-            viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL || viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == null
+            isButtonControl = true,
+            initiallySelected = viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL || viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == null
         )
         binding.bakerOptions.addControl(
-            getString(R.string.baker_registration_close),
-            object : SegmentedControlView.OnItemClickListener {
+            title = getString(R.string.baker_registration_close),
+            clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
             },
-            viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
+            isButtonControl = true,
+            initiallySelected = viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
         )
 
         binding.bakerRegistrationContinue.setOnClickListener {

@@ -657,14 +657,27 @@
     <string name="earn_subtitle">Below are two options for earning rewards on CryptoX Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
-    <string name="earn_delegation_title">Delegation</string>
-    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other validators. There is no minimum amount of CCD required when delegating.</string>
-    <string name="earn_delegation_button">Continue to delegation setup</string>
-    <string name="earn_baker_button">Continue to validator setup</string>
+    <string name="earn_delegation_title">Earn up to <font color='#24D4AB'>6%</font></string>
+    <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
+    <string name="earn_delegation_rewarded_description">Stake your CCD to earn rewards. Rewards can be restaked automatically.</string>
+    <string name="earn_delegation_options_title">Earn your way</string>
+    <string name="earn_delegation_options_description">You can delegate to an open pool of your choice, or stake using passive delegation.</string>
+    <string name="earn_delegation_update_title">Update with ease</string>
+    <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
+    <plurals name="earn_delegation_update_description">
+        <item quantity="one">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d day applies</item>
+        <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
+    </plurals>
+
+    <string name="start_earning_button">Start earning</string>
+    <string name="read_more_button">Read more</string>
+    <string name="earn_baker_button">Or become a validator (advanced)</string>
+    <string name="earn_notice">Estimated rewards are based on past results. Actual returns may vary.</string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
+    <string name="delegation_intro_flow_learn_about">Learn about earning</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
     <string name="delegation_intro_subtitle2">Delegation models</string>
     <string name="delegation_intro_subtitle3">Validator pools</string>
@@ -678,8 +691,17 @@
     <string name="delegation_update_subtitle3">Cooldowns</string>
 
     <string name="delegation_remove_subtitle1">Stop your delegation</string>
+    <string name="delegation_remove_description">
+        Stopping your delegation is subject to a cooldown period, in which the stake cannot be spent or transferred.
+        \n\n
+        At the end of the cooldown period, the delegated amount is unlocked on your public balance, and
+        the funds will be at disposal again.
+    </string>
+    <string name="delegation_remove_button">Stop staking</string>
+    <string name="delegation_validation_go_back_button">Go back</string>
+    <string name="delegation_validation_continue_button">Continue</string>
 
-    <string name="delegation_status_title">Delegation status</string>
+    <string name="delegation_status_title">Earn</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
     <string name="delegation_status_content_empty_desc">This account has no delegation registered. You can register a delegation with the button below.</string>
     <string name="delegation_status_continue">Continue</string>
@@ -693,12 +715,17 @@
     <string name="delegation_status_effective_time">%1$s at %2$s</string>
     <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validating on</string>
 
-    <string name="delegation_register_delegation_title">Register delegation</string>
+    <string name="delegation_register_delegation_title">Earn</string>
+    <string name="delegation_register_staking_mode">Staking mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
-    <string name="delegation_remove_delegation_title">Remove delegation</string>
+    <string name="delegation_update_delegation_button">Update delegation</string>
+    <string name="delegation_update_delegation_success">Your delegation is updated</string>
+    <string name="delegation_remove_delegation_title">Earn</string>
     <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered</string>
+    <string name="delegation_status_content_registered_button">Submit delegation</string>
+    <string name="delegation_status_content_registered_success">You are delegating</string>
     <string name="delegation_status_content_delegating_account">Delegating account</string>
     <string name="delegation_status_content_delegation_amount">Delegation amount</string>
     <string name="delegation_status_content_target_pool">Target</string>
@@ -709,18 +736,20 @@
     <string name="delegation_status_content_inactive_stake_description">You don’t receive rewards from this part of stake now, this amount will be at disposal after cooldown period.</string>
     <string name="delegation_status_content_cooldown_time">Cooldown time:</string>
 
-    <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
+    <string name="delegation_register_delegation_intro">Delegate to an open pool of your choice, or stake your CCD using passive delegation.</string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit <a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Validator id %1$s</string>
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
-    <string name="delegation_register_delegation_pool_baker">Validator</string>
-    <string name="delegation_register_delegation_passive">Passive</string>
+    <string name="delegation_register_delegation_pool_baker">Validator pool</string>
+    <string name="delegation_register_delegation_pool_baker_id">Validator pool: %1$s</string>
+    <string name="delegation_register_delegation_passive">Passive delegation</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
+    <string name="delegation_register_delegation_error">Staking mode not selected</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
@@ -730,7 +759,8 @@
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
     <string name="delegation_register_delegation_amount_balance">Balance</string>
-    <string name="delegation_register_delegation_amount_delegation">Delegation</string>
+    <string name="delegation_register_delegation_amount_available_label">Available for staking</string>
+    <string name="delegation_register_delegation_amount_delegation">Current delegation</string>
     <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
@@ -738,7 +768,8 @@
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_amount_do_you_want">Add the rewards to your delegated amount automatically?\n\nIf you decline, amounts will be at disposal on your account balance at each pay day.</string>
+    <string name="delegation_register_delegation_restake_rewards">Restake rewards</string>
+    <string name="delegation_register_delegation_amount_do_you_want">Automatically reinvest rewards to compound your staking returns over time.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
@@ -754,7 +785,7 @@
     </plurals>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
-    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Delegation amount</string>
+    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Amount (CCD):</string>
     <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
@@ -776,15 +807,21 @@
     <string name="delegation_more_than_95_continue">Continue</string>
     <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
 
+    <string name="delegation_select_delegation_title">Warning</string>
+    <string name="delegation_select_delegation_message">Staking mode not selected</string>
+    <string name="delegation_select_delegation_continue">Select staking mode</string>
+    <string name="delegation_select_delegation_later">Later</string>
+
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
-    <string name="delegation_register_delegation_finish">Finish</string>
+    <string name="delegation_register_delegation_close">Close</string>
     <string name="delegation_register_delegation_failed_title">Transaction failed</string>
     <string name="delegation_register_delegation_failed_message">Your delegation transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
     <string name="delegation_register_delegation_failed_try_again">Try again</string>
     <string name="delegation_register_delegation_failed_later">Later</string>
 
     <string name="delegation_remove_text">Are you sure you want to remove your delegation?</string>
-    <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
+    <string name="delegation_remove_confirm_title">Stop staking</string>
+    <string name="delegation_remove_confirm_success">You submitted a transaction to stop you staking.</string>
     <string name="delegation_remove_account">Account to stop delegating</string>
     <string name="delegation_remove_not_enough_funds_title">Warning</string>
     <string name="delegation_remove_not_enough_funds_message">You don\'t have any funds on your balance to pay for the fee.</string>
@@ -811,14 +848,24 @@
     <string name="delegation_amount_too_large_while_in_cooldown">Your delegation amount is too large for this pool.</string>
 
     <!-- Validator intro -->
-    <string name="baker_intro_flow_title">Become a validator</string>
+    <string name="baker_intro_flow_title">Learn about validation</string>
     <string name="baker_intro_subtitle1">Become a validator</string>
     <string name="baker_intro_subtitle2">The node</string>
     <string name="baker_intro_subtitle3">Opening a pool</string>
     <string name="baker_intro_subtitle4">Suspension</string>
+    <string name="baker_intro_notice">NOTE: A single account cannot both be a validator and delegator, but it is possible to stop one and change to the other.</string>
 
     <string name="baker_registration_title">Register validator</string>
-    <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to it.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_registration_metadata_title">Metadata</string>
+    <string name="baker_registration_validator_keys_title">Validator keys</string>
+    <string name="baker_registration_pool_title">Commissions</string>
+    <string name="baker_registration_open_pool_title">Opening a pool</string>
+    <string name="baker_start_validation_button">Start validating</string>
+    <string name="baker_registration_explain">
+        You have the option when adding a validator to open a staking pool or not. A staking pool allows others who want to earn rewards to do so without the need to run a node or become a validator themselves.\n\n
+        To do this they delegate an amount to your staking pool which then increases your total stake and your chances of winning the lottery to bake a block. At each pay day the rewards will be distributed to you and your delegators.\n\n
+        You can also choose not to open a pool, in which case only your own stake applies toward the lottery. You can always open or close a pool later.
+    </string>
     <string name="baker_pool_settings_explain">When you open your validator as a pool, you earn commissions of stake delegated to your pool from other accounts:</string>
     <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
     <string name="baker_pool_settings_baking_explain">Block reward commission</string>
@@ -826,26 +873,28 @@
     <string name="baking_commission_rate_error_baking_not_in_range">Validator reward is out of specified range</string>
     <string name="baking_pool_range_min">Min:\n%1$s%%</string>
     <string name="baking_pool_range_max">Max:\n%1$s%%</string>
-    <string name="baker_registration_open">Open for delegation</string>
-    <string name="baker_registration_close">Close for delegation</string>
+    <string name="baker_registration_pool_options_title">Open for delegation</string>
+    <string name="baker_registration_open">Open</string>
+    <string name="baker_registration_close">Closed for new</string>
     <string name="baker_registration_continue">Continue</string>
     <string name="baker_registration_export">Export validator keys</string>
-    <string name="baker_registration_export_explain">Your new validator keys have been generated. Before you can continue, you must export and save them. The keys will have to be added to the validator node.\n\nNOTICE: Besides exporting the keys, you will have to finish and submit the transaction afterwards for the validator to be registered.</string>
+    <string name="baker_registration_export_explain">Your new validator keys have been generated. Before you can continue, you must export and save them. The keys will have to be added to the validator node.</string>
     <string name="baker_registration_export_election_verify_key">Election verify key</string>
     <string name="baker_registration_export_signature_verify_key">Signature verify key</string>
     <string name="baker_registration_export_aggregation_verify_key">Aggregation verify key</string>
     <string name="baker_registration_export_notice_title">Notice</string>
     <string name="baker_registration_export_notice_message">This is your only chance to export and save the keys.\n\nThey cannot be recreated, so you will have to generate new keys and register them with a transaction, if you lose these.</string>
     <string name="baker_registration_export_notice_ok">Okay</string>
+    <string name="baker_registration_commission_percent">%</string>
 
     <string name="baker_registration_open_title">Add validator</string>
     <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your validator. Leave it blank if you don’t have any.</string>
     <string name="baker_registration_open_read_more">You can read more about the metadata URL on <a href="https://docs.concordium.com/en/mainnet/docs/mobile-wallet/add-baker-mw.html">docs.concordium.com</a></string>
     <string name="baker_registration_open_continue">Continue</string>
-    <string name="baker_registration_open_url_hint">Paste your metadata URL here</string>
+    <string name="baker_registration_open_url_hint">Enter metadata URL</string>
     <string name="baker_registration_open_url_invalid">Please enter a valid HTTP or HTTPS URL</string>
 
-    <string name="baker_status_title">Validator status</string>
+    <string name="baker_status_title">Validation</string>
     <string name="baker_status_register_baker">Register validator</string>
     <string name="baker_status_no_baker_title">This account has no validator registered.</string>
     <string name="baker_status_no_baker">This account has no validator registered. You can register a validator with the button below.</string>
@@ -866,7 +915,7 @@
     <string name="baker_status_baker_metadata_url">Metadata URL</string>
 
     <string name="baker_registration_amount_title">Register validator</string>
-    <string name="baker_registration_amount_explain">Do you want to automatically add your validating rewards to your validator stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
+    <string name="baker_registration_amount_explain">I want to automatically add my stake rewards to my stake amount.</string>
     <string name="baker_registration_amount_current_stake_title">Validator stake</string>
     <string name="baker_registration_amount_enter_stake_title">Type the amount you want to stake</string>
 
@@ -880,9 +929,10 @@
     <string name="baker_update_enter_new_stake">Enter your new total validator stake</string>
 
     <string name="baker_registration_confirmation_title">Register validator</string>
+    <string name="baker_registration_confirmation_button">Submit</string>
     <string name="baker_registration_confirmation_explain">You are about to submit a register validator transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>
     <string name="baker_register_confirmation_receipt_title">Transaction: Register validator</string>
-    <string name="baker_register_confirmation_receipt_account_to_bake_from">Account to register as validator</string>
+    <string name="baker_register_confirmation_receipt_account_to_bake_from">Sender account</string>
     <string name="baker_register_confirmation_receipt_amount_to_bake">Validator stake</string>
     <string name="baker_register_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="baker_register_confirmation_receipt_pool_status">Delegation pool status</string>
@@ -892,19 +942,30 @@
     <string name="baker_register_confirmation_receipt_signature_verify_key">Signature verify key</string>
     <string name="baker_register_confirmation_receipt_aggregation_verify_key">Aggregation verify key</string>
     <string name="baker_register_confirmation_receipt_submit_transaction">Submit delegation transaction</string>
-    <string name="baker_register_confirmation_receipt_finish">Finish</string>
+    <string name="baker_register_confirmation_receipt_submit_transaction_fee">Estimated transaction fee</string>
+    <string name="baker_register_confirmation_receipt_success">Your validation is registered</string>
+    <string name="baker_register_confirmation_receipt_close">Close</string>
     <string name="baker_register_confirmation_receipt_added_to_delegation_amount">Added to stake</string>
     <string name="baker_register_confirmation_receipt_at_disposal">Added to disposable amount</string>
     <string name="baker_register_confirmation_receipt_meta_data_url">Metadata URL</string>
     <string name="baker_register_transaction_failed">Your validating transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
-    <string name="baker_registration_confirmation_remove_title">Stop validating</string>
+    <string name="baker_registration_confirmation_remove_title">Validation</string>
+    <string name="baker_registration_confirmation_remove_label">Stop validation</string>
+    <string name="baker_registration_confirmation_remove_button">Stop validation</string>
+    <string name="baker_registration_confirmation_remove_success">You submitted a transaction to stop your validator</string>
     <string name="baker_registration_confirmation_remove_are_you_sure">Are you sure you want to make the following transaction to stop validating?</string>
     <string name="baker_registration_confirmation_remove_transaction">Transaction: Stop validating</string>
     <string name="baker_registration_confirmation_remove_account_to_stop">Account to stop validating</string>
     <string name="baker_registration_confirmation_submit">Submit validator transaction</string>
     <string name="baker_registration_confirmation_update_keys_title">Update validator keys</string>
+    <string name="baker_registration_confirmation_update_keys_button">Update keys</string>
+    <string name="baker_registration_confirmation_update_keys_success">Validator keys updated</string>
     <string name="baker_registration_confirmation_update_pool_title">Update pool settings</string>
+    <string name="baker_registration_confirmation_update_pool_button">Update pool</string>
+    <string name="baker_registration_confirmation_update_pool_success">Validator pool is updated</string>
     <string name="baker_registration_confirmation_update_stake_title">Update validator stake</string>
+    <string name="baker_registration_confirmation_update_stake_button">Update stake</string>
+    <string name="baker_registration_confirmation_update_stake_success">Validator stake is updated</string>
     <string name="baker_registration_confirmation_update_keys_transaction_title">Transaction: Update validator keys</string>
     <string name="baker_registration_confirmation_update_pool_transaction_title">Transaction: Update pool settings</string>
     <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update validator stake</string>
@@ -913,6 +974,8 @@
     <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Reducing your stake is subject to a cooldown period, in which the stake cannot be spent or transferred</string>
 
     <string name="baker_update_intro_flow_title">Validating</string>
+    <string name="baker_update_title">Update validation</string>
+    <string name="baker_update_button">Update validation</string>
     <string name="baker_update_intro_subtitle1">Updating validator settings</string>
     <string name="baker_update_intro_subtitle2">Update validator stake</string>
     <string name="baker_update_intro_subtitle3" tools:ignore="TypographyFractions">Update pool settings (1/2)</string>
@@ -920,7 +983,23 @@
     <string name="baker_update_intro_subtitle5">Update validator keys</string>
 
     <string name="baker_remove_intro_flow_title">Validating</string>
-    <string name="baker_remove_intro_subtitle1">Stop validating</string>
+    <string name="baker_remove_intro_subtitle1">Stop validation</string>
+    <string name="baker_remove_intro_description">
+        If you stop validating there is a cooldown period, after which the full stake amount will be unlocked on your public balance.
+        \n\nIf your pool has any delegators, they will be automatically moved to passive delegation.
+        \n\nDeregistering the validator does not shut down your node. You must shut down the node in a separate
+        action if you no longer wish to run a node on the Concordium blockchain.
+    </string>
+
+    <string name="baker_suspend_validation_dialog_title">Important</string>
+    <string name="baker_suspend_validation_dialog_description">
+        You are about to self-suspend your validation.\n\nPlease be aware that:\n\n
+        • Suspended nodes don’t earn rewards\n\n
+        • Your delegators will stop earning rewards\n\n
+        • Your delegators will be notified about the suspension\n\n
+    </string>
+    <string name="baker_suspend_validation_dialog_go_back_button">Go back</string>
+    <string name="baker_suspend_validation_dialog_button">Continue</string>
 
     <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>
     <string name="update_baker_settings_menu_update_pool_settings">Update pool settings</string>
@@ -928,7 +1007,11 @@
     <string name="update_baker_settings_menu_stop_baking">Stop validating</string>
 
     <string name="baker_update_pool_settings_title">Update pool settings</string>
-    <string name="baker_update_pool_settings_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your validating pool.\n\nIf your pool is already open, you can also close it for new delegators, or you can close it for delegation completely.</string>
+    <string name="baker_update_pool_settings_explain">
+        You have the option when adding a validator to open a staking pool or not. A staking pool allows others who want to earn rewards to do so without the need to run a node or become a validator themselves.\n\n
+        To do this they delegate an amount to your staking pool which then increases your total stake and your chances of winning the lottery to bake a block. At each pay day the rewards will be distributed to you and your delegators.\n\n
+        You can also choose not to open a pool, in which case only your own stake applies toward the lottery. You can always open or close a pool later.
+    </string>
     <string name="baker_update_pool_settings_current_status_open">Current status: Open</string>
     <string name="baker_update_pool_settings_current_status_closed">Current status: Closed</string>
     <string name="baker_update_pool_settings_current_status_closed_for_new">Current status: Closed for new</string>
@@ -1323,12 +1406,19 @@
     <string name="baker_status_baker_suspended_title">@string/your_validation_has_been_suspended</string>
     <string name="update_baker_settings_menu_suspend_baking">Suspend validation</string>
     <string name="update_baker_settings_menu_resume_baking">Resume validation</string>
-    <string name="baker_registration_confirmation_resume_title">Resume validation</string>
+    <string name="baker_registration_confirmation_resume_title">Validation</string>
+    <string name="baker_registration_confirmation_resume_label">Resume validation</string>
+    <string name="baker_registration_confirmation_resume_button">Resume</string>
     <string name="baker_registration_confirmation_resume_transaction">Transaction: Resume validation</string>
+    <string name="baker_registration_confirmation_resume_success">You resumed you validation</string>
     <string name="baker_registration_confirmation_resume_account_to_stop">Account to resume validation</string>
-    <string name="baker_registration_confirmation_suspend_title">Suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_title">Validation</string>
+    <string name="baker_registration_confirmation_suspend_label">Suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_button">Suspend</string>
     <string name="baker_registration_confirmation_suspend_transaction">Transaction: Suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_success">You suspended you validation</string>
     <string name="baker_registration_confirmation_suspend_account_to_stop">Account to suspend validation</string>
+    <string name="baker_registration_confirmation_suspend_resume_description">Effective from next payday</string>
     <string name="delegation_status_content_suspended_title">@string/your_validator_has_been_suspended</string>
     <string name="account_details_suspension_notice_baker_suspended">@string/your_validation_has_been_suspended</string>
     <string name="account_details_suspension_notice_delegation_baker_suspended">@string/your_validator_has_been_suspended</string>
@@ -1340,10 +1430,18 @@
         Once your node is active you will no longer be primed for suspension.
     </string>
     <string name="validation_suspended_baker_explanation">
-        Your node does not earn rewards at the moment.\n\nTo lift the suspension and earn rewards again
-        ensure your node is up-to-date and click “Resume\u00A0validation” in the “Change\u00A0validating\u00A0status” menu.
+        Your node does not earn rewards at the moment.\n\nTo lift the suspension and earn rewards again ensure your node is up-to-date and click “Resume”.
     </string>
     <string name="validation_suspended_delegator_explanation">
         Your delegation amount does not earn rewards until validation is resumed.
     </string>
+    <string name="earn_status_stop_button">Stop</string>
+    <string name="earn_status_update_button">Update</string>
+    <string name="delegation_status_suspend_button">Suspend</string>
+    <string name="delegation_status_resume_button">Resume</string>
+    <string name="confirmation_bottom_sheet_delete_button">Delete</string>
+    <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
+    
+    <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
+    <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
 </resources>

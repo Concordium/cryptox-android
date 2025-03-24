@@ -1,32 +1,18 @@
 package com.concordium.wallet.ui.common
 
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.commit
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityIntroFlowBinding
-import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
+import com.concordium.wallet.ui.account.accountdetails.IntroFlowFragment
+import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationNoticeFragment
 import com.concordium.wallet.ui.base.BaseActivity
-
 
 abstract class GenericFlowActivity(
     titleId: Int = R.string.app_name
 ) : BaseActivity(R.layout.activity_intro_flow, titleId) {
-    companion object {
-        const val EXTRA_HIDE_BACK = "EXTRA_HIDE_BACK"
-        const val EXTRA_IGNORE_BACK_PRESS = "EXTRA_IGNORE_BACK_PRESS"
-    }
 
-    private var hideBack = true
-    private var ignoreBackPress = true
-    protected var showProgressLine = false
-    protected var progressLineTotalDots = 4
-    protected var progressLineFilledDots = 0
     private lateinit var binding: ActivityIntroFlowBinding
 
     //region Lifecycle
@@ -35,20 +21,8 @@ abstract class GenericFlowActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIntroFlowBinding.bind(findViewById(R.id.root_layout))
-
-        hideBack = intent.extras?.getBoolean(EXTRA_HIDE_BACK) == true
-        ignoreBackPress = intent.extras?.getBoolean(EXTRA_IGNORE_BACK_PRESS) == true
-
-        initializeViewModel()
+        hideActionBarBack(isVisible = true)
         initViews()
-    }
-
-    override fun onBackPressed() {
-        if (ignoreBackPress) {
-            // Ignore back press
-        } else {
-            super.onBackPressed()
-        }
     }
 
     // endregion
@@ -56,103 +30,55 @@ abstract class GenericFlowActivity(
     //region Initialize
     //************************************************************
 
-    private fun initializeViewModel() {
-    }
-
     private fun initViews() {
-
-        binding.pager.adapter = ScreenSlidePagerAdapter(this)
-
-        binding.createIdentIntroBack.setOnClickListener {
-            binding.pager.setCurrentItem(binding.pager.currentItem - 1, true)
-        }
-        binding.createIdentIntroNext.setOnClickListener {
-            binding.pager.setCurrentItem(binding.pager.currentItem + 1, true)
-        }
-        binding.createIdentIntroContinue.setOnClickListener {
-            gotoContinue()
-        }
-        binding.createIdentIntroSkip.setOnClickListener {
-            gotoContinue()
+        binding.introFlowContainer.removeAllViews()
+        if (showNotice()) {
+            addFragment(BakerRegistrationNoticeFragment(), binding.introFlowContainer.id)
         }
 
-        updateButtons()
+        getTitles().forEachIndexed { index, _ ->
+            addFragment(
+                IntroFlowFragment.newInstance(getLink(index), getPageTitle(index)),
+                binding.introFlowContainer.id
+            )
+        }
 
-        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {
+        with(binding.continueButton) {
+            text = getButtonText()
+            setOnClickListener {
+                gotoContinue()
             }
+            isEnabled = isButtonEnabled()
+        }
 
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                updateButtons()
-            }
-        })
+        binding.scrollContainer.viewTreeObserver.addOnScrollChangedListener {
+            val scrollView = binding.scrollContainer
+            val view = scrollView.getChildAt(scrollView.childCount - 1)
 
-        hideActionBarBack(hideBack)
-    }
-
-    protected fun updateViews() {
-        with (binding.progressLine) {
-            isVisible = showProgressLine
-            setFilledDots(progressLineFilledDots)
-            setTotalDots(progressLineTotalDots)
+            if (view.bottom <= (scrollView.height + scrollView.scrollY))
+                binding.continueButton.isEnabled = true
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id: Int = item.itemId
-        return if (id == android.R.id.home) {
-            onBackPressed()
-            true
-        } else super.onOptionsItemSelected(item)
+    private fun addFragment(fragment: Fragment, containerId: Int) {
+        supportFragmentManager.commit {
+            add(containerId, fragment, fragment::class.java.simpleName)
+        }
     }
 
     abstract fun gotoContinue()
-
-    abstract fun getMaxPages(): Int
 
     abstract fun getPageTitle(position: Int): Int
 
     abstract fun getLink(position: Int): String
 
-    //endregion
+    abstract fun getTitles(): IntArray
 
-    //region Control/UI
-    //************************************************************
+    abstract fun getButtonText(): String
 
-    private fun updateButtons() {
-        if (binding.pager.currentItem == 0 && getMaxPages() == 1) {
-            binding.createIdentIntroSkip.visibility = View.GONE
-            binding.createIdentIntroContinue.visibility = View.VISIBLE
-            binding.createIdentIntroBack.visibility = View.GONE
-            binding.createIdentIntroNext.visibility = View.GONE
-        } else if (binding.pager.currentItem == 0 && getMaxPages() > 1) {
-            binding.createIdentIntroSkip.visibility = View.VISIBLE
-            binding.createIdentIntroContinue.visibility = View.GONE
-            binding.createIdentIntroBack.visibility = View.GONE
-            binding.createIdentIntroNext.visibility = View.VISIBLE
-        } else if (binding.pager.currentItem == 0) {
-            binding.createIdentIntroSkip.visibility = View.GONE
-            binding.createIdentIntroContinue.visibility = View.GONE
-            binding.createIdentIntroBack.visibility = View.GONE
-            binding.createIdentIntroNext.visibility = View.VISIBLE
-        } else if (binding.pager.currentItem > 0 && binding.pager.currentItem < getMaxPages() - 1) {
-            binding.createIdentIntroSkip.visibility = View.GONE
-            binding.createIdentIntroContinue.visibility = View.GONE
-            binding.createIdentIntroBack.visibility = View.VISIBLE
-            binding.createIdentIntroNext.visibility = View.VISIBLE
-        } else if (binding.pager.currentItem == getMaxPages() - 1) {
-            binding.createIdentIntroSkip.visibility = View.GONE
-            binding.createIdentIntroContinue.visibility = View.VISIBLE
-            binding.createIdentIntroNext.visibility = View.GONE
-        }
-    }
+    abstract fun isButtonEnabled(): Boolean
 
-    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = getMaxPages()
-        override fun createFragment(position: Int): Fragment =
-            WebViewPageFragment.newInstance(getLink(position), getPageTitle(position))
-    }
+    open fun showNotice(): Boolean = false
 
     //endregion
 }

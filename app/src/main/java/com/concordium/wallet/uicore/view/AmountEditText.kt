@@ -9,6 +9,7 @@ import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
 import android.widget.EditText
+import com.concordium.wallet.R
 import com.concordium.wallet.uicore.DecimalTextWatcher
 import com.concordium.wallet.uicore.MaxAmountTextWatcher
 
@@ -38,6 +39,7 @@ class AmountEditText : EditText {
     ) : super(context, attrs, defStyleAttr) {
         init(attrs)
     }
+    private var isGradientTextColor: Boolean = true
 
     private var currentDecimalTextWatcher: DecimalTextWatcher? = null
         set(value) {
@@ -63,6 +65,10 @@ class AmountEditText : EditText {
         decimals = 6
 
         addTextChangedListener(MaxAmountTextWatcher())
+
+        context.theme.obtainStyledAttributes(attrs, R.styleable.AmountEditText, 0, 0).apply {
+            isGradientTextColor = getBoolean(R.styleable.AmountEditText_isGradientTextColor, true)
+        }
     }
 
     @SuppressLint("DrawAllocation")
@@ -80,7 +86,9 @@ class AmountEditText : EditText {
             Shader.TileMode.CLAMP
         )
 
-        paint.shader = gradient
+        if (isGradientTextColor) {
+            paint.shader = gradient
+        }
         super.onDraw(canvas)
     }
 

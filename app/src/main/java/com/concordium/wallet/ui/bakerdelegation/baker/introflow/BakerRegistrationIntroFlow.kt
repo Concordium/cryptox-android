@@ -19,6 +19,12 @@ class BakerRegistrationIntroFlow :
         )
     }
 
+    override fun getButtonText(): String = getString(R.string.baker_start_validation_button)
+
+    override fun isButtonEnabled(): Boolean = false
+
+    override fun showNotice(): Boolean = true
+
     override fun gotoContinue() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
@@ -27,6 +33,6 @@ class BakerRegistrationIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_intro_flow_en_" + (position + 1) + ".html"
+        return "baker_intro_flow_en_" + (position + 1) + ".html"
     }
 }

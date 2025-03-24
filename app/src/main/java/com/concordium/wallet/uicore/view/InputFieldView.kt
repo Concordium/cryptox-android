@@ -33,13 +33,7 @@ class InputFieldView @JvmOverloads constructor(
                 iconTextEmpty = getDrawable(R.styleable.InputFieldView_iconTextEmpty)
                 iconTextFilled = getDrawable(R.styleable.InputFieldView_iconTextFilled)
 
-                binding.searchIcon.setImageDrawable(
-                    iconTextEmpty ?: ContextCompat.getDrawable(
-                        context,
-                        R.drawable.cryptox_ico_search
-                    )
-                )
-
+                binding.searchIcon.setImageDrawable(iconTextEmpty)
                 binding.clearIcon.setImageDrawable(
                     iconTextFilled ?: ContextCompat.getDrawable(
                         context,
@@ -102,9 +96,9 @@ class InputFieldView @JvmOverloads constructor(
         updateIconFromText(binding.edittext.text)
     }
 
-    fun getSearchText(): String = binding.edittext.text.toString()
+    fun getText(): String = binding.edittext.text.toString()
 
-    fun setSearchText(text: String) = binding.edittext.setText(text)
+    fun setText(text: String) = binding.edittext.setText(text)
 
     fun setSearchListener(listener: OnClickListener) {
         binding.searchIcon.setOnClickListener(listener)

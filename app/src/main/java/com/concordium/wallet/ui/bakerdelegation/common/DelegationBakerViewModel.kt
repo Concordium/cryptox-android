@@ -34,6 +34,7 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
@@ -51,11 +52,14 @@ import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.data.util.FileUtil
+import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
@@ -65,11 +69,14 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.math.BigInteger
 import java.util.Date
 import kotlin.math.roundToInt
 
-class DelegationBakerViewModel(application: Application) : AndroidViewModel(application) {
+class DelegationBakerViewModel(application: Application) : AndroidViewModel(application),
+    KoinComponent {
 
     lateinit var bakerDelegationData: BakerDelegationData
     private val proxyRepository = ProxyRepository()
@@ -78,6 +85,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
+    private val tokenPriceRepository by inject<TokenPriceRepository>()
 
     companion object {
         const val FILE_NAME_BAKER_KEYS = "validator-credentials.json"
@@ -119,7 +127,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         get() = _showAuthenticationLiveData
 
     private val _bakerKeysLiveData = MutableLiveData<BakerKeys?>()
-    val bakerKeysLiveData: MutableLiveData<BakerKeys?>
+    val bakerKeysLiveData: LiveData<BakerKeys?>
         get() = _bakerKeysLiveData
 
     private val _fileSavedLiveData = MutableLiveData<Event<Int>>()
@@ -127,8 +135,16 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         get() = _fileSavedLiveData
 
     private val _bakerPoolStatusLiveData = MutableLiveData<BakerPoolStatus?>()
-    val bakerPoolStatusLiveData: MutableLiveData<BakerPoolStatus?>
+    val bakerPoolStatusLiveData: LiveData<BakerPoolStatus?>
         get() = _bakerPoolStatusLiveData
+
+    private val _eurRateLiveData = MutableLiveData<String?>()
+    val eurRateLiveData: LiveData<String?>
+        get() = _eurRateLiveData
+
+    private val _transaction = MutableLiveData<Transaction?>()
+    val transaction: LiveData<Transaction?>
+        get() = _transaction
 
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData
@@ -215,6 +231,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account.baker?.isSuspended == true
     }
 
+    fun isInitialSetup(): Boolean {
+        return (!bakerDelegationData.isBakerPool && !bakerDelegationData.isLPool)
+    }
+
     fun atDisposal(): BigInteger {
         var staked: BigInteger = BigInteger.ZERO
         bakerDelegationData.account.delegation?.let {
@@ -296,7 +316,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                     if (bakerDelegationData.type == UPDATE_DELEGATION && openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
                         _errorLiveData.value =
                             Event(R.string.delegation_register_delegation_pool_id_closed)
-                    else if ((bakerDelegationData.type == REGISTER_DELEGATION || bakerDelegationData.type == UPDATE_DELEGATION) && (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
+                    else if ((bakerDelegationData.type == REGISTER_DELEGATION ||
+                                bakerDelegationData.type == UPDATE_DELEGATION) &&
+                        (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
                         _errorLiveData.value =
                             Event(R.string.delegation_register_delegation_pool_id_closed)
                     else if (changePool && !isInCoolDown() && stakedAmount + delegatedCapital > delegatedCapitalCap)
@@ -364,9 +386,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             }
 
             UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
-                if (metadataUrlHasChanged() || (openStatusHasChanged() && bakerDelegationData.bakerPoolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL)) {
+                if (metadataUrlHasChanged() || (openStatusHasChanged() &&
+                            bakerDelegationData.bakerPoolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL)
+                ) {
                     (bakerDelegationData.metadataUrl?.length ?: 0)
-                } else null
+                } else
+                    null
             }
 
             else -> null
@@ -402,7 +427,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         try {
             bakerDelegationData.chainParameters = proxyRepository.getChainParameters()
             _chainParametersLoadedLiveData.value = true
-        } catch (e: Exception){
+        } catch (e: Exception) {
             _chainParametersLoadedLiveData.value = false
             handleBackendError(e)
         }
@@ -424,8 +449,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 },
                 async(Dispatchers.IO) {
                     try {
-                        bakerDelegationData.chainParameters=proxyRepository.getChainParameters()
-                    } catch (e: Exception){
+                        bakerDelegationData.chainParameters = proxyRepository.getChainParameters()
+                    } catch (e: Exception) {
                         handleBackendError(e)
                     }
                 }
@@ -536,16 +561,35 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
         val capital: String? = bakerDelegationData.amount
             ?.toString()
-            ?.takeIf { bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && stakedAmountHasChanged() }
+            ?.takeIf {
+                bakerDelegationData.type != UPDATE_BAKER_KEYS &&
+                        bakerDelegationData.type != UPDATE_BAKER_POOL && stakedAmountHasChanged()
+            }
 
         val restakeEarnings: Boolean? = bakerDelegationData.restake
-            .takeIf { bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged() }
+            .takeIf {
+                bakerDelegationData.type != UPDATE_BAKER_KEYS &&
+                        bakerDelegationData.type != UPDATE_BAKER_POOL &&
+                        bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged()
+            }
 
         val metadataUrl = (bakerDelegationData.metadataUrl ?: "")
-            .takeIf { bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL && metadataUrlHasChanged() }
+            .takeIf {
+                bakerDelegationData.type == REGISTER_BAKER ||
+                        bakerDelegationData.type == UPDATE_BAKER_POOL && metadataUrlHasChanged()
+            }
 
         val openStatus =
-            if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_STAKE) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
+            if (
+                bakerDelegationData.type == UPDATE_BAKER_KEYS ||
+                bakerDelegationData.type == REMOVE_BAKER ||
+                bakerDelegationData.type == UPDATE_BAKER_STAKE
+            )
+                null
+            else if (openStatusHasChanged())
+                bakerDelegationData.bakerPoolInfo?.openStatus
+            else
+                null
 
         val bakerKeys = bakerDelegationData.bakerKeys
             .takeUnless { bakerDelegationData.type == REMOVE_BAKER }
@@ -653,7 +697,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerDelegationData.type == REGISTER_DELEGATION
                 || bakerDelegationData.type == UPDATE_DELEGATION && poolHasChanged()
             ) {
-                if (bakerDelegationData.isBakerPool)
+                if (bakerDelegationData.isBakerPool && bakerDelegationData.poolId.isNotEmpty())
                     com.concordium.sdk.responses.transactionstatus.DelegationTarget
                         .newBakerDelegationTarget(BakerId.from(bakerDelegationData.poolId.toLong()))
                 else
@@ -698,6 +742,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         localTransactionType: TransactionType,
     ) = withContext(Dispatchers.IO) {
 
+        Log.d("transaction: $transaction")
+
         val submissionId: String = try {
             proxyRepository
                 .submitSdkTransaction(transaction)
@@ -715,7 +761,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
         bakerDelegationData.submissionId = submissionId
 
-        val submissionStatus =try {
+        val submissionStatus = try {
             proxyRepository
                 .getSubmissionStatus(submissionId)
                 .status
@@ -775,6 +821,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         )
 
         transferRepository.insert(transfer)
+        _transaction.postValue(transfer.toTransaction())
         _waitingLiveData.value = false
         _transactionSuccessLiveData.value = true
     }
@@ -811,8 +858,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return null
     }
 
-    fun getAvailableBalance(): BigInteger =
-        bakerDelegationData.account.balanceAtDisposal
+    fun getAvailableBalance(): BigInteger = bakerDelegationData.account.balance
 
     fun setSelectedCommissionRates(
         transactionRate: Double?,
@@ -820,5 +866,21 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     ) {
         bakerDelegationData.transactionCommissionRate = transactionRate
         bakerDelegationData.bakingCommissionRate = bakingRate
+    }
+
+    fun getMaxDelegationBalance(): BigInteger =
+        bakerDelegationData.account.balance - (bakerDelegationData.cost ?: BigInteger.ZERO)
+
+    fun loadEURRate(amount: BigInteger) = viewModelScope.launch {
+        tokenPriceRepository.getEurPerMicroCcd()
+            .onSuccess { eurPerMicroCcd ->
+                _eurRateLiveData.postValue(
+                    CurrencyUtil.toEURRate(
+                        amount,
+                        eurPerMicroCcd,
+                    )
+                )
+            }
+            .onFailure(::handleBackendError)
     }
 }

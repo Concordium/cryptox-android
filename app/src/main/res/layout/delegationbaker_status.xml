@@ -29,36 +29,30 @@
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/status_layout"
                 style="@style/CryptoX_Container_TextCard"
                 android:layout_marginHorizontal="18dp"
-                android:padding="20dp">
-
-                <ImageView
-                    android:id="@+id/status_icon_image_view"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:importantForAccessibility="no"
-                    app:layout_constraintBottom_toBottomOf="@id/status_text_view"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/status_text_view"
-                    app:srcCompat="@drawable/cryptox_ico_successfully" />
+                android:layout_marginTop="20dp"
+                android:padding="14dp">
 
                 <TextView
                     android:id="@+id/status_text_view"
-                    style="@style/CryptoX_Typography_Headline_Large"
+                    android:textAppearance="@style/MW24_Typography_Text_Main"
+                    android:textColor="@color/attention_red"
                     android:layout_width="0dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/status_icon_image_view"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Delegation registered" />
 
                 <TextView
                     android:id="@+id/status_empty_text_view"
-                    style="@style/CryptoX_Typography_Body_Medium"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:textColor="@color/cryptox_grey_additional"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
                     app:layout_constraintEnd_toEndOf="@id/status_text_view"
                     app:layout_constraintStart_toStartOf="@id/status_text_view"
                     app:layout_constraintTop_toBottomOf="@id/status_text_view"
@@ -66,10 +60,11 @@
 
                 <TextView
                     android:id="@+id/status_explanation_text_view"
-                    style="@style/CryptoX_Typography_Body_Medium"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:textColor="@color/cryptox_grey_additional"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@id/status_text_view"
                     app:layout_constraintStart_toStartOf="@id/status_text_view"
@@ -78,15 +73,22 @@
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <include
+                android:id="@+id/action_buttons_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="14dp"
+                android:layout_marginHorizontal="18dp"
+                layout="@layout/delegation_validation_action_buttons" />
+
             <LinearLayout
                 android:id="@+id/status_list_container"
-                style="@style/CryptoX_Container_Stroked"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
-                android:layout_marginTop="20dp"
                 android:orientation="vertical"
-                android:paddingHorizontal="20dp"
+                android:background="@drawable/mw24_container_primary_background_default"
+                android:paddingHorizontal="14dp"
                 android:paddingVertical="12dp" />
 
             <LinearLayout
@@ -124,7 +126,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:visibility="gone"
             tools:enabled="false"
+            tools:visibility="visible"
             tools:text="Button buttom" />
     </LinearLayout>
 

@@ -4,17 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import androidx.core.widget.doOnTextChanged
+import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityBakerRegistrationAmountBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
+import com.concordium.wallet.ui.bakerdelegation.dialog.WarningDialog
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.common.GenericFlowActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import java.math.BigInteger
 
 class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
@@ -37,6 +38,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
         binding = ActivityBakerRegistrationAmountBinding.bind(findViewById(R.id.root_layout))
         hideActionBarBack(isVisible = true)
         initViews()
+        initObservers()
     }
 
     override fun initViews() {
@@ -52,13 +54,9 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
                     withCommas = false
                 )
             )
-            binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
         }
 
         binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
-        binding.bakerAmount.text = CurrencyUtil.formatGTU(
-            viewModel.bakerDelegationData.account.baker?.stakedAmount ?: BigInteger.ZERO
-        )
 
         viewModel.transactionFeeLiveData.observe(this) { response ->
             response?.second?.let { requestId ->
@@ -77,15 +75,14 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
                 singleFee?.let {
                     binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
                     binding.poolEstimatedTransactionFee.text = getString(
-                        R.string.baker_registration_update_amount_estimated_transaction_fee_single,
+                        R.string.cis_estimated_fee,
                         CurrencyUtil.formatGTU(singleFee ?: BigInteger.ZERO)
                     )
                 } ?: run {
                     if (minFee != null && maxFee != null) {
                         binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
                         binding.poolEstimatedTransactionFee.text = getString(
-                            R.string.baker_registration_update_amount_estimated_transaction_fee_range,
-                            CurrencyUtil.formatGTU(minFee ?: BigInteger.ZERO),
+                            R.string.cis_estimated_fee,
                             CurrencyUtil.formatGTU(maxFee ?: BigInteger.ZERO)
                         )
                     }
@@ -100,6 +97,17 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             }
         }
 
+        viewModel.eurRateLiveData.observe(this) { rate ->
+            binding.eurRate.text =
+                if (rate != null)
+                    getString(
+                        R.string.cis_estimated_eur_rate,
+                        rate
+                    )
+                else
+                    ""
+        }
+
         showWaiting(binding.includeProgress.progressLayout, true)
 
         loadTransactionFee()
@@ -108,6 +116,17 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
         } catch (ex: Exception) {
             handleBackendError(ex)
+        }
+    }
+
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            WarningDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (WarningDialog.getResult(bundle)) {
+                gotoNextPage()
+            }
         }
     }
 
@@ -126,20 +145,33 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             false
         }
         setAmountHint(binding.amount)
-        binding.amount.doOnTextChanged { _, _, _, _ ->
+        binding.amount.addTextChangedListener {
             validateAmountInput(binding.amount, binding.amountError)
+            if (it.toString().isEmpty()) {
+                binding.balanceSymbol.alpha = 0.5f
+            } else {
+                binding.balanceSymbol.alpha = 1f
+            }
+            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.let { amount ->
+                viewModel.loadEURRate(amount)
+            }
         }
         binding.amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.amount.text.isEmpty()) binding.amount.hint = ""
-            else setAmountHint(binding.amount)
+            if (hasFocus) {
+                showKeyboard(this, binding.amount)
+            }
         }
-
+        binding.balanceSymbol.setOnClickListener {
+            showKeyboard(this, binding.amount)
+        }
+        binding.maxAmountButton.setOnClickListener {
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.getMaxDelegationBalance()))
+        }
         binding.bakerRegistrationContinue.setOnClickListener {
             onContinueClicked()
         }
 
         if (viewModel.isInCoolDown()) {
-            binding.amountLocked.visibility = View.VISIBLE
             binding.amount.isEnabled = false
         }
     }
@@ -221,12 +253,14 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
     }
 
     private fun show95PercentWarning() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.baker_more_than_95_title)
-        builder.setMessage(getString(R.string.baker_more_than_95_message))
-        builder.setPositiveButton(getString(R.string.baker_more_than_95_continue)) { _, _ -> gotoNextPage() }
-        builder.setNegativeButton(getString(R.string.baker_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        WarningDialog.newInstance(
+            WarningDialog.setBundle(
+                title = getString(R.string.baker_more_than_95_title),
+                description = getString(R.string.baker_more_than_95_message),
+                confirmButton = getString(R.string.baker_more_than_95_continue),
+                denyButton = getString(R.string.baker_more_than_95_new_stake)
+            )
+        ).showSingle(supportFragmentManager, WarningDialog.TAG)
     }
 
     private fun gotoNextPage() {
@@ -236,7 +270,6 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
             Intent(this, BakerRegistrationConfirmationActivity::class.java)
         else
             Intent(this, BakerRegistrationActivity::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData

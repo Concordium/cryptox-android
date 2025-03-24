@@ -28,121 +28,207 @@
             android:layout_marginHorizontal="20dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/amounts_layout"
-                style="@style/CryptoX_Container_TextCard"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
-
-                <TextView
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:text="@string/delegation_register_delegation_amount_current_amount" />
-
-                <TextView
-                    android:id="@+id/balance_amount"
-                    style="@style/CryptoX_Typography_Headline_Large"
-                    android:layout_marginTop="20dp"
-                    tools:text="132.955" />
-
-                <TextView
-                    android:id="@+id/account_balance"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/delegation_register_delegation_amount_balance" />
-
-                <View
-                    style="@style/CryptoX_Divider_Horizontal"
-                    android:layout_marginTop="16dp" />
-
-                <TextView
-                    android:id="@+id/baker_amount"
-                    style="@style/CryptoX_Typography_Headline_Large"
-                    android:layout_marginTop="16dp"
-                    tools:text="50" />
-
-                <TextView
-                    android:id="@+id/baker_amount_title"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/baker_registration_amount_current_stake_title" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/CryptoX_Container_TextCard"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/amount_desc"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:text="@string/baker_registration_amount_enter_stake_title"
-                    android:textColor="@color/cryptox_grey_main" />
+                android:orientation="vertical">
 
                 <com.concordium.wallet.uicore.view.AmountEditText
                     android:id="@+id/amount"
-                    style="@style/CryptoX_Typography_TitleMedium"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:background="@null"
                     android:imeOptions="actionDone"
-                    android:textColor="@color/cryptox_black_secondary"
+                    android:lineHeight="36sp"
+                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
                     android:textColorHint="@color/cryptox_black_secondary"
-                    tools:text="123,45" />
+                    android:textSize="36sp"
+                    app:layout_constraintEnd_toStartOf="@id/balance_symbol"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:targetApi="p"
+                    tools:text="12,455.00" />
+
+                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                    android:id="@+id/balance_symbol"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.5"
+                    android:lineHeight="36sp"
+                    android:text="@string/accounts_overview_balance_suffix"
+                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
+                    android:textSize="36sp"
+                    app:layout_constraintBottom_toBottomOf="@id/amount"
+                    app:layout_constraintEnd_toStartOf="@id/max_amount_button"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toEndOf="@id/amount"
+                    app:layout_constraintTop_toTopOf="@id/amount"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:targetApi="p" />
 
                 <TextView
-                    android:id="@+id/amount_locked"
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:text="@string/delegation_register_delegation_amount_locked"
-                    android:textColor="@color/cryptox_grey_main"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:id="@+id/max_amount_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|end"
+                    android:padding="4dp"
+                    android:text="@string/cis_max"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textColor="@color/cryptox_grey_additional"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="@id/amount"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/amount" />
 
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/eur_rate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintEnd_toStartOf="@id/pool_estimated_transaction_fee"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:text="@string/cis_estimated_eur_rate" />
+
+                <TextView
+                    android:id="@+id/pool_estimated_transaction_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount"
+                    tools:text="@string/cis_estimated_fee"
+                    tools:visibility="visible" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/amount_error"
                 style="@style/CryptoX_Typography_Body_Medium.Error"
-                android:layout_marginTop="8dp"
                 android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/delegation_register_delegation_amount_insufficient_error"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/pool_estimated_transaction_fee"
-                style="@style/CryptoX_Typography_Body_Medium"
-                android:layout_marginTop="16dp"
-                android:text="@string/delegation_register_delegation_amount_estimated_transaction_fee"
-                android:textColor="@color/cryptox_grey_main"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/pool_desc"
-                style="@style/CryptoX_Typography_Body_Medium"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/baker_registration_amount_explain" />
+                android:layout_marginTop="14dp"
+                android:paddingVertical="11dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="24dp">
 
-            <com.concordium.wallet.uicore.view.SegmentedControlView
-                android:id="@+id/restake_options"
-                style="@style/CryptoX_SegmentedControl"
-                android:layout_marginTop="16dp" />
+                <ImageView
+                    android:id="@+id/token_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/accounts_overview_balance_suffix"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/mw24_ic_ccd"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:id="@+id/ccd_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/accounts_overview_balance_suffix"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textColor="@color/cryptox_white_main"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/balance_amount"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/token_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="wrap" />
+
+                <TextView
+                    android:id="@+id/balance_amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textColor="@color/cryptox_white_main"
+                    app:layout_constraintBottom_toTopOf="@id/balance_amount_available_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="132.955" />
+
+                <TextView
+                    android:id="@+id/balance_amount_available_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/delegation_register_delegation_amount_available_label"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/balance_amount" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/mw24_container_primary_background"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/pool_restake_rewards"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delegation_register_delegation_restake_rewards"
+                    android:textAppearance="@style/MW24_Typography_Text_Main"
+                    android:textColor="@color/cryptox_white_main"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/pool_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/baker_registration_amount_explain"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/pool_restake_rewards" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/restake_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/pool_restake_rewards"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/pool_restake_rewards"
+                    app:trackTint="@color/ccx_switch_track_color" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
 
     <Button
         android:id="@+id/baker_registration_continue"
-        style="@style/CryptoX_Button_Primary"
+        style="@style/MW24_Button_Primary"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="20dp"

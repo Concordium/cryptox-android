@@ -4,39 +4,47 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.forEach
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.bakerdelegation.common.segmentedview.SegmentedButtonView
+import com.concordium.wallet.ui.bakerdelegation.common.segmentedview.SegmentedLayoutView
+import com.concordium.wallet.ui.bakerdelegation.common.segmentedview.SegmentedView
 
 class SegmentedControlView : LinearLayout {
-    private var onItemClickListener: OnItemClickListener? = null
 
-    constructor (context: Context) : super(context, null, R.style.CryptoX_SegmentedControl) {
+    constructor (context: Context) : super(context, null) {
         init(null)
     }
 
-    constructor(
-        context: Context,
-        attrs: AttributeSet?
-    ) : super(context, attrs, R.style.CryptoX_SegmentedControl) {
-        init(attrs)
-    }
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
 
     @Suppress("UNUSED_PARAMETER")
     private fun init(attrs: AttributeSet?) {
         if (isInEditMode) {
-            addControl("My test 1", null, false)
-            addControl("My test 2", null, true)
-            addControl("My test 3", null, false)
+            addControl(
+                title = "My test 1",
+                clickListener = null,
+                earningPercent = "",
+                isButtonControl = false,
+                initiallySelected = false
+            )
+            addControl(
+                title = "My test 2",
+                clickListener = null,
+                earningPercent = "",
+                isButtonControl = false,
+                initiallySelected = false
+            )
+            addControl(
+                title = "My test 3",
+                clickListener = null,
+                earningPercent = "",
+                isButtonControl = false,
+                initiallySelected = false
+            )
         }
     }
 
@@ -47,24 +55,41 @@ class SegmentedControlView : LinearLayout {
     fun addControl(
         title: String,
         clickListener: OnItemClickListener?,
+        earningPercent: String = "",
+        isButtonControl: Boolean = false,
         initiallySelected: Boolean
     ): View {
-        val view =
-            LayoutInflater.from(context).inflate(R.layout.segmented_text_item, this, false) as Button
-        view.text = title
-        view.isSelected = initiallySelected
+        val view = if (isButtonControl) {
+            LayoutInflater.from(context).inflate(
+                R.layout.segmented_button_view,
+                this,
+                false
+            ) as SegmentedButtonView
+        } else {
+            LayoutInflater.from(context).inflate(
+                R.layout.segmented_layout_view,
+                this,
+                false
+            ) as SegmentedLayoutView
+        }
+        view.setLayout(
+            title = title,
+            earningPercent = earningPercent,
+            selected = initiallySelected
+        )
+        view.onCheck(initiallySelected)
         view.setOnClickListener {
-            selectItem(it as Button)
+            selectItem(it as SegmentedView)
             clickListener?.onItemClicked()
         }
         addView(view)
         return view
     }
 
-    fun selectItem(item: Button) {
+    private fun selectItem(item: SegmentedView) {
         forEach { child ->
-            child as Button
-            child.isSelected = child == item
+            child as SegmentedView
+            child.onCheck(child == item)
         }
     }
 

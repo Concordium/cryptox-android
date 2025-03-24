@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/result_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:background="@drawable/mw24_container_stroked_background"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="30dp"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/transaction_animation"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/transaction_success"
+        app:lottie_repeatCount="0" />
+
+    <TextView
+        android:id="@+id/receipt_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/transaction_animation"
+        tools:text="Resume validation" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/amount_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/receipt_title"
+        tools:visibility="visible">
+
+        <View
+            android:id="@+id/amount_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/mw24_plain_white_10"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/amount_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/amount_divider"
+            app:layout_goneMarginTop="22dp"
+            tools:text="Your validation is registered" />
+
+        <com.concordium.wallet.uicore.view.BalanceGradientTextView
+            android:id="@+id/amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textAppearance="@style/MW24_Typography_IBM_Balance"
+            android:textSize="50sp"
+            app:autoSizeMaxTextSize="50sp"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/amount_description"
+            tools:text="12,600.00" />
+
+        <TextView
+            android:id="@+id/amount_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/app_gstroke"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/amount" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/transaction_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/mw24_plain_white_10"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/amount_layout"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/transaction_details_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:drawablePadding="8dp"
+        android:padding="8dp"
+        android:paddingVertical="4dp"
+        android:text="@string/cis_transaction_details"
+        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+        android:textColor="@color/cryptox_white_main"
+        android:visibility="gone"
+        app:drawableEndCompat="@drawable/mw24_ic_arrow_right"
+        app:drawableTint="@color/cryptox_white_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/transaction_divider"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

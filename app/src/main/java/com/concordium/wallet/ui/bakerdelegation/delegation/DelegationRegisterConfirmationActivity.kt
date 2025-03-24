@@ -8,12 +8,16 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmationBinding
-import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationErrorDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationNoticeDialog
+import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
+import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.UnitConvertUtil
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
 class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
@@ -22,6 +26,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
 ) {
     private var receiptMode = false
     private lateinit var binding: ActivityDelegationRegistrationConfirmationBinding
+    private lateinit var sliderButton: SliderButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         setContentView(binding.root)
         hideActionBarBack(isVisible = true)
         initViews()
+        initObservers()
     }
 
     override fun onBackPressed() {
@@ -39,6 +45,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
 
     override fun initViews() {
         super.initViews()
+        sliderButton = binding.submitDelegationTransaction
         viewModel.chainParametersLoadedLiveData.observe(this) { success ->
             success?.let {
                 updateViews()
@@ -56,8 +63,11 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
 
         if (viewModel.isUpdatingDelegation()) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
-            binding.delegationTransactionTitle.text =
-                getString(R.string.delegation_update_delegation_transaction_title)
+            binding.includeResultLayout.amountDescription.text =
+                getString(R.string.delegation_update_delegation_success)
+            binding.submitDelegationTransaction.setText(
+                getString(R.string.delegation_update_delegation_button)
+            )
         }
 
         if (viewModel.bakerDelegationData.type == REGISTER_DELEGATION) {
@@ -67,6 +77,11 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
                 gracePeriod
             )
             binding.gracePeriod.isVisible = true
+            binding.includeResultLayout.amountDescription.text =
+                getString(R.string.delegation_status_content_registered_success)
+            binding.submitDelegationTransaction.setText(
+                getString(R.string.delegation_status_content_registered_button)
+            )
         } else if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION
             && viewModel.isLoweringDelegation()
         ) {
@@ -80,7 +95,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
             binding.gracePeriod.isVisible = false
         }
 
-        binding.submitDelegationTransaction.setOnClickListener {
+        binding.submitDelegationTransaction.setOnSliderCompleteListener {
             onContinueClicked()
         }
 
@@ -94,24 +109,29 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
                 .plus(viewModel.bakerDelegationData.account.address)
         binding.delegationAmountConfirmation.text =
             CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
+        binding.includeResultLayout.amount.text =
+            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
         binding.targetPool.text =
-            if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
+            if (viewModel.bakerDelegationData.isLPool)
+                getString(R.string.delegation_register_delegation_passive_long)
+            else
+                getString(
+                    R.string.delegation_register_delegation_pool_baker_id,
+                    viewModel.bakerDelegationData.poolId
+                )
         binding.rewardsWillBe.text =
             if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(
                 R.string.delegation_status_at_disposal
             )
 
-        if (!viewModel.stakedAmountHasChanged()) {
-            binding.delegationAmountConfirmationTitle.visibility = View.GONE
-            binding.delegationAmountConfirmation.visibility = View.GONE
-        }
         if (!viewModel.poolHasChanged() && viewModel.isUpdatingDelegation()) {
-            binding.targetPoolTitle.visibility = View.GONE
+            binding.fromToIcon.visibility = View.GONE
             binding.targetPool.visibility = View.GONE
         }
         if (!viewModel.restakeHasChanged()) {
             binding.rewardsWillBeTitle.visibility = View.GONE
             binding.rewardsWillBe.visibility = View.GONE
+            binding.rewardsDivider.visibility = View.GONE
         }
 
         initializeTransactionFeeLiveData(
@@ -126,40 +146,57 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
                 showPageAsReceipt()
             }
         }
+        viewModel.transaction.observe(this) { transaction ->
+            transaction?.let {
+                binding.includeResultLayout.apply {
+                    transactionDivider.visibility = View.VISIBLE
+                    transactionDetailsButton.visibility = View.VISIBLE
+                    transactionDetailsButton.setOnClickListener {
+                        gotoTransactionDetails(transaction)
+                    }
+                }
+            }
+        }
 
         viewModel.loadTransactionFee(true)
     }
 
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            DelegationErrorDialog.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (DelegationErrorDialog.getResult(bundle)) {
+                onContinueClicked()
+            }
+        }
+    }
+
     override fun errorLiveData(value: Int) {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_register_delegation_failed_title)
         val messageFromWalletProxy = getString(value)
-        builder.setMessage(
-            getString(
-                R.string.delegation_register_delegation_failed_message,
-                messageFromWalletProxy
+
+        DelegationErrorDialog.newInstance(
+            DelegationErrorDialog.setBundle(
+                getString(
+                    R.string.delegation_register_delegation_failed_message,
+                    messageFromWalletProxy
+                )
             )
-        )
-        builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
-            dialog.dismiss()
-            onContinueClicked()
-        }
-        builder.setNegativeButton(getString(R.string.delegation_register_delegation_failed_later)) { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.create().show()
+        ).showSingle(supportFragmentManager, DelegationErrorDialog.TAG)
     }
 
     private fun showPageAsReceipt() {
         receiptMode = true
         hideActionBarBack(isVisible = false)
-        binding.submitDelegationTransaction.visibility = View.GONE
-        binding.gracePeriod.visibility = View.GONE
-        binding.submitDelegationFinish.visibility = View.VISIBLE
-        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
-        viewModel.bakerDelegationData.submissionId?.let { submissionId ->
-            binding.transactionHashView.isVisible = true
-            binding.transactionHashView.transactionHash = submissionId
+        binding.apply {
+            submitDelegationTransaction.visibility = View.GONE
+            gracePeriod.visibility = View.GONE
+            submitDelegationFinish.visibility = View.VISIBLE
+            receiptLayout.visibility = View.GONE
+            includeResultLayout.resultLayout.visibility = View.VISIBLE
+            includeResultLayout.receiptTitle.visibility = View.GONE
+            includeResultLayout.amountLayout.visibility = View.VISIBLE
+            includeResultLayout.transactionAnimation.playAnimation()
         }
     }
 
@@ -168,11 +205,10 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
     }
 
     private fun showNotice() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_notice_title)
+        val noticeMessage: String
 
         if (viewModel.isInCoolDown()) {
-            builder.setMessage(getString(R.string.delegation_notice_message_locked))
+            noticeMessage = getString(R.string.delegation_notice_message_locked)
         } else {
             var gracePeriod = 0
             viewModel.bakerDelegationData.chainParameters?.delegatorCooldown?.let { delegatorCooldown ->
@@ -180,48 +216,55 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
             }
             when (viewModel.bakerDelegationData.type) {
                 UPDATE_DELEGATION -> {
-                    if ((viewModel.bakerDelegationData.amount
+                    noticeMessage = if ((viewModel.bakerDelegationData.amount
                             ?: BigInteger.ZERO) < (viewModel.bakerDelegationData.oldStakedAmount
                             ?: BigInteger.ZERO)
                     ) {
-                        builder.setMessage(
-                            resources.getQuantityString(
-                                R.plurals.delegation_notice_message_decrease,
-                                gracePeriod,
-                                gracePeriod
-                            )
+                        resources.getQuantityString(
+                            R.plurals.delegation_notice_message_decrease,
+                            gracePeriod,
+                            gracePeriod
                         )
                     } else {
-                        builder.setMessage(getString(R.string.delegation_notice_message))
+                        getString(R.string.delegation_notice_message)
                     }
                 }
 
                 REMOVE_DELEGATION -> {
-                    builder.setMessage(
-                        resources.getQuantityString(
-                            R.plurals.delegation_notice_message_remove,
-                            gracePeriod,
-                            gracePeriod
-                        )
+                    noticeMessage = resources.getQuantityString(
+                        R.plurals.delegation_notice_message_remove,
+                        gracePeriod,
+                        gracePeriod
                     )
                 }
 
                 else -> {
-                    builder.setMessage(getString(R.string.delegation_notice_message))
+                    noticeMessage = getString(R.string.delegation_notice_message)
                 }
             }
         }
 
-        builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
-            dialog.dismiss()
-            startActivity(Intent(this, MainActivity::class.java))
-            finishAffinity()
-        }
-        builder.create().show()
+        DelegationNoticeDialog.newInstance(
+            DelegationNoticeDialog.setBundle(noticeMessage)
+        ).showSingle(supportFragmentManager, DelegationNoticeDialog.TAG)
     }
 
     override fun showWaiting(progressLayout: View, waiting: Boolean) {
         super.showWaiting(progressLayout, waiting)
         binding.submitDelegationTransaction.isEnabled = !waiting
+    }
+
+    private fun gotoTransactionDetails(transaction: Transaction) {
+        val intent = Intent(this, TransactionDetailsActivity::class.java)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_ACCOUNT,
+            viewModel.bakerDelegationData.account
+        )
+        intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, transaction)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_RECEIPT_TITLE,
+            getString(R.string.account_delegation_pending)
+        )
+        startActivity(intent)
     }
 }

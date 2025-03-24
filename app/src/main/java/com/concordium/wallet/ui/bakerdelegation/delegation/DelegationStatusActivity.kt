@@ -4,17 +4,17 @@ import android.content.Intent
 import android.view.View
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.model.BakerStakePendingChange.Companion.CHANGE_REMOVE_POOL
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
-import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
-import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.StopDelegationDialog
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 
@@ -42,24 +42,21 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
     }
 
     override fun initView() {
-
         clearState()
 
         val account = viewModel.bakerDelegationData.account
         val accountDelegation = account.delegation
-
-        binding.statusButtonBottom.text = getString(R.string.delegation_status_update)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
             addWaitingForTransaction(
                 R.string.delegation_status_waiting_to_finalize_title,
                 R.string.delegation_status_waiting_to_finalize
             )
+            binding.actionButtonsLayout.root.visibility = View.GONE
             return
         }
 
         if (accountDelegation == null) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
             binding.statusButtonBottom.text = getString(R.string.delegation_status_continue)
@@ -70,12 +67,10 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         }
 
         if (viewModel.isBakerSuspended()) {
-            binding.statusIconImageView.setImageResource(R.drawable.ic_status_problem)
             setContentTitle(R.string.delegation_status_content_suspended_title)
             setExplanation(getString(R.string.validation_suspended_delegator_explanation))
         } else {
-            binding.statusIconImageView.setImageResource(R.drawable.cryptox_ico_successfully)
-            setContentTitle(R.string.delegation_status_content_registered_title)
+            binding.statusLayout.visibility = View.GONE
         }
 
         addContent(
@@ -85,7 +80,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         )
         addContent(
             R.string.delegation_status_content_delegation_amount,
-            CurrencyUtil.formatGTU(accountDelegation.stakedAmount)
+            getString(R.string.amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
         )
 
         if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(
@@ -114,16 +109,13 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
                 R.string.delegation_status_content_delegation_will_be_stopped,
                 R.string.delegation_status_new_amount
             )
-            binding.statusButtonTop.isEnabled =
+            binding.actionButtonsLayout.stopBtn.isEnabled =
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
         addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
-        binding.statusButtonTop.visibility = View.VISIBLE
-        binding.statusButtonTop.text = getString(R.string.delegation_status_stop)
-
-        binding.statusButtonTop.setOnClickListener {
+        binding.actionButtonsLayout.stopBtn.setOnClickListener {
             continueToDelete()
         }
 
@@ -133,25 +125,40 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
             }
         }
 
-        binding.statusButtonBottom.setOnClickListener {
+        binding.actionButtonsLayout.updateBtn.setOnClickListener {
             continueToUpdate()
         }
 
         if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) {
             viewModel.getBakerPool(accountDelegation.delegationTarget.bakerId.toString())
         }
+
+        initObservers()
+    }
+
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            StopDelegationDialog.ACTION_KEY,
+            this
+        ) { _, bundle ->
+            if (StopDelegationDialog.getResult(bundle)) {
+                val intent = Intent(this, DelegationRemoveActivity::class.java)
+                intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
+                startActivityForResultAndHistoryCheck(intent)
+                finishUntilClass(MainActivity::class.java.canonicalName)
+            }
+        }
     }
 
     private fun continueToDelete() {
-        val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        viewModel.bakerDelegationData.type = REMOVE_DELEGATION
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
-        startActivityForResultAndHistoryCheck(intent)
+        StopDelegationDialog().showSingle(
+            supportFragmentManager,
+            StopDelegationDialog.TAG
+        )
     }
 
     private fun continueToCreate() {
-        val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
         viewModel.bakerDelegationData.type = REGISTER_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
@@ -159,7 +166,6 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
 
     private fun continueToUpdate() {
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.bakerDelegationData.type = UPDATE_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)

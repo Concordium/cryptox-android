@@ -4,19 +4,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.isVisible
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.databinding.ActivityDelegationRemoveBinding
-import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
+import com.concordium.wallet.ui.bakerdelegation.dialog.delegation.DelegationNoticeDialog
+import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
+import com.concordium.wallet.uicore.button.SliderButton
 import com.concordium.wallet.util.UnitConvertUtil
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 
 class DelegationRemoveActivity : BaseDelegationBakerActivity(
     R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title
 ) {
     private lateinit var binding: ActivityDelegationRemoveBinding
+    private lateinit var sliderButton: SliderButton
     private var receiptMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,13 +35,11 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
     }
 
     override fun initViews() {
-        binding.accountToRemoveDelegateFrom.text =
-            viewModel.bakerDelegationData.account.name
-                .plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account.address)
+        sliderButton = binding.submitDelegationTransaction
+        binding.submitDelegationTransaction.setText(getString(R.string.delegation_remove_button))
         binding.estimatedTransactionFee.text = ""
 
-        binding.submitDelegationTransaction.setOnClickListener {
+        binding.submitDelegationTransaction.setOnSliderCompleteListener {
             onContinueClicked()
         }
 
@@ -56,6 +57,17 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
         viewModel.transactionSuccessLiveData.observe(this) { waiting ->
             waiting?.let {
                 showPageAsReceipt()
+            }
+        }
+        viewModel.transaction.observe(this) { transaction ->
+            transaction?.let {
+                binding.apply {
+                    includeResultLayout.transactionDivider.visibility = View.VISIBLE
+                    includeResultLayout.transactionDetailsButton.visibility = View.VISIBLE
+                    includeResultLayout.transactionDetailsButton.setOnClickListener {
+                        gotoTransactionDetails(transaction)
+                    }
+                }
             }
         }
 
@@ -89,39 +101,48 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
     private fun showPageAsReceipt() {
         receiptMode = true
         hideActionBarBack(isVisible = false)
-        binding.delegationRemoveText.visibility = View.GONE
-        binding.submitDelegationTransaction.visibility = View.GONE
-        binding.submitDelegationFinish.visibility = View.VISIBLE
-        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
-        viewModel.bakerDelegationData.submissionId?.let { submissionId ->
-            binding.transactionHashView.isVisible = true
-            binding.transactionHashView.transactionHash = submissionId
+        binding.apply {
+            submitDelegationTransaction.visibility = View.GONE
+            submitDelegationFinish.visibility = View.VISIBLE
+            receiptLayout.visibility = View.GONE
+            includeResultLayout.resultLayout.visibility = View.VISIBLE
+            includeResultLayout.receiptTitle.text =
+                getString(R.string.delegation_remove_confirm_success)
+            includeResultLayout.transactionAnimation.playAnimation()
         }
     }
 
     private fun showNotice() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_notice_title)
         val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
             viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
         )
-        builder.setMessage(
-            resources.getQuantityString(
-                R.plurals.delegation_notice_message_remove,
-                gracePeriod,
-                gracePeriod
-            )
+        val noticeMessage = resources.getQuantityString(
+            R.plurals.delegation_notice_message_remove,
+            gracePeriod,
+            gracePeriod
         )
-        builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
-            dialog.dismiss()
-            startActivity(Intent(this, MainActivity::class.java))
-            finishAffinity()
-        }
-        builder.create().show()
+
+        DelegationNoticeDialog.newInstance(
+            DelegationNoticeDialog.setBundle(noticeMessage)
+        ).showSingle(supportFragmentManager, DelegationNoticeDialog.TAG)
     }
 
     override fun showWaiting(progressLayout: View, waiting: Boolean) {
         super.showWaiting(progressLayout, waiting)
         binding.submitDelegationTransaction.isEnabled = !waiting
+    }
+
+    private fun gotoTransactionDetails(transaction: Transaction) {
+        val intent = Intent(this, TransactionDetailsActivity::class.java)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_ACCOUNT,
+            viewModel.bakerDelegationData.account
+        )
+        intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, transaction)
+        intent.putExtra(
+            TransactionDetailsActivity.EXTRA_RECEIPT_TITLE,
+            getString(R.string.account_delegation_pending)
+        )
+        startActivity(intent)
     }
 }

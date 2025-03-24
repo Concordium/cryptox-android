@@ -27,14 +27,10 @@ object TransactionViewHelper {
         alertImageView: ImageView,
         statusImageView: ImageView,
         showDate: Boolean = false,
-        isReceipt: Boolean = false,
+        titleFromReceipt: String = "",
     ) {
         // Title
-        titleTextView.text =
-            if (isReceipt)
-                titleTextView.context.getString(R.string.transaction_type_transfer)
-            else
-                ta.title
+        titleTextView.text = titleFromReceipt.ifEmpty { ta.title }
         titleTextView.setTextColor(
             if (ta.isBakerSuspension() || ta.isBakerPrimingForSuspension()) {
                 ContextCompat.getColor(titleTextView.context, R.color.mw24_attention_red)

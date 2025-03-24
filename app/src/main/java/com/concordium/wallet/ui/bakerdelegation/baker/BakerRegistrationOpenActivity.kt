@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
@@ -10,12 +11,11 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.databinding.ActivityBakerRegistrationOpenBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
-import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.KeyboardUtil
 
 class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
-    R.layout.activity_baker_registration_open, R.string.baker_registration_open_title
+    R.layout.activity_baker_registration_open, R.string.baker_registration_metadata_title
 ) {
     private lateinit var binding: ActivityBakerRegistrationOpenBinding
 
@@ -40,17 +40,18 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
             }
         }
 
+        binding.openUrl.setInputType(InputType.TYPE_TEXT_VARIATION_URI)
+
         fun onUrlClicked(url: String) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
 
         binding.openUrlExplain.handleUrlClicks(::onUrlClicked)
-        binding.readMoreTextView.handleUrlClicks(::onUrlClicked)
 
         binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
-            viewModel.bakerDelegationData.metadataUrl = binding.openUrl.text?.toString()
+            viewModel.bakerDelegationData.metadataUrl = binding.openUrl.getText()
             validate()
         }
     }
@@ -76,7 +77,6 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity(
         } else {
             Intent(this, BakerRegistrationCloseActivity::class.java)
         }
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData

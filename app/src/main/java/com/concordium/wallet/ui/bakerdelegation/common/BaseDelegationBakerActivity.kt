@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -9,11 +8,12 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.bakerdelegation.dialog.NoChangeDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.NotEnoughFundsDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 abstract class BaseDelegationBakerActivity(
     layout: Int?,
@@ -56,7 +56,7 @@ abstract class BaseDelegationBakerActivity(
             response?.first?.let {
                 estimatedTransactionFee.text =
                     getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                        R.string.cis_estimated_fee,
                         CurrencyUtil.formatGTU(it)
                     )
                 showWaiting(progressLayout, false)
@@ -89,23 +89,11 @@ abstract class BaseDelegationBakerActivity(
     }
 
     protected fun showNotEnoughFunds() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_remove_not_enough_funds_title)
-        builder.setMessage(getString(R.string.delegation_remove_not_enough_funds_message))
-        builder.setPositiveButton(getString(R.string.delegation_remove_not_enough_funds_ok)) { dialog, _ ->
-            dialog.dismiss()
-            startActivity(Intent(this, MainActivity::class.java))
-            finishAffinity()
-        }
-        builder.create().show()
+        NotEnoughFundsDialog().showSingle(supportFragmentManager, NotEnoughFundsDialog.TAG)
     }
 
     protected fun showNoChange() {
-        val builder = MaterialAlertDialogBuilder(this)
-        builder.setTitle(R.string.delegation_no_changes_title)
-        builder.setMessage(getString(R.string.delegation_no_changes_message))
-        builder.setPositiveButton(getString(R.string.delegation_no_changes_ok)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        NoChangeDialog().showSingle(supportFragmentManager, NoChangeDialog.TAG)
     }
 
     protected open fun initViews() {}

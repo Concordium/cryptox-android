@@ -34,6 +34,11 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="MW24_Typography_H3_Bold">
+        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
     <style name="MW24_Typography_H4">
         <item name="android:fontFamily">@font/w500</item>
         <item name="android:textSize">19sp</item>

@@ -1,13 +1,11 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.widget.TextView
-import com.concordium.wallet.R
+import androidx.appcompat.widget.SwitchCompat
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.uicore.view.AmountEditText
-import com.concordium.wallet.uicore.view.SegmentedControlView
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.text.DecimalFormatSymbols
 
 abstract class BaseDelegationBakerRegisterAmountActivity(
     layout: Int,
@@ -21,7 +19,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
         fun onReStakeChanged()
     }
 
-    protected fun initReStakeOptionsView(reStakeOptions: SegmentedControlView) {
+    protected fun initReStakeOptionsView(reStakeOptions: SwitchCompat) {
         val initiallyReStake = if (viewModel.bakerDelegationData.isBakerFlow()) {
             viewModel.bakerDelegationData.account.baker?.restakeEarnings == true || viewModel.bakerDelegationData.account.baker?.restakeEarnings == null
         } else {
@@ -29,25 +27,11 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
         }
         viewModel.bakerDelegationData.restake = initiallyReStake
 
-        reStakeOptions.clearAll()
-        reStakeOptions.addControl(
-            getString(R.string.delegation_register_delegation_yes_add),
-            object : SegmentedControlView.OnItemClickListener {
-                override fun onItemClicked() {
-                    viewModel.markRestake(true)
-                    baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
-                }
-            }, initiallyReStake
-        )
-        reStakeOptions.addControl(
-            getString(R.string.delegation_register_delegation_no_add),
-            object : SegmentedControlView.OnItemClickListener {
-                override fun onItemClicked() {
-                    viewModel.markRestake(false)
-                    baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
-                }
-            }, !initiallyReStake
-        )
+        reStakeOptions.isChecked = initiallyReStake
+        reStakeOptions.setOnClickListener {
+            viewModel.markRestake(reStakeOptions.isChecked)
+            baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
+        }
     }
 
     protected fun moreThan95Percent(amountToStake: BigInteger): Boolean {
@@ -55,12 +39,8 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
     }
 
     protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {
-        if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
-            amount.setText("Ͼ".plus(amount.text.toString()))
-            amount.setSelection(amount.text.length)
-        }
         setAmountHint(amount)
-        if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
+        if (amount.text.toString().isNotBlank()) {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
             val stakeError = stakeAmountInputValidator.validate(
                 CurrencyUtil.toGTUValue(amount.text.toString()),
@@ -85,7 +65,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(
             }
 
             else -> {
-                amount.hint = "Ͼ0" + DecimalFormatSymbols.getInstance().decimalSeparator + "00"
+                amount.hint = BigInteger.ZERO.toString()
             }
         }
     }

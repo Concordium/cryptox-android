@@ -16,17 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/closeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_rounded_white"
-        android:padding="3dp"
-        android:src="@drawable/ic_ico_close_new"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/cryptox_deep_blue" />
-
     <LinearLayout
         android:id="@+id/headerBlock"
         android:layout_width="match_parent"

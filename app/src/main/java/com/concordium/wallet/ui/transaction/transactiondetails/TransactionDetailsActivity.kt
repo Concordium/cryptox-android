@@ -33,14 +33,14 @@ class TransactionDetailsActivity : BaseActivity(
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_TRANSACTION = "EXTRA_TRANSACTION"
-        const val EXTRA_IS_RECEIPT = "EXTRA_IS_RECEIPT"
+        const val EXTRA_RECEIPT_TITLE = "EXTRA_IS_RECEIPT"
     }
 
     private lateinit var viewModel: TransactionDetailsViewModel
     private val binding by lazy {
         ActivityTransactionDetailsBinding.bind(findViewById(R.id.root_layout))
     }
-    private var isReceipt = false //always show "Transfer" title if show send receipt
+    private var receiptTitle = "" //always show "Transfer" title if show send receipt
 
     //region Lifecycle
     // ************************************************************
@@ -50,7 +50,7 @@ class TransactionDetailsActivity : BaseActivity(
 
         val account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
         val transaction = intent.getSerializable(EXTRA_TRANSACTION, Transaction::class.java)
-        isReceipt = intent.getBooleanExtra(EXTRA_IS_RECEIPT, false)
+        receiptTitle = intent.getStringExtra(EXTRA_RECEIPT_TITLE) ?: ""
 
         initializeViewModel()
         viewModel.initialize(account, transaction)
@@ -83,7 +83,7 @@ class TransactionDetailsActivity : BaseActivity(
         })
         viewModel.showDetailsLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
-                showTransactionDetails(isReceipt)
+                showTransactionDetails(receiptTitle)
             }
         })
     }
@@ -134,12 +134,12 @@ class TransactionDetailsActivity : BaseActivity(
         Toast.makeText(applicationContext, stringRes, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showTransactionDetails(isReceipt: Boolean) {
+    private fun showTransactionDetails(receiptTitle: String) {
         binding.contentLayout.visibility = View.VISIBLE
-        showDetailsContent(isReceipt)
+        showDetailsContent(receiptTitle)
     }
 
-    private fun showDetailsContent(isReceipt: Boolean) {
+    private fun showDetailsContent(receiptTitle: String) {
         val transaction = viewModel.transaction
         val transactionItem = binding.transactionItem
         binding.transactionItem.itemRootLayout.background = null
@@ -154,7 +154,7 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.memoTextview,
             transactionItem.alertImageview,
             transactionItem.statusImageview,
-            isReceipt = isReceipt
+            titleFromReceipt = receiptTitle
         )
         // Do not show the memo in the item,
         // it is shown below with ability to copy the value.

@@ -148,7 +148,7 @@ class RecipientListActivity :
             override fun delete(item: Recipient) {
                 Log.d("Delete")
                 confirmationBottomSheet?.setData(
-                    description = "do you really want to delete ${item.name} contact?",
+                    description = "Do you really want to delete ${item.name} contact?",
                     data = item
                 )
             }
