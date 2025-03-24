@@ -648,13 +648,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setupEarnBanner(account: Account = viewModelAccountDetails.account) {
-        binding.includeEarnBanner.earnBanner.isVisible = (
-                viewModelAccountDetails.isShowEarnBanner() &&
-                        account.balance > BigInteger.ZERO &&
-                        account.isDelegating().not() &&
-                        account.isBaking().not()
-                )
-
+        binding.includeEarnBanner.earnBanner.isVisible = viewModelAccountDetails.isEarnBannerVisible()
         binding.includeEarnBanner.earnBanner.setOnClickListener {
             viewModelAccountDetails.onEarnClicked()
         }

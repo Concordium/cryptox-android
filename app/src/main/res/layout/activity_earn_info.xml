@@ -172,7 +172,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/earn_notice"
                 android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                android:textColor="@color/mw24_blue_2"/>
+                android:textColor="@color/mw24_blue_3_50"/>
 
             <TextView
                 android:id="@+id/btnBaker"
