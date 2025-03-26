@@ -328,7 +328,7 @@
     <string name="about_twitter">X (formerly Twitter) button</string>
     <string name="about_discord">Discord button</string>
     <string name="about_terms_link"><a href="#terms">Terms and Conditions</a></string>
-    <string name="about_privacy_link"><a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
+    <string name="about_privacy_link"><a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
     <!-- Import -->
     <string name="import_not_possible_when_using_phrase">File import is not possible when using a secret phrase</string>
     <string name="import_importing_progress">Importing…</string>
@@ -1097,7 +1097,7 @@
     <string name="welcome_get_started">Get started</string>
     <string name="welcome_terms">I have read and understood the
         <a href="#terms">Terms and Conditions</a>
-        and the <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
+        and the <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
     <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
     <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
