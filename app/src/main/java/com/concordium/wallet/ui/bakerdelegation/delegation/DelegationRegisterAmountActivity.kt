@@ -44,15 +44,18 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         super.onNewIntent(intent)
 
         if (intent.getBooleanExtra(UPDATE_DATA, false)) {
-            viewModel.bakerDelegationData = intent.getSerializable(
+            val updatedBakerData = intent.getSerializable(
                 DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
                 BakerDelegationData::class.java
             )
+            viewModel.bakerDelegationData = updatedBakerData
             initViews()
             validateAmountInput(binding.amount, binding.amountError)
             showStakingModeError(
-                viewModel.bakerDelegationData.isLPool.not() &&
-                        viewModel.bakerDelegationData.isBakerPool.not()
+                updatedBakerData.isLPool.not() &&
+                        updatedBakerData.isBakerPool.not() &&
+                        viewModel.isBakerPool().not() &&
+                        viewModel.isLPool()
             )
         }
     }
@@ -135,11 +138,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amount.setText(CurrencyUtil.formatGTU(viewModel.getMaxDelegationBalance()))
         }
 
-        binding.balanceAmount.text =
-            getString(
-                R.string.amount,
-                CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
-            )
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
 
         viewModel.bakerDelegationData.account.let { account ->
             account.delegation?.let { accountDelegation ->
@@ -270,7 +269,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                     withCommas = false
                 )
             })
-            viewModel.validatePoolId()
+            if (viewModel.isBakerPool()) {
+                viewModel.validatePoolId()
+            }
         }
     }
 

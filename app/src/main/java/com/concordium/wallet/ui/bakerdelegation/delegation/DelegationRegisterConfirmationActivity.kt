@@ -3,12 +3,12 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.model.Transaction
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmationBinding
 import com.concordium.wallet.extension.showSingle
@@ -57,10 +57,6 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
     }
 
     private fun updateViews() {
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
-            viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
-        )
-
         if (viewModel.isUpdatingDelegation()) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
             binding.includeResultLayout.amountDescription.text =
@@ -71,28 +67,11 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         }
 
         if (viewModel.bakerDelegationData.type == REGISTER_DELEGATION) {
-            binding.gracePeriod.text = resources.getQuantityString(
-                R.plurals.delegation_register_delegation_confirmation_desc,
-                gracePeriod,
-                gracePeriod
-            )
-            binding.gracePeriod.isVisible = true
             binding.includeResultLayout.amountDescription.text =
                 getString(R.string.delegation_status_content_registered_success)
             binding.submitDelegationTransaction.setText(
                 getString(R.string.delegation_status_content_registered_button)
             )
-        } else if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION
-            && viewModel.isLoweringDelegation()
-        ) {
-            binding.gracePeriod.text = resources.getQuantityString(
-                R.plurals.delegation_register_delegation_confirmation_desc_update,
-                gracePeriod,
-                gracePeriod
-            )
-            binding.gracePeriod.isVisible = true
-        } else {
-            binding.gracePeriod.isVisible = false
         }
 
         binding.submitDelegationTransaction.setOnSliderCompleteListener {
@@ -103,10 +82,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
             showNotice()
         }
 
-        binding.accountToDelegateFrom.text =
-            viewModel.bakerDelegationData.account.getAccountName()
-                .plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account.address)
+        binding.accountToDelegateFrom.text = getAccountName()
         binding.delegationAmountConfirmation.text =
             CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
         binding.includeResultLayout.amount.text =
@@ -185,12 +161,22 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         ).showSingle(supportFragmentManager, DelegationErrorDialog.TAG)
     }
 
+    private fun getAccountName(): String {
+        return if (viewModel.bakerDelegationData.account.getAccountName() ==
+            Account.getDefaultName(viewModel.bakerDelegationData.account.address)
+        )
+            viewModel.bakerDelegationData.account.getAccountName()
+        else
+            viewModel.bakerDelegationData.account.getAccountName()
+                .plus("\n\n")
+                .plus(Account.getDefaultName(viewModel.bakerDelegationData.account.address))
+    }
+
     private fun showPageAsReceipt() {
         receiptMode = true
         hideActionBarBack(isVisible = false)
         binding.apply {
             submitDelegationTransaction.visibility = View.GONE
-            gracePeriod.visibility = View.GONE
             submitDelegationFinish.visibility = View.VISIBLE
             receiptLayout.visibility = View.GONE
             includeResultLayout.resultLayout.visibility = View.VISIBLE
