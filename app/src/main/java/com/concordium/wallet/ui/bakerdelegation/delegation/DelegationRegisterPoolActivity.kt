@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
@@ -22,6 +23,7 @@ import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
+@Suppress("KotlinConstantConditions")
 class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
     R.layout.activity_delegation_registration_pool, R.string.delegation_register_staking_mode
 ) {
@@ -194,7 +196,12 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         if (checkIsPassiveMode())
             binding.poolDesc.text = ""
         else
-            binding.poolDesc.setText(R.string.delegation_register_delegation_desc)
+            binding.poolDesc.setText(
+                if (BuildConfig.ENV_NAME == "production")
+                    R.string.delegation_register_delegation_desc
+                else
+                    R.string.delegation_register_delegation_desc_testnet
+            )
 
         binding.poolDesc.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))

@@ -328,7 +328,7 @@
     <string name="about_twitter">X (formerly Twitter) button</string>
     <string name="about_discord">Discord button</string>
     <string name="about_terms_link"><a href="#terms">Terms and Conditions</a></string>
-    <string name="about_privacy_link"><a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
+    <string name="about_privacy_link"><a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
     <!-- Import -->
     <string name="import_not_possible_when_using_phrase">File import is not possible when using a secret phrase</string>
     <string name="import_importing_progress">Importing…</string>
@@ -653,7 +653,7 @@
     <string name="seed_phrase_recover_process_finished_no_accounts">No accounts</string>
     <string name="seed_phrase_recover_process_finished_accounts_count">ACCOUNTS: %1$d</string>
 
-    <string name="earn_title">Earning rewards</string>
+    <string name="earn_title">Earn</string>
     <string name="earn_subtitle">Below are two options for earning rewards on CryptoX Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
@@ -738,6 +738,7 @@
 
     <string name="delegation_register_delegation_intro">Delegate to an open pool of your choice, or stake your CCD using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_desc_testnet">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://testnet.ccdscan.io/staking">testnet.ccdscan.io/staking</a></string>
     <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit <a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
@@ -749,7 +750,7 @@
     <string name="delegation_register_delegation_passive">Passive delegation</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
-    <string name="delegation_register_delegation_error">Staking mode not selected</string>
+    <string name="delegation_register_delegation_error">Staking mode must be confirmed</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
@@ -1097,7 +1098,7 @@
     <string name="welcome_get_started">Get started</string>
     <string name="welcome_terms">I have read and understood the
         <a href="#terms">Terms and Conditions</a>
-        and the <a href="https://www.concordium.com/privacy-policy">Privacy policy</a></string>
+        and the <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
     <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
     <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
