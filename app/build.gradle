@@ -350,6 +350,9 @@ dependencies {
 
     // Lottie animations
     implementation 'com.airbnb.android:lottie:6.0.0'
+
+    // Swipe to refresh
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
 }
 
 task printVersionName {
