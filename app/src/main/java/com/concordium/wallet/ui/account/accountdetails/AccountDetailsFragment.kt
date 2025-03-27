@@ -301,6 +301,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun initViews() {
         showWaiting(true)
         initializeAnimation()
+        initSwipeToRefresh()
         binding.accountRetryButton.setOnClickListener {
             gotoAccountsList()
         }
@@ -466,6 +467,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             mainViewModel.setNotificationData("", "")
         }
         viewModelAccountDetails.stopFrequentUpdater()
+    }
+
+    private fun initSwipeToRefresh() {
+        binding.swipeLayout.setOnRefreshListener {
+            updateWhenResumed()
+            binding.swipeLayout.isRefreshing = false
+        }
     }
 
     private fun initContainer(isEarning: Boolean = false) {

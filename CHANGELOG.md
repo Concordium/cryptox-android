@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Pull to refresh feature on Home screen
+
 ### Changed
 
 - Revamped UI across the delegation and validation flow
