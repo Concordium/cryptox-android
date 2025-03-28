@@ -746,7 +746,7 @@
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
     <string name="delegation_register_delegation_pool_baker">Validator pool</string>
-    <string name="delegation_register_delegation_pool_baker_id">Validator pool: %1$s</string>
+    <string name="delegation_register_delegation_pool_targeted">Targeted delegation</string>
     <string name="delegation_register_delegation_passive">Passive delegation</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>

@@ -91,10 +91,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
             if (viewModel.bakerDelegationData.isLPool)
                 getString(R.string.delegation_register_delegation_passive_long)
             else
-                getString(
-                    R.string.delegation_register_delegation_pool_baker_id,
-                    viewModel.bakerDelegationData.poolId
-                )
+                getString(R.string.delegation_register_delegation_pool_targeted)
         binding.rewardsWillBe.text =
             if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(
                 R.string.delegation_status_at_disposal
