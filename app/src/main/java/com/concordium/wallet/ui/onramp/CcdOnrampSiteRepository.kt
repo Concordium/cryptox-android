@@ -13,7 +13,7 @@ class CcdOnrampSiteRepository {
         ),
         CcdOnrampSite(
             name = "Wert",
-            url = "https://wert.io/try-wert",
+            url = "https://widget.wert.io/01HM0W8FTFG4TEBRB0JPM18G5W/widget/?commodity=CCD&network=concordium&commodity_id=ccd.simple.concordium",
             logoUrl = "https://partner.wert.io/icons/apple-touch-icon.png",
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
             acceptsCreditCard = true,
