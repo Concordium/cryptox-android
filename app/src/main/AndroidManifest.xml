@@ -35,6 +35,10 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
 
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+
         <service
             android:name=".core.notifications.FcmNotificationsService"
             android:exported="false">
@@ -67,8 +71,8 @@
             android:name=".ui.tokens.add_provider.AddProviderActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/MW24_Screen" />
+            android:theme="@style/MW24_Screen"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.connect.ConnectActivity"
             android:excludeFromRecents="true"
@@ -257,8 +261,8 @@
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
-            android:theme="@style/MW24_Screen" />
+            android:theme="@style/MW24_Screen"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.account.newaccountidentity.NewAccountIdentityActivity"
             android:launchMode="singleTop"
@@ -286,8 +290,8 @@
             android:launchMode="singleTop"
             android:parentActivityName=".ui.cis2.SendTokenActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/MW24_Screen"/>
+            android:theme="@style/MW24_Screen"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
             android:launchMode="singleTop"
@@ -469,8 +473,8 @@
             android:name=".ui.bakerdelegation.baker.BakerPoolSettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            android:theme="@style/MW24_Screen" />
+            android:theme="@style/MW24_Screen"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerStatusActivity"
             android:launchMode="singleTop"
@@ -550,43 +554,47 @@
             android:name=".ui.more.notifications.NotificationsPreferencesActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.tokens.provider.NFTActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.account.accountslist.AccountsListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
-        <activity android:name=".ui.cis2.manage.ManageTokenListActivity"
+            android:theme="@style/MW24_Screen" />
+        <activity
+            android:name=".ui.cis2.manage.ManageTokenListActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
-        <activity android:name=".ui.cis2.manage.AddTokenActivity"
+            android:theme="@style/MW24_Screen" />
+        <activity
+            android:name=".ui.cis2.manage.AddTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
-        <activity android:name=".ui.cis2.manage.AddTokenDetailsActivity"
+            android:theme="@style/MW24_Screen" />
+        <activity
+            android:name=".ui.cis2.manage.AddTokenDetailsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
-        <activity android:name=".ui.account.accountdetails.transfers.AccountDetailsTransfersActivity"
+            android:theme="@style/MW24_Screen" />
+        <activity
+            android:name=".ui.account.accountdetails.transfers.AccountDetailsTransfersActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.multiwallet.WalletsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
+            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.cis2.SelectTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"/>
+            android:theme="@style/MW24_Screen" />
     </application>
 
 </manifest>
