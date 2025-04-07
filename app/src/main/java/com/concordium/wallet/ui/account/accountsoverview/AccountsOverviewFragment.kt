@@ -105,10 +105,8 @@ class AccountsOverviewFragment : BaseFragment() {
             gotoExport()
         }
 
-        eventListener = object : Preferences.Listener {
-            override fun onChange() {
-                updateMissingBackup()
-            }
+        eventListener = Preferences.Listener {
+            updateMissingBackup()
         }
 
         updateMissingBackup()

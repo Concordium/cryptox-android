@@ -28,9 +28,7 @@ class WelcomeActivity :
         ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private val trackingPreferences: AppTrackingPreferences by lazy {
-        AppTrackingPreferences(this)
-    }
+    private val trackingPreferences = App.appCore.appTrackingPreferences
 
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

@@ -21,7 +21,7 @@ class NoOpAppTracker : AppTracker {
     override fun seedPhraseScreen() = Log.d("No op")
     override fun seedPhraseCopyClicked() = Log.d("No op")
     override fun seedPhraseCheckboxBoxChecked() = Log.d("No op")
-    override fun seedPhraseContinueCLicked() = Log.d("No op")
+    override fun seedPhraseContinueClicked() = Log.d("No op")
     override fun identityVerificationProvidersListScreen() = Log.d("No op")
     override fun identityVerificationScreen(provider: String) = Log.d("No op")
     override fun identityVerificationResultScreen() = Log.d("No op")

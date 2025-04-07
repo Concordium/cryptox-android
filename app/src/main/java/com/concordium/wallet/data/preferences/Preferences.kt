@@ -16,7 +16,7 @@ open class Preferences(context: Context, preferenceName: String) {
 
     private val changeListeners = HashMap<Listener, String>()
 
-    interface Listener {
+    fun interface Listener {
         fun onChange()
     }
 

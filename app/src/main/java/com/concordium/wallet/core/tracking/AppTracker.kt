@@ -20,7 +20,7 @@ interface AppTracker {
     fun seedPhraseScreen()
     fun seedPhraseCopyClicked()
     fun seedPhraseCheckboxBoxChecked()
-    fun seedPhraseContinueCLicked()
+    fun seedPhraseContinueClicked()
     fun identityVerificationProvidersListScreen()
     fun identityVerificationScreen(provider: String)
     fun identityVerificationResultScreen()

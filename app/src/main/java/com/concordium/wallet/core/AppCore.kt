@@ -10,7 +10,7 @@ import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.core.migration.TwoWalletsMigration
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
-import com.concordium.wallet.core.tracking.MatomoAppTracker
+import com.concordium.wallet.core.tracking.FirebaseAppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
 import com.concordium.wallet.data.AppWalletRepository
 import com.concordium.wallet.data.backend.GrpcBackendConfig
@@ -28,12 +28,11 @@ import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.data.room.app.AppDatabase
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.runBlocking
-import org.matomo.sdk.Matomo
-import org.matomo.sdk.TrackerBuilder
 import java.math.BigInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -49,17 +48,15 @@ class AppCore(val app: App) {
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
-    private val appTrackingPreferences = AppTrackingPreferences(App.appContext)
+    val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
-    private val matomoAppTracker: AppTracker by lazy {
-        TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 8)
-            .build(Matomo.getInstance(App.appContext))
-            .let(::MatomoAppTracker)
-    }
+    private val firebaseAppTracker: AppTracker = FirebaseAppTracker(
+        analytics = FirebaseAnalytics.getInstance(app),
+    )
     val tracker: AppTracker
         get() =
             if (appTrackingPreferences.isTrackingEnabled)
-                matomoAppTracker
+                firebaseAppTracker
             else
                 noOpAppTracker
 
@@ -77,6 +74,10 @@ class AppCore(val app: App) {
                 }
             }
         }
+
+        FirebaseAnalytics
+            .getInstance(app)
+            .setAnalyticsCollectionEnabled(appTrackingPreferences.isTrackingEnabled)
     }
 
     val database = AppDatabase.getDatabase(app)

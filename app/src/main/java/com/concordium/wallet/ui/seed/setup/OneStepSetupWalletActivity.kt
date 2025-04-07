@@ -69,7 +69,7 @@ class OneStepSetupWalletActivity :
         }
 
         binding.continueButton.setOnClickListener {
-            App.appCore.tracker.seedPhraseContinueCLicked()
+            App.appCore.tracker.seedPhraseContinueClicked()
             viewModel.onContinueClicked()
         }
 
