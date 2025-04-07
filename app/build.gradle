@@ -21,9 +21,9 @@ android {
     // https://semver.org/
     def versionMajor = 1
     def versionMinor = 8
-    def versionPatch = 0
+    def versionPatch = 1
     def versionMeta = ""
-    def versionCodeIncremental = 1446
+    def versionCodeIncremental = 1447
 
     compileSdkVersion 34
 
