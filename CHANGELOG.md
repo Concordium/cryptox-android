@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Cutting off a text on the delegation action button
+
 ## [1.8.0] - 2025-04-01
 
 ### Added
