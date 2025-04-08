@@ -31,14 +31,14 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
 
         when (state) {
             is State.Create -> {
-                App.appCore.tracker.welcomePasscodeEntered()
+                App.appCore.tracker.passcodeSetupEntered()
                 createdPasscode = passcode
                 mutableStateFlow.tryEmit(State.Repeat)
             }
 
             State.Repeat -> {
                 if (passcode == createdPasscode) {
-                    App.appCore.tracker.welcomePasscodeConfirmationEntered()
+                    App.appCore.tracker.passcodeSetupConfirmationEntered()
                     proceedWithConfirmedCreatedPasscode()
                 } else {
                     mutableStateFlow.tryEmit(

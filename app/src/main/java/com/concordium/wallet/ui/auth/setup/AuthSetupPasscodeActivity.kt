@@ -49,7 +49,7 @@ class AuthSetupPasscodeActivity :
 
     override fun onResume() {
         super.onResume()
-        App.appCore.tracker.welcomePasscodeScreen()
+        App.appCore.tracker.passcodeScreen()
     }
 
     private fun initInput() = with(binding.passcodeInputView) {

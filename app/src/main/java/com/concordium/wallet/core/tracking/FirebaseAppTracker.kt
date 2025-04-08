@@ -41,51 +41,51 @@ class FirebaseAppTracker(
             contentType = CONTENT_TYPE_BUTTON,
         )
 
-    override fun welcomeActivateAccountDialog() =
-        screenVisit(DIALOG_ACTIVATE_ACCOUNT)
+    override fun welcomeSetUpWalletDialog() =
+        screenVisit(DIALOG_SET_UP_WALLET)
 
-    override fun welcomeActivateAccountDialogCreateClicked() =
+    override fun welcomeSetUpWalletDialogCreateClicked() =
         contentSelection(
             contentName = "Create wallet",
             contentType = CONTENT_TYPE_BUTTON,
         )
 
-    override fun welcomeActivateAccountDialogImportClicked() =
+    override fun welcomeSetUpWalletDialogImportClicked() =
         contentSelection(
             contentName = "Import wallet",
             contentType = CONTENT_TYPE_BUTTON,
         )
 
-    override fun welcomePasscodeScreen() =
-        screenVisit(SCREEN_WELCOME_PASSCODE)
+    override fun passcodeScreen() =
+        screenVisit(SCREEN_PASSCODE_SETUP)
 
-    override fun welcomePasscodeEntered() =
+    override fun passcodeSetupEntered() =
         input(
             contentName = "6-digit passcode",
         )
 
-    override fun welcomePasscodeConfirmationEntered() =
+    override fun passcodeSetupConfirmationEntered() =
         input(
             contentName = "6-digit passcode confirmation",
         )
 
-    override fun welcomePasscodeBiometricsDialog() =
-        screenVisit(DIALOG_WELCOME_PASSCODE_BIOMETRICS)
+    override fun passcodeSetupBiometricsDialog() =
+        screenVisit(DIALOG_PASSCODE_SETUP_BIOMETRICS)
 
-    override fun welcomePasscodeBiometricsAccepted() =
+    override fun passcodeSetupBiometricsAccepted() =
         contentSelection(
             contentName = "Biometrics enable",
             contentType = CONTENT_TYPE_BUTTON,
         )
 
-    override fun welcomePasscodeBiometricsRejected() =
+    override fun passcodeBiometricsRejected() =
         contentSelection(
             contentName = "Biometrics later",
             contentType = CONTENT_TYPE_BUTTON,
         )
 
     override fun seedPhraseScreen() =
-        screenVisit(SCREEN_SAVE_PHRASE)
+        screenVisit(SCREEN_PHRASE_SETUP)
 
     override fun seedPhraseCopyClicked() =
         contentSelection(
@@ -106,7 +106,7 @@ class FirebaseAppTracker(
         )
 
     override fun identityVerificationProvidersListScreen() =
-        screenVisit(SCREEN_ID)
+        screenVisit(SCREEN_ID_PROVIDERS)
 
     override fun identityVerificationScreen(provider: String) =
         screenVisit(
@@ -190,8 +190,8 @@ class FirebaseAppTracker(
             contentType = CONTENT_TYPE_LINK,
         )
 
-    override fun homeNewsScreen() =
-        screenVisit(SCREEN_HOME_NEWS)
+    override fun discoverScreen() =
+        screenVisit(SCREEN_DISCOVER)
 
     private fun screenVisit(
         screen: Screen,
@@ -201,7 +201,7 @@ class FirebaseAppTracker(
             FirebaseAnalytics.Event.SCREEN_VIEW,
             Bundle().apply {
                 putString(FirebaseAnalytics.Param.SCREEN_NAME, screen.title)
-                putString(FirebaseAnalytics.Param.SCREEN_CLASS, screen.path)
+                putString(FirebaseAnalytics.Param.SCREEN_CLASS, screen.slug)
                 extraParams?.also(::putAll)
             }
         )
@@ -233,66 +233,66 @@ class FirebaseAppTracker(
 
     private class Screen(
         val title: String,
-        val path: String,
+        val slug: String,
     )
 
     private companion object {
         private val SCREEN_WELCOME = Screen(
             title = "Welcome",
-            path = "/welcome",
+            slug = "welcome",
         )
-        private val SCREEN_WELCOME_PASSCODE = Screen(
-            title = "Welcome: Passcode",
-            path = "/welcome/passcode_setup",
+        private val SCREEN_PASSCODE_SETUP = Screen(
+            title = "Passcode setup",
+            slug = "passcode_setup",
         )
-        private val SCREEN_SAVE_PHRASE = Screen(
-            title = "Home: Phrase",
-            path = "/home/phrase",
+        private val SCREEN_PHRASE_SETUP = Screen(
+            title = "Seed phrase setup",
+            slug = "phrase_setup",
         )
-        private val SCREEN_ID = Screen(
-            title = "ID Screen",
-            path = "/id_providers",
+        private val SCREEN_ID_PROVIDERS = Screen(
+            title = "ID Providers",
+            slug = "id_providers",
         )
         private val SCREEN_ID_VERIFICATION = Screen(
             title = "ID Verification",
-            path = "/id_providers/verification",
+            slug = "id_verification",
         )
         private val SCREEN_ID_VERIFICATION_RESULT = Screen(
             title = "ID Verification result",
-            path = "/id_providers/verification/result",
+            slug = "id_verification_result",
         )
         private val SCREEN_HOME = Screen(
             title = "Home",
-            path = "/home"
+            slug = "home"
         )
         private val SCREEN_ONRAMP = Screen(
-            title = "Home: Onramp",
-            path = "/home/onramp"
+            title = "Onramp",
+            slug = "onramp"
         )
         private val SCREEN_ABOUT = Screen(
             title = "About",
-            path = "/about"
+            slug = "about"
         )
-        private val SCREEN_HOME_NEWS = Screen(
-            title = "Home: News",
-            path = "/home/news"
+        private val SCREEN_DISCOVER = Screen(
+            title = "Discover",
+            slug = "discover"
         )
 
-        private val DIALOG_ACTIVATE_ACCOUNT = Screen(
-            title = "Welcome: Activate account dialog",
-            path = SCREEN_WELCOME.path + "#activate_account",
+        private val DIALOG_SET_UP_WALLET = Screen(
+            title = "Set up wallet dialog",
+            slug = "set_up_wallet_dialog",
         )
-        private val DIALOG_WELCOME_PASSCODE_BIOMETRICS = Screen(
+        private val DIALOG_PASSCODE_SETUP_BIOMETRICS = Screen(
             title = "Welcome: Passcode: Biometrics dialog",
-            path = SCREEN_WELCOME.path + "#biometrics",
+            slug = "passcode_setup_biometrics_dialog",
         )
         private val DIALOG_ID_VERIFICATION_APPROVED = Screen(
             title = "ID Verification approved",
-            path = SCREEN_ID_VERIFICATION_RESULT.path + "#approved",
+            slug = "id_verification_approved_dialog",
         )
         private val DIALOG_UNLOCK_FEATURE = Screen(
             title = "Home: Unlock feature dialog",
-            path = SCREEN_HOME.path + "#unlock_feature"
+            slug = "unlock_feature_dialog"
         )
 
         private const val CONTENT_TYPE_CHECK_BOX = "checkbox"

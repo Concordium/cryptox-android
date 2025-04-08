@@ -53,7 +53,7 @@ class NewsOverviewFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        App.appCore.tracker.homeNewsScreen()
+        App.appCore.tracker.discoverScreen()
     }
 
     private fun initializeViewModel() {

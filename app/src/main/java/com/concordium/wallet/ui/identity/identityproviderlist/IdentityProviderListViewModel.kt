@@ -171,10 +171,10 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
 
         return IdentityCreationData(
-            identityProvider=identityProvider,
-            idObjectRequest=idObjectRequest,
-            identityName=tempData.identityName,
-            identityIndex=tempData.identityIndex
+            identityProvider = identityProvider,
+            idObjectRequest = idObjectRequest,
+            identityName = tempData.identityName,
+            identityIndex = tempData.identityIndex
         )
     }
 
