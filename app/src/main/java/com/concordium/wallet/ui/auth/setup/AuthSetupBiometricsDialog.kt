@@ -61,14 +61,16 @@ class AuthSetupBiometricsDialog : AppCompatDialogFragment() {
 
             App.appCore.tracker.welcomePasscodeBiometricsAccepted()
         }
+    }
 
-        if (savedInstanceState == null) {
-            App.appCore.tracker.welcomePasscodeBiometricsDialog()
-        }
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.welcomePasscodeBiometricsDialog()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
+        App.appCore.tracker.welcomePasscodeBiometricsRejected()
         (activity as? DialogInterface.OnDismissListener)?.onDismiss(dialog)
     }
 

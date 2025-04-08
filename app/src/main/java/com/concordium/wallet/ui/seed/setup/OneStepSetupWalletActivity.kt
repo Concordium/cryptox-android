@@ -43,6 +43,11 @@ class OneStepSetupWalletActivity :
         subscribeToEvents()
     }
 
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.seedPhraseScreen()
+    }
+
     @SuppressLint("SetTextI18n")
     private fun initWords(
     ) = viewModel.phraseFlow.collectWhenStarted(this) { words ->

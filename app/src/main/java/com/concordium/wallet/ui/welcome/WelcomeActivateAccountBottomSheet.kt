@@ -37,6 +37,7 @@ class WelcomeActivateAccountBottomSheet : BottomSheetDialogFragment() {
             )
             dismiss()
         }
+
         binding.importWalletButton.setOnClickListener {
             App.appCore.tracker.welcomeActivateAccountDialogImportClicked()
             setFragmentResult(
@@ -45,10 +46,11 @@ class WelcomeActivateAccountBottomSheet : BottomSheetDialogFragment() {
             )
             dismiss()
         }
+    }
 
-        if (savedInstanceState == null) {
-            App.appCore.tracker.welcomeActivateAccountDialog()
-        }
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.welcomeActivateAccountDialog()
     }
 
     enum class ChosenAction {

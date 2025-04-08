@@ -8,7 +8,7 @@ class AppTrackingPreferences(
 ) : Preferences(context, SharedPreferenceFiles.APP_TRACKING.key) {
 
     var isTrackingEnabled: Boolean
-            by BooleanPreference(PREFKEY_TRACKING_ENABLED, false)
+            by BooleanPreference(PREFKEY_TRACKING_ENABLED, true)
 
     var hasDecidedOnPermission: Boolean
             by BooleanPreference(PREFKEY_HAS_DECIDED_ON_PERMISSION, false)

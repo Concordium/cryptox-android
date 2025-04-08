@@ -24,10 +24,6 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
     val passcodeLength = 6
     private var createdPasscode: String? = null
 
-    init {
-        App.appCore.tracker.welcomePasscodeScreen()
-    }
-
     fun onPasscodeEntered(passcode: String) = viewModelScope.launch {
         require(passcode.length == passcodeLength) {
             "The entered passcode doesn't have the required length"

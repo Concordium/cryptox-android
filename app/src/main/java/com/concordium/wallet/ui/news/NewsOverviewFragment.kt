@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewsfeedEntry
 import com.concordium.wallet.databinding.FragmentNewsOverviewBinding
@@ -48,6 +49,11 @@ class NewsOverviewFragment : BaseFragment() {
         initializeViews()
 
         (requireActivity() as BaseActivity).hideLeftPlus(isVisible = false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.homeNewsScreen()
     }
 
     private fun initializeViewModel() {

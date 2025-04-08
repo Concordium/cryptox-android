@@ -7,7 +7,14 @@ import com.google.firebase.analytics.FirebaseAnalytics
 
 class FirebaseAppTracker(
     private val analytics: FirebaseAnalytics,
-): AppTracker {
+) : AppTracker {
+
+    /*
+        ⚠️
+        Screens must be tracked from RESUMED activities.
+        If tracked in onCreate or in view model init,
+        Firebase refuses to track.
+     */
 
     override fun installation(context: Context) {
         // Not needed as 'first_open' event is collected automatically.
@@ -150,16 +157,16 @@ class FirebaseAppTracker(
             contentType = CONTENT_TYPE_BUTTON,
         )
 
-    override fun homeOnRampScreen() =
+    override fun homeOnrampScreen() =
         screenVisit(SCREEN_ONRAMP)
 
-    override fun homeOnRampSiteClicked(siteName: String) =
+    override fun homeOnrampSiteClicked(siteName: String) =
         contentSelection(
             contentName = "Onramp $siteName",
             contentType = CONTENT_TYPE_BUTTON,
         )
 
-    override fun homeOnRampBannerClicked() =
+    override fun homeOnrampBannerClicked() =
         contentSelection(
             contentName = "Onramp banner",
             contentType = CONTENT_TYPE_BANNER,
@@ -259,7 +266,7 @@ class FirebaseAppTracker(
             path = "/home"
         )
         private val SCREEN_ONRAMP = Screen(
-            title = "Home: OnRamp",
+            title = "Home: Onramp",
             path = "/home/onramp"
         )
         private val SCREEN_ABOUT = Screen(

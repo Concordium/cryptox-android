@@ -64,8 +64,6 @@ class IdentityConfirmedActivity :
             return
         }
 
-        App.appCore.tracker.identityVerificationResultScreen()
-
         if (!showForFirstAccount) {
             showRequestNoticeDialog(IdentityRequestNoticeDialog.submitted())
         }
@@ -73,6 +71,7 @@ class IdentityConfirmedActivity :
 
     override fun onResume() {
         super.onResume()
+        App.appCore.tracker.identityVerificationResultScreen()
         viewModel.updateState()
     }
 
