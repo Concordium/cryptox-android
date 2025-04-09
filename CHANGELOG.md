@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+
+- USDT, USDC, ETH and WBTC tokens from the default token set
+
 ## [1.8.1] - 2025-04-07
 
 ### Fixed
