@@ -23,7 +23,6 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
 
     init {
         postItems()
-        App.appCore.tracker.homeOnRampScreen()
     }
 
     fun initialize(accountAddress: String?) {

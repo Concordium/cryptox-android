@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.databinding.ActivityWelcomeBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
@@ -28,9 +27,7 @@ class WelcomeActivity :
         ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private val trackingPreferences: AppTrackingPreferences by lazy {
-        AppTrackingPreferences(this)
-    }
+    private val trackingPreferences = App.appCore.appTrackingPreferences
 
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -56,10 +53,6 @@ class WelcomeActivity :
         ).get()
 
         initViews()
-
-        if (savedInstanceState == null) {
-            App.appCore.tracker.welcomeScreen()
-        }
 
         viewModel.isNotificationDialogEverShowed.collectWhenStarted(this) {
             if (it.not()) {
@@ -98,6 +91,11 @@ class WelcomeActivity :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.welcomeScreen()
+    }
+
     private fun initViews() {
         binding.termsTextView.handleUrlClicks { url ->
             when (url) {
@@ -110,17 +108,23 @@ class WelcomeActivity :
                 }
             }
         }
+
         binding.termsCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 App.appCore.tracker.welcomeTermAndConditionsCheckBoxChecked()
             }
             binding.getStartedButton.isEnabled = isChecked
         }
-        binding.getStartedButton.setOnClickListener {
-            if (binding.activityTrackingCheckBox.isChecked) {
+
+        binding.activityTrackingCheckBox.isChecked = trackingPreferences.isTrackingEnabled
+        binding.activityTrackingCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
                 App.appCore.tracker.welcomeActivityTrackingCheckBoxChecked()
-                trackingPreferences.isTrackingEnabled = true
             }
+            trackingPreferences.isTrackingEnabled = isChecked
+        }
+
+        binding.getStartedButton.setOnClickListener {
             App.appCore.tracker.welcomeGetStartedClicked()
             proceedWithAccountActivation()
         }

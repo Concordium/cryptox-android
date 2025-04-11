@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isInvisible
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAuthSetupPasscodeBinding
 import com.concordium.wallet.extension.collect
@@ -44,6 +45,11 @@ class AuthSetupPasscodeActivity :
 
         subscribeToState()
         subscribeToEvents()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.passcodeScreen()
     }
 
     private fun initInput() = with(binding.passcodeInputView) {

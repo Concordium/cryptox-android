@@ -113,6 +113,12 @@ class IdentityProviderWebviewActivity : BaseActivity(
         super.onResume()
         if (chromeLaunched)
             finish()
+
+        runCatching {
+            App.appCore.tracker.identityVerificationScreen(
+                provider = viewModel.identityCreationData.identityProvider.displayName
+            )
+        }
     }
 
     override fun onPause() {

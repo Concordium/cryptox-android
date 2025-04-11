@@ -46,7 +46,7 @@ class AuthSetupBiometricsDialog : AppCompatDialogFragment() {
 
         listOf(binding.denyButton, binding.closeButton).forEach {
             it.setOnClickListener {
-                App.appCore.tracker.welcomePasscodeBiometricsRejected()
+                App.appCore.tracker.passcodeBiometricsRejected()
                 dismiss()
             }
         }
@@ -59,16 +59,18 @@ class AuthSetupBiometricsDialog : AppCompatDialogFragment() {
                 biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
             }
 
-            App.appCore.tracker.welcomePasscodeBiometricsAccepted()
+            App.appCore.tracker.passcodeSetupBiometricsAccepted()
         }
+    }
 
-        if (savedInstanceState == null) {
-            App.appCore.tracker.welcomePasscodeBiometricsDialog()
-        }
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.passcodeSetupBiometricsDialog()
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
+        App.appCore.tracker.passcodeBiometricsRejected()
         (activity as? DialogInterface.OnDismissListener)?.onDismiss(dialog)
     }
 

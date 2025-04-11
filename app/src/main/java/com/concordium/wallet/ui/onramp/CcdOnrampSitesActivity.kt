@@ -35,6 +35,11 @@ class CcdOnrampSitesActivity : BaseActivity(
         hideActionBarBack(isVisible = true)
     }
 
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.homeOnrampScreen()
+    }
+
     private fun initList() {
         val adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
@@ -55,7 +60,7 @@ class CcdOnrampSitesActivity : BaseActivity(
     private fun onSiteClicked(site: CcdOnrampSite) {
         val accountAddress = viewModel.accountAddress
 
-        App.appCore.tracker.homeOnRampSiteClicked(
+        App.appCore.tracker.homeOnrampSiteClicked(
             siteName = site.name,
         )
 

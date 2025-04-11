@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.IdentityProvider
@@ -39,6 +40,11 @@ class IdentityProviderListActivity : BaseActivity(
         initializeViews()
         viewModel.getIdentityProviders()
         viewModel.getGlobalInfo()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.identityVerificationProvidersListScreen()
     }
 
     private fun initializeViewModel() {

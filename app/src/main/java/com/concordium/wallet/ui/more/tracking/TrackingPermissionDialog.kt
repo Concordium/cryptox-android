@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
+import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.databinding.DialogTrackingPermissionBinding
 
 class TrackingPermissionDialog : AppCompatDialogFragment() {
@@ -14,10 +14,7 @@ class TrackingPermissionDialog : AppCompatDialogFragment() {
         R.style.CCX_Dialog
 
     private lateinit var binding: DialogTrackingPermissionBinding
-
-    private val appTrackingPreferences: AppTrackingPreferences by lazy {
-        AppTrackingPreferences(requireContext())
-    }
+    private val appTrackingPreferences = App.appCore.appTrackingPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
