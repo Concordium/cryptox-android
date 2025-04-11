@@ -6,6 +6,10 @@
 
 - USDT, USDC, ETH and WBTC tokens from the default token set
 
+### Changed
+
+- Analytics is now collected through Firebase (Google Analytics)
+
 ## [1.8.1] - 2025-04-07
 
 ### Fixed
