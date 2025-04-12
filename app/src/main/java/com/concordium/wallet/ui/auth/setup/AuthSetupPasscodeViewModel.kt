@@ -24,10 +24,6 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
     val passcodeLength = 6
     private var createdPasscode: String? = null
 
-    init {
-        App.appCore.tracker.welcomePasscodeScreen()
-    }
-
     fun onPasscodeEntered(passcode: String) = viewModelScope.launch {
         require(passcode.length == passcodeLength) {
             "The entered passcode doesn't have the required length"
@@ -35,14 +31,14 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
 
         when (state) {
             is State.Create -> {
-                App.appCore.tracker.welcomePasscodeEntered()
+                App.appCore.tracker.passcodeSetupEntered()
                 createdPasscode = passcode
                 mutableStateFlow.tryEmit(State.Repeat)
             }
 
             State.Repeat -> {
                 if (passcode == createdPasscode) {
-                    App.appCore.tracker.welcomePasscodeConfirmationEntered()
+                    App.appCore.tracker.passcodeSetupConfirmationEntered()
                     proceedWithConfirmedCreatedPasscode()
                 } else {
                     mutableStateFlow.tryEmit(

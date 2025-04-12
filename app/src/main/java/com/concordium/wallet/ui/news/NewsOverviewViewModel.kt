@@ -23,7 +23,6 @@ class NewsOverviewViewModel(application: Application) : AndroidViewModel(applica
     val isLoadingFailedVisibleLiveData: LiveData<Boolean> = _isLoadingFailedVisibleLiveData
 
     init {
-        App.appCore.tracker.homeNewsScreen()
         loadNews()
     }
 

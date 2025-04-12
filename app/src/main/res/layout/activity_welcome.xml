@@ -65,9 +65,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginBottom="24dp"
+                android:lineHeight="20sp"
                 android:text="@string/welcome_point_1_details"
                 android:textAppearance="@style/CCX_Typography_Body"
-                android:lineHeight="20sp"
                 android:textColor="@color/ccx_neutral_tint_2"
                 app:layout_constraintBottom_toTopOf="@id/point_2_text_view"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -107,8 +107,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginBottom="24dp"
-                android:text="@string/welcome_point_2_details"
                 android:lineHeight="20sp"
+                android:text="@string/welcome_point_2_details"
                 android:textAppearance="@style/CCX_Typography_Body"
                 android:textColor="@color/ccx_neutral_tint_2"
                 app:layout_constraintBottom_toTopOf="@id/point_3_text_view"
@@ -148,8 +148,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="@string/welcome_point_3_details"
                 android:lineHeight="20sp"
+                android:text="@string/welcome_point_3_details"
                 android:textAppearance="@style/CCX_Typography_Body"
                 android:textColor="@color/ccx_neutral_tint_2"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -208,11 +208,13 @@
         style="@style/CCX_CompoundButton_Checkbox"
         android:layout_width="wrap_content"
         android:layout_marginStart="36dp"
-        android:checked="true"
         android:paddingVertical="16dp"
         app:layout_constraintBottom_toBottomOf="@id/activity_tracking_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/activity_tracking_text_view" />
+        app:layout_constraintTop_toTopOf="@id/activity_tracking_text_view">
+
+        <!-- The default value is set programmatically -->
+    </androidx.appcompat.widget.AppCompatCheckBox>
 
     <TextView
         android:id="@+id/activity_tracking_text_view"
@@ -231,8 +233,8 @@
     <Button
         android:id="@+id/get_started_button"
         style="@style/MW24_Button_Primary"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
         android:enabled="false"

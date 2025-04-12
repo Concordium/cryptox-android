@@ -66,7 +66,6 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     }
 
     init {
-        App.appCore.tracker.identityVerificationProvidersListScreen()
         _waitingLiveData.value = true
         _waitingGlobalData.value = true
     }
@@ -172,10 +171,10 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
 
         return IdentityCreationData(
-            identityProvider=identityProvider,
-            idObjectRequest=idObjectRequest,
-            identityName=tempData.identityName,
-            identityIndex=tempData.identityIndex
+            identityProvider = identityProvider,
+            idObjectRequest = idObjectRequest,
+            identityName = tempData.identityName,
+            identityIndex = tempData.identityIndex
         )
     }
 

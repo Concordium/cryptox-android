@@ -27,8 +27,6 @@ class AboutActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        App.appCore.tracker.aboutScreen()
-
         fun onUrlClicked(url: String) {
             App.appCore.tracker.aboutScreenLinkClicked(
                 url = url,
@@ -83,6 +81,10 @@ class AboutActivity : BaseActivity(
         hideActionBarBack(isVisible = true)
     }
 
+    override fun onResume() {
+        super.onResume()
+        App.appCore.tracker.aboutScreen()
+    }
     //endregion
 
     override fun loggedOut() {
