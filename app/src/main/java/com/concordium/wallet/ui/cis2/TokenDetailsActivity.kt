@@ -23,7 +23,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.getSerializable
@@ -298,14 +297,14 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
             !thumbnail.isNullOrBlank() -> loadImage(iconView, thumbnail)
             isCCD -> iconView.setImageResource(R.drawable.mw24_ic_ccd)
-            else -> iconView.setImageResource(R.drawable.ic_token_no_image)
+            else -> iconView.setImageResource(R.drawable.mw24_ic_token_placeholder)
         }
     }
 
     private fun loadImage(view: AppCompatImageView, url: String) {
         Glide.with(view.context)
             .load(url)
-            .placeholder(ThemedCircularProgressDrawable(view.context))
+            .placeholder(R.drawable.mw24_ic_token_placeholder)
             .fitCenter()
             .into(view)
     }

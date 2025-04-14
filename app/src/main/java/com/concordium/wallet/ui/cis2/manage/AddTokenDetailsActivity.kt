@@ -11,7 +11,6 @@ import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.RawMetadataDialog
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.getSerializable
 
@@ -72,7 +71,7 @@ class AddTokenDetailsActivity : BaseActivity(
                 tokenMetadata.display?.url?.let { loadImage(binding.detailsLayout.nftIcon, it) }
             }
         } else {
-            binding.detailsLayout.icon.setImageResource(R.drawable.ic_token_no_image)
+            binding.detailsLayout.icon.setImageResource(R.drawable.mw24_ic_token_placeholder)
         }
         binding.detailsLayout.name.text = name
     }
@@ -80,7 +79,7 @@ class AddTokenDetailsActivity : BaseActivity(
     private fun loadImage(view: AppCompatImageView, url: String) {
         Glide.with(view.context)
             .load(url)
-            .placeholder(ThemedCircularProgressDrawable(view.context))
+            .placeholder(R.drawable.mw24_ic_token_placeholder)
             .fitCenter()
             .into(view)
     }
