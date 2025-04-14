@@ -10,7 +10,7 @@
     <name>my-selenium-project</name>
     <url>http://maven.apache.org</url>
 
-    <!-- Set the properties to use Java 17 -->
+    <!-- Set the properties to use Java 11 -->
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -19,7 +19,7 @@
 
     <build>
         <plugins>
-            <!-- Maven Compiler Plugin to use Java 17 with preview features -->
+            <!-- Maven Compiler Plugin to use Java 11 with preview features -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
