@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Suite" verbose="1">
+    <listeners>
+        <listener class-name="config.CustomTestListener"/>
+    </listeners>
+    <test name="CryptoX - Android">
+        <classes>
+            <class name="cryptox_AndroidTest.baseClass"/>
+            <class name="cryptox_AndroidTest.RecoverAccounts.recoverAccountThroughSeedPhrase"/>
+            <class name="cryptox_AndroidTest.Validation.createValidatorWithNoDelegation"/>
+            <class name="cryptox_AndroidTest.Validation.validatorWithOpenForDelegation"/>
+            <class name="cryptox_AndroidTest.delegation.createDelegation"/>
+            <class name="cryptox_AndroidTest.delegation.stopDelegation"/>
+            <class name="cryptox_AndroidTest.Transactions.CCDTransactions"/>
+            <class name="cryptox_AndroidTest.Settings.settingsCases"/>
+            <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases"/>
+        </classes>
+    </test>
+</suite>
