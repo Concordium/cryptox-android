@@ -22,6 +22,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
+import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
@@ -331,7 +332,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             Glide.with(this)
                 .load(tokenMetadata.thumbnail.url)
                 .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
-                .placeholder(R.drawable.mw24_ic_token_placeholder)
+                .placeholder(ThemedCircularProgressDrawable(this))
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
                 .into(binding.tokenIcon)
         } else if (token.isCcd) {

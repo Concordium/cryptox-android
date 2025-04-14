@@ -60,9 +60,10 @@ class ManageTokensListAdapter(
         if (thumbnailUrl != null) {
             Glide.with(context)
                 .load(thumbnailUrl)
-                .placeholder(R.drawable.mw24_ic_token_placeholder)
+                .placeholder(ThemedCircularProgressDrawable(context))
                 .override(iconSize)
                 .fitCenter()
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .into(holder.binding.tokenIcon)
         } else if (token.isCcd) {
             Glide.with(context)

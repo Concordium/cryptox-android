@@ -12,6 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
+import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
@@ -93,7 +94,8 @@ class TokensAccountDetailsAdapter(
             Glide.with(context)
                 .load(tokenMetadata.thumbnail.url)
                 .override(iconSize)
-                .placeholder(R.drawable.mw24_ic_token_placeholder)
+                .placeholder(ThemedCircularProgressDrawable(context))
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
                 .into(holder.binding.tokenIcon)
         } else if (token.isCcd) {

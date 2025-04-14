@@ -49,7 +49,8 @@ class ManageTokensSelectionAdapter(
         if (thumbnailUrl != null) {
             Glide.with(context)
                 .load(thumbnailUrl)
-                .placeholder(R.drawable.mw24_ic_token_placeholder)
+                .placeholder(ThemedCircularProgressDrawable(context))
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .override(iconSize)
                 .fitCenter()
                 .into(holder.binding.tokenIcon)

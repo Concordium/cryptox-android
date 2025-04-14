@@ -11,6 +11,7 @@ import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.RawMetadataDialog
+import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.getSerializable
 
@@ -79,7 +80,8 @@ class AddTokenDetailsActivity : BaseActivity(
     private fun loadImage(view: AppCompatImageView, url: String) {
         Glide.with(view.context)
             .load(url)
-            .placeholder(R.drawable.mw24_ic_token_placeholder)
+            .placeholder(ThemedCircularProgressDrawable(view.context))
+            .error(R.drawable.mw24_ic_token_placeholder)
             .fitCenter()
             .into(view)
     }
