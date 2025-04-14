@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static config.appiumconnection.driver;
+import static cryptox_AndroidTest.baseClass.slackUrl;
 
 public class CustomTestListener implements ITestListener {
 
@@ -51,7 +52,7 @@ public class CustomTestListener implements ITestListener {
         System.out.println("Test failed: " + result.getName());
         testResults.add(result);  // Store the failed test result
 
-        if (driver instanceof TakesScreenshot) {
+        if (driver != null) {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 
             try {
@@ -134,7 +135,7 @@ public class CustomTestListener implements ITestListener {
     private void sendSlackMessage(String message) {
         try {
             CloseableHttpClient client = HttpClients.createDefault();
-            final String SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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";
+            final String SLACK_WEBHOOK_URL = slackUrl;
 
             HttpPost post = new HttpPost(SLACK_WEBHOOK_URL);
             StringEntity entity = new StringEntity("{\"text\":\"" + message + "\"}");

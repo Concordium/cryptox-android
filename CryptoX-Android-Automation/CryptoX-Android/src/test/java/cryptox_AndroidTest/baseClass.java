@@ -20,6 +20,7 @@ public static String testnetPackageName = "com.pioneeringtechventures.wallet.tes
 public static String stagePackageName = "com.pioneeringtechventures.wallet.stagenet";
 public static String activityName = "com.concordium.wallet.ui.MainActivity";
 public static String PackageName = stagePackageName;
+public static String slackUrl = "https:// hooks. slack. com/ services/ TBSPDSJ3B/ B08JB6QKA4F/ M83Hz2Pmj3NjJzwp7fujxHIv";
 
 
 
