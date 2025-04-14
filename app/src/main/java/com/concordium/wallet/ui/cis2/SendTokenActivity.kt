@@ -333,6 +333,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 .load(tokenMetadata.thumbnail.url)
                 .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
                 .placeholder(ThemedCircularProgressDrawable(this))
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
                 .into(binding.tokenIcon)
         } else if (token.isCcd) {
@@ -341,7 +342,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 .into(binding.tokenIcon)
         } else {
             Glide.with(this)
-                .load(R.drawable.ic_token_no_image)
+                .load(R.drawable.mw24_ic_token_placeholder)
                 .into(binding.tokenIcon)
         }
     }

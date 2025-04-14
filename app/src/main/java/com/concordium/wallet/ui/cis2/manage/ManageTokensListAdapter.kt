@@ -63,13 +63,14 @@ class ManageTokensListAdapter(
                 .placeholder(ThemedCircularProgressDrawable(context))
                 .override(iconSize)
                 .fitCenter()
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .into(holder.binding.tokenIcon)
         } else if (token.isCcd) {
             Glide.with(context)
                 .load(R.drawable.mw24_ic_ccd)
                 .into(holder.binding.tokenIcon)
         } else if (tokenMetadata != null) {
-            holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
+            holder.binding.tokenIcon.setImageResource(R.drawable.mw24_ic_token_placeholder)
         } else {
             // While the metadata is loading, show progress in the icon view.
             holder.binding.tokenIcon.setImageDrawable(ThemedCircularProgressDrawable(context))

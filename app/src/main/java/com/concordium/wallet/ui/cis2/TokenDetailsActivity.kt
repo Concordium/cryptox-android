@@ -298,7 +298,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
             !thumbnail.isNullOrBlank() -> loadImage(iconView, thumbnail)
             isCCD -> iconView.setImageResource(R.drawable.mw24_ic_ccd)
-            else -> iconView.setImageResource(R.drawable.ic_token_no_image)
+            else -> iconView.setImageResource(R.drawable.mw24_ic_token_placeholder)
         }
     }
 
@@ -306,6 +306,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         Glide.with(view.context)
             .load(url)
             .placeholder(ThemedCircularProgressDrawable(view.context))
+            .error(R.drawable.mw24_ic_token_placeholder)
             .fitCenter()
             .into(view)
     }

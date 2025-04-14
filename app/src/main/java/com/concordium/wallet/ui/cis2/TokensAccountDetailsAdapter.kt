@@ -95,6 +95,7 @@ class TokensAccountDetailsAdapter(
                 .load(tokenMetadata.thumbnail.url)
                 .override(iconSize)
                 .placeholder(ThemedCircularProgressDrawable(context))
+                .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
                 .into(holder.binding.tokenIcon)
         } else if (token.isCcd) {
@@ -121,7 +122,7 @@ class TokensAccountDetailsAdapter(
                 }
         } else {
             Glide.with(context)
-                .load(R.drawable.ic_token_no_image)
+                .load(R.drawable.mw24_ic_token_placeholder)
                 .into(holder.binding.tokenIcon)
         }
 
