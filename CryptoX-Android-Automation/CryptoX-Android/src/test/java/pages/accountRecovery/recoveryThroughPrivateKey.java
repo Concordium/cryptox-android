@@ -10,7 +10,6 @@ import java.util.Random;
 
 import static config.appiumconnection.log;
 import static config.appiumconnection.waitForElement;
-import static config.screenshotRecord.takeScreenShot;
 
 
 public class recoveryThroughPrivateKey {
@@ -182,7 +181,6 @@ public class recoveryThroughPrivateKey {
             else {
 
                 log.error("unable to find Element{}", elementID);
-                takeScreenShot("elementID.png");
 
                 return false;
             }

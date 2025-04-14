@@ -4,7 +4,6 @@ import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
 import static config.appiumconnection.*;
-import static config.screenshotRecord.takeScreenShot;
 
 public class requestCCDs {
 
@@ -25,11 +24,9 @@ public class requestCCDs {
             } else {
 
                 System.out.println("Unable to find element");
-                takeScreenShot("requestCCD.png");
             }
 
         } catch (Exception exp) {
-            takeScreenShot("requestCCD.png");
             log.error(String.valueOf(exp.getCause()));
             System.out.println(exp.getMessage());
             log.error(String.valueOf(exp.fillInStackTrace()));
