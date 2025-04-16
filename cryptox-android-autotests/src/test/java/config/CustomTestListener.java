@@ -4,20 +4,13 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.OutputType;
-import org.apache.commons.io.FileUtils;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.ITestContext;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static config.appiumconnection.driver;
-import static cryptox_AndroidTest.baseClass.slackUrl;
 
 public class CustomTestListener implements ITestListener {
 
@@ -124,7 +117,7 @@ public class CustomTestListener implements ITestListener {
     private void sendSlackMessage(String message) {
         try {
             CloseableHttpClient client = HttpClients.createDefault();
-            final String SLACK_WEBHOOK_URL = slackUrl;
+            final String SLACK_WEBHOOK_URL = System.getenv("SLACK_WEBHOOK");
 
             HttpPost post = new HttpPost(SLACK_WEBHOOK_URL);
             StringEntity entity = new StringEntity("{\"text\":\"" + message + "\"}");
