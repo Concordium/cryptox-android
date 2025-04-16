@@ -5,10 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.App
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 import com.concordium.wallet.ui.onramp.wert.WertWidgetHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,15 +18,12 @@ import kotlinx.coroutines.launch
 
 class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(application) {
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository by lazy(::CcdOnrampSiteRepository)
-    private val accountRepository: AccountRepository by lazy {
-        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-    }
     private val wertRepository: WertRepository by lazy(::WertRepository)
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
 
-    private val _wertSite = MutableSharedFlow<CcdOnrampSite?>()
+    private val _wertSite = MutableSharedFlow<Pair<CcdOnrampSite, Boolean>?>()
     val wertSite = _wertSite.asSharedFlow()
 
     private val _sessionLoading = MutableStateFlow(false)
@@ -36,29 +32,18 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
     private val _error = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     val error = _error.asSharedFlow()
 
-    var accountAddress: String? = null
+    lateinit var accountAddress: String
         private set
 
     init {
         postItems()
     }
 
-    fun initialize(accountAddress: String?) {
-        // Use the provided account address or, if none provided,
-        // the only one if there is one account.
-        if (accountAddress != null) {
-            this.accountAddress = accountAddress
-        } else {
-            viewModelScope.launch {
-                val allDoneAccounts = accountRepository.getAllDone()
-                if (allDoneAccounts.size == 1) {
-                    this@CcdOnrampSitesViewModel.accountAddress = allDoneAccounts.first().address
-                }
-            }
-        }
+    fun initialize(accountAddress: String) {
+        this.accountAddress = accountAddress
     }
 
-    fun getWertSessionId(accountAddress: String) {
+    private fun getWertSessionId(accountAddress: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _sessionLoading.value = true
             wertRepository.getWertSessionDetails(
@@ -67,7 +52,12 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                     val wertSite = ccdOnrampSiteRepository.getSiteByName("Wert")
                     viewModelScope.launch {
                         wertSite?.let {
-                            _wertSite.emit(it.copy(url = WertWidgetHelper.getWidgetLink(response.sessionId)))
+                            _wertSite.emit(
+                                Pair(
+                                    it.copy(url = WertWidgetHelper.getWidgetLink(response.sessionId)),
+                                    false
+                                )
+                            )
                         }
                     }
                     _sessionLoading.value = false
@@ -77,6 +67,23 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                     _sessionLoading.value = false
                 }
             )
+        }
+    }
+
+    fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
+        when {
+            site.name == "Wert" -> getWertSessionId(accountAddress)
+
+            site.name == "Swipelux" -> _wertSite.emit(
+                Pair(
+                    site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress)),
+                    false
+                )
+            )
+
+            site.type == CcdOnrampSite.Type.DEX -> _wertSite.emit(Pair(site, false))
+
+            else -> _wertSite.emit(Pair(site, true))
         }
     }
 

@@ -1,6 +1,10 @@
 package com.concordium.wallet.ui.onramp
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -31,7 +35,7 @@ class CcdOnrampSitesActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         viewModel.initialize(
-            accountAddress = intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA),
+            accountAddress = intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA) ?: "",
         )
         initList()
 
@@ -66,8 +70,8 @@ class CcdOnrampSitesActivity : BaseActivity(
         viewModel.wertSite.collectWhenStarted(this) { site ->
             site?.let {
                 openSite(
-                    site = it,
-                    accountAddress = viewModel.accountAddress ?: ""
+                    site = it.first,
+                    copyToClipboard = it.second
                 )
             }
         }
@@ -82,56 +86,42 @@ class CcdOnrampSitesActivity : BaseActivity(
     }
 
     private fun onSiteClicked(site: CcdOnrampSite) {
-        val accountAddress = viewModel.accountAddress
+        App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name,)
 
-        App.appCore.tracker.homeOnrampSiteClicked(
-            siteName = site.name,
-        )
-
-        if (site.type == CcdOnrampSite.Type.DEX) {
-            openSite(site = site)
-        } else {
-            if (accountAddress != null) {
-                if (site.name == "Wert") {
-                    viewModel.getWertSessionId(accountAddress)
-                } else {
-                    openSite(
-                        site = site,
-                        accountAddress = accountAddress,
-                        onAccountAddressCopied = {
-                            showGradientToast(
-                                iconResId = R.drawable.mw24_ic_address_copy_check,
-                                title = getString(
-                                    R.string.template_ccd_onramp_opening_site,
-                                    site.name
-                                )
-                            )
-                        }
-                    )
-                }
-            } else {
-                val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
-                intent.putExtras(CcdOnrampAccountsActivity.getBundle(site = site))
-                startActivity(intent)
-            }
-        }
+        viewModel.onSiteClicked(site)
     }
 
     private fun openSite(
         site: CcdOnrampSite,
-        accountAddress: String = "",
-        onAccountAddressCopied: () -> Unit = {}
+        copyToClipboard: Boolean
     ) {
-        OpenCcdOnrampSiteWithAccountUseCase(
-            site = site,
-            accountAddress = accountAddress,
-            onAccountAddressCopied = onAccountAddressCopied,
-            context = this
-        ).invoke()
+        if (copyToClipboard) {
+            val clipboardManager: ClipboardManager =
+                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipData = ClipData.newPlainText(
+                getString(R.string.account_details_address),
+                viewModel.accountAddress,
+            )
+            showGradientToast(
+                iconResId = R.drawable.mw24_ic_address_copy_check,
+                title = getString(
+                    R.string.template_ccd_onramp_opening_site,
+                    site.name
+                )
+            )
+            clipboardManager.setPrimaryClip(clipData)
+        }
+
+        openSite(site)
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.loading.progressBar.isVisible = isLoading
+    }
+
+    private fun openSite(launchSite: CcdOnrampSite) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(launchSite.url))
+        startActivity(Intent.createChooser(browserIntent, launchSite.name))
     }
 
     companion object {
