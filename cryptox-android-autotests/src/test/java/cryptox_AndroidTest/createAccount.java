@@ -59,17 +59,5 @@ public static String loginActivity = "com.concordium.wallet.ui.auth.login.AuthLo
     public void tearDown(){
     driver.quit();
 }
-
-@AfterSuite
-    public void TestMoResults() throws InterruptedException {
-
-    Thread.sleep(5000);
-    String batchFilePath = "C:\\Users\\nas\\Desktop\\TestMo.bat"; // Update this path
-    runBatchFile(batchFilePath);
-    System.out.println("Start posting resutls to testmo");
-}
-
-
-
 }
 

@@ -4,24 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class StartAppiumServer {
-//    public static void startAppium1(String AppiumPort) {
-//        ProcessBuilder processBuilder = new ProcessBuilder("node", "C:\\Users\\nas\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js");
-//        processBuilder.redirectErrorStream(true);
-//        processBuilder.redirectOutput(new File("appium.log")); // Redirect output to a log file
-//
-//        try {
-//            Process process = processBuilder.start();
-//            // Wait for the server to start
-//            Thread.sleep(5000); // Adjust the sleep time if necessary
-//        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
     public static void startAppium(String AppiumPort) {
-        ProcessBuilder processBuilder = new ProcessBuilder("node", "C:\\Users\\nas\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js","--port",AppiumPort);
+        ProcessBuilder processBuilder = new ProcessBuilder("node", "\\npm\\node_modules\\appium\\build\\lib\\main.js","--port",AppiumPort);
         processBuilder.redirectErrorStream(true);
-        processBuilder.redirectOutput(new File("C:\\Users\\nas\\Desktop\\appium.log")); // Redirect output to a log file
+        processBuilder.redirectOutput(new File("")); // Redirect output to a log file
 
         try {
             Thread.sleep(5000); // Adjust the sleep time if necessary
