@@ -124,7 +124,7 @@ public class CustomTestListener implements ITestListener {
     private void sendSlackMessage(String message) {
         try {
             CloseableHttpClient client = HttpClients.createDefault();
-            final String SLACK_WEBHOOK_URL = slackUrl;
+            final String SLACK_WEBHOOK_URL = System.getenv("SLACK_WEBHOOK");
 
             HttpPost post = new HttpPost(SLACK_WEBHOOK_URL);
             StringEntity entity = new StringEntity("{\"text\":\"" + message + "\"}");
