@@ -1,8 +1,8 @@
 name: E2E Tests
 
 on:
-    workflow_dispatch:
-     inputs:
+  workflow_dispatch:
+    inputs:
       branch:
         description: 'The branch to run the workflow on'
         required: true
@@ -17,12 +17,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [31]
-        profile: [pixel_7_pro]
+        api-level: [ 31 ]
+        profile: [ pixel_7_pro ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Slack Post
         uses: devtk0582/slack-post-action@v1.2
         with:
@@ -38,14 +38,15 @@ jobs:
       - name: Build project (Stagenet)
         run: chmod +x ./gradlew && ./gradlew app:assembleStagenetDebug --stacktrace
 
-# Log APK Path and store it as an environment variable
+      # Log APK Path and store it as an environment variable
       - name: Log APK Path
         id: log_apk
         run: |
-            echo "Listing APK files..."
-            APK_PATH=$(find app/build/outputs/apk -type f -name "*.apk")
-            echo "APK_PATH=$APK_PATH"
-            echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+          echo "Listing APK files..."
+          APK_PATH=$(find app/build/outputs/apk -type f -name "*.apk")
+          echo "APK_PATH=$APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+
       - name: Slack Post
         uses: devtk0582/slack-post-action@v1.2
         with:
@@ -57,8 +58,6 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
 
       - name: AVD cache
         uses: actions/cache@v4
@@ -91,8 +90,8 @@ jobs:
         run: |
           appium --log-level debug &  # Start Appium in the background
           sleep 10  # Wait for Appium to initialize
-        
-      - name: run tests
+
+      - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
