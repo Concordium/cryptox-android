@@ -24,6 +24,8 @@ import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
 import com.concordium.wallet.data.backend.tokens.TokensBackend
 import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
+import com.concordium.wallet.data.backend.wert.WertBackend
+import com.concordium.wallet.data.backend.wert.WertBackendConfig
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
@@ -47,6 +49,7 @@ class AppCore(val app: App) {
     private val newsfeedRssBackendConfig: NewsfeedRssBackendConfig by lazy(::NewsfeedRssBackendConfig)
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
+    private val wertBackendConfig = WertBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
     val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
@@ -120,6 +123,10 @@ class AppCore(val app: App) {
 
     fun getProxyBackend(): ProxyBackend {
         return proxyBackendConfig.backend
+    }
+
+    fun getWertBackend(): WertBackend {
+        return wertBackendConfig.backend
     }
 
     @Deprecated("It's better to use ProxyBackend, as it is backed by a reliable node")

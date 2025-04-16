@@ -2,11 +2,14 @@ package com.concordium.wallet.ui.onramp
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.toast.showGradientToast
 
@@ -40,6 +43,11 @@ class CcdOnrampSitesActivity : BaseActivity(
         App.appCore.tracker.homeOnrampScreen()
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.clearWertSession()
+    }
+
     private fun initList() {
         val adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
@@ -55,6 +63,22 @@ class CcdOnrampSitesActivity : BaseActivity(
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)
+        viewModel.wertSite.collectWhenStarted(this) { site ->
+            site?.let {
+                openSite(
+                    site = it,
+                    accountAddress = viewModel.accountAddress ?: ""
+                )
+            }
+        }
+        viewModel.sessionLoading.collectWhenStarted(this) { isLoading ->
+            showLoading(isLoading)
+        }
+        viewModel.error.collectWhenStarted(this) { error ->
+            if (error != -1) {
+                Toast.makeText(this, getString(error), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun onSiteClicked(site: CcdOnrampSite) {
@@ -68,16 +92,23 @@ class CcdOnrampSitesActivity : BaseActivity(
             openSite(site = site)
         } else {
             if (accountAddress != null) {
-                openSite(
-                    site = site,
-                    accountAddress = accountAddress,
-                    onAccountAddressCopied = {
-                        showGradientToast(
-                            iconResId = R.drawable.mw24_ic_address_copy_check,
-                            title = getString(R.string.template_ccd_onramp_opening_site, site.name)
-                        )
-                    }
-                )
+                if (site.name == "Wert") {
+                    viewModel.getWertSessionId(accountAddress)
+                } else {
+                    openSite(
+                        site = site,
+                        accountAddress = accountAddress,
+                        onAccountAddressCopied = {
+                            showGradientToast(
+                                iconResId = R.drawable.mw24_ic_address_copy_check,
+                                title = getString(
+                                    R.string.template_ccd_onramp_opening_site,
+                                    site.name
+                                )
+                            )
+                        }
+                    )
+                }
             } else {
                 val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
                 intent.putExtras(CcdOnrampAccountsActivity.getBundle(site = site))
@@ -97,6 +128,10 @@ class CcdOnrampSitesActivity : BaseActivity(
             onAccountAddressCopied = onAccountAddressCopied,
             context = this
         ).invoke()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.loading.progressBar.isVisible = isLoading
     }
 
     companion object {

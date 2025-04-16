@@ -7,6 +7,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.backend.wert.WertRepository
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.onramp.wert.WertWidgetHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(application) {
@@ -14,9 +22,19 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
     private val accountRepository: AccountRepository by lazy {
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     }
+    private val wertRepository: WertRepository by lazy(::WertRepository)
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
+
+    private val _wertSite = MutableSharedFlow<CcdOnrampSite?>()
+    val wertSite = _wertSite.asSharedFlow()
+
+    private val _sessionLoading = MutableStateFlow(false)
+    val sessionLoading = _sessionLoading.asStateFlow()
+
+    private val _error = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    val error = _error.asSharedFlow()
 
     var accountAddress: String? = null
         private set
@@ -38,6 +56,33 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                 }
             }
         }
+    }
+
+    fun getWertSessionId(accountAddress: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _sessionLoading.value = true
+            wertRepository.getWertSessionDetails(
+                walletAddress = accountAddress,
+                success = { response ->
+                    val wertSite = ccdOnrampSiteRepository.getSiteByName("Wert")
+                    viewModelScope.launch {
+                        wertSite?.let {
+                            _wertSite.emit(it.copy(url = WertWidgetHelper.getWidgetLink(response.sessionId)))
+                        }
+                    }
+                    _sessionLoading.value = false
+                },
+                failure = { error ->
+                    _error.tryEmit(BackendErrorHandler.getExceptionStringRes(error))
+                    _sessionLoading.value = false
+                }
+            )
+        }
+    }
+
+    fun clearWertSession() {
+        _wertSite.tryEmit(null)
+        _error.tryEmit(-1)
     }
 
     private fun postItems() {

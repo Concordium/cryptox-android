@@ -106,4 +106,6 @@ class CcdOnrampSiteRepository {
             else ->
                 emptyList()
         }
+
+    fun getSiteByName(name: String): CcdOnrampSite? = getSites().find { it.name == name }
 }
