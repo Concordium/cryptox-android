@@ -14,11 +14,17 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    environment:
+      name: Autotests
+      url: https://concordium.testmo.net/automation/runs/2
+
     strategy:
       fail-fast: false
       matrix:
         api-level: [ 31 ]
         profile: [ pixel_7_pro ]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
