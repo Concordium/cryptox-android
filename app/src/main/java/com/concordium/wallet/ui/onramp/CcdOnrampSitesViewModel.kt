@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
@@ -44,38 +43,29 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
         this.accountAddress = accountAddress
     }
 
-    private fun getWertWidgetSettings(accountAddress: String, site: CcdOnrampSite) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _sessionLoading.value = true
-            try {
-                val response = wertRepository.getWertSessionDetails(accountAddress)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        _siteToOpen.emit(
-                            Pair(
-                                site.copy(url = WertWidgetHelper.getWidgetLink(it.sessionId)),
-                                false
-                            )
-                        )
-                    }
-                    _sessionLoading.value = false
-                } else {
-                    val error = ErrorParser.parseError(response)
-                    error?.let {
-                        _error.emit(it.error)
-                    }
-                    _sessionLoading.value = false
-                }
-            } catch (e: Exception) {
-                _error.emit(BackendErrorHandler.getExceptionStringRes(e))
-                _sessionLoading.value = false
-            }
+    private fun openWert(
+        accountAddress: String,
+        site: CcdOnrampSite,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        _sessionLoading.value = true
+        try {
+            val sessionDetails = wertRepository.getWertSessionDetails(accountAddress)
+            _siteToOpen.emit(
+                Pair(
+                    site.copy(url = WertWidgetHelper.getWidgetLink(sessionDetails.sessionId)),
+                    false
+                )
+            )
+        } catch (e: Exception) {
+            _error.emit(BackendErrorHandler.getExceptionStringRes(e))
+        } finally {
+            _sessionLoading.value = false
         }
     }
 
     fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
         when {
-            site.name == "Wert" -> getWertWidgetSettings(accountAddress, site)
+            site.name == "Wert" -> openWert(accountAddress, site)
 
             site.name == "Swipelux" -> _siteToOpen.emit(
                 Pair(
