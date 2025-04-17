@@ -47,11 +47,6 @@ class CcdOnrampSitesActivity : BaseActivity(
         App.appCore.tracker.homeOnrampScreen()
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.clearWertSession()
-    }
-
     private fun initList() {
         val adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
@@ -67,7 +62,7 @@ class CcdOnrampSitesActivity : BaseActivity(
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)
-        viewModel.wertSite.collectWhenStarted(this) { site ->
+        viewModel.siteToOpen.collectWhenStarted(this) { site ->
             site?.let {
                 openSite(
                     site = it.first,
@@ -86,7 +81,7 @@ class CcdOnrampSitesActivity : BaseActivity(
     }
 
     private fun onSiteClicked(site: CcdOnrampSite) {
-        App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name,)
+        App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name)
 
         viewModel.onSiteClicked(site)
     }

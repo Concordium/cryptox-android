@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
@@ -23,8 +24,8 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
 
-    private val _wertSite = MutableSharedFlow<Pair<CcdOnrampSite, Boolean>?>()
-    val wertSite = _wertSite.asSharedFlow()
+    private val _siteToOpen = MutableSharedFlow<Pair<CcdOnrampSite, Boolean>?>()
+    val siteToOpen = _siteToOpen.asSharedFlow()
 
     private val _sessionLoading = MutableStateFlow(false)
     val sessionLoading = _sessionLoading.asStateFlow()
@@ -43,53 +44,50 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
         this.accountAddress = accountAddress
     }
 
-    private fun getWertSessionId(accountAddress: String) {
+    private fun getWertWidgetSettings(accountAddress: String, site: CcdOnrampSite) {
         viewModelScope.launch(Dispatchers.IO) {
             _sessionLoading.value = true
-            wertRepository.getWertSessionDetails(
-                walletAddress = accountAddress,
-                success = { response ->
-                    val wertSite = ccdOnrampSiteRepository.getSiteByName("Wert")
-                    viewModelScope.launch {
-                        wertSite?.let {
-                            _wertSite.emit(
-                                Pair(
-                                    it.copy(url = WertWidgetHelper.getWidgetLink(response.sessionId)),
-                                    false
-                                )
+            try {
+                val response = wertRepository.getWertSessionDetails(accountAddress)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _siteToOpen.emit(
+                            Pair(
+                                site.copy(url = WertWidgetHelper.getWidgetLink(it.sessionId)),
+                                false
                             )
-                        }
+                        )
                     }
                     _sessionLoading.value = false
-                },
-                failure = { error ->
-                    _error.tryEmit(BackendErrorHandler.getExceptionStringRes(error))
+                } else {
+                    val error = ErrorParser.parseError(response)
+                    error?.let {
+                        _error.emit(it.error)
+                    }
                     _sessionLoading.value = false
                 }
-            )
+            } catch (e: Exception) {
+                _error.emit(BackendErrorHandler.getExceptionStringRes(e))
+                _sessionLoading.value = false
+            }
         }
     }
 
     fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
         when {
-            site.name == "Wert" -> getWertSessionId(accountAddress)
+            site.name == "Wert" -> getWertWidgetSettings(accountAddress, site)
 
-            site.name == "Swipelux" -> _wertSite.emit(
+            site.name == "Swipelux" -> _siteToOpen.emit(
                 Pair(
                     site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress)),
                     false
                 )
             )
 
-            site.type == CcdOnrampSite.Type.DEX -> _wertSite.emit(Pair(site, false))
+            site.type == CcdOnrampSite.Type.DEX -> _siteToOpen.emit(Pair(site, false))
 
-            else -> _wertSite.emit(Pair(site, true))
+            else -> _siteToOpen.emit(Pair(site, true))
         }
-    }
-
-    fun clearWertSession() {
-        _wertSite.tryEmit(null)
-        _error.tryEmit(-1)
     }
 
     private fun postItems() {
