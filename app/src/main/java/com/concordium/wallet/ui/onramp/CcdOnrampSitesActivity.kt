@@ -1,12 +1,19 @@
 package com.concordium.wallet.ui.onramp
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.toast.showGradientToast
 
@@ -28,7 +35,7 @@ class CcdOnrampSitesActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         viewModel.initialize(
-            accountAddress = intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA),
+            accountAddress = intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA) ?: "",
         )
         initList()
 
@@ -55,48 +62,61 @@ class CcdOnrampSitesActivity : BaseActivity(
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)
-    }
-
-    private fun onSiteClicked(site: CcdOnrampSite) {
-        val accountAddress = viewModel.accountAddress
-
-        App.appCore.tracker.homeOnrampSiteClicked(
-            siteName = site.name,
-        )
-
-        if (site.type == CcdOnrampSite.Type.DEX) {
-            openSite(site = site)
-        } else {
-            if (accountAddress != null) {
+        viewModel.siteToOpen.collectWhenStarted(this) { site ->
+            site?.let {
                 openSite(
-                    site = site,
-                    accountAddress = accountAddress,
-                    onAccountAddressCopied = {
-                        showGradientToast(
-                            iconResId = R.drawable.mw24_ic_address_copy_check,
-                            title = getString(R.string.template_ccd_onramp_opening_site, site.name)
-                        )
-                    }
+                    site = it.first,
+                    copyToClipboard = it.second
                 )
-            } else {
-                val intent = Intent(this, CcdOnrampAccountsActivity::class.java)
-                intent.putExtras(CcdOnrampAccountsActivity.getBundle(site = site))
-                startActivity(intent)
+            }
+        }
+        viewModel.sessionLoading.collectWhenStarted(this) { isLoading ->
+            showLoading(isLoading)
+        }
+        viewModel.error.collectWhenStarted(this) { error ->
+            if (error != -1) {
+                Toast.makeText(this, getString(error), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    private fun onSiteClicked(site: CcdOnrampSite) {
+        App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name)
+
+        viewModel.onSiteClicked(site)
+    }
+
     private fun openSite(
         site: CcdOnrampSite,
-        accountAddress: String = "",
-        onAccountAddressCopied: () -> Unit = {}
+        copyToClipboard: Boolean
     ) {
-        OpenCcdOnrampSiteWithAccountUseCase(
-            site = site,
-            accountAddress = accountAddress,
-            onAccountAddressCopied = onAccountAddressCopied,
-            context = this
-        ).invoke()
+        if (copyToClipboard) {
+            val clipboardManager: ClipboardManager =
+                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipData = ClipData.newPlainText(
+                getString(R.string.account_details_address),
+                viewModel.accountAddress,
+            )
+            showGradientToast(
+                iconResId = R.drawable.mw24_ic_address_copy_check,
+                title = getString(
+                    R.string.template_ccd_onramp_opening_site,
+                    site.name
+                )
+            )
+            clipboardManager.setPrimaryClip(clipData)
+        }
+
+        openSite(site)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.loading.progressBar.isVisible = isLoading
+    }
+
+    private fun openSite(launchSite: CcdOnrampSite) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(launchSite.url))
+        startActivity(Intent.createChooser(browserIntent, launchSite.name))
     }
 
     companion object {

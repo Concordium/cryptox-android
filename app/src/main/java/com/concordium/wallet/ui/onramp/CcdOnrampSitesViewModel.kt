@@ -5,38 +5,78 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.App
-import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.backend.wert.WertRepository
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
+import com.concordium.wallet.ui.onramp.wert.WertWidgetHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(application) {
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository by lazy(::CcdOnrampSiteRepository)
-    private val accountRepository: AccountRepository by lazy {
-        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-    }
+    private val wertRepository: WertRepository by lazy(::WertRepository)
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
 
-    var accountAddress: String? = null
+    private val _siteToOpen = MutableSharedFlow<Pair<CcdOnrampSite, Boolean>?>()
+    val siteToOpen = _siteToOpen.asSharedFlow()
+
+    private val _sessionLoading = MutableStateFlow(false)
+    val sessionLoading = _sessionLoading.asStateFlow()
+
+    private val _error = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    val error = _error.asSharedFlow()
+
+    lateinit var accountAddress: String
         private set
 
     init {
         postItems()
     }
 
-    fun initialize(accountAddress: String?) {
-        // Use the provided account address or, if none provided,
-        // the only one if there is one account.
-        if (accountAddress != null) {
-            this.accountAddress = accountAddress
-        } else {
-            viewModelScope.launch {
-                val allDoneAccounts = accountRepository.getAllDone()
-                if (allDoneAccounts.size == 1) {
-                    this@CcdOnrampSitesViewModel.accountAddress = allDoneAccounts.first().address
-                }
-            }
+    fun initialize(accountAddress: String) {
+        this.accountAddress = accountAddress
+    }
+
+    private fun openWert(
+        accountAddress: String,
+        site: CcdOnrampSite,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        _sessionLoading.value = true
+        try {
+            val sessionDetails = wertRepository.getWertSessionDetails(accountAddress)
+            _siteToOpen.emit(
+                Pair(
+                    site.copy(url = WertWidgetHelper.getWidgetLink(sessionDetails.sessionId)),
+                    false
+                )
+            )
+        } catch (e: Exception) {
+            _error.emit(BackendErrorHandler.getExceptionStringRes(e))
+        } finally {
+            _sessionLoading.value = false
+        }
+    }
+
+    fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
+        when {
+            site.name == "Wert" -> openWert(accountAddress, site)
+
+            site.name == "Swipelux" -> _siteToOpen.emit(
+                Pair(
+                    site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress)),
+                    false
+                )
+            )
+
+            site.type == CcdOnrampSite.Type.DEX -> _siteToOpen.emit(Pair(site, false))
+
+            else -> _siteToOpen.emit(Pair(site, true))
         }
     }
 
