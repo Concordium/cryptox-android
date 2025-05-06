@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
+import com.concordium.wallet.ui.payandverify.DemoPayAndVerifyActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
@@ -40,6 +41,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_IMPORT_FROM_FILE = "EXTRA_IMPORT_FROM_FILE"
         const val EXTRA_IMPORT_FROM_SEED = "EXTRA_IMPORT_FROM_SEED"
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
+        const val EXTRA_DEMO_PAY_AND_VERIFY_INVOICE_URL = "demo_pay_and_verify_invoice_url"
         const val EXTRA_ACTIVATE_ACCOUNT = "EXTRA_ACTIVATE_ACCOUNT"
         const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
         const val EXTRA_NOTIFICATION_TOKEN_ID = "EXTRA_NOTIFICATION_TOKEN_ID"
@@ -81,6 +83,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
 
         handlePossibleWalletConnectUri(intent)
+        handlePossibleDemoPayAndVerify(intent)
 
         if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
             goToImportFromFile()
@@ -152,6 +155,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
         handleNotificationReceived(newIntent)
         handlePossibleWalletConnectUri(newIntent)
+        handlePossibleDemoPayAndVerify(newIntent)
     }
 
     //endregion
@@ -297,6 +301,21 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
     }
 
+    private fun handlePossibleDemoPayAndVerify(intent: Intent) {
+        val invoiceUrl = intent.getStringExtra(EXTRA_DEMO_PAY_AND_VERIFY_INVOICE_URL)
+            ?.takeIf(String::isNotEmpty)
+            ?: return
+
+        startActivity(
+            Intent(this@MainActivity, DemoPayAndVerifyActivity::class.java)
+                .putExtras(
+                    DemoPayAndVerifyActivity.getBundle(
+                        invoiceUrl = invoiceUrl,
+                    )
+                )
+        )
+    }
+
     private fun goToImportFromFile() {
         val intent = Intent(this, ImportActivity::class.java)
         startActivity(intent)
@@ -304,9 +323,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun goToImportFromSeed() {
         val intent = Intent(this, WelcomeRecoverWalletActivity::class.java)
-        intent.putExtras(WelcomeRecoverWalletActivity.getBundle(
-            showFileOptions = false,
-        ))
+        intent.putExtras(
+            WelcomeRecoverWalletActivity.getBundle(
+                showFileOptions = false,
+            )
+        )
         startActivity(intent)
     }
     //endregion

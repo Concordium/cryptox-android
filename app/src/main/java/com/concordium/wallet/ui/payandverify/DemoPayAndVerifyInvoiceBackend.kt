@@ -3,13 +3,17 @@ package com.concordium.wallet.ui.payandverify
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Url
 
 interface DemoPayAndVerifyInvoiceBackend {
 
     @GET
-    suspend fun getInvoice(): InvoiceResponse
+    suspend fun getInvoice(
+        @Url
+        invoiceUrl: String,
+    ): InvoiceResponse
 
-    @POST("pay")
+    @POST("/pay")
     suspend fun payInvoice(
         @Body
         request: PaymentRequest,

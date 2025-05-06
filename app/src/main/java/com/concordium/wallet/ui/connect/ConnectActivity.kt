@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.connect
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -62,7 +63,11 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
             DEFAULT_WALLET_CONNECT_PREFIX,
             "${getString(R.string.wc_scheme)}:",
         )
-        val supportedPrefixes = walletConnectPrefixes + MARKETPLACE_CONNECT_PREFIX
+        val demoPayAndVerifyPrefix = getString(R.string.scheme) + "://demo_pay_and_verify"
+        val supportedPrefixes =
+            demoPayAndVerifyPrefix +
+                    walletConnectPrefixes +
+                    MARKETPLACE_CONNECT_PREFIX
 
         var isDepLink = false
         val connectUrl: String? =
@@ -72,7 +77,10 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
                 } else {
                     isDepLink = true
                     val urlData = intent?.data
-                    if (urlData != null && urlData.isHierarchical)
+                    if (urlData != null
+                        && urlData.isHierarchical
+                        && urlData.getQueryParameter("uri") != null
+                    )
                     // Case for NFT marketplace.
                         urlData.getQueryParameter("uri")
                     else
@@ -114,6 +122,9 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         when {
             connectUrl.startsWith(MARKETPLACE_CONNECT_PREFIX) ->
                 getBridgeInfo(connectUrl)
+
+            connectUrl.startsWith(demoPayAndVerifyPrefix) ->
+                demoPayAndVerify(connectUrl)
 
             walletConnectPrefixes.any { connectUrl.startsWith(it) } ->
                 connectWc(connectUrl)
@@ -235,7 +246,8 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
                 }
 
                 WsMessageResponse.MESSAGE_TYPE_SIMPLE_TRANSFER,
-                WsMessageResponse.MESSAGE_TYPE_TRANSACTION -> {
+                WsMessageResponse.MESSAGE_TYPE_TRANSACTION,
+                -> {
                     Intent(applicationContext, UniRefActivity::class.java).also {
                         val bundle = Bundle()
                         bundle.putString(
@@ -273,6 +285,16 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
             Intent(this, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .putExtra(MainActivity.EXTRA_WALLET_CONNECT_URI, wcUri)
+        )
+        finish()
+    }
+
+    private fun demoPayAndVerify(connectUrl: String){
+        val invoiceUrl = Uri.parse(connectUrl).getQueryParameter("invoice")
+        startActivity(
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra(MainActivity.EXTRA_DEMO_PAY_AND_VERIFY_INVOICE_URL, invoiceUrl)
         )
         finish()
     }

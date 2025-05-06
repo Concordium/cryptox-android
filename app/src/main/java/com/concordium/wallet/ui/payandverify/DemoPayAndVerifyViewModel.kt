@@ -27,11 +27,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -41,6 +43,7 @@ class DemoPayAndVerifyViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
 
+    private var isInitialized = false
     private lateinit var invoiceUrl: String
     private lateinit var invoiceBackend: DemoPayAndVerifyInvoiceBackend
 
@@ -87,35 +90,42 @@ class DemoPayAndVerifyViewModel(
         }
     }
 
-    fun initialize(
-        accountAddress: String,
+    fun initializeOnce(
         invoiceUrl: String,
     ) {
+        if (isInitialized) {
+            return
+        }
+
         this.invoiceUrl = invoiceUrl
 
         viewModelScope.launch {
             loadInvoice()
 
+            // Select the active account once balances are loaded.
+            val balances = balancesByAccountAddress
+                .filterNotNull()
+                .first()
             _selectedAccount.emit(
                 accountRepository
                     .getAllDoneWithIdentity()
-                    .first { it.account.address == accountAddress }
+                    .first { it.account.isActive }
                     .let { (account, identity) ->
                         DemoPayAndVerifyAccount(
                             account = account,
                             identity = identity,
-                            balance = balancesByAccountAddress.value
-                                ?.get(account.address)
-                                ?: BigInteger.ZERO,
+                            balance = balances[account.address] ?: BigInteger.ZERO,
                         )
                     }
             )
         }
+
+        isInitialized = true
     }
 
     private suspend fun loadInvoice() {
         invoiceBackend = Retrofit.Builder()
-            .baseUrl(invoiceUrl)
+            .baseUrl(invoiceUrl.trimEnd('/') + "/")
             .client(
                 OkHttpClient.Builder()
                     .connectTimeout(30, TimeUnit.SECONDS)
@@ -136,10 +146,13 @@ class DemoPayAndVerifyViewModel(
                     )
                     .build()
             )
+            .addConverterFactory(GsonConverterFactory.create(App.appCore.gson))
             .build()
             .create(DemoPayAndVerifyInvoiceBackend::class.java)
 
-        val response = invoiceBackend.getInvoice()
+        val response = invoiceBackend.getInvoice(
+            invoiceUrl = invoiceUrl,
+        )
         check(response.version == 1)
         check(response.paymentType == "cis2")
 
