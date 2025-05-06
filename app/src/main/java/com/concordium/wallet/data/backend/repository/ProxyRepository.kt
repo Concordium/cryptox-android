@@ -19,9 +19,7 @@ import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.util.Log
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigInteger
 
@@ -113,6 +111,10 @@ class ProxyRepository {
             failure = failure
         )
     }
+
+    suspend fun getAccountNonceSuspended(
+        accountAddress: String,
+    ) = backend.accountNonceSuspended(accountAddress)
 
     fun submitTransfer(
         transfer: CreateTransferOutput,

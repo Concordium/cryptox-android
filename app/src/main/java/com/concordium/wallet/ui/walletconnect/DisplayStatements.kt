@@ -153,16 +153,6 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         return dateToDateString(dateWithDaysAdded)
     }
 
-    /**
-     * Change a date to a string on the form "YYYYMMDD"
-     */
-    private fun dateToDateString(date: LocalDateTime): String {
-        val day = date.dayOfMonth.toString().padStart(2, '0')
-        val month = date.monthValue.toString().padStart(2, '0')
-        val year = date.year.toString()
-        return year + month + day
-    }
-
     private fun isAgeStatement(statement: AtomicStatement): Boolean {
         return when (statement) {
             is RevealStatement -> false
@@ -201,15 +191,6 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
      */
     private fun formatDateString(date: String): String {
         return date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6)
-    }
-
-    /**
-     * returns a date string for the specified years ago with the specified day offset.
-     * @return A string on the form "YYYYMMDD"
-     */
-    private fun getPastDate(yearsAgo: Long, daysOffset: Long = 0): String {
-        val now = LocalDateTime.now().minusYears(yearsAgo).minusDays(daysOffset)
-        return dateToDateString(now)
     }
 
     private fun getRangeStatementValue(rangeStatement: RangeStatement): String {
@@ -320,6 +301,28 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
             }
 
             else -> throw IllegalArgumentException("Unknown statement type")
+        }
+    }
+
+    companion object{
+
+        /**
+         * returns a date string for the specified years ago with the specified day offset.
+         * @return A string on the form "YYYYMMDD"
+         */
+        fun getPastDate(yearsAgo: Long, daysOffset: Long = 0): String {
+            val now = LocalDateTime.now().minusYears(yearsAgo).minusDays(daysOffset)
+            return dateToDateString(now)
+        }
+
+        /**
+         * Change a date to a string on the form "YYYYMMDD"
+         */
+        private fun dateToDateString(date: LocalDateTime): String {
+            val day = date.dayOfMonth.toString().padStart(2, '0')
+            val month = date.monthValue.toString().padStart(2, '0')
+            val year = date.year.toString()
+            return year + month + day
         }
     }
 }

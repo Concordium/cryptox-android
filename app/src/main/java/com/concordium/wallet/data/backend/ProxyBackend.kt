@@ -47,6 +47,9 @@ interface ProxyBackend {
     @GET("v0/accNonce/{accountAddress}")
     fun accountNonce(@Path("accountAddress") accountAddress: String): Call<AccountNonce>
 
+    @GET("v0/accNonce/{accountAddress}")
+    suspend fun accountNonceSuspended(@Path("accountAddress") accountAddress: String): AccountNonce
+
     @PUT("v0/submitTransfer")
     fun submitTransfer(@Body transfer: CreateTransferOutput): Call<SubmissionData>
 
