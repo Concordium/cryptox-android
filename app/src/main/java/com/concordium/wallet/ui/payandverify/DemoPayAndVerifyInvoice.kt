@@ -4,6 +4,7 @@ import java.math.BigInteger
 import java.time.Instant
 
 data class DemoPayAndVerifyInvoice(
+    val storeName: String,
     val paymentDetails: PaymentDetails,
     val minAgeYears: Int,
     val proofRequestJson: String,

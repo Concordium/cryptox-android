@@ -8,13 +8,137 @@
     android:orientation="vertical"
     tools:context=".ui.payandverify.DemoPayAndVerifyActivity">
 
+    <TextView
+        android:id="@+id/reject_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="16dp"
+        android:drawablePadding="12dp"
+        android:gravity="center"
+        android:text="@string/reject_payment"
+        android:textAppearance="@style/MW24_Typography_Text_Mid"
+        android:textColor="@color/mw24_blue_3"
+        app:drawableStartCompat="@drawable/mw24_ic_x_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:fadingEdge="vertical"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/account_container"
+        app:layout_constraintTop_toBottomOf="@id/reject_button">
+
+        <LinearLayout
+            android:id="@+id/invoice_details_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/cryptox_container_stroked_background"
+            android:orientation="vertical"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="18dp">
+
+            <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                android:id="@+id/title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/MW24_Typography_H3"
+                tools:text="@string/template_payment_and_verification_request" />
+
+            <TextView
+                android:id="@+id/amount_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/amount_requested"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/cryptox_white_main"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/amount_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="10 demoUSD" />
+
+            <TextView
+                android:id="@+id/verification_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/verification_requested"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/cryptox_white_main"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/verification_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/cryptox_white_main"
+                tools:text="@string/template_over_years_old" />
+
+            <TextView
+                android:id="@+id/fee_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_grey_4"
+                tools:text="@string/cis_estimated_fee" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/account_errors_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="19dp"
+        android:layout_marginBottom="-48dp"
+        android:background="@drawable/cryptox_container_error_background"
+        android:orientation="vertical"
+        android:paddingHorizontal="18dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="62dp"
+        app:layout_constraintBottom_toTopOf="@id/account_container">
+
+        <TextView
+            android:id="@+id/insufficient_balance_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="2dp"
+            android:text="@string/error_insufficient_balance"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
+            android:textColor="@color/mw24_attention_red" />
+
+        <TextView
+            android:id="@+id/underage_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="2dp"
+            android:text="@string/template_error_underage"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
+            android:textColor="@color/mw24_attention_red" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/account_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/ccx_card_dark_20_background"
+        android:background="@drawable/ccx_card_dark_16_background"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/button_container">
@@ -32,8 +156,10 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/account_arrow_button"
-            android:layout_width="38dp"
-            android:layout_height="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="24dp"
             app:srcCompat="@drawable/cryptox_ico_chevron_right"
             app:tint="@color/cryptox_white_main" />
     </LinearLayout>
@@ -51,12 +177,12 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.concordium.wallet.uicore.button.SliderButton
-            android:id="@+id/submit_baker_transaction"
+            android:id="@+id/verify_and_pay_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/submit_baker_finish"
+            android:id="@+id/close_button"
             style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
             android:text="@string/baker_register_confirmation_receipt_close"

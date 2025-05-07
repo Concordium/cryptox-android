@@ -64,4 +64,9 @@ class SliderButton @JvmOverloads constructor(
     fun setText(buttonText: String) {
         binding.sliderText.text = buttonText
     }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        binding.motionLayout.isInteractionEnabled = enabled
+    }
 }

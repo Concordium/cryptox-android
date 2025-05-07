@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
@@ -72,7 +73,7 @@ class DemoPayAndVerifyViewModel(
     val selectedAccount = _selectedAccount.asStateFlow()
     private val balancesByAccountAddress: MutableStateFlow<Map<String, BigInteger>?> =
         MutableStateFlow(null)
-    private val fee: MutableStateFlow<BigInteger?> = MutableStateFlow(null)
+    val fee: MutableStateFlow<BigInteger?> = MutableStateFlow(null)
     private val nonce: MutableStateFlow<Int?> = MutableStateFlow(null)
 
     val selectedAccountErrors: StateFlow<List<SelectedAccountError>> =
@@ -101,6 +102,30 @@ class DemoPayAndVerifyViewModel(
             }
             .flowOn(Dispatchers.IO)
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    val isLoading: StateFlow<Boolean> =
+        combine(
+            selectedAccount,
+            invoice,
+            fee,
+            nonce,
+            transform = { values ->
+                values.any { it == null }
+            }
+        )
+            .stateIn(viewModelScope, SharingStarted.Lazily, true)
+
+    val canPayAndVerify: StateFlow<Boolean> =
+        combine(
+            selectedAccount.map { it != null },
+            invoice.map { it != null },
+            nonce.map { it != null },
+            selectedAccountErrors.map { it.isEmpty() },
+            transform = { values ->
+                values.all { it }
+            }
+        )
+            .stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     init {
         viewModelScope.launch {
@@ -203,6 +228,7 @@ class DemoPayAndVerifyViewModel(
         check(response.paymentType == "cis2")
 
         val invoice = DemoPayAndVerifyInvoice(
+            storeName = invoiceUrl.toHttpUrl().host,
             minAgeYears = response.minAgeYears,
             proofRequestJson = response.proofRequestJson,
             paymentDetails = DemoPayAndVerifyInvoice.PaymentDetails.Cis2(
