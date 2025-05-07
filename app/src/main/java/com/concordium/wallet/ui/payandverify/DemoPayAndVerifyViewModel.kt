@@ -7,6 +7,8 @@ import com.concordium.sdk.cis2.Cis2Transfer
 import com.concordium.sdk.cis2.SerializationUtils
 import com.concordium.sdk.cis2.TokenAmount
 import com.concordium.sdk.cis2.TokenId
+import com.concordium.sdk.crypto.wallet.web3Id.Statement.IdentityQualifier
+import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.sdk.transactions.Parameter
 import com.concordium.sdk.types.AccountAddress
 import com.concordium.sdk.types.ContractAddress
@@ -17,17 +19,25 @@ import com.concordium.wallet.data.backend.InMemoryCookieJar
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.TransactionCost
+import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.ui.walletconnect.getIdentityObject
 import com.concordium.wallet.util.toHex
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.OkHttpClient
@@ -44,7 +54,6 @@ class DemoPayAndVerifyViewModel(
 ) : AndroidViewModel(application) {
 
     private var isInitialized = false
-    private lateinit var invoiceUrl: String
     private lateinit var invoiceBackend: DemoPayAndVerifyInvoiceBackend
 
     private val accountRepository: AccountRepository by lazy {
@@ -65,6 +74,33 @@ class DemoPayAndVerifyViewModel(
         MutableStateFlow(null)
     private val fee: MutableStateFlow<BigInteger?> = MutableStateFlow(null)
     private val nonce: MutableStateFlow<Int?> = MutableStateFlow(null)
+
+    val selectedAccountErrors: StateFlow<List<SelectedAccountError>> =
+        combine(
+            selectedAccount.filterNotNull(),
+            invoice.filterNotNull(),
+            transform = ::Pair,
+        )
+            .map { (selectedAccount, invoice) ->
+                buildList {
+                    val cis2PaymentDetails =
+                        invoice.paymentDetails as DemoPayAndVerifyInvoice.PaymentDetails.Cis2
+                    if (selectedAccount.balance < cis2PaymentDetails.amount) {
+                        add(SelectedAccountError.InsufficientBalance)
+                    }
+
+                    val unqualifiedRequest = UnqualifiedRequest.fromJson(invoice.proofRequestJson)
+                    if (!isValidIdentityForRequest(selectedAccount.identity, unqualifiedRequest)) {
+                        add(
+                            SelectedAccountError.Underage(
+                                minAgeYears = invoice.minAgeYears,
+                            )
+                        )
+                    }
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {
         viewModelScope.launch {
@@ -88,24 +124,13 @@ class DemoPayAndVerifyViewModel(
                     loadBalances(invoice)
                 }
         }
-    }
 
-    fun initializeOnce(
-        invoiceUrl: String,
-    ) {
-        if (isInitialized) {
-            return
-        }
-
-        this.invoiceUrl = invoiceUrl
-
+        // Select the active account once balances are loaded.
         viewModelScope.launch {
-            loadInvoice()
-
-            // Select the active account once balances are loaded.
             val balances = balancesByAccountAddress
                 .filterNotNull()
                 .first()
+
             _selectedAccount.emit(
                 accountRepository
                     .getAllDoneWithIdentity()
@@ -119,11 +144,25 @@ class DemoPayAndVerifyViewModel(
                     }
             )
         }
+    }
+
+    fun initializeOnce(
+        invoiceUrl: String,
+    ) {
+        if (isInitialized) {
+            return
+        }
+
+        viewModelScope.launch {
+            loadInvoice(invoiceUrl)
+        }
 
         isInitialized = true
     }
 
-    private suspend fun loadInvoice() {
+    private suspend fun loadInvoice(
+        invoiceUrl: String,
+    ) {
         invoiceBackend = Retrofit.Builder()
             .baseUrl(invoiceUrl.trimEnd('/') + "/")
             .client(
@@ -261,5 +300,26 @@ class DemoPayAndVerifyViewModel(
             byteArrayOf(),
         )
         return SerializationUtils.serializeTransfers(listOf(transfer))
+    }
+
+    private fun isValidIdentityForRequest(
+        identity: Identity,
+        request: UnqualifiedRequest,
+    ): Boolean {
+        val identityObject = getIdentityObject(identity)
+        return request.credentialStatements.all { statement ->
+            statement.idQualifier is IdentityQualifier
+                    && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
+                    && statement.canBeProvedBy(identityObject)
+        }
+    }
+
+    sealed interface SelectedAccountError {
+
+        object InsufficientBalance : SelectedAccountError
+
+        class Underage(
+            val minAgeYears: Int,
+        ) : SelectedAccountError
     }
 }
