@@ -1,11 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.payandverify.DemoPayAndVerifyActivity">
+
+    <LinearLayout
+        android:id="@+id/account_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/ccx_card_dark_20_background"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/button_container">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <include
+                android:id="@+id/account_view"
+                layout="@layout/view_demo_pay_and_verify_account"
+                app:layout_constraintEnd_toStartOf="@id/account_arrow_button" />
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/account_arrow_button"
+            android:layout_width="38dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/cryptox_ico_chevron_right"
+            app:tint="@color/cryptox_white_main" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginVertical="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.concordium.wallet.uicore.button.SliderButton
+            android:id="@+id/submit_baker_transaction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/submit_baker_finish"
+            style="@style/MW24_Button_Primary"
+            android:layout_width="match_parent"
+            android:text="@string/baker_register_confirmation_receipt_close"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <include
         android:id="@+id/loading"

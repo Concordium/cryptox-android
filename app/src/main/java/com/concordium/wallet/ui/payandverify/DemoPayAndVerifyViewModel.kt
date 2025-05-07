@@ -130,6 +130,11 @@ class DemoPayAndVerifyViewModel(
             val balances = balancesByAccountAddress
                 .filterNotNull()
                 .first()
+            val invoice = invoice
+                .filterNotNull()
+                .first()
+            val cis2PaymentDetails =
+                invoice.paymentDetails as DemoPayAndVerifyInvoice.PaymentDetails.Cis2
 
             _selectedAccount.emit(
                 accountRepository
@@ -140,6 +145,8 @@ class DemoPayAndVerifyViewModel(
                             account = account,
                             identity = identity,
                             balance = balances[account.address] ?: BigInteger.ZERO,
+                            tokenSymbol = cis2PaymentDetails.tokenSymbol,
+                            tokenDecimals = cis2PaymentDetails.tokenDecimals,
                         )
                     }
             )

@@ -8,17 +8,6 @@ class DemoPayAndVerifyAccount(
     val account: Account,
     val identity: Identity,
     val balance: BigInteger,
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DemoPayAndVerifyAccount) return false
-
-        if (account.address != other.account.address) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return account.address.hashCode()
-    }
-}
+    val tokenSymbol: String,
+    val tokenDecimals: Int,
+)
