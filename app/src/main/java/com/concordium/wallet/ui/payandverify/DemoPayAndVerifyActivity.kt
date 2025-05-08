@@ -14,6 +14,8 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDemoPayAndVerifyBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.util.ImageUtil
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -21,9 +23,10 @@ import kotlinx.coroutines.flow.map
 class DemoPayAndVerifyActivity : BaseActivity(
     R.layout.activity_demo_pay_and_verify,
     R.string.pay_and_verify_title,
-) {
+), AuthDelegate by AuthDelegateImpl() {
+
     private val binding: ActivityDemoPayAndVerifyBinding by lazy {
-        ActivityDemoPayAndVerifyBinding.bind(findViewById(R.id.root_layout))
+        ActivityDemoPayAndVerifyBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
     private val viewModel: DemoPayAndVerifyViewModel by lazy {
         ViewModelProvider(
@@ -45,6 +48,8 @@ class DemoPayAndVerifyActivity : BaseActivity(
         initVerifyAndPayButton()
         initInvoiceDetails()
         initAccountSelection()
+
+        subscribeToEvents()
     }
 
     private fun initLoading() {
@@ -79,6 +84,10 @@ class DemoPayAndVerifyActivity : BaseActivity(
         }
 
         binding.verifyAndPayButton.setText(getString(R.string.verify_and_pay))
+
+        binding.verifyAndPayButton.setOnSliderCompleteListener(
+            viewModel::onVerifyAndPayClicked
+        )
     }
 
     private fun initInvoiceDetails() {
@@ -121,7 +130,7 @@ class DemoPayAndVerifyActivity : BaseActivity(
             binding.feeTextView.isVisible = true
             binding.feeTextView.text = getString(
                 R.string.cis_estimated_fee,
-                CurrencyUtil.formatGTU(fee)
+                CurrencyUtil.formatGTU(fee.cost)
             )
         }
     }
@@ -211,6 +220,21 @@ class DemoPayAndVerifyActivity : BaseActivity(
                     binding.accountArrowButton.imageTintList = ColorStateList.valueOf(blackColor)
                 }
             }
+    }
+
+    private fun subscribeToEvents(
+    ) = viewModel.events.collectWhenStarted(this) { event ->
+
+        when (event) {
+            DemoPayAndVerifyViewModel.Event.Authenticate ->
+                showAuthentication(
+                    activity = this,
+                    onAuthenticated = viewModel::onAuthenticated,
+                )
+
+            is DemoPayAndVerifyViewModel.Event.ShowFloatingError ->
+                showError(event.message)
+        }
     }
 
     companion object {

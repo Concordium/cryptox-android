@@ -13,11 +13,11 @@ interface DemoPayAndVerifyInvoiceBackend {
         invoiceUrl: String,
     ): InvoiceResponse
 
-    @POST("/pay")
+    @POST("pay")
     suspend fun payInvoice(
         @Body
         request: PaymentRequest,
-    ): Any
+    )
 
     class InvoiceResponse(
         val version: Int = 1,
