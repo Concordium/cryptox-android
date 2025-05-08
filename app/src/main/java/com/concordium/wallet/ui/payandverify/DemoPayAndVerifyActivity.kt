@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityDemoPayAndVerifyBinding
@@ -18,6 +20,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.util.ImageUtil
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -63,8 +66,12 @@ class DemoPayAndVerifyActivity : BaseActivity(
 
     private fun initRejectButton() {
 
-        viewModel.invoice.collectWhenStarted(this) { invoice ->
-            binding.rejectButton.isVisible = invoice != null
+        combine(
+            viewModel.invoice,
+            viewModel.paymentStatus,
+            transform = ::Pair,
+        ).collectWhenStarted(this) { (invoice, paymentResult) ->
+            binding.rejectButton.isInvisible = invoice == null || paymentResult != null
         }
 
         binding.rejectButton.setOnClickListener {
@@ -89,11 +96,54 @@ class DemoPayAndVerifyActivity : BaseActivity(
         binding.verifyAndPayButton.setOnSliderCompleteListener(
             viewModel::onVerifyAndPayClicked
         )
+
+        binding.closeButton.setOnClickListener {
+            finish()
+        }
+
+        viewModel.paymentStatus.collectWhenStarted(this) { paymentResult ->
+            binding.verifyAndPayButton.isVisible = paymentResult == null
+            binding.closeButton.isVisible = paymentResult != null
+        }
     }
 
     private fun initInvoiceDetails() {
 
-        viewModel.invoice.collectWhenStarted(this) { invoice ->
+        viewModel.paymentStatus.collectWhenStarted(this) { paymentResult ->
+            if (paymentResult == null) {
+                binding.transactionAnimation.isVisible = false
+                binding.animationDivider.isVisible = false
+                return@collectWhenStarted
+            }
+
+            binding.transactionAnimation.isVisible = true
+            binding.animationDivider.isVisible = true
+
+            when (paymentResult) {
+                is DemoPayAndVerifyViewModel.PaymentStatus.Failure -> {
+                    binding.transactionAnimation.setAnimation(R.raw.transaction_fail)
+                    binding.transactionAnimation.repeatCount = 0
+                }
+
+                is DemoPayAndVerifyViewModel.PaymentStatus.Success -> {
+                    binding.transactionAnimation.setAnimation(R.raw.transaction_success)
+                    binding.transactionAnimation.repeatCount = 0
+                }
+
+                DemoPayAndVerifyViewModel.PaymentStatus.Sending -> {
+                    binding.transactionAnimation.setAnimation(R.raw.transaction_loading)
+                    binding.transactionAnimation.repeatCount = LottieDrawable.INFINITE
+                }
+            }
+            binding.transactionAnimation.playAnimation()
+        }
+
+        combine(
+            viewModel.invoice,
+            viewModel.paymentStatus,
+            transform = ::Pair,
+        ).collectWhenStarted(this)
+        { (invoice, paymentResult) ->
             if (invoice == null) {
                 binding.invoiceDetailsCard.isVisible = false
                 return@collectWhenStarted
@@ -104,10 +154,33 @@ class DemoPayAndVerifyActivity : BaseActivity(
 
             binding.invoiceDetailsCard.isVisible = true
 
-            binding.titleTextView.text = getString(
-                R.string.template_payment_and_verification_request,
-                invoice.storeName,
-            )
+            binding.titleTextView.text = when (paymentResult) {
+                is DemoPayAndVerifyViewModel.PaymentStatus.Failure ->
+                    getString(
+                        R.string.template_failed_payment_and_verification_request,
+                        invoice.storeName,
+                    )
+
+                is DemoPayAndVerifyViewModel.PaymentStatus.Success ->
+                    getString(
+                        R.string.template_successful_payment_and_verification_request,
+                        invoice.storeName,
+                    )
+
+                else ->
+                    getString(
+                        R.string.template_payment_and_verification_request,
+                        invoice.storeName,
+                    )
+            }
+
+            binding.amountTitleTextView.text = when (paymentResult) {
+                is DemoPayAndVerifyViewModel.PaymentStatus.Success ->
+                    getString(R.string.amount_paid)
+
+                else ->
+                    getString(R.string.amount_requested)
+            }
 
             @SuppressLint("SetTextI18n")
             binding.amountTextView.text =
@@ -115,6 +188,14 @@ class DemoPayAndVerifyActivity : BaseActivity(
                     value = cis2PaymentDetails.amount,
                     decimals = cis2PaymentDetails.tokenDecimals,
                 ) + " " + cis2PaymentDetails.tokenSymbol
+
+            binding.verificationTitleTextView.text = when (paymentResult) {
+                is DemoPayAndVerifyViewModel.PaymentStatus.Success ->
+                    getString(R.string.verification_performed)
+
+                else ->
+                    getString(R.string.verification_requested)
+            }
 
             binding.verificationTextView.text = getString(
                 R.string.template_over_years_old,
@@ -138,8 +219,12 @@ class DemoPayAndVerifyActivity : BaseActivity(
 
     private fun initAccountSelection() {
 
-        viewModel.selectedAccount.collectWhenStarted(this) { selectedAccount ->
-            if (selectedAccount == null) {
+        combine(
+            viewModel.selectedAccount,
+            viewModel.paymentStatus,
+            transform = ::Pair
+        ).collectWhenStarted(this) { (selectedAccount, paymentStatus) ->
+            if (selectedAccount == null || paymentStatus != null) {
                 binding.accountContainer.isVisible = false
                 return@collectWhenStarted
             }

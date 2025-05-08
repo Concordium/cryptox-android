@@ -110,9 +110,8 @@ class DemoPayAndVerifyViewModel(
     private val globalParams: MutableStateFlow<GlobalParams?> = MutableStateFlow(null)
     private val _events: MutableSharedFlow<Event> = MutableSharedFlow(extraBufferCapacity = 10)
     val events = _events.asSharedFlow()
-    private val isSubmittingPayment: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _paymentResult: MutableStateFlow<PaymentResult?> = MutableStateFlow(null)
-    val paymentResult = _paymentResult.asStateFlow()
+    private val _paymentStatus: MutableStateFlow<PaymentStatus?> = MutableStateFlow(null)
+    val paymentStatus = _paymentStatus.asStateFlow()
 
     val selectedAccountErrors: StateFlow<List<SelectedAccountError>> =
         combine(
@@ -148,7 +147,6 @@ class DemoPayAndVerifyViewModel(
             fee.map { it == null },
             nonce.map { it == null },
             globalParams.map { it == null },
-            isSubmittingPayment,
             transform = { values ->
                 values.any { it }
             },
@@ -163,8 +161,7 @@ class DemoPayAndVerifyViewModel(
             nonce.map { it != null },
             globalParams.map { it != null },
             selectedAccountErrors.map { it.isEmpty() },
-            isSubmittingPayment.map { !it },
-            paymentResult.map { it == null },
+            paymentStatus.map { it == null },
             transform = { values ->
                 values.all { it }
             }
@@ -445,7 +442,7 @@ class DemoPayAndVerifyViewModel(
     private suspend fun payAndVerify(
         password: String,
     ) = try {
-        isSubmittingPayment.emit(true)
+        _paymentStatus.emit(PaymentStatus.Sending)
 
         val account = selectedAccount.value!!.account
         val identity = selectedAccount.value!!.identity
@@ -491,8 +488,8 @@ class DemoPayAndVerifyViewModel(
                 )
             )
 
-        _paymentResult.emit(
-            PaymentResult.Success(
+        _paymentStatus.emit(
+            PaymentStatus.Success(
                 transactionHash = paymentTransactionHash,
             )
         )
@@ -501,8 +498,8 @@ class DemoPayAndVerifyViewModel(
     } catch (httpException: HttpException) {
         httpException.printStackTrace()
 
-        _paymentResult.emit(
-            PaymentResult.Failure(
+        _paymentStatus.emit(
+            PaymentStatus.Failure(
                 reason = httpException
                     .response()
                     ?.errorBody()
@@ -516,13 +513,11 @@ class DemoPayAndVerifyViewModel(
     } catch (e: Exception) {
         e.printStackTrace()
 
-        _paymentResult.emit(
-            PaymentResult.Failure(
+        _paymentStatus.emit(
+            PaymentStatus.Failure(
                 reason = e.message ?: e.toString(),
             )
         )
-    } finally {
-        isSubmittingPayment.tryEmit(false)
     }
 
     private fun getPaymentTransaction(
@@ -681,15 +676,17 @@ class DemoPayAndVerifyViewModel(
         ) : SelectedAccountError
     }
 
-    sealed interface PaymentResult {
+    sealed interface PaymentStatus {
+
+        object Sending : PaymentStatus
 
         class Failure(
             val reason: String,
-        ) : PaymentResult
+        ) : PaymentStatus
 
         class Success(
             val transactionHash: String,
-        ) : PaymentResult
+        ) : PaymentStatus
     }
 
     sealed interface Event {
