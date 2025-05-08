@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
@@ -234,6 +235,12 @@ class DemoPayAndVerifyActivity : BaseActivity(
 
             is DemoPayAndVerifyViewModel.Event.ShowFloatingError ->
                 showError(event.message)
+
+            is DemoPayAndVerifyViewModel.Event.FinishWithError -> {
+                Toast.makeText(this, event.message, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
         }
     }
 

@@ -47,9 +47,11 @@ import com.google.gson.JsonObject
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
 import com.reown.util.hexToBytes
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -73,6 +75,7 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.math.BigInteger
+import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -108,6 +111,8 @@ class DemoPayAndVerifyViewModel(
     private val _events: MutableSharedFlow<Event> = MutableSharedFlow(extraBufferCapacity = 10)
     val events = _events.asSharedFlow()
     private val isSubmittingPayment: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _paymentResult: MutableStateFlow<PaymentResult?> = MutableStateFlow(null)
+    val paymentResult = _paymentResult.asStateFlow()
 
     val selectedAccountErrors: StateFlow<List<SelectedAccountError>> =
         combine(
@@ -159,6 +164,7 @@ class DemoPayAndVerifyViewModel(
             globalParams.map { it != null },
             selectedAccountErrors.map { it.isEmpty() },
             isSubmittingPayment.map { !it },
+            paymentResult.map { it == null },
             transform = { values ->
                 values.all { it }
             }
@@ -240,53 +246,90 @@ class DemoPayAndVerifyViewModel(
     private suspend fun loadInvoice(
         invoiceUrl: String,
     ) {
-        invoiceBackend = Retrofit.Builder()
-            .baseUrl(invoiceUrl.trimEnd('/') + "/")
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .cache(null)
-                    .cookieJar(InMemoryCookieJar())
-                    .addInterceptor(ModifyHeaderInterceptor())
-                    .addInterceptor(
-                        LoggingInterceptor.Builder()
-                            .setLevel(Level.BASIC)
-                            .log(Platform.INFO)
-                            .request("Request")
-                            .response("Response")
-                            .addHeader("Accept", "application/json")
-                            .addHeader("Content-Type", "application/json")
+        do {
+            try {
+                invoiceBackend = Retrofit.Builder()
+                    .baseUrl(invoiceUrl.trimEnd('/') + "/")
+                    .client(
+                        OkHttpClient.Builder()
+                            .connectTimeout(30, TimeUnit.SECONDS)
+                            .readTimeout(30, TimeUnit.SECONDS)
+                            .writeTimeout(30, TimeUnit.SECONDS)
+                            .cache(null)
+                            .cookieJar(InMemoryCookieJar())
+                            .addInterceptor(ModifyHeaderInterceptor())
+                            .addInterceptor(
+                                LoggingInterceptor.Builder()
+                                    .setLevel(Level.BASIC)
+                                    .log(Platform.INFO)
+                                    .request("Request")
+                                    .response("Response")
+                                    .addHeader("Accept", "application/json")
+                                    .addHeader("Content-Type", "application/json")
+                                    .build()
+                            )
                             .build()
                     )
+                    .addConverterFactory(GsonConverterFactory.create(App.appCore.gson))
                     .build()
-            )
-            .addConverterFactory(GsonConverterFactory.create(App.appCore.gson))
-            .build()
-            .create(DemoPayAndVerifyInvoiceBackend::class.java)
+                    .create(DemoPayAndVerifyInvoiceBackend::class.java)
 
-        val response = invoiceBackend.getInvoice(
-            invoiceUrl = invoiceUrl,
-        )
-        check(response.version == 1)
-        check(response.paymentType == "cis2")
+                val response = invoiceBackend.getInvoice(
+                    invoiceUrl = invoiceUrl,
+                )
 
-        val invoice = DemoPayAndVerifyInvoice(
-            storeName = invoiceUrl.toHttpUrl().host,
-            minAgeYears = response.minAgeYears,
-            proofRequestJson = response.proofRequestJson,
-            paymentDetails = DemoPayAndVerifyInvoice.PaymentDetails.Cis2(
-                amount = response.cis2Amount!!.toBigInteger(),
-                tokenContractIndex = response.cis2TokenContractIndex!!,
-                tokenSymbol = response.cis2TokenSymbol!!,
-                tokenDecimals = response.cis2TokenDecimals!!,
-                tokenContractName = response.cis2TokenContractName!!,
-                recipientAccountAddress = response.cis2RecipientAccountAddress!!,
-            )
-        )
+                check(response.version == 1) {
+                    "Only V1 invoices are supported"
+                }
+                check(response.paymentType == "cis2") {
+                    "Only CIS-2 invoices are supported"
+                }
+                check(response.status == "pending") {
+                    "The invoice is outdated"
+                }
 
-        _invoice.emit(invoice)
+                val invoice = DemoPayAndVerifyInvoice(
+                    storeName = invoiceUrl.toHttpUrl().host,
+                    minAgeYears = response.minAgeYears,
+                    proofRequestJson = response.proofRequestJson,
+                    paymentDetails = DemoPayAndVerifyInvoice.PaymentDetails.Cis2(
+                        amount = response.cis2Amount!!.toBigInteger(),
+                        tokenContractIndex = response.cis2TokenContractIndex!!,
+                        tokenSymbol = response.cis2TokenSymbol!!,
+                        tokenDecimals = response.cis2TokenDecimals!!,
+                        tokenContractName = response.cis2TokenContractName!!,
+                        recipientAccountAddress = response.cis2RecipientAccountAddress!!,
+                    )
+                )
+
+                _invoice.emit(invoice)
+            } catch (e: HttpException) {
+                e.printStackTrace()
+
+                if (e.code() == HttpURLConnection.HTTP_NOT_FOUND) {
+                    _events.emit(
+                        Event.FinishWithError(
+                            message = "The link is outdated"
+                        )
+                    )
+                    return
+                }
+            } catch (e: IllegalStateException) {
+                if (e is CancellationException) {
+                    return
+                }
+
+                _events.emit(
+                    Event.FinishWithError(
+                        message = "Invalid invoice: ${e.message ?: e}"
+                    )
+                )
+                return
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            delay(2000)
+        } while (_invoice.value == null)
     }
 
     private suspend fun loadBalances(
@@ -295,24 +338,38 @@ class DemoPayAndVerifyViewModel(
         val cis2PaymentDetails =
             invoice.paymentDetails as DemoPayAndVerifyInvoice.PaymentDetails.Cis2
 
-        balancesByAccountAddress.emit(
-            accountRepository
-                .getAllDone()
-                .map { account ->
-                    viewModelScope.async {
-                        val balances = proxyRepository.getCIS2TokenBalanceV1(
-                            index = cis2PaymentDetails.tokenContractIndex.toString(),
-                            subIndex = "0",
-                            accountAddress = account.address,
-                            tokenIds = ""
-                        )
+        var loaded = false
 
-                        account.address to balances[0].balance.toBigInteger()
-                    }
+        do {
+            try {
+                balancesByAccountAddress.emit(
+                    accountRepository
+                        .getAllDone()
+                        .map { account ->
+                            viewModelScope.async {
+                                val balances = proxyRepository.getCIS2TokenBalanceV1(
+                                    index = cis2PaymentDetails.tokenContractIndex.toString(),
+                                    subIndex = "0",
+                                    accountAddress = account.address,
+                                    tokenIds = ""
+                                )
+
+                                account.address to balances[0].balance.toBigInteger()
+                            }
+                        }
+                        .awaitAll()
+                        .toMap()
+                )
+                loaded = true
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    return
                 }
-                .awaitAll()
-                .toMap()
-        )
+
+                e.printStackTrace()
+            }
+            delay(2000)
+        } while (!loaded)
     }
 
     private suspend fun loadPaymentTransactionData(
@@ -322,31 +379,54 @@ class DemoPayAndVerifyViewModel(
         nonce.emit(null)
         fee.emit(null)
 
-        awaitAll(
-            viewModelScope.async {
-                nonce.emit(
-                    proxyRepository
-                        .getAccountNonceSuspended(
-                            accountAddress = senderAccountAddress,
+        do {
+            try {
+                awaitAll(
+                    viewModelScope.async {
+                        nonce.emit(
+                            proxyRepository
+                                .getAccountNonceSuspended(
+                                    accountAddress = senderAccountAddress,
+                                )
+                                .nonce
                         )
-                        .nonce
+                    },
+                    viewModelScope.async {
+                        fee.emit(
+                            getTransactionCost(
+                                senderAccountAddress = senderAccountAddress,
+                                cis2PaymentDetails = cis2PaymentDetails,
+                            )
+                        )
+                    }
                 )
-            },
-            viewModelScope.async {
-                fee.emit(
-                    getTransactionCost(
-                        senderAccountAddress = senderAccountAddress,
-                        cis2PaymentDetails = cis2PaymentDetails,
-                    )
-                )
+                delay(2000)
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    return
+                }
+
+                e.printStackTrace()
             }
-        )
+        } while (nonce.value == null || fee.value == null)
     }
 
     private suspend fun loadProofData(
     ) {
         globalParams.emit(null)
-        globalParams.emit(getGlobalParams())
+
+        do {
+            try {
+                globalParams.emit(getGlobalParams())
+                delay(2000)
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    return
+                }
+
+                e.printStackTrace()
+            }
+        } while (globalParams.value == null)
     }
 
     fun onVerifyAndPayClicked() {
@@ -357,44 +437,16 @@ class DemoPayAndVerifyViewModel(
 
     fun onAuthenticated(
         password: String,
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                payAndVerify(
-                    password = password,
-                )
-            } catch (httpException: HttpException) {
-                httpException.printStackTrace()
+    ) = viewModelScope.launch(Dispatchers.IO) {
 
-                val title = httpException
-                    .response()
-                    ?.errorBody()
-                    ?.string()
-                    ?.let { App.appCore.gson.fromJson(it, JsonObject::class.java) }
-                    ?.get("title")
-                    ?.asString
-                    ?.let { "Request failed: $it" }
-
-                _events.emit(
-                    Event.ShowFloatingError(
-                        message = title ?: httpException.toString(),
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-
-                _events.emit(
-                    Event.ShowFloatingError(
-                        message = e.message ?: e.toString(),
-                    )
-                )
-            }
-        }
+        payAndVerify(password)
     }
 
     private suspend fun payAndVerify(
         password: String,
-    ) {
+    ) = try {
+        isSubmittingPayment.emit(true)
+
         val account = selectedAccount.value!!.account
         val identity = selectedAccount.value!!.identity
 
@@ -420,10 +472,12 @@ class DemoPayAndVerifyViewModel(
                     .getSignerEntry(),
             )
 
+        val paymentTransactionHash = paymentTransaction.hash.asHex()
+
         val proofJson = getProof(
             identity = identity,
             account = account,
-            paymentTransactionHash = paymentTransaction.hash.asHex(),
+            paymentTransactionHash = paymentTransactionHash,
             attributeRandomness = storageAccountData
                 .getAttributeRandomness()
                 ?: error("Missing account attribute randomness")
@@ -436,6 +490,39 @@ class DemoPayAndVerifyViewModel(
                     paymentTransactionHex = paymentTransaction.versionedBytes.toHex(),
                 )
             )
+
+        _paymentResult.emit(
+            PaymentResult.Success(
+                transactionHash = paymentTransactionHash,
+            )
+        )
+    } catch (_: CancellationException) {
+        // Ok.
+    } catch (httpException: HttpException) {
+        httpException.printStackTrace()
+
+        _paymentResult.emit(
+            PaymentResult.Failure(
+                reason = httpException
+                    .response()
+                    ?.errorBody()
+                    ?.string()
+                    ?.let { App.appCore.gson.fromJson(it, JsonObject::class.java) }
+                    ?.get("title")
+                    ?.asString
+                    ?: httpException.message()
+            )
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+
+        _paymentResult.emit(
+            PaymentResult.Failure(
+                reason = e.message ?: e.toString(),
+            )
+        )
+    } finally {
+        isSubmittingPayment.tryEmit(false)
     }
 
     private fun getPaymentTransaction(
@@ -594,11 +681,26 @@ class DemoPayAndVerifyViewModel(
         ) : SelectedAccountError
     }
 
+    sealed interface PaymentResult {
+
+        class Failure(
+            val reason: String,
+        ) : PaymentResult
+
+        class Success(
+            val transactionHash: String,
+        ) : PaymentResult
+    }
+
     sealed interface Event {
 
         object Authenticate : Event
 
         class ShowFloatingError(
+            val message: String,
+        ) : Event
+
+        class FinishWithError(
             val message: String,
         ) : Event
     }
