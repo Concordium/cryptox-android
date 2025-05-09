@@ -20,7 +20,7 @@ class DemoPayAndVerifyAccountListItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
             itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.view_demo_pay_and_verify_account, parent, false),
+                .inflate(R.layout.list_item_demo_pay_and_verify_account, parent, false),
         )
 
     override fun getItemCount(): Int =
@@ -67,6 +67,8 @@ class DemoPayAndVerifyAccountListItemAdapter(
     class ViewHolder(
         itemView: View,
     ) : RecyclerView.ViewHolder(itemView) {
-        val binding = ViewDemoPayAndVerifyAccountBinding.bind(itemView)
+        val binding = ViewDemoPayAndVerifyAccountBinding.bind(
+            itemView.findViewById(R.id.account_view)
+        )
     }
 }
