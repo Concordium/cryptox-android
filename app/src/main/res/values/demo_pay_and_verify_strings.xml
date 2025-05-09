@@ -13,6 +13,7 @@
     <string name="template_over_years_old">Over %1$d years old</string>
     <string name="verify_and_pay">Verify and pay</string>
     <string name="error_insufficient_balance">• Insufficient balance</string>
+    <string name="error_insufficient_ccd_balance">• Insufficient CCD balance</string>
     <string name="template_error_underage">• Not over %1$d</string>
     <string name="pay_and_verify_accounts_title">Your accounts</string>
 </resources>

@@ -292,6 +292,10 @@ class DemoPayAndVerifyActivity : BaseActivity(
                         binding.insufficientBalanceTextView.isVisible = true
                     }
 
+                    DemoPayAndVerifyViewModel.SelectedAccountError.InsufficientCcd -> {
+                        binding.insufficientCcdTextView.isVisible = true
+                    }
+
                     is DemoPayAndVerifyViewModel.SelectedAccountError.Underage -> {
                         binding.underageTextView.isVisible = true
                         binding.underageTextView.text = getString(

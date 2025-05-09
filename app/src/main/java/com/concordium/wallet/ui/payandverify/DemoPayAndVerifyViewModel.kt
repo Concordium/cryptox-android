@@ -115,9 +115,10 @@ class DemoPayAndVerifyViewModel(
         combine(
             selectedAccount.filterNotNull(),
             invoice.filterNotNull(),
-            transform = ::Pair,
+            fee.filterNotNull(),
+            transform = ::Triple,
         )
-            .map { (selectedAccount, invoice) ->
+            .map { (selectedAccount, invoice, fee) ->
                 buildList {
                     val cis2PaymentDetails =
                         invoice.paymentDetails as DemoPayAndVerifyInvoice.PaymentDetails.Cis2
@@ -132,6 +133,10 @@ class DemoPayAndVerifyViewModel(
                                 minAgeYears = invoice.minAgeYears,
                             )
                         )
+                    }
+
+                    if (fee.cost > selectedAccount.account.balanceAtDisposal) {
+                        add(SelectedAccountError.InsufficientCcd)
                     }
                 }
             }
@@ -369,13 +374,13 @@ class DemoPayAndVerifyViewModel(
                         )
                     }
                 )
-                delay(2000)
             } catch (e: Exception) {
                 if (e is CancellationException) {
                     return
                 }
 
                 e.printStackTrace()
+                delay(2000)
             }
         } while (nonce.value == null || fee.value == null)
     }
@@ -387,13 +392,13 @@ class DemoPayAndVerifyViewModel(
         do {
             try {
                 globalParams.emit(getGlobalParams())
-                delay(2000)
             } catch (e: Exception) {
                 if (e is CancellationException) {
                     return
                 }
 
                 e.printStackTrace()
+                delay(2000)
             }
         } while (globalParams.value == null)
     }
@@ -407,6 +412,7 @@ class DemoPayAndVerifyViewModel(
     fun onAccountSelected(
         newSelectedAccount: DemoPayAndVerifyAccount,
     ) = viewModelScope.launch {
+
         _selectedAccount.emit(newSelectedAccount)
     }
 
@@ -648,6 +654,8 @@ class DemoPayAndVerifyViewModel(
     sealed interface SelectedAccountError {
 
         object InsufficientBalance : SelectedAccountError
+
+        object InsufficientCcd : SelectedAccountError
 
         class Underage(
             val minAgeYears: Int,

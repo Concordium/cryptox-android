@@ -87,23 +87,25 @@ class DemoPayAndVerifyAccountsViewModel(
                 _accountItemList.emit(
                     accountsAndIdentities.map { (account, identity) ->
 
+                        val balance = balances[account.address] ?: BigInteger.ZERO
                         DemoPayAndVerifyAccountListItem(
                             account = DemoPayAndVerifyAccount(
                                 account = account,
                                 identity = identity,
-                                balance = balances[account.address] ?: BigInteger.ZERO,
+                                balance = balance,
                                 tokenSymbol = cis2PaymentDetails.tokenSymbol,
                                 tokenDecimals = cis2PaymentDetails.tokenDecimals,
                             ),
                             isSelected = selectedAccountAddress == account.address,
-                            isValid = isValidIdentityForRequest(
-                                identity = identity,
-                                request = unqualifiedRequest,
-                            )
+                            isValid = balance >= cis2PaymentDetails.amount &&
+                                    isValidIdentityForRequest(
+                                        identity = identity,
+                                        request = unqualifiedRequest,
+                                    )
                         )
                     }
                 )
-            }  catch (e: Exception) {
+            } catch (e: Exception) {
                 if (e is CancellationException) {
                     return
                 }

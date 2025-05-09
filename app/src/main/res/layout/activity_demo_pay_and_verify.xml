@@ -148,6 +148,15 @@
             android:textColor="@color/mw24_attention_red" />
 
         <TextView
+            android:id="@+id/insufficient_ccd_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="2dp"
+            android:text="@string/error_insufficient_ccd_balance"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
+            android:textColor="@color/mw24_attention_red" />
+
+        <TextView
             android:id="@+id/underage_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
