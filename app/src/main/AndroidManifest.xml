@@ -605,6 +605,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />
+        <activity
+            android:name=".ui.payandverify.DemoPayAndVerifyAccountsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen" />
     </application>
 
 </manifest>

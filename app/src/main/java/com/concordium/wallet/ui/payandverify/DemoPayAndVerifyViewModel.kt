@@ -103,8 +103,6 @@ class DemoPayAndVerifyViewModel(
     private val _selectedAccount: MutableStateFlow<DemoPayAndVerifyAccount?> =
         MutableStateFlow(null)
     val selectedAccount = _selectedAccount.asStateFlow()
-    private val balancesByAccountAddress: MutableStateFlow<Map<String, BigInteger>?> =
-        MutableStateFlow(null)
     val fee: MutableStateFlow<TransactionCost?> = MutableStateFlow(null)
     private val nonce: MutableStateFlow<Int?> = MutableStateFlow(null)
     private val globalParams: MutableStateFlow<GlobalParams?> = MutableStateFlow(null)
@@ -190,38 +188,52 @@ class DemoPayAndVerifyViewModel(
                 }
         }
 
+        // Select active account upon invoice loading.
         viewModelScope.launch {
-            _invoice
+            val invoice = _invoice
                 .filterNotNull()
-                .collectLatest { invoice ->
-                    loadBalances(invoice)
-                }
-        }
+                .first()
 
-        // Select the active account once balances are loaded.
-        viewModelScope.launch {
-            val balances = balancesByAccountAddress
-                .filterNotNull()
-                .first()
-            val invoice = invoice
-                .filterNotNull()
-                .first()
+            // Only if nothing is already selected.
+            if (selectedAccount.value != null) {
+                return@launch
+            }
+
             val cis2PaymentDetails =
                 invoice.paymentDetails as DemoPayAndVerifyInvoice.PaymentDetails.Cis2
 
-            _selectedAccount.emit(
-                accountRepository
-                    .getAllDoneWithIdentity()
-                    .first { it.account.isActive }
-                    .let { (account, identity) ->
-                        DemoPayAndVerifyAccount(
-                            account = account,
-                            identity = identity,
-                            balance = balances[account.address] ?: BigInteger.ZERO,
-                            tokenSymbol = cis2PaymentDetails.tokenSymbol,
-                            tokenDecimals = cis2PaymentDetails.tokenDecimals,
-                        )
+            val activeAccount = accountRepository
+                .getAllDoneWithIdentity()
+                .first { it.account.isActive }
+
+            var balance: BigInteger
+            do {
+                try {
+                    balance = proxyRepository.getCIS2TokenBalanceV1(
+                        index = cis2PaymentDetails.tokenContractIndex.toString(),
+                        subIndex = "0",
+                        accountAddress = activeAccount.account.address,
+                        tokenIds = ""
+                    ).first().balance.toBigInteger()
+                    break
+                } catch (e: Exception) {
+                    if (e is CancellationException) {
+                        return@launch
                     }
+
+                    e.printStackTrace()
+                    delay(2000)
+                }
+            } while (true)
+
+            _selectedAccount.emit(
+                DemoPayAndVerifyAccount(
+                    account = activeAccount.account,
+                    identity = activeAccount.identity,
+                    balance = balance,
+                    tokenSymbol = cis2PaymentDetails.tokenSymbol,
+                    tokenDecimals = cis2PaymentDetails.tokenDecimals,
+                )
             )
         }
     }
@@ -329,46 +341,6 @@ class DemoPayAndVerifyViewModel(
         } while (_invoice.value == null)
     }
 
-    private suspend fun loadBalances(
-        invoice: DemoPayAndVerifyInvoice,
-    ) {
-        val cis2PaymentDetails =
-            invoice.paymentDetails as DemoPayAndVerifyInvoice.PaymentDetails.Cis2
-
-        var loaded = false
-
-        do {
-            try {
-                balancesByAccountAddress.emit(
-                    accountRepository
-                        .getAllDone()
-                        .map { account ->
-                            viewModelScope.async {
-                                val balances = proxyRepository.getCIS2TokenBalanceV1(
-                                    index = cis2PaymentDetails.tokenContractIndex.toString(),
-                                    subIndex = "0",
-                                    accountAddress = account.address,
-                                    tokenIds = ""
-                                )
-
-                                account.address to balances[0].balance.toBigInteger()
-                            }
-                        }
-                        .awaitAll()
-                        .toMap()
-                )
-                loaded = true
-            } catch (e: Exception) {
-                if (e is CancellationException) {
-                    return
-                }
-
-                e.printStackTrace()
-            }
-            delay(2000)
-        } while (!loaded)
-    }
-
     private suspend fun loadPaymentTransactionData(
         senderAccountAddress: String,
         cis2PaymentDetails: DemoPayAndVerifyInvoice.PaymentDetails.Cis2,
@@ -430,6 +402,12 @@ class DemoPayAndVerifyViewModel(
         if (canPayAndVerify.value) {
             _events.tryEmit(Event.Authenticate)
         }
+    }
+
+    fun onAccountSelected(
+        newSelectedAccount: DemoPayAndVerifyAccount,
+    ) = viewModelScope.launch {
+        _selectedAccount.emit(newSelectedAccount)
     }
 
     fun onAuthenticated(

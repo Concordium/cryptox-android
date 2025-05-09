@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.payandverify
 
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import java.io.Serializable
 import java.math.BigInteger
 
 class DemoPayAndVerifyAccount(
@@ -10,4 +11,4 @@ class DemoPayAndVerifyAccount(
     val balance: BigInteger,
     val tokenSymbol: String,
     val tokenDecimals: Int,
-)
+) : Serializable

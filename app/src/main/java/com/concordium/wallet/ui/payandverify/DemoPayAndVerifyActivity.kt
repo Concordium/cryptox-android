@@ -1,10 +1,13 @@
 package com.concordium.wallet.ui.payandverify
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.core.view.isInvisible
@@ -38,6 +41,15 @@ class DemoPayAndVerifyActivity : BaseActivity(
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
     }
+    private val accountSelectionLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                viewModel.onAccountSelected(
+                    newSelectedAccount = DemoPayAndVerifyAccountsActivity
+                        .getSelectedAccount(it.data!!),
+                )
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -218,6 +230,21 @@ class DemoPayAndVerifyActivity : BaseActivity(
     }
 
     private fun initAccountSelection() {
+
+        binding.accountContainer.setOnClickListener {
+            val selectedAccountAddress = viewModel.selectedAccount.value!!.account.address
+            val invoice = viewModel.invoice.value!!
+
+            accountSelectionLauncher.launch(
+                Intent(this, DemoPayAndVerifyAccountsActivity::class.java)
+                    .putExtras(
+                        DemoPayAndVerifyAccountsActivity.getBundle(
+                            selectedAccountAddress = selectedAccountAddress,
+                            invoice = invoice,
+                        )
+                    )
+            )
+        }
 
         combine(
             viewModel.selectedAccount,

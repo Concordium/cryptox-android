@@ -14,4 +14,5 @@
     <string name="verify_and_pay">Verify and pay</string>
     <string name="error_insufficient_balance">• Insufficient balance</string>
     <string name="template_error_underage">• Not over %1$d</string>
+    <string name="pay_and_verify_accounts_title">Your accounts</string>
 </resources>

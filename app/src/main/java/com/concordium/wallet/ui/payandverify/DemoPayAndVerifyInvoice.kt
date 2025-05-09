@@ -1,16 +1,16 @@
 package com.concordium.wallet.ui.payandverify
 
+import java.io.Serializable
 import java.math.BigInteger
-import java.time.Instant
 
 data class DemoPayAndVerifyInvoice(
     val storeName: String,
     val paymentDetails: PaymentDetails,
     val minAgeYears: Int,
     val proofRequestJson: String,
-) {
+) : Serializable {
 
-    sealed interface PaymentDetails {
+    sealed interface PaymentDetails : Serializable {
 
         data class Cis2(
             val amount: BigInteger,
