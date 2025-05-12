@@ -129,6 +129,20 @@ class DemoPayAndVerifyActivity : BaseActivity(
         }
 
         viewModel.paymentStatus.collectWhenStarted(this) { paymentStatus ->
+
+            if (paymentStatus is DemoPayAndVerifyViewModel.PaymentStatus.Success) {
+                binding.transactionDetailsDivider.isVisible = true
+                binding.transactionDetails.isVisible = true
+                binding.transactionDetails.setOnClickListener {
+                    val browserIntent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse(paymentStatus.transactionExplorerUrl))
+                    ContextCompat.startActivity(this, browserIntent, null)
+                }
+            } else {
+                binding.transactionDetailsDivider.isVisible = false
+                binding.transactionDetails.isVisible = false
+            }
+
             if (paymentStatus == null) {
                 binding.transactionAnimation.isVisible = false
                 binding.animationDivider.isVisible = false

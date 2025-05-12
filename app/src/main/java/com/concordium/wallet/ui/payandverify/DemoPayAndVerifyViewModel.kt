@@ -474,7 +474,8 @@ class DemoPayAndVerifyViewModel(
 
         _paymentStatus.emit(
             PaymentStatus.Success(
-                transactionHash = paymentTransactionHash,
+                transactionExplorerUrl =
+                "https://ccdexplorer.io/testnet/transaction/$paymentTransactionHash",
             )
         )
     } catch (_: CancellationException) {
@@ -671,7 +672,7 @@ class DemoPayAndVerifyViewModel(
         ) : PaymentStatus
 
         class Success(
-            val transactionHash: String,
+            val transactionExplorerUrl: String,
         ) : PaymentStatus
     }
 
