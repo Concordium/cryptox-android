@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
@@ -90,6 +91,10 @@ class SavedSeedPhraseRevealActivity :
                 null,
             )
         }
+
+        binding.backupButton.setOnClickListener {
+            gotoGoogleDriveBackUp()
+        }
     }
 
     private fun subscribeToEvents(
@@ -123,5 +128,10 @@ class SavedSeedPhraseRevealActivity :
 
     override fun loggedOut() {
         // No need to show auth, as it is anyway requested further.
+    }
+
+    private fun gotoGoogleDriveBackUp() {
+        val intent = Intent(this, GoogleSignInActivity::class.java)
+        startActivity(intent)
     }
 }
