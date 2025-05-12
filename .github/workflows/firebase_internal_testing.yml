@@ -1,10 +1,6 @@
 name: Distribute builds for internal testing through Firebase
 
 on:
-  push:
-    # Run for QA builds.
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+-qa.[0-9]+'
   workflow_dispatch:
 
 env:
@@ -13,6 +9,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dontmerge-demo-pay-and-verify'
 
     environment:
       name: Internal testing
@@ -34,26 +31,8 @@ jobs:
           java-version: "${{env.java_version}}"
           distribution: corretto
 
-      - name: Check if build version matches the tag
-        run: |
-          buildVersion="$(./gradlew -q printVersionName)"
-          tagVersion="${GITHUB_REF#refs/tags/}"
-          if [ "$buildVersion" != "$tagVersion" ]; then
-            echo "Build version '$buildVersion' doesn't match the tag '$tagVersion'"
-            exit 1
-          fi
-        shell: bash
-        env:
-          SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
-
       - name: Build and distribute Testnet APK
         run: ./gradlew app:assembleTstnetRelease app:appDistributionUploadTstnetRelease --stacktrace
-
-      - name: Build and distribute Stagenet APK
-        run: ./gradlew app:assembleStagenetRelease app:appDistributionUploadStagenetRelease --stacktrace
-
-      - name: Build and distribute Mainnet APK
-        run: ./gradlew app:assembleMainnetRelease app:appDistributionUploadMainnetRelease --stacktrace
 
       - name: Upload the APKs
         uses: actions/upload-artifact@v4
