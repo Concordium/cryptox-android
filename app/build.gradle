@@ -22,8 +22,8 @@ android {
     def versionMajor = 1
     def versionMinor = 9
     def versionPatch = 0
-    def versionMeta = ""
-    def versionCodeIncremental = 1448
+    def versionMeta = "-demopv.1"
+    def versionCodeIncremental = 100
 
     compileSdkVersion 34
 
@@ -114,7 +114,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:44ec3892cba12e73c7e1d6'
-                groups = "concordium-team"
+                groups = "unsafe-demos"
             }
         }
 
@@ -147,7 +147,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = "unsafe-demos"
             }
         }
 
@@ -176,7 +176,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = "unsafe-demos"
             }
         }
     }
