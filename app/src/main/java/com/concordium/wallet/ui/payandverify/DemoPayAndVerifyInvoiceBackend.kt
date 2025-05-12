@@ -31,6 +31,7 @@ interface DemoPayAndVerifyInvoiceBackend {
         val cis2TokenContractName: String?,
         val cis2TokenSymbol: String?,
         val cis2TokenDecimals: Int?,
+        val cis2TokenId: String?,
         val cis2RecipientAccountAddress: String?,
     )
 

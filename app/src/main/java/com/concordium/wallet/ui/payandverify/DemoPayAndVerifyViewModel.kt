@@ -218,7 +218,7 @@ class DemoPayAndVerifyViewModel(
                         index = cis2PaymentDetails.tokenContractIndex.toString(),
                         subIndex = "0",
                         accountAddress = activeAccount.account.address,
-                        tokenIds = ""
+                        tokenIds = cis2PaymentDetails.tokenId,
                     ).first().balance.toBigInteger()
                     break
                 } catch (e: Exception) {
@@ -311,6 +311,7 @@ class DemoPayAndVerifyViewModel(
                         tokenContractIndex = response.cis2TokenContractIndex!!,
                         tokenSymbol = response.cis2TokenSymbol!!,
                         tokenDecimals = response.cis2TokenDecimals!!,
+                        tokenId = response.cis2TokenId!!,
                         tokenContractName = response.cis2TokenContractName!!,
                         recipientAccountAddress = response.cis2RecipientAccountAddress!!,
                     )
@@ -621,7 +622,7 @@ class DemoPayAndVerifyViewModel(
         App.appCore.cryptoLibrary
             .serializeTokenTransferParameters(
                 SerializeTokenTransferParametersInput(
-                    tokenId = "",
+                    tokenId = cis2PaymentDetails.tokenId,
                     amount = cis2PaymentDetails.amount.toString(),
                     from = senderAccountAddress,
                     to = cis2PaymentDetails.recipientAccountAddress,

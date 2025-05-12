@@ -16,6 +16,7 @@ data class DemoPayAndVerifyInvoice(
             val amount: BigInteger,
             val tokenSymbol: String,
             val tokenDecimals: Int,
+            val tokenId: String,
             val tokenContractIndex: Int,
             val tokenContractName: String,
             val recipientAccountAddress: String,

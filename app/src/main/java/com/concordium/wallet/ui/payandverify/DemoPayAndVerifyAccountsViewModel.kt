@@ -82,6 +82,7 @@ class DemoPayAndVerifyAccountsViewModel(
                 val balances = getBalances(
                     addresses = accountsAndIdentities.map { it.account.address },
                     tokenContractIndex = cis2PaymentDetails.tokenContractIndex,
+                    tokenId = cis2PaymentDetails.tokenId,
                 )
 
                 _accountItemList.emit(
@@ -119,6 +120,7 @@ class DemoPayAndVerifyAccountsViewModel(
     private suspend fun getBalances(
         addresses: List<String>,
         tokenContractIndex: Int,
+        tokenId: String,
     ): Map<String, BigInteger> =
         addresses
             .map { address ->
@@ -127,7 +129,7 @@ class DemoPayAndVerifyAccountsViewModel(
                         index = tokenContractIndex.toString(),
                         subIndex = "0",
                         accountAddress = address,
-                        tokenIds = "",
+                        tokenIds = tokenId,
                     )
 
                     address to balances.first().balance.toBigInteger()
