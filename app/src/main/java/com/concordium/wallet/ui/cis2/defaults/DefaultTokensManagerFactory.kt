@@ -27,6 +27,16 @@ class DefaultTokensManagerFactory(
             decimals = 6,
             token = "",
         ),
+        DefaultFungibleToken(
+            symbol = "DemoUSD",
+            name = "DemoUSD",
+            contractIndex = "11353",
+            contractName = "mint_wizard_000000_V3",
+            description = "USD token for demos",
+            thumbnailUrl = null,
+            decimals = 2,
+            token = "01",
+        ),
     )
 
     private val mainnetDefaultFungibleTokens: List<DefaultFungibleToken> = listOf(
