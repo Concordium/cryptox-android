@@ -121,8 +121,8 @@ class DemoPayAndVerifyActivity : BaseActivity(
 
     private fun initInvoiceDetails() {
 
-        viewModel.paymentStatus.collectWhenStarted(this) { paymentResult ->
-            if (paymentResult == null) {
+        viewModel.paymentStatus.collectWhenStarted(this) { paymentStatus ->
+            if (paymentStatus == null) {
                 binding.transactionAnimation.isVisible = false
                 binding.animationDivider.isVisible = false
                 return@collectWhenStarted
@@ -131,7 +131,7 @@ class DemoPayAndVerifyActivity : BaseActivity(
             binding.transactionAnimation.isVisible = true
             binding.animationDivider.isVisible = true
 
-            when (paymentResult) {
+            when (paymentStatus) {
                 is DemoPayAndVerifyViewModel.PaymentStatus.Failure -> {
                     binding.transactionAnimation.setAnimation(R.raw.transaction_fail)
                     binding.transactionAnimation.repeatCount = 0
@@ -155,7 +155,7 @@ class DemoPayAndVerifyActivity : BaseActivity(
             viewModel.paymentStatus,
             transform = ::Pair,
         ).collectWhenStarted(this)
-        { (invoice, paymentResult) ->
+        { (invoice, paymentStatus) ->
             if (invoice == null) {
                 binding.invoiceDetailsCard.isVisible = false
                 return@collectWhenStarted
@@ -166,7 +166,7 @@ class DemoPayAndVerifyActivity : BaseActivity(
 
             binding.invoiceDetailsCard.isVisible = true
 
-            binding.titleTextView.text = when (paymentResult) {
+            binding.titleTextView.text = when (paymentStatus) {
                 is DemoPayAndVerifyViewModel.PaymentStatus.Failure ->
                     getString(
                         R.string.template_failed_payment_and_verification_request,
@@ -186,7 +186,7 @@ class DemoPayAndVerifyActivity : BaseActivity(
                     )
             }
 
-            binding.amountTitleTextView.text = when (paymentResult) {
+            binding.amountTitleTextView.text = when (paymentStatus) {
                 is DemoPayAndVerifyViewModel.PaymentStatus.Success ->
                     getString(R.string.amount_paid)
 
@@ -201,7 +201,7 @@ class DemoPayAndVerifyActivity : BaseActivity(
                     decimals = cis2PaymentDetails.tokenDecimals,
                 ) + " " + cis2PaymentDetails.tokenSymbol
 
-            binding.verificationTitleTextView.text = when (paymentResult) {
+            binding.verificationTitleTextView.text = when (paymentStatus) {
                 is DemoPayAndVerifyViewModel.PaymentStatus.Success ->
                     getString(R.string.verification_performed)
 
@@ -213,6 +213,13 @@ class DemoPayAndVerifyActivity : BaseActivity(
                 R.string.template_over_years_old,
                 invoice.minAgeYears,
             )
+
+            if (paymentStatus is DemoPayAndVerifyViewModel.PaymentStatus.Failure) {
+                binding.rejectReasonTextView.isVisible = true
+                binding.rejectReasonTextView.text = paymentStatus.reason
+            } else {
+                binding.rejectReasonTextView.isVisible = false
+            }
         }
 
         viewModel.fee.collectWhenStarted(this) { fee ->

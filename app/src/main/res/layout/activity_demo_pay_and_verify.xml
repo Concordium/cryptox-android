@@ -75,6 +75,17 @@
                 tools:text="@string/template_payment_and_verification_request" />
 
             <TextView
+                android:id="@+id/reject_reason_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/ccx_status_error"
+                android:visibility="gone"
+                tools:text="Payment rejected"
+                tools:visibility="visible" />
+
+            <TextView
                 android:id="@+id/amount_title_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
