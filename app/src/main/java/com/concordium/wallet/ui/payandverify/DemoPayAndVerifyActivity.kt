@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +23,7 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.ImageUtil
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -120,6 +122,11 @@ class DemoPayAndVerifyActivity : BaseActivity(
     }
 
     private fun initInvoiceDetails() {
+
+        binding.privateByDefaultTextView.handleUrlClicks { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            ContextCompat.startActivity(this, browserIntent, null)
+        }
 
         viewModel.paymentStatus.collectWhenStarted(this) { paymentStatus ->
             if (paymentStatus == null) {

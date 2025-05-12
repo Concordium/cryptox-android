@@ -16,4 +16,5 @@
     <string name="error_insufficient_ccd_balance">• Insufficient CCD balance</string>
     <string name="template_error_underage">• Not over %1$d</string>
     <string name="pay_and_verify_accounts_title">Your accounts</string>
+    <string name="private_by_default">Private by default. <a href="https://docs.concordium.com/en/mainnet/docs/network/guides/create-proofs.html">Read more</a></string>
 </resources>
