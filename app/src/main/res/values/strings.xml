@@ -51,6 +51,7 @@
     <string name="welcome_recover_import_via_seed_phrase">Import via seed phrase</string>
     <string name="welcome_recover_import_via_seed_or_private_key">Import via seed phrase or wallet private key</string>
     <string name="welcome_recover_import_via_seed">Import via wallet private key</string>
+    <string name="welcome_recover_import_via_google_drive">Import via Google Drive backup</string>
     <string name="welcome_recover_import_via_backup_file">Import via backup file</string>
     <string name="welcome_recover_use_file">File wallet</string>
     <string name="welcome_recover_use_file_details">Use your exported backup file from your device</string>
@@ -635,6 +636,8 @@
     <string name="seed_recover_continue">Continue</string>
     <string name="seed_recover_paste">Paste</string>
     <string name="seed_recover_clear">Clear</string>
+
+    <string name="google_drive_recover_title">Google Drive backup</string>
 
     <string name="seed_phrase_recover_process_title">Recover your accounts(s)</string>
     <string name="seed_phrase_recover_process_subtitle">Recover your accounts and identities to connect them to your wallet</string>

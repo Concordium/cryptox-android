@@ -10,6 +10,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.multiwallet.WalletsActionConfirmationDialog
 import com.concordium.wallet.ui.seed.recover.RecoverSeedPhraseWalletActivity
+import com.concordium.wallet.ui.seed.recover.googledrive.RecoverGoogleDriveWalletActivity
 import com.concordium.wallet.ui.seed.recover.seed.RecoverSeedWalletActivity
 
 class WelcomeRecoverWalletActivity : BaseActivity(
@@ -57,6 +58,10 @@ class WelcomeRecoverWalletActivity : BaseActivity(
             goToSeedRecovery()
         }
 
+        binding.importGoogleDriveButton.setOnClickListener {
+            goToGoogleDriveRecovery()
+        }
+
         binding.importBackupFileButton.setOnClickListener {
             showImportFileWalletDialog()
         }
@@ -97,6 +102,10 @@ class WelcomeRecoverWalletActivity : BaseActivity(
 
     private fun goToSeedRecovery() {
         startActivity(Intent(this, RecoverSeedWalletActivity::class.java))
+    }
+
+    private fun goToGoogleDriveRecovery() {
+        startActivity(Intent(this, RecoverGoogleDriveWalletActivity::class.java))
     }
 
     companion object {

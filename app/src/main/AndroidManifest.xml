@@ -594,6 +594,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"/>
+        <activity android:name=".ui.seed.recover.googledrive.RecoverGoogleDriveWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MW24_Screen"/>
     </application>
 
 </manifest>

@@ -1,12 +1,16 @@
-package com.concordium.wallet.ui.seed.reveal
+package com.concordium.wallet.ui.seed.recover.googledrive
 
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.EncryptedData
+import com.concordium.wallet.databinding.ActivityRecoverGoogleDriveWalletBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.util.PrettyPrint.asJsonString
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -21,11 +25,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
 
-class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup) {
+class RecoverGoogleDriveWalletActivity :
+    BaseActivity(R.layout.activity_recover_google_drive_wallet),
+    AuthDelegate by AuthDelegateImpl() {
+
+    private val binding by lazy {
+        ActivityRecoverGoogleDriveWalletBinding.bind(findViewById(R.id.root_layout))
+    }
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var accessToken: String
@@ -40,16 +47,6 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
             lifecycleScope.launch {
                 accessToken = getAccessToken(account)
 
-                // Upload file to appDataFolder
-                val encryptedData = App.appCore.session.walletStorage.setupPreferences
-                    .getEncryptedSeedPhrase()
-                    ?.asJsonString()
-                    ?.toByteArray()
-
-                encryptedData?.let {
-                    uploadToDrive(it, "cryptox_backup.txt")
-                }
-
                 // Create Drive service for listing/downloading
                 val driveService = createDriveService(account)
 
@@ -59,7 +56,21 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
                 // Download a file if it exists
                 val downloadedBytes = downloadFileFromAppFolder(driveService, "cryptox_backup.txt")
                 downloadedBytes?.let {
-                    println("Downloaded content: ${it.inputStream().bufferedReader().readText()}")
+                    println("Downloaded content: ${it.inputStream().bufferedReader().readText().prettyPrint()}")
+                    val jsonString = it.toString(Charsets.UTF_8)
+                    val encryptedData = App.appCore.gson.fromJson(jsonString, EncryptedData::class.java)
+                    println("Encrypted content: $encryptedData")
+
+                    showAuthentication(this@RecoverGoogleDriveWalletActivity) { password ->
+                        lifecycleScope.launch {
+                            val seedPhrase =
+                                App.appCore.session.walletStorage.setupPreferences.getSeedPhrase(
+                                    password = password,
+                                    encryptedData = encryptedData
+                                )
+                            println("Seed phrase: $seedPhrase")
+                        }
+                    }
                 }
             }
         }
@@ -69,6 +80,8 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
         super.onCreate(savedInstanceState)
 
         hideActionBarBack(isVisible = true)
+        setActionBarTitle("")
+
         setupGoogleSignIn()
     }
 
@@ -88,7 +101,7 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
     private suspend fun getAccessToken(account: GoogleSignInAccount?): String =
         withContext(Dispatchers.IO) {
             GoogleAuthUtil.getToken(
-                this@GoogleSignInActivity,
+                this@RecoverGoogleDriveWalletActivity,
                 account!!.account!!,
                 "oauth2:${DriveScopes.DRIVE_FILE}"
             )
@@ -112,49 +125,6 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }
-
-    private suspend fun uploadToDrive(data: ByteArray, filename: String) =
-        withContext(Dispatchers.IO) {
-            val metadata = """
-        {
-            "name": "$filename",
-            "parents": ["appDataFolder"]
-        }
-    """.trimIndent()
-
-            val boundary = "-------314159265358979323846"
-            val delimiter = "--$boundary\r\n"
-            val closeDelimiter = "--$boundary--"
-
-            val bodyStream = ByteArrayOutputStream()
-            val writer = OutputStreamWriter(bodyStream)
-            writer.write(delimiter)
-            writer.write("Content-Type: application/json; charset=UTF-8\r\n\r\n")
-            writer.write(metadata)
-            writer.write("\r\n")
-
-            writer.write(delimiter)
-            writer.write("Content-Type: application/octet-stream\r\n\r\n")
-            writer.flush()
-            bodyStream.write(data)
-            writer.write("\r\n$closeDelimiter")
-            writer.flush()
-
-            val url = URL("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "POST"
-            connection.setRequestProperty("Authorization", "Bearer $accessToken")
-            connection.setRequestProperty("Content-Type", "multipart/related; boundary=$boundary")
-            connection.doOutput = true
-            connection.outputStream.write(bodyStream.toByteArray())
-
-            val responseCode = connection.responseCode
-            println("Upload response code: $responseCode")
-            val response = connection.inputStream.bufferedReader().readText()
-            println("Upload response: $response")
-
-            connection.disconnect()
-        }
 
     private suspend fun listFilesInAppFolder(driveService: Drive): List<File> =
         withContext(Dispatchers.IO) {

@@ -150,6 +150,23 @@
                     android:textColor="@color/cryptox_white_main"
                     app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
                     app:drawableTint="@color/ccx_neutral_tint_1" />
+
+                <View
+                    style="@style/CryptoX_Divider_Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
+                <TextView
+                    android:id="@+id/import_google_drive_button"
+                    style="@style/CCX_Typography_Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingVertical="10dp"
+                    android:text="@string/welcome_recover_import_via_google_drive"
+                    android:textColor="@color/cryptox_white_main"
+                    app:drawableEndCompat="@drawable/ccx_ico_arrow_right"
+                    app:drawableTint="@color/ccx_neutral_tint_1" />
             </LinearLayout>
 
             <LinearLayout
