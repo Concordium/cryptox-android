@@ -10,7 +10,7 @@ object SwipeluxSettingsHelper {
     fun getWidgetSettings(walletAddress: String): String {
 
         val widgetConfig = WidgetConfig(
-            apiKey = "6515da6d-a065-4676-a214-c83e5b18f5f3", //CCD API Key
+            apiKey = "a71770a8-07ce-4f46-8085-373229bee148", //CCD API Key
             colors = Colors(
                 main = "#48A2AE",
                 background = "#182022",
