@@ -2,10 +2,16 @@ package com.concordium.wallet.ui.seed.reveal
 
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -13,7 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
@@ -25,10 +30,18 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
-class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup) {
+class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup),
+    AuthDelegate by AuthDelegateImpl() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var accessToken: String
+
+    private val viewModel: GoogleDriveSaveBackupViewModel by lazy {
+        ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get()
+    }
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -41,19 +54,28 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
                 accessToken = getAccessToken(account)
 
                 // Upload file to appDataFolder
-                val encryptedData = App.appCore.session.walletStorage.setupPreferences
-                    .getEncryptedSeedPhrase()
-                    ?.asJsonString()
-                    ?.toByteArray()
+                showAuthentication(this@GoogleSignInActivity) { password ->
+                    lifecycleScope.launch {
+                        val seedPhrase = App.appCore.session.walletStorage.setupPreferences.getSeedPhrase(password)
 
-                encryptedData?.let {
-                    uploadToDrive(it, "cryptox_backup.txt")
+                        val encryptedExportData =
+                            ExportEncryptionHelper.encryptExportData(password, seedPhrase)
+
+                        Log.d("phrase_encrypted $encryptedExportData")
+
+                        uploadToDrive(
+                            encryptedExportData.asJsonString().toByteArray(),
+                            "cryptox_backup.txt"
+                        )
+                    }
                 }
 
-                // Create Drive service for listing/downloading
-                val driveService = createDriveService(account)
+                val driveService = GoogleDriveManager.getDriveService(
+                    this@GoogleSignInActivity,
+                    account
+                )
 
-                // List files
+                // Show list of files
                 val files = listFilesInAppFolder(driveService)
 
                 // Download a file if it exists
@@ -93,20 +115,6 @@ class GoogleSignInActivity : BaseActivity(R.layout.activity_google_drive_backup)
                 "oauth2:${DriveScopes.DRIVE_FILE}"
             )
         }
-
-    private fun createDriveService(account: GoogleSignInAccount): Drive {
-        val credential = GoogleAccountCredential.usingOAuth2(
-            this, listOf(DriveScopes.DRIVE_APPDATA)
-        ).apply {
-            selectedAccount = account.account
-        }
-
-        return Drive.Builder(
-            com.google.api.client.http.javanet.NetHttpTransport(),
-            com.google.api.client.json.gson.GsonFactory.getDefaultInstance(),
-            credential
-        ).setApplicationName(getString(R.string.app_name)).build()
-    }
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent

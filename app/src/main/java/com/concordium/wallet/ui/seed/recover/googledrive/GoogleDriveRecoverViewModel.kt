@@ -6,32 +6,86 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
+import com.concordium.wallet.data.export.EncryptedExportData
+import com.concordium.wallet.data.util.ExportEncryptionHelper
+import com.concordium.wallet.ui.seed.reveal.GoogleDriveManager.listFilesInAppFolder
+import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
+import com.google.api.services.drive.Drive
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
-class GoogleDriveRecoverViewModel(application: Application): AndroidViewModel(application) {
+class GoogleDriveRecoverViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _saveSeedPhraseFlow = MutableStateFlow(false)
-    val saveSeedPhraseFlow = _saveSeedPhraseFlow.asStateFlow()
+    private val _saveSeedPhrase = MutableStateFlow(false)
+    val saveSeedPhrase = _saveSeedPhrase.asStateFlow()
+
+    private val _loading = MutableStateFlow(false)
+    val loading = _loading.asStateFlow()
+
+    private val _encryptedData = MutableSharedFlow<EncryptedExportData?>()
+    val encryptedData = _encryptedData.asSharedFlow()
 
 
+    fun setSeedPhrase(encryptedData: EncryptedExportData, password: String) =
+        viewModelScope.launch {
+            val seedPhrase =
+                ExportEncryptionHelper.decryptExportData(password, encryptedData)
 
-    fun setSeedPhrase(seed: String, password: String) = viewModelScope.launch {
-        val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
-            .tryToSetEncryptedSeedPhrase(
-                seed,
-                password
-            )
+            val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
+                .tryToSetEncryptedSeedPhrase(
+                    seedPhrase,
+                    password
+                )
 
-        if (isSavedSuccessfully) {
-            SwitchActiveWalletTypeUseCase().invoke(
-                newWalletType = AppWallet.Type.SEED,
-            )
-            App.appCore.setup.finishInitialSetup()
-            App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+            if (isSavedSuccessfully) {
+                SwitchActiveWalletTypeUseCase().invoke(
+                    newWalletType = AppWallet.Type.SEED,
+                )
+                App.appCore.setup.finishInitialSetup()
+                App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+            }
+            _saveSeedPhrase.emit(isSavedSuccessfully)
         }
 
-        _saveSeedPhraseFlow.emit(isSavedSuccessfully)
+    fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
+        listFilesInAppFolder(driveService)
+    }
+
+    fun downloadFileFromAppFolder(
+        driveService: Drive,
+        fileName: String = "cryptox_backup.txt"
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        val fileList = driveService.files().list()
+            .setSpaces("appDataFolder")
+            .setQ("name='$fileName' and trashed=false and 'appDataFolder' in parents")
+            .setFields("files(id, name, createdTime)")
+            .execute()
+
+        val file = fileList.files.firstOrNull() ?: run {
+            println("File not found in app folder: $fileName")
+            return@launch
+        }
+
+        val outputStream = ByteArrayOutputStream()
+        driveService.files().get(file.id).executeMediaAndDownloadTo(outputStream)
+        Log.d("Downloaded file '${file.name}' (${outputStream.size()} bytes)")
+        Log.d("Created time: ${file.createdTime}")
+
+        val result = outputStream.toByteArray()
+        Log.d(
+            "Downloaded content: ${
+                result.inputStream().bufferedReader().readText().prettyPrint()
+            }"
+        )
+        val jsonString = result.toString(Charsets.UTF_8)
+        val encryptedData = App.appCore.gson.fromJson(jsonString, EncryptedExportData::class.java)
+        Log.d("Encrypted content: $encryptedData")
+        _encryptedData.emit(encryptedData)
     }
 }
