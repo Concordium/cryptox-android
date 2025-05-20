@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/mw24_container_primary_background"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="20dp">
+
+    <ImageView
+        android:id="@+id/backup_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/mw24_ic_backup"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/cryptox_white_main" />
+
+    <TextView
+        android:id="@+id/backup_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constraintBottom_toTopOf="@id/backup_time"
+        app:layout_constraintStart_toEndOf="@id/backup_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="CryptoX Wallet backup"/>
+
+    <TextView
+        android:id="@+id/backup_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+        android:textColor="@color/mw24_blue_3_50"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/backup_icon"
+        app:layout_constraintTop_toBottomOf="@id/backup_title"
+        tools:text="21 May 2024 11:47"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

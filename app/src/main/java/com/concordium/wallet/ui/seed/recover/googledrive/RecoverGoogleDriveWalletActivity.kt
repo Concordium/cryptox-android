@@ -6,7 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
-import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverGoogleDriveWalletBinding
 import com.concordium.wallet.extension.collectWhenStarted
@@ -17,11 +16,15 @@ import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.seed.reveal.GoogleDriveManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import kotlinx.coroutines.launch
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.model.File
 
 class RecoverGoogleDriveWalletActivity :
     BaseActivity(R.layout.activity_recover_google_drive_wallet),
     AuthDelegate by AuthDelegateImpl() {
+
+    private lateinit var backupsAdapter: GoogleDriveRecoverListAdapter
+    private lateinit var driveService: Drive
 
     private val binding by lazy {
         ActivityRecoverGoogleDriveWalletBinding.bind(findViewById(R.id.root_layout))
@@ -41,27 +44,34 @@ class RecoverGoogleDriveWalletActivity :
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         if (task.isSuccessful) {
             val account = task.result
-            lifecycleScope.launch {
 
-                // Create Drive service for listing/downloading
-                val driveService = GoogleDriveManager.getDriveService(
-                    this@RecoverGoogleDriveWalletActivity,
-                    account
-                )
-                viewModel.getBackupsList(driveService)
-                viewModel.downloadFileFromAppFolder(driveService)
-            }
+            driveService = GoogleDriveManager.getDriveService(
+                this@RecoverGoogleDriveWalletActivity,
+                account
+            )
+            viewModel.getBackupsList(driveService)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         hideActionBarBack(isVisible = true)
-        setActionBarTitle("")
+        setActionBarTitle(getString(R.string.welcome_recover_google_drive_select_backup_title))
 
         setupGoogleSignIn()
+        initViews()
         initObservers()
+    }
+
+    private fun initViews() {
+        backupsAdapter = GoogleDriveRecoverListAdapter()
+        binding.backupsList.adapter = backupsAdapter
+        backupsAdapter.setBackupClickListener(object :
+            GoogleDriveRecoverListAdapter.BackupClickListener {
+            override fun onBackupClick(file: File) {
+                viewModel.downloadFileFromAppFolder(driveService, file.name)
+            }
+        })
     }
 
     private fun initObservers() {
@@ -79,6 +89,11 @@ class RecoverGoogleDriveWalletActivity :
                     viewModel.setSeedPhrase(data, password)
                 }
             }
+        }
+
+        viewModel.backupsList.collectWhenStarted(this) { backupsList ->
+            binding.backupsList.isVisible = backupsList.isNotEmpty()
+            backupsAdapter.setFiles(backupsList)
         }
     }
 

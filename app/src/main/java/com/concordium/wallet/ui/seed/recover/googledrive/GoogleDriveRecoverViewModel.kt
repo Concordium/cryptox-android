@@ -12,6 +12,7 @@ import com.concordium.wallet.ui.seed.reveal.GoogleDriveManager.listFilesInAppFol
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.google.api.services.drive.Drive
+import com.google.api.services.drive.model.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,8 @@ class GoogleDriveRecoverViewModel(application: Application) : AndroidViewModel(a
     private val _encryptedData = MutableSharedFlow<EncryptedExportData?>()
     val encryptedData = _encryptedData.asSharedFlow()
 
+    private val _backupsList = MutableStateFlow<List<File>>(mutableListOf())
+    val backupsList = _backupsList.asStateFlow()
 
     fun setSeedPhrase(encryptedData: EncryptedExportData, password: String) =
         viewModelScope.launch {
@@ -54,13 +57,17 @@ class GoogleDriveRecoverViewModel(application: Application) : AndroidViewModel(a
         }
 
     fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
-        listFilesInAppFolder(driveService)
+        _loading.emit(true)
+        _backupsList.emit(listFilesInAppFolder(driveService))
+        _loading.emit(false)
     }
 
     fun downloadFileFromAppFolder(
         driveService: Drive,
-        fileName: String = "cryptox_backup.txt"
+        fileName: String
     ) = viewModelScope.launch(Dispatchers.IO) {
+        _loading.emit(true)
+
         val fileList = driveService.files().list()
             .setSpaces("appDataFolder")
             .setQ("name='$fileName' and trashed=false and 'appDataFolder' in parents")
@@ -87,5 +94,6 @@ class GoogleDriveRecoverViewModel(application: Application) : AndroidViewModel(a
         val encryptedData = App.appCore.gson.fromJson(jsonString, EncryptedExportData::class.java)
         Log.d("Encrypted content: $encryptedData")
         _encryptedData.emit(encryptedData)
+        _loading.emit(false)
     }
 }
