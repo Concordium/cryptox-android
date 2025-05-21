@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ViewMw24InputFieldBinding
+import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 
 class InputFieldView @JvmOverloads constructor(
@@ -125,5 +126,9 @@ class InputFieldView @JvmOverloads constructor(
                 false
             }
         }
+    }
+
+    fun setAfterTextChangedListener(action: () -> Unit) {
+        binding.edittext.afterTextChanged { action() }
     }
 }

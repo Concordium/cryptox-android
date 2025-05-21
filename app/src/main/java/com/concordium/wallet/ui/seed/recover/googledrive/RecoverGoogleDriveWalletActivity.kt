@@ -13,15 +13,17 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
-import com.concordium.wallet.ui.seed.reveal.GoogleDriveManager
+import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
 
 class RecoverGoogleDriveWalletActivity :
-    BaseActivity(R.layout.activity_recover_google_drive_wallet),
-    AuthDelegate by AuthDelegateImpl() {
+    BaseActivity(
+        R.layout.activity_recover_google_drive_wallet,
+        R.string.welcome_recover_google_drive_select_backup_title
+    ), AuthDelegate by AuthDelegateImpl() {
 
     private lateinit var backupsAdapter: GoogleDriveRecoverListAdapter
     private lateinit var driveService: Drive
@@ -56,7 +58,6 @@ class RecoverGoogleDriveWalletActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideActionBarBack(isVisible = true)
-        setActionBarTitle(getString(R.string.welcome_recover_google_drive_select_backup_title))
 
         setupGoogleSignIn()
         initViews()

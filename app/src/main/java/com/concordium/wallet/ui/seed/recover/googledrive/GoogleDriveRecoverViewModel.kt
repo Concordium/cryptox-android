@@ -4,11 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.core.backup.GoogleDriveManager.listFilesInAppFolder
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.data.export.EncryptedExportData
 import com.concordium.wallet.data.util.ExportEncryptionHelper
-import com.concordium.wallet.ui.seed.reveal.GoogleDriveManager.listFilesInAppFolder
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.google.api.services.drive.Drive

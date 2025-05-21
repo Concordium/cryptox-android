@@ -131,7 +131,7 @@ class SavedSeedPhraseRevealActivity :
     }
 
     private fun gotoGoogleDriveBackUp() {
-        val intent = Intent(this, GoogleSignInActivity::class.java)
+        val intent = Intent(this, GoogleDriveCreateBackupActivity::class.java)
         startActivity(intent)
     }
 }

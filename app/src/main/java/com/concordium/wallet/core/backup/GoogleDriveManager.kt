@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.reveal
+package com.concordium.wallet.core.backup
 
 import android.content.Context
 import com.concordium.wallet.R
