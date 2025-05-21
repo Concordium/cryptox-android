@@ -775,6 +775,7 @@
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
     <string name="delegation_register_delegation_not_enough_funds">@string/insufficient_funds</string>
+    <string name="delegation_register_delegation_not_enough_funds_for_fee">Insufficient funds at disposal to pay the fee</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
     <plurals name="delegation_register_delegation_confirmation_desc">
         <item quantity="one">This will lock your delegation amount. Amount is released after %d day from the time you remove or decrease your delegation.</item>

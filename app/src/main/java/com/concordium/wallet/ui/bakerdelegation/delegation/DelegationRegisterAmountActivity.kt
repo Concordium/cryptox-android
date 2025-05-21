@@ -241,7 +241,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             maximumValue = null,
             oldStakedAmount = null,
             balance = viewModel.bakerDelegationData.account.balance,
-            atDisposal = viewModel.atDisposal(),
+            atDisposal = viewModel.bakerDelegationData.account.balanceAtDisposal,
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             poolLimit = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
             previouslyStakedInPool = viewModel.bakerDelegationData.account.delegation?.stakedAmount,

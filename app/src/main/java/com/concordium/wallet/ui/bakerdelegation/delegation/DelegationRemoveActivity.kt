@@ -81,8 +81,10 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity(
     }
 
     private fun validate() {
-        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)) {
-            showNotEnoughFunds()
+        if (viewModel.bakerDelegationData.account.balanceAtDisposal <
+            (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)
+        ) {
+            showNotEnoughFundsForFee()
         } else {
             if (viewModel.bakerDelegationData.isBakerPool) {
                 viewModel.bakerDelegationData.account.delegation?.delegationTarget?.bakerId?.let {

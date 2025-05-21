@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Not warning about insufficient funds at disposal to pay the transaction fee
+  when configuring earning
+
 ## [1.9.0] - 2025-04-17
 
 ### Removed
