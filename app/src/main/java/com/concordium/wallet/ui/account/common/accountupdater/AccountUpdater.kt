@@ -353,7 +353,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
 
                     request.account.balance = accountFinalizedBalance.accountAmount
-                    request.account.balanceAtDisposal = BigInteger.ZERO//accountFinalizedBalance.accountAtDisposal
+                    request.account.balanceAtDisposal = accountFinalizedBalance.accountAtDisposal
                     request.account.index = accountFinalizedBalance.accountIndex
 
                     request.account.delegation = accountFinalizedBalance.accountDelegation
