@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.databinding.ListItemGoogleDriveBackupBinding
+import com.concordium.wallet.util.DateTimeUtil.formatTo
+import com.concordium.wallet.util.DateTimeUtil.toDate
 import com.google.api.services.drive.model.File
 
 class GoogleDriveRecoverListAdapter :
@@ -46,7 +48,8 @@ class GoogleDriveRecoverListAdapter :
         val file = backupsList[position]
         holder.binding.apply {
             backupTitle.text = file.name + file.id
-            backupTime.text = file.createdTime?.toString() ?: ""
+            backupTime.text =
+                file.createdTime?.toString()?.toDate()?.formatTo("dd MMM yyyy HH:mm") ?: ""
             root.setOnClickListener {
                 backupClickListener?.onBackupClick(file)
             }

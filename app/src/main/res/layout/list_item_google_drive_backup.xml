@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
         android:textColor="@color/mw24_blue_3_50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/backup_icon"

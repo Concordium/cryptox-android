@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,12 +33,21 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
+    private val _isGoogleDriveBackupReady = MutableStateFlow(false)
+    val isGoogleDriveBackupReady = _isGoogleDriveBackupReady.asStateFlow()
+
     fun onShowPhraseClicked() {
         mutableEventsFlow.tryEmit(Event.Authenticate)
     }
 
     fun onAuthenticated(password: String) {
         decryptAndRevealPhrase(password)
+    }
+
+    fun isGoogleDriveBackupReady() = viewModelScope.launch {
+        _isGoogleDriveBackupReady.emit(
+            App.appCore.session.walletStorage.setupPreferences.getHasBackedUpWithDrive()
+        )
     }
 
     private fun decryptAndRevealPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {

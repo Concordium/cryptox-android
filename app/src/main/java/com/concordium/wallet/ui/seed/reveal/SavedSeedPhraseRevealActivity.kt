@@ -48,6 +48,11 @@ class SavedSeedPhraseRevealActivity :
         subscribeToState()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.isGoogleDriveBackupReady()
+    }
+
     @SuppressLint("SetTextI18n")
     private fun initWords(
     ) = viewModel.phraseFlow.collectWhenStarted(this) { words ->
@@ -97,33 +102,47 @@ class SavedSeedPhraseRevealActivity :
         }
     }
 
-    private fun subscribeToEvents(
-    ) = viewModel.eventsFlow.collect(this) { event ->
+    private fun subscribeToEvents() =
+        viewModel.eventsFlow.collect(this) { event ->
+            when (event) {
+                SavedSeedPhraseRevealViewModel.Event.Authenticate -> {
+                    showAuthentication(
+                        activity = this,
+                        onAuthenticated = viewModel::onAuthenticated
+                    )
+                }
 
-        when (event) {
-            SavedSeedPhraseRevealViewModel.Event.Authenticate -> {
-                showAuthentication(
-                    activity = this,
-                    onAuthenticated = viewModel::onAuthenticated
-                )
+                SavedSeedPhraseRevealViewModel.Event.ShowFatalError -> {
+                    showError(R.string.saved_seed_phrase_reveal_failed)
+                }
+            }
+        }
+
+    private fun subscribeToState() {
+        viewModel.stateFlow.collectWhenStarted(this) { state ->
+            with(binding.blurView) {
+                isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
+                setBlurEnabled(isVisible)
             }
 
-            SavedSeedPhraseRevealViewModel.Event.ShowFatalError -> {
-                showError(R.string.saved_seed_phrase_reveal_failed)
-            }
+            binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
+            binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
+        }
+        viewModel.isGoogleDriveBackupReady.collectWhenStarted(this) { backedUp ->
+            updateGoogleDriveBackupStatus(backedUp)
         }
     }
 
-    private fun subscribeToState(
-    ) = viewModel.stateFlow.collectWhenStarted(this) { state ->
-
-        with (binding.blurView) {
-            isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
-            setBlurEnabled(isVisible)
+    private fun updateGoogleDriveBackupStatus(backedUp: Boolean) {
+        if (backedUp) {
+            binding.googleDriveBackupStatus.text =
+                getString(R.string.settings_overview_google_drive_backup_active)
+            binding.googleDriveBackupStatus.setTextColor(getColor(R.color.mw24_green))
+        } else {
+            binding.googleDriveBackupStatus.text =
+                getString(R.string.settings_overview_google_drive_backup_not_active)
+            binding.googleDriveBackupStatus.setTextColor(getColor(R.color.attention_red))
         }
-
-        binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
-        binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
     }
 
     override fun loggedOut() {

@@ -299,6 +299,7 @@
     <string name="settings_overview_erase_data_erased">All the data has been successfully erased</string>
     <string name="settings_overview_reveal_seed_phrase">Seed Phrase</string>
     <string name="settings_overview_reveal_seed">Wallet Private Key</string>
+    <string name="settings_overview_google_drive_backup">Google Drive backup</string>
     <string name="settings_overview_google_drive_set_password_title">Set password</string>
     <string name="settings_overview_google_drive_set_password_requirements">A password is required to encrypt your secret phrase on Google Drive.</string>
     <string name="settings_overview_google_drive_set_password_notice">Do not lose this password, as CryptoX cannot reset it for you!</string>
@@ -311,6 +312,8 @@
     <string name="settings_overview_google_drive_permissions_error">Please grant all permissions to continue</string>
     <string name="settings_overview_google_drive_processing">Processing</string>
     <string name="settings_overview_google_drive_backup_ready">Backup saved</string>
+    <string name="settings_overview_google_drive_backup_active">Active</string>
+    <string name="settings_overview_google_drive_backup_not_active">Back up now</string>
     <!-- ***** Backup ***** -->
     <!-- Export -->
     <string name="export_title">Export</string>

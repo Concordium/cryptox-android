@@ -154,17 +154,31 @@
                 app:drawableEndCompat="@drawable/ccx_ico_eye_open"
                 app:drawableTint="@color/ccx_neutral_tint_1" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/backup_button"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginTop="8dp"
-                android:drawablePadding="8dp"
-                android:gravity="center"
-                android:paddingHorizontal="20dp"
-                android:text="Google Drive backup"
-                android:textAppearance="@style/CCX_Typography_Button_M"
-                android:textColor="@color/ccx_neutral_tint_1"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:paddingHorizontal="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/settings_overview_google_drive_backup"
+                    android:textAppearance="@style/CCX_Typography_Button_M"
+                    android:textColor="@color/ccx_neutral_tint_1" />
+
+                <TextView
+                    android:id="@+id/google_drive_backup_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/CCX_Typography_Button_M"
+                    android:textColor="@color/attention_red"
+                    tools:text="@string/settings_overview_google_drive_backup_not_active" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

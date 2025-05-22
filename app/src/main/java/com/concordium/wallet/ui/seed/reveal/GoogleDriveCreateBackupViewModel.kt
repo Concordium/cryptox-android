@@ -20,7 +20,7 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
-class GoogleDriveSaveBackupViewModel(application: Application) : AndroidViewModel(application) {
+class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _showSetPasswordError = MutableSharedFlow<Boolean>(1)
     val showSetPasswordError = _showSetPasswordError.asSharedFlow()
@@ -147,6 +147,8 @@ class GoogleDriveSaveBackupViewModel(application: Application) : AndroidViewMode
                 println("Upload response: $response")
 
                 connection.disconnect()
+
+                App.appCore.session.walletStorage.setupPreferences.setHasBackedUpWithDrive(true)
                 _loading.emit(false)
                 _backupReady.emit(true)
             } catch (e: Exception) {

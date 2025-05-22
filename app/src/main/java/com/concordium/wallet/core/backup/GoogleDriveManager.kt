@@ -42,7 +42,7 @@ object GoogleDriveManager {
             val result = driveService.files().list()
                 .setSpaces("appDataFolder")
                 .setQ("'appDataFolder' in parents and trashed=false")
-                .setFields("files(id, name)")
+                .setFields("files(id, name, createdTime)")
                 .execute()
 
             result.files.onEach { file ->

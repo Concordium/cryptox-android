@@ -25,7 +25,7 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
         ActivityCreateGoogleDriveBackupBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private val viewModel: GoogleDriveSaveBackupViewModel by lazy {
+    private val viewModel: GoogleDriveCreateBackupViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
@@ -113,15 +113,15 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
         }
         viewModel.state.collectWhenStarted(this) { state ->
             when (state) {
-                GoogleDriveSaveBackupViewModel.State.Processing -> {
+                GoogleDriveCreateBackupViewModel.State.Processing -> {
                     showProcessingState()
                     hideActionBarBack(isVisible = true)
                 }
-                GoogleDriveSaveBackupViewModel.State.SetPassword -> {
+                GoogleDriveCreateBackupViewModel.State.SetPassword -> {
                     showSetPasswordState()
                     hideActionBarBack(isVisible = true)
                 }
-                GoogleDriveSaveBackupViewModel.State.RepeatPassword -> {
+                GoogleDriveCreateBackupViewModel.State.RepeatPassword -> {
                     showRepeatPasswordState()
                     hideActionBarBack(isVisible = true) {
                         viewModel.backToSetPassword()
