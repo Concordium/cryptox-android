@@ -16,10 +16,16 @@ class StakeAmountInputValidator(
     private val previouslyStakedInPool: BigInteger?,
     private val isInCoolDown: Boolean?,
     private val oldPoolId: Long?,
-    private val newPoolId: String?
+    private val newPoolId: String?,
 ) {
     enum class StakeError {
-        OK, NOT_ENOUGH_FUND, MINIMUM, MAXIMUM, POOL_LIMIT_REACHED, POOL_LIMIT_REACHED_COOLDOWN, UNKNOWN
+        OK,
+        NOT_ENOUGH_FUND,
+        NOT_ENOUGH_FUND_FOR_FEE,
+        MINIMUM, MAXIMUM,
+        POOL_LIMIT_REACHED,
+        POOL_LIMIT_REACHED_COOLDOWN,
+        UNKNOWN,
     }
 
     fun validate(amount: BigInteger?, estimatedFee: BigInteger?): StakeError {
@@ -45,24 +51,40 @@ class StakeAmountInputValidator(
         return StakeError.OK
     }
 
-    fun getErrorText(context: Context, stakeError: StakeError): String {
-        return when (stakeError) {
-            StakeError.NOT_ENOUGH_FUND -> context.getString(R.string.delegation_register_delegation_not_enough_funds)
-            StakeError.MINIMUM -> context.getString(
+    fun getErrorText(
+        context: Context,
+        stakeError: StakeError,
+    ): String = when (stakeError) {
+
+        StakeError.NOT_ENOUGH_FUND ->
+            context.getString(R.string.delegation_register_delegation_not_enough_funds)
+
+        StakeError.NOT_ENOUGH_FUND_FOR_FEE ->
+            context.getString(R.string.delegation_register_delegation_not_enough_funds_for_fee)
+
+        StakeError.MINIMUM ->
+            context.getString(
                 R.string.delegation_register_delegation_minimum,
                 CurrencyUtil.formatGTU(minimumValue ?: BigInteger.ZERO)
             )
 
-            StakeError.MAXIMUM -> context.getString(
+        StakeError.MAXIMUM ->
+            context.getString(
                 R.string.delegation_register_delegation_maximum,
                 CurrencyUtil.formatGTU(maximumValue ?: BigInteger.ZERO)
             )
 
-            StakeError.POOL_LIMIT_REACHED -> context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)
-            StakeError.POOL_LIMIT_REACHED_COOLDOWN -> context.getString(R.string.delegation_amount_too_large_while_in_cooldown)
-            StakeError.UNKNOWN -> context.getString(R.string.app_error_general)
-            else -> ""
-        }
+        StakeError.POOL_LIMIT_REACHED ->
+            context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)
+
+        StakeError.POOL_LIMIT_REACHED_COOLDOWN ->
+            context.getString(R.string.delegation_amount_too_large_while_in_cooldown)
+
+        StakeError.UNKNOWN ->
+            context.getString(R.string.app_error_general)
+
+        StakeError.OK ->
+            ""
     }
 
     private fun checkMaximum(amount: BigInteger): StakeError {
@@ -81,15 +103,22 @@ class StakeAmountInputValidator(
         return StakeError.OK
     }
 
-    private fun checkBalance(amount: BigInteger, estimatedFee: BigInteger?): StakeError = when {
-        balance == null || atDisposal == null -> StakeError.UNKNOWN
+    private fun checkBalance(
+        amount: BigInteger,
+        estimatedFee: BigInteger?,
+    ): StakeError = when {
+
+        balance == null || atDisposal == null ->
+            StakeError.UNKNOWN
 
         balance < amount + (estimatedFee ?: BigInteger.ZERO) ->
             StakeError.NOT_ENOUGH_FUND
 
-        (estimatedFee ?: BigInteger.ZERO) > atDisposal -> StakeError.NOT_ENOUGH_FUND
+        atDisposal < (estimatedFee ?: BigInteger.ZERO) ->
+            StakeError.NOT_ENOUGH_FUND_FOR_FEE
 
-        else -> StakeError.OK
+        else ->
+            StakeError.OK
     }
 
     private fun checkPoolLimit(amount: BigInteger): StakeError {

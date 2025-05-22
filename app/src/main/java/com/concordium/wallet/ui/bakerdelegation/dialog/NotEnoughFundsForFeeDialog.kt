@@ -7,21 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogNotEnoughFundsBinding
+import com.concordium.wallet.databinding.DialogNotEnoughFundsForFeeBinding
 import com.concordium.wallet.ui.MainActivity
 
-class NotEnoughFundsDialog : AppCompatDialogFragment() {
+class NotEnoughFundsForFeeDialog : AppCompatDialogFragment() {
 
     override fun getTheme(): Int = R.style.CCX_Dialog
 
-    private lateinit var binding: DialogNotEnoughFundsBinding
+    private lateinit var binding: DialogNotEnoughFundsForFeeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogNotEnoughFundsBinding.inflate(inflater, container, false)
+        binding = DialogNotEnoughFundsForFeeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,6 +36,6 @@ class NotEnoughFundsDialog : AppCompatDialogFragment() {
     }
 
     companion object {
-        const val TAG = "NotEnoughFundsDialog"
+        const val TAG = "NotEnoughFundsForFeeDialog"
     }
 }

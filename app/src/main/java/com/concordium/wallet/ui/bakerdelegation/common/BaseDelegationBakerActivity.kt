@@ -10,7 +10,7 @@ import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.dialog.NoChangeDialog
-import com.concordium.wallet.ui.bakerdelegation.dialog.NotEnoughFundsDialog
+import com.concordium.wallet.ui.bakerdelegation.dialog.NotEnoughFundsForFeeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
@@ -88,8 +88,8 @@ abstract class BaseDelegationBakerActivity(
         }
     }
 
-    protected fun showNotEnoughFunds() {
-        NotEnoughFundsDialog().showSingle(supportFragmentManager, NotEnoughFundsDialog.TAG)
+    protected fun showNotEnoughFundsForFee() {
+        NotEnoughFundsForFeeDialog().showSingle(supportFragmentManager, NotEnoughFundsForFeeDialog.TAG)
     }
 
     protected fun showNoChange() {

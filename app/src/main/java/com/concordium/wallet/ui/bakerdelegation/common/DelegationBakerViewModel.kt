@@ -235,17 +235,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return (!bakerDelegationData.isBakerPool && !bakerDelegationData.isLPool)
     }
 
-    fun atDisposal(): BigInteger {
-        var staked: BigInteger = BigInteger.ZERO
-        bakerDelegationData.account.delegation?.let {
-            staked = it.stakedAmount
-        }
-        bakerDelegationData.account.baker?.let {
-            staked = it.stakedAmount
-        }
-        return bakerDelegationData.account.balance - staked
-    }
-
     fun selectBakerPool() {
         this.bakerDelegationData.isLPool = false
         this.bakerDelegationData.isBakerPool = true

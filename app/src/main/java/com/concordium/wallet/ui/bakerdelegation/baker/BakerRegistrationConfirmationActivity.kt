@@ -387,8 +387,10 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity(
     }
 
     private fun onContinueClicked() {
-        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)) {
-            showNotEnoughFunds()
+        if (viewModel.bakerDelegationData.account.balanceAtDisposal <
+            (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)
+        ) {
+            showNotEnoughFundsForFee()
             return
         }
         viewModel.prepareTransaction()
