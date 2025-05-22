@@ -15,6 +15,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.util.KeyboardUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
@@ -157,6 +158,7 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
         binding.setPasswordLayout.isVisible = true
         binding.repeatPasswordLayout.isVisible = false
         showLoading(false)
+        KeyboardUtil.showKeyboard(this, binding.setPasswordInputLayout)
     }
 
     private fun showRepeatPasswordState() {
@@ -165,6 +167,7 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
         binding.setPasswordLayout.isVisible = false
         binding.repeatPasswordLayout.isVisible = true
         showLoading(false)
+        KeyboardUtil.showKeyboard(this, binding.repeatPasswordInputLayout)
     }
 
     private fun onSetPasswordConfirm() {
