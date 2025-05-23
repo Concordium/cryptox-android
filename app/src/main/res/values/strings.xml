@@ -387,6 +387,9 @@
         <item quantity="other">(%d account imports failed)</item>
     </plurals>
     <string name="import_confirmed_readonly_accounts_header">Accounts found on chain (read only):</string>
+    <string name="import_google_drive_enter_encryption_password_title">Enter encryption password</string>
+    <string name="import_google_drive_enter_encryption_password_info">Enter the encryption password you created for your Google Drive secret phrase backup.</string>
+    <string name="import_google_drive_enter_encryption_password_button">Recover wallet</string>
     <!-- Change Password -->
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="alterpassword_desc">By pressing Continue, you will be guided through setting up a new passcode. You will also get the option of enabling biometrics, or to continue without them.</string>

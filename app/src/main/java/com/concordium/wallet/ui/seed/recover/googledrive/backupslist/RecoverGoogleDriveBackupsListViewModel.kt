@@ -5,17 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backup.GoogleDriveManager.listFilesInAppFolder
-import com.concordium.wallet.core.multiwallet.AppWallet
-import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
-import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.data.export.EncryptedExportData
-import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
-import com.google.gson.JsonIOException
-import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,9 +21,6 @@ import java.io.ByteArrayOutputStream
 class RecoverGoogleDriveBackupsListViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    private val _saveSeedPhrase = MutableStateFlow(false)
-    val saveSeedPhrase = _saveSeedPhrase.asStateFlow()
-
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
@@ -38,42 +29,6 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
 
     private val _backupsList = MutableStateFlow<List<File>>(mutableListOf())
     val backupsList = _backupsList.asStateFlow()
-
-    fun setSeedPhrase(encryptedData: EncryptedExportData, password: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val seedPhrase = try {
-                ExportEncryptionHelper.decryptExportData(password, encryptedData)
-            } catch (e: IllegalArgumentException) {
-                Log.e("Unexpected json format, Invalid password or import file corrupted")
-                return@launch
-            } catch (e: Exception) {
-                when (e) {
-                    is JsonIOException,
-                    is JsonSyntaxException,
-                    -> {
-                        Log.e("Unexpected json format")
-                    }
-
-                    is EncryptionException -> {
-                        Log.e("Unexpected encryption/decryption error, Invalid password or import file corrupted")
-                    }
-
-                    else -> throw e
-                }
-                return@launch
-            }
-
-            val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
-                .tryToSetEncryptedSeedPhrase(seedPhrase, password)
-
-            if (isSavedSuccessfully) {
-                SwitchActiveWalletTypeUseCase().invoke(newWalletType = AppWallet.Type.SEED)
-                App.appCore.setup.finishInitialSetup()
-                App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
-            }
-            _saveSeedPhrase.emit(isSavedSuccessfully)
-        }
-    }
 
     fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
         _loading.emit(true)

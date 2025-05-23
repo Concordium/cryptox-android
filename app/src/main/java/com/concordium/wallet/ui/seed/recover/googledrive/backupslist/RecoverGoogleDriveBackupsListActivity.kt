@@ -8,12 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backup.GoogleDriveManager
-import com.concordium.wallet.databinding.ActivityRecoverGoogleDriveWalletBinding
+import com.concordium.wallet.data.export.EncryptedExportData
+import com.concordium.wallet.databinding.ActivityRecoverGoogleDriveBackupsListBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
+import com.concordium.wallet.ui.seed.recover.googledrive.password.RecoverGoogleDrivePasswordActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.api.services.drive.Drive
@@ -21,7 +22,7 @@ import com.google.api.services.drive.model.File
 
 class RecoverGoogleDriveBackupsListActivity :
     BaseActivity(
-        R.layout.activity_recover_google_drive_wallet,
+        R.layout.activity_recover_google_drive_backups_list,
         R.string.welcome_recover_google_drive_select_backup_title
     ), AuthDelegate by AuthDelegateImpl() {
 
@@ -29,7 +30,7 @@ class RecoverGoogleDriveBackupsListActivity :
     private lateinit var driveService: Drive
 
     private val binding by lazy {
-        ActivityRecoverGoogleDriveWalletBinding.bind(findViewById(R.id.root_layout))
+        ActivityRecoverGoogleDriveBackupsListBinding.bind(findViewById(R.id.root_layout))
     }
 
     val viewModel: RecoverGoogleDriveBackupsListViewModel by lazy {
@@ -76,19 +77,13 @@ class RecoverGoogleDriveBackupsListActivity :
     }
 
     private fun initObservers() {
-        viewModel.saveSeedPhrase.collectWhenStarted(this) { saveSuccess ->
-            goToRecovery(saveSuccess)
-        }
-
         viewModel.loading.collectWhenStarted(this) { loading ->
             binding.loading.progressBar.isVisible = loading
         }
 
         viewModel.encryptedData.collectWhenStarted(this) { data ->
             data?.let {
-                showAuthentication(this) { password ->
-                    viewModel.setSeedPhrase(data, password)
-                }
+                goToEnterPassword(data)
             }
         }
 
@@ -107,12 +102,9 @@ class RecoverGoogleDriveBackupsListActivity :
         googleSignInLauncher.launch(signInIntent)
     }
 
-    private fun goToRecovery(success: Boolean) {
-        if (success) {
-            finish()
-            startActivity(Intent(this, RecoverProcessActivity::class.java))
-        } else {
-            showError(R.string.auth_login_seed_error)
-        }
+    private fun goToEnterPassword(data: EncryptedExportData) {
+        val intent = Intent(this, RecoverGoogleDrivePasswordActivity::class.java)
+        intent.putExtra(RecoverGoogleDrivePasswordActivity.ENCRYPTED_DATA, data)
+        startActivity(intent)
     }
 }
