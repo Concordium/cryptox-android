@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backup.GoogleDriveManager
+import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
@@ -15,12 +17,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
 class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val accountRepository = AccountRepository(
+        App.appCore.session.walletStorage.database.accountDao()
+    )
 
     private val _showSetPasswordError = MutableSharedFlow<Boolean>(1)
     val showSetPasswordError = _showSetPasswordError.asSharedFlow()
@@ -77,7 +84,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
         }
 
         val encryptedExportData = try {
-            ExportEncryptionHelper.encryptExportData(authPassword, seedPhrase)
+            ExportEncryptionHelper.encryptExportData(backupPassword.value, seedPhrase)
         } catch (e: Exception) {
             Log.e("phrase_encrypt_failed", e)
             _loading.emit(false)
@@ -86,7 +93,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
 
         uploadToDrive(
             encryptedExportData.asJsonString().toByteArray(),
-            "cryptox_backup.txt"
+            "CryptoX backup ${getAccountName()}"
         )
     }
 
@@ -99,6 +106,10 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
             googleAccessToken.emit(GoogleDriveManager.getAccessToken(getApplication(), account))
             _state.emit(State.SetPassword)
         }
+    }
+
+    private suspend fun getAccountName() = withContext(Dispatchers.IO) {
+        Account.getDefaultName(accountRepository.getAllDone().first().address)
     }
 
     private fun uploadToDrive(data: ByteArray, filename: String) =

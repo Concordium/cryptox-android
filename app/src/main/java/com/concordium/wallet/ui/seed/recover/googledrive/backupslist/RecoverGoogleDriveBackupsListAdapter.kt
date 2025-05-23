@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.recover.googledrive
+package com.concordium.wallet.ui.seed.recover.googledrive.backupslist
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import com.google.api.services.drive.model.File
 
-class GoogleDriveRecoverListAdapter :
-    RecyclerView.Adapter<GoogleDriveRecoverListAdapter.ViewHolder>() {
+class RecoverGoogleDriveBackupsListAdapter :
+    RecyclerView.Adapter<RecoverGoogleDriveBackupsListAdapter.ViewHolder>() {
     private val backupsList: MutableList<File> = mutableListOf()
     private var backupClickListener: BackupClickListener? = null
 
@@ -47,7 +47,7 @@ class GoogleDriveRecoverListAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val file = backupsList[position]
         holder.binding.apply {
-            backupTitle.text = file.name + file.id
+            backupTitle.text = file.name
             backupTime.text =
                 file.createdTime?.toString()?.toDate()?.formatTo("dd MMM yyyy HH:mm") ?: ""
             root.setOnClickListener {

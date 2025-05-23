@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.recover.googledrive
+package com.concordium.wallet.ui.seed.recover.googledrive.backupslist
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,32 +7,32 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
+import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.concordium.wallet.databinding.ActivityRecoverGoogleDriveWalletBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
-import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
 
-class RecoverGoogleDriveWalletActivity :
+class RecoverGoogleDriveBackupsListActivity :
     BaseActivity(
         R.layout.activity_recover_google_drive_wallet,
         R.string.welcome_recover_google_drive_select_backup_title
     ), AuthDelegate by AuthDelegateImpl() {
 
-    private lateinit var backupsAdapter: GoogleDriveRecoverListAdapter
+    private lateinit var backupsAdapter: RecoverGoogleDriveBackupsListAdapter
     private lateinit var driveService: Drive
 
     private val binding by lazy {
         ActivityRecoverGoogleDriveWalletBinding.bind(findViewById(R.id.root_layout))
     }
 
-    val viewModel: GoogleDriveRecoverViewModel by lazy {
+    val viewModel: RecoverGoogleDriveBackupsListViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
@@ -48,7 +48,7 @@ class RecoverGoogleDriveWalletActivity :
             val account = task.result
 
             driveService = GoogleDriveManager.getDriveService(
-                this@RecoverGoogleDriveWalletActivity,
+                this@RecoverGoogleDriveBackupsListActivity,
                 account
             )
             viewModel.getBackupsList(driveService)
@@ -65,10 +65,10 @@ class RecoverGoogleDriveWalletActivity :
     }
 
     private fun initViews() {
-        backupsAdapter = GoogleDriveRecoverListAdapter()
+        backupsAdapter = RecoverGoogleDriveBackupsListAdapter()
         binding.backupsList.adapter = backupsAdapter
         backupsAdapter.setBackupClickListener(object :
-            GoogleDriveRecoverListAdapter.BackupClickListener {
+            RecoverGoogleDriveBackupsListAdapter.BackupClickListener {
             override fun onBackupClick(file: File) {
                 viewModel.downloadFileFromAppFolder(driveService, file.name)
             }

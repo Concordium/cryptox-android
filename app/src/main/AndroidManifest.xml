@@ -595,7 +595,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/MW24_Screen"/>
-        <activity android:name=".ui.seed.recover.googledrive.RecoverGoogleDriveWalletActivity"
+        <activity android:name=".ui.seed.recover.googledrive.backupslist.RecoverGoogleDriveBackupsListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"/>
