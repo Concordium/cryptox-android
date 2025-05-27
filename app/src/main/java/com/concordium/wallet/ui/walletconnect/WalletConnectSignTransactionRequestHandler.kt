@@ -13,7 +13,7 @@ import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.TransactionCostCalculator
+import com.concordium.wallet.data.util.TransactionEnergyCostCalculator
 import com.concordium.wallet.data.walletconnect.AccountTransactionParams
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
@@ -197,6 +197,7 @@ class WalletConnectSignTransactionRequestHandler(
         emitState(reviewState)
     }
 
+    @Suppress("IfThenToElvis")
     private suspend fun getTransactionCost(): TransactionCost =
         when (val transactionPayload = this.transactionPayload) {
             is AccountTransactionPayload.Transfer ->
@@ -211,14 +212,11 @@ class WalletConnectSignTransactionRequestHandler(
                         transactionPayload.maxEnergy
                     } else if (transactionPayload.maxContractExecutionEnergy != null) {
                         // Calculate the total value locally if only the execution energy provided.
-                        // Max energy = contract execution energy + base transaction energy.
-                        transactionPayload.maxContractExecutionEnergy +
-                                TransactionCostCalculator.getBaseCostEnergy(
-                                    transactionSize = TransactionCostCalculator.getContractTransactionSize(
-                                        receiveName = transactionPayload.receiveName,
-                                        message = transactionPayload.message,
-                                    ),
-                                )
+                        TransactionEnergyCostCalculator.getContractTransactionMaxEnergy(
+                            receiveName = transactionPayload.receiveName,
+                            messageHex = transactionPayload.message,
+                            maxContractExecutionEnergy = transactionPayload.maxContractExecutionEnergy,
+                        )
                     } else {
                         error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
                     }
