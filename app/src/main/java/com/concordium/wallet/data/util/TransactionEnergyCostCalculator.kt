@@ -4,6 +4,7 @@ import com.concordium.sdk.transactions.CCDAmount
 import com.concordium.sdk.transactions.Parameter
 import com.concordium.sdk.transactions.Payload
 import com.concordium.sdk.transactions.ReceiveName
+import com.concordium.sdk.transactions.TransactionTypeCost
 import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.types.ContractAddress
 import com.concordium.sdk.types.UInt64
@@ -56,5 +57,22 @@ object TransactionEnergyCostCalculator {
         numSignatures,
         payload.bytes.size,
         UInt64.from(maxContractExecutionEnergy),
+    ).value
+
+    /**
+     * @param payload non-contract transaction payload
+     * @param transactionSpecificCost fixed base cost of the transaction
+     * @param numSignatures number of signatures, which is 1 unless we implement multisig in the wallet.
+     *
+     * @return max energy (NRG) which can be spent by this transaction.
+     */
+    fun getTransactionMaxEnergy(
+        payload: Payload,
+        transactionSpecificCost: TransactionTypeCost,
+        numSignatures: Int = 1,
+    ): Long = Payload.calculateEnergyCost(
+        numSignatures,
+        payload.bytes.size,
+        transactionSpecificCost.value
     ).value
 }
