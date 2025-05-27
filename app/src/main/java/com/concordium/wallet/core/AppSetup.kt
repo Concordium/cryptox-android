@@ -17,6 +17,8 @@ class AppSetup(
         get() = appSetupPreferences.getHasCompletedInitialSetup()
     val isAuthSetupCompleted: Boolean
         get() = auth.isPasswordAuthInitialized()
+    val isGoogleAccountSignedIn: Boolean
+        get() = appSetupPreferences.getHasSignedGoogleAccount()
 
     fun finishInitialSetup() {
         appSetupPreferences.setHasCompletedInitialSetup(true)
@@ -62,5 +64,9 @@ class AppSetup(
         // Restore the auth manager discarding the alternative slot.
         auth = oldAuth
         finishAuthSetup()
+    }
+
+    fun setGoogleAccountSignedIn(value: Boolean) {
+        appSetupPreferences.setHasSignedGoogleAccount(value)
     }
 }

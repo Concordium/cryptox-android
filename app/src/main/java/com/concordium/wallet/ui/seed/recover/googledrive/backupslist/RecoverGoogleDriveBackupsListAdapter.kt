@@ -48,8 +48,10 @@ class RecoverGoogleDriveBackupsListAdapter :
         val file = backupsList[position]
         holder.binding.apply {
             backupTitle.text = file.name
-            backupTime.text =
-                file.createdTime?.toString()?.toDate()?.formatTo("dd MMM yyyy HH:mm") ?: ""
+            backupTime.text = file.createdTime?.toString()
+                ?.toDate()
+                ?.formatTo("dd MMM yyyy HH:mm:ss") ?: ""
+
             root.setOnClickListener {
                 backupClickListener?.onBackupClick(file)
             }

@@ -94,6 +94,14 @@ class AppSetupPreferences(
         return getBoolean(PREFKEY_HAS_COMPLETED_INITIAL_SETUP, false)
     }
 
+    fun setHasSignedGoogleAccount(value: Boolean) {
+        setBoolean(PREFKEY_HAS_SIGNED_GOOGLE_ACCOUNT, value)
+    }
+
+    fun getHasSignedGoogleAccount(): Boolean {
+        return getBoolean(PREFKEY_HAS_SIGNED_GOOGLE_ACCOUNT, false)
+    }
+
     private companion object {
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
@@ -105,5 +113,6 @@ class AppSetupPreferences(
         const val PREFKEY_LEGACY_PASSWORD_CHECK = "PREFKEY_LEGACY_PASSWORD_CHECK"
         const val PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON =
             "PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON"
+        const val PREFKEY_HAS_SIGNED_GOOGLE_ACCOUNT = "PREFKEY_HAS_SIGNED_GOOGLE_ACCOUNT"
     }
 }

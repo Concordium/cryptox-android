@@ -36,10 +36,31 @@
         android:layout_marginTop="16dp"
         android:padding="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/change_account_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/choose_backup_message"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:listitem="@layout/list_item_google_drive_backup" />
+
+    <TextView
+        android:id="@+id/change_account_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:drawablePadding="10dp"
+        android:text="@string/welcome_recover_google_drive_change_account"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textColor="@color/cryptox_white_main"
+        app:drawableStartCompat="@drawable/ccx_ico_user_circle"
+        app:drawableTint="@color/ccx_neutral_tint_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backups_list"
+        app:layout_constraintVertical_bias="0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

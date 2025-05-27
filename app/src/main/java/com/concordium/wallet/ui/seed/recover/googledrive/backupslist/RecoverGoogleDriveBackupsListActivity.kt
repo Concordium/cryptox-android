@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.seed.recover.googledrive.backupslist
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -46,13 +47,22 @@ class RecoverGoogleDriveBackupsListActivity :
         val data = result.data
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         if (task.isSuccessful) {
-            val account = task.result
+            viewModel.setHasGoogleAccountSignedIn(true)
 
+            val account = task.result
             driveService = GoogleDriveManager.getDriveService(
                 this@RecoverGoogleDriveBackupsListActivity,
                 account
             )
             viewModel.getBackupsList(driveService)
+        } else {
+            viewModel.setHasGoogleAccountSignedIn(false)
+            Toast.makeText(
+                this,
+                getString(R.string.settings_overview_google_drive_permissions_error),
+                Toast.LENGTH_SHORT
+            ).show()
+            finish()
         }
     }
 
@@ -74,6 +84,9 @@ class RecoverGoogleDriveBackupsListActivity :
                 viewModel.downloadFileFromAppFolder(driveService, file.name)
             }
         })
+        binding.changeAccountButton.setOnClickListener {
+            changeGoogleAccount()
+        }
     }
 
     private fun initObservers() {
@@ -100,6 +113,18 @@ class RecoverGoogleDriveBackupsListActivity :
     private fun signInWithGoogle(googleSignInClient: GoogleSignInClient) {
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
+    }
+
+    private fun changeGoogleAccount() {
+        val signInAccount = GoogleDriveManager.getSignInClient(this)
+        signInAccount.signOut().addOnCompleteListener {
+            if (it.isSuccessful) {
+                signInWithGoogle(signInAccount)
+                viewModel.setHasGoogleAccountSignedIn(false)
+            } else {
+                showError(R.string.app_error_lib)
+            }
+        }
     }
 
     private fun goToEnterPassword(data: EncryptedExportData) {

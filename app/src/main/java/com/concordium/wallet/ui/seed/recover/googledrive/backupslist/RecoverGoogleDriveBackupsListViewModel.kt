@@ -70,4 +70,8 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
         _encryptedData.emit(encryptedData)
         _loading.emit(false)
     }
+
+    fun setHasGoogleAccountSignedIn(value: Boolean) {
+        App.appCore.setup.setGoogleAccountSignedIn(value)
+    }
 }
