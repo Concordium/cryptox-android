@@ -16,9 +16,13 @@ import com.concordium.wallet.databinding.ActivitySavedSeedPhraseRevealBinding
 import com.concordium.wallet.databinding.ItemCcxSeedPhraseWordBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupActivity
+import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupViewModel
+import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveDeleteBackupBottomSheet
 
 class SavedSeedPhraseRevealActivity :
     BaseActivity(R.layout.activity_saved_seed_phrase_reveal),
@@ -28,11 +32,16 @@ class SavedSeedPhraseRevealActivity :
         ActivitySavedSeedPhraseRevealBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
     private lateinit var viewModel: SavedSeedPhraseRevealViewModel
+    private lateinit var googleDriveBackupViewModel: GoogleDriveCreateBackupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get()
+        googleDriveBackupViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
@@ -50,7 +59,11 @@ class SavedSeedPhraseRevealActivity :
 
     override fun onResume() {
         super.onResume()
-        viewModel.isGoogleDriveBackupReady()
+        if (googleDriveBackupViewModel.isGoogleAccountSignedIn) {
+            googleDriveBackupViewModel.checkBackupStatus()
+        } else {
+            updateGoogleDriveBackupStatus(false)
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -98,7 +111,11 @@ class SavedSeedPhraseRevealActivity :
         }
 
         binding.backupButton.setOnClickListener {
-            gotoGoogleDriveBackUp()
+//            gotoGoogleDriveBackUp()
+            GoogleDriveDeleteBackupBottomSheet().showSingle(
+                supportFragmentManager,
+                GoogleDriveDeleteBackupBottomSheet.TAG
+            )
         }
     }
 
@@ -127,9 +144,6 @@ class SavedSeedPhraseRevealActivity :
 
             binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
             binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
-        }
-        viewModel.isGoogleDriveBackupReady.collectWhenStarted(this) { backedUp ->
-            updateGoogleDriveBackupStatus(backedUp)
         }
     }
 

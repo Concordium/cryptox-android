@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.reveal
+package com.concordium.wallet.ui.seed.reveal.backup
 
 import android.os.Bundle
 import android.text.InputType
@@ -39,6 +39,7 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
         val data = result.data
         val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         if (task.isSuccessful) {
+            viewModel.setHasGoogleAccountSignedIn(true)
             task.result?.let {
                 viewModel.setGoogleSignInAccount(it)
             }

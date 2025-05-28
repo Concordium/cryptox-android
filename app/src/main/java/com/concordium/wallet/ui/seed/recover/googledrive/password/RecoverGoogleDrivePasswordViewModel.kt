@@ -55,18 +55,18 @@ class RecoverGoogleDrivePasswordViewModel(application: Application) :
             val seedPhrase = try {
                 ExportEncryptionHelper.decryptExportData(backupPassword.value, encryptedData)
             } catch (e: IllegalArgumentException) {
-                Log.e("Unexpected json format, Invalid password or import file corrupted")
+                Log.e("Unexpected json format")
                 return@launch
             } catch (e: Exception) {
                 when (e) {
                     is JsonIOException,
                     is JsonSyntaxException,
                     -> {
-                        Log.e("Unexpected json format")
+                        Log.e("Unexpected file format")
                     }
 
                     is EncryptionException -> {
-                        Log.e("Unexpected encryption/decryption error, Invalid password or import file corrupted")
+                        Log.e("Unexpected encryption/decryption error")
                     }
 
                     else -> throw e

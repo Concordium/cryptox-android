@@ -159,8 +159,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:paddingHorizontal="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -175,9 +175,9 @@
                     android:id="@+id/google_drive_backup_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/settings_overview_google_drive_backup_not_active"
                     android:textAppearance="@style/CCX_Typography_Button_M"
-                    android:textColor="@color/attention_red"
-                    tools:text="@string/settings_overview_google_drive_backup_not_active" />
+                    android:textColor="@color/attention_red" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

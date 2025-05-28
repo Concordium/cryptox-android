@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.seed.reveal
+package com.concordium.wallet.ui.seed.reveal.backup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -49,6 +49,9 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
 
     private val backupPassword = MutableStateFlow("")
     private val googleAccessToken = MutableStateFlow("")
+
+    val isGoogleAccountSignedIn
+        get() = App.appCore.setup.isGoogleAccountSignedIn
 
     fun onSetPasswordConfirmClicked(password: String) {
         viewModelScope.launch {
@@ -108,8 +111,16 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
         }
     }
 
+    fun checkBackupStatus() = viewModelScope.launch {
+
+    }
+
     private suspend fun getAccountName() = withContext(Dispatchers.IO) {
         Account.getDefaultName(accountRepository.getAllDone().first().address)
+    }
+
+    fun setHasGoogleAccountSignedIn(value: Boolean) {
+        App.appCore.setup.setGoogleAccountSignedIn(value)
     }
 
     private fun uploadToDrive(data: ByteArray, filename: String) =
