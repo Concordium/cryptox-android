@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewOutlineProvider
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +26,8 @@ import com.concordium.wallet.ui.common.delegates.GoogleSignInDelegateImpl
 import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupActivity
 import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupViewModel
 import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveDeleteBackupBottomSheet
+import com.concordium.wallet.util.DateTimeUtil.formatTo
+import com.concordium.wallet.util.DateTimeUtil.toDate
 
 class SavedSeedPhraseRevealActivity :
     BaseActivity(R.layout.activity_saved_seed_phrase_reveal),
@@ -37,6 +38,7 @@ class SavedSeedPhraseRevealActivity :
     }
     private lateinit var viewModel: SavedSeedPhraseRevealViewModel
     private lateinit var googleDriveBackupViewModel: GoogleDriveCreateBackupViewModel
+    private var backupCreationTime = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,13 +152,9 @@ class SavedSeedPhraseRevealActivity :
         }
         googleDriveBackupViewModel.backupFile.collectWhenStarted(this) { file ->
             file?.let {
-                binding.backupButton.setOnClickListener {
-                    Toast.makeText(
-                        this,
-                        "Backup file: ${file.name}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                backupCreationTime = file.createdTime?.toString()
+                    ?.toDate()
+                    ?.formatTo("dd MMM yyyy HH:mm:ss") ?: ""
             }
         }
     }
@@ -169,7 +167,9 @@ class SavedSeedPhraseRevealActivity :
                 binding.googleDriveBackupStatus.setTextColor(getColor(R.color.mw24_green))
 
                 binding.backupButton.setOnClickListener {
-                    GoogleDriveDeleteBackupBottomSheet().showSingle(
+                    GoogleDriveDeleteBackupBottomSheet.newInstance(
+                        GoogleDriveDeleteBackupBottomSheet.setBundle(backupCreationTime)
+                    ).showSingle(
                         supportFragmentManager,
                         GoogleDriveDeleteBackupBottomSheet.TAG
                     )

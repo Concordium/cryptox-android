@@ -32,9 +32,6 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
-//    private val _isGoogleDriveBackupReady = MutableStateFlow(false)
-//    val isGoogleDriveBackupReady = _isGoogleDriveBackupReady.asStateFlow()
-
     fun onShowPhraseClicked() {
         mutableEventsFlow.tryEmit(Event.Authenticate)
     }
@@ -42,12 +39,6 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
     fun onAuthenticated(password: String) {
         decryptAndRevealPhrase(password)
     }
-
-//    fun isGoogleDriveBackupReady() = viewModelScope.launch {
-//        _isGoogleDriveBackupReady.emit(
-//            App.appCore.session.walletStorage.setupPreferences.getHasBackedUpWithDrive()
-//        )
-//    }
 
     private fun decryptAndRevealPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {
         val seedPhrase = try {

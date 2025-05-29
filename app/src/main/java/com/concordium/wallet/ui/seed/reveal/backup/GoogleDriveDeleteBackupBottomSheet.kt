@@ -13,6 +13,9 @@ class GoogleDriveDeleteBackupBottomSheet : BottomSheetDialogFragment() {
     override fun getTheme(): Int = R.style.CCX_BottomSheetDialog
 
     private lateinit var binding: FragmentGoogleDriveDeleteBackupBottomSheetBinding
+    private val backupCreationTime: String by lazy {
+        arguments?.getString(BACKUP_CREATION_TIME) ?: ""
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +32,11 @@ class GoogleDriveDeleteBackupBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.backupTime.text = requireContext().getString(
+            R.string.settings_overview_google_drive_backup_time,
+            backupCreationTime
+        )
+
         binding.deleteBackupButton.setOnClickListener {
             DeleteBackupConfirmDialog().showSingle(
                 parentFragmentManager,
@@ -39,5 +47,14 @@ class GoogleDriveDeleteBackupBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "GoogleDriveDeleteBackupBottomSheet"
+        private const val BACKUP_CREATION_TIME = "backup_creation_time"
+
+        fun newInstance(bundle: Bundle) = GoogleDriveDeleteBackupBottomSheet().apply {
+            arguments = bundle
+        }
+
+        fun setBundle(backupCreationTime: String) = Bundle().apply {
+            putString(BACKUP_CREATION_TIME, backupCreationTime)
+        }
     }
 }
