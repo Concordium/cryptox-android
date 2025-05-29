@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.seed.reveal.backup
 import android.os.Bundle
 import android.text.InputType
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -14,12 +13,13 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.ui.common.delegates.GoogleSignInDelegate
+import com.concordium.wallet.ui.common.delegates.GoogleSignInDelegateImpl
 import com.concordium.wallet.uicore.toast.showGradientToast
 import com.concordium.wallet.util.KeyboardUtil
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_google_drive_backup),
-    AuthDelegate by AuthDelegateImpl() {
+    AuthDelegate by AuthDelegateImpl(), GoogleSignInDelegate by GoogleSignInDelegateImpl() {
 
     private val binding: ActivityCreateGoogleDriveBackupBinding by lazy {
         ActivityCreateGoogleDriveBackupBinding.bind(findViewById(R.id.root_layout))
@@ -30,26 +30,6 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
-    }
-
-    private val googleSignInLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val data = result.data
-        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-        if (task.isSuccessful) {
-            viewModel.setHasGoogleAccountSignedIn(true)
-            task.result?.let {
-                viewModel.setGoogleSignInAccount(it)
-            }
-        } else {
-            finish()
-            Toast.makeText(
-                this,
-                getString(R.string.settings_overview_google_drive_permissions_error),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,10 +98,12 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
                     showProcessingState()
                     hideActionBarBack(isVisible = true)
                 }
+
                 GoogleDriveCreateBackupViewModel.State.SetPassword -> {
                     showSetPasswordState()
                     hideActionBarBack(isVisible = true)
                 }
+
                 GoogleDriveCreateBackupViewModel.State.RepeatPassword -> {
                     showRepeatPasswordState()
                     hideActionBarBack(isVisible = true) {
@@ -191,8 +173,23 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
     }
 
     private fun setupGoogleSignIn() {
+        registerLauncher(
+            caller = this,
+            onSuccess = { account ->
+                viewModel.setHasGoogleAccountSignedIn(true)
+                viewModel.setGoogleSignInAccount(account)
+            },
+            onFailure = {
+                Toast.makeText(
+                    this,
+                    getString(R.string.settings_overview_google_drive_permissions_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
+            }
+        )
         val googleSignInClient = GoogleDriveManager.getSignInClient(this)
         val signInIntent = googleSignInClient.signInIntent
-        googleSignInLauncher.launch(signInIntent)
+        launchGoogleSignIn(signInIntent)
     }
 }
