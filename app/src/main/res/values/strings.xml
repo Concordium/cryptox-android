@@ -315,6 +315,7 @@
     <string name="settings_overview_google_drive_backup_ready">Backup saved</string>
     <string name="settings_overview_google_drive_backup_active">Active</string>
     <string name="settings_overview_google_drive_backup_not_active">Back up now</string>
+    <string name="settings_overview_google_drive_backup_processing">Processing\.\.\.</string>
     <string name="settings_overview_google_drive_backup_time">Back up time: %1$s</string>
     <string name="settings_overview_google_drive_delete_backup">Delete Backup</string>
     <string name="settings_overview_google_drive_delete_backup_warning">Warning!</string>

@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.core.backup.GoogleDriveManager.listFilesInAppFolder
+import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.concordium.wallet.data.export.EncryptedExportData
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
@@ -32,7 +32,7 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
 
     fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
         _loading.emit(true)
-        _backupsList.emit(listFilesInAppFolder(driveService))
+        _backupsList.emit(GoogleDriveManager.listFilesInAppFolder(driveService))
         _loading.emit(false)
     }
 

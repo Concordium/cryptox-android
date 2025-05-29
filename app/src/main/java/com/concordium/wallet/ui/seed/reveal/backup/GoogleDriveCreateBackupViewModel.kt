@@ -44,6 +44,9 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
     private val _state = MutableStateFlow<State>(State.Processing)
     val state = _state.asStateFlow()
 
+    private val _backupStatus = MutableStateFlow<BackupStatus>(BackupStatus.Processing)
+    val backupStatus = _backupStatus.asStateFlow()
+
     private val _backupReady = MutableStateFlow(false)
     val backupReady = _backupReady.asStateFlow()
 
@@ -96,7 +99,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
 
         uploadToDrive(
             encryptedExportData.asJsonString().toByteArray(),
-            "CryptoX backup ${getAccountName()}"
+            getAccountName()
         )
     }
 
@@ -112,11 +115,21 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
     }
 
     fun checkBackupStatus() = viewModelScope.launch {
+        _backupStatus.emit(BackupStatus.Processing)
+        if (isGoogleAccountSignedIn.not()) {
+            _backupStatus.emit(BackupStatus.NotBackedUp)
+            return@launch
+        } else {
+            _backupStatus.emit(BackupStatus.BackedUp)
+        }
+    }
+
+    private suspend fun isBackupExist() {
 
     }
 
     private suspend fun getAccountName() = withContext(Dispatchers.IO) {
-        Account.getDefaultName(accountRepository.getAllDone().first().address)
+        "CryptoX backup ${Account.getDefaultName(accountRepository.getAllDone().first().address)}"
     }
 
     fun setHasGoogleAccountSignedIn(value: Boolean) {
@@ -183,5 +196,11 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
         object Processing : State
         object SetPassword : State
         object RepeatPassword : State
+    }
+
+    sealed interface BackupStatus {
+        object Processing : BackupStatus
+        object NotBackedUp : BackupStatus
+        object BackedUp : BackupStatus
     }
 }

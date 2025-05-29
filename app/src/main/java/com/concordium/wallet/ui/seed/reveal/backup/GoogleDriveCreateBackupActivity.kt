@@ -17,7 +17,6 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.uicore.toast.showGradientToast
 import com.concordium.wallet.util.KeyboardUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_google_drive_backup),
     AuthDelegate by AuthDelegateImpl() {
@@ -192,10 +191,7 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
     }
 
     private fun setupGoogleSignIn() {
-        signInWithGoogle(GoogleDriveManager.getSignInClient(this))
-    }
-
-    private fun signInWithGoogle(googleSignInClient: GoogleSignInClient) {
+        val googleSignInClient = GoogleDriveManager.getSignInClient(this)
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }

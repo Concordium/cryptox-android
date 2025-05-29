@@ -59,11 +59,7 @@ class SavedSeedPhraseRevealActivity :
 
     override fun onResume() {
         super.onResume()
-        if (googleDriveBackupViewModel.isGoogleAccountSignedIn) {
-            googleDriveBackupViewModel.checkBackupStatus()
-        } else {
-            updateGoogleDriveBackupStatus(false)
-        }
+        googleDriveBackupViewModel.checkBackupStatus()
     }
 
     @SuppressLint("SetTextI18n")
@@ -109,14 +105,6 @@ class SavedSeedPhraseRevealActivity :
                 null,
             )
         }
-
-        binding.backupButton.setOnClickListener {
-//            gotoGoogleDriveBackUp()
-            GoogleDriveDeleteBackupBottomSheet().showSingle(
-                supportFragmentManager,
-                GoogleDriveDeleteBackupBottomSheet.TAG
-            )
-        }
     }
 
     private fun subscribeToEvents() =
@@ -145,17 +133,42 @@ class SavedSeedPhraseRevealActivity :
             binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
             binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
         }
+        googleDriveBackupViewModel.backupStatus.collectWhenStarted(this) { status ->
+            updateGoogleDriveBackupStatus(status)
+        }
     }
 
-    private fun updateGoogleDriveBackupStatus(backedUp: Boolean) {
-        if (backedUp) {
-            binding.googleDriveBackupStatus.text =
-                getString(R.string.settings_overview_google_drive_backup_active)
-            binding.googleDriveBackupStatus.setTextColor(getColor(R.color.mw24_green))
-        } else {
-            binding.googleDriveBackupStatus.text =
-                getString(R.string.settings_overview_google_drive_backup_not_active)
-            binding.googleDriveBackupStatus.setTextColor(getColor(R.color.attention_red))
+    private fun updateGoogleDriveBackupStatus(status: GoogleDriveCreateBackupViewModel.BackupStatus) {
+        when (status) {
+            GoogleDriveCreateBackupViewModel.BackupStatus.BackedUp -> {
+                binding.googleDriveBackupStatus.text =
+                    getString(R.string.settings_overview_google_drive_backup_active)
+                binding.googleDriveBackupStatus.setTextColor(getColor(R.color.mw24_green))
+
+                binding.backupButton.setOnClickListener {
+                    GoogleDriveDeleteBackupBottomSheet().showSingle(
+                        supportFragmentManager,
+                        GoogleDriveDeleteBackupBottomSheet.TAG
+                    )
+                }
+            }
+
+            GoogleDriveCreateBackupViewModel.BackupStatus.NotBackedUp -> {
+                binding.googleDriveBackupStatus.text =
+                    getString(R.string.settings_overview_google_drive_backup_not_active)
+                binding.googleDriveBackupStatus.setTextColor(getColor(R.color.attention_red))
+
+                binding.backupButton.setOnClickListener {
+                    gotoGoogleDriveBackUp()
+                }
+            }
+
+            GoogleDriveCreateBackupViewModel.BackupStatus.Processing -> {
+                binding.googleDriveBackupStatus.text =
+                    getString(R.string.settings_overview_google_drive_backup_processing)
+                binding.googleDriveBackupStatus.setTextColor(getColor(R.color.mw24_blue_3))
+                binding.backupButton.setOnClickListener { }
+            }
         }
     }
 
