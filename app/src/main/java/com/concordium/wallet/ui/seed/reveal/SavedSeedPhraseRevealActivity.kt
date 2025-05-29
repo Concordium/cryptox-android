@@ -7,11 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewOutlineProvider
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.R
+import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.concordium.wallet.databinding.ActivitySavedSeedPhraseRevealBinding
 import com.concordium.wallet.databinding.ItemCcxSeedPhraseWordBinding
 import com.concordium.wallet.extension.collect
@@ -20,13 +22,15 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.ui.common.delegates.GoogleSignInDelegate
+import com.concordium.wallet.ui.common.delegates.GoogleSignInDelegateImpl
 import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupActivity
 import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupViewModel
 import com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveDeleteBackupBottomSheet
 
 class SavedSeedPhraseRevealActivity :
     BaseActivity(R.layout.activity_saved_seed_phrase_reveal),
-    AuthDelegate by AuthDelegateImpl() {
+    AuthDelegate by AuthDelegateImpl(), GoogleSignInDelegate by GoogleSignInDelegateImpl() {
 
     private val binding: ActivitySavedSeedPhraseRevealBinding by lazy {
         ActivitySavedSeedPhraseRevealBinding.bind(findViewById(R.id.toastLayoutTopError))
@@ -53,6 +57,7 @@ class SavedSeedPhraseRevealActivity :
         initBlur()
         initButtons()
 
+        setupGoogleSignIn()
         subscribeToEvents()
         subscribeToState()
     }
@@ -136,6 +141,24 @@ class SavedSeedPhraseRevealActivity :
         googleDriveBackupViewModel.backupStatus.collectWhenStarted(this) { status ->
             updateGoogleDriveBackupStatus(status)
         }
+        googleDriveBackupViewModel.canCheckBackupStatus.collectWhenStarted(this) { canCheck ->
+            if (canCheck) {
+                val googleSignInClient = GoogleDriveManager.getSignInClient(this)
+                val signInIntent = googleSignInClient.signInIntent
+                launchGoogleSignIn(signInIntent)
+            }
+        }
+        googleDriveBackupViewModel.backupFile.collectWhenStarted(this) { file ->
+            file?.let {
+                binding.backupButton.setOnClickListener {
+                    Toast.makeText(
+                        this,
+                        "Backup file: ${file.name}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 
     private fun updateGoogleDriveBackupStatus(status: GoogleDriveCreateBackupViewModel.BackupStatus) {
@@ -170,6 +193,14 @@ class SavedSeedPhraseRevealActivity :
                 binding.backupButton.setOnClickListener { }
             }
         }
+    }
+
+    private fun setupGoogleSignIn() {
+        registerLauncher(
+            caller = this,
+            onSuccess = googleDriveBackupViewModel::setGoogleSignInAccount,
+            onFailure = {}
+        )
     }
 
     override fun loggedOut() {

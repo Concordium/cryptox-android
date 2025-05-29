@@ -32,8 +32,14 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
 
     fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
         _loading.emit(true)
-        _backupsList.emit(GoogleDriveManager.listFilesInAppFolder(driveService))
-        _loading.emit(false)
+        try {
+            val list = GoogleDriveManager.listFilesInAppFolder(driveService)
+            _backupsList.emit(list)
+        } catch (e: Exception) {
+            Log.d("Failed to download backup list, error: $e")
+        } finally {
+            _loading.emit(false)
+        }
     }
 
     fun downloadFileFromAppFolder(

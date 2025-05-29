@@ -12,19 +12,15 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 object GoogleDriveManager {
 
-    suspend fun getAccessToken(context: Context, account: GoogleSignInAccount?): String =
-        withContext(Dispatchers.IO) {
-            GoogleAuthUtil.getToken(
-                context,
-                account!!.account!!,
-                "oauth2:${DriveScopes.DRIVE_FILE}"
-            )
-        }
+    fun getAccessToken(context: Context, account: GoogleSignInAccount?): String =
+        GoogleAuthUtil.getToken(
+            context,
+            account!!.account!!,
+            "oauth2:${DriveScopes.DRIVE_FILE}"
+        )
 
     fun getSignInClient(context: Context): GoogleSignInClient {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -37,18 +33,13 @@ object GoogleDriveManager {
         return GoogleSignIn.getClient(context, gso)
     }
 
-    suspend fun listFilesInAppFolder(driveService: Drive): List<File> =
-        withContext(Dispatchers.IO) {
-            val result = driveService.files().list()
-                .setSpaces("appDataFolder")
-                .setQ("'appDataFolder' in parents and trashed=false")
-                .setFields("files(id, name, createdTime)")
-                .execute()
-
-            result.files.onEach { file ->
-                println("Found file: ${file.name} (ID: ${file.id})")
-            }
-        }
+    fun listFilesInAppFolder(driveService: Drive): List<File> =
+        driveService.files().list()
+            .setSpaces("appDataFolder")
+            .setQ("'appDataFolder' in parents and trashed=false")
+            .setFields("files(id, name, createdTime)")
+            .execute()
+            .files
 
     fun getDriveService(context: Context, account: GoogleSignInAccount): Drive {
         val credential = GoogleAccountCredential.usingOAuth2(

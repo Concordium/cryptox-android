@@ -110,6 +110,15 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
                         viewModel.backToSetPassword()
                     }
                 }
+
+                GoogleDriveCreateBackupViewModel.State.BackupAlreadyExists -> {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.settings_overview_google_drive_backup_exists),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
             }
         }
     }
@@ -175,9 +184,9 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
     private fun setupGoogleSignIn() {
         registerLauncher(
             caller = this,
-            onSuccess = { account ->
+            onSuccess = {
                 viewModel.setHasGoogleAccountSignedIn(true)
-                viewModel.setGoogleSignInAccount(account)
+                viewModel::setGoogleSignInAccount
             },
             onFailure = {
                 Toast.makeText(

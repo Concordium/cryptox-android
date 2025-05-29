@@ -11,13 +11,13 @@ import com.concordium.wallet.data.util.ExportEncryptionHelper
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.api.services.drive.model.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
@@ -50,11 +50,17 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
     private val _backupReady = MutableStateFlow(false)
     val backupReady = _backupReady.asStateFlow()
 
+    private val _canCheckBackupStatus = MutableStateFlow(false)
+    val canCheckBackupStatus = _canCheckBackupStatus.asStateFlow()
+
+    private val _backupFile = MutableSharedFlow<File?>()
+    val backupFile = _backupFile.asSharedFlow()
+
     private val backupPassword = MutableStateFlow("")
     private val googleAccessToken = MutableStateFlow("")
 
-    val isGoogleAccountSignedIn
-        get() = App.appCore.setup.isGoogleAccountSignedIn
+    private fun isGoogleAccountSignedIn() =
+        App.appCore.setup.isGoogleAccountSignedIn
 
     fun onSetPasswordConfirmClicked(password: String) {
         viewModelScope.launch {
@@ -99,7 +105,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
 
         uploadToDrive(
             encryptedExportData.asJsonString().toByteArray(),
-            getAccountName()
+            getBackupName()
         )
     }
 
@@ -108,29 +114,45 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
     }
 
     fun setGoogleSignInAccount(account: GoogleSignInAccount) {
-        viewModelScope.launch(Dispatchers.IO) {
-            googleAccessToken.emit(GoogleDriveManager.getAccessToken(getApplication(), account))
-            _state.emit(State.SetPassword)
-        }
+        isBackupExists(account)
     }
 
     fun checkBackupStatus() = viewModelScope.launch {
         _backupStatus.emit(BackupStatus.Processing)
-        if (isGoogleAccountSignedIn.not()) {
+        if (isGoogleAccountSignedIn().not()) {
             _backupStatus.emit(BackupStatus.NotBackedUp)
             return@launch
         } else {
-            _backupStatus.emit(BackupStatus.BackedUp)
+            _canCheckBackupStatus.emit(true)
         }
     }
 
-    private suspend fun isBackupExist() {
+    private fun isBackupExists(account: GoogleSignInAccount) =
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val token = GoogleDriveManager.getAccessToken(getApplication(), account)
+                googleAccessToken.emit(token)
+                val driveService = GoogleDriveManager.getDriveService(getApplication(), account)
+                val backupsList = GoogleDriveManager.listFilesInAppFolder(driveService)
+                val file = backupsList.find {
+                    it.name == getBackupName()
+                } ?: run {
+                    _state.emit(State.SetPassword)
+                    _backupStatus.emit(BackupStatus.NotBackedUp)
+                    return@launch
+                }
+                file.let {
+                    _backupFile.emit(file)
+                    _state.emit(State.BackupAlreadyExists)
+                    _backupStatus.emit(BackupStatus.BackedUp)
+                }
+            } catch (e: Exception) {
+                Log.e("google_drive_failed", e)
+            }
+        }
 
-    }
-
-    private suspend fun getAccountName() = withContext(Dispatchers.IO) {
+    private suspend fun getBackupName() =
         "CryptoX backup ${Account.getDefaultName(accountRepository.getAllDone().first().address)}"
-    }
 
     fun setHasGoogleAccountSignedIn(value: Boolean) {
         App.appCore.setup.setGoogleAccountSignedIn(value)
@@ -196,6 +218,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
         object Processing : State
         object SetPassword : State
         object RepeatPassword : State
+        object BackupAlreadyExists : State
     }
 
     sealed interface BackupStatus {

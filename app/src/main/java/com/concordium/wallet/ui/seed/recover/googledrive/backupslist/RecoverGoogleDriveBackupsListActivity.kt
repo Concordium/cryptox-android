@@ -84,6 +84,7 @@ class RecoverGoogleDriveBackupsListActivity :
             onSuccess = { account ->
                 driveService = GoogleDriveManager.getDriveService(this, account)
                 viewModel.getBackupsList(driveService)
+                viewModel.setHasGoogleAccountSignedIn(true)
             },
             onFailure = {
                 viewModel.setHasGoogleAccountSignedIn(false)
@@ -104,8 +105,8 @@ class RecoverGoogleDriveBackupsListActivity :
         val signInAccount = GoogleDriveManager.getSignInClient(this)
         signInAccount.signOut().addOnCompleteListener {
             if (it.isSuccessful) {
-                launchGoogleSignIn(signInAccount.signInIntent)
                 viewModel.setHasGoogleAccountSignedIn(false)
+                launchGoogleSignIn(signInAccount.signInIntent)
             } else {
                 showError(R.string.app_error_lib)
             }
