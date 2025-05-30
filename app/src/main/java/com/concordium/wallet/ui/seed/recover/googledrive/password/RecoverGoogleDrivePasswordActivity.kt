@@ -50,6 +50,8 @@ class RecoverGoogleDrivePasswordActivity : BaseActivity(
             setOnSearchDoneListener { onEnterPasswordConfirm() }
             setAfterTextChangedListener {
                 enterPasswordButtonEnabled()
+                showPasswordError(false)
+                binding.enterPasswordError.isVisible = false
             }
         }
         binding.enterPasswordButton.setOnClickListener {
@@ -71,6 +73,14 @@ class RecoverGoogleDrivePasswordActivity : BaseActivity(
             if (show) {
                 showAuthentication(this@RecoverGoogleDrivePasswordActivity) { password ->
                     viewModel.setSeedPhrase(exportData, password)
+                }
+            }
+        }
+        viewModel.error.collectWhenStarted(this) { error ->
+            error.contentIfNotHandled?.takeIf { it != -1 }?.let { resId ->
+                binding.enterPasswordError.run {
+                    text = getString(resId)
+                    isVisible = true
                 }
             }
         }

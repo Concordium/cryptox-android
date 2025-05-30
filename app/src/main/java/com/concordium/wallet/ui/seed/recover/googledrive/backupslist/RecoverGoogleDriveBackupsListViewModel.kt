@@ -53,7 +53,7 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
         driveService: Drive,
         fileName: String
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _state.emit(State.Processing)
+        _loading.emit(true)
 
         val fileList = driveService.files().list()
             .setSpaces("appDataFolder")
@@ -81,6 +81,7 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
         val encryptedData = App.appCore.gson.fromJson(jsonString, EncryptedExportData::class.java)
         Log.d("Encrypted content: $encryptedData")
         _encryptedData.emit(encryptedData)
+        _loading.emit(false)
     }
 
     fun setHasGoogleAccountSignedIn(value: Boolean) {

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
@@ -14,24 +15,26 @@ import com.concordium.wallet.util.Log
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class RecoverGoogleDrivePasswordViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    private val _saveSeedPhrase = MutableStateFlow(false)
-    val saveSeedPhrase = _saveSeedPhrase.asStateFlow()
-
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
-    private val _showAuthentication = MutableStateFlow(false)
-    val showAuthentication = _showAuthentication.asStateFlow()
+    private val _saveSeedPhrase = MutableStateFlow(false)
+    val saveSeedPhrase = _saveSeedPhrase.asStateFlow()
 
     private val _showEnterPasswordError = MutableStateFlow(false)
     val showEnterPasswordError = _showEnterPasswordError.asStateFlow()
+
+    private val _showAuthentication = MutableSharedFlow<Boolean>(1)
+    val showAuthentication = _showAuthentication.asSharedFlow()
 
     private val _error = MutableStateFlow(Event(-1))
     val error = _error.asStateFlow()
@@ -55,7 +58,8 @@ class RecoverGoogleDrivePasswordViewModel(application: Application) :
             val seedPhrase = try {
                 ExportEncryptionHelper.decryptExportData(backupPassword.value, encryptedData)
             } catch (e: IllegalArgumentException) {
-                Log.e("Unexpected json format")
+                Log.e("Unexpected file format")
+                _error.emit(Event(R.string.import_google_drive_enter_encryption_password_error_file_format))
                 return@launch
             } catch (e: Exception) {
                 when (e) {
@@ -63,13 +67,18 @@ class RecoverGoogleDrivePasswordViewModel(application: Application) :
                     is JsonSyntaxException,
                     -> {
                         Log.e("Unexpected file format")
+                        _error.emit(Event(R.string.import_google_drive_enter_encryption_password_error_file_format))
                     }
 
                     is EncryptionException -> {
                         Log.e("Unexpected encryption/decryption error")
+                        _error.emit(Event(R.string.import_error_password_or_file_content))
                     }
 
-                    else -> throw e
+                    else -> {
+                        Log.e("Unexpected error")
+                        _error.emit(Event(R.string.auth_login_seed_error))
+                    }
                 }
                 return@launch
             }
