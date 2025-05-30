@@ -45,6 +45,45 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:listitem="@layout/list_item_google_drive_backup" />
 
+    <LinearLayout
+        android:id="@+id/empty_state_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/choose_backup_message">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/crypto_x_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/welcome_recover_google_drive_empty_state_message"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
+            android:textColor="@color/mw24_blue_3" />
+
+        <TextView
+            android:id="@+id/empty_change_account_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:drawablePadding="10dp"
+            android:text="@string/welcome_recover_google_drive_change_account"
+            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textColor="@color/cryptox_white_main"
+            app:drawableStartCompat="@drawable/ccx_ico_user_circle"
+            app:drawableTint="@color/ccx_neutral_tint_1" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/change_account_button"
         android:layout_width="0dp"

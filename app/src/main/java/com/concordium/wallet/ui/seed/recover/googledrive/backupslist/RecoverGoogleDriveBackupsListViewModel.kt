@@ -30,23 +30,30 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
     private val _backupsList = MutableStateFlow<List<File>>(mutableListOf())
     val backupsList = _backupsList.asStateFlow()
 
+    private val _state = MutableStateFlow<State>(State.Processing)
+    val state = _state.asStateFlow()
+
     fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
-        _loading.emit(true)
+        _state.emit(State.Processing)
         try {
             val list = GoogleDriveManager.listFilesInAppFolder(driveService)
             _backupsList.emit(list)
+            if (list.isEmpty()) {
+                _state.emit(State.EmptyState)
+            } else {
+                _state.emit(State.Success)
+            }
         } catch (e: Exception) {
             Log.d("Failed to download backup list, error: $e")
-        } finally {
-            _loading.emit(false)
+            _state.emit(State.Error(e.localizedMessage ?: "Failed to download backup list"))
         }
     }
 
-    fun downloadFileFromAppFolder(
+    fun downloadBackupFromAppFolder(
         driveService: Drive,
         fileName: String
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _loading.emit(true)
+        _state.emit(State.Processing)
 
         val fileList = driveService.files().list()
             .setSpaces("appDataFolder")
@@ -74,10 +81,16 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
         val encryptedData = App.appCore.gson.fromJson(jsonString, EncryptedExportData::class.java)
         Log.d("Encrypted content: $encryptedData")
         _encryptedData.emit(encryptedData)
-        _loading.emit(false)
     }
 
     fun setHasGoogleAccountSignedIn(value: Boolean) {
         App.appCore.setup.setGoogleAccountSignedIn(value)
+    }
+
+    sealed interface State {
+        object Processing : State
+        object EmptyState : State
+        object Success : State
+        data class Error(val message: String) : State
     }
 }

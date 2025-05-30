@@ -53,11 +53,16 @@ class RecoverGoogleDriveBackupsListActivity :
         backupsAdapter.setBackupClickListener(object :
             RecoverGoogleDriveBackupsListAdapter.BackupClickListener {
             override fun onBackupClick(file: File) {
-                viewModel.downloadFileFromAppFolder(driveService, file.name)
+                viewModel.downloadBackupFromAppFolder(driveService, file.name)
             }
         })
-        binding.changeAccountButton.setOnClickListener {
-            changeGoogleAccount()
+        listOf(
+            binding.changeAccountButton,
+            binding.emptyChangeAccountButton
+        ).forEach {
+            it.setOnClickListener {
+                changeGoogleAccount()
+            }
         }
     }
 
@@ -76,6 +81,42 @@ class RecoverGoogleDriveBackupsListActivity :
             binding.backupsList.isVisible = backupsList.isNotEmpty()
             backupsAdapter.setFiles(backupsList)
         }
+
+        viewModel.state.collectWhenStarted(this) { state ->
+            when (state) {
+                RecoverGoogleDriveBackupsListViewModel.State.Processing -> {
+                    setActionBarTitle(getString(R.string.settings_overview_google_drive_processing))
+                    binding.chooseBackupMessage.isVisible = false
+                    binding.backupsList.isVisible = false
+                    binding.changeAccountButton.isVisible = false
+                    binding.emptyStateLayout.isVisible = false
+                    binding.loading.progressBar.isVisible = true
+                }
+
+                RecoverGoogleDriveBackupsListViewModel.State.Success -> {
+                    setActionBarTitle(getString(R.string.welcome_recover_google_drive_select_backup_title))
+                    binding.chooseBackupMessage.isVisible = true
+                    binding.backupsList.isVisible = true
+                    binding.changeAccountButton.isVisible = true
+                    binding.emptyStateLayout.isVisible = false
+                    binding.loading.progressBar.isVisible = false
+                }
+
+                RecoverGoogleDriveBackupsListViewModel.State.EmptyState -> {
+                    setActionBarTitle("")
+                    binding.chooseBackupMessage.isVisible = false
+                    binding.backupsList.isVisible = false
+                    binding.changeAccountButton.isVisible = false
+                    binding.emptyStateLayout.isVisible = true
+                    binding.loading.progressBar.isVisible = false
+                }
+
+                is RecoverGoogleDriveBackupsListViewModel.State.Error -> {
+                    showErrorToast(state.message)
+                    finish()
+                }
+            }
+        }
     }
 
     private fun setupGoogleSignIn() {
@@ -88,11 +129,7 @@ class RecoverGoogleDriveBackupsListActivity :
             },
             onFailure = {
                 viewModel.setHasGoogleAccountSignedIn(false)
-                Toast.makeText(
-                    this,
-                    getString(R.string.settings_overview_google_drive_permissions_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                showErrorToast(getString(R.string.settings_overview_google_drive_permissions_error))
                 finish()
             }
         )
@@ -111,6 +148,10 @@ class RecoverGoogleDriveBackupsListActivity :
                 showError(R.string.app_error_lib)
             }
         }
+    }
+
+    private fun showErrorToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun goToEnterPassword(data: EncryptedExportData) {

@@ -59,6 +59,7 @@
     <string name="welcome_recover_google_drive_select_backup_title">Select wallet backup</string>
     <string name="welcome_recover_google_drive_select_backup_choose">Choose the backup for the wallet you want to restore</string>
     <string name="welcome_recover_google_drive_change_account">Change Account</string>
+    <string name="welcome_recover_google_drive_empty_state_message">There is nothing here</string>
     <!-- ***** Auth ***** -->
     <!-- Auth -->
     <string name="auth_password">Password</string>
