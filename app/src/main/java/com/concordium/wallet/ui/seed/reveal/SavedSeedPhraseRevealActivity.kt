@@ -58,6 +58,7 @@ class SavedSeedPhraseRevealActivity :
         initWords()
         initBlur()
         initButtons()
+        initObservers()
 
         setupGoogleSignIn()
         subscribeToEvents()
@@ -155,6 +156,17 @@ class SavedSeedPhraseRevealActivity :
                 backupCreationTime = file.createdTime?.toString()
                     ?.toDate()
                     ?.formatTo("dd MMM yyyy HH:mm:ss") ?: ""
+            }
+        }
+    }
+
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            GoogleDriveDeleteBackupBottomSheet.ACTION_REQUEST,
+            this
+        ) { _, bundle ->
+            if (GoogleDriveDeleteBackupBottomSheet.getResult(bundle)) {
+                googleDriveBackupViewModel.deleteBackup()
             }
         }
     }

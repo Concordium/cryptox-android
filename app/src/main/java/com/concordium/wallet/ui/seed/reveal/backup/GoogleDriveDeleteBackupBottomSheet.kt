@@ -43,11 +43,26 @@ class GoogleDriveDeleteBackupBottomSheet : BottomSheetDialogFragment() {
                 DeleteBackupConfirmDialog.TAG
             )
         }
+
+        parentFragmentManager.setFragmentResultListener(
+            DeleteBackupConfirmDialog.DELETE_ACTION_REQUEST,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            if (DeleteBackupConfirmDialog.getResult(bundle)) {
+                parentFragmentManager.setFragmentResult(
+                    ACTION_REQUEST,
+                    setResultBundle(true)
+                )
+                dismiss()
+            }
+        }
     }
 
     companion object {
         const val TAG = "GoogleDriveDeleteBackupBottomSheet"
+        const val ACTION_REQUEST = "google_drive_delete_backup_action_request"
         private const val BACKUP_CREATION_TIME = "backup_creation_time"
+        private const val IS_DELETING = "is_deleting"
 
         fun newInstance(bundle: Bundle) = GoogleDriveDeleteBackupBottomSheet().apply {
             arguments = bundle
@@ -56,5 +71,12 @@ class GoogleDriveDeleteBackupBottomSheet : BottomSheetDialogFragment() {
         fun setBundle(backupCreationTime: String) = Bundle().apply {
             putString(BACKUP_CREATION_TIME, backupCreationTime)
         }
+
+        private fun setResultBundle(isDeleting: Boolean) = Bundle().apply {
+            putBoolean(IS_DELETING, isDeleting)
+        }
+
+        fun getResult(bundle: Bundle): Boolean = bundle.getBoolean(IS_DELETING, false)
+
     }
 }

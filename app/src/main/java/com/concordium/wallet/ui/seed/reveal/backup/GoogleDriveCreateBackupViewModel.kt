@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.OutputStreamWriter
@@ -35,8 +36,8 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
     private val _showRepeatPasswordError = MutableSharedFlow<Boolean>(1)
     val showRepeatPasswordError = _showRepeatPasswordError.asSharedFlow()
 
-    private val _showAuthentication = MutableStateFlow(false)
-    val showAuthentication = _showAuthentication.asStateFlow()
+    private val _showAuthentication = MutableSharedFlow<Boolean>(1)
+    val showAuthentication = _showAuthentication.asSharedFlow()
 
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
@@ -58,6 +59,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
 
     private val backupPassword = MutableStateFlow("")
     private val googleAccessToken = MutableStateFlow("")
+    private val googleSignInAccount = MutableStateFlow<GoogleSignInAccount?>(null)
 
     private fun isGoogleAccountSignedIn() =
         App.appCore.setup.isGoogleAccountSignedIn
@@ -129,19 +131,21 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
 
     private fun isBackupExists(account: GoogleSignInAccount) =
         viewModelScope.launch(Dispatchers.IO) {
+            googleSignInAccount.emit(account)
             try {
                 val token = GoogleDriveManager.getAccessToken(getApplication(), account)
                 googleAccessToken.emit(token)
                 val driveService = GoogleDriveManager.getDriveService(getApplication(), account)
                 val backupsList = GoogleDriveManager.listFilesInAppFolder(driveService)
-                val file = backupsList.find {
-                    it.name == getBackupName()
-                } ?: run {
-                    _state.emit(State.SetPassword)
-                    _backupStatus.emit(BackupStatus.NotBackedUp)
-                    return@launch
-                }
+                val file = backupsList.find { it.name == getBackupName() }
+                    ?: run {
+                        _state.emit(State.SetPassword)
+                        _backupStatus.emit(BackupStatus.NotBackedUp)
+                        Log.d("Backup file not found")
+                        return@launch
+                    }
                 file.let {
+                    Log.d("Backup file found")
                     _backupFile.emit(file)
                     _state.emit(State.BackupAlreadyExists)
                     _backupStatus.emit(BackupStatus.BackedUp)
@@ -150,6 +154,32 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
                 Log.e("google_drive_failed", e)
             }
         }
+
+    fun deleteBackup() = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            googleSignInAccount.first()?.let {
+                _backupStatus.emit(BackupStatus.Processing)
+                val driveService = GoogleDriveManager.getDriveService(getApplication(), it)
+                val backupsList = GoogleDriveManager.listFilesInAppFolder(driveService)
+                val fileName = getBackupName()
+
+                backupsList.find { backup ->
+                    backup.name == getBackupName()
+                }?.let { file ->
+                    driveService
+                        .files()
+                        .delete(file.id)
+                        .execute()
+                    Log.d("File ${file.name} deleted successfully.")
+                } ?: run {
+                    Log.d("File $fileName not found.")
+                }
+                checkBackupStatus()
+            }
+        } catch (e: Exception) {
+            Log.e("Failed to delete file", e)
+        }
+    }
 
     private suspend fun getBackupName() =
         "CryptoX backup ${Account.getDefaultName(accountRepository.getAllDone().first().address)}"

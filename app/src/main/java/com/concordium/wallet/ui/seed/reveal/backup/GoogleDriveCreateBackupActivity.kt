@@ -184,9 +184,9 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
     private fun setupGoogleSignIn() {
         registerLauncher(
             caller = this,
-            onSuccess = {
+            onSuccess = { account ->
                 viewModel.setHasGoogleAccountSignedIn(true)
-                viewModel::setGoogleSignInAccount
+                viewModel.setGoogleSignInAccount(account)
             },
             onFailure = {
                 Toast.makeText(
