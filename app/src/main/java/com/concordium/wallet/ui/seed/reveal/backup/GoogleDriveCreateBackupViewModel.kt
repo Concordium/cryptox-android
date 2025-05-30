@@ -174,7 +174,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
                 } ?: run {
                     Log.d("File $fileName not found.")
                 }
-                checkBackupStatus()
+                setGoogleSignInAccount(it)
             }
         } catch (e: Exception) {
             Log.e("Failed to delete file", e)
