@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.room.Account
@@ -181,8 +182,12 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
         }
     }
 
-    private suspend fun getBackupName() =
-        "CryptoX backup ${Account.getDefaultName(accountRepository.getAllDone().first().address)}"
+    private suspend fun getBackupName(): String =
+        "${AppConfig.net} backup ${
+            Account.getDefaultName(
+                accountRepository.getAllDone().first().address
+            )
+        }"
 
     fun setHasGoogleAccountSignedIn(value: Boolean) {
         App.appCore.setup.setGoogleAccountSignedIn(value)

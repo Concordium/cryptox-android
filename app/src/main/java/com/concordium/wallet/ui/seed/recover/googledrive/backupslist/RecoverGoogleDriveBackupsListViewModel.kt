@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.core.backup.GoogleDriveManager
 import com.concordium.wallet.data.export.EncryptedExportData
 import com.concordium.wallet.util.Log
@@ -37,6 +38,9 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
         _state.emit(State.Processing)
         try {
             val list = GoogleDriveManager.listFilesInAppFolder(driveService)
+                .filter {
+                    it.name.contains(AppConfig.net)
+                }
             _backupsList.emit(list)
             if (list.isEmpty()) {
                 _state.emit(State.EmptyState)
@@ -54,34 +58,31 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
         fileName: String
     ) = viewModelScope.launch(Dispatchers.IO) {
         _loading.emit(true)
-
-        val fileList = driveService.files().list()
-            .setSpaces("appDataFolder")
-            .setQ("name='$fileName' and trashed=false and 'appDataFolder' in parents")
-            .setFields("files(id, name, createdTime)")
-            .execute()
-
-        val file = fileList.files.firstOrNull() ?: run {
-            println("File not found in app folder: $fileName")
-            return@launch
+        try {
+            val file = GoogleDriveManager.listFilesInAppFolder(driveService)
+                .firstOrNull() ?: run {
+                Log.d("File not found in app folder: $fileName")
+                return@launch
+            }
+            val outputStream = ByteArrayOutputStream()
+            driveService.files().get(file.id).executeMediaAndDownloadTo(outputStream)
+            val result = outputStream.toByteArray()
+            Log.d(
+                "Downloaded content: ${
+                    result.inputStream().bufferedReader().readText().prettyPrint()
+                }"
+            )
+            val jsonString = result.toString(Charsets.UTF_8)
+            val encryptedData =
+                App.appCore.gson.fromJson(jsonString, EncryptedExportData::class.java)
+            Log.d("Encrypted content: $encryptedData")
+            _encryptedData.emit(encryptedData)
+        } catch (e: Exception) {
+            Log.d("Failed to download backup, error: $e")
+            _state.emit(State.Error(e.localizedMessage ?: "Failed to download backup"))
+        } finally {
+            _loading.emit(false)
         }
-
-        val outputStream = ByteArrayOutputStream()
-        driveService.files().get(file.id).executeMediaAndDownloadTo(outputStream)
-        Log.d("Downloaded file '${file.name}' (${outputStream.size()} bytes)")
-        Log.d("Created time: ${file.createdTime}")
-
-        val result = outputStream.toByteArray()
-        Log.d(
-            "Downloaded content: ${
-                result.inputStream().bufferedReader().readText().prettyPrint()
-            }"
-        )
-        val jsonString = result.toString(Charsets.UTF_8)
-        val encryptedData = App.appCore.gson.fromJson(jsonString, EncryptedExportData::class.java)
-        Log.d("Encrypted content: $encryptedData")
-        _encryptedData.emit(encryptedData)
-        _loading.emit(false)
     }
 
     fun setHasGoogleAccountSignedIn(value: Boolean) {
