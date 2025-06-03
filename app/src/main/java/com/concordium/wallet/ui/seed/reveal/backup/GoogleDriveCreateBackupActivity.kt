@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.seed.reveal.backup
 import android.os.Bundle
 import android.text.InputType
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -32,10 +33,21 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
         ).get()
     }
 
+    private val backCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (viewModel.state.value == GoogleDriveCreateBackupViewModel.State.RepeatPassword) {
+                viewModel.backToSetPassword()
+            } else {
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        hideActionBarBack(isVisible = true)
+        onBackPressedDispatcher.addCallback(this, backCallback)
         setupGoogleSignIn()
         initViews()
         initObservers()
