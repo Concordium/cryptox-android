@@ -12,7 +12,7 @@ interface GoogleSignInDelegate {
     fun registerLauncher(
         caller: ActivityResultCaller,
         onSuccess: (GoogleSignInAccount) -> Unit,
-        onFailure: () -> Unit
+        onFailure: (Throwable) -> Unit
     )
 }
 
@@ -22,16 +22,16 @@ class GoogleSignInDelegateImpl : GoogleSignInDelegate {
     override fun registerLauncher(
         caller: ActivityResultCaller,
         onSuccess: (GoogleSignInAccount) -> Unit,
-        onFailure: () -> Unit
+        onFailure: (Throwable) -> Unit
     ) {
         googleSignInLauncher = caller.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             if (task.isSuccessful) {
-                task.result?.let { onSuccess(it) } ?: onFailure()
+                task.result?.let { onSuccess(it) } ?: onFailure(Throwable(task.exception?.cause))
             } else {
-                onFailure()
+                onFailure(Throwable(task.exception?.cause))
             }
         }
     }

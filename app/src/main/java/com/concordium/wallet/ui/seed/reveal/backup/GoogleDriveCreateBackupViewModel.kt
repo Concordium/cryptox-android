@@ -152,7 +152,7 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
                     _backupStatus.emit(BackupStatus.BackedUp)
                 }
             } catch (e: Exception) {
-                Log.e("google_drive_failed", e)
+                Log.e("Google Drive sign in failed", e)
             }
         }
 
@@ -234,10 +234,9 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
                 connection.outputStream.write(bodyStream.toByteArray())
 
                 val responseCode = connection.responseCode
-                println("Upload response code: $responseCode")
+                Log.d("Upload response code: $responseCode")
                 val response = connection.inputStream.bufferedReader().readText()
-                println("Upload response: $response")
-
+                Log.d("Upload response: $response")
                 connection.disconnect()
 
                 App.appCore.session.walletStorage.setupPreferences.setHasBackedUpWithDrive(true)

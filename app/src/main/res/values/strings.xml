@@ -324,6 +324,7 @@
     <string name="settings_overview_google_drive_delete_backup_description">By deleting it, you won\'t be able to restore this wallet from your Google Drive account. However you can always create a new backup.</string>
     <string name="settings_overview_google_drive_delete_backup_go_back">Go back</string>
     <string name="settings_overview_google_drive_delete_backup_continue">Continue</string>
+    <string name="settings_overview_google_drive_sign_in_failed">Google Drive sign in failed</string>
     <!-- ***** Backup ***** -->
     <!-- Export -->
     <string name="export_title">Export</string>

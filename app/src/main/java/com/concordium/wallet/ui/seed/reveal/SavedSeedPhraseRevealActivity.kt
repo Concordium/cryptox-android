@@ -211,7 +211,14 @@ class SavedSeedPhraseRevealActivity :
         registerLauncher(
             caller = this,
             onSuccess = googleDriveBackupViewModel::setGoogleSignInAccount,
-            onFailure = {}
+            onFailure = {
+                binding.googleDriveBackupStatus.text =
+                    getString(R.string.settings_overview_google_drive_backup_not_active)
+                binding.googleDriveBackupStatus.setTextColor(getColor(R.color.attention_red))
+                binding.backupButton.setOnClickListener {
+                    gotoGoogleDriveBackUp()
+                }
+            }
         )
     }
 

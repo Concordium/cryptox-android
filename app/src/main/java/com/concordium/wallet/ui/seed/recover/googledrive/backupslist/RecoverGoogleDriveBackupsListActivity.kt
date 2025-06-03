@@ -127,9 +127,12 @@ class RecoverGoogleDriveBackupsListActivity :
                 viewModel.getBackupsList(driveService)
                 viewModel.setHasGoogleAccountSignedIn(true)
             },
-            onFailure = {
+            onFailure = { error ->
                 viewModel.setHasGoogleAccountSignedIn(false)
-                showErrorToast(getString(R.string.settings_overview_google_drive_permissions_error))
+                showErrorToast(
+                    error.message
+                        ?: getString(R.string.settings_overview_google_drive_sign_in_failed)
+                )
                 finish()
             }
         )

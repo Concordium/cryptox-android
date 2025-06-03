@@ -188,10 +188,11 @@ class GoogleDriveCreateBackupActivity : BaseActivity(R.layout.activity_create_go
                 viewModel.setHasGoogleAccountSignedIn(true)
                 viewModel.setGoogleSignInAccount(account)
             },
-            onFailure = {
+            onFailure = { error ->
                 Toast.makeText(
                     this,
-                    getString(R.string.settings_overview_google_drive_permissions_error),
+                    error.message
+                        ?: getString(R.string.settings_overview_google_drive_sign_in_failed),
                     Toast.LENGTH_SHORT
                 ).show()
                 finish()
