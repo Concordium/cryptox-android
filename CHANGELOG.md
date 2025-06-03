@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Functionality to securely save and restore seed phrase backups using Google Drive.
+
 ### Fixed
 
 - Not warning about insufficient funds at disposal to pay the transaction fee
