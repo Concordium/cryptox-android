@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.concordium.wallet.core.backup
 
 import android.content.Context

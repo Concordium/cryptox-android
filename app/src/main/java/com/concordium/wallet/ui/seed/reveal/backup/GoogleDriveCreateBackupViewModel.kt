@@ -182,6 +182,12 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
         }
     }
 
+    /**
+     * Returns the name of the backup file.
+     *
+     * Any changes in backup name should be reflected in
+     * [com.concordium.wallet.ui.seed.recover.googledrive.backupslist.RecoverGoogleDriveBackupsListViewModel.getBackupsList]
+     */
     private suspend fun getBackupName(): String =
         "${AppConfig.net} backup ${
             Account.getDefaultName(
@@ -239,7 +245,6 @@ class GoogleDriveCreateBackupViewModel(application: Application) : AndroidViewMo
                 Log.d("Upload response: $response")
                 connection.disconnect()
 
-                App.appCore.session.walletStorage.setupPreferences.setHasBackedUpWithDrive(true)
                 _loading.emit(false)
                 _backupReady.emit(true)
             } catch (e: Exception) {

@@ -83,16 +83,22 @@ class RecoverGoogleDrivePasswordViewModel(application: Application) :
                 return@launch
             }
 
-            val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
-                .tryToSetEncryptedSeedPhrase(seedPhrase, password)
+            try {
+                val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
+                    .tryToSetEncryptedSeedPhrase(seedPhrase, password)
 
-            if (isSavedSuccessfully) {
-                SwitchActiveWalletTypeUseCase().invoke(newWalletType = AppWallet.Type.SEED)
-                App.appCore.setup.finishInitialSetup()
-                App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
+                if (isSavedSuccessfully) {
+                    SwitchActiveWalletTypeUseCase().invoke(newWalletType = AppWallet.Type.SEED)
+                    App.appCore.setup.finishInitialSetup()
+                    App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(
+                        true
+                    )
+                }
+                _saveSeedPhrase.emit(isSavedSuccessfully)
+            } catch (e: Exception) {
+                Log.e("Unexpected encryption error")
+                _error.emit(Event(R.string.auth_login_seed_error))
             }
-            App.appCore.session.walletStorage.setupPreferences.setHasBackedUpWithDrive(true)
-            _saveSeedPhrase.emit(isSavedSuccessfully)
         }
     }
 }

@@ -34,6 +34,12 @@ class RecoverGoogleDriveBackupsListViewModel(application: Application) :
     private val _state = MutableStateFlow<State>(State.Processing)
     val state = _state.asStateFlow()
 
+    /**
+     * Returns the list of available backups.
+     *
+     * Note: This function depends on the backup naming behavior in
+     * [com.concordium.wallet.ui.seed.reveal.backup.GoogleDriveCreateBackupViewModel.getBackupName]
+     */
     fun getBackupsList(driveService: Drive) = viewModelScope.launch(Dispatchers.IO) {
         _state.emit(State.Processing)
         try {
