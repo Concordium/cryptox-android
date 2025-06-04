@@ -395,7 +395,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             type = bakerDelegationData.type,
             amount = amount,
             restake = restake,
-            lPool = bakerDelegationData.isLPool,
+            passive = bakerDelegationData.isLPool,
             targetChange = targetChange,
             metadataSize = metadataSize,
             openStatus = openStatus,
