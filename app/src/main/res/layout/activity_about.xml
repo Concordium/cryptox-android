@@ -140,6 +140,15 @@
                 android:contentDescription="@string/about_discord"
                 android:src="@drawable/mw24_ic_discord" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/review_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textAppearance="@style/CCX_Typography_H2"
+            android:textColor="@color/ccx_neutral_tint_1"
+            android:text="Open review"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

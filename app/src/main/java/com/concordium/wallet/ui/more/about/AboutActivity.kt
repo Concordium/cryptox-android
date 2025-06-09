@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.core.rating.ReviewHelper
 import com.concordium.wallet.databinding.ActivityAboutBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.welcome.WelcomeTermsActivity
@@ -21,11 +22,15 @@ class AboutActivity : BaseActivity(
         ActivityAboutBinding.bind(findViewById(R.id.root_layout))
     }
 
+    private lateinit var reviewHelper: ReviewHelper
+
     //region Lifecycle
     // ************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        reviewHelper = ReviewHelper(this)
 
         fun onUrlClicked(url: String) {
             App.appCore.tracker.aboutScreenLinkClicked(
@@ -76,6 +81,9 @@ class AboutActivity : BaseActivity(
         }
         binding.discordButton.setOnClickListener {
             openSocial(DISCORD_LINK)
+        }
+        binding.reviewButton.setOnClickListener {
+            reviewHelper.launchReviewFlow()
         }
 
         hideActionBarBack(isVisible = true)
