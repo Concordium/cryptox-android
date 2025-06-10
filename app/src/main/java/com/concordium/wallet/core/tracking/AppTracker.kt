@@ -39,4 +39,7 @@ interface AppTracker {
     fun aboutScreen()
     fun aboutScreenLinkClicked(url: String)
     fun discoverScreen()
+    fun reviewAppDialog()
+    fun reviewAppDialogCancelClicked()
+    fun reviewAppDialogSubmitClicked()
 }
