@@ -16,6 +16,8 @@ public class CustomTestListener implements ITestListener {
 
     // List to store test results
     private final List<ITestResult> testResults = new ArrayList<>();
+    private final List<ITestResult> failedTests = new ArrayList<>();
+
 
     @Override
     public void onTestStart(ITestResult result) {
@@ -32,21 +34,7 @@ public class CustomTestListener implements ITestListener {
     public void onTestFailure(ITestResult result) {
         System.out.println("Test failed: " + result.getName());
         testResults.add(result);
-
-        // Screenshot capture is currently disabled
-        /*
-        if (driver != null) {
-            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-
-            try {
-                // Save screenshot to a file
-                String screenshotPath = "screenshots/" + result.getName() + ".png";
-                FileUtils.copyFile(screenshot, new File(screenshotPath));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        */
+        failedTests.add(result);
     }
 
     @Override
@@ -64,19 +52,6 @@ public class CustomTestListener implements ITestListener {
     public void onFinish(ITestContext context) {
         System.out.println("Test suite finished: " + context.getName());
         sendSlackNotification();
-    }
-
-    private String getStatus(int status) {
-        switch (status) {
-            case ITestResult.SUCCESS:
-                return "PASS";
-            case ITestResult.FAILURE:
-                return "FAIL";
-            case ITestResult.SKIP:
-                return "SKIPPED";
-            default:
-                return "UNKNOWN";
-        }
     }
 
     public List<ITestResult> getTestResults() {
@@ -105,11 +80,17 @@ public class CustomTestListener implements ITestListener {
             }
         }
 
-        resultMessage.append("Automation Tests for CryptoX Android (Build 14.0):\n")
+        resultMessage.append("Automation Tests for CryptoX Android - Stagenet:\n")
                 .append("Executed at ").append(java.time.LocalDate.now()).append("\n")
                 .append("Passed: ").append(passed).append("\n")
                 .append("Failed: ").append(failed).append("\n")
                 .append("Skipped: ").append(skipped).append("\n");
+        if (!failedTests.isEmpty()) {
+            resultMessage.append("List of Failed Test Cases:\n");
+            for (ITestResult failedTest : failedTests) {
+                resultMessage.append("- ").append(failedTest.getName()).append("\n");
+            }
+        }
 
         sendSlackMessage(resultMessage.toString());
     }
