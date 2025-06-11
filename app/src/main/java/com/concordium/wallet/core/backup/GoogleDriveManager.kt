@@ -21,7 +21,7 @@ object GoogleDriveManager {
         GoogleAuthUtil.getToken(
             context,
             account!!.account!!,
-            "oauth2:${DriveScopes.DRIVE_FILE}"
+            "oauth2:${DriveScopes.DRIVE_APPDATA}"
         )
 
     fun getSignInClient(context: Context): GoogleSignInClient {
