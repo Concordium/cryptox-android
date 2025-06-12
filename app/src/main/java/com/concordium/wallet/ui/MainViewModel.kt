@@ -42,6 +42,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
 
+    private val _showReviewDialog = MutableStateFlow(false)
+    val showReviewDialog = _showReviewDialog.asStateFlow()
+
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
 
@@ -103,6 +106,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setNotificationData(address: String, id: String) = viewModelScope.launch {
         _activeAccountAddress.emit(address)
         _notificationTokenId.emit(id)
+    }
+
+    fun showReviewDialog() = viewModelScope.launch {
+        _showReviewDialog.emit(true)
     }
 
     fun startIdentityUpdate() {

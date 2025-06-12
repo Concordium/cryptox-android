@@ -110,7 +110,12 @@ class SendTokenReceiptActivity : BaseActivity(
     }
 
     private fun onFinish() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java).apply {
+            if (viewModel.isHasShowReviewDialogAfterSendFunds.not()) {
+                putExtra(MainActivity.EXTRA_SHOW_REVIEW_POPUP, true)
+            }
+        }
+        viewModel.setHasShowReviewDialogAfterSendFunds()
         startActivity(intent)
         finishAffinity()
     }

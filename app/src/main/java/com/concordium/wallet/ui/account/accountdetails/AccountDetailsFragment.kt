@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.core.rating.ReviewHelper
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
@@ -64,6 +65,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
+    private lateinit var reviewHelper: ReviewHelper
 
     // parameters for dynamic calculation of tokensFragmentContainer height
     private var isFileWallet: Boolean = false
@@ -280,6 +282,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        mainViewModel.showReviewDialog.collectWhenStarted(viewLifecycleOwner) { show ->
+            if (show) {
+                reviewHelper.launchReviewFlow()
+            }
+        }
+
         viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
             token?.let {
                 showTokenDetailsDialog(it)
@@ -314,6 +322,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.suspensionNotice.setOnClickListener {
             viewModelAccountDetails.onSuspensionNoticeClicked()
         }
+        reviewHelper = ReviewHelper(requireActivity())
     }
 
     private fun updateViews(account: Account) {

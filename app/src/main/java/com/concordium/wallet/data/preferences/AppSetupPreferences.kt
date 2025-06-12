@@ -94,6 +94,30 @@ class AppSetupPreferences(
         return getBoolean(PREFKEY_HAS_COMPLETED_INITIAL_SETUP, false)
     }
 
+    fun setHasShowReviewDialogAfterReceiveFunds(value: Boolean) {
+        setBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_RECEIVE_FUNDS, value)
+    }
+
+    fun getHasShowReviewDialogAfterReceiveFunds(): Boolean {
+        return getBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_RECEIVE_FUNDS, false)
+    }
+
+    fun setHasShowReviewDialogAfterSendFunds(value: Boolean) {
+        setBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_SEND_FUNDS, value)
+    }
+
+    fun getHasShowReviewDialogAfterSendFunds(): Boolean {
+        return getBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_SEND_FUNDS, false)
+    }
+
+    fun setHasShowReviewDialogAfterEarnSetup(value: Boolean) {
+        setBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP, value)
+    }
+
+    fun getHasShowReviewDialogAfterEarnSetup(): Boolean {
+        return getBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP, false)
+    }
+
     private companion object {
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
@@ -105,5 +129,11 @@ class AppSetupPreferences(
         const val PREFKEY_LEGACY_PASSWORD_CHECK = "PREFKEY_LEGACY_PASSWORD_CHECK"
         const val PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON =
             "PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON"
+        const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_RECEIVE_FUNDS =
+            "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_RECEIVE_FUNDS"
+        const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_SEND_FUNDS =
+            "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_SEND_FUNDS"
+        const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP =
+            "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP"
     }
 }

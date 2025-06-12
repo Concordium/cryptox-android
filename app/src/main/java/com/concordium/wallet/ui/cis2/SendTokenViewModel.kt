@@ -118,6 +118,8 @@ class SendTokenViewModel(
                     && fee != null
                     && hasEnoughFunds()
         }
+    val isHasShowReviewDialogAfterSendFunds: Boolean
+        get() = App.appCore.setup.isHasShowReviewDialogAfterSendFunds
 
     init {
         chooseToken.observeForever { token ->
@@ -298,6 +300,10 @@ class SendTokenViewModel(
             atDisposal >= (sendTokenData.fee
                 ?: BigInteger.ZERO) && sendTokenData.token!!.balance >= sendTokenData.amount
         }
+    }
+
+    fun setHasShowReviewDialogAfterSendFunds() {
+        App.appCore.setup.setHasShowReviewDialogAfterSendFunds(true)
     }
 
     private fun getTransferEURRate() = viewModelScope.launch {
