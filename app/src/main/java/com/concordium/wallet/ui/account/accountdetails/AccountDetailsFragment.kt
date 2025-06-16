@@ -263,6 +263,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 }
             }
         }
+        viewModelAccountDetails.showReviewDialog.collectWhenStarted(this) { show ->
+            if (show && mainViewModel.hasCompletedOnboarding()) {
+                reviewHelper.launchReviewFlow()
+            }
+        }
 
         combine(
             mainViewModel.activeAccountAddress,
@@ -283,8 +288,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         mainViewModel.showReviewDialog.collectWhenStarted(viewLifecycleOwner) { show ->
-            if (show) {
+            if (show && mainViewModel.hasCompletedOnboarding()) {
                 reviewHelper.launchReviewFlow()
+                // Since the review dialog can only be closed by user actions,
+                // reset the flow value to false to avoid spam
+                mainViewModel.hideReviewDialog()
             }
         }
 
@@ -507,7 +515,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 binding.includeEarnBanner.earnBanner.measuredHeight
             else 0
             val earnBannerMargin = if (viewModelAccountDetails.isShowEarnBanner() &&
-                !isZeroBalance && !isEarning)
+                !isZeroBalance && !isEarning
+            )
                 (binding.includeEarnBanner.earnBanner.layoutParams as MarginLayoutParams).topMargin
             else 0
 
@@ -665,7 +674,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setupEarnBanner(account: Account = viewModelAccountDetails.account) {
-        binding.includeEarnBanner.earnBanner.isVisible = viewModelAccountDetails.isEarnBannerVisible()
+        binding.includeEarnBanner.earnBanner.isVisible =
+            viewModelAccountDetails.isEarnBannerVisible()
         binding.includeEarnBanner.earnBanner.setOnClickListener {
             viewModelAccountDetails.onEarnClicked()
         }

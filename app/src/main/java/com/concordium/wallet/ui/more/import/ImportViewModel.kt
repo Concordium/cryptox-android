@@ -49,6 +49,7 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.math.BigInteger
 
 class ImportViewModel(application: Application) :
     AndroidViewModel(application) {
@@ -619,7 +620,18 @@ class ImportViewModel(application: Application) :
         val activeAccount = accountRepository.getActive()
 
         if (allAccounts.isNotEmpty() && activeAccount == null) {
-            accountRepository.activate(allAccounts.sortedBy { it.id }.first().address)
+            accountRepository.activate(
+                allAccounts
+                    .sortedBy { it.id }
+                    .first().address
+            )
+
+            allAccounts
+                .find { it.balance > BigInteger.ZERO }
+                ?.let {
+                    App.appCore.setup.setHasShowReviewDialogAfterReceiveFunds(true)
+                }
+            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
         }
     }
 }

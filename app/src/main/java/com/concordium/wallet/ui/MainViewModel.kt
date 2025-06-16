@@ -112,6 +112,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _showReviewDialog.emit(true)
     }
 
+    fun hideReviewDialog() = viewModelScope.launch {
+        _showReviewDialog.emit(false)
+    }
+
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {
             override fun onError(identity: Identity, account: Account?) {

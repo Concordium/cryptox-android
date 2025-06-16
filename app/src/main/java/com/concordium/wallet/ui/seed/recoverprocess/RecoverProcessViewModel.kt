@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
+import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 
 data class RecoverProcessData(
@@ -434,7 +435,18 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val activeAccount = accountRepository.getActive()
 
         if (allAccounts.isNotEmpty() && activeAccount == null) {
-            accountRepository.activate(allAccounts.sortedBy { it.id }.last().address)
+            accountRepository.activate(
+                allAccounts
+                    .sortedBy { it.id }
+                    .last().address
+            )
+
+            allAccounts
+                .find { it.balance > BigInteger.ZERO }
+                ?.let {
+                    App.appCore.setup.setHasShowReviewDialogAfterReceiveFunds(true)
+                }
+            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
         }
     }
 

@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val session: Session = App.appCore.session
@@ -117,6 +118,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
 
+    private val _showReviewDialog = MutableStateFlow(false)
+    val showReviewDialog = _showReviewDialog.asStateFlow()
+
     var hasPendingBakingTransactions = false
         private set
     var hasPendingDelegationTransactions = false
@@ -151,9 +155,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun isEarnBannerVisible(): Boolean = isShowEarnBanner() &&
-                account.balance > BigInteger.ZERO &&
-                account.isDelegating().not() &&
-                account.isBaking().not()
+            account.balance > BigInteger.ZERO &&
+            account.isDelegating().not() &&
+            account.isBaking().not()
 
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
@@ -209,6 +213,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                         _totalBalanceLiveData.value = account.balance
                     }
                     _accountUpdatedFlow.emit(true)
+                    if (totalBalances.totalBalanceForAllAccounts > BigInteger.ZERO &&
+                        App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
+                    ) {
+                        App.appCore.setup.setHasShowReviewDialogAfterReceiveFunds(true)
+                        _showReviewDialog.emit(true)
+                    } else {
+                        _showReviewDialog.emit(false)
+                    }
                 }
             }
 
@@ -288,9 +300,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun updateState(notifyWaitingLiveData: Boolean = true) = viewModelScope.launch(Dispatchers.IO) {
+        showReviewDialog()
+
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
-
         if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             getActiveAccount()
@@ -455,5 +468,18 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 )
             )
         )
+    }
+
+    private fun showReviewDialog() = viewModelScope.launch {
+        val elapsedTime = System.currentTimeMillis() -
+                App.appCore.session.walletStorage.setupPreferences.getShowReviewDialogTime()
+        val elapsedDays = TimeUnit.MILLISECONDS.toDays(elapsedTime)
+
+        if (elapsedDays >= 180) {
+            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
+            _showReviewDialog.emit(true)
+        } else {
+            _showReviewDialog.emit(false)
+        }
     }
 }

@@ -82,6 +82,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
 
         handlePossibleWalletConnectUri(intent)
+        handleReviewPopup(intent)
 
         if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
             goToImportFromFile()

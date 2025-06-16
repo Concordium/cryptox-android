@@ -263,6 +263,9 @@ open class NewAccountViewModel(application: Application) :
     private fun saveNewAccount(account: Account) = viewModelScope.launch(Dispatchers.IO) {
         val accountId = accountRepository.insertAndActivate(account)
         account.id = accountId.toInt()
+        if (firstAccount) {
+            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
+        }
         // Also save a recipient representing this account
         recipientRepository.insert(Recipient(account))
         _gotoAccountCreatedLiveData.postValue(Event(account))
