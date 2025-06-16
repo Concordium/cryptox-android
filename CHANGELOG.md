@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Rating dialog to users to easily and quickly rate the app (star rating)
+
 ### Fixed
 
 - Not warning about insufficient funds at disposal to pay the transaction fee
