@@ -45,5 +45,7 @@ sealed interface CcdOnrampListItem {
 
     object NoneAvailable : CcdOnrampListItem
 
+    object ExchangesNotice: CcdOnrampListItem
+
     object Disclaimer : CcdOnrampListItem
 }

@@ -103,6 +103,7 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
             items.add(CcdOnrampListItem.NoneAvailable)
         }
 
+        items.add(CcdOnrampListItem.ExchangesNotice)
         items.add(CcdOnrampListItem.Disclaimer)
 
         _listItemsLiveData.postValue(items)
