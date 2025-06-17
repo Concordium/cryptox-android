@@ -74,8 +74,6 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                 )
             )
 
-            site.type == CcdOnrampSite.Type.DEX -> _siteToOpen.emit(Pair(site, false))
-
             else -> _siteToOpen.emit(Pair(site, true))
         }
     }
