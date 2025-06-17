@@ -118,8 +118,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
 
-    private val _showReviewDialog = MutableStateFlow(false)
-    val showReviewDialog = _showReviewDialog.asStateFlow()
+    private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
+    val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
     var hasPendingBakingTransactions = false
         private set
@@ -217,9 +217,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                         App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
                     ) {
                         App.appCore.setup.setHasShowReviewDialogAfterReceiveFunds(true)
-                        _showReviewDialog.emit(true)
-                    } else {
-                        _showReviewDialog.emit(false)
+                        _showReviewDialog.postValue(Event(true))
                     }
                 }
             }
@@ -476,9 +474,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
         if (elapsedDays >= 180 && App.appCore.setup.isHasShowReviewDialogAfterHalfYear.not()) {
             App.appCore.setup.setHasShowReviewDialogAfterHalfYear(true)
-            _showReviewDialog.emit(true)
-        } else {
-            _showReviewDialog.emit(false)
+            _showReviewDialog.postValue(Event(true))
         }
     }
 }

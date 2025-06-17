@@ -34,7 +34,6 @@ import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.ReviewEvent
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
@@ -264,11 +263,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 }
             }
         }
-        viewModelAccountDetails.showReviewDialog.collectWhenStarted(this) { show ->
-            if (show && mainViewModel.hasCompletedOnboarding()) {
-                reviewHelper.launchReviewFlow()
+
+        val reviewDialogObserver = object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                if (mainViewModel.hasCompletedOnboarding()) {
+                    reviewHelper.launchReviewFlow()
+                }
             }
         }
+        viewModelAccountDetails.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
+        mainViewModel.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
 
         combine(
             mainViewModel.activeAccountAddress,
@@ -287,15 +291,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 viewModelTokens.tokenBalances.removeObservers(viewLifecycleOwner)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        mainViewModel.showReviewDialog.collectWhenStarted(viewLifecycleOwner) { show ->
-            if (show == ReviewEvent.ShowDialog && mainViewModel.hasCompletedOnboarding()) {
-                reviewHelper.launchReviewFlow()
-                // Since the review dialog can only be closed by user actions,
-                // reset the flow value to avoid spam
-                mainViewModel.hideReviewDialog()
-            }
-        }
 
         viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
             token?.let {

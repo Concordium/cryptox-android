@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -42,8 +43,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
 
-    private val _showReviewDialog = MutableStateFlow<ReviewEvent>(ReviewEvent.HideDialog)
-    val showReviewDialog = _showReviewDialog.asStateFlow()
+    private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
+    val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
@@ -108,12 +109,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _notificationTokenId.emit(id)
     }
 
-    fun showReviewDialog() = viewModelScope.launch {
-        _showReviewDialog.emit(ReviewEvent.ShowDialog)
-    }
-
-    fun hideReviewDialog() = viewModelScope.launch {
-        _showReviewDialog.emit(ReviewEvent.HideDialog)
+    fun showReviewDialog() {
+        _showReviewDialog.postValue(Event(true))
     }
 
     fun startIdentityUpdate() {
@@ -136,9 +133,4 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun stopIdentityUpdate() {
         identityUpdater.stop()
     }
-}
-
-sealed interface ReviewEvent {
-    object ShowDialog : ReviewEvent
-    object HideDialog : ReviewEvent
 }
