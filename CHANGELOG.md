@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- On the Buy screen, exchange sections are replaced with an external link
+
 ## [1.9.1] - 2025-06-04
 
 ### Fixed
