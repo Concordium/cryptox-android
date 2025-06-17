@@ -118,6 +118,22 @@ class AppSetupPreferences(
         return getBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP, false)
     }
 
+    fun setShowReviewDialogSnapshotTime() {
+        setLong(PREFKEY_SHOW_REVIEW_DIALOG_TIME, System.currentTimeMillis())
+    }
+
+    fun getShowReviewDialogTime(): Long {
+        return getLong(PREFKEY_SHOW_REVIEW_DIALOG_TIME, System.currentTimeMillis())
+    }
+
+    fun setHasShowReviewDialogAfterHalfYear(value: Boolean) {
+        setBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_HALF_YEAR, value)
+    }
+
+    fun getHasShowReviewDialogAfterHalfYear(): Boolean {
+        return getBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_HALF_YEAR, false)
+    }
+
     private companion object {
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
@@ -129,6 +145,9 @@ class AppSetupPreferences(
         const val PREFKEY_LEGACY_PASSWORD_CHECK = "PREFKEY_LEGACY_PASSWORD_CHECK"
         const val PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON =
             "PREFKEY_LEGACY_ENCRYPTED_PASSWORD_CHECK_JSON"
+        const val PREFKEY_SHOW_REVIEW_DIALOG_TIME = "PREFKEY_SHOW_REVIEW_DIALOG_TIME"
+        const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_HALF_YEAR =
+            "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_HALF_YEAR"
         const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_RECEIVE_FUNDS =
             "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_RECEIVE_FUNDS"
         const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_SEND_FUNDS =

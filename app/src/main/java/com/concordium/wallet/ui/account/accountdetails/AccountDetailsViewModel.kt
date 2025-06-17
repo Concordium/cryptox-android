@@ -471,12 +471,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun showReviewDialog() = viewModelScope.launch {
-        val elapsedTime = System.currentTimeMillis() -
-                App.appCore.session.walletStorage.setupPreferences.getShowReviewDialogTime()
+        val elapsedTime = System.currentTimeMillis() - App.appCore.setup.showReviewDialogTime
         val elapsedDays = TimeUnit.MILLISECONDS.toDays(elapsedTime)
 
-        if (elapsedDays >= 180) {
-            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
+        if (elapsedDays >= 180 && App.appCore.setup.isHasShowReviewDialogAfterHalfYear.not()) {
+            App.appCore.setup.setHasShowReviewDialogAfterHalfYear(true)
             _showReviewDialog.emit(true)
         } else {
             _showReviewDialog.emit(false)

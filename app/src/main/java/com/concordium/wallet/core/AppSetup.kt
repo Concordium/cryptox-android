@@ -23,6 +23,10 @@ class AppSetup(
         get() = appSetupPreferences.getHasShowReviewDialogAfterSendFunds()
     val isHasShowReviewDialogAfterEarnSetup: Boolean
         get() = appSetupPreferences.getHasShowReviewDialogAfterEarnSetup()
+    val isHasShowReviewDialogAfterHalfYear: Boolean
+        get() = appSetupPreferences.getHasShowReviewDialogAfterHalfYear()
+    val showReviewDialogTime: Long
+        get() = appSetupPreferences.getShowReviewDialogTime()
 
     fun finishInitialSetup() {
         appSetupPreferences.setHasCompletedInitialSetup(true)
@@ -80,5 +84,13 @@ class AppSetup(
 
     fun setHasShowReviewDialogAfterEarnSetup(value: Boolean) {
         appSetupPreferences.setHasShowReviewDialogAfterEarnSetup(value)
+    }
+
+    fun setHasShowReviewDialogAfterHalfYear(value: Boolean) {
+        appSetupPreferences.setHasShowReviewDialogAfterHalfYear(value)
+    }
+
+    fun setShowReviewDialogSnapshotTime() {
+        appSetupPreferences.setShowReviewDialogSnapshotTime()
     }
 }

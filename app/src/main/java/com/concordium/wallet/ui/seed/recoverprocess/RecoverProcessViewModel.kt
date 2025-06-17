@@ -446,7 +446,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 ?.let {
                     App.appCore.setup.setHasShowReviewDialogAfterReceiveFunds(true)
                 }
-            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
+            App.appCore.setup.setShowReviewDialogSnapshotTime()
         }
     }
 

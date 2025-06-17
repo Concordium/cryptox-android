@@ -34,6 +34,7 @@ import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.ReviewEvent
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
@@ -288,10 +289,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         mainViewModel.showReviewDialog.collectWhenStarted(viewLifecycleOwner) { show ->
-            if (show && mainViewModel.hasCompletedOnboarding()) {
+            if (show == ReviewEvent.ShowDialog && mainViewModel.hasCompletedOnboarding()) {
                 reviewHelper.launchReviewFlow()
                 // Since the review dialog can only be closed by user actions,
-                // reset the flow value to false to avoid spam
+                // reset the flow value to avoid spam
                 mainViewModel.hideReviewDialog()
             }
         }

@@ -42,7 +42,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
 
-    private val _showReviewDialog = MutableStateFlow(false)
+    private val _showReviewDialog = MutableStateFlow<ReviewEvent>(ReviewEvent.HideDialog)
     val showReviewDialog = _showReviewDialog.asStateFlow()
 
     val canAcceptImportFiles: Boolean
@@ -109,11 +109,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun showReviewDialog() = viewModelScope.launch {
-        _showReviewDialog.emit(true)
+        _showReviewDialog.emit(ReviewEvent.ShowDialog)
     }
 
     fun hideReviewDialog() = viewModelScope.launch {
-        _showReviewDialog.emit(false)
+        _showReviewDialog.emit(ReviewEvent.HideDialog)
     }
 
     fun startIdentityUpdate() {
@@ -136,4 +136,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun stopIdentityUpdate() {
         identityUpdater.stop()
     }
+}
+
+sealed interface ReviewEvent {
+    object ShowDialog : ReviewEvent
+    object HideDialog : ReviewEvent
 }

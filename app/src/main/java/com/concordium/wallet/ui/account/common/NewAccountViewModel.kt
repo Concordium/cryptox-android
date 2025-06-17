@@ -264,7 +264,7 @@ open class NewAccountViewModel(application: Application) :
         val accountId = accountRepository.insertAndActivate(account)
         account.id = accountId.toInt()
         if (firstAccount) {
-            App.appCore.session.walletStorage.setupPreferences.setShowReviewDialogSnapshotTime()
+            App.appCore.setup.setShowReviewDialogSnapshotTime()
         }
         // Also save a recipient representing this account
         recipientRepository.insert(Recipient(account))
