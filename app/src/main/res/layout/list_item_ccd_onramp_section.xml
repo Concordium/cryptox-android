@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="42dp"
+    android:paddingTop="24dp"
     android:paddingBottom="16dp"
     android:textAppearance="@style/CCX_Typography_Caption"
     android:textColor="@color/cryptox_black_additional"

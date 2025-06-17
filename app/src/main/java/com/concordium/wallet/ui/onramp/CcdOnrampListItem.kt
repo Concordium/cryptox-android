@@ -14,12 +14,6 @@ sealed interface CcdOnrampListItem {
             nameRes = when (siteType) {
                 CcdOnrampSite.Type.PAYMENT_GATEWAY ->
                     R.string.ccd_onramp_site_type_payment_gateway
-
-                CcdOnrampSite.Type.CEX ->
-                    R.string.ccd_onramp_site_type_cex
-
-                CcdOnrampSite.Type.DEX ->
-                    R.string.ccd_onramp_site_type_dex
             }
         )
     }
@@ -44,6 +38,8 @@ sealed interface CcdOnrampListItem {
     }
 
     object NoneAvailable : CcdOnrampListItem
+
+    object ExchangesNotice: CcdOnrampListItem
 
     object Disclaimer : CcdOnrampListItem
 }

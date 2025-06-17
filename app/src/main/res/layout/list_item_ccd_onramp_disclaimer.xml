@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="64dp"
+    android:layout_marginTop="40dp"
     android:orientation="vertical"
     android:paddingBottom="36dp">
 
@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="36dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
         android:text="@string/ccd_onramp_disclaimer_content"
         android:textAppearance="@style/CCX_Typography_Body"
         android:textColor="@color/ccx_neutral_tint_2" />

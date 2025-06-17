@@ -1266,16 +1266,17 @@
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
-    <string name="ccd_onramp_site_type_cex">CEX</string>
-    <string name="ccd_onramp_site_type_dex">DEX</string>
+    <string name="ccd_onramp_exchanges_notice">
+        List of supported exchanges can be found at <a href="https://concordium.com/ccd-wallet">concordium.com/ccd-wallet</a>
+    </string>
     <string name="ccd_onramp_disclaimer_title">Disclaimer</string>
     <string name="ccd_onramp_disclaimer_content">
         The information regarding the CCD on any Concordium website does not constitute an offer or solicitation to purchase CCDs.
         The information on the CCD on this website is only directed to persons in countries other than the United States.
-        \n\n
-        Without limiting the foregoing, in no event would any offering of CCD by Concordium be intended to be available to residents of the United States.
-        \n\n
-        By clicking on any of the above links, you may be getting access to various services, including trading services.
+        \n\nWithout
+        limiting the foregoing, in no event would any offering of CCD by Concordium be intended to be available to residents of the United States.
+        \n\nBy
+        clicking on any of the above links, you may be getting access to various services, including trading services.
         These services are offered by third parties and the use of such services are subject to terms of conditions
         defined by such third parties and Concordium is not responsible for and does not assume any liabilities
         in relation to the use of such services.

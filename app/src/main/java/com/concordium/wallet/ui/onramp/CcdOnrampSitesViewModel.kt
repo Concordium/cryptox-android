@@ -74,8 +74,6 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                 )
             )
 
-            site.type == CcdOnrampSite.Type.DEX -> _siteToOpen.emit(Pair(site, false))
-
             else -> _siteToOpen.emit(Pair(site, true))
         }
     }
@@ -103,6 +101,7 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
             items.add(CcdOnrampListItem.NoneAvailable)
         }
 
+        items.add(CcdOnrampListItem.ExchangesNotice)
         items.add(CcdOnrampListItem.Disclaimer)
 
         _listItemsLiveData.postValue(items)
