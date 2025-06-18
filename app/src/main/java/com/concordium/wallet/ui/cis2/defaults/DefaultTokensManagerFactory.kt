@@ -8,16 +8,6 @@ class DefaultTokensManagerFactory(
 ) {
     private val testnetDefaultFungibleTokens: List<DefaultFungibleToken> = listOf(
         DefaultFungibleToken(
-            symbol = "EUROe",
-            name = "EUROe Stablecoin",
-            contractIndex = "7260",
-            contractName = "euroe_stablecoin_v3",
-            description = "EUROe is a modern European stablecoin - a digital representation of fiat Euros",
-            thumbnailUrl = "https://dev.euroe.com/persistent/token-icon/png/128x128.png",
-            decimals = 6,
-            token = "",
-        ),
-        DefaultFungibleToken(
             symbol = "wCCD",
             name = "Wrapped CCD Token",
             contractIndex = "2059",
@@ -30,16 +20,6 @@ class DefaultTokensManagerFactory(
     )
 
     private val mainnetDefaultFungibleTokens: List<DefaultFungibleToken> = listOf(
-        DefaultFungibleToken(
-            symbol = "EUROe",
-            name = "EUROe Stablecoin",
-            contractIndex = "9390",
-            contractName = "euroe_stablecoin",
-            description = "EUROe is a modern European stablecoin - a digital representation of fiat Euros",
-            thumbnailUrl = "https://dev.euroe.com/persistent/token-icon/png/128x128.png",
-            decimals = 6,
-            token = "",
-        ),
         DefaultFungibleToken(
             symbol = "wCCD",
             name = "Wrapped CCD Token",

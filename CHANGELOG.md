@@ -6,6 +6,10 @@
 
 - On the Buy screen, exchange sections are replaced with an external link
 
+### Removed
+
+- EUROe token from the default token set
+
 ## [1.9.1] - 2025-06-04
 
 ### Fixed
