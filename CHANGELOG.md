@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Requests to rate the wallet in Google Play
+
 ### Changed
 
 - On the Buy screen, exchange sections are replaced with an external link
