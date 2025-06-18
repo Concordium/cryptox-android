@@ -193,6 +193,24 @@ class FirebaseAppTracker(
     override fun discoverScreen() =
         screenVisit(SCREEN_DISCOVER)
 
+    override fun reviewAppDialog() {
+        screenVisit(DIALOG_REVIEW_APP)
+    }
+
+    override fun reviewAppDialogCancelClicked() {
+        contentSelection(
+            contentName = "Review app: Cancel",
+            contentType = CONTENT_TYPE_BUTTON,
+        )
+    }
+
+    override fun reviewAppDialogSubmitClicked() {
+        contentSelection(
+            contentName = "Review app: Submit",
+            contentType = CONTENT_TYPE_BUTTON,
+        )
+    }
+
     private fun screenVisit(
         screen: Screen,
         extraParams: Bundle? = null,
@@ -293,6 +311,10 @@ class FirebaseAppTracker(
         private val DIALOG_UNLOCK_FEATURE = Screen(
             title = "Home: Unlock feature dialog",
             slug = "unlock_feature_dialog"
+        )
+        private val DIALOG_REVIEW_APP = Screen(
+            title = "Review app dialog",
+            slug = "review_app_dialog"
         )
 
         private const val CONTENT_TYPE_CHECK_BOX = "checkbox"

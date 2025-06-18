@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.core.rating.ReviewHelper
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
@@ -64,6 +65,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
+    private lateinit var reviewHelper: ReviewHelper
 
     // parameters for dynamic calculation of tokensFragmentContainer height
     private var isFileWallet: Boolean = false
@@ -262,6 +264,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
+        val reviewDialogObserver = object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                if (mainViewModel.hasCompletedOnboarding()) {
+                    reviewHelper.launchReviewFlow()
+                }
+            }
+        }
+        viewModelAccountDetails.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
+        mainViewModel.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
+
         combine(
             mainViewModel.activeAccountAddress,
             mainViewModel.notificationTokenId,
@@ -314,6 +326,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.suspensionNotice.setOnClickListener {
             viewModelAccountDetails.onSuspensionNoticeClicked()
         }
+        reviewHelper = ReviewHelper(requireActivity())
     }
 
     private fun updateViews(account: Account) {
@@ -498,7 +511,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 binding.includeEarnBanner.earnBanner.measuredHeight
             else 0
             val earnBannerMargin = if (viewModelAccountDetails.isShowEarnBanner() &&
-                !isZeroBalance && !isEarning)
+                !isZeroBalance && !isEarning
+            )
                 (binding.includeEarnBanner.earnBanner.layoutParams as MarginLayoutParams).topMargin
             else 0
 
@@ -656,7 +670,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setupEarnBanner(account: Account = viewModelAccountDetails.account) {
-        binding.includeEarnBanner.earnBanner.isVisible = viewModelAccountDetails.isEarnBannerVisible()
+        binding.includeEarnBanner.earnBanner.isVisible =
+            viewModelAccountDetails.isEarnBannerVisible()
         binding.includeEarnBanner.earnBanner.setOnClickListener {
             viewModelAccountDetails.onEarnClicked()
         }

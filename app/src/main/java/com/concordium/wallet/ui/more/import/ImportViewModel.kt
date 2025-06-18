@@ -619,7 +619,12 @@ class ImportViewModel(application: Application) :
         val activeAccount = accountRepository.getActive()
 
         if (allAccounts.isNotEmpty() && activeAccount == null) {
-            accountRepository.activate(allAccounts.sortedBy { it.id }.first().address)
+            accountRepository.activate(
+                allAccounts
+                    .sortedBy { it.id }
+                    .first().address
+            )
+            App.appCore.setup.setShowReviewDialogSnapshotTime()
         }
     }
 }

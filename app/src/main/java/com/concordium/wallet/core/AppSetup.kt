@@ -17,6 +17,16 @@ class AppSetup(
         get() = appSetupPreferences.getHasCompletedInitialSetup()
     val isAuthSetupCompleted: Boolean
         get() = auth.isPasswordAuthInitialized()
+    val isHasShowReviewDialogAfterReceiveFunds: Boolean
+        get() = appSetupPreferences.getHasShowReviewDialogAfterReceiveFunds()
+    val isHasShowReviewDialogAfterSendFunds: Boolean
+        get() = appSetupPreferences.getHasShowReviewDialogAfterSendFunds()
+    val isHasShowReviewDialogAfterEarnSetup: Boolean
+        get() = appSetupPreferences.getHasShowReviewDialogAfterEarnSetup()
+    val isHasShowReviewDialogAfterHalfYear: Boolean
+        get() = appSetupPreferences.getHasShowReviewDialogAfterHalfYear()
+    val showReviewDialogTime: Long
+        get() = appSetupPreferences.getShowReviewDialogTime()
 
     fun finishInitialSetup() {
         appSetupPreferences.setHasCompletedInitialSetup(true)
@@ -62,5 +72,25 @@ class AppSetup(
         // Restore the auth manager discarding the alternative slot.
         auth = oldAuth
         finishAuthSetup()
+    }
+
+    fun setHasShowReviewDialogAfterReceiveFunds(value: Boolean) {
+        appSetupPreferences.setHasShowReviewDialogAfterReceiveFunds(value)
+    }
+
+    fun setHasShowReviewDialogAfterSendFunds(value: Boolean) {
+        appSetupPreferences.setHasShowReviewDialogAfterSendFunds(value)
+    }
+
+    fun setHasShowReviewDialogAfterEarnSetup(value: Boolean) {
+        appSetupPreferences.setHasShowReviewDialogAfterEarnSetup(value)
+    }
+
+    fun setHasShowReviewDialogAfterHalfYear(value: Boolean) {
+        appSetupPreferences.setHasShowReviewDialogAfterHalfYear(value)
+    }
+
+    fun setShowReviewDialogSnapshotTime() {
+        appSetupPreferences.setShowReviewDialogSnapshotTime()
     }
 }

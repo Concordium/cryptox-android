@@ -12,6 +12,10 @@
 
 ## [1.9.1] - 2025-06-04
 
+### Added
+
+- Rating dialog to users to easily and quickly rate the app (star rating)
+
 ### Fixed
 
 - Not warning about insufficient funds at disposal to pay the transaction fee

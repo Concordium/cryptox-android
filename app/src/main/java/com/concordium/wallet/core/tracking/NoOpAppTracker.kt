@@ -40,4 +40,7 @@ class NoOpAppTracker : AppTracker {
     override fun aboutScreen() = Log.d("No op")
     override fun aboutScreenLinkClicked(url: String) = Log.d("No op")
     override fun discoverScreen() = Log.d("No op")
+    override fun reviewAppDialog() = Log.d("No op")
+    override fun reviewAppDialogCancelClicked() = Log.d("No op")
+    override fun reviewAppDialogSubmitClicked() = Log.d("No op")
 }

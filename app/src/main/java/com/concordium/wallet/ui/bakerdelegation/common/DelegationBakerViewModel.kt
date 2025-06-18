@@ -146,6 +146,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val transaction: LiveData<Transaction?>
         get() = _transaction
 
+    val isHasShowReviewDialogAfterEarnSetup: Boolean
+        get() = App.appCore.setup.isHasShowReviewDialogAfterEarnSetup
+
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData
     }
@@ -871,5 +874,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 )
             }
             .onFailure(::handleBackendError)
+    }
+
+    fun setHasShowReviewDialogAfterEarnSetup() {
+        App.appCore.setup.setHasShowReviewDialogAfterEarnSetup(true)
     }
 }

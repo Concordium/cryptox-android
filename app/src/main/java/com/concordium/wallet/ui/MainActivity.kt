@@ -43,6 +43,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_ACTIVATE_ACCOUNT = "EXTRA_ACTIVATE_ACCOUNT"
         const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
         const val EXTRA_NOTIFICATION_TOKEN_ID = "EXTRA_NOTIFICATION_TOKEN_ID"
+        const val EXTRA_SHOW_REVIEW_POPUP = "EXTRA_SHOW_REVIEW_POPUP"
     }
 
     private val binding by lazy {
@@ -81,6 +82,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
 
         handlePossibleWalletConnectUri(intent)
+        handleReviewPopup(intent)
 
         if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
             goToImportFromFile()
@@ -152,6 +154,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
         handleNotificationReceived(newIntent)
         handlePossibleWalletConnectUri(newIntent)
+        handleReviewPopup(newIntent)
     }
 
     //endregion
@@ -216,6 +219,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                     viewModel.setNotificationData(address, tokenId)
                 }
             }
+        }
+    }
+
+    private fun handleReviewPopup(intent: Intent) {
+        if (intent.getBooleanExtra(EXTRA_SHOW_REVIEW_POPUP, false)) {
+            viewModel.showReviewDialog()
         }
     }
 
