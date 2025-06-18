@@ -1,15 +1,22 @@
 package config;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.ITestContext;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static config.appiumconnection.driver;
 
 
 public class CustomTestListener implements ITestListener {
@@ -35,6 +42,27 @@ public class CustomTestListener implements ITestListener {
         System.out.println("Test failed: " + result.getName());
         testResults.add(result);
         failedTests.add(result);
+
+        // Get WebDriver from the test instance (BaseTest must have getDriver())
+        Object testClass = result.getInstance();
+
+        // Ensure the screenshots directory exists
+        File screenshotsDir = new File("screenshots");
+        if (!screenshotsDir.exists()) {
+            screenshotsDir.mkdirs();
+        }
+
+        // Take the screenshot and save it
+        File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        String fileName = "screenshots/" + result.getName() + "_" + System.currentTimeMillis() + ".png";
+        File destFile = new File(fileName);
+
+        try {
+            FileUtils.copyFile(srcFile, destFile);
+            System.out.println("Screenshot saved: " + destFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
