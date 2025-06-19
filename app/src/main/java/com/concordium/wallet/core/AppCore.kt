@@ -3,6 +3,7 @@ package com.concordium.wallet.core
 import android.os.Handler
 import com.concordium.sdk.ClientV2
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
@@ -56,9 +57,10 @@ class AppCore(val app: App) {
     private val firebaseAppTracker: AppTracker = FirebaseAppTracker(
         analytics = FirebaseAnalytics.getInstance(app),
     )
+    @Suppress("KotlinConstantConditions")
     val tracker: AppTracker
         get() =
-            if (appTrackingPreferences.isTrackingEnabled)
+            if (appTrackingPreferences.isTrackingEnabled && BuildConfig.ENV_NAME == "production")
                 firebaseAppTracker
             else
                 noOpAppTracker
