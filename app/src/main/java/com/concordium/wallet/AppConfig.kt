@@ -1,5 +1,6 @@
 package com.concordium.wallet
 
+@Suppress("KotlinConstantConditions")
 object AppConfig {
 
     const val useOfflineMock = BuildConfig.USE_BACKEND_MOCK
