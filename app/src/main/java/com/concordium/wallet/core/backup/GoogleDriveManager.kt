@@ -28,8 +28,8 @@ object GoogleDriveManager {
         // No need to specify tokens – the client identification is done via Firebase.
         //
         //⚠️ Only packages signed by white-listed keys can do this.
-        // Facing "Developer error 10" means your signing key SHA-1 is not white-listed
-        // in the ConcordiumMobileWallet Firebase project.
+        // White-list your signing key SHA-1 in the ConcordiumMobileWallet Firebase project
+        // and update google-services.json. Otherwise you'll face "Developer error 10".
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestScopes(Scope(DriveScopes.DRIVE_APPDATA))

@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "124880082147-dhnp44of8uouekspilvpj93cc8gqko94.apps.googleusercontent.com",
+          "client_id": "124880082147-1gajhtnad3fsjvfvjsne8uvvamc2c639.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneeringtechventures.wallet",
+            "certificate_hash": "656f7bef56d8595a5317ab53e19f95133cf8d865"
+          }
+        },
+        {
+          "client_id": "124880082147-ahlrluq5l9djf3oko7nldahq1h942pjm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pioneeringtechventures.wallet",
@@ -22,16 +30,20 @@
           }
         },
         {
-          "client_id": "124880082147-gdh7jq4ppans5tn4i60iqd4u9hvv7pt6.apps.googleusercontent.com",
+          "client_id": "124880082147-aognc1qhpp8vvn8knvuqn0l5cc3s2fje.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pioneeringtechventures.wallet",
-            "certificate_hash": "f2f8b63c7ac6ee97739debd5ce99ba6aaec642a2"
+            "certificate_hash": "ae7c9224d2280151d537911b9a9af1e8b0859958"
           }
         },
         {
-          "client_id": "124880082147-7ssi8hf915qdbd3i4n02d9kaa8l2au0r.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "124880082147-vcnvbdhsb4rf26h70k8dulhpipu8gq0b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneeringtechventures.wallet",
+            "certificate_hash": "78c5bbbfb9bfec6b0bc286bcc0cba4ecb33a851e"
+          }
         }
       ],
       "api_key": [
@@ -42,10 +54,6 @@
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
-            {
-              "client_id": "124880082147-7ssi8hf915qdbd3i4n02d9kaa8l2au0r.apps.googleusercontent.com",
-              "client_type": 3
-            },
             {
               "client_id": "124880082147-d2sd7kho0j6qto7d17benip2dp8u8fa7.apps.googleusercontent.com",
               "client_type": 2,
@@ -65,28 +73,7 @@
           "package_name": "com.pioneeringtechventures.wallet.stagenet"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "124880082147-gjadaj579m09fr58vbthm2ju4qdpc3d2.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pioneeringtechventures.wallet.stagenet",
-            "certificate_hash": "2084df878909f87bb8e1508f2e9f939f4d31d6c9"
-          }
-        },
-        {
-          "client_id": "124880082147-vr76a0d2sgns50koln9gpg3ts6ogffum.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pioneeringtechventures.wallet.stagenet",
-            "certificate_hash": "f2f8b63c7ac6ee97739debd5ce99ba6aaec642a2"
-          }
-        },
-        {
-          "client_id": "124880082147-7ssi8hf915qdbd3i4n02d9kaa8l2au0r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyD9thKlEIUkdDK0h5ciWowlYNuzRqQdM5M"
@@ -95,10 +82,6 @@
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
-            {
-              "client_id": "124880082147-7ssi8hf915qdbd3i4n02d9kaa8l2au0r.apps.googleusercontent.com",
-              "client_type": 3
-            },
             {
               "client_id": "124880082147-d2sd7kho0j6qto7d17benip2dp8u8fa7.apps.googleusercontent.com",
               "client_type": 2,
@@ -120,16 +103,36 @@
       },
       "oauth_client": [
         {
-          "client_id": "124880082147-g1b9vfjq10qk682kk46s08te00m58iv5.apps.googleusercontent.com",
+          "client_id": "124880082147-3e5dri3boiaiduui568frc0lpm9cn84m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pioneeringtechventures.wallet.testnet",
-            "certificate_hash": "f2f8b63c7ac6ee97739debd5ce99ba6aaec642a2"
+            "certificate_hash": "2084df878909f87bb8e1508f2e9f939f4d31d6c9"
           }
         },
         {
-          "client_id": "124880082147-7ssi8hf915qdbd3i4n02d9kaa8l2au0r.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "124880082147-bf3ridgdr3d7c010notatld73sug2cm6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneeringtechventures.wallet.testnet",
+            "certificate_hash": "78c5bbbfb9bfec6b0bc286bcc0cba4ecb33a851e"
+          }
+        },
+        {
+          "client_id": "124880082147-nrr6eliuela2810kiqp79kbi614caqir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneeringtechventures.wallet.testnet",
+            "certificate_hash": "ae7c9224d2280151d537911b9a9af1e8b0859958"
+          }
+        },
+        {
+          "client_id": "124880082147-pqv4thfbtipb1u34v2sjukm9l6bl0j8u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneeringtechventures.wallet.testnet",
+            "certificate_hash": "e0faa61a3b501f8be2e979aa5b1dd680aa052478"
+          }
         }
       ],
       "api_key": [
@@ -140,10 +143,6 @@
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
-            {
-              "client_id": "124880082147-7ssi8hf915qdbd3i4n02d9kaa8l2au0r.apps.googleusercontent.com",
-              "client_type": 3
-            },
             {
               "client_id": "124880082147-d2sd7kho0j6qto7d17benip2dp8u8fa7.apps.googleusercontent.com",
               "client_type": 2,
