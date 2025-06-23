@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Ability to buy CCD through Banxa
+
 ## [1.10.0] - 2025-06-19
 
 ### Added

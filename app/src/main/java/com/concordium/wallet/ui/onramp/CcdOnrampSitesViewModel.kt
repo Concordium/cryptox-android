@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.onramp.banxa.BanxaWidgetHelper
 import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 import com.concordium.wallet.ui.onramp.wert.WertWidgetHelper
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +71,18 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
             site.name == "Swipelux" -> _siteToOpen.emit(
                 Pair(
                     site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress)),
+                    false
+                )
+            )
+
+            site.name.startsWith("Banxa") -> _siteToOpen.emit(
+                Pair(
+                    site.copy(
+                        url = BanxaWidgetHelper.getWidgetLink(
+                            baseUrl = site.url,
+                            accountAddress = accountAddress,
+                        )
+                    ),
                     false
                 )
             )
