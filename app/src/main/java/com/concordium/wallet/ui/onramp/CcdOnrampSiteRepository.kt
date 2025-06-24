@@ -8,7 +8,7 @@ class CcdOnrampSiteRepository {
             name = "Banxa",
             // Base URL.
             url = "https://concordium.banxa.com/",
-            logoUrl = "https://files.readme.io/b031bd1-small-Banxa_Icon_RGB.png",
+            logoUrl = "https://github.com/user-attachments/assets/cdbe3cae-1be7-4510-8bd8-c283b92b23b5",
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
             acceptsCreditCard = true,
         ),
@@ -33,7 +33,7 @@ class CcdOnrampSiteRepository {
             name = "Banxa Sandbox",
             // Base URL.
             url = "https://concordium.banxa-sandbox.com/",
-            logoUrl = "https://files.readme.io/b031bd1-small-Banxa_Icon_RGB.png",
+            logoUrl = "https://github.com/user-attachments/assets/cdbe3cae-1be7-4510-8bd8-c283b92b23b5",
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
             acceptsCreditCard = true,
         ),
