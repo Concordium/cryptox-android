@@ -5,6 +5,14 @@ import com.concordium.wallet.BuildConfig
 class CcdOnrampSiteRepository {
     private val mainnetSites = listOf(
         CcdOnrampSite(
+            name = "Banxa",
+            // Base URL.
+            url = "https://concordium.banxa.com/",
+            logoUrl = "https://github.com/user-attachments/assets/cdbe3cae-1be7-4510-8bd8-c283b92b23b5",
+            type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+            acceptsCreditCard = true,
+        ),
+        CcdOnrampSite(
             name = "Swipelux",
             url = "https://track.swipelux.com",
             logoUrl = "https://assets-global.website-files.com/64f060f3fc95f9d2081781db/65e825be9290e43f9d1bc29b_52c3517d-1bb0-4705-a952-8f0d2746b4c5.jpg",
@@ -21,6 +29,14 @@ class CcdOnrampSiteRepository {
     )
 
     private val testnetSites = listOf(
+        CcdOnrampSite(
+            name = "Banxa Sandbox",
+            // Base URL.
+            url = "https://concordium.banxa-sandbox.com/",
+            logoUrl = "https://github.com/user-attachments/assets/cdbe3cae-1be7-4510-8bd8-c283b92b23b5",
+            type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+            acceptsCreditCard = true,
+        ),
         CcdOnrampSite(
             name = "Testnet CCD drop",
             url = "https://radiokot.github.io/ccd-faucet/",
