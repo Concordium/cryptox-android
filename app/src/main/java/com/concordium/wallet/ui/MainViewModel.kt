@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -41,6 +42,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
+
+    private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
+    val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
@@ -103,6 +107,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setNotificationData(address: String, id: String) = viewModelScope.launch {
         _activeAccountAddress.emit(address)
         _notificationTokenId.emit(id)
+    }
+
+    fun showReviewDialog() {
+        _showReviewDialog.postValue(Event(true))
     }
 
     fun startIdentityUpdate() {

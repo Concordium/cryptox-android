@@ -174,7 +174,7 @@ class ProxyRepository {
         memoSize: Int? = null,
         amount: BigInteger? = null,
         restake: Boolean? = null,
-        lPool: Boolean? = null,
+        passive: Boolean? = null,
         targetChange: Boolean? = null,
         metadataSize: Int? = null,
         openStatus: String? = null,
@@ -188,15 +188,13 @@ class ProxyRepository {
         success: (TransactionCost) -> Unit,
         failure: ((Throwable) -> Unit)?,
     ): BackendRequest<TransactionCost> {
-        val lPoolArg = if (lPool == true) "lPool" else null
-        val targetArg = if (targetChange == true) "target" else null
         val call = backend.transferCost(
             type,
             memoSize,
             amount?.toString(),
-            restake,
-            lPoolArg,
-            targetArg,
+            restake?.takeIf { it },
+            targetChange?.takeIf { it },
+            passive?.takeIf { it },
             metadataSize,
             openStatus,
             suspended,

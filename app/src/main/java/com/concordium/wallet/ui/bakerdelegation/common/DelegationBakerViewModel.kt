@@ -146,6 +146,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val transaction: LiveData<Transaction?>
         get() = _transaction
 
+    val isHasShowReviewDialogAfterEarnSetup: Boolean
+        get() = App.appCore.setup.isHasShowReviewDialogAfterEarnSetup
+
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData
     }
@@ -233,17 +236,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun isInitialSetup(): Boolean {
         return (!bakerDelegationData.isBakerPool && !bakerDelegationData.isLPool)
-    }
-
-    fun atDisposal(): BigInteger {
-        var staked: BigInteger = BigInteger.ZERO
-        bakerDelegationData.account.delegation?.let {
-            staked = it.stakedAmount
-        }
-        bakerDelegationData.account.baker?.let {
-            staked = it.stakedAmount
-        }
-        return bakerDelegationData.account.balance - staked
     }
 
     fun selectBakerPool() {
@@ -406,7 +398,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             type = bakerDelegationData.type,
             amount = amount,
             restake = restake,
-            lPool = bakerDelegationData.isLPool,
+            passive = bakerDelegationData.isLPool,
             targetChange = targetChange,
             metadataSize = metadataSize,
             openStatus = openStatus,
@@ -882,5 +874,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 )
             }
             .onFailure(::handleBackendError)
+    }
+
+    fun setHasShowReviewDialogAfterEarnSetup() {
+        App.appCore.setup.setHasShowReviewDialogAfterEarnSetup(true)
     }
 }

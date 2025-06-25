@@ -228,8 +228,12 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         }
 
         DelegationNoticeDialog.newInstance(
-            DelegationNoticeDialog.setBundle(noticeMessage)
+            DelegationNoticeDialog.setBundle(
+                noticeMessage,
+                viewModel.isHasShowReviewDialogAfterEarnSetup.not()
+            )
         ).showSingle(supportFragmentManager, DelegationNoticeDialog.TAG)
+        viewModel.setHasShowReviewDialogAfterEarnSetup()
     }
 
     override fun showWaiting(progressLayout: View, waiting: Boolean) {

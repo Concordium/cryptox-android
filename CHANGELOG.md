@@ -1,5 +1,37 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Ability to buy CCD through Banxa
+
+## [1.10.0] - 2025-06-19
+
+### Added
+
+- Requests to rate the wallet in Google Play
+
+### Changed
+
+- On the Buy screen, exchange sections are replaced with an external link
+
+### Removed
+
+- EUROe token from the default token set
+
+## [1.9.1] - 2025-06-04
+
+### Added
+
+- Rating dialog to users to easily and quickly rate the app (star rating)
+
+### Fixed
+
+- Not warning about insufficient funds at disposal to pay the transaction fee
+  when configuring earning
+- Inability to stake the maximum amount
+
 ## [1.9.0] - 2025-04-17
 
 ### Removed
@@ -224,7 +256,11 @@
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.9.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.10.0...HEAD
+
+[1.10.0]: https://github.com/Concordium/cryptox-android/compare/1.9.1...1.10.0
+
+[1.9.1]: https://github.com/Concordium/cryptox-android/compare/1.9.0...1.9.1
 
 [1.9.0]: https://github.com/Concordium/cryptox-android/compare/1.8.1...1.9.0
 

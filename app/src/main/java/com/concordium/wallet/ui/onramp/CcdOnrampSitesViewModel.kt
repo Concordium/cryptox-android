@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.onramp.banxa.BanxaWidgetHelper
 import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
 import com.concordium.wallet.ui.onramp.wert.WertWidgetHelper
 import kotlinx.coroutines.Dispatchers
@@ -74,7 +75,17 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                 )
             )
 
-            site.type == CcdOnrampSite.Type.DEX -> _siteToOpen.emit(Pair(site, false))
+            site.name.startsWith("Banxa") -> _siteToOpen.emit(
+                Pair(
+                    site.copy(
+                        url = BanxaWidgetHelper.getWidgetLink(
+                            baseUrl = site.url,
+                            accountAddress = accountAddress,
+                        )
+                    ),
+                    false
+                )
+            )
 
             else -> _siteToOpen.emit(Pair(site, true))
         }
@@ -103,6 +114,7 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
             items.add(CcdOnrampListItem.NoneAvailable)
         }
 
+        items.add(CcdOnrampListItem.ExchangesNotice)
         items.add(CcdOnrampListItem.Disclaimer)
 
         _listItemsLiveData.postValue(items)

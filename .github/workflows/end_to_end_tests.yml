@@ -35,6 +35,12 @@ jobs:
         uses: devtk0582/slack-post-action@v1.2
         with:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MESSAGE: "📱 Test Started on device set :${{ matrix.profile }} You can find results and logs here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Slack Post
+        uses: devtk0582/slack-post-action@v1.2
+        with:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MESSAGE: 🚀 Starting Stagenet Debug Build
 
       - name: Set up JDK
@@ -109,3 +115,9 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
+      - name: Upload Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+              name: failed-test-screenshots
+              path: cryptox-android-autotests/screenshots/

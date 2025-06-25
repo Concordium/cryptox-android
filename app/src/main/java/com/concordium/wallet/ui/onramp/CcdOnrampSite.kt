@@ -11,8 +11,6 @@ data class CcdOnrampSite(
 ): Serializable {
     enum class Type {
         PAYMENT_GATEWAY,
-        CEX,
-        DEX
         ;
     }
 }

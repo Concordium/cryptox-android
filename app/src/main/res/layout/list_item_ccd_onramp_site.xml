@@ -10,12 +10,11 @@
         android:id="@+id/logo_image_view"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:background="@drawable/simple_circle_bg"
         android:importantForAccessibility="no"
-        app:backgroundTint="@color/ccx_neutral_tint_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/simple_circle_bg" />
 
     <TextView
         android:id="@+id/name_text_view"

@@ -1,9 +1,13 @@
 package com.concordium.wallet.ui.onramp
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,6 +15,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ListItemCcdOnrampHeaderBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSectionBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSiteBinding
+import com.concordium.wallet.uicore.handleUrlClicks
 
 class CcdOnrampItemAdapter(
     private val onReadDisclaimerClicked: () -> Unit,
@@ -30,6 +35,9 @@ class CcdOnrampItemAdapter(
 
         CcdOnrampListItem.NoneAvailable ->
             R.layout.list_item_ccd_onramp_none_available
+
+        CcdOnrampListItem.ExchangesNotice ->
+            R.layout.list_item_ccd_onramp_exchanges_notice
 
         CcdOnrampListItem.Disclaimer ->
             R.layout.list_item_ccd_onramp_disclaimer
@@ -51,6 +59,9 @@ class CcdOnrampItemAdapter(
 
             R.layout.list_item_ccd_onramp_none_available ->
                 ViewHolder.NoneAvailable(view)
+
+            R.layout.list_item_ccd_onramp_exchanges_notice ->
+                ViewHolder.ExchangesNotice(view)
 
             R.layout.list_item_ccd_onramp_disclaimer ->
                 ViewHolder.Disclaimer(view)
@@ -97,9 +108,11 @@ class CcdOnrampItemAdapter(
                 }
             }
 
-            is ViewHolder.NoneAvailable -> {}
-
-            is ViewHolder.Disclaimer -> {}
+            is ViewHolder.NoneAvailable,
+            is ViewHolder.ExchangesNotice,
+            is ViewHolder.Disclaimer,
+            -> {
+            }
         }
     }
 
@@ -123,6 +136,15 @@ class CcdOnrampItemAdapter(
         }
 
         class NoneAvailable(itemView: View) : ViewHolder(itemView)
+
+        class ExchangesNotice(itemView: View) : ViewHolder(itemView) {
+            init {
+                (itemView as TextView).handleUrlClicks { url ->
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    ContextCompat.startActivity(itemView.context, browserIntent, null)
+                }
+            }
+        }
 
         class Disclaimer(itemView: View) : ViewHolder(itemView)
     }
