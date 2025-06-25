@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pay_and_verify_title">Pay and Verify</string>
+    <string name="pay_and_verify_title">Verify and Pay</string>
     <string name="account_not_valid">Not valid</string>
     <string name="reject_payment">Reject</string>
-    <string name="template_failed_payment_and_verification_request">Failed payment &amp; verification to %1$s</string>
-    <string name="template_successful_payment_and_verification_request">Successful payment &amp; verification to %1$s</string>
-    <string name="template_payment_and_verification_request">Payment &amp; verification request by %1$s</string>
+    <string name="template_failed_payment_and_verification_request">Failed verification &amp; payment to %1$s</string>
+    <string name="template_successful_payment_and_verification_request">Successful verification &amp; payment to %1$s</string>
+    <string name="template_payment_and_verification_request">Verification &amp; payment request by %1$s</string>
     <string name="amount_requested">Amount requested:</string>
     <string name="amount_paid">Amount paid:</string>
     <string name="verification_requested">Verification requested:</string>
