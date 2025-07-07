@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/mw24_ic_menu_discover" android:state_selected="true" />
-    <item android:drawable="@drawable/mw24_ic_menu_discover_unselected" android:state_selected="false" />
+    <item android:drawable="@drawable/mw24_ic_menu_discover_selected" android:state_selected="true" />
+    <item android:drawable="@drawable/mw24_ic_menu_discover" android:state_selected="false" />
 </selector>

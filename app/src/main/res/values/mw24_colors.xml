@@ -16,4 +16,7 @@
    <color name="mw24_attention_red">#CD2E4A</color>
    <color name="mw24_info_orange">#E8B126</color>
 
+    <color name="mw24_surface_primary_disabled">#2F3437</color>
+    <color name="mw24_content_primary_disabled">#4B5357</color>
+
 </resources>
