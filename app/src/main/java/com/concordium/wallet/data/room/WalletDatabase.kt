@@ -10,6 +10,7 @@ import androidx.room.TypeConverters
 import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.migrations.MIGRATION_10_11
+import com.concordium.wallet.data.room.migrations.MIGRATION_11_12
 import com.concordium.wallet.data.room.migrations.MIGRATION_3_4
 import com.concordium.wallet.data.room.migrations.MIGRATION_4_5
 import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
@@ -88,6 +89,7 @@ abstract class WalletDatabase : RoomDatabase() {
                             gson = AppCore.getGson(),
                         ),
                         MIGRATION_10_11,
+                        MIGRATION_11_12
                     )
                     .build()
                     .also { instances.put(name, it) }

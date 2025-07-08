@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "0e22dee09a1e54a2002034e1f1fa37ef",
+    "identityHash": "90c0f454a62f9a36e23a0bb19eadd331",
     "entities": [
       {
         "tableName": "identity_table",
@@ -428,7 +428,7 @@
       },
       {
         "tableName": "contract_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `contract_name` TEXT NOT NULL DEFAULT '', `token_id` TEXT NOT NULL, `account_address` TEXT, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `is_newly_received` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `contract_name` TEXT NOT NULL DEFAULT '', `token_id` TEXT NOT NULL, `account_address` TEXT, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `added_at` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -479,6 +479,13 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "added_at",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -506,7 +513,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0e22dee09a1e54a2002034e1f1fa37ef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '90c0f454a62f9a36e23a0bb19eadd331')"
     ]
   }
 }
