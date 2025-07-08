@@ -1,0 +1,25 @@
+package com.concordium.wallet.data.room
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+
+@Dao
+interface ProtocolLevelTokenDao {
+    @Query("SELECT * FROM protocol_level_token_table WHERE account_address = :accountAddress")
+    suspend fun getTokens(accountAddress: String): List<ProtocolLevelToken>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(vararg protocolLevelToken: ProtocolLevelToken)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(vararg protocolLevelToken: ProtocolLevelToken)
+
+    @Query("SELECT * FROM protocol_level_token_table WHERE tokenId = :tokenId AND account_address = :accountAddress")
+    suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelToken?
+
+    @Query("UPDATE protocol_level_token_table SET is_newly_received = 0 WHERE tokenId = :tokenId")
+    suspend fun unmarkNewlyReceived(tokenId: String)
+}

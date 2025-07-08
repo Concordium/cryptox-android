@@ -443,6 +443,7 @@ class TokensViewModel(
                                 isFungible = !selectedToken.isUnique,
                                 tokenMetadata = selectedToken.metadata,
                                 isNewlyReceived = false,
+                                addedAt = System.currentTimeMillis()
                             )
                         )
                     }

@@ -31,4 +31,6 @@ data class ContractToken(
     val tokenMetadata: TokenMetadata?,
     @ColumnInfo(name = "is_newly_received", defaultValue = "0")
     val isNewlyReceived: Boolean,
+    @ColumnInfo(name = "added_at", defaultValue = "0")
+    var addedAt: Long = 0L,
 ) : Serializable
