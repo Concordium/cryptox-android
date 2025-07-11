@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.cis2.manage
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -36,6 +37,7 @@ class ManageTokensMainFragment : Fragment(
 
     private fun initViews() {
         binding.searchLayout.apply {
+            setInputType(InputType.TYPE_CLASS_TEXT)
             setSearchListener { lookForTokens() }
             setOnSearchDoneListener { lookForTokens() }
             setClearListener {
@@ -63,7 +65,9 @@ class ManageTokensMainFragment : Fragment(
         KeyboardUtil.hideKeyboard(requireActivity())
 
         viewModel.tokenData.contractIndex = contractIndex
-        viewModel.lookForTokens(viewModel.tokenData.account!!.address)
+        viewModel.lookForPLTs()
+
+//        viewModel.lookForTokens(viewModel.tokenData.account!!.address)
     }
 
     private fun showWaiting(waiting: Boolean) {

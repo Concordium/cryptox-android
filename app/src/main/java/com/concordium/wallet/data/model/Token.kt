@@ -33,6 +33,7 @@ data class Token(
      * Number of EUR per smallest token unit.
      */
     val eurPerUnit: SimpleFraction? = null,
+    val type: TokenType = TokenType.CIS2,
 ) : Serializable {
 
     val symbol: String
@@ -87,6 +88,7 @@ data class Token(
             balance = account.balance,
             isEarning = account.isBaking() || account.isDelegating(),
             eurPerUnit = eurPerMicroCcd,
+            type = TokenType.CCD,
         )
     }
 }

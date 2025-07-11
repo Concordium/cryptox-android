@@ -15,6 +15,7 @@ import com.concordium.wallet.data.model.CIS2TokensBalances
 import com.concordium.wallet.data.model.CIS2TokensMetadata
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionCost
@@ -246,7 +247,8 @@ class ProxyRepository {
     suspend fun getBakerPoolSuspended(poolId: String) = backend.bakerPoolSuspended(poolId)
 
     suspend fun getAccountBalanceSuspended(accountAddress: String) =
-        backend.accountBalanceSuspended(accountAddress)
+//        backend.accountBalanceSuspended(accountAddress)
+        backend.accountBalanceSuspended()
 
     fun getAccountBalance(
         accountAddress: String,
@@ -400,4 +402,14 @@ class ProxyRepository {
         accountAddress: String,
         tokenIds: String,
     ): CIS2TokensBalances = backend.cis2TokenBalanceV1(index, subIndex, accountAddress, tokenIds)
+
+    /**
+     * @return a list of plt token infos.
+     */
+    suspend fun getPLTTokens(): List<PLTInfo> = backend.pltTokens()
+
+    /**
+     * @return token info and decoded module state
+     */
+    suspend fun getPLTTokenById(tokenId: String): PLTInfo = backend.getPLTTokenById(tokenId)
 }

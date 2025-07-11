@@ -522,8 +522,13 @@ class TokensViewModel(
         )
     }
 
-    fun onFindTokensDialogDismissed() {
-        resetLookForTokens()
+    fun lookForPLTs() = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            proxyRepository.getPLTTokenById(tokenData.contractIndex)
+        } catch (e: Throwable) {
+            Log.e("Failed to load PLT tokens", e)
+            handleBackendError(e)
+        }
     }
 
     private fun resetLookForTokens() {

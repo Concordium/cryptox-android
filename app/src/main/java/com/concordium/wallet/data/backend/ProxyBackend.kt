@@ -14,6 +14,7 @@ import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.PassiveDelegation
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
@@ -84,8 +85,12 @@ interface ProxyBackend {
     @GET("v1/accBalance/{accountAddress}")
     fun accountBalance(@Path("accountAddress") accountAddress: String): Call<AccountBalance>
 
-    @GET("v1/accBalance/{accountAddress}")
-    suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
+//    @GET("v1/accBalance/{accountAddress}")
+//    suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
+
+    // this hardcoded endpoint is used only for testing purposes
+    @GET("v2/accBalance/4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo")
+    suspend fun accountBalanceSuspended(): AccountBalance
 
     @GET("v2/accTransactions/{accountAddress}")
     fun accountTransactions(
@@ -136,4 +141,10 @@ interface ProxyBackend {
         @Path("accountAddress") accountAddress: String,
         @Query("tokenId") tokenId: String,
     ): CIS2TokensBalances
+
+    @GET("/v0/plt/tokens")
+    suspend fun pltTokens(): List<PLTInfo>
+
+    @GET("/v0/plt/tokenInfo/{tokenId}")
+    suspend fun getPLTTokenById(@Path("tokenId") tokenId: String): PLTInfo
 }

@@ -13,4 +13,5 @@ data class AccountBalanceInfo(
     val accountBaker: AccountBaker?,
     val accountDelegation: AccountDelegation?,
     val accountIndex: Int,
+    val accountTokens: List<PLTInfoWithAccountState>?,
 ) : Serializable
