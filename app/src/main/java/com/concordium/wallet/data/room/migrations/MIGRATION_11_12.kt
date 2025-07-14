@@ -12,6 +12,7 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `tokenId` TEXT NOT NULL,
                 `tokenState` TEXT,
+                `tokenAccountState` TEXT,
                 `account_address` TEXT,
                 `added_at` INTEGER NOT NULL DEFAULT 0,
                 `is_hidden` INTEGER NOT NULL DEFAULT 0,

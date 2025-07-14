@@ -337,6 +337,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     if (account.transactionStatus == TransactionStatus.FINALIZED) {
                         val deferred = async {
 //                            devnetRepository.getAccountBalanceSuspended(account.address)
+                            // TODO: Remove devnetRepository when testnet is ready
                             devnetRepository.getAccountBalanceSuspended()
                         }
                         val requestData = AccountBalanceRequestData(deferred, account)
@@ -551,7 +552,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         return output
     }
 
-    suspend fun saveDecryptedAmount(key: String, amount: String?) {
+    private suspend fun saveDecryptedAmount(key: String, amount: String?) {
         encryptedAmountRepository.insert(EncryptedAmount(key, amount))
     }
 

@@ -113,6 +113,7 @@ class TokensViewModel(
                 accountAddress = accountAddress,
                 isFungible = isFungible,
             )
+            // TODO: remove hardcoded PLT address
             val pltTokens = pltRepository.getTokens("4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo")
             withContext(Dispatchers.Main) {
                 tokens.clear()
