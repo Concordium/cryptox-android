@@ -85,12 +85,8 @@ interface ProxyBackend {
     @GET("v1/accBalance/{accountAddress}")
     fun accountBalance(@Path("accountAddress") accountAddress: String): Call<AccountBalance>
 
-//    @GET("v1/accBalance/{accountAddress}")
-//    suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
-
-    // this hardcoded endpoint is used only for testing purposes
-    @GET("v2/accBalance/4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo")
-    suspend fun accountBalanceSuspended(): AccountBalance
+    @GET("v1/accBalance/{accountAddress}")
+    suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
 
     @GET("v2/accTransactions/{accountAddress}")
     fun accountTransactions(
