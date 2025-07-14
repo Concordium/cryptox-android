@@ -111,7 +111,11 @@ object TransactionViewHelper {
             // transferToSecret (as simpleTransfer)
             // transferToPublic (as simpleTransfer)
             // update (send tokens)
-            if (ta.isSimpleTransfer() || ta.isTransferToSecret() || ta.isTransferToPublic() || ta.isSmartContractUpdate()) {
+            if (ta.isSimpleTransfer()
+                || ta.isTransferToSecret()
+                || ta.isTransferToPublic()
+                || ta.isSmartContractUpdate()
+            ) {
                 setTotalView(ta.getTotalAmountForRegular())
                 showCostLineWithAmounts()
             } else

@@ -51,6 +51,9 @@ enum class TransactionType {
     @SerializedName("validatorSuspended")
     VALIDATOR_SUSPENDED,
 
+    @SerializedName("tokenUpdate")
+    TOKEN_UPDATE,
+
     // This has been added to have a default value
     @SerializedName("unknown")
     UNKNOWN,
