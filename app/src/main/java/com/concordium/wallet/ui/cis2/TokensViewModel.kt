@@ -1,18 +1,24 @@
 package com.concordium.wallet.ui.cis2
 
 import android.app.Application
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.PLTRepository
+import com.concordium.wallet.data.backend.devnet.DevnetRepository
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenType
+import com.concordium.wallet.data.model.toPltInfo
 import com.concordium.wallet.data.model.toToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
+import com.concordium.wallet.data.room.ProtocolLevelToken
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -83,6 +89,12 @@ class TokensViewModel(
         )
     }
     private val tokenPriceRepository by inject<TokenPriceRepository>()
+    private val devnetRepository = DevnetRepository()
+    private val pltRepository: PLTRepository by lazy {
+        PLTRepository(
+            App.appCore.session.walletStorage.database.protocolLevelTokenDao()
+        )
+    }
 
     /**
      * @param isFungible if set, allows loading only fungible or non-fungible
@@ -101,6 +113,7 @@ class TokensViewModel(
                 accountAddress = accountAddress,
                 isFungible = isFungible,
             )
+            val pltTokens = pltRepository.getTokens("4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo")
             withContext(Dispatchers.Main) {
                 tokens.clear()
                 // Add CCD as default at the top
@@ -108,6 +121,12 @@ class TokensViewModel(
                 tokens.addAll(contractTokens.map {
                     Token(
                         contractToken = it,
+                        isSelected = true,
+                    )
+                })
+                tokens.addAll(pltTokens.map {
+                    Token(
+                        pltToken = it.toPltInfo(),
                         isSelected = true,
                     )
                 })
@@ -136,37 +155,42 @@ class TokensViewModel(
             contractAddressLoading.postValue(true)
         }
 
-        val existingContractTokens =
-            contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-        val selectedTokenIds =
-            existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
-                    everFoundExactTokens.asSequence()
-                        .filter(Token::isSelected)
-                        .mapTo(mutableSetOf(), Token::token)
+        if (tokenData.contractIndex.isDigitsOnly().not()) {
+            lookForPLTs()
+        } else {
 
-        try {
-            val pageLimit = 20
-            val pageTokens = getFullyLoadedTokensPage(
-                accountAddress = accountAddress,
-                limit = pageLimit,
-                from = from,
-            ).onEach {
-                it.isSelected = it.token in selectedTokenIds
+            val existingContractTokens =
+                contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
+            val selectedTokenIds =
+                existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
+                        everFoundExactTokens.asSequence()
+                            .filter(Token::isSelected)
+                            .mapTo(mutableSetOf(), Token::token)
+
+            try {
+                val pageLimit = 20
+                val pageTokens = getFullyLoadedTokensPage(
+                    accountAddress = accountAddress,
+                    limit = pageLimit,
+                    from = from,
+                ).onEach {
+                    it.isSelected = it.token in selectedTokenIds
+                }
+
+                tokens.addAll(pageTokens)
+                contractAddressLoading.postValue(false)
+                allowToLoadMore = pageTokens.size >= pageLimit
+
+                if (tokens.isEmpty() && !allowToLoadMore) {
+                    lookForTokens.postValue(TOKENS_EMPTY)
+                } else {
+                    lookForTokens.postValue(TOKENS_OK)
+                }
+            } catch (e: Throwable) {
+                handleBackendError(e)
+                allowToLoadMore = true
+                contractAddressLoading.postValue(false)
             }
-
-            tokens.addAll(pageTokens)
-            contractAddressLoading.postValue(false)
-            allowToLoadMore = pageTokens.size >= pageLimit
-
-            if (tokens.isEmpty() && !allowToLoadMore) {
-                lookForTokens.postValue(TOKENS_EMPTY)
-            } else {
-                lookForTokens.postValue(TOKENS_OK)
-            }
-        } catch (e: Throwable) {
-            handleBackendError(e)
-            allowToLoadMore = true
-            contractAddressLoading.postValue(false)
         }
     }
 
@@ -426,26 +450,47 @@ class TokensViewModel(
 
                 // Add each selected token if missing.
                 selectedTokens.forEach { selectedToken ->
-                    val existingContractToken =
-                        contractTokensRepository.find(
-                            account.address,
-                            selectedToken.contractIndex,
+                    if (selectedToken.type == TokenType.PLT) {
+                        val existingPltToken = pltRepository.find(
+                            "4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo",
                             selectedToken.token
                         )
-                    if (existingContractToken == null) {
-                        contractTokensRepository.insert(
-                            ContractToken(
-                                id = 0,
-                                token = selectedToken.token,
-                                contractIndex = selectedToken.contractIndex,
-                                contractName = selectedToken.contractName,
-                                accountAddress = account.address,
-                                isFungible = !selectedToken.isUnique,
-                                tokenMetadata = selectedToken.metadata,
-                                isNewlyReceived = false,
-                                addedAt = System.currentTimeMillis()
+                        Log.d("PLT token: $existingPltToken")
+                        if (existingPltToken == null) {
+                            pltRepository.insert(
+                                ProtocolLevelToken(
+                                    id = 0,
+                                    tokenId = selectedToken.token,
+                                    tokenState = null,
+                                    accountAddress = "4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo",
+                                    isNewlyReceived = false,
+                                    isHidden = false,
+                                    addedAt = System.currentTimeMillis()
+                                )
                             )
-                        )
+                        }
+                    } else {
+                        val existingContractToken =
+                            contractTokensRepository.find(
+                                account.address,
+                                selectedToken.contractIndex,
+                                selectedToken.token
+                            )
+                        if (existingContractToken == null) {
+                            contractTokensRepository.insert(
+                                ContractToken(
+                                    id = 0,
+                                    token = selectedToken.token,
+                                    contractIndex = selectedToken.contractIndex,
+                                    contractName = selectedToken.contractName,
+                                    accountAddress = account.address,
+                                    isFungible = !selectedToken.isUnique,
+                                    tokenMetadata = selectedToken.metadata,
+                                    isNewlyReceived = false,
+                                    addedAt = System.currentTimeMillis()
+                                )
+                            )
+                        }
                     }
                 }
                 // As the loaded tokens list may be partial,
@@ -524,10 +569,24 @@ class TokensViewModel(
 
     fun lookForPLTs() = viewModelScope.launch(Dispatchers.IO) {
         try {
-            proxyRepository.getPLTTokenById(tokenData.contractIndex)
+            val response = devnetRepository.getPLTTokenById(tokenData.contractIndex)
+            val pltToken = Token(
+                pltToken = response,
+                isSelected = false,
+            )
+
+            tokens.add(pltToken)
+            contractAddressLoading.postValue(false)
+
+            if (tokens.isEmpty()) {
+                lookForTokens.postValue(TOKENS_EMPTY)
+            } else {
+                lookForTokens.postValue(TOKENS_OK)
+            }
         } catch (e: Throwable) {
             Log.e("Failed to load PLT tokens", e)
             handleBackendError(e)
+            contractAddressLoading.postValue(false)
         }
     }
 

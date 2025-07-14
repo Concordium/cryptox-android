@@ -125,7 +125,7 @@ android {
 
             buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
             buildConfigField("String", "ENV_NAME", "\"testnet\"")
-            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.devnet-plt-beta.concordium.com\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.testnet.concordium.com\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://testnet.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.testnet.concordium.com/api/\"")
             buildConfigField("String", "HOSTNAME_GRPC", "\"grpc.testnet.concordium.com\"")

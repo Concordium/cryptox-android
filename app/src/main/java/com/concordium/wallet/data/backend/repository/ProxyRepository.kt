@@ -247,8 +247,7 @@ class ProxyRepository {
     suspend fun getBakerPoolSuspended(poolId: String) = backend.bakerPoolSuspended(poolId)
 
     suspend fun getAccountBalanceSuspended(accountAddress: String) =
-//        backend.accountBalanceSuspended(accountAddress)
-        backend.accountBalanceSuspended()
+        backend.accountBalanceSuspended(accountAddress)
 
     fun getAccountBalance(
         accountAddress: String,

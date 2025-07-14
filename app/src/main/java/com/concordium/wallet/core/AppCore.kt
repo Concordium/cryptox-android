@@ -19,6 +19,8 @@ import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.airdrop.AirDropBackend
 import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
+import com.concordium.wallet.data.backend.devnet.DevnetBackend
+import com.concordium.wallet.data.backend.devnet.DevnetBackendConfig
 import com.concordium.wallet.data.backend.news.NewsfeedRssBackend
 import com.concordium.wallet.data.backend.news.NewsfeedRssBackendConfig
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
@@ -51,6 +53,7 @@ class AppCore(val app: App) {
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     private val wertBackendConfig = WertBackendConfig(gson)
+    private val devnetBackend = DevnetBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
     val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
@@ -129,6 +132,10 @@ class AppCore(val app: App) {
 
     fun getWertBackend(): WertBackend {
         return wertBackendConfig.backend
+    }
+
+    fun getDevnetBackend(): DevnetBackend {
+        return devnetBackend.backend
     }
 
     @Deprecated("It's better to use ProxyBackend, as it is backed by a reliable node")
