@@ -9,6 +9,7 @@ import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionU
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.EncryptedAmountRepository
+import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.devnet.DevnetRepository
@@ -71,6 +72,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
     private val devnetRepository = DevnetRepository()
+    private val pltRepository = PLTRepository(
+        App.appCore.session.walletStorage.database.protocolLevelTokenDao()
+    )
 
     private var accountSubmissionStatusRequestList: MutableList<AccountSubmissionStatusRequestData> =
         ArrayList()
@@ -365,6 +369,12 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                     request.account.releaseSchedule = accountFinalizedBalance.accountReleaseSchedule
                     request.account.cooldowns = accountFinalizedBalance.accountCooldowns
+
+                    //TODO: Remove hardcoded address when testnet is ready
+                    pltRepository.addForAccount(
+                        "4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo",
+                        accountFinalizedBalance.accountTokens ?: emptyList()
+                    )
 
                     if (areValuesDecrypted(request.account.encryptedBalance)) {
                         request.account.encryptedBalanceStatus =
