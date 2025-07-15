@@ -107,32 +107,17 @@ object TransactionViewHelper {
         // Public balance
         // remote transactions
         if (ta.isRemoteTransaction()) {
-            // simpleTransfer (as before: so use total subtotal and cost for display)
-            // transferToSecret (as simpleTransfer)
-            // transferToPublic (as simpleTransfer)
-            // update (send tokens)
-            if (ta.isSimpleTransfer()
-                || ta.isTransferToSecret()
-                || ta.isTransferToPublic()
-                || ta.isSmartContractUpdate()
-            ) {
+            if (ta.isEncryptedTransfer()) {
+                setTotalView(ta.getTotalAmountForRegular())
+                if (ta.isOriginSelf()) {
+                    showTransactionFeeText()
+                } else {
+                    // left empty intentionally (won't be called as item is filtered out)
+                }
+            } else { // baker
                 setTotalView(ta.getTotalAmountForRegular())
                 showCostLineWithAmounts()
-            } else
-            // encryptedTransfer
-            //    if origin is self => show as simpleTransfer, but show subtotal/cost row as "Shielded transaction fee
-            //    else => do NOT show
-                if (ta.isEncryptedTransfer()) {
-                    setTotalView(ta.getTotalAmountForRegular())
-                    if (ta.isOriginSelf()) {
-                        showTransactionFeeText()
-                    } else {
-                        // left empty intentionally (won't be called as item is filtered out)
-                    }
-                } else { // baker
-                    setTotalView(ta.getTotalAmountForRegular())
-                    showCostLineWithAmounts()
-                }
+            }
         }
         // local (unfinalized) transactions
         else {
@@ -144,7 +129,7 @@ object TransactionViewHelper {
                 showCostLineWithAmounts()
             } else
             // update Smart Contract (show the fee as an estimate cost until the transaction is Finalized)
-                if (ta.isSmartContractUpdate()) {
+                if (ta.isSmartContractUpdate() || ta.isTokenUpdate()) {
                     setTotalView(ta.getTotalAmountForSmartContractUpdate())
                     showCostLineWithAmounts()
                 } else
