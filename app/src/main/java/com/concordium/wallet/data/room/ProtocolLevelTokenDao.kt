@@ -11,10 +11,10 @@ interface ProtocolLevelTokenDao {
     @Query("SELECT * FROM protocol_level_token_table WHERE account_address = :accountAddress")
     suspend fun getTokens(accountAddress: String): List<ProtocolLevelToken>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(vararg protocolLevelToken: ProtocolLevelToken)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update
     suspend fun update(vararg protocolLevelToken: ProtocolLevelToken)
 
     @Query("SELECT * FROM protocol_level_token_table WHERE tokenId = :tokenId AND account_address = :accountAddress")

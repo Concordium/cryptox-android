@@ -65,9 +65,7 @@ class ManageTokensMainFragment : Fragment(
         KeyboardUtil.hideKeyboard(requireActivity())
 
         viewModel.tokenData.contractIndex = contractIndex
-        viewModel.lookForPLTs()
-
-//        viewModel.lookForTokens(viewModel.tokenData.account!!.address)
+        viewModel.lookForTokens(viewModel.tokenData.account!!.address)
     }
 
     private fun showWaiting(waiting: Boolean) {

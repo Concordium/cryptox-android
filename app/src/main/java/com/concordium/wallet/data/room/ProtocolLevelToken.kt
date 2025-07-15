@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.concordium.wallet.data.model.PLTState
+import com.concordium.wallet.data.model.TokenAccountState
 import com.concordium.wallet.data.room.typeconverter.PLTTypeConverters
 import java.io.Serializable
 
@@ -21,6 +22,8 @@ data class ProtocolLevelToken(
     val tokenId: String,
     @ColumnInfo(name = "tokenState")
     val tokenState: PLTState?,
+    @ColumnInfo(name = "tokenAccountState")
+    val tokenAccountState: TokenAccountState? = null,
     @ColumnInfo(name = "account_address")
     val accountAddress: String?,
     @ColumnInfo(name = "added_at", defaultValue = "0")

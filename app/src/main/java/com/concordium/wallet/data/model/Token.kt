@@ -33,7 +33,7 @@ data class Token(
      * Number of EUR per smallest token unit.
      */
     val eurPerUnit: SimpleFraction? = null,
-    val type: TokenType = TokenType.CIS2,
+    val type: TokenType = TokenType.UNKNOWN,
 ) : Serializable {
 
     val symbol: String
@@ -63,7 +63,32 @@ data class Token(
         contractName = contractToken.contractName,
         isNewlyReceived = contractToken.isNewlyReceived,
         isSelected = isSelected,
-        isEarning = isEarning
+        isEarning = isEarning,
+        type = TokenType.CIS2
+    )
+
+    constructor(
+        pltToken: PLTInfo,
+        isSelected: Boolean = false,
+        isEarning: Boolean = false,
+    ) : this(
+        uid = pltToken.tokenId,
+        token = pltToken.tokenId,
+        metadata = TokenMetadata(
+            decimals = pltToken.tokenState?.decimals,
+            description = null,
+            name = pltToken.tokenId,
+            symbol = pltToken.tokenId,
+            thumbnail = pltToken.tokenState?.moduleState?.metadata?.url.let { UrlHolder(it) },
+            unique = false,
+            display = null
+        ),
+        contractIndex = "",
+        contractName = "",
+        isSelected = isSelected,
+        isNewlyReceived = false,
+        isEarning = isEarning,
+        type = TokenType.PLT
     )
 
     companion object {
