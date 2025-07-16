@@ -12,7 +12,6 @@ import com.concordium.wallet.data.EncryptedAmountRepository
 import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
-import com.concordium.wallet.data.backend.devnet.DevnetRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.model.AccountBalance
@@ -71,7 +70,6 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val defaultFungibleTokensManager: DefaultFungibleTokensManager
-    private val devnetRepository = DevnetRepository()
     private val pltRepository = PLTRepository(
         App.appCore.session.walletStorage.database.protocolLevelTokenDao()
     )
@@ -340,9 +338,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (account in accountList) {
                     if (account.transactionStatus == TransactionStatus.FINALIZED) {
                         val deferred = async {
-//                            devnetRepository.getAccountBalanceSuspended(account.address)
-                            // TODO: Remove devnetRepository when testnet is ready
-                            devnetRepository.getAccountBalanceSuspended()
+                            proxyRepository.getAccountBalanceSuspended(account.address)
                         }
                         val requestData = AccountBalanceRequestData(deferred, account)
                         accountBalanceRequestList.add(requestData)

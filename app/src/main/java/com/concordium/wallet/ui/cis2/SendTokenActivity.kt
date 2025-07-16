@@ -23,7 +23,6 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
-import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
@@ -216,10 +215,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun handleMemo(memoText: String) {
         if (memoText.isNotEmpty()) {
-            viewModel.setMemo(CBORUtil.encodeCBOR(memoText))
+            viewModel.setMemoText(memoText)
             setMemoText(memoText)
         } else {
-            viewModel.setMemo(null)
+            viewModel.setMemoText(null)
             setMemoText("")
         }
     }

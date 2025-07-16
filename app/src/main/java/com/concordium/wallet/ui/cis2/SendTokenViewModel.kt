@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.sdk.serializing.CborMapper
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
@@ -40,10 +41,10 @@ import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
-import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.toHex
+import com.reown.util.bytesToHex
+import com.reown.util.hexToBytes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +65,7 @@ data class SendTokenData(
     var receiverName: String? = null,
     var fee: BigInteger? = null,
     var max: BigInteger? = null,
-    var memo: String? = null,
+    var memoHex: String? = null,
     var energy: Long? = null,
     var accountNonce: AccountNonce? = null,
     var expiry: Long? = null,
@@ -205,13 +206,18 @@ class SendTokenViewModel(
             })
     }
 
-    fun setMemo(memo: ByteArray?) {
-        sendTokenData.memo = memo?.toHex()
+    fun setMemoText(memoText: String?) {
+        sendTokenData.memoHex = memoText
+            ?.let(CborMapper.INSTANCE::writeValueAsBytes)
+            ?.bytesToHex()
         loadTransactionFee()
     }
 
     fun getMemoText(): String? =
-        sendTokenData.memo?.let(CBORUtil.Companion::decodeHexAndCBOR)
+        sendTokenData
+            .memoHex
+            ?.hexToBytes()
+            ?.let { CborMapper.INSTANCE.readValue(it, String::class.java) }
 
     fun showMemoWarning(): Boolean {
         return sendFundsPreferences.shouldShowMemoWarning()
@@ -323,7 +329,7 @@ class SendTokenViewModel(
     private fun getTransferCostCCD() {
         proxyRepository.getTransferCost(
             type = ProxyRepository.SIMPLE_TRANSFER,
-            memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
+            memoSize = sendTokenData.memoHex?.length?.div(2),
             success = {
                 sendTokenData.energy = it.energy
                 sendTokenData.fee = it.cost
@@ -437,7 +443,7 @@ class SendTokenViewModel(
         val nonce = sendTokenData.accountNonce
         val amount = sendTokenData.amount
         val energy = sendTokenData.energy
-        val memo = sendTokenData.memo
+        val memoHex = sendTokenData.memoHex
         val accountId = sendTokenData.account?.id
         val balance = sendTokenData.accountBalance
 
@@ -455,7 +461,7 @@ class SendTokenViewModel(
             amount.toString(),
             energy,
             nonce.nonce,
-            memo,
+            memoHex,
             sendTokenData.globalParams,
             sendTokenData.receiverPublicKey,
             encryptionSecretKey,
@@ -558,7 +564,7 @@ class SendTokenViewModel(
 
     private fun finishTransferCreation(submissionId: String) {
         val toAddress = sendTokenData.receiver
-        val memo = sendTokenData.memo
+        val memo = sendTokenData.memoHex
         val expiry = sendTokenData.expiry
         val cost = sendTokenData.fee
 

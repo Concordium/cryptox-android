@@ -16,7 +16,6 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.button.SliderButton
-import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -93,11 +92,11 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.finish.setOnClickListener {
             onFinish()
         }
-        viewModel.sendTokenData.memo.let { encodedMemo ->
-            if (encodedMemo != null) {
+        viewModel.getMemoText().also { memoText ->
+            if (memoText != null) {
                 binding.memoDivider.visibility = View.VISIBLE
                 binding.memoLayout.visibility = View.VISIBLE
-                binding.memo.text = CBORUtil.decodeHexAndCBOR(encodedMemo)
+                binding.memo.text = memoText
             } else {
                 binding.memoDivider.visibility = View.GONE
                 binding.memoLayout.visibility = View.GONE
