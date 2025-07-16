@@ -233,7 +233,7 @@ allprojects {
 
 dependencies {
 
-    implementation("com.concordium.sdk:concordium-android-sdk:10.0.1") {
+    implementation("com.concordium.sdk:concordium-android-sdk:11.0.0-plt.1") {
         exclude group: "org.bouncycastle"
         exclude group: "net.jcip"
     }
