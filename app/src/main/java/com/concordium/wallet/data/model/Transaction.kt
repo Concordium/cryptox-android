@@ -73,6 +73,10 @@ data class Transaction(
         return details?.type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
     }
 
+    fun isTokenUpdate(): Boolean {
+        return details?.type == TransactionType.TOKEN_UPDATE
+    }
+
     fun getTotalAmountForRegular(): BigInteger {
         if (transactionStatus == TransactionStatus.ABSENT) {
             return BigInteger.ZERO
