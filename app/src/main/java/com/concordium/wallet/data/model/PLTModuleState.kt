@@ -9,5 +9,6 @@ data class PLTModuleState(
     val governanceAccount: GovernanceAccount,
     val metadata: PLTMetadata,
     val mintable: Boolean,
-    val name: String
+    val name: String,
+    val paused: Boolean
 ) : Serializable

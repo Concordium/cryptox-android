@@ -8,7 +8,7 @@ import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewPLTToken
+import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.toNewContractToken
 import com.concordium.wallet.data.model.toNewPLTToken
@@ -73,8 +73,8 @@ class TokensManagerViewModel(application: Application) : AndroidViewModel(applic
 
     fun deleteSelectedToken(accountAddress: String) = viewModelScope.launch {
         when (selectedToken) {
-            is NewPLTToken -> {
-                val token = selectedToken as NewPLTToken
+            is PLTToken -> {
+                val token = selectedToken as PLTToken
                 // TODO: remove hardcoded PLT address
                 pltRepository.hideToken(
                     "4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo",
@@ -96,8 +96,8 @@ class TokensManagerViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun selectedTokenSymbol(): String = when (selectedToken) {
-        is NewPLTToken -> {
-            val token = selectedToken as NewPLTToken
+        is PLTToken -> {
+            val token = selectedToken as PLTToken
             token.tokenId
         }
         is NewContractToken -> {

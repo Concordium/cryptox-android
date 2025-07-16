@@ -4,7 +4,7 @@ import com.concordium.wallet.data.room.ProtocolLevelToken
 import java.io.Serializable
 import java.math.BigInteger
 
-data class NewPLTToken(
+data class PLTToken(
     override val balance: BigInteger = BigInteger.ZERO,
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
@@ -22,7 +22,7 @@ fun ProtocolLevelToken.toNewPLTToken(
     balance: BigInteger = BigInteger.ZERO,
     isSelected: Boolean = false,
     isNewlyReceived: Boolean = false,
-) = NewPLTToken(
+) = PLTToken(
     balance = balance,
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,

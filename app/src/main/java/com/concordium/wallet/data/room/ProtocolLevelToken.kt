@@ -9,6 +9,7 @@ import com.concordium.wallet.data.model.PLTState
 import com.concordium.wallet.data.model.TokenAccountState
 import com.concordium.wallet.data.room.typeconverter.PLTTypeConverters
 import java.io.Serializable
+import java.math.BigInteger
 
 @Entity(
     tableName = "protocol_level_token_table",
@@ -26,6 +27,8 @@ data class ProtocolLevelToken(
     val tokenAccountState: TokenAccountState? = null,
     @ColumnInfo(name = "account_address")
     val accountAddress: String?,
+    @ColumnInfo(name = "token_balance")
+    var balance: BigInteger = BigInteger.ZERO,
     @ColumnInfo(name = "added_at", defaultValue = "0")
     var addedAt: Long = 0L,
     @ColumnInfo(name = "is_hidden", defaultValue = "0")

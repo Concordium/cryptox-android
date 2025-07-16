@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "fd600f144c2ce5fdeec0601e226be4dc",
+    "identityHash": "1c338bf36ae7d00d3c0c754952345c2b",
     "entities": [
       {
         "tableName": "identity_table",
@@ -511,7 +511,7 @@
       },
       {
         "tableName": "protocol_level_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tokenId` TEXT NOT NULL, `tokenState` TEXT, `tokenAccountState` TEXT, `account_address` TEXT, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tokenId` TEXT NOT NULL, `tokenState` TEXT, `tokenAccountState` TEXT, `account_address` TEXT, `token_balance` TEXT NOT NULL, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -542,6 +542,12 @@
             "columnName": "account_address",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "balance",
+            "columnName": "token_balance",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "addedAt",
@@ -588,7 +594,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fd600f144c2ce5fdeec0601e226be4dc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c338bf36ae7d00d3c0c754952345c2b')"
     ]
   }
 }
