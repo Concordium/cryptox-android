@@ -340,7 +340,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (account in accountList) {
                     if (account.transactionStatus == TransactionStatus.FINALIZED) {
                         val deferred = async {
-//                            devnetRepository.getAccountBalanceSuspended(account.address)
+//                            proxyRepository.getAccountBalanceSuspended(account.address)
                             // TODO: Remove devnetRepository when testnet is ready
                             devnetRepository.getAccountBalanceSuspended()
                         }
