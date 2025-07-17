@@ -30,8 +30,14 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
 
         loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
             updateUIState(waiting = true)
-            tokensInteractor.loadTokens(accountAddress)
+            tokensInteractor.loadTokens(
+                accountAddress = accountAddress,
+                loadBalances = false
+            )
                 .onSuccess {
+                    it.forEach { updatedToken ->
+                        println("token balance for ${updatedToken.accountAddress} is ${updatedToken.balance}")
+                    }
                     updateUIState(tokens = it, waiting = false)
                 }
                 .onFailure {

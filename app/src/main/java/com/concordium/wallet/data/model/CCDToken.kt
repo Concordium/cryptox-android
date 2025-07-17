@@ -19,5 +19,6 @@ data class CCDToken(
         thumbnail = null,
         display = null,
     ),
+    var isEarning: Boolean = false,
     val eurPerMicroCcd: SimpleFraction? = null,
 ) : NewToken, Serializable

@@ -5,7 +5,7 @@ import java.io.Serializable
 import java.math.BigInteger
 
 data class NewContractToken(
-    override val balance: BigInteger = BigInteger.ZERO,
+    override var balance: BigInteger = BigInteger.ZERO,
     override val accountAddress: String,
     override val isNewlyReceived: Boolean,
     override val addedAt: Long,
@@ -13,6 +13,7 @@ data class NewContractToken(
     override val metadata: TokenMetadata?,
     override val isSelected: Boolean = false,
     val contractIndex: String,
+    val subIndex: String = "0",
     val contractName: String,
     val token: String,
     val isFungible: Boolean,
