@@ -5,6 +5,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.serializing.CborMapper
+import com.concordium.sdk.transactions.Expiry
+import com.concordium.sdk.transactions.TokenUpdate
+import com.concordium.sdk.transactions.TransactionFactory
+import com.concordium.sdk.transactions.TransactionSigner
+import com.concordium.sdk.transactions.tokens.CborMemo
+import com.concordium.sdk.transactions.tokens.TaggedTokenHolderAccount
+import com.concordium.sdk.transactions.tokens.TokenOperationAmount
+import com.concordium.sdk.transactions.tokens.TransferTokenOperation
+import com.concordium.sdk.types.AccountAddress
+import com.concordium.sdk.types.Nonce
+import com.concordium.sdk.types.UInt64
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
@@ -47,6 +58,7 @@ import com.reown.util.bytesToHex
 import com.reown.util.hexToBytes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -97,6 +109,7 @@ class SendTokenViewModel(
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitTransaction: BackendRequest<SubmissionData>? = null
+    private var submitTransactionJob: Job? = null
     private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
 
     var sendTokenData = SendTokenData()
@@ -429,7 +442,7 @@ class SendTokenViewModel(
                         )
                     }
                 else
-                    createTransaction(credentialsOutput.accountKeys)
+                    createCis2Transaction(credentialsOutput.accountKeys)
             },
             failure = {
                 transactionWaiting.postValue(false)
@@ -487,7 +500,7 @@ class SendTokenViewModel(
         }
     }
 
-    private fun createTransaction(keys: AccountData) {
+    private fun createCis2Transaction(keys: AccountData) {
         if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.energy == null || sendTokenData.accountNonce == null) {
             errorInt.postValue(R.string.app_error_general)
             return
@@ -540,6 +553,61 @@ class SendTokenViewModel(
         }
     }
 
+    private fun createProtocolLevelTokenTransaction(
+        keys: AccountData,
+    ) = viewModelScope.launch {
+
+        if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.energy == null || sendTokenData.accountNonce == null) {
+            errorInt.postValue(R.string.app_error_general)
+            return@launch
+        }
+
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+
+        val transaction = try {
+            TransactionFactory.newTokenUpdate()
+                .expiry(Expiry.from(expiry))
+                .sender(AccountAddress.from(sendTokenData.account!!.address))
+                .nonce(Nonce.from(sendTokenData.accountNonce!!.nonce.toLong()))
+                .signer(TransactionSigner.from(keys.getSignerEntry()))
+                .payload(
+                    TokenUpdate.builder()
+                        .tokenSymbol(TODO("token symbol"))
+                        .operation(
+                            TransferTokenOperation.builder()
+                                .recipient(
+                                    TaggedTokenHolderAccount(
+                                        AccountAddress.from(sendTokenData.receiver)
+                                    )
+                                )
+                                .amount(
+                                    TokenOperationAmount(
+                                        UInt64.from(sendTokenData.amount.toString()),
+                                        TODO("token decimals"),
+                                    )
+                                )
+                                .memo(
+                                    sendTokenData
+                                        .memoHex
+                                        ?.hexToBytes()
+                                        ?.let(CborMemo::from)
+                                )
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+
+        } catch (e: Exception) {
+            Log.e("Error creating transaction", e)
+            transactionWaiting.postValue(false)
+            errorInt.postValue(R.string.app_error_general)
+            return@launch
+        }
+
+        submitTransaction(transaction)
+    }
+
     private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
         submitTransaction?.dispose()
         submitTransaction = proxyRepository.submitTransfer(
@@ -555,6 +623,24 @@ class SendTokenViewModel(
                 transactionWaiting.postValue(false)
             }
         )
+    }
+
+    private fun submitTransaction(transaction: com.concordium.sdk.transactions.Transaction) {
+        submitTransactionJob?.cancel()
+        submitTransactionJob = viewModelScope.launch {
+            try {
+                val submissionId = proxyRepository
+                    .submitSdkTransaction(transaction)
+                    .submissionId
+                println("LC -> submitTransaction SUCCESS = $submissionId")
+                finishTransferCreation(submissionId)
+                transactionWaiting.postValue(false)
+            } catch (e: Exception){
+                println("LC -> submitTransaction ERROR ${e.stackTraceToString()}")
+                handleBackendError(e)
+                transactionWaiting.postValue(false)
+            }
+        }
     }
 
     private fun handleBackendError(throwable: Throwable) {
@@ -603,6 +689,7 @@ class SendTokenViewModel(
 
     private fun getTransactionType(isCCDTransfer: Boolean, hasMemo: Boolean): TransactionType {
         if (!isCCDTransfer) {
+            // TODO token transfer type
             return TransactionType.UPDATE
         }
         if (hasMemo) {
