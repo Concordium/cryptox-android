@@ -20,8 +20,7 @@ data class NewContractToken(
 
 fun ContractToken.toNewContractToken(
     balance: BigInteger = BigInteger.ZERO,
-    isSelected: Boolean = false,
-    isNewlyReceived: Boolean = false,
+    isSelected: Boolean = false
 ) = NewContractToken(
     balance = balance,
     accountAddress = accountAddress ?: "",
