@@ -26,11 +26,11 @@ fun ProtocolLevelToken.toNewPLTToken(
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,
     addedAt = addedAt,
-    metadata = null,
+    metadata = tokenMetadata,
     isSelected = isSelected,
     tokenId = tokenId,
-    tokenState = tokenState,
-    tokenAccountState = tokenAccountState,
+    tokenState = null,
+    tokenAccountState = null,
     isHidden = isHidden
 )
 

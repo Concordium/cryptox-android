@@ -38,7 +38,7 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
                     )
                     insert(protocolLevelToken)
                 } else {
-                    if (existsToken.tokenAccountState != tokenWithState.tokenAccountState) {
+                    if (existsToken.balance != tokenWithState.tokenAccountState?.balance?.value) {
                         // Update the existing token's balance if it has changed
                         val updatedToken = tokenWithState.toProtocolLevelToken(
                             accountAddress = accountAddress,

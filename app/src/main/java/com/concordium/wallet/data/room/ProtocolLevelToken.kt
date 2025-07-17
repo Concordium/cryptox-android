@@ -5,8 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.concordium.wallet.data.model.PLTState
-import com.concordium.wallet.data.model.TokenAccountState
+import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.typeconverter.PLTTypeConverters
 import java.io.Serializable
 import java.math.BigInteger
@@ -21,10 +20,12 @@ data class ProtocolLevelToken(
     var id: Int = 0,
     @ColumnInfo(name = "tokenId")
     val tokenId: String,
-    @ColumnInfo(name = "tokenState")
-    val tokenState: PLTState?,
-    @ColumnInfo(name = "tokenAccountState")
-    val tokenAccountState: TokenAccountState? = null,
+//    @ColumnInfo(name = "tokenState")
+//    val tokenState: PLTState?,
+//    @ColumnInfo(name = "tokenAccountState")
+//    val tokenAccountState: TokenAccountState? = null,
+    @ColumnInfo(name = "token_metadata")
+    val tokenMetadata: TokenMetadata?,
     @ColumnInfo(name = "account_address")
     val accountAddress: String?,
     @ColumnInfo(name = "token_balance")

@@ -11,8 +11,7 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
             CREATE TABLE IF NOT EXISTS `protocol_level_token_table` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `tokenId` TEXT NOT NULL,
-                `tokenState` TEXT,
-                `tokenAccountState` TEXT,
+                `token_metadata` TEXT,
                 `account_address` TEXT,
                 `token_balance` TEXT NOT NULL,
                 `added_at` INTEGER NOT NULL DEFAULT 0,
