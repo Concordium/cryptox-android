@@ -9,7 +9,6 @@ data class PLTToken(
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
     override val addedAt: Long,
-    override val type: TokenType = TokenType.PLT,
     override val metadata: TokenMetadata? = null,
     override val isSelected: Boolean = false,
     val tokenId: String,
@@ -27,8 +26,7 @@ fun ProtocolLevelToken.toNewPLTToken(
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,
     addedAt = addedAt,
-    type = TokenType.PLT,
-    metadata = null, // PLT tokens do not have metadata
+    metadata = null,
     isSelected = isSelected,
     tokenId = tokenId,
     tokenState = tokenState,

@@ -7,7 +7,6 @@ interface NewToken {
     val accountAddress: String
     val isNewlyReceived: Boolean
     val addedAt: Long
-    val type: TokenType
     val metadata: TokenMetadata?
     val isSelected: Boolean
 }

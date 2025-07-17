@@ -8,7 +8,6 @@ data class CCDToken(
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
     override val addedAt: Long = 0L,
-    override val type: TokenType = TokenType.CCD,
     override val isSelected: Boolean = false,
     override val metadata: TokenMetadata? = TokenMetadata(
         symbol = "CCD",

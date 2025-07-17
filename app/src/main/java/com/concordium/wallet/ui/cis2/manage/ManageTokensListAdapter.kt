@@ -8,9 +8,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.PLTToken
-import com.concordium.wallet.data.model.TokenType
 import com.concordium.wallet.databinding.ItemTokenManageListBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 
@@ -66,7 +66,7 @@ class ManageTokensListAdapter(
                 .fitCenter()
                 .error(R.drawable.mw24_ic_token_placeholder)
                 .into(holder.binding.tokenIcon)
-        } else if (token.type == TokenType.CCD) {
+        } else if (token is CCDToken) {
             Glide.with(context)
                 .load(R.drawable.mw24_ic_ccd)
                 .into(holder.binding.tokenIcon)
@@ -79,12 +79,10 @@ class ManageTokensListAdapter(
         }
 
         holder.binding.title.text =
-            if (token.type == TokenType.PLT)
-                    (token as PLTToken).tokenId
-            else
-                tokenMetadata?.symbol ?: tokenMetadata?.name
+            if (token is PLTToken) token.tokenId
+            else tokenMetadata?.symbol ?: tokenMetadata?.name
 
-        holder.binding.hideBtn.isVisible = token.type != TokenType.CCD
+        holder.binding.hideBtn.isVisible = token !is CCDToken
         holder.binding.hideBtn.setOnClickListener {
             tokenClickListener?.onHideClick(token)
         }
