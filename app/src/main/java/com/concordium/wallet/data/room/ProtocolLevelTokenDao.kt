@@ -22,4 +22,7 @@ interface ProtocolLevelTokenDao {
 
     @Query("UPDATE protocol_level_token_table SET is_newly_received = 0 WHERE tokenId = :tokenId")
     suspend fun unmarkNewlyReceived(tokenId: String)
+
+    @Query("UPDATE protocol_level_token_table SET is_hidden = 1 WHERE account_address = :accountAddress AND tokenId = :tokenId")
+    suspend fun hideToken(accountAddress: String, tokenId: String)
 }

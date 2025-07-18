@@ -8,14 +8,16 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.TokenType
 import com.concordium.wallet.databinding.ItemTokenManageListBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 
 class ManageTokensListAdapter(
     private val context: Context,
 ) : RecyclerView.Adapter<ManageTokensListAdapter.ViewHolder>() {
-    private val tokensList: MutableList<Token> = mutableListOf()
+    private val tokensList: MutableList<NewToken> = mutableListOf()
     private var tokenClickListener: TokenClickListener? = null
     private val iconSize: Int by lazy {
         context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
@@ -25,16 +27,15 @@ class ManageTokensListAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     interface TokenClickListener {
-        fun onHideClick(token: Token)
+        fun onHideClick(token: NewToken)
     }
 
     fun setTokenClickListener(tokenClickListener: TokenClickListener) {
         this.tokenClickListener = tokenClickListener
     }
 
-
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<Token>) {
+    fun setData(data: List<NewToken>) {
         tokensList.clear()
         tokensList.addAll(data)
         notifyDataSetChanged()
@@ -65,21 +66,25 @@ class ManageTokensListAdapter(
                 .fitCenter()
                 .error(R.drawable.mw24_ic_token_placeholder)
                 .into(holder.binding.tokenIcon)
-        } else if (token.isCcd) {
+        } else if (token.type == TokenType.CCD) {
             Glide.with(context)
                 .load(R.drawable.mw24_ic_ccd)
                 .into(holder.binding.tokenIcon)
         } else if (tokenMetadata != null) {
             holder.binding.tokenIcon.setImageResource(R.drawable.mw24_ic_token_placeholder)
         } else {
-            // While the metadata is loading, show progress in the icon view.
-            holder.binding.tokenIcon.setImageDrawable(ThemedCircularProgressDrawable(context))
+            Glide.with(context)
+                .load(R.drawable.mw24_ic_token_placeholder)
+                .into(holder.binding.tokenIcon)
         }
 
         holder.binding.title.text =
-            tokenMetadata?.symbol ?: token.name
+            if (token.type == TokenType.PLT)
+                    (token as PLTToken).tokenId
+            else
+                tokenMetadata?.symbol ?: tokenMetadata?.name
 
-        holder.binding.hideBtn.isVisible = !token.isCcd
+        holder.binding.hideBtn.isVisible = token.type != TokenType.CCD
         holder.binding.hideBtn.setOnClickListener {
             tokenClickListener?.onHideClick(token)
         }
