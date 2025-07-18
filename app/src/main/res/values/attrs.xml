@@ -61,4 +61,8 @@
     <declare-styleable name="AmountEditText">
         <attr name="isGradientTextColor" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="PLTAllowDenyListView">
+        <attr name="isPLTLabel" format="boolean"/>
+    </declare-styleable>
 </resources>

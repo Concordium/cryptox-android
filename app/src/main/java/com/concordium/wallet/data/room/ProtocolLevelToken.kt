@@ -20,10 +20,6 @@ data class ProtocolLevelToken(
     var id: Int = 0,
     @ColumnInfo(name = "tokenId")
     val tokenId: String,
-//    @ColumnInfo(name = "tokenState")
-//    val tokenState: PLTState?,
-//    @ColumnInfo(name = "tokenAccountState")
-//    val tokenAccountState: TokenAccountState? = null,
     @ColumnInfo(name = "token_metadata")
     val tokenMetadata: TokenMetadata?,
     @ColumnInfo(name = "account_address")
@@ -36,4 +32,8 @@ data class ProtocolLevelToken(
     var isHidden: Boolean = false,
     @ColumnInfo(name = "is_newly_received", defaultValue = "0")
     val isNewlyReceived: Boolean,
+    @ColumnInfo(name = "is_in_allow_list", defaultValue = "null")
+    val isInAllowList: Boolean? = null,
+    @ColumnInfo(name = "is_in_deny_list", defaultValue = "null")
+    val isInDenyList: Boolean? = null,
 ) : Serializable

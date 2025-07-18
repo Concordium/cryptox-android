@@ -16,7 +16,9 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
                 `token_balance` TEXT NOT NULL,
                 `added_at` INTEGER NOT NULL DEFAULT 0,
                 `is_hidden` INTEGER NOT NULL DEFAULT 0,
-                `is_newly_received` INTEGER NOT NULL DEFAULT 0
+                `is_newly_received` INTEGER NOT NULL DEFAULT 0,
+                `is_in_allow_list` INTEGER DEFAULT null,
+                `is_in_deny_list` INTEGER DEFAULT null
             )
             """
         )

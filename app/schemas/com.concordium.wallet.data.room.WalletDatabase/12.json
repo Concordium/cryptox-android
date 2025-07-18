@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "e24e09fe24a8b5e7a93e965a1f366fac",
+    "identityHash": "71eb3d4ecf7256262698c5415412f1bd",
     "entities": [
       {
         "tableName": "identity_table",
@@ -511,7 +511,7 @@
       },
       {
         "tableName": "protocol_level_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tokenId` TEXT NOT NULL, `token_metadata` TEXT, `account_address` TEXT, `token_balance` TEXT NOT NULL, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tokenId` TEXT NOT NULL, `token_metadata` TEXT, `account_address` TEXT, `token_balance` TEXT NOT NULL, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null, `is_in_deny_list` INTEGER DEFAULT null)",
         "fields": [
           {
             "fieldPath": "id",
@@ -563,6 +563,20 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
+          },
+          {
+            "fieldPath": "isInAllowList",
+            "columnName": "is_in_allow_list",
+            "affinity": "INTEGER",
+            "notNull": false,
+            "defaultValue": "null"
+          },
+          {
+            "fieldPath": "isInDenyList",
+            "columnName": "is_in_deny_list",
+            "affinity": "INTEGER",
+            "notNull": false,
+            "defaultValue": "null"
           }
         ],
         "primaryKey": {
@@ -588,7 +602,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e24e09fe24a8b5e7a93e965a1f366fac')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71eb3d4ecf7256262698c5415412f1bd')"
     ]
   }
 }
