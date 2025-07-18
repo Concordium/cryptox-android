@@ -30,46 +30,62 @@ class PLTAllowDenyListView(context: Context, attrs: AttributeSet?) :
     }
 
     fun setToken(token: PLTToken) {
-        val pltListStatus = PLTListStatus.ON_DENY_LIST
-        when (pltListStatus) {
-            PLTListStatus.ON_ALLOW_LIST -> {
-                binding.rootLayout.background = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.plt_in_allow_list_background
-                )
-                binding.statusTitle.text =
-                    context.getString(R.string.account_details_account_on_allow_list)
-                binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_success_primary))
-                binding.icon.setImageResource(R.drawable.mw24_ic_circled_check_done)
-            }
+        if (isPLTLabel) {
+            binding.rootLayout.background = null
+            binding.statusTitle.text =
+                context.getString(R.string.account_details_plt_token)
+            binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_accent_primary))
+            binding.icon.setImageResource(R.drawable.mw24_ic_ccd_token_colored)
+        } else {
+            val pltListStatus = getPLTListStatus(token)
+            when (pltListStatus) {
+                PLTListStatus.ON_ALLOW_LIST -> {
+                    binding.rootLayout.background = AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.plt_in_allow_list_background
+                    )
+                    binding.statusTitle.text =
+                        context.getString(R.string.account_details_account_on_allow_list)
+                    binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_success_primary))
+                    binding.icon.setImageResource(R.drawable.mw24_ic_circled_check_done)
+                }
 
-            PLTListStatus.NOT_ON_ALLOW_LIST -> {
-                binding.rootLayout.background = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.plt_not_in_allow_list_background
-                )
-                binding.statusTitle.text =
-                    context.getString(R.string.account_details_account_not_on_allow_list)
-                binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_warning_primary))
-                binding.icon.setImageResource(R.drawable.mw24_ic_circled_block_warning)
-            }
+                PLTListStatus.NOT_ON_ALLOW_LIST -> {
+                    binding.rootLayout.background = AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.plt_not_in_allow_list_background
+                    )
+                    binding.statusTitle.text =
+                        context.getString(R.string.account_details_account_not_on_allow_list)
+                    binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_warning_primary))
+                    binding.icon.setImageResource(R.drawable.mw24_ic_circled_block_warning)
+                }
 
-            PLTListStatus.ON_DENY_LIST -> {
-                binding.rootLayout.background = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.plt_in_deny_list_background
-                )
-                binding.statusTitle.text =
-                    context.getString(R.string.account_details_account_on_deny_list)
-                binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_error_primary))
-                binding.icon.setImageResource(R.drawable.mw24_ic_circled_block_deny)
-            }
+                PLTListStatus.ON_DENY_LIST -> {
+                    binding.rootLayout.background = AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.plt_in_deny_list_background
+                    )
+                    binding.statusTitle.text =
+                        context.getString(R.string.account_details_account_on_deny_list)
+                    binding.statusTitle.setTextColor(context.getColor(R.color.mw24_content_error_primary))
+                    binding.icon.setImageResource(R.drawable.mw24_ic_circled_block_deny)
+                }
 
-            else -> {
-                binding.rootLayout.isVisible = false
+                else -> {
+                    binding.rootLayout.isVisible = false
+                }
             }
         }
     }
+
+    private fun getPLTListStatus(token: PLTToken): PLTListStatus = when {
+        (token.isInDenyList != null && token.isInDenyList) -> PLTListStatus.ON_DENY_LIST
+        (token.isInAllowList != null && token.isInAllowList) -> PLTListStatus.ON_ALLOW_LIST
+        token.isInAllowList != null -> PLTListStatus.NOT_ON_ALLOW_LIST
+        else -> PLTListStatus.UNKNOWN
+    }
+
 
 
 }

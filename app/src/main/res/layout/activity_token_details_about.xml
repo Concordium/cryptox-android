@@ -52,6 +52,32 @@
                 tools:text="Global Transaction Unit" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/plt_list_status_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="visible"
+            tools:visibility="visible">
+
+            <com.concordium.wallet.ui.plt.PLTAllowDenyListView
+                android:id="@+id/plt_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:isPLTLabel="true"/>
+
+            <com.concordium.wallet.ui.plt.PLTAllowDenyListView
+                android:id="@+id/plt_list_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@id/plt_label"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/description_holder"
             android:layout_width="match_parent"

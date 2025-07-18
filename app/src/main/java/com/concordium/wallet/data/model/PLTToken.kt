@@ -15,6 +15,8 @@ data class PLTToken(
     val tokenState: PLTState?,
     val tokenAccountState: TokenAccountState? = null,
     val isHidden: Boolean = false,
+    val isInAllowList: Boolean? = null,
+    val isInDenyList: Boolean? = null,
 ) : NewToken, Serializable
 
 fun ProtocolLevelToken.toNewPLTToken(
@@ -30,6 +32,8 @@ fun ProtocolLevelToken.toNewPLTToken(
     tokenId = tokenId,
     tokenState = null,
     tokenAccountState = null,
-    isHidden = isHidden
+    isHidden = isHidden,
+    isInAllowList = isInAllowList,
+    isInDenyList = isInDenyList
 )
 

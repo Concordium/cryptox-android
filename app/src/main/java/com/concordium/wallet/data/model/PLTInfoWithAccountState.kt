@@ -30,6 +30,8 @@ fun PLTInfoWithAccountState.toProtocolLevelToken(
         balance = tokenAccountState?.balance?.value ?: BigInteger.ZERO,
         addedAt = addedAt,
         isHidden = isHidden,
-        isNewlyReceived = isNewlyReceived
+        isNewlyReceived = isNewlyReceived,
+        isInAllowList = tokenAccountState?.state?.allowList,
+        isInDenyList = tokenAccountState?.state?.denyList,
     )
 }
