@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenType
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -138,7 +139,9 @@ class TokensAccountDetailsAdapter(
                         context.getString(R.string.cis_not_owned)
             }
         } else {
-            holder.binding.title.text = token.symbol
+            holder.binding.title.text =
+                if (token.type == TokenType.PLT) token.token
+                else token.symbol
             holder.binding.balance.isVisible = true
             holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
                 value = token.balance,

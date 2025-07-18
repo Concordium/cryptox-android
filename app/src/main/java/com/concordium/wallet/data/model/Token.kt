@@ -2,6 +2,7 @@ package com.concordium.wallet.data.model
 
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
+import com.concordium.wallet.data.room.ProtocolLevelToken
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 import java.math.BigInteger
@@ -68,21 +69,14 @@ data class Token(
     )
 
     constructor(
-        pltToken: PLTInfo,
+        pltToken: ProtocolLevelToken,
         isSelected: Boolean = false,
         isEarning: Boolean = false,
     ) : this(
         uid = pltToken.tokenId,
         token = pltToken.tokenId,
-        metadata = TokenMetadata(
-            decimals = pltToken.tokenState?.decimals,
-            description = null,
-            name = pltToken.tokenId,
-            symbol = pltToken.tokenId,
-            thumbnail = pltToken.tokenState?.moduleState?.metadata?.url.let { UrlHolder(it) },
-            unique = false,
-            display = null
-        ),
+        metadata = pltToken.tokenMetadata,
+        balance = pltToken.balance,
         contractIndex = "",
         contractName = "",
         isSelected = isSelected,
@@ -109,6 +103,7 @@ data class Token(
                 description = null,
                 thumbnail = null,
                 display = null,
+                totalSupply = null
             ),
             balance = account.balance,
             isEarning = account.isBaking() || account.isDelegating(),

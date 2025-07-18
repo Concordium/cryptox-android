@@ -18,7 +18,6 @@ data class PLTToken(
 ) : NewToken, Serializable
 
 fun ProtocolLevelToken.toNewPLTToken(
-    balance: BigInteger = BigInteger.ZERO,
     isSelected: Boolean = false,
     isNewlyReceived: Boolean = false,
 ) = PLTToken(

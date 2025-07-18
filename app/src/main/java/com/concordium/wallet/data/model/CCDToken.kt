@@ -17,6 +17,7 @@ data class CCDToken(
         description = null,
         thumbnail = null,
         display = null,
+        totalSupply = null
     ),
     var isEarning: Boolean = false,
     val eurPerMicroCcd: SimpleFraction? = null,

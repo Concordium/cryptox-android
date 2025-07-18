@@ -10,6 +10,6 @@ data class PLTInfo(
 fun ProtocolLevelToken.toPltInfo(): PLTInfo {
     return PLTInfo(
         tokenId = this.tokenId,
-        tokenState = this.tokenState
+        tokenState = null
     )
 }

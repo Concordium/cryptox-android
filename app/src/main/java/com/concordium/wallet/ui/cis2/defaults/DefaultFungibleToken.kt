@@ -31,6 +31,7 @@ class DefaultFungibleToken(
             ),
             unique = false,
             display = null,
+            totalSupply = null
         ),
         isNewlyReceived = false,
     )

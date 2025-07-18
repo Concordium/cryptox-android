@@ -23,10 +23,9 @@ fun PLTInfoWithAccountState.toProtocolLevelToken(
             symbol = null,
             thumbnail = token.tokenState?.moduleState?.metadata?.url?.let { UrlHolder(it) },
             unique = false,
-            display = null
+            display = null,
+            totalSupply = token.tokenState?.totalSupply?.value
         ),
-//        tokenState = token.tokenState,
-//        tokenAccountState = tokenAccountState,
         accountAddress = accountAddress,
         balance = tokenAccountState?.balance?.value ?: BigInteger.ZERO,
         addedAt = addedAt,
