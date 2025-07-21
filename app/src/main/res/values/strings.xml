@@ -589,6 +589,7 @@
     <string name="cis_description">Description</string>
     <string name="cis_contract_index">Contract index</string>
     <string name="cis_contract_index_subindex">Contract index, subindex</string>
+    <string name="cis_total_supply">Total Supply</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>

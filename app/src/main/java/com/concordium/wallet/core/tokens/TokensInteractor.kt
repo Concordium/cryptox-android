@@ -74,6 +74,14 @@ class TokensInteractor(
         }
     }
 
+    suspend fun unmarkNewlyReceivedToken(token: NewToken) {
+        when (token) {
+            is NewContractToken -> contractTokensRepository.unmarkNewlyReceived(token.token)
+            is PLTToken -> pltRepository.unmarkNewlyReceived(token.tokenId)
+            else -> throw UnsupportedOperationException("Cannot unmark CCD token")
+        }
+    }
+
     private suspend fun getCCDDefaultToken(accountAddress: String): CCDToken {
         val account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found")

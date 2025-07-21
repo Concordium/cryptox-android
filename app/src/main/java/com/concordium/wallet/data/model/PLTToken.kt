@@ -21,7 +21,6 @@ data class PLTToken(
 
 fun ProtocolLevelToken.toNewPLTToken(
     isSelected: Boolean = false,
-    isNewlyReceived: Boolean = false,
 ) = PLTToken(
     balance = balance,
     accountAddress = accountAddress ?: "",

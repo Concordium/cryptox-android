@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,7 +39,12 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
                         isLoading = false
                     )
                 }
-                .onFailure { _uiState.value = _uiState.value.copy(isLoading = false) }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = Event(BackendErrorHandler.getExceptionStringRes(error))
+                    )
+                }
         }
     }
 
@@ -45,6 +52,7 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
         val account: Account? = null,
         val tokens: List<NewToken> = emptyList(),
         val selectedToken: NewToken? = null,
-        var isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val error: Event<Int>? = null
     )
 }
