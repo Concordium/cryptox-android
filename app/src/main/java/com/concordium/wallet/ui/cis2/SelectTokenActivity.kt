@@ -1,12 +1,11 @@
 package com.concordium.wallet.ui.cis2
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivitySelectTokenBinding
@@ -45,8 +44,8 @@ class SelectTokenActivity : BaseActivity(
 
         tokensAccountDetailsAdapter.setTokenClickListener(object :
             TokensAccountDetailsAdapter.TokenClickListener {
-            override fun onRowClick(token: Token) {
-                goBackWithToken(token)
+            override fun onRowClick(token: NewToken) {
+//                goBackWithToken(token)
             }
         })
     }
@@ -75,8 +74,8 @@ class SelectTokenActivity : BaseActivity(
         }
         viewModelTokens.tokenBalances.observe(this) { ready ->
             showWaiting(ready.not())
-            if (ready)
-                tokensAccountDetailsAdapter.setData(viewModelTokens.tokens)
+//            if (ready)
+//                tokensAccountDetailsAdapter.setData(viewModelTokens.tokens)
         }
     }
 
@@ -84,13 +83,13 @@ class SelectTokenActivity : BaseActivity(
         binding.loading.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 
-    private fun goBackWithToken(token: Token) {
-        val intent = Intent().apply {
-            putExtra(SELECT_TOKEN_ACCOUNT, token)
-        }
-        setResult(Activity.RESULT_OK, intent)
-        finish()
-    }
+//    private fun goBackWithToken(token: Token) {
+//        val intent = Intent().apply {
+//            putExtra(SELECT_TOKEN_ACCOUNT, token)
+//        }
+//        setResult(Activity.RESULT_OK, intent)
+//        finish()
+//    }
 
     companion object {
         const val SELECT_TOKEN_ACCOUNT = "select_token_account"

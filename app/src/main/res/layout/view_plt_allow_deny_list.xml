@@ -3,30 +3,78 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/plt_token_view_background"
-    android:padding="6dp">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/icon"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/plt_label_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:importantForAccessibility="no"
-        android:src="@drawable/mw24_ic_ccd_token_colored"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/plt_token_view_background"
+        android:padding="6dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <TextView
-        android:id="@+id/status_title"
+        <ImageView
+            android:id="@+id/label_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_ccd_token_colored"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/label_status_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:text="@string/account_details_plt_token"
+            android:textColor="@color/mw24_content_accent_primary"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            app:layout_constraintStart_toEndOf="@id/label_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/plt_list_status_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="@string/account_details_plt_token"
-        android:textColor="@color/mw24_content_accent_primary"
-        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        app:layout_constraintStart_toEndOf="@id/icon"
+        android:layout_marginStart="8dp"
+        android:padding="6dp"
+        android:background="@drawable/plt_in_allow_list_background"
+        app:layout_constraintStart_toEndOf="@id/plt_label_layout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/list_status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_circled_check_done"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/list_status_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:text="@string/account_details_account_on_allow_list"
+            android:textColor="@color/mw24_content_success_primary"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            app:layout_constraintStart_toEndOf="@id/list_status_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
