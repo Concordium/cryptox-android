@@ -32,9 +32,6 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
             delay(1000)
             tokensInteractor.loadTokens(accountAddress = account.address)
                 .onSuccess { tokens ->
-                    tokens.forEach {
-                        println("token with balance ${it.balance}")
-                    }
                     _uiState.value = uiState.value.copy(
                         tokens = tokens,
                         isLoading = false

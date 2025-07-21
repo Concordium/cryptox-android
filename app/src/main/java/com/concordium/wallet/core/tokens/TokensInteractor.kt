@@ -30,9 +30,8 @@ class TokensInteractor(
                 isFungible = null,
             ).map { it.toNewContractToken() }
 
-            //TODO: remove hardcoded PLT address
             val pltTokens =
-                pltRepository.getTokens("4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo")
+                pltRepository.getTokens(accountAddress)
                     .filterNot { it.isHidden }
                     .map { it.toNewPLTToken() }
 
@@ -67,11 +66,7 @@ class TokensInteractor(
             }
 
             is PLTToken -> {
-                //TODO: remove hardcoded PLT address
-                pltRepository.hideToken(
-                    "4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo",
-                    token.tokenId
-                )
+                pltRepository.hideToken(accountAddress, token.tokenId)
                 Result.success(true)
             }
 

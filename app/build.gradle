@@ -91,10 +91,10 @@ android {
 
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
-            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.stagenet.concordium.com\"")
-            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://stagenet.ccdscan.io/\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.devnet-plt-beta.concordium.com\"")
+            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://devnet-plt-beta.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.stagenet.concordium.com/api/\"")
-            buildConfigField("String", "HOSTNAME_GRPC", "\"grpc.stagenet.concordium.com\"")
+            buildConfigField("String", "HOSTNAME_GRPC", "\"grpc.devnet-plt-beta.concordium.com\"")
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
