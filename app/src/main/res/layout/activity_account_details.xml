@@ -360,7 +360,7 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/tokens_fragment_container"
-                android:name="com.concordium.wallet.ui.cis2.TokensFragment"
+                android:name="com.concordium.wallet.ui.cis2.TokensListFragment"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="40dp"

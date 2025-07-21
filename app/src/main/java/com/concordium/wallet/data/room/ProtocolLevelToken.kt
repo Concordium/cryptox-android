@@ -5,8 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.concordium.wallet.data.model.PLTState
-import com.concordium.wallet.data.model.TokenAccountState
+import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.typeconverter.PLTTypeConverters
 import java.io.Serializable
 import java.math.BigInteger
@@ -21,10 +20,8 @@ data class ProtocolLevelToken(
     var id: Int = 0,
     @ColumnInfo(name = "tokenId")
     val tokenId: String,
-    @ColumnInfo(name = "tokenState")
-    val tokenState: PLTState?,
-    @ColumnInfo(name = "tokenAccountState")
-    val tokenAccountState: TokenAccountState? = null,
+    @ColumnInfo(name = "token_metadata")
+    val tokenMetadata: TokenMetadata?,
     @ColumnInfo(name = "account_address")
     val accountAddress: String?,
     @ColumnInfo(name = "token_balance")
@@ -35,4 +32,8 @@ data class ProtocolLevelToken(
     var isHidden: Boolean = false,
     @ColumnInfo(name = "is_newly_received", defaultValue = "0")
     val isNewlyReceived: Boolean,
+    @ColumnInfo(name = "is_in_allow_list", defaultValue = "null")
+    val isInAllowList: Boolean? = null,
+    @ColumnInfo(name = "is_in_deny_list", defaultValue = "null")
+    val isInDenyList: Boolean? = null,
 ) : Serializable

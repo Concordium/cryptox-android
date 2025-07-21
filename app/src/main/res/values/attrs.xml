@@ -61,4 +61,5 @@
     <declare-styleable name="AmountEditText">
         <attr name="isGradientTextColor" format="boolean" />
     </declare-styleable>
+
 </resources>

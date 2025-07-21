@@ -17,11 +17,11 @@
             android:id="@+id/nft_icon"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
             android:visibility="gone"
             tools:src="@drawable/ic_logo_placeholder"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/name_and_icon_holder"
@@ -50,6 +50,24 @@
                 app:layout_constraintStart_toEndOf="@id/icon"
                 app:layout_constraintTop_toTopOf="@id/icon"
                 tools:text="Global Transaction Unit" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/plt_list_status_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.concordium.wallet.ui.plt.PLTAllowDenyListView
+                android:id="@+id/plt_list_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -250,7 +268,7 @@
         android:textAppearance="@style/MW24_Typography_Label_Main"
         android:textColor="@color/mw24_primary_text_button_color"
         app:drawableStartCompat="@drawable/mw24_ic_raw_metadata"
-        app:drawableTint="@color/mw24_primary_text_button_color"/>
+        app:drawableTint="@color/mw24_primary_text_button_color" />
 
     <TextView
         android:id="@+id/hide_token"
@@ -260,10 +278,10 @@
         android:drawablePadding="8dp"
         android:paddingVertical="4dp"
         android:text="@string/cis_hide_token"
-        android:visibility="gone"
         android:textAppearance="@style/MW24_Typography_Label_Main"
         android:textColor="@color/mw24_attention_red"
+        android:visibility="gone"
         app:drawableStartCompat="@drawable/mw24_ic_eye_close"
         app:drawableTint="@color/mw24_attention_red"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 </LinearLayout>

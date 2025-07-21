@@ -35,9 +35,6 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
                 loadBalances = false
             )
                 .onSuccess {
-                    it.forEach { updatedToken ->
-                        println("token balance for ${updatedToken.accountAddress} is ${updatedToken.balance}")
-                    }
                     updateUIState(tokens = it, waiting = false)
                 }
                 .onFailure {

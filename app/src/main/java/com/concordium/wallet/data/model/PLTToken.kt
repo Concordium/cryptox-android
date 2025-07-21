@@ -9,17 +9,17 @@ data class PLTToken(
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
     override val addedAt: Long,
-    override val type: TokenType = TokenType.PLT,
     override val metadata: TokenMetadata? = null,
     override val isSelected: Boolean = false,
     val tokenId: String,
     val tokenState: PLTState?,
     val tokenAccountState: TokenAccountState? = null,
     val isHidden: Boolean = false,
+    val isInAllowList: Boolean? = null,
+    val isInDenyList: Boolean? = null,
 ) : NewToken, Serializable
 
 fun ProtocolLevelToken.toNewPLTToken(
-    balance: BigInteger = BigInteger.ZERO,
     isSelected: Boolean = false,
     isNewlyReceived: Boolean = false,
 ) = PLTToken(
@@ -27,12 +27,13 @@ fun ProtocolLevelToken.toNewPLTToken(
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,
     addedAt = addedAt,
-    type = TokenType.PLT,
-    metadata = null, // PLT tokens do not have metadata
+    metadata = tokenMetadata,
     isSelected = isSelected,
     tokenId = tokenId,
-    tokenState = tokenState,
-    tokenAccountState = tokenAccountState,
-    isHidden = isHidden
+    tokenState = null,
+    tokenAccountState = null,
+    isHidden = isHidden,
+    isInAllowList = isInAllowList,
+    isInDenyList = isInDenyList
 )
 

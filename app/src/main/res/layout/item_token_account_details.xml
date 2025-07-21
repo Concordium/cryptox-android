@@ -55,11 +55,13 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginHorizontal="8dp"
+            android:visibility="gone"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toStartOf="@id/arrow"
             app:layout_constraintStart_toEndOf="@id/title"
-            app:layout_constraintTop_toTopOf="@id/title">
+            app:layout_constraintTop_toTopOf="@id/title"
+            tools:visibility="visible">
 
             <View
                 android:layout_width="3dp"

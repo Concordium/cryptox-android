@@ -236,6 +236,11 @@
     <string name="account_details_tooltip_title">Total CCD balance</string>
     <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>
     <string name="account_token_details_decimals">0 – %1$s</string>
+    <!-- Account PLT status -->
+    <string name="account_details_plt_token">Protocol Level Token</string>
+    <string name="account_details_account_on_allow_list">Account is on the allow list</string>
+    <string name="account_details_account_not_on_allow_list">Account not on the allow list</string>
+    <string name="account_details_account_on_deny_list">Account on the deny list</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
