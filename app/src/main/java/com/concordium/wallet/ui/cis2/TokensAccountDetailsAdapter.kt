@@ -14,7 +14,9 @@ import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
+import com.concordium.wallet.ui.plt.PLTListStatus
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import com.concordium.wallet.util.TokenUtil
 import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
@@ -157,6 +159,8 @@ class TokensAccountDetailsAdapter(
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)
             }
+            pltInAllowListIcon.isVisible = token is PLTToken
+                    && TokenUtil.getPLTPLTListStatus(token) != PLTListStatus.ON_ALLOW_LIST
         }
     }
 }

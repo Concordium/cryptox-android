@@ -12,7 +12,9 @@ import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.databinding.ItemTokenManageListBinding
+import com.concordium.wallet.ui.plt.PLTListStatus
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import com.concordium.wallet.util.TokenUtil
 
 class ManageTokensListAdapter(
     private val context: Context,
@@ -86,6 +88,9 @@ class ManageTokensListAdapter(
         holder.binding.hideBtn.setOnClickListener {
             tokenClickListener?.onHideClick(token)
         }
+
+        holder.binding.pltInAllowListIcon.isVisible =
+            token is PLTToken && TokenUtil.getPLTPLTListStatus(token) != PLTListStatus.ON_ALLOW_LIST
     }
 
 

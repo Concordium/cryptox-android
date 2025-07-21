@@ -90,6 +90,20 @@
             app:layout_constraintStart_toEndOf="@id/title"
             app:layout_constraintTop_toTopOf="@id/title" />
 
+        <ImageView
+            android:id="@+id/plt_in_allow_list_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_circled_block_deny"
+            app:layout_constraintBottom_toBottomOf="@id/title"
+            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/title"
+            app:layout_constraintTop_toTopOf="@id/title"
+            app:tint="@color/mw24_content_accent_secondary" />
+
         <TextView
             android:id="@+id/subtitle"
             style="@style/MW24_Typography_Text_Mid_Alternative"
