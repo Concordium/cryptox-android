@@ -10,7 +10,6 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -31,7 +30,6 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
 
         loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = uiState.value.copy(account = account, isLoading = true)
-            delay(1000)
             tokensInteractor.loadTokens(accountAddress = account.address)
                 .onSuccess { tokens ->
                     _uiState.value = uiState.value.copy(

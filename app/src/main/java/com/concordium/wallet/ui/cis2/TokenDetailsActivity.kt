@@ -136,15 +136,14 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             setPLTListStatus(token)
             setTotalSupply(token)
             if (token.isNewlyReceived) {
-                handleNewlyReceivedToken(token)
+                handleNewlyReceivedToken()
             }
         }
     }
 
-    private fun handleNewlyReceivedToken(token: NewToken) {
+    private fun handleNewlyReceivedToken() {
         viewModel.unmarkNewlyReceivedSelectedToken()
-        val tokenName = token.metadata?.name ?: token.metadata?.symbol ?: ""
-        showNewlyReceivedNotice(tokenName = tokenName)
+        showNewlyReceivedNotice(tokenName = viewModel.tokenSymbol())
         setResult(
             Activity.RESULT_OK,
             Intent().putExtra(CHANGED, true)
@@ -152,9 +151,9 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun showDeleteDialog() {
-        viewModel.tokenDetailsData.selectedToken?.metadata?.symbol?.let {
+        if (viewModel.tokenSymbol().isNotEmpty()) {
             HidingTokenDialog.newInstance(
-                HidingTokenDialog.getBundle(tokenName = it)
+                HidingTokenDialog.getBundle(tokenName = viewModel.tokenSymbol())
             ).showSingle(supportFragmentManager, HidingTokenDialog.TAG)
         }
     }
