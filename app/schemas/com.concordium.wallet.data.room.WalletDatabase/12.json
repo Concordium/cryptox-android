@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "71eb3d4ecf7256262698c5415412f1bd",
+    "identityHash": "9904f3236a65e1901c5f78746ae4a51a",
     "entities": [
       {
         "tableName": "identity_table",
@@ -585,24 +585,14 @@
             "id"
           ]
         },
-        "indices": [
-          {
-            "name": "index_protocol_level_token_table_tokenId",
-            "unique": true,
-            "columnNames": [
-              "tokenId"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_protocol_level_token_table_tokenId` ON `${TABLE_NAME}` (`tokenId`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71eb3d4ecf7256262698c5415412f1bd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9904f3236a65e1901c5f78746ae4a51a')"
     ]
   }
 }
