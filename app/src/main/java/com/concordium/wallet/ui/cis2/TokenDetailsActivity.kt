@@ -190,8 +190,10 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
         val isTokenActionButtonEnabled = if (token is PLTToken) {
-            TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_ALLOW_LIST
-        } else true
+            TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_ALLOW_LIST ||
+                    TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.UNKNOWN
+        } else
+            true
         binding.apply {
             ccdActionButtons.onrampBtn.isEnabled = true
             ccdActionButtons.receiveBtn.isEnabled = true

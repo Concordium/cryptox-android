@@ -89,9 +89,11 @@ class ManageTokensListAdapter(
             tokenClickListener?.onHideClick(token)
         }
 
-        holder.binding.pltInAllowListIcon.isVisible =
-            token is PLTToken && TokenUtil.getPLTPLTListStatus(token) != PLTListStatus.ON_ALLOW_LIST
+        holder.binding.pltInAllowListIcon.isVisible = if (token is PLTToken) {
+            TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.NOT_ON_ALLOW_LIST ||
+                    TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_DENY_LIST
+        } else {
+            false
+        }
     }
-
-
 }
