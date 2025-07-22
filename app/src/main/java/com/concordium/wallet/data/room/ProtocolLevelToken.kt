@@ -2,7 +2,6 @@ package com.concordium.wallet.data.room
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.concordium.wallet.data.model.TokenMetadata
@@ -10,10 +9,7 @@ import com.concordium.wallet.data.room.typeconverter.PLTTypeConverters
 import java.io.Serializable
 import java.math.BigInteger
 
-@Entity(
-    tableName = "protocol_level_token_table",
-    indices = [Index(value = ["tokenId"], unique = true)]
-)
+@Entity(tableName = "protocol_level_token_table")
 @TypeConverters(PLTTypeConverters::class)
 data class ProtocolLevelToken(
     @PrimaryKey(autoGenerate = true)

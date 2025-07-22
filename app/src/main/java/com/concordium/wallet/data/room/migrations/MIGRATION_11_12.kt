@@ -22,12 +22,6 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
             )
             """
         )
-        database.execSQL(
-            """
-                CREATE UNIQUE INDEX IF NOT EXISTS `index_protocol_level_token_table_tokenId` 
-                ON `protocol_level_token_table` (`tokenId`)
-                """
-        )
 
         // Base timestamp: Jan 1, 2000 UTC
         val baseTime = 946684800000L
