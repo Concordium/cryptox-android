@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.model
 
 import com.concordium.wallet.data.room.ProtocolLevelToken
-import java.io.Serializable
 import java.math.BigInteger
 
 data class PLTToken(
@@ -17,7 +16,11 @@ data class PLTToken(
     val isHidden: Boolean = false,
     val isInAllowList: Boolean? = null,
     val isInDenyList: Boolean? = null,
-) : NewToken, Serializable
+) : NewToken {
+
+    override val symbol: String
+        get() = tokenId
+}
 
 fun ProtocolLevelToken.toNewPLTToken(
     isSelected: Boolean = false,

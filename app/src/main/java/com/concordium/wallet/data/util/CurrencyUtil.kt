@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.util
 
+import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
@@ -99,6 +100,9 @@ object CurrencyUtil {
 
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? =
         toGTUValue(stringValue, token?.decimals ?: 0)
+
+    fun toGTUValue(stringValue: String, token: NewToken): BigInteger? =
+        toGTUValue(stringValue, token.decimals)
 
     fun toGTUValue(stringValue: String, decimals: Int = 6): BigInteger? {
         var str = stringValue.replace("Ͼ", "")
