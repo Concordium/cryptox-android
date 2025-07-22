@@ -3,9 +3,8 @@ package com.concordium.wallet.ui.cis2
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewToken
@@ -23,9 +22,8 @@ class SelectTokenActivity : BaseActivity(
     private val binding by lazy {
         ActivitySelectTokenBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private val tokensListViewModel: TokensListViewModel by lazy {
-        ViewModelProvider(this).get()
-    }
+    private val tokensListViewModel: TokensListViewModel by viewModels()
+
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {

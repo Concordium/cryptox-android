@@ -19,26 +19,22 @@ import com.concordium.sdk.types.UInt64
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.core.crypto.CryptoLibrary
-import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
-import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.SubmissionData
-import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
@@ -46,18 +42,14 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.reown.util.bytesToHex
 import com.reown.util.hexToBytes
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -67,7 +59,7 @@ import java.math.BigInteger
 import java.util.Date
 
 data class SendTokenData(
-    var token: Token? = null,
+    var token: NewToken? = null,
     var account: Account? = null,
     var amount: BigInteger = BigInteger.ZERO,
     /**
@@ -81,12 +73,6 @@ data class SendTokenData(
     var energy: Long? = null,
     var accountNonce: AccountNonce? = null,
     var expiry: Long? = null,
-    var createTransferInput: CreateTransferInput? = null,
-    var createTransferOutput: CreateTransferOutput? = null,
-    var receiverPublicKey: String? = null,
-    var globalParams: GlobalParams? = null,
-    var accountBalance: AccountBalance? = null,
-    var newSelfEncryptedAmount: String? = null,
 ) : Serializable
 
 class SendTokenViewModel(
@@ -107,14 +93,11 @@ class SendTokenViewModel(
         App.appCore.session.walletStorage.sendFundsPreferences
 
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
-    private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var submitTransactionJob: Job? = null
-    private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
 
     var sendTokenData = SendTokenData()
-    val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
-    val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
+    val chooseToken: MutableLiveData<NewToken> by lazy { MutableLiveData<NewToken>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>(null) }
@@ -138,7 +121,7 @@ class SendTokenViewModel(
     init {
         chooseToken.observeForever { token ->
             sendTokenData.token = token
-            sendTokenData.max = if (token.isCcd) null else token.balance
+            sendTokenData.max = if (token is CCDToken) null else token.balance
             sendTokenData.fee = null
             sendTokenData.amount = BigInteger.ZERO
             feeReady.value = null
@@ -147,60 +130,7 @@ class SendTokenViewModel(
 
     fun dispose() {
         accountNonceRequest?.dispose()
-        globalParamsRequest?.dispose()
         submitTransaction?.dispose()
-        accountBalanceRequest?.dispose()
-    }
-
-    fun loadTokens(accountAddress: String) {
-        waiting.postValue(true)
-        CoroutineScope(Dispatchers.IO).launch {
-            val contractTokensRepository = ContractTokensRepository(
-                App.appCore.session.walletStorage.database.contractTokenDao()
-            )
-            val tokensFound = mutableListOf<Token>()
-            tokensFound.add(getCCDDefaultToken(accountAddress))
-            val contractTokens = contractTokensRepository.getTokens(
-                accountAddress = accountAddress,
-            )
-            tokensFound.addAll(contractTokens.map(::Token))
-            waiting.postValue(false)
-            tokens.postValue(tokensFound)
-        }
-    }
-
-    fun getGlobalInfo() {
-        waiting.postValue(true)
-        globalParamsRequest?.dispose()
-        globalParamsRequest = proxyRepository.getIGlobalInfo(
-            success = {
-                sendTokenData.globalParams = it.value
-                waiting.postValue(false)
-            },
-            failure = {
-                waiting.postValue(false)
-                handleBackendError(it)
-            }
-        )
-    }
-
-    fun getAccountBalance() {
-        if (sendTokenData.account == null)
-            return
-
-        waiting.postValue(true)
-        accountBalanceRequest?.dispose()
-        accountBalanceRequest = proxyRepository.getAccountBalance(
-            accountAddress = sendTokenData.account!!.address,
-            success = {
-                sendTokenData.accountBalance = it
-                waiting.postValue(false)
-            },
-            failure = {
-                waiting.postValue(false)
-                handleBackendError(it)
-            }
-        )
     }
 
     fun send() {
@@ -247,7 +177,7 @@ class SendTokenViewModel(
             sendTokenData.receiver = input
 
             // Fee should be updated only when sending CIS-2.
-            if (sendTokenData.token?.isCcd == false) {
+            if (sendTokenData.token.let { it != null && it !is CCDToken }) {
                 loadTransactionFee()
             }
         } else {
@@ -259,84 +189,60 @@ class SendTokenViewModel(
         sendTokenData.receiverName = name
     }
 
-    fun loadEURRate() {
-        if (sendTokenData.token == null)
-            return
-
-        if (sendTokenData.token!!.isCcd) {
-            getTransferEURRate()
-        }
-    }
-
     fun loadTransactionFee() {
         if (sendTokenData.token == null)
             return
 
-        if (sendTokenData.token!!.isCcd) {
-            waiting.postValue(true)
-            viewModelScope.launch {
-                getTransferCostCCD()
-            }
-            return
-        }
-
-        if (sendTokenData.account == null || sendTokenData.receiver.isEmpty()) {
-            return
-        }
-
-        viewModelScope.launch {
-            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
-                sendTokenData.token!!.token,
-                sendTokenData.amount.toString(),
-                sendTokenData.account!!.address,
-                sendTokenData.receiver
-            )
-            val serializeTokenTransferParametersOutput =
-                App.appCore.cryptoLibrary.serializeTokenTransferParameters(
-                    serializeTokenTransferParametersInput
-                )
-            if (serializeTokenTransferParametersOutput == null) {
-                waiting.postValue(false)
-                errorInt.postValue(R.string.app_error_lib)
-            } else {
-                getTransferCost(serializeTokenTransferParametersOutput)
-            }
-        }
+        // TODO load the fee
+//        if (sendTokenData.token!!.isCcd) {
+//            waiting.postValue(true)
+//            viewModelScope.launch {
+//                getTransferCostCCD()
+//            }
+//            return
+//        }
+//
+//        if (sendTokenData.account == null || sendTokenData.receiver.isEmpty()) {
+//            return
+//        }
+//
+//        viewModelScope.launch {
+//            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
+//                sendTokenData.token!!.token,
+//                sendTokenData.amount.toString(),
+//                sendTokenData.account!!.address,
+//                sendTokenData.receiver
+//            )
+//            val serializeTokenTransferParametersOutput =
+//                App.appCore.cryptoLibrary.serializeTokenTransferParameters(
+//                    serializeTokenTransferParametersInput
+//                )
+//            if (serializeTokenTransferParametersOutput == null) {
+//                waiting.postValue(false)
+//                errorInt.postValue(R.string.app_error_lib)
+//            } else {
+//                getTransferCost(serializeTokenTransferParametersOutput)
+//            }
+//        }
     }
 
     fun hasEnoughFunds(): Boolean {
         if (sendTokenData.token == null)
             return false
 
-        var atDisposal: BigInteger = BigInteger.ZERO
-        sendTokenData.account?.let { account ->
-            atDisposal = account.balanceAtDisposal
-        }
+        val ccdAtDisposal = sendTokenData.account?.balanceAtDisposal
+            ?: BigInteger.ZERO
 
-        return if (sendTokenData.token!!.isCcd) {
-            atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
+        return if (sendTokenData.token is CCDToken) {
+            ccdAtDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
         } else {
-            atDisposal >= (sendTokenData.fee
-                ?: BigInteger.ZERO) && sendTokenData.token!!.balance >= sendTokenData.amount
+            ccdAtDisposal >= (sendTokenData.fee ?: BigInteger.ZERO)
+                    && sendTokenData.token!!.balance >= sendTokenData.amount
         }
     }
 
     fun setHasShowReviewDialogAfterSendFunds() {
         App.appCore.setup.setHasShowReviewDialogAfterSendFunds(true)
-    }
-
-    private fun getTransferEURRate() = viewModelScope.launch {
-        tokenPriceRepository
-            .getEurPerMicroCcd()
-            .onSuccess { eurPerMicroCcd ->
-                eurRateReady.postValue(
-                    CurrencyUtil.toEURRate(
-                        sendTokenData.amount,
-                        eurPerMicroCcd,
-                    )
-                )
-            }
-            .onFailure(::handleBackendError)
     }
 
     private fun getTransferCostCCD() {
@@ -366,34 +272,27 @@ class SendTokenViewModel(
             return
         }
 
-        proxyRepository.getTransferCost(
-            type = ProxyRepository.UPDATE,
-            memoSize = null,
-            amount = BigInteger.ZERO,
-            sender = sendTokenData.account!!.address,
-            contractIndex = sendTokenData.token!!.contractIndex.toInt(),
-            contractSubindex = 0,
-            receiveName = sendTokenData.token!!.contractName + ".transfer",
-            parameter = serializeTokenTransferParametersOutput.parameter,
-            success = {
-                sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost
-                waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
-            },
-            failure = {
-                waiting.postValue(false)
-                handleBackendError(it)
-            }
-        )
-    }
-
-    private suspend fun getCCDDefaultToken(accountAddress: String): Token {
-        val accountRepository =
-            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-        val account = accountRepository.findByAddress(accountAddress)
-            ?: error("Account $accountAddress not found")
-        return Token.ccd(account)
+        // TODO Fix cis2 transfer cost
+//        proxyRepository.getTransferCost(
+//            type = ProxyRepository.UPDATE,
+//            memoSize = null,
+//            amount = BigInteger.ZERO,
+//            sender = sendTokenData.account!!.address,
+//            contractIndex = sendTokenData.token!!.contractIndex.toInt(),
+//            contractSubindex = 0,
+//            receiveName = sendTokenData.token!!.contractName + ".transfer",
+//            parameter = serializeTokenTransferParametersOutput.parameter,
+//            success = {
+//                sendTokenData.energy = it.energy
+//                sendTokenData.fee = it.cost
+//                waiting.postValue(false)
+//                feeReady.postValue(sendTokenData.fee)
+//            },
+//            failure = {
+//                waiting.postValue(false)
+//                handleBackendError(it)
+//            }
+//        )
     }
 
     fun continueWithPassword(password: String) = viewModelScope.launch {
@@ -431,18 +330,23 @@ class SendTokenViewModel(
         proxyRepository.getAccountEncryptedKey(
             accountAddress = sendTokenData.receiver,
             success = {
-                sendTokenData.receiverPublicKey = it.accountEncryptionKey
                 sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
-                if (sendTokenData.token!!.isCcd)
-                    viewModelScope.launch {
-                        createTransactionCCD(
-                            credentialsOutput.accountKeys,
-                            credentialsOutput.encryptionSecretKey
-                        )
+                when (val token = sendTokenData.token!!) {
+                    is CCDToken -> {
+                        viewModelScope.launch {
+                            createTransactionCCD(credentialsOutput.accountKeys)
+                        }
                     }
-                else
-                    createCis2Transaction(credentialsOutput.accountKeys)
+
+                    is NewContractToken -> {
+                        createCis2Transaction(credentialsOutput.accountKeys, token)
+                    }
+
+                    is PLTToken -> {
+                        createProtocolLevelTokenTransaction(credentialsOutput.accountKeys)
+                    }
+                }
             },
             failure = {
                 transactionWaiting.postValue(false)
@@ -451,56 +355,59 @@ class SendTokenViewModel(
         )
     }
 
-    private suspend fun createTransactionCCD(keys: AccountData, encryptionSecretKey: String) {
+    private suspend fun createTransactionCCD(keys: AccountData) {
         val toAddress = sendTokenData.receiver
         val nonce = sendTokenData.accountNonce
         val amount = sendTokenData.amount
         val energy = sendTokenData.energy
         val memoHex = sendTokenData.memoHex
         val accountId = sendTokenData.account?.id
-        val balance = sendTokenData.accountBalance
 
-        if (nonce == null || energy == null || accountId == null || balance == null) {
+        if (nonce == null || energy == null || accountId == null) {
             errorInt.postValue(R.string.app_error_general)
             transactionWaiting.postValue(false)
             return
         }
 
-        val transferInput = CreateTransferInput(
-            sendTokenData.account!!.address,
-            keys,
-            toAddress,
-            sendTokenData.expiry!!,
-            amount.toString(),
-            energy,
-            nonce.nonce,
-            memoHex,
-            sendTokenData.globalParams,
-            sendTokenData.receiverPublicKey,
-            encryptionSecretKey,
-            SendFundsViewModel.calculateInputEncryptedAmount(
-                accountId = accountId,
-                accountBalance = balance,
-                transferRepository = transferRepository,
-                accountUpdater = accountUpdater,
-            ),
-        )
-
-        sendTokenData.createTransferInput = transferInput
-
-        val output =
-            App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
-
-        if (output == null) {
-            transactionWaiting.postValue(false)
-            errorInt.postValue(R.string.app_error_general)
-        } else {
-            sendTokenData.createTransferOutput = output
-            submitTransaction(output)
-        }
+        // TODO use SDK for CCD transfer transaction
+//        val transferInput = CreateTransferInput(
+//            sendTokenData.account!!.address,
+//            keys,
+//            toAddress,
+//            sendTokenData.expiry!!,
+//            amount.toString(),
+//            energy,
+//            nonce.nonce,
+//            memoHex,
+//            sendTokenData.globalParams,
+//            sendTokenData.receiverPublicKey,
+//            encryptionSecretKey,
+//            SendFundsViewModel.calculateInputEncryptedAmount(
+//                accountId = accountId,
+//                accountBalance = balance,
+//                transferRepository = transferRepository,
+//                accountUpdater = accountUpdater,
+//            ),
+//        )
+//
+//        sendTokenData.createTransferInput = transferInput
+//
+//        val output =
+//            App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
+//
+//        if (output == null) {
+//            transactionWaiting.postValue(false)
+//            errorInt.postValue(R.string.app_error_general)
+//        } else {
+//            sendTokenData.createTransferOutput = output
+//            submitTransaction(output)
+//        }
     }
 
-    private fun createCis2Transaction(keys: AccountData) {
+    private fun createCis2Transaction(
+        keys: AccountData,
+        token: NewContractToken,
+    ) {
         if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.energy == null || sendTokenData.accountNonce == null) {
             errorInt.postValue(R.string.app_error_general)
             return
@@ -510,7 +417,7 @@ class SendTokenViewModel(
 
         viewModelScope.launch {
             val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
-                sendTokenData.token!!.token,
+                token.token,
                 sendTokenData.amount.toString(),
                 sendTokenData.account!!.address,
                 sendTokenData.receiver
@@ -523,12 +430,12 @@ class SendTokenViewModel(
                 errorInt.postValue(R.string.app_error_lib)
             } else {
                 val payload = AccountTransactionPayload.Update(
-                    address = ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0),
+                    address = ContractAddress(token.contractIndex.toInt(), 0),
                     amount = BigInteger.ZERO,
                     maxEnergy = sendTokenData.energy!!,
                     maxContractExecutionEnergy = null,
                     message = serializeTokenTransferParametersOutput.parameter,
-                    receiveName = sendTokenData.token!!.contractName + ".transfer"
+                    receiveName = token.contractName + ".transfer"
                 )
                 val accountTransactionInput = CreateAccountTransactionInput(
                     expiry = expiry,
@@ -635,7 +542,7 @@ class SendTokenViewModel(
                 println("LC -> submitTransaction SUCCESS = $submissionId")
                 finishTransferCreation(submissionId)
                 transactionWaiting.postValue(false)
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 println("LC -> submitTransaction ERROR ${e.stackTraceToString()}")
                 handleBackendError(e)
                 transactionWaiting.postValue(false)
@@ -650,7 +557,7 @@ class SendTokenViewModel(
 
     private fun finishTransferCreation(submissionId: String) {
         val toAddress = sendTokenData.receiver
-        val memo = sendTokenData.memoHex
+        val memoHex = sendTokenData.memoHex
         val expiry = sendTokenData.expiry
         val cost = sendTokenData.fee
 
@@ -659,43 +566,44 @@ class SendTokenViewModel(
             return
         }
         val createdAt = Date().time
-        val isCCDTransfer = sendTokenData.token!!.isCcd
-
-        val amount = if (isCCDTransfer) sendTokenData.amount else BigInteger.ZERO
 
         val transfer = Transfer(
-            0,
-            sendTokenData.account?.id ?: -1,
-            amount,
-            cost,
-            sendTokenData.account?.address.orEmpty(),
-            toAddress,
-            expiry,
-            memo,
-            createdAt,
-            submissionId,
-            TransactionStatus.UNKNOWN,
-            TransactionOutcome.UNKNOWN,
-            getTransactionType(isCCDTransfer, memo != null),
-            null,
-            0,
-            sendTokenData.accountNonce
+            id = 0,
+            accountId = sendTokenData.account?.id ?: -1,
+            amount = if (sendTokenData.token is CCDToken)
+                sendTokenData.amount
+            else
+                BigInteger.ZERO,
+            cost = cost,
+            fromAddress = sendTokenData.account?.address.orEmpty(),
+            toAddress = toAddress,
+            expiry = expiry,
+            memo = memoHex,
+            createdAt = createdAt,
+            submissionId = submissionId,
+            transactionStatus = TransactionStatus.UNKNOWN,
+            outcome = TransactionOutcome.UNKNOWN,
+            transactionType = when (sendTokenData.token!!) {
+                is CCDToken ->
+                    if (memoHex != null)
+                        TransactionType.TRANSFERWITHMEMO
+                    else
+                        TransactionType.TRANSFER
+
+                is NewContractToken ->
+                    TransactionType.UPDATE
+
+                is PLTToken ->
+                    TransactionType.TOKEN_UPDATE
+            },
+            newSelfEncryptedAmount = null,
+            newStartIndex = 0,
+            nonce = sendTokenData.accountNonce,
         )
         transactionWaiting.postValue(false)
         saveNewTransfer(transfer)
         transaction.postValue(transfer.toTransaction())
         transactionReady.postValue(submissionId)
-    }
-
-    private fun getTransactionType(isCCDTransfer: Boolean, hasMemo: Boolean): TransactionType {
-        if (!isCCDTransfer) {
-            // TODO token transfer type
-            return TransactionType.UPDATE
-        }
-        if (hasMemo) {
-            return TransactionType.TRANSFERWITHMEMO
-        }
-        return TransactionType.TRANSFER
     }
 
     private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {

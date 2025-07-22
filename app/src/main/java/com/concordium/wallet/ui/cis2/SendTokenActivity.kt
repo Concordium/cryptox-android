@@ -42,7 +42,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         super.onCreate(savedInstanceState)
         binding = ActivitySendTokenBinding.bind(findViewById(R.id.root_layout))
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
+        // TODO fix setting the token
+//        viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
         initObservers()
         initFragmentListener()
         initViews()
@@ -69,8 +70,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         initializeAddressBook()
         initializeSend()
         initializeSearchToken()
-        viewModel.getGlobalInfo()
-        viewModel.getAccountBalance()
     }
 
     private fun initializeSend() {
@@ -103,7 +102,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             } else {
                 binding.balanceSymbol.alpha = 1f
             }
-            viewModel.loadEURRate()
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -141,7 +139,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             }
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.sendTokenData.max ?: BigInteger.ZERO, decimals
+                    viewModel.sendTokenData.max ?: BigInteger.ZERO,
+                    decimals
                 )
             )
             enableSend()
@@ -202,7 +201,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getSerializable(
-                    SelectTokenActivity.EXTRA_ACCOUNT,
+                    SelectTokenActivity.EXTRA_SELECTED_TOKEN,
                     Token::class.java
                 )?.let { token ->
                     viewModel.chooseToken.postValue(token)
