@@ -73,7 +73,6 @@ class TokensViewModel(
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
-//    private var loadTokensJob: Job? = null
     private val proxyRepository = ProxyRepository()
     private val contractTokensRepository: ContractTokensRepository by lazy {
         ContractTokensRepository(
@@ -81,52 +80,6 @@ class TokensViewModel(
         )
     }
     private val tokenPriceRepository by inject<TokenPriceRepository>()
-//    private val pltRepository: PLTRepository by lazy {
-//        PLTRepository(
-//            App.appCore.session.walletStorage.database.protocolLevelTokenDao()
-//        )
-//    }
-
-    /**
-     * @param isFungible if set, allows loading only fungible or non-fungible
-     */
-//    fun loadTokens(
-//        accountAddress: String,
-//        isFungible: Boolean? = null,
-//    ) {
-//        loadTokensJob?.cancel()
-//        loadTokensJob = null
-//
-//        loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
-//            waiting.postValue(true)
-//            val ccdToken = getCCDDefaultToken(accountAddress)
-//            val contractTokens = contractTokensRepository.getTokens(
-//                accountAddress = accountAddress,
-//                isFungible = isFungible,
-//            )
-//            val pltTokens =
-//                pltRepository.getTokens(accountAddress)
-//            withContext(Dispatchers.Main) {
-//                tokens.clear()
-//                // Add CCD as default at the top
-//                tokens.add(ccdToken)
-//                tokens.addAll(contractTokens.map {
-//                    Token(
-//                        contractToken = it,
-//                        isSelected = true,
-//                    )
-//                })
-//                tokens.addAll(pltTokens.map {
-//                    Token(
-//                        pltToken = it,
-//                        isSelected = true,
-//                    )
-//                })
-//            }
-//            loadTokensBalances()
-//            waiting.postValue(false)
-//        }
-//    }
 
     fun lookForTokens(
         accountAddress: String,
@@ -518,52 +471,6 @@ class TokensViewModel(
             }
         }
     }
-
-//    fun deleteSelectedToken() = viewModelScope.launch {
-//        contractTokensRepository.delete(
-//            accountAddress = tokenData.account!!.address,
-//            contractIndex = tokenData.selectedToken!!.contractIndex,
-//            token = tokenData.selectedToken!!.token,
-//        )
-//    }
-//
-//    fun unmarkNewlyReceivedSelectedToken() = viewModelScope.launch {
-//        contractTokensRepository.unmarkNewlyReceived(
-//            tokenUid = tokenData.selectedToken!!.uid,
-//        )
-//    }
-
-//    fun lookForPLTs() = viewModelScope.launch(Dispatchers.IO) {
-//        try {
-//            val response = devnetRepository.getPLTTokenById(tokenData.contractIndex)
-//            val pltToken = Token(
-//                pltToken = response,
-//                isSelected = false,
-//            )
-//
-//            tokens.add(pltToken)
-//            contractAddressLoading.postValue(false)
-//
-//            if (tokens.isEmpty()) {
-//                lookForTokens.postValue(TOKENS_EMPTY)
-//            } else {
-//                lookForTokens.postValue(TOKENS_OK)
-//            }
-//        } catch (e: Throwable) {
-//            Log.e("Failed to load PLT tokens", e)
-//            handleBackendError(e)
-//            contractAddressLoading.postValue(false)
-//        }
-//    }
-
-//    private fun resetLookForTokens() {
-//        tokenData.contractIndex = String.Empty
-//        lookForTokens.value = TOKENS_NOT_LOADED
-//        lookForExactToken.value = TOKENS_NOT_LOADED
-//        everFoundExactTokens.clear()
-//        exactToken = null
-//        allowToLoadMore = true
-//    }
 
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)

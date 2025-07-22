@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.model
 
 import com.concordium.wallet.data.room.ContractToken
-import java.io.Serializable
 import java.math.BigInteger
 
 data class NewContractToken(
@@ -16,11 +15,15 @@ data class NewContractToken(
     val contractName: String,
     val token: String,
     val isFungible: Boolean,
-) : NewToken, Serializable
+) : NewToken {
+
+    override val symbol: String
+        get() = metadata?.symbol ?: ""
+}
 
 fun ContractToken.toNewContractToken(
     balance: BigInteger = BigInteger.ZERO,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
 ) = NewContractToken(
     balance = balance,
     accountAddress = accountAddress ?: "",

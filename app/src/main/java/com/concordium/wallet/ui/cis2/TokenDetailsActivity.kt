@@ -26,9 +26,11 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.ui.plt.PLTListStatus
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
+import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.util.getSerializable
 import java.io.Serializable
 import java.math.BigInteger
@@ -187,10 +189,14 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.ccdActionButtons.earnBtn.isEnabled = !it
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
+        val isTokenActionButtonEnabled = if (token is PLTToken) {
+            TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_ALLOW_LIST
+        } else true
         binding.apply {
             ccdActionButtons.onrampBtn.isEnabled = true
             ccdActionButtons.receiveBtn.isEnabled = true
-            cisTokenActionButtons.receiveBtn.isEnabled = true
+            cisTokenActionButtons.receiveBtn.isEnabled = isTokenActionButtonEnabled
+            cisTokenActionButtons.sendFundsBtn.isEnabled = isTokenActionButtonEnabled
             walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
             walletInfoCard.disposalBlock.visibility = View.VISIBLE
         }

@@ -4,10 +4,14 @@ import java.io.Serializable
 import java.math.BigInteger
 
 sealed interface NewToken : Serializable {
+    val symbol: String
     val balance: BigInteger
     val accountAddress: String
     val isNewlyReceived: Boolean
     val addedAt: Long
     val metadata: TokenMetadata?
     val isSelected: Boolean
+
+    val decimals: Int
+        get() = metadata?.decimals ?: 0
 }
