@@ -36,8 +36,8 @@ import java.math.BigInteger
 class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     EarnDelegate by EarnDelegateImpl() {
     private lateinit var binding: ActivityTokenDetailsBinding
-    private val viewModel: TokensViewModel by viewModels()
-    private val tokenDetailsViewModel: TokenDetailsViewModel by viewModels()
+
+    private val viewModel: TokenDetailsViewModel by viewModels()
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -55,35 +55,27 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun initViews() {
-        val account = requireNotNull(intent.getSerializable(ACCOUNT, Account::class.java)) {
-            "Missing account extra"
-        }
-        viewModel.tokenData.account = account
-        tokenDetailsViewModel.tokenDetailsData.account = account
+        viewModel.tokenDetailsData.account =
+            requireNotNull(intent.getSerializable(ACCOUNT, Account::class.java)) {
+                "Missing account extra"
+            }
 
         @Suppress("DEPRECATION")
         val token = intent.getSerializableExtra(TOKEN) as? NewToken
-        tokenDetailsViewModel.tokenDetailsData.selectedToken = token
+        viewModel.tokenDetailsData.selectedToken = token
 
-        val hasPendingDelegationTransactions =
+        viewModel.tokenDetailsData.hasPendingDelegationTransactions =
             requireNotNull(intent.getBooleanExtra(PENDING_DELEGATION, false)) {
                 "Missing delegation extra"
             }
-        viewModel.tokenData.hasPendingDelegationTransactions = hasPendingDelegationTransactions
-        tokenDetailsViewModel.tokenDetailsData.hasPendingDelegationTransactions =
-            hasPendingDelegationTransactions
 
-        val hasPendingValidationTransactions =
+        viewModel.tokenDetailsData.hasPendingValidationTransactions =
             requireNotNull(intent.getBooleanExtra(PENDING_VALIDATION, false)) {
                 "Missing delegation extra"
             }
 
-        viewModel.tokenData.hasPendingValidationTransactions = hasPendingValidationTransactions
-        tokenDetailsViewModel.tokenDetailsData.hasPendingValidationTransactions =
-            hasPendingValidationTransactions
-
-        Log.d("TOKEN : ${tokenDetailsViewModel.tokenDetailsData}")
-        Log.d("ACCOUNT : ${tokenDetailsViewModel.tokenDetailsData.account}")
+        Log.d("TOKEN : ${viewModel.tokenDetailsData}")
+        Log.d("ACCOUNT : ${viewModel.tokenDetailsData.account}")
 
         setActionBarTitle(getString(R.string.cis_token_details_balance))
         hideActionBarBack(true)
@@ -92,7 +84,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             onOnrampClicked()
         }
         binding.ccdActionButtons.sendFundsBtn.isEnabled =
-            tokenDetailsViewModel.tokenDetailsData.account.let {
+            viewModel.tokenDetailsData.account.let {
                 it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED
             }
         binding.ccdActionButtons.sendFundsBtn.setOnClickListener {
@@ -103,7 +95,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
 
         binding.ccdActionButtons.earnBtnNotice.isVisible =
-            tokenDetailsViewModel.tokenDetailsData.account.let {
+            viewModel.tokenDetailsData.account.let {
                 it != null && (it.isBakerSuspended || it.isBakerPrimedForSuspension || it.isDelegationBakerSuspended)
             }
         binding.ccdActionButtons.earnBtn.setOnClickListener {
@@ -115,7 +107,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
 
         binding.cisTokenActionButtons.sendFundsBtn.isEnabled =
-            tokenDetailsViewModel.tokenDetailsData.account.let {
+            viewModel.tokenDetailsData.account.let {
                 it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED
             }
         binding.cisTokenActionButtons.sendFundsBtn.setOnClickListener {
@@ -128,16 +120,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             showDeleteDialog()
         }
 
-        tokenDetailsViewModel.tokenDetailsData.selectedToken?.let { token ->
+        viewModel.tokenDetailsData.selectedToken?.let { token ->
             setContractIndexAndSubIndex(token)
             setTokenId(token)
             setBalances(token)
             token.metadata?.let { tokenMetadata ->
-                setNameAndIcon(
-                    token is CCDToken,
-                    token.metadata?.unique ?: false,
-                    tokenMetadata
-                )
+                setNameAndIcon(token)
                 setOwnership(token, tokenMetadata)
                 setDescription(token is CCDToken, tokenMetadata)
                 setTicker(tokenMetadata)
@@ -146,6 +134,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
             setHideButton(token is CCDToken)
             setPLTListStatus(token)
+            setTotalSupply(token)
             if (token.isNewlyReceived) {
                 handleNewlyReceivedToken(token)
             }
@@ -154,9 +143,8 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
 
     private fun handleNewlyReceivedToken(token: NewToken) {
         viewModel.unmarkNewlyReceivedSelectedToken()
-        showNewlyReceivedNotice(
-            tokenName = token.metadata?.name ?: token.metadata?.symbol ?: ""
-        )
+        val tokenName = token.metadata?.name ?: token.metadata?.symbol ?: ""
+        showNewlyReceivedNotice(tokenName = tokenName)
         setResult(
             Activity.RESULT_OK,
             Intent().putExtra(CHANGED, true)
@@ -164,7 +152,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun showDeleteDialog() {
-        tokenDetailsViewModel.tokenDetailsData.selectedToken?.metadata?.symbol?.let {
+        viewModel.tokenDetailsData.selectedToken?.metadata?.symbol?.let {
             HidingTokenDialog.newInstance(
                 HidingTokenDialog.getBundle(tokenName = it)
             ).showSingle(supportFragmentManager, HidingTokenDialog.TAG)
@@ -172,15 +160,29 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun setBalances(token: NewToken) {
-        binding.walletInfoCard.totalBalanceTextview.text = if (token is CCDToken) {
-            CurrencyUtil.formatGTU(viewModel.tokenData.account?.balance!!, token.metadata?.decimals ?: 6) +
-                    " ${token.metadata?.symbol}"
-        } else {
-            CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
-                    " ${token.metadata?.symbol}"
+        binding.walletInfoCard.totalBalanceTextview.text = when (token) {
+            is CCDToken -> {
+                CurrencyUtil.formatGTU(
+                    viewModel.tokenDetailsData.account?.balance!!,
+                    token.metadata?.decimals ?: 6
+                ) +
+                        " ${token.metadata?.symbol}"
+            }
+
+            is NewContractToken -> {
+                CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
+                        " ${token.metadata?.symbol ?: ""}"
+            }
+
+            is PLTToken -> {
+                CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
+                        " ${token.tokenId}"
+            }
+
+            else -> ""
         }
 
-        tokenDetailsViewModel.tokenDetailsData.account?.readOnly?.let {
+        viewModel.tokenDetailsData.account?.readOnly?.let {
             binding.ccdActionButtons.sendFundsBtn.isEnabled = !it
             binding.cisTokenActionButtons.sendFundsBtn.isEnabled = !it
             binding.ccdActionButtons.earnBtn.isEnabled = !it
@@ -198,9 +200,9 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.ccdActionButtons.root.visibility = View.VISIBLE
             binding.cisTokenActionButtons.root.visibility = View.GONE
             binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
-                tokenDetailsViewModel.tokenDetailsData.account?.baker?.bakerId?.toString()
+                viewModel.tokenDetailsData.account?.baker?.bakerId?.toString()
 
-            tokenDetailsViewModel.tokenDetailsData.account?.let { account ->
+            viewModel.tokenDetailsData.account?.let { account ->
                 account.isBaking().also { isBaking ->
                     binding.walletInfoCard.stakedLabel.isVisible = isBaking
                     binding.walletInfoCard.accountsOverviewTotalDetailsStaked.isVisible =
@@ -221,31 +223,32 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 }
                 if (account.balance != account.balanceAtDisposal) {
                     binding.walletInfoCard.atDisposalLabel.visibility = View.VISIBLE
-                    binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.visibility = View.VISIBLE
+                    binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.visibility =
+                        View.VISIBLE
                 }
             }
 
-            tokenDetailsViewModel.tokenDetailsData.account?.stakedAmount?.let {
+            viewModel.tokenDetailsData.account?.stakedAmount?.let {
                 binding.walletInfoCard.accountsOverviewTotalDetailsStaked.text = getString(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
                 )
             }
 
-            tokenDetailsViewModel.tokenDetailsData.account?.balanceAtDisposal?.let {
+            viewModel.tokenDetailsData.account?.balanceAtDisposal?.let {
                 binding.walletInfoCard.accountsOverviewTotalDetailsDisposal.text = getString(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
                 )
             }
 
-            tokenDetailsViewModel.tokenDetailsData.account?.delegatedAmount?.let {
+            viewModel.tokenDetailsData.account?.delegatedAmount?.let {
                 binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text = getString(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
                 )
             }
-            tokenDetailsViewModel.tokenDetailsData.account?.cooldownAmount?.let {
+            viewModel.tokenDetailsData.account?.cooldownAmount?.let {
                 binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text = getString(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
@@ -302,9 +305,14 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setNameAndIcon(isCCD: Boolean, isUnique: Boolean, tokenMetadata: TokenMetadata) {
-        val name = if (isCCD) getString(R.string.account_details_ccd_token) else tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
+    private fun setNameAndIcon(token: NewToken) {
+        val name = when (token) {
+            is CCDToken -> getString(R.string.account_details_ccd_token)
+            is PLTToken -> token.tokenId
+            else -> token.metadata?.name
+        }
+
+        val thumbnail = token.metadata?.thumbnail?.url
         val iconView = binding.includeAbout.icon
 
         binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
@@ -313,13 +321,19 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         when {
             !thumbnail.isNullOrBlank() -> {
                 loadImage(iconView, thumbnail)
-                if (isUnique) {
+                if (token.metadata?.unique == true) {
                     binding.includeAbout.nftIcon.visibility = View.VISIBLE
-                    tokenMetadata.display?.url?.let { loadImage(binding.includeAbout.nftIcon, it) }
+                    token.metadata?.display?.url?.let {
+                        loadImage(
+                            binding.includeAbout.nftIcon,
+                            it
+                        )
+                    }
                 }
             }
+
             !thumbnail.isNullOrBlank() -> loadImage(iconView, thumbnail)
-            isCCD -> iconView.setImageResource(R.drawable.mw24_ic_ccd)
+            token is CCDToken -> iconView.setImageResource(R.drawable.mw24_ic_ccd)
             else -> iconView.setImageResource(R.drawable.mw24_ic_token_placeholder)
         }
     }
@@ -379,6 +393,20 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
+    private fun setTotalSupply(token: NewToken) {
+        if (token is PLTToken) {
+            token.metadata?.totalSupply?.let {
+                binding.includeAbout.totalSupplyHolder.visibility = View.VISIBLE
+                binding.includeAbout.supply.text = CurrencyUtil.formatGTU(
+                    it,
+                    token.metadata?.decimals ?: 0
+                )
+            } ?: run {
+                binding.includeAbout.totalSupplyHolder.visibility = View.GONE
+            }
+        }
+    }
+
     private fun showNewlyReceivedNotice(tokenName: String) {
         NewlyReceivedTokenNoticeDialog.newInstance(
             NewlyReceivedTokenNoticeDialog.getBundle(
@@ -388,10 +416,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun initObservers() {
-        viewModel.waiting.observe(this) { waiting ->
-            showWaiting(waiting)
-        }
-
         supportFragmentManager.setFragmentResultListener(
             NewlyReceivedTokenNoticeDialog.ACTION_REQUEST,
             this,
@@ -418,20 +442,19 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun showWaiting(waiting: Boolean) {
-        binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
-    }
-
     private fun onOnrampClicked() {
         val intent = Intent(this, CcdOnrampSitesActivity::class.java)
-        intent.putExtras(CcdOnrampSitesActivity.getBundle(tokenDetailsViewModel.tokenDetailsData.account?.address))
+        intent.putExtras(CcdOnrampSitesActivity.getBundle(viewModel.tokenDetailsData.account?.address))
         startActivity(intent)
     }
 
     private fun onSendClicked() {
         val intent = Intent(this, SendTokenActivity::class.java)
-        intent.putExtra(SendTokenActivity.ACCOUNT, tokenDetailsViewModel.tokenDetailsData.account)
-        intent.putExtra(SendTokenActivity.TOKEN, tokenDetailsViewModel.tokenDetailsData.selectedToken as Serializable)
+        intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenDetailsData.account)
+        intent.putExtra(
+            SendTokenActivity.TOKEN,
+            viewModel.tokenDetailsData.selectedToken as Serializable
+        )
         intent.putExtra(
             SendTokenActivity.PARENT_ACTIVITY,
             MainActivity::class.java.canonicalName
@@ -441,27 +464,30 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
 
     private fun onReceiveClicked() {
         val intent = Intent(this, AccountQRCodeActivity::class.java)
-        intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, tokenDetailsViewModel.tokenDetailsData.account)
+        intent.putExtra(
+            AccountQRCodeActivity.EXTRA_ACCOUNT,
+            viewModel.tokenDetailsData.account
+        )
         startActivity(intent)
     }
 
     private fun onEarnClicked() {
-        tokenDetailsViewModel.tokenDetailsData.account?.let {
+        viewModel.tokenDetailsData.account?.let {
             gotoEarn(
                 this,
                 it,
-                tokenDetailsViewModel.tokenDetailsData.hasPendingDelegationTransactions,
-                tokenDetailsViewModel.tokenDetailsData.hasPendingValidationTransactions
+                viewModel.tokenDetailsData.hasPendingDelegationTransactions,
+                viewModel.tokenDetailsData.hasPendingValidationTransactions
             )
         }
     }
 
     private fun onActivityClicked() {
-        tokenDetailsViewModel.tokenDetailsData.selectedToken?.let {
+        viewModel.tokenDetailsData.selectedToken?.let {
             val intent = Intent(this, AccountDetailsTransfersActivity::class.java)
             intent.putExtra(
                 AccountDetailsTransfersActivity.EXTRA_ACCOUNT,
-                tokenDetailsViewModel.tokenDetailsData.account
+                viewModel.tokenDetailsData.account
             )
             startActivity(intent)
         }

@@ -366,9 +366,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.releaseSchedule = accountFinalizedBalance.accountReleaseSchedule
                     request.account.cooldowns = accountFinalizedBalance.accountCooldowns
 
-                    //TODO: Remove hardcoded address when testnet is ready
                     pltRepository.addForAccount(
-                        "4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo",
+                        request.account.address,
                         accountFinalizedBalance.accountTokens ?: emptyList()
                     )
 

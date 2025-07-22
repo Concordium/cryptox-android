@@ -14,6 +14,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentTokensListBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
 import java.io.Serializable
 
@@ -81,6 +82,11 @@ class TokensListFragment : Fragment() {
             tokensAccountDetailsAdapter.setData(uiState.tokens)
             binding.tokensList.isVisible = uiState.tokens.isNotEmpty()
             binding.noItemsLayout.isVisible = uiState.isLoading.not() && uiState.tokens.isEmpty()
+            uiState.error?.let {
+                it.contentOrNullIfUsed?.let { res ->
+                    (requireActivity() as BaseActivity).showError(res)
+                }
+            }
         }
     }
 

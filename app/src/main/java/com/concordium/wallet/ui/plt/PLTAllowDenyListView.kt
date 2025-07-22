@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.databinding.ViewPltAllowDenyListBinding
+import com.concordium.wallet.util.TokenUtil
 
 class PLTAllowDenyListView @JvmOverloads constructor(
     context: Context,
@@ -23,7 +24,7 @@ class PLTAllowDenyListView @JvmOverloads constructor(
     }
 
     fun setToken(token: PLTToken) {
-        val pltListStatus = getPLTListStatus(token)
+        val pltListStatus = TokenUtil.getPLTPLTListStatus(token)
 
         when (pltListStatus) {
             PLTListStatus.ON_ALLOW_LIST -> {
@@ -64,13 +65,4 @@ class PLTAllowDenyListView @JvmOverloads constructor(
             }
         }
     }
-
-    private fun getPLTListStatus(token: PLTToken): PLTListStatus = when {
-        (token.isInDenyList != null && token.isInDenyList) -> PLTListStatus.ON_DENY_LIST
-        (token.isInAllowList != null && token.isInAllowList) -> PLTListStatus.ON_ALLOW_LIST
-        token.isInAllowList != null -> PLTListStatus.NOT_ON_ALLOW_LIST
-        else -> PLTListStatus.UNKNOWN
-    }
-
-
 }

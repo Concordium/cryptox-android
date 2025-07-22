@@ -22,6 +22,10 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
         protocolLevelTokenDao.hideToken(accountAddress, tokenId)
     }
 
+    suspend fun unmarkNewlyReceived(tokenId: String) {
+        protocolLevelTokenDao.unmarkNewlyReceived(tokenId)
+    }
+
     suspend fun addForAccount(accountAddress: String, tokens: List<PLTInfoWithAccountState>) {
         if (tokens.isNotEmpty()) {
             tokens.forEach { tokenWithState ->

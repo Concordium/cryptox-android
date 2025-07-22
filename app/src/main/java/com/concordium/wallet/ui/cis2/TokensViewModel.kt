@@ -8,7 +8,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
-import com.concordium.wallet.data.backend.devnet.DevnetRepository
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
@@ -85,7 +84,6 @@ class TokensViewModel(
         )
     }
     private val tokenPriceRepository by inject<TokenPriceRepository>()
-    private val devnetRepository = DevnetRepository()
     private val pltRepository: PLTRepository by lazy {
         PLTRepository(
             App.appCore.session.walletStorage.database.protocolLevelTokenDao()
@@ -109,9 +107,8 @@ class TokensViewModel(
                 accountAddress = accountAddress,
                 isFungible = isFungible,
             )
-            // TODO: remove hardcoded PLT address
             val pltTokens =
-                pltRepository.getTokens("4GbHu8Ynnt1hc2PGhRAiwGzkXYBxnSCNJEB9dcnGEJPehRw3oo")
+                pltRepository.getTokens(accountAddress)
             withContext(Dispatchers.Main) {
                 tokens.clear()
                 // Add CCD as default at the top
