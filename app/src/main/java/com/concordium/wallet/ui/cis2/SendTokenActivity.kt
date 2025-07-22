@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -94,9 +95,22 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
+            val token = viewModel.sendTokenData.token!!
+
             viewModel.sendTokenData.amount =
-                CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token)
-                    ?: BigInteger.ZERO
+                CurrencyUtil.toGTUValue(it.toString(), token) ?: BigInteger.ZERO
+
+            if (token is CCDToken && token.eurPerMicroCcd != null) {
+                binding.eurRate.isVisible = true
+                binding.eurRate.text =
+                    CurrencyUtil.toEURRate(
+                        viewModel.sendTokenData.amount,
+                        token.eurPerMicroCcd,
+                    )
+            } else {
+                binding.eurRate.isVisible = false
+            }
+
             if (it.toString().isEmpty()) {
                 binding.balanceSymbol.alpha = 0.5f
             } else {
@@ -156,7 +170,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         binding.recipientLayout.setOnClickListener {
             val intent = Intent(this, RecipientListActivity::class.java)
             intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.sendTokenData.account)
-            intent.putExtra(RecipientListActivity.EXTRA_SENDER_ACCOUNT, viewModel.sendTokenData.account)
+            intent.putExtra(
+                RecipientListActivity.EXTRA_SENDER_ACCOUNT,
+                viewModel.sendTokenData.account
+            )
             getResultRecipient.launch(intent)
         }
     }

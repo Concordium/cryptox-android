@@ -105,7 +105,6 @@ class SendTokenViewModel(
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionWaiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transaction: MutableLiveData<Transaction> by lazy { MutableLiveData<Transaction>() }
-    val eurRateReady: MutableLiveData<String?> by lazy { MutableLiveData<String?>() }
 
     val canSend: Boolean
         get() = with(sendTokenData) {
