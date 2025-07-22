@@ -87,7 +87,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private fun initializeSearchToken() {
         binding.content.setOnClickListener {
             val intent = Intent(this, SelectTokenActivity::class.java).apply {
-                putExtra(SelectTokenActivity.SELECT_TOKEN_ACCOUNT, viewModel.sendTokenData.account)
+                putExtra(SelectTokenActivity.EXTRA_ACCOUNT, viewModel.sendTokenData.account)
             }
             getResultToken.launch(intent)
         }
@@ -202,7 +202,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getSerializable(
-                    SelectTokenActivity.SELECT_TOKEN_ACCOUNT,
+                    SelectTokenActivity.EXTRA_ACCOUNT,
                     Token::class.java
                 )?.let { token ->
                     viewModel.chooseToken.postValue(token)
