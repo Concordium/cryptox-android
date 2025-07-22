@@ -42,7 +42,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.cis2.TokenDetailsActivity
-import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.TokensListViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
@@ -61,7 +61,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var binding: ActivityAccountDetailsBinding
     private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModelAccountDetails: AccountDetailsViewModel
-    private lateinit var viewModelTokens: TokensViewModel
+    private lateinit var viewModelTokensList: TokensListViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
@@ -134,10 +134,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
 
-        viewModelTokens = ViewModelProvider(
+        viewModelTokensList = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[TokensViewModel::class.java]
+        )[TokensListViewModel::class.java]
 
         onboardingViewModel = ViewModelProvider(
             requireActivity(),
@@ -200,14 +200,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
-            viewModelTokens.loadTokensBalances()
+            viewModelTokensList.loadTokens(viewModelAccountDetails.account)
             updateBannersVisibility(viewModelAccountDetails.account)
         }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             updateViews(account)
-            viewModelTokens.tokenData.account = account
-            viewModelTokens.loadTokens(account.address)
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
                 text = account.getAccountName(),
@@ -219,8 +217,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it) {
-                viewModelTokens.loadTokensBalances()
+            if (it.first) {
+                it.second?.let { account ->
+                    viewModelTokensList.loadTokens(account)
+                }
             }
         }
 
@@ -279,24 +279,18 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             mainViewModel.notificationTokenId,
             viewModelAccountDetails.activeAccount
         ) { notificationAddress, tokenId, currentAccount ->
-            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
-                viewModelTokens.tokenBalances.observe(viewLifecycleOwner) { ready ->
-                    if (ready) {
-                        viewModelTokens.tokens.find { it.uid == tokenId }?.also {
-                            showTokenDetailsDialog(it)
-                        }
-                    }
-                }
-            } else {
-                viewModelTokens.tokenBalances.removeObservers(viewLifecycleOwner)
-            }
+//            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
+//                viewModelTokens.tokenBalances.observe(viewLifecycleOwner) { ready ->
+//                    if (ready) {
+//                        viewModelTokens.tokens.find { it.uid == tokenId }?.also {
+//                            showTokenDetailsDialog(it)
+//                        }
+//                    }
+//                }
+//            } else {
+//                viewModelTokens.tokenBalances.removeObservers(viewLifecycleOwner)
+//            }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
-            token?.let {
-                showTokenDetailsDialog(it)
-            }
-        }
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
@@ -469,7 +463,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.updateState()
         viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
-        viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
+//        viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }
 
     private fun resetWhenPaused() {
@@ -715,7 +709,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 val isChanged =
                     it.data?.getBooleanExtra(TokenDetailsActivity.CHANGED, false) == true
                 if (isChanged) {
-                    viewModelTokens.updateWithSelectedTokensDone.postValue(true)
+//                    viewModelTokens.updateWithSelectedTokensDone.postValue(true)
                 }
             }
         }
