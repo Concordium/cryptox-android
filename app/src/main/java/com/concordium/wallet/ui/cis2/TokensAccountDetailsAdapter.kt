@@ -159,8 +159,12 @@ class TokensAccountDetailsAdapter(
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)
             }
-            pltInAllowListIcon.isVisible = token is PLTToken
-                    && TokenUtil.getPLTPLTListStatus(token) != PLTListStatus.ON_ALLOW_LIST
+            pltInAllowListIcon.isVisible = if (token is PLTToken) {
+                TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.NOT_ON_ALLOW_LIST ||
+                        TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_DENY_LIST
+            } else {
+                false
+            }
         }
     }
 }
