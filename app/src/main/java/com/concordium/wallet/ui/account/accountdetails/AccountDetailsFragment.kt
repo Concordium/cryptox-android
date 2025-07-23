@@ -25,6 +25,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
@@ -602,10 +603,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun onSendFundsClicked() {
         val intent = Intent(requireActivity(), SendTokenActivity::class.java)
-        intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
+        intent.putExtra(
+            SendTokenActivity.ACCOUNT,
+            viewModelAccountDetails.account
+        )
         intent.putExtra(
             SendTokenActivity.TOKEN,
-            Token.ccd(viewModelAccountDetails.account)
+            CCDToken(
+                account = viewModelAccountDetails.account,
+                eurPerMicroCcd = null,
+            )
         )
         intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, this::class.java.canonicalName)
 

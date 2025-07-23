@@ -7,7 +7,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
@@ -28,11 +27,20 @@ import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.math.BigInteger
 
 class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.cis_send_funds) {
     private lateinit var binding: ActivitySendTokenBinding
-    private val viewModel: SendTokenViewModel by viewModels()
+    private val viewModel: SendTokenViewModel by viewModel {
+        parametersOf(
+            SendTokenData(
+                account = intent.getSerializable(ACCOUNT, Account::class.java),
+                token = intent.getSerializable(TOKEN, NewToken::class.java),
+            ),
+        )
+    }
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -43,9 +51,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySendTokenBinding.bind(findViewById(R.id.root_layout))
-        viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        // TODO fix setting the token
-//        viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
         initObservers()
         initFragmentListener()
         initViews()
@@ -64,9 +69,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initViews() {
         binding.amount.hint = BigInteger.ZERO.toString()
-        binding.atDisposal.text = CurrencyUtil.formatGTU(
-            viewModel.sendTokenData.account?.balanceAtDisposal ?: BigInteger.ZERO
-        )
+        binding.atDisposal.text =
+            CurrencyUtil.formatGTU(viewModel.sendTokenData.account.balanceAtDisposal)
         initializeAmount()
         initializeMax()
         initializeAddressBook()
@@ -97,7 +101,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private fun initializeAmount() {
         binding.amount.addTextChangedListener { amountText ->
             val amountString = amountText.toString()
-            val token = viewModel.sendTokenData.token!!
+            val token = viewModel.sendTokenData.token
 
             viewModel.sendTokenData.amount =
                 CurrencyUtil.toGTUValue(amountString, token) ?: BigInteger.ZERO
@@ -319,9 +323,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     ""
             binding.fee.isVisible = fee != null
             binding.sendAllButton.isEnabled = true
-            binding.amountError.isVisible =
-                viewModel.sendTokenData.token != null
-                        && !viewModel.hasEnoughFunds()
+            binding.amountError.isVisible = !viewModel.hasEnoughFunds()
 
             enableSend()
         }

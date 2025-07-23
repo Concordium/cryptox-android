@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.cis2
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewContractToken
@@ -21,6 +20,8 @@ import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SendTokenReceiptActivity : BaseActivity(
     R.layout.activity_send_token_receipt,
@@ -28,7 +29,11 @@ class SendTokenReceiptActivity : BaseActivity(
 ), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySendTokenReceiptBinding
     private lateinit var sliderButton: SliderButton
-    private val viewModel: SendTokenViewModel by viewModels()
+    private val viewModel: SendTokenViewModel by viewModel {
+        parametersOf(
+            intent.getSerializable(SEND_TOKEN_DATA, SendTokenData::class.java),
+        )
+    }
     private var receiptMode = false
 
     companion object {
@@ -37,7 +42,6 @@ class SendTokenReceiptActivity : BaseActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.sendTokenData = intent.getSerializable(SEND_TOKEN_DATA, SendTokenData::class.java)
         binding = ActivitySendTokenReceiptBinding.bind(findViewById(R.id.root_layout))
         initViews()
         initObservers()
@@ -49,18 +53,18 @@ class SendTokenReceiptActivity : BaseActivity(
     }
 
     private fun initViews() {
-        val token = viewModel.sendTokenData.token!!
+        val token = viewModel.sendTokenData.token
 
         sliderButton = binding.sendFunds
-        binding.senderName.text = viewModel.sendTokenData.account?.getAccountName()
-        binding.senderAddress.text = viewModel.sendTokenData.account?.address
+        binding.senderName.text = viewModel.sendTokenData.account.getAccountName()
+        binding.senderAddress.text = viewModel.sendTokenData.account.address
         binding.amountTitle.text =
             if (token is NewContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
                 getString(
                     R.string.cis_amount,
-                    viewModel.sendTokenData.token?.symbol
+                    token.symbol,
                 )
         binding.amount.text =
             CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, token)
@@ -87,7 +91,7 @@ class SendTokenReceiptActivity : BaseActivity(
             if (token is NewContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
-                viewModel.sendTokenData.token?.symbol
+                token.symbol
 
         binding.sendFunds.setOnSliderCompleteListener {
             onSend()

@@ -18,10 +18,13 @@ class TokensInteractor(
     private val pltRepository: PLTRepository,
     private val accountRepository: AccountRepository,
     private val tokenPriceRepository: TokenPriceRepository,
-    private val loadTokensBalancesUseCase: LoadTokensBalancesUseCase
+    private val loadTokensBalancesUseCase: LoadTokensBalancesUseCase,
 ) {
 
-    suspend fun loadTokens(accountAddress: String, loadBalances: Boolean = true): Result<List<NewToken>> {
+    suspend fun loadTokens(
+        accountAddress: String,
+        loadBalances: Boolean = true,
+    ): Result<List<NewToken>> {
         return try {
             val ccdToken = getCCDDefaultToken(accountAddress)
 
@@ -82,19 +85,12 @@ class TokensInteractor(
         }
     }
 
-    private suspend fun getCCDDefaultToken(accountAddress: String): CCDToken {
-        val account = accountRepository.findByAddress(accountAddress)
-            ?: error("Account $accountAddress not found")
-        val eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
+    private suspend fun getCCDDefaultToken(
+        accountAddress: String,
+    ) = CCDToken(
+        account = accountRepository.findByAddress(accountAddress)
+            ?: error("Account $accountAddress not found"),
+        eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
             .getOrNull()
-
-        return CCDToken(
-            balance = account.balance,
-            accountAddress = accountAddress,
-            isNewlyReceived = false,
-            isSelected = false,
-            eurPerMicroCcd = eurPerMicroCcd,
-            isEarning = account.isBaking() || account.isDelegating(),
-        )
-    }
+    )
 }

@@ -4,11 +4,16 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
-import com.concordium.wallet.data.backend.price.TokenPriceRepository
+import com.concordium.wallet.data.backend.price.tokenPriceModule
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import org.koin.dsl.module
 
 val tokensInteractorModule = module {
+
+    includes(
+        tokenPriceModule,
+    )
+
     single {
         TokensInteractor(
             proxyRepository = ProxyRepository(),
@@ -21,7 +26,7 @@ val tokensInteractorModule = module {
             accountRepository = AccountRepository(
                 App.appCore.session.walletStorage.database.accountDao()
             ),
-            tokenPriceRepository = TokenPriceRepository(ProxyRepository()),
+            tokenPriceRepository = get(),
             loadTokensBalancesUseCase = LoadTokensBalancesUseCase()
         )
     }
