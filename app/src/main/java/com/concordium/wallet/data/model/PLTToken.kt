@@ -20,6 +20,9 @@ data class PLTToken(
 
     override val symbol: String
         get() = tokenId
+
+    val isTransferable: Boolean
+        get() = isInDenyList != true && isInAllowList != false
 }
 
 fun ProtocolLevelToken.toNewPLTToken(

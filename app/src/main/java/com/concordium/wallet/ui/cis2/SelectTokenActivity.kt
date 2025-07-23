@@ -56,6 +56,7 @@ class SelectTokenActivity : BaseActivity(
     private fun initViewModels() {
         tokensListViewModel.loadTokens(
             account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
+            onlyTransferable = true,
         )
     }
 
@@ -66,14 +67,7 @@ class SelectTokenActivity : BaseActivity(
 
             tokensAccountDetailsAdapter.setData(state.tokens)
 
-            binding.tokensList.isVisible = state.tokens.isNotEmpty()
-
             state.error?.contentOrNullIfUsed?.let(::showError)
-
-            binding.noItemsLayout.isVisible =
-                state.tokens.isEmpty()
-                        && !state.isLoading
-                        && state.error == null
         }
     }
 

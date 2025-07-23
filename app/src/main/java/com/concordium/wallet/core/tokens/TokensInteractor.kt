@@ -24,6 +24,7 @@ class TokensInteractor(
     suspend fun loadTokens(
         accountAddress: String,
         loadBalances: Boolean = true,
+        onlyTransferable: Boolean = false,
     ): Result<List<NewToken>> {
         return try {
             val ccdToken = getCCDDefaultToken(accountAddress)
@@ -37,6 +38,7 @@ class TokensInteractor(
                 pltRepository.getTokens(accountAddress)
                     .filterNot { it.isHidden }
                     .map { it.toNewPLTToken() }
+                    .filter { !onlyTransferable || it.isTransferable }
 
             val allTokens = (listOf(ccdToken) + contractTokens + pltTokens).sortedBy { it.addedAt }
 
