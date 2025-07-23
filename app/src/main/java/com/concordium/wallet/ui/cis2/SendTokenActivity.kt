@@ -69,13 +69,12 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initViews() {
         binding.amount.hint = BigInteger.ZERO.toString()
-        binding.atDisposal.text =
-            CurrencyUtil.formatGTU(viewModel.sendTokenData.account.balanceAtDisposal)
         initializeAmount()
         initializeMax()
         initializeAddressBook()
         initializeSend()
         initializeSearchToken()
+        initializeMemo()
     }
 
     private fun initializeSend() {
@@ -145,7 +144,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
                     viewModel.sendTokenData.max ?: BigInteger.ZERO,
-                    viewModel.sendTokenData.token!!
+                    viewModel.sendTokenData.token
                 )
             )
             enableSend()
@@ -166,6 +165,19 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 viewModel.sendTokenData.account
             )
             getResultRecipient.launch(intent)
+        }
+    }
+
+    private fun initializeMemo() {
+        binding.addMemo.setOnClickListener {
+            if (viewModel.showMemoWarning()) {
+                MemoNoticeDialog().showSingle(
+                    supportFragmentManager,
+                    MemoNoticeDialog.TAG
+                )
+            } else {
+                goToEnterMemo()
+            }
         }
     }
 
@@ -216,9 +228,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 ?.let(viewModel.chooseToken::postValue)
         }
 
-    private fun clearMemo() =
-        handleMemo("")
-
     private fun handleMemo(memoText: String) {
         if (memoText.isNotEmpty()) {
             viewModel.setMemoText(memoText)
@@ -244,15 +253,13 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun initObservers() {
-        viewModel.waiting.observe(this) { waiting ->
-            showWaiting(waiting)
-        }
+        viewModel.waiting.observe(this, ::showWaiting)
+
         viewModel.chooseToken.observe(this) { token ->
             setTokenIcon(token)
 
             val decimals = token.decimals
-            binding.balance.text =
-                CurrencyUtil.formatGTU(token.balance, decimals)
+            binding.balance.text = CurrencyUtil.formatGTU(token.balance, decimals)
             binding.token.text =
                 if (token is NewContractToken && token.isUnique)
                     token.metadata?.name ?: ""
@@ -273,29 +280,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             binding.sendAllButton.isEnabled = token !is CCDToken
             binding.balanceSymbol.text = token.symbol
 
-            if (token !is CCDToken) {
-                binding.addMemo.visibility = View.GONE
-                binding.atDisposalLayout.visibility = View.GONE
-                binding.balance.visibility = View.VISIBLE
-                binding.eurRate.visibility = View.GONE
-            } else {
-                binding.addMemo.visibility = View.VISIBLE
-                binding.addMemo.setOnClickListener {
-                    if (viewModel.showMemoWarning()) {
-                        MemoNoticeDialog().showSingle(
-                            supportFragmentManager,
-                            MemoNoticeDialog.TAG
-                        )
-                    } else {
-                        goToEnterMemo()
-                    }
-                }
-                binding.atDisposalLayout.visibility = View.VISIBLE
-                binding.balance.visibility = View.GONE
-                binding.eurRate.visibility = View.VISIBLE
-            }
-            // This also initiates fee loading.
-            clearMemo()
+            binding.addMemo.isVisible = token !is NewContractToken
+            binding.atDisposalTitle.isVisible = token is CCDToken
         }
 
         viewModel.feeReady.observe(this) { fee ->
@@ -314,9 +300,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
             enableSend()
         }
+
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
         }
+
         viewModel.tokenEurRate.observe(this) {
             setEstimatedAmountInEur()
         }

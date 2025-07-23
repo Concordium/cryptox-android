@@ -162,7 +162,7 @@
                     android:textAppearance="@style/MW24_Typography_Label_Main"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintBottom_toBottomOf="@id/token_icon"
-                    app:layout_constraintEnd_toStartOf="@id/balance"
+                    app:layout_constraintEnd_toStartOf="@id/balance_layout"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toEndOf="@id/token_icon"
@@ -182,34 +182,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/mw24_grey_4" />
 
-                <TextView
-                    android:id="@+id/balance"
-                    style="@style/MW24_Typography_Label_Main"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:textColor="@color/cryptox_white_main"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/token_arrow"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_goneMarginEnd="12dp"
-                    tools:text="12334.365" />
-
                 <LinearLayout
-                    android:id="@+id/at_disposal_layout"
+                    android:id="@+id/balance_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:orientation="vertical"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/token_arrow"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/at_disposal"
+                        android:id="@+id/balance"
                         style="@style/MW24_Typography_Label_Main"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

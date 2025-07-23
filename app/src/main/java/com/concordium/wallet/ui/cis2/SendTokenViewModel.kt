@@ -119,9 +119,12 @@ class SendTokenViewModel(
         chooseToken.observeForever { token ->
             sendTokenData.token = token
             sendTokenData.max = if (token is CCDToken) null else token.balance
-            sendTokenData.fee = null
             sendTokenData.amount = BigInteger.ZERO
+
+            sendTokenData.fee = null
             feeReady.value = null
+            loadTransactionFee()
+
             tokenEurRate.value = null
             loadEurRate(token)
         }
