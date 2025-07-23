@@ -53,6 +53,7 @@ import com.reown.util.bytesToHex
 import com.reown.util.hexToBytes
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okio.IOException
 import org.koin.core.component.KoinComponent
 import java.io.Serializable
 import java.math.BigInteger
@@ -264,6 +265,11 @@ class SendTokenViewModel(
     private suspend fun loadContractTokenTransferFee(
         token: NewContractToken,
     ) {
+        // Contract token transfer fee can't be loaded until the receiver is known.
+        if (sendTokenData.receiver.isEmpty()) {
+            return
+        }
+
         val parameter: String? = getContractTokenTransferParameter(token)
 
         if (parameter == null) {
@@ -296,6 +302,11 @@ class SendTokenViewModel(
     private fun loadProtocolLevelTokenTransferFee(
         token: PLTToken,
     ) {
+        // Protocol level token transfer fee can't be loaded until the receiver is known.
+        if (sendTokenData.receiver.isEmpty()) {
+            return
+        }
+
         val payload = getProtocolLevelTokenTransferPayload(token)
 
         feeRequest?.dispose()
@@ -568,6 +579,10 @@ class SendTokenViewModel(
     }
 
     private fun handleBackendError(throwable: Throwable) {
+        if (throwable is IOException && throwable.message == "Canceled"){
+            return
+        }
+
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
     }
