@@ -19,6 +19,9 @@ data class NewContractToken(
 
     override val symbol: String
         get() = metadata?.symbol ?: ""
+
+    val isUnique: Boolean
+        get() = metadata?.unique == true
 }
 
 fun ContractToken.toNewContractToken(

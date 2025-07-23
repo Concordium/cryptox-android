@@ -13,7 +13,8 @@ import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -94,24 +95,28 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun initializeAmount() {
-        binding.amount.addTextChangedListener {
+        binding.amount.addTextChangedListener { amountText ->
+            val amountString = amountText.toString()
             val token = viewModel.sendTokenData.token!!
 
             viewModel.sendTokenData.amount =
-                CurrencyUtil.toGTUValue(it.toString(), token) ?: BigInteger.ZERO
+                CurrencyUtil.toGTUValue(amountString, token) ?: BigInteger.ZERO
 
             if (token is CCDToken && token.eurPerMicroCcd != null) {
                 binding.eurRate.isVisible = true
                 binding.eurRate.text =
-                    CurrencyUtil.toEURRate(
-                        viewModel.sendTokenData.amount,
-                        token.eurPerMicroCcd,
+                    getString(
+                        R.string.cis_estimated_eur_rate,
+                        CurrencyUtil.toEURRate(
+                            viewModel.sendTokenData.amount,
+                            token.eurPerMicroCcd,
+                        )
                     )
             } else {
                 binding.eurRate.isVisible = false
             }
 
-            if (it.toString().isEmpty()) {
+            if (amountString.isEmpty()) {
                 binding.balanceSymbol.alpha = 0.5f
             } else {
                 binding.balanceSymbol.alpha = 1f
@@ -146,15 +151,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initializeMax() {
         binding.sendAllButton.setOnClickListener {
-            var decimals = 6
-            viewModel.sendTokenData.token?.let { token ->
-                if (!token.isCcd)
-                    decimals = token.decimals
-            }
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
                     viewModel.sendTokenData.max ?: BigInteger.ZERO,
-                    decimals
+                    viewModel.sendTokenData.token!!
                 )
             )
             enableSend()
@@ -216,14 +216,13 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private val getResultToken =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getSerializable(
+            result.data
+                ?.takeIf { result.resultCode == Activity.RESULT_OK }
+                ?.getSerializable(
                     SelectTokenActivity.EXTRA_SELECTED_TOKEN,
-                    Token::class.java
-                )?.let { token ->
-                    viewModel.chooseToken.postValue(token)
-                }
-            }
+                    NewToken::class.java,
+                )
+                ?.let(viewModel.chooseToken::postValue)
         }
 
     private fun clearMemo() =
@@ -264,11 +263,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             binding.balance.text =
                 CurrencyUtil.formatGTU(token.balance, decimals)
             binding.token.text =
-                if (token.isUnique)
-                    token.name
+                if (token is NewContractToken && token.isUnique)
+                    token.metadata?.name ?: ""
                 else
                     token.symbol
-            if (token.isUnique && token.balance.signum() > 0) {
+            if (token is NewContractToken && token.isUnique && token.balance.signum() > 0) {
                 // For owned NFTs, prefill the amount (quantity) which is 1
                 // for smoother experience.
                 binding.amount.setText("1")
@@ -280,10 +279,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             }
             binding.amount.decimals = decimals
             // For non-CCD tokens Max is always available.
-            binding.sendAllButton.isEnabled = !token.isCcd
+            binding.sendAllButton.isEnabled = token !is CCDToken
             binding.balanceSymbol.text = token.symbol
 
-            if (!token.isCcd) {
+            if (token !is CCDToken) {
                 binding.addMemo.visibility = View.GONE
                 binding.atDisposalLayout.visibility = View.GONE
                 binding.balance.visibility = View.VISIBLE
@@ -329,19 +328,9 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
         }
-        viewModel.eurRateReady.observe(this) { rate ->
-            binding.eurRate.text =
-                if (rate != null)
-                    getString(
-                        R.string.cis_estimated_eur_rate,
-                        rate
-                    )
-                else
-                    ""
-        }
     }
 
-    private fun setTokenIcon(token: Token) {
+    private fun setTokenIcon(token: NewToken) {
         val tokenMetadata = token.metadata
         if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
             Glide.with(this)
@@ -351,7 +340,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
                 .into(binding.tokenIcon)
-        } else if (token.isCcd) {
+        } else if (token is CCDToken) {
             Glide.with(this)
                 .load(R.drawable.mw24_ic_ccd)
                 .into(binding.tokenIcon)

@@ -36,6 +36,9 @@ object CurrencyUtil {
         return formatGTU(value, decimals)
     }
 
+    fun formatGTU(value: BigInteger, token: NewToken): String =
+        formatGTU(value, token.decimals)
+
     fun formatGTU(
         value: BigInteger,
         decimals: Int = 6,

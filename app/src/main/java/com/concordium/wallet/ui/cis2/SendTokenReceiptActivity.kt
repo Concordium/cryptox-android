@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.viewModels
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
@@ -48,11 +49,13 @@ class SendTokenReceiptActivity : BaseActivity(
     }
 
     private fun initViews() {
+        val token = viewModel.sendTokenData.token!!
+
         sliderButton = binding.sendFunds
         binding.senderName.text = viewModel.sendTokenData.account?.getAccountName()
         binding.senderAddress.text = viewModel.sendTokenData.account?.address
         binding.amountTitle.text =
-            if (viewModel.sendTokenData.token?.isUnique == true)
+            if (token is NewContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
                 getString(
@@ -60,7 +63,7 @@ class SendTokenReceiptActivity : BaseActivity(
                     viewModel.sendTokenData.token?.symbol
                 )
         binding.amount.text =
-            CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, viewModel.sendTokenData.token)
+            CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, token)
         binding.receiver.text = viewModel.sendTokenData.receiver
         viewModel.sendTokenData.receiverName?.let {
             binding.receiverName.visibility = View.VISIBLE
@@ -78,10 +81,10 @@ class SendTokenReceiptActivity : BaseActivity(
         }
         binding.statusAmount.text = CurrencyUtil.formatGTU(
             viewModel.sendTokenData.amount,
-            viewModel.sendTokenData.token
+            token
         )
         binding.transactionSymbol.text =
-            if (viewModel.sendTokenData.token?.isUnique == true)
+            if (token is NewContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
                 viewModel.sendTokenData.token?.symbol
