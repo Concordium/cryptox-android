@@ -20,6 +20,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
@@ -33,6 +34,7 @@ import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -74,6 +76,7 @@ data class SendTokenData(
 
 class SendTokenViewModel(
     val sendTokenData: SendTokenData,
+    private val tokenPriceRepository: TokenPriceRepository,
     application: Application,
 ) : AndroidViewModel(application),
     KoinComponent {
@@ -92,14 +95,15 @@ class SendTokenViewModel(
     private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var submitTransactionJob: Job? = null
 
-    val chooseToken: MutableLiveData<NewToken> by lazy { MutableLiveData<NewToken>(sendTokenData.token) }
-    val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
-    val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>(null) }
-    val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transactionWaiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transaction: MutableLiveData<Transaction> by lazy { MutableLiveData<Transaction>() }
+    val chooseToken: MutableLiveData<NewToken> = MutableLiveData<NewToken>(sendTokenData.token)
+    val waiting: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val transactionReady: MutableLiveData<String> = MutableLiveData<String>()
+    val feeReady: MutableLiveData<BigInteger?> = MutableLiveData<BigInteger?>(null)
+    val errorInt: MutableLiveData<Int> = MutableLiveData<Int>()
+    val showAuthentication: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    val transactionWaiting: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    val transaction: MutableLiveData<Transaction> = MutableLiveData<Transaction>()
+    val tokenEurRate: MutableLiveData<SimpleFraction?> = MutableLiveData()
 
     val canSend: Boolean
         get() = with(sendTokenData) {
@@ -118,6 +122,8 @@ class SendTokenViewModel(
             sendTokenData.fee = null
             sendTokenData.amount = BigInteger.ZERO
             feeReady.value = null
+            tokenEurRate.value = null
+            loadEurRate(token)
         }
     }
 
@@ -180,6 +186,30 @@ class SendTokenViewModel(
 
     fun onReceiverNameFound(name: String) {
         sendTokenData.receiverName = name
+    }
+
+    private var loadEurRateJob: Job? = null
+    private fun loadEurRate(
+        token: NewToken,
+    ) {
+        loadEurRateJob?.cancel()
+        loadEurRateJob = viewModelScope.launch {
+
+            val rate = when (token) {
+                is CCDToken ->
+                    tokenPriceRepository
+                        .getEurPerMicroCcd()
+                        .getOrNull()
+
+                is NewContractToken ->
+                    null
+
+                is PLTToken ->
+                    null
+            }
+
+            tokenEurRate.postValue(rate)
+        }
     }
 
     fun loadTransactionFee() {

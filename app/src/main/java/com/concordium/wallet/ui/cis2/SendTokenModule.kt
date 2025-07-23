@@ -16,6 +16,7 @@ val sendTokenModule = module {
             sendTokenData = requireNotNull(getOrNull()) {
                 "SendTokenData must be provided in parameters"
             },
+            tokenPriceRepository = get(),
             application = androidApplication(),
         )
     }

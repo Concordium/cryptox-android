@@ -106,20 +106,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             viewModel.sendTokenData.amount =
                 CurrencyUtil.toGTUValue(amountString, token) ?: BigInteger.ZERO
 
-            if (token is CCDToken && token.eurPerMicroCcd != null) {
-                binding.eurRate.isVisible = true
-                binding.eurRate.text =
-                    getString(
-                        R.string.cis_estimated_eur_rate,
-                        CurrencyUtil.toEURRate(
-                            viewModel.sendTokenData.amount,
-                            token.eurPerMicroCcd,
-                        )
-                    )
-            } else {
-                binding.eurRate.isVisible = false
-            }
-
             if (amountString.isEmpty()) {
                 binding.balanceSymbol.alpha = 0.5f
             } else {
@@ -127,6 +113,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             }
             viewModel.loadTransactionFee()
             enableSend()
+            setEstimatedAmountInEur()
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -329,6 +316,27 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.tokenEurRate.observe(this) {
+            setEstimatedAmountInEur()
+        }
+    }
+
+    private fun setEstimatedAmountInEur() {
+        val rate = viewModel.tokenEurRate.value
+
+        if (rate != null) {
+            binding.eurRate.isVisible = true
+            binding.eurRate.text =
+                getString(
+                    R.string.cis_estimated_eur_rate,
+                    CurrencyUtil.toEURRate(
+                        viewModel.sendTokenData.amount,
+                        rate,
+                    )
+                )
+        } else {
+            binding.eurRate.isVisible = false
         }
     }
 
