@@ -530,15 +530,15 @@
 
     <string name="cis_tab_tokens">Tokens</string>
     <string name="cis_manage">Manage token list</string>
-    <string name="cis_manage_tokens">Enter a contract index to add tokens.</string>
+    <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
     <string name="cis_manage_token_list">Manage token list</string>
-    <string name="cis_add_token_title">Add token</string>
+    <string name="cis_add_token_title">Add Tokens</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
     <string name="cis_token_details_balance">Balance</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens">Add</string>
-    <string name="cis_add_tokens_continue">Continue</string>
+    <string name="cis_add_tokens_continue">Add Selected Tokens</string>
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">This contract has no valid tokens</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
@@ -587,7 +587,7 @@
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_image">Image</string>
     <string name="cis_description">Description</string>
-    <string name="cis_contract_index">Contract index</string>
+    <string name="cis_contract_index">Token name or contract index</string>
     <string name="cis_contract_index_subindex">Contract index, subindex</string>
     <string name="cis_total_supply">Total Supply</string>
     <string name="cis_decimals">Decimals</string>

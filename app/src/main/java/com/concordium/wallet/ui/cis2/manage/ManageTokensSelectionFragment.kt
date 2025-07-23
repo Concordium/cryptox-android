@@ -94,7 +94,7 @@ class ManageTokensSelectionFragment : Fragment() {
             }
         })
 
-        binding.continueBtn.setOnClickListener {
+        binding.addTokensBtn.setOnClickListener {
             updateTokens()
         }
     }
@@ -120,7 +120,7 @@ class ManageTokensSelectionFragment : Fragment() {
             selectionAdapter.notifyDataSetChanged()
         }
         _viewModel.selectedTokensChanged.observe(viewLifecycleOwner) { changed ->
-            binding.continueBtn.isEnabled = changed
+            binding.addTokensBtn.isEnabled = changed
         }
         _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
             if (nonSelected)
