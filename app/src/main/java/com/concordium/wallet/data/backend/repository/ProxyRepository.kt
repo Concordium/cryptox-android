@@ -204,7 +204,10 @@ class ProxyRepository {
             contractSubindex,
             receiveName,
             parameter,
-            executionNRGBuffer
+            executionNRGBuffer,
+            tokenId,
+            listOperationsSize,
+            App.appCore.gson.toJson(tokenOperationTypeCount),
         )
         call.enqueue(object : BackendCallback<TransactionCost>() {
             override fun onResponseData(response: TransactionCost) {
