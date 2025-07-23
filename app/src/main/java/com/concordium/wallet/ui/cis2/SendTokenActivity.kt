@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +21,6 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -110,7 +110,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             } else {
                 binding.balanceSymbol.alpha = 1f
             }
-            viewModel.loadTransactionFee()
+            viewModel.loadFee()
             enableSend()
             setEstimatedAmountInEur()
         }
@@ -252,6 +252,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         binding.recipientName.text = name
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initObservers() {
         viewModel.waiting.observe(this, ::showWaiting)
 
@@ -368,7 +369,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun gotoReceipt() {
         val intent = Intent(this, SendTokenReceiptActivity::class.java)
-        intent.putExtra(SEND_TOKEN_DATA, viewModel.sendTokenData)
+        intent.putExtra(
+            SendTokenReceiptActivity.SEND_TOKEN_DATA,
+            viewModel.sendTokenData,
+        )
         intent.putExtra(
             SendTokenReceiptActivity.PARENT_ACTIVITY,
             checkNotNull(this.intent.getStringExtra(PARENT_ACTIVITY)) {

@@ -43,6 +43,7 @@ class ProxyRepository {
         const val REMOVE_BAKER = "removeBaker"
         const val CONFIGURE_BAKER = "configureBaker"
         const val UPDATE = "update"
+        const val TOKEN_UPDATE = "tokenUpdate"
 
         const val CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS = 20
         const val CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS = 20
@@ -182,6 +183,9 @@ class ProxyRepository {
         receiveName: String? = null,
         parameter: String? = null,
         executionNRGBuffer: Int? = null,
+        tokenId: String? = null,
+        listOperationsSize: Int? = null,
+        tokenOperationTypeCount: Map<String, Int>? = null,
         success: (TransactionCost) -> Unit,
         failure: ((Throwable) -> Unit)?,
     ): BackendRequest<TransactionCost> {

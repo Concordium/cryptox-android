@@ -11,7 +11,6 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
@@ -37,6 +36,7 @@ class SendTokenReceiptActivity : BaseActivity(
     private var receiptMode = false
 
     companion object {
+        const val SEND_TOKEN_DATA = "SEND_TOKEN_DATA"
         const val PARENT_ACTIVITY = "PARENT_ACTIVITY"
     }
 
