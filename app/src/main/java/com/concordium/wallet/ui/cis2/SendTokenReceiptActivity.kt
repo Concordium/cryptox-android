@@ -68,7 +68,7 @@ class SendTokenReceiptActivity : BaseActivity(
                 )
         binding.amount.text =
             CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, token)
-        binding.receiver.text = viewModel.sendTokenData.receiver
+        binding.receiver.text = viewModel.sendTokenData.receiverAddress
         viewModel.sendTokenData.receiverName?.let {
             binding.receiverName.visibility = View.VISIBLE
             binding.receiverName.text = it

@@ -97,6 +97,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initializeAmount() {
         binding.amount.addTextChangedListener { amountText ->
             val amountString = amountText.toString()
@@ -143,7 +144,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         binding.sendAllButton.setOnClickListener {
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.sendTokenData.max ?: BigInteger.ZERO,
+                    viewModel.sendTokenData.maxAmount ?: BigInteger.ZERO,
                     viewModel.sendTokenData.token
                 )
             )
