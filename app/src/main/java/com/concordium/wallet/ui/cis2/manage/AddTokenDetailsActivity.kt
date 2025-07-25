@@ -5,7 +5,8 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
@@ -29,15 +30,15 @@ class AddTokenDetailsActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
 
-        initViews(requireNotNull(intent.getSerializable(TOKEN, Token::class.java)))
+        initViews(requireNotNull(intent.getSerializable(TOKEN, NewToken::class.java)))
     }
 
-    private fun initViews(token: Token) {
+    private fun initViews(token: NewToken) {
         binding.detailsLayout.hideToken.visibility = View.GONE
         setContractIndexAndSubIndex(token)
-        setTokenId(token.token)
+        setTokenId(token)
         token.metadata?.let { tokenMetadata ->
-            setNameAndIcon(tokenMetadata, token.isUnique)
+            setNameAndIcon(tokenMetadata, token.metadata?.unique == true)
             setDescription(tokenMetadata)
             setTicker(tokenMetadata)
             setDecimals(token)
@@ -45,10 +46,12 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setTokenId(tokenId: String) {
-        if (tokenId.isNotBlank()) {
-            binding.detailsLayout.tokenIdHolder.visibility = View.VISIBLE
-            binding.detailsLayout.tokenId.text = tokenId
+    private fun setTokenId(token: NewToken) {
+        if (token is NewContractToken) {
+            if (token.token.isNotBlank()) {
+                binding.detailsLayout.tokenIdHolder.visibility = View.VISIBLE
+                binding.detailsLayout.tokenId.text = token.token
+            }
         }
     }
 
@@ -86,17 +89,19 @@ class AddTokenDetailsActivity : BaseActivity(
             .into(view)
     }
 
-    private fun setContractIndexAndSubIndex(token: Token) {
-        val tokenIndex = token.contractIndex
+    private fun setContractIndexAndSubIndex(token: NewToken) {
+        if (token is NewContractToken) {
+            val tokenIndex = token.contractIndex
 
-        if (tokenIndex.isNotBlank()) {
-            binding.detailsLayout.contractIndexHolder.visibility = View.VISIBLE
-            binding.detailsLayout.contractIndex.text = token.contractIndex
-            if (token.subIndex.isNotBlank()) {
-                val combinedInfo = "${tokenIndex}, ${token.subIndex}"
-                binding.detailsLayout.contractIndex.text = combinedInfo
-            } else {
-                binding.detailsLayout.contractIndex.text = tokenIndex
+            if (tokenIndex.isNotBlank()) {
+                binding.detailsLayout.contractIndexHolder.visibility = View.VISIBLE
+                binding.detailsLayout.contractIndex.text = token.contractIndex
+                if (token.subIndex.isNotBlank()) {
+                    val combinedInfo = "${tokenIndex}, ${token.subIndex}"
+                    binding.detailsLayout.contractIndex.text = combinedInfo
+                } else {
+                    binding.detailsLayout.contractIndex.text = tokenIndex
+                }
             }
         }
     }
@@ -108,8 +113,8 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setDecimals(token: Token) {
-        if (!token.isUnique) {
+    private fun setDecimals(token: NewToken) {
+        if (token.metadata?.unique?.not() == true) {
             binding.detailsLayout.decimalsHolder.visibility = View.VISIBLE
             binding.detailsLayout.decimals.text = token.decimals.toString()
         }

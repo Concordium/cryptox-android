@@ -1,23 +1,25 @@
 package com.concordium.wallet.ui.cis2
 
 import android.app.Application
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.ContractTokensRepository
-import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.toToken
+import com.concordium.wallet.data.model.toNewContractToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -36,7 +38,7 @@ data class TokenData(
     var hasPendingValidationTransactions: Boolean = false,
 ) : Serializable
 
-class TokensViewModel(
+class ManageTokensViewModel(
     application: Application,
 ) : AndroidViewModel(application),
     KoinComponent {
@@ -53,14 +55,19 @@ class TokensViewModel(
     var tokenData = TokenData()
     var tokens: MutableList<Token> = mutableListOf()
 
+    var newTokens: MutableList<NewToken> = mutableListOf()
+
     // Save found exact tokens to keep their selection once the search is dismissed.
     // For example, the user can look for multiple exact tokens and toggle them one by one.
     private val everFoundExactTokens: MutableList<Token> = mutableListOf()
-    private val changedTokensList: MutableList<Token> = mutableListOf()
-    var exactToken: Token? = null
+    private val newEverFoundExactTokens: MutableList<NewToken> = mutableListOf()
 
-//    val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
-    val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
+    private val changedTokensList: MutableList<Token> = mutableListOf()
+    private val newChangedTokensList: MutableList<NewToken> = mutableListOf()
+
+    var exactToken: Token? = null
+    var newExactToken: NewToken? = null
+
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val contractAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -68,7 +75,6 @@ class TokensViewModel(
     val lookForExactToken: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val hasExistingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
@@ -79,14 +85,15 @@ class TokensViewModel(
             App.appCore.session.walletStorage.database.contractTokenDao()
         )
     }
-    private val tokenPriceRepository by inject<TokenPriceRepository>()
+    private val tokensInteractor by inject<TokensInteractor>()
 
     fun lookForTokens(
         accountAddress: String,
         from: String? = null,
     ) = viewModelScope.launch(Dispatchers.IO) {
         changedTokensList.clear()
-        selectedTokensChanged.postValue(changedTokensList.isNotEmpty())
+        newChangedTokensList.clear()
+        selectedTokensChanged.postValue(newChangedTokensList.isNotEmpty())
 
         if (from != null && !allowToLoadMore)
             return@launch
@@ -95,43 +102,57 @@ class TokensViewModel(
 
         if (from == null) {
             tokens.clear()
+            newTokens.clear()
+
             everFoundExactTokens.clear()
             lookForTokens.postValue(TOKENS_NOT_LOADED)
             contractAddressLoading.postValue(true)
         }
 
-        val existingContractTokens =
-            contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-        val selectedTokenIds =
-            existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
-                    everFoundExactTokens.asSequence()
-                        .filter(Token::isSelected)
-                        .mapTo(mutableSetOf(), Token::token)
+        if (tokenData.contractIndex.isDigitsOnly()) {
+            val existingContractTokens =
+                contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
+                    .map { it.toNewContractToken() }
+            val selectedTokenIds =
+                existingContractTokens.mapTo(mutableSetOf(), NewContractToken::token) +
+                        newEverFoundExactTokens.asSequence()
+                            .filterIsInstance<NewContractToken>()
+                            .filter(NewContractToken::isSelected)
+                            .mapTo(mutableSetOf(), NewContractToken::token)
 
-        try {
-            val pageLimit = 20
-            val pageTokens = getFullyLoadedTokensPage(
-                accountAddress = accountAddress,
-                limit = pageLimit,
-                from = from,
-            ).onEach {
-                it.isSelected = it.token in selectedTokenIds
+            try {
+                val pageLimit = 20
+                val pageTokens = getFullyLoadedTokensPage(
+                    accountAddress = accountAddress,
+                    limit = pageLimit,
+                    from = from,
+                ).onEach {
+                    it.isSelected = it.token in selectedTokenIds
+                }
+
+//                tokens.addAll(pageTokens)
+                newTokens.addAll(pageTokens)
+                contractAddressLoading.postValue(false)
+                allowToLoadMore = pageTokens.size >= pageLimit
+
+                if (newTokens.isEmpty() && !allowToLoadMore) {
+                    lookForTokens.postValue(TOKENS_EMPTY)
+                } else {
+                    lookForTokens.postValue(TOKENS_OK)
+                }
+            } catch (e: Throwable) {
+                handleBackendError(e)
+                allowToLoadMore = true
+                contractAddressLoading.postValue(false)
             }
-
-            tokens.addAll(pageTokens)
-            contractAddressLoading.postValue(false)
-            allowToLoadMore = pageTokens.size >= pageLimit
-
-            if (tokens.isEmpty() && !allowToLoadMore) {
-                lookForTokens.postValue(TOKENS_EMPTY)
-            } else {
-                lookForTokens.postValue(TOKENS_OK)
-            }
-        } catch (e: Throwable) {
-            handleBackendError(e)
-            allowToLoadMore = true
-            contractAddressLoading.postValue(false)
+        } else {
+            lookForPLTs(accountAddress)
         }
+    }
+
+    private fun lookForPLTs(accountAddress: String) = viewModelScope.launch(Dispatchers.IO) {
+        tokensInteractor.getPLTTokenById(tokenData.contractIndex)
+
     }
 
     /**
@@ -142,8 +163,8 @@ class TokensViewModel(
         accountAddress: String,
         limit: Int,
         from: String? = null,
-    ): List<Token> {
-        val fullyLoadedTokens = mutableListOf<Token>()
+    ): List<NewContractToken> {
+        val fullyLoadedTokens = mutableListOf<NewToken>()
 
         var tokenPageCursor = from
         var isLastTokenPage = false
@@ -154,7 +175,7 @@ class TokensViewModel(
                 limit = limit,
                 from = tokenPageCursor,
             ).tokens
-                .map { it.toToken() }
+                .map { it.toNewContractToken() }
                 .onEach {
                     it.contractIndex = tokenData.contractIndex
                     it.subIndex = tokenData.subIndex
@@ -169,21 +190,20 @@ class TokensViewModel(
 
             loadTokensMetadata(pageTokens)
             val tokensWithMetadata = pageTokens.filter { it.metadata != null }
-            loadTokensBalances(
-                tokensToUpdate = tokensWithMetadata,
+            tokensInteractor.loadTokensBalances(
                 accountAddress = accountAddress,
+                tokens = tokensWithMetadata
             )
 
             fullyLoadedTokens.addAll(tokensWithMetadata)
         }
 
-        return fullyLoadedTokens
+        return fullyLoadedTokens.map { it as NewContractToken }
     }
 
-    private suspend fun loadTokensMetadata(tokensToUpdate: List<Token>) {
-        val tokensByContract: Map<String, List<Token>> = tokensToUpdate
-            .filterNot(Token::isCcd)
-            .groupBy(Token::contractIndex)
+    private suspend fun loadTokensMetadata(tokensToUpdate: List<NewContractToken>) {
+        val tokensByContract: Map<String, List<NewContractToken>> = tokensToUpdate
+            .groupBy(NewContractToken::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
             val contractSubIndex = contractTokens.firstOrNull()?.subIndex
@@ -194,7 +214,7 @@ class TokensViewModel(
                 .forEach { contractTokensChunk ->
                     val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
                         separator = ",",
-                        transform = Token::token,
+                        transform = NewContractToken::token,
                     )
 
                     try {
@@ -247,51 +267,6 @@ class TokensViewModel(
         }
     }
 
-    private suspend fun loadTokensBalances(
-        tokensToUpdate: List<Token>,
-        accountAddress: String,
-    ) {
-        val tokensByContract: Map<String, List<Token>> = tokensToUpdate
-            .filterNot(Token::isCcd)
-            .groupBy(Token::contractIndex)
-
-        tokensByContract.forEach { (contractIndex, contractTokens) ->
-            val contractSubIndex = contractTokens.firstOrNull()?.subIndex
-                ?: return@forEach
-
-            contractTokens
-                .chunked(ProxyRepository.CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS)
-                .forEach { contractTokensChunk ->
-                    val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
-                        separator = ",",
-                        transform = Token::token,
-                    )
-
-                    try {
-                        proxyRepository.getCIS2TokenBalanceV1(
-                            index = contractIndex,
-                            subIndex = contractSubIndex,
-                            accountAddress = accountAddress,
-                            tokenIds = commaSeparatedChunkTokenIds,
-                        ).forEach { balanceItem ->
-                            val correspondingToken = contractTokens.first {
-                                it.token == balanceItem.tokenId
-                            }
-                            correspondingToken.balance = balanceItem.balance.toBigInteger()
-                        }
-                    } catch (e: Throwable) {
-                        Log.e(
-                            "Failed to load balances chunk:\n" +
-                                    "contract=$contractIndex:$contractSubIndex,\n" +
-                                    "accountAddress=$accountAddress,\n" +
-                                    "chunkTokenIds=$commaSeparatedChunkTokenIds",
-                            e
-                        )
-                    }
-                }
-        }
-    }
-
     private var lookForExactTokenJob: Job? = null
     fun lookForExactToken(
         accountAddress: String,
@@ -307,7 +282,7 @@ class TokensViewModel(
                             .filter(Token::isSelected)
                             .mapTo(mutableSetOf(), Token::token)
 
-            val apparentToken = Token(
+            val apparentToken = NewContractToken(
                 token = apparentTokenId,
                 contractIndex = tokenData.contractIndex,
                 subIndex = tokenData.subIndex,
@@ -320,16 +295,18 @@ class TokensViewModel(
                         loadTokensMetadata(listOf(apparentToken))
                     },
                     async {
-                        loadTokensBalances(
-                            tokensToUpdate = listOf(apparentToken),
+                        tokensInteractor.loadTokensBalances(
                             accountAddress = accountAddress,
+                            tokens = listOf(apparentToken),
                         )
                     },
                 )
 
                 if (apparentToken.metadata != null) {
-                    everFoundExactTokens.add(apparentToken)
-                    exactToken = apparentToken
+//                    everFoundExactTokens.add(apparentToken)
+                    newEverFoundExactTokens.add(apparentToken)
+//                    exactToken = apparentToken
+                    newExactToken = apparentToken
                     lookForExactToken.postValue(TOKENS_OK)
                 } else {
                     exactToken = null
@@ -349,76 +326,68 @@ class TokensViewModel(
         lookForExactToken.value = TOKENS_NOT_LOADED
     }
 
-    fun toggleNewToken(token: Token) {
+    fun toggleNewToken(token: NewToken) {
         val isSelectedNow = !token.isSelected
-        (tokens.asSequence() + everFoundExactTokens.asSequence())
-            .filter { it.token == token.token }
+        (newTokens.asSequence() + newEverFoundExactTokens.asSequence())
+            .filter { it.symbol == token.symbol }
             .forEach {
                 it.isSelected = isSelectedNow
 
-                if (changedTokensList.contains(it)) {
-                    changedTokensList.remove(it)
+                if (newChangedTokensList.contains(it)) {
+                    newChangedTokensList.remove(it)
                 } else {
-                    changedTokensList.add(it)
+                    newChangedTokensList.add(it)
                 }
-                selectedTokensChanged.postValue(changedTokensList.isNotEmpty())
+                selectedTokensChanged.postValue(newChangedTokensList.isNotEmpty())
             }
-    }
-
-    fun checkExistingTokens() = viewModelScope.launch(Dispatchers.IO) {
-        tokenData.account.also { account ->
-            if (account != null) {
-                hasExistingTokens.postValue(
-                    contractTokensRepository.getTokens(
-                        accountAddress = account.address,
-                    ).isNotEmpty()
-                )
-            } else {
-                hasExistingTokens.postValue(false)
-            }
-        }
     }
 
     fun updateWithSelectedTokens() {
-        updateTokens(tokens + everFoundExactTokens)
+        updateTokens(newTokens + newEverFoundExactTokens)
     }
 
-    private fun updateTokens(loadedTokens: Iterable<Token>) {
+    private fun updateTokens(loadedTokens: Iterable<NewToken>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
-                val selectedTokens = loadedTokens.filter(Token::isSelected)
+                val selectedTokens = loadedTokens.filter(NewToken::isSelected)
+                val selectedContractTokens = selectedTokens.filterIsInstance<NewContractToken>()
+                val selectedPLTTokens = selectedTokens.filterIsInstance<PLTToken>()
 
-                // Add each selected token if missing.
-                selectedTokens.forEach { selectedToken ->
-                    val existingContractToken =
-                        contractTokensRepository.find(
-                            account.address,
-                            selectedToken.contractIndex,
-                            selectedToken.token
-                        )
-                    if (existingContractToken == null) {
-                        contractTokensRepository.insert(
-                            ContractToken(
-                                id = 0,
-                                token = selectedToken.token,
-                                contractIndex = selectedToken.contractIndex,
-                                contractName = selectedToken.contractName,
-                                accountAddress = account.address,
-                                isFungible = !selectedToken.isUnique,
-                                tokenMetadata = selectedToken.metadata,
-                                isNewlyReceived = false,
-                                addedAt = System.currentTimeMillis()
+                if (selectedContractTokens.isNotEmpty()) {
+                    // Add each selected token if missing.
+                    selectedContractTokens.forEach { selectedToken ->
+                        val existingContractToken =
+                            contractTokensRepository.find(
+                                account.address,
+                                selectedToken.contractIndex,
+                                selectedToken.token
                             )
-                        )
+                        if (existingContractToken == null) {
+                            contractTokensRepository.insert(
+                                ContractToken(
+                                    id = 0,
+                                    token = selectedToken.token,
+                                    contractIndex = selectedToken.contractIndex,
+                                    contractName = selectedToken.contractName,
+                                    accountAddress = account.address,
+                                    isFungible = selectedToken.metadata?.unique?.not() ?: false,
+                                    tokenMetadata = selectedToken.metadata,
+                                    isNewlyReceived = false,
+                                    addedAt = System.currentTimeMillis()
+                                )
+                            )
+                        }
                     }
                 }
+
                 // As the loaded tokens list may be partial,
                 // we must only delete the unselected ones among loaded.
                 // Therefore, if there is an existing token but the user haven't scrolled to it
                 // in the search results, it won't be deleted.
                 val loadedNotSelectedTokens = loadedTokens
-                    .filterNot(Token::isSelected)
-                    .mapTo(mutableSetOf(), Token::token)
+                    .filterNot(NewToken::isSelected)
+                    .filterIsInstance<NewContractToken>()
+                    .mapTo(mutableSetOf(), NewContractToken::token)
 
                 // Delete each loaded not selected token.
                 loadedNotSelectedTokens.forEach { loadedNotSelectedToken ->
@@ -429,45 +398,6 @@ class TokensViewModel(
                     )
                 }
                 updateWithSelectedTokensDone.postValue(changedTokensList.isNotEmpty())
-            }
-        }
-    }
-
-    private suspend fun getCCDDefaultToken(accountAddress: String): Token {
-        val accountRepository =
-            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-        val account = accountRepository.findByAddress(accountAddress)
-            ?: error("Account $accountAddress not found")
-        val eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
-            .getOrNull()
-
-        return Token.ccd(
-            account,
-            eurPerMicroCcd = eurPerMicroCcd,
-        )
-    }
-
-    fun loadTokensBalances() {
-        if (tokenData.account == null)
-            return
-
-        viewModelScope.launch(Dispatchers.IO) {
-            tokenBalances.postValue(false)
-            try {
-                val ccdToken = getCCDDefaultToken(tokenData.account!!.address)
-                tokens.find { it.isCcd }?.apply {
-                    balance = ccdToken.balance
-                    isEarning = ccdToken.isEarning
-                }
-
-                loadTokensBalances(
-                    tokensToUpdate = tokens,
-                    accountAddress = tokenData.account!!.address,
-                )
-                tokenBalances.postValue(true)
-            } catch (e: Throwable) {
-                handleBackendError(e)
-                tokenBalances.postValue(true)
             }
         }
     }

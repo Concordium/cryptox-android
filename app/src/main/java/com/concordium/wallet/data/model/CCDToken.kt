@@ -7,7 +7,7 @@ data class CCDToken(
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
     override val addedAt: Long = 0L,
-    override val isSelected: Boolean = false,
+    override var isSelected: Boolean = false,
     var isEarning: Boolean = false,
     val eurPerMicroCcd: SimpleFraction? = null,
 ) : NewToken {

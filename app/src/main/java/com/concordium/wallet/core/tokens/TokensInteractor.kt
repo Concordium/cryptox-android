@@ -8,9 +8,10 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.toNewContractToken
-import com.concordium.wallet.data.model.toNewPLTToken
+import com.concordium.wallet.data.model.toPLTToken
 
 class TokensInteractor(
     private val proxyRepository: ProxyRepository,
@@ -21,7 +22,10 @@ class TokensInteractor(
     private val loadTokensBalancesUseCase: LoadTokensBalancesUseCase
 ) {
 
-    suspend fun loadTokens(accountAddress: String, loadBalances: Boolean = true): Result<List<NewToken>> {
+    suspend fun loadTokens(
+        accountAddress: String,
+        loadBalances: Boolean = true
+    ): Result<List<NewToken>> {
         return try {
             val ccdToken = getCCDDefaultToken(accountAddress)
 
@@ -33,15 +37,14 @@ class TokensInteractor(
             val pltTokens =
                 pltRepository.getTokens(accountAddress)
                     .filterNot { it.isHidden }
-                    .map { it.toNewPLTToken() }
+                    .map { it.toPLTToken() }
 
             val allTokens = (listOf(ccdToken) + contractTokens + pltTokens).sortedBy { it.addedAt }
 
             if (loadBalances) {
-                loadTokensBalancesUseCase(
-                    proxyRepository = proxyRepository,
-                    tokens = allTokens,
+                loadTokensBalances(
                     accountAddress = accountAddress,
+                    tokens = allTokens,
                 )
             }
 
@@ -49,6 +52,21 @@ class TokensInteractor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    suspend fun loadTokensBalances(
+        accountAddress: String,
+        tokens: List<NewToken>,
+    ) = runCatching {
+        loadTokensBalancesUseCase(
+            proxyRepository = proxyRepository,
+            tokens = tokens,
+            accountAddress = accountAddress,
+        )
+    }
+
+    suspend fun getPLTTokenById(tokenId: String): Result<PLTInfo> = runCatching {
+        proxyRepository.getPLTTokenById(tokenId)
     }
 
     suspend fun deleteToken(

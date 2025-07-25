@@ -22,7 +22,7 @@ class SelectTokenActivity : BaseActivity(
     }
 
     private lateinit var viewModelSend: SendTokenViewModel
-    private lateinit var viewModelTokens: TokensViewModel
+    private lateinit var viewModelTokens: ManageTokensViewModel
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
     private lateinit var account: Account
 
@@ -59,7 +59,7 @@ class SelectTokenActivity : BaseActivity(
         viewModelTokens = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[TokensViewModel::class.java]
+        )[ManageTokensViewModel::class.java]
 
         account = intent.getSerializable(SELECT_TOKEN_ACCOUNT, Account::class.java)
         viewModelTokens.tokenData.account = account
@@ -70,7 +70,7 @@ class SelectTokenActivity : BaseActivity(
         }
         viewModelSend.tokens.observe(this) { tokens ->
             viewModelTokens.tokens = tokens as MutableList<Token>
-            viewModelTokens.loadTokensBalances()
+//            viewModelTokens.loadTokensBalances()
         }
         viewModelTokens.tokenBalances.observe(this) { ready ->
             showWaiting(ready.not())
