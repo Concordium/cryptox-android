@@ -26,7 +26,11 @@ object CurrencyUtil {
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*(\\.[0-9]{0,77})?\$")
 
     //Format the Decimal value with comma separators for thousands
-    private val formatter = DecimalFormat("#,###.######", DecimalFormatSymbols(Locale.US))
+    private val formatter = DecimalFormat().apply {
+        decimalFormatSymbols = DecimalFormatSymbols(Locale.US)
+        maximumIntegerDigits = Int.MAX_VALUE
+        maximumFractionDigits = Int.MAX_VALUE
+    }
 
     fun formatGTU(value: String, decimals: Int = 6): String =
         formatGTU(value.toBigInteger(), decimals)
