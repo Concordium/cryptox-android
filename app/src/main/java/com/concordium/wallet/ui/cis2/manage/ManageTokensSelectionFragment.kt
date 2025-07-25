@@ -13,14 +13,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
-import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel
 
 class ManageTokensSelectionFragment : Fragment() {
     private var _binding: FragmentManageTokensSelectionBinding? = null
     private val binding get() = _binding!!
-    private val _viewModel: TokensViewModel
+    private val _viewModel: ManageTokensViewModel
         get() = (parentFragment as ManageTokensMainFragment).viewModel
     private lateinit var selectionAdapter: ManageTokensSelectionAdapter
     private var firstTime = true
@@ -41,13 +41,13 @@ class ManageTokensSelectionFragment : Fragment() {
         initObservers()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 
         if (!firstTime)
             selectionAdapter.notifyDataSetChanged()
         firstTime = false
-        _viewModel.checkExistingTokens()
         binding.nonSelected.visibility = View.INVISIBLE
     }
 
@@ -58,7 +58,7 @@ class ManageTokensSelectionFragment : Fragment() {
 
     private fun initViews() {
         selectionAdapter = ManageTokensSelectionAdapter(requireActivity(), arrayOf())
-        selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        selectionAdapter.dataSet = _viewModel.newTokens.toTypedArray()
 
         binding.tokensFound.adapter = selectionAdapter
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -68,7 +68,7 @@ class ManageTokensSelectionFragment : Fragment() {
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (_viewModel.tokens.size > 0 &&
+                if (_viewModel.newTokens.size > 0 &&
                     visibleItemCount + firstVisibleItemPosition >= totalItemCount &&
                     firstVisibleItemPosition >= 0 &&
                     totalItemCount > 3
@@ -84,12 +84,11 @@ class ManageTokensSelectionFragment : Fragment() {
 
         selectionAdapter.setTokenClickListener(object :
             ManageTokensSelectionAdapter.TokenClickListener {
-            override fun onRowClick(token: Token) {
-                _viewModel.chooseTokenInfo.postValue(token)
+            override fun onRowClick(token: NewToken) {
                 gotoTokenDetails(token)
             }
 
-            override fun onCheckBoxClick(token: Token) {
+            override fun onCheckBoxClick(token: NewToken) {
                 _viewModel.toggleNewToken(token)
             }
         })
@@ -102,21 +101,21 @@ class ManageTokensSelectionFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-            binding.searchLayout.isVisible = _viewModel.tokens.size > 1
-            selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+            binding.searchLayout.isVisible = _viewModel.newTokens.size > 1
+            selectionAdapter.dataSet = _viewModel.newTokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
             binding.searchLayout.setText("")
         }
         _viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
             showWaiting(false)
-            binding.noTokensFound.isVisible = status == TokensViewModel.TOKENS_EMPTY
-            if (status == TokensViewModel.TOKENS_OK) {
-                selectionAdapter.dataSet = arrayOf(checkNotNull(_viewModel.exactToken))
+            binding.noTokensFound.isVisible = status == ManageTokensViewModel.TOKENS_EMPTY
+            if (status == ManageTokensViewModel.TOKENS_OK) {
+                selectionAdapter.dataSet = arrayOf(checkNotNull(_viewModel.newExactToken))
                 selectionAdapter.notifyDataSetChanged()
             }
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
-            selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+            selectionAdapter.dataSet = _viewModel.newTokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
         }
         _viewModel.selectedTokensChanged.observe(viewLifecycleOwner) { changed ->
@@ -136,7 +135,7 @@ class ManageTokensSelectionFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun resetSearch() {
-        selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        selectionAdapter.dataSet = _viewModel.newTokens.toTypedArray()
         selectionAdapter.notifyDataSetChanged()
         _viewModel.dismissExactTokenLookup()
     }
@@ -191,7 +190,7 @@ class ManageTokensSelectionFragment : Fragment() {
         }
     }
 
-    private fun gotoTokenDetails(token: Token) {
+    private fun gotoTokenDetails(token: NewToken) {
         val intent = Intent(requireContext(), AddTokenDetailsActivity::class.java).apply {
             putExtra(AddTokenDetailsActivity.TOKEN, token)
         }

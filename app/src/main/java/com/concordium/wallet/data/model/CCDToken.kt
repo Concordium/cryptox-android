@@ -24,7 +24,7 @@ data class CCDToken(
 
     override val addedAt: Long = 0L
 
-    override val isSelected: Boolean = false
+    override var isSelected: Boolean = false
 
     override val metadata: TokenMetadata =
         TokenMetadata(

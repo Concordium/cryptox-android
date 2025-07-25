@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -15,7 +15,7 @@ import java.math.BigInteger
 
 class ManageTokensSelectionAdapter(
     private val context: Context,
-    var dataSet: Array<Token>
+    var dataSet: Array<NewToken>
 ) : RecyclerView.Adapter<ManageTokensSelectionAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private val iconSize: Int by lazy {
@@ -25,8 +25,8 @@ class ManageTokensSelectionAdapter(
     inner class ViewHolder(val binding: ItemTokenAddBinding) : RecyclerView.ViewHolder(binding.root)
 
     interface TokenClickListener {
-        fun onRowClick(token: Token)
-        fun onCheckBoxClick(token: Token)
+        fun onRowClick(token: NewToken)
+        fun onCheckBoxClick(token: NewToken)
     }
 
     fun setTokenClickListener(tokenClickListener: TokenClickListener) {

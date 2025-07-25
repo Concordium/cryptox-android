@@ -9,7 +9,7 @@ data class PLTToken(
     override val isNewlyReceived: Boolean = false,
     override val addedAt: Long,
     override val metadata: TokenMetadata? = null,
-    override val isSelected: Boolean = false,
+    override var isSelected: Boolean = false,
     val tokenId: String,
     val tokenState: PLTState?,
     val tokenAccountState: TokenAccountState? = null,
@@ -25,7 +25,7 @@ data class PLTToken(
         get() = isInDenyList != true && isInAllowList != false
 }
 
-fun ProtocolLevelToken.toNewPLTToken(
+fun ProtocolLevelToken.toPLTToken(
     isSelected: Boolean = false,
 ) = PLTToken(
     balance = balance,

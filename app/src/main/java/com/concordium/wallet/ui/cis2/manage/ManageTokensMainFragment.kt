@@ -7,11 +7,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentManageTokensMainBinding
-import com.concordium.wallet.ui.cis2.TokensViewModel
-import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKENS_EMPTY
-import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKENS_NOT_LOADED
-import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKENS_OK
-import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKENS_SELECTED
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel.Companion.TOKENS_EMPTY
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel.Companion.TOKENS_NOT_LOADED
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel.Companion.TOKENS_OK
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel.Companion.TOKENS_SELECTED
 import com.concordium.wallet.util.KeyboardUtil
 
 class ManageTokensMainFragment : Fragment(
@@ -20,7 +20,7 @@ class ManageTokensMainFragment : Fragment(
 
     private var _binding: FragmentManageTokensMainBinding? = null
     private val binding get() = _binding!!
-    val viewModel: TokensViewModel
+    val viewModel: ManageTokensViewModel
         get() = (requireActivity() as AddTokenActivity).viewModelTokens
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

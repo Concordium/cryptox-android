@@ -10,7 +10,7 @@ sealed interface NewToken : Serializable {
     val isNewlyReceived: Boolean
     val addedAt: Long
     val metadata: TokenMetadata?
-    val isSelected: Boolean
+    var isSelected: Boolean
 
     val decimals: Int
         get() = metadata?.decimals ?: 0

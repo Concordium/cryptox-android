@@ -5,16 +5,17 @@ import java.math.BigInteger
 
 data class NewContractToken(
     override var balance: BigInteger = BigInteger.ZERO,
-    override val accountAddress: String,
-    override val isNewlyReceived: Boolean,
-    override val addedAt: Long,
-    override val metadata: TokenMetadata?,
-    override val isSelected: Boolean = false,
-    val contractIndex: String,
-    val subIndex: String = "0",
-    val contractName: String,
-    val token: String,
-    val isFungible: Boolean,
+    override val accountAddress: String = "",
+    override val isNewlyReceived: Boolean = false,
+    override val addedAt: Long = System.currentTimeMillis(),
+    override var metadata: TokenMetadata? = null,
+    override var isSelected: Boolean = false,
+    var uid: String = "",
+    var contractIndex: String = "",
+    var subIndex: String = "0",
+    var contractName: String = "",
+    val token: String = "",
+    val isFungible: Boolean = false,
 ) : NewToken {
 
     override val symbol: String
@@ -34,6 +35,7 @@ fun ContractToken.toNewContractToken(
     addedAt = addedAt,
     metadata = tokenMetadata,
     isSelected = isSelected,
+    uid = id.toString(),
     contractIndex = contractIndex,
     contractName = contractName,
     token = token,
