@@ -24,13 +24,19 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
 
     private var loadTokensJob: Job? = null
 
-    fun loadTokens(account: Account) {
+    fun loadTokens(
+        account: Account,
+        onlyTransferable: Boolean = false,
+    ) {
         loadTokensJob?.cancel()
         loadTokensJob = null
 
         loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
             _uiState.value = uiState.value.copy(account = account, isLoading = true)
-            tokensInteractor.loadTokens(accountAddress = account.address)
+            tokensInteractor.loadTokens(
+                accountAddress = account.address,
+                onlyTransferable = onlyTransferable,
+            )
                 .onSuccess { tokens ->
                     _uiState.value = uiState.value.copy(
                         tokens = tokens,
@@ -51,6 +57,6 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
         val tokens: List<NewToken> = emptyList(),
         val selectedToken: NewToken? = null,
         val isLoading: Boolean = false,
-        val error: Event<Int>? = null
+        val error: Event<Int>? = null,
     )
 }

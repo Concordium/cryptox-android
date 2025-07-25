@@ -58,22 +58,26 @@ interface ProxyBackend {
     suspend fun submissionStatusSuspended(@Path("submissionId") submissionId: String): SubmissionStatusResponse
 
     @GET("v0/transactionCost")
+    @JvmSuppressWildcards
     fun transferCost(
-        @Query("type") type: String? = null,
-        @Query("memoSize") memoSize: Int? = null,
-        @Query("amount") amount: String? = null,
-        @Query("restake") restake: Boolean? = null,
-        @Query("target") target: Boolean? = null,
-        @Query("passive") passive: Boolean? = null,
-        @Query("metadataSize") metadataSize: Int? = null,
-        @Query("openStatus") openStatus: String? = null,
-        @Query("suspended") suspended: Boolean? = null,
-        @Query("sender") sender: String? = null,
-        @Query("contractIndex") contractIndex: Int? = null,
-        @Query("contractSubindex") contractSubindex: Int? = null,
-        @Query("receiveName") receiveName: String? = null,
-        @Query("parameter") parameter: String? = null,
-        @Query("executionNRGBuffer") executionNRGBuffer: Int? = null,
+        @Query("type") type: String?,
+        @Query("memoSize") memoSize: Int?,
+        @Query("amount") amount: String?,
+        @Query("restake") restake: Boolean?,
+        @Query("target") target: Boolean?,
+        @Query("passive") passive: Boolean?,
+        @Query("metadataSize") metadataSize: Int?,
+        @Query("openStatus") openStatus: String?,
+        @Query("suspended") suspended: Boolean?,
+        @Query("sender") sender: String?,
+        @Query("contractIndex") contractIndex: Int?,
+        @Query("contractSubindex") contractSubindex: Int?,
+        @Query("receiveName") receiveName: String?,
+        @Query("parameter") parameter: String?,
+        @Query("executionNRGBuffer") executionNRGBuffer: Int?,
+        @Query("tokenId") tokenId: String?,
+        @Query("listOperationsSize") listOperationsSize: Int?,
+        @Query("tokenOperationTypeCount") tokenOperationTypeCountJson: String?,
     ): Call<TransactionCost>
 
     @GET("v0/chainParameters")

@@ -53,8 +53,8 @@ class NewsfeedRssBackendConfig {
     private fun initializeXmlMapper(): XmlMapper =
         XmlMapper.builder(
             XmlFactory.builder()
-                .xmlInputFactory(WstxInputFactory())
-                .xmlOutputFactory(WstxOutputFactory())
+                .inputFactory(WstxInputFactory())
+                .outputFactory(WstxOutputFactory())
                 .build()
         ).build()
 }

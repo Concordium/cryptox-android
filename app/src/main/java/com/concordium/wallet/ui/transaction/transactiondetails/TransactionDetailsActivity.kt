@@ -213,7 +213,7 @@ class TransactionDetailsActivity : BaseActivity(
     private fun showMemo(ta: Transaction) {
         if (ta.hasMemo()) {
             binding.memoLayout.visibility = View.VISIBLE
-            binding.memoLayout.setValue(ta.getDecryptedMemo())
+            binding.memoLayout.setValue(ta.getDecodedMemo() ?: "")
         } else {
             binding.memoLayout.visibility = View.GONE
         }

@@ -233,7 +233,7 @@ allprojects {
 
 dependencies {
 
-    implementation("com.concordium.sdk:concordium-android-sdk:10.0.1") {
+    implementation("com.concordium.sdk:concordium-android-sdk:11.0.0-plt.1") {
         exclude group: "org.bouncycastle"
         exclude group: "net.jcip"
     }
@@ -264,7 +264,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.biometric:biometric:1.1.0'
-    implementation 'com.google.iot.cbor:cbor:0.01.02'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
     // Lifecycles
@@ -333,12 +332,12 @@ dependencies {
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 
     // Jackson
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.19.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.19.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.19.1'
 
     // Jackson XML
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.14.2'
     implementation 'javax.xml.stream:stax-api:1.0-2'
 
     // Analytics (version lock for Kotlin version compatibility)

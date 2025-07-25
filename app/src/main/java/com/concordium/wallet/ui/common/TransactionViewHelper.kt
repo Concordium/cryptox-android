@@ -39,7 +39,7 @@ object TransactionViewHelper {
             }
         )
 
-        memoTextView.text = ta.getDecryptedMemo()
+        memoTextView.text = ta.getDecodedMemo()
         memoLayout.visibility = if (ta.hasMemo()) View.VISIBLE else View.GONE
 
         // Time

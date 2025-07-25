@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.model
 
-import com.concordium.wallet.util.CBORUtil
+import com.concordium.sdk.serializing.CborMapper
+import com.reown.util.hexToBytes
 import java.io.Serializable
 import java.math.BigInteger
 import java.util.Date
@@ -90,11 +91,14 @@ data class Transaction(
         return if (cost == null) BigInteger.ZERO else -cost
     }
 
-    fun getDecryptedMemo(): String {
-        return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
+    fun getDecodedMemo(): String? {
+        return details
+            ?.memo
+            ?.hexToBytes()
+            ?.let { CborMapper.INSTANCE.readValue(it, String::class.java) }
     }
 
     fun hasMemo(): Boolean {
-        return details?.memo?.isNotEmpty() == true
+        return !details?.memo.isNullOrEmpty()
     }
 }
