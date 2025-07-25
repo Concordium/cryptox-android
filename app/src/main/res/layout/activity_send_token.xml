@@ -41,45 +41,46 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:imeOptions="actionDone"
-                    android:textSize="36sp"
                     android:lineHeight="36sp"
                     android:textAppearance="@style/MW24_Typography_IBM_Balance"
                     android:textColorHint="@color/cryptox_black_secondary"
+                    android:textSize="36sp"
+                    app:layout_constraintEnd_toStartOf="@id/balance_symbol"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintWidth_default="wrap"
-                    app:layout_constraintEnd_toStartOf="@id/balance_symbol"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="12,455.00"
-                    tools:targetApi="p" />
+                    app:layout_constraintWidth_default="wrap"
+                    tools:targetApi="p"
+                    tools:text="12,455.00" />
 
                 <com.concordium.wallet.uicore.view.BalanceGradientTextView
                     android:id="@+id/balance_symbol"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="8dp"
-                    android:textSize="36sp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.5"
                     android:lineHeight="36sp"
                     android:textAppearance="@style/MW24_Typography_IBM_Balance"
-                    android:alpha="0.5"
+                    android:textSize="36sp"
+                    app:layout_constraintBottom_toBottomOf="@id/amount"
                     app:layout_constraintEnd_toStartOf="@id/send_all_button"
-                    app:layout_constraintVertical_bias="0"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toEndOf="@id/amount"
                     app:layout_constraintTop_toTopOf="@id/amount"
-                    app:layout_constraintBottom_toBottomOf="@id/amount"
+                    app:layout_constraintVertical_bias="0"
                     app:layout_constraintWidth_default="wrap"
-                    tools:text="CCD"
-                    tools:targetApi="p" />
+                    tools:targetApi="p"
+                    tools:text="CCD" />
 
                 <TextView
                     android:id="@+id/send_all_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:enabled="false"
                     android:gravity="center_vertical|end"
+                    android:padding="4dp"
                     android:text="@string/cis_max"
                     android:textAppearance="@style/MW24_Typography_Label_Main"
                     android:textColor="@color/cryptox_grey_additional"
@@ -95,14 +96,12 @@
                     android:layout_marginTop="8dp"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/mw24_blue_3_50"
-                    android:visibility="gone"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintWidth_default="wrap"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/fee"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/amount"
-                    tools:text="@string/cis_estimated_eur_rate"
-                    tools:visibility="visible" />
+                    app:layout_constraintWidth_default="wrap"
+                    tools:text="@string/cis_estimated_eur_rate" />
 
                 <TextView
                     android:id="@+id/fee"
@@ -111,11 +110,9 @@
                     android:layout_marginTop="8dp"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/mw24_blue_3_50"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/amount"
-                    tools:text="@string/cis_estimated_fee"
-                    tools:visibility="visible" />
+                    tools:text="@string/cis_estimated_fee" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView

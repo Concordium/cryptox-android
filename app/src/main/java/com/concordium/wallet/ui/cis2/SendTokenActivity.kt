@@ -296,8 +296,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     )
                 else
                     ""
-            binding.fee.isVisible = fee != null
-            binding.sendAllButton.isEnabled = true
+            binding.sendAllButton.isEnabled =
+                viewModel.sendTokenData.token !is CCDToken || fee != null
             binding.amountError.isVisible = !viewModel.hasEnoughFunds()
 
             enableSend()
@@ -312,11 +312,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setEstimatedAmountInEur() {
         val rate = viewModel.tokenEurRate.value
 
         if (rate != null) {
-            binding.eurRate.isVisible = true
             binding.eurRate.text =
                 getString(
                     R.string.cis_estimated_eur_rate,
@@ -326,7 +326,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     )
                 )
         } else {
-            binding.eurRate.isVisible = false
+            binding.eurRate.text = ""
         }
     }
 

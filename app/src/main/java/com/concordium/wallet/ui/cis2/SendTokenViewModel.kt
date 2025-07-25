@@ -117,6 +117,10 @@ class SendTokenViewModel(
 
             loadEurRate(token)
         }
+
+        if (sendTokenData.fee == null) {
+            loadFee()
+        }
     }
 
     fun dispose() {
