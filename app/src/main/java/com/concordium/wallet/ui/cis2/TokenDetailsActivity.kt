@@ -32,7 +32,6 @@ import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.util.getSerializable
-import java.io.Serializable
 import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
@@ -457,14 +456,17 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
 
     private fun onSendClicked() {
         val intent = Intent(this, SendTokenActivity::class.java)
-        intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenDetailsData.account)
+        intent.putExtra(
+            SendTokenActivity.ACCOUNT,
+            viewModel.tokenDetailsData.account,
+        )
         intent.putExtra(
             SendTokenActivity.TOKEN,
-            viewModel.tokenDetailsData.selectedToken as Serializable
+            viewModel.tokenDetailsData.selectedToken,
         )
         intent.putExtra(
             SendTokenActivity.PARENT_ACTIVITY,
-            MainActivity::class.java.canonicalName
+            MainActivity::class.java.canonicalName,
         )
         startActivityForResultAndHistoryCheck(intent)
     }

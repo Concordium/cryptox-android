@@ -1315,7 +1315,7 @@
     <string name="unlock_feature_title">Unlock this feature</string>
     <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
     <string name="unlock_feature_go_back_button">Go back</string>
-    
+
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>
     <string name="onboarding_status_card_description_second">Final step: Verify your identity</string>
@@ -1451,7 +1451,7 @@
     <string name="delegation_status_resume_button">Resume</string>
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
-    
+
     <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
 </resources>
