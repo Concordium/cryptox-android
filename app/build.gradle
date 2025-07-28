@@ -341,9 +341,6 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.1'
     implementation 'javax.xml.stream:stax-api:1.0-2'
 
-    // Analytics (version lock for Kotlin version compatibility)
-    implementation 'com.google.firebase:firebase-analytics:21.6.2!!'
-
     // Push notifications (version lock for Kotlin version compatibility)
     implementation 'com.google.firebase:firebase-messaging:24.0.0!!'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
