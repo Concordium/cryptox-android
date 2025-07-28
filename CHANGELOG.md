@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+
+- Google Analytics. Although the user interface remained the same,
+  the data is no longer sent to this service
+
 ## [1.11.0] - 2025-07-08
 
 ### Added

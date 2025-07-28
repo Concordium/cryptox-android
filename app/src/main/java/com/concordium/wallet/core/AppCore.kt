@@ -3,7 +3,6 @@ package com.concordium.wallet.core
 import android.os.Handler
 import com.concordium.sdk.ClientV2
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
@@ -11,7 +10,6 @@ import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.core.migration.TwoWalletsMigration
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
-import com.concordium.wallet.core.tracking.FirebaseAppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
 import com.concordium.wallet.data.AppWalletRepository
 import com.concordium.wallet.data.backend.GrpcBackendConfig
@@ -31,7 +29,6 @@ import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
 import com.concordium.wallet.data.room.app.AppDatabase
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.ensureActive
@@ -54,16 +51,9 @@ class AppCore(val app: App) {
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
     val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
-    private val firebaseAppTracker: AppTracker = FirebaseAppTracker(
-        analytics = FirebaseAnalytics.getInstance(app),
-    )
-    @Suppress("KotlinConstantConditions")
+
     val tracker: AppTracker
-        get() =
-            if (appTrackingPreferences.isTrackingEnabled && BuildConfig.ENV_NAME == "production")
-                firebaseAppTracker
-            else
-                noOpAppTracker
+        get() = noOpAppTracker
 
     // Migrations are invoked once vital core components are initialized:
     // Gson, crypto lib, etc.
@@ -79,10 +69,6 @@ class AppCore(val app: App) {
                 }
             }
         }
-
-        FirebaseAnalytics
-            .getInstance(app)
-            .setAnalyticsCollectionEnabled(appTrackingPreferences.isTrackingEnabled)
     }
 
     val database = AppDatabase.getDatabase(app)
