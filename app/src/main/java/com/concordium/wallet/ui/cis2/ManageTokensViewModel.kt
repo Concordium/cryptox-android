@@ -62,10 +62,9 @@ class ManageTokensViewModel(
     private val everFoundExactTokens: MutableList<Token> = mutableListOf()
     private val newEverFoundExactTokens: MutableList<NewToken> = mutableListOf()
 
-    private val changedTokensList: MutableList<Token> = mutableListOf()
+//    private val changedTokensList: MutableList<Token> = mutableListOf()
     private val newChangedTokensList: MutableList<NewToken> = mutableListOf()
-
-    var exactToken: Token? = null
+    
     var newExactToken: NewToken? = null
 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -91,7 +90,6 @@ class ManageTokensViewModel(
         accountAddress: String,
         from: String? = null,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        changedTokensList.clear()
         newChangedTokensList.clear()
         selectedTokensChanged.postValue(newChangedTokensList.isNotEmpty())
 
@@ -309,12 +307,14 @@ class ManageTokensViewModel(
                     newExactToken = apparentToken
                     lookForExactToken.postValue(TOKENS_OK)
                 } else {
-                    exactToken = null
+//                    exactToken = null
+                    newExactToken = null
                     lookForExactToken.postValue(TOKENS_EMPTY)
                 }
             } catch (e: Throwable) {
                 handleBackendError(e)
-                exactToken = null
+//                exactToken = null
+                newExactToken = null
                 lookForExactToken.postValue(TOKENS_EMPTY)
             }
         }
@@ -322,7 +322,8 @@ class ManageTokensViewModel(
 
     fun dismissExactTokenLookup() {
         lookForExactTokenJob?.cancel()
-        exactToken = null
+//        exactToken = null
+        newExactToken = null
         lookForExactToken.value = TOKENS_NOT_LOADED
     }
 
@@ -406,4 +407,6 @@ class ManageTokensViewModel(
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
     }
+
+    fun lastTokenId() = newTokens.filterIsInstance<NewContractToken>().last().uid
 }
