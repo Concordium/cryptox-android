@@ -76,7 +76,7 @@ class ManageTokensViewModel(
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+//    val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val selectedTokensChanged: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     private val proxyRepository = ProxyRepository()
@@ -397,7 +397,7 @@ class ManageTokensViewModel(
                         token = loadedNotSelectedToken,
                     )
                 }
-                updateWithSelectedTokensDone.postValue(changedTokensList.isNotEmpty())
+                updateWithSelectedTokensDone.postValue(newChangedTokensList.isNotEmpty())
             }
         }
     }

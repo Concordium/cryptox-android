@@ -57,7 +57,7 @@ class ManageTokenListActivity : BaseActivity(
 
         listUpdated = intent?.getBooleanExtra(LIST_UPDATED, false) == true
         if (listUpdated) {
-            showToast(showDescription = false)
+            showToast()
         }
     }
 
@@ -102,7 +102,7 @@ class ManageTokenListActivity : BaseActivity(
 
         listUpdated = intent.getBooleanExtra(LIST_UPDATED, false)
         if (listUpdated) {
-            showToast(showDescription = false)
+            showToast()
         }
     }
 
@@ -116,7 +116,7 @@ class ManageTokenListActivity : BaseActivity(
     private fun onHideToken() {
         manageTokenListViewModel.deleteSelectedToken(account.address)
         manageTokenListViewModel.loadTokens(account.address)
-        showToast(showDescription = true)
+        showToast()
     }
 
     private fun goToAddTokens() {
@@ -125,21 +125,10 @@ class ManageTokenListActivity : BaseActivity(
         startActivity(intent)
     }
 
-    private fun showToast(showDescription: Boolean) {
-        if (showDescription) {
-            showGradientToast(
-                R.drawable.mw24_ic_eye_close,
-                getString(R.string.cis_tokens_updated),
-                getString(
-                    R.string.cis_tokens_updated_details,
-                    manageTokenListViewModel.selectedTokenSymbol()
-                )
-            )
-        } else {
-            showGradientToast(
-                R.drawable.mw24_ic_address_copy_check,
-                getString(R.string.cis_tokens_updated)
-            )
-        }
+    private fun showToast() {
+        showGradientToast(
+            R.drawable.mw24_ic_address_copy_check,
+            getString(R.string.cis_tokens_updated)
+        )
     }
 }
