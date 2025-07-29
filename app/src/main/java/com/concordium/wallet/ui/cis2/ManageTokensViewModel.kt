@@ -175,7 +175,11 @@ class ManageTokensViewModel(
             }
 
         existingPLTToken?.let {
-            newTokens.add(it)
+            if (it.isHidden) {
+                newTokens.add(it.copy(isSelected = false))
+            } else {
+                newTokens.add(it)
+            }
             contractAddressLoading.postValue(false)
             lookForTokens.postValue(TOKENS_OK)
         } ?: run {
@@ -419,7 +423,14 @@ class ManageTokensViewModel(
             .filterIsInstance<PLTToken>()
             .forEach { selectedToken ->
                 val existingPLToken = pltRepository.find(accountAddress, selectedToken.tokenId)
-                if (existingPLToken == null) {
+                existingPLToken?.let {
+                    if (it.isHidden) {
+                        pltRepository.unhideToken(
+                            accountAddress = accountAddress,
+                            tokenId = selectedToken.tokenId
+                        )
+                    }
+                } ?: run {
                     pltRepository.insert(
                         ProtocolLevelToken(
                             tokenId = selectedToken.tokenId,
