@@ -43,6 +43,7 @@ class ManageTokensMainFragment : Fragment(
             setClearListener {
                 binding.searchLayout.setText("")
                 viewModel.tokens.clear()
+                viewModel.newTokens.clear()
                 viewModel.lookForTokens.postValue(TOKENS_NOT_LOADED)
             }
         }

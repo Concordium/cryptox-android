@@ -26,7 +26,7 @@ data class PLTToken(
 }
 
 fun ProtocolLevelToken.toPLTToken(
-    isSelected: Boolean = false,
+    isSelected: Boolean = true,
 ) = PLTToken(
     balance = balance,
     accountAddress = accountAddress ?: "",

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -61,8 +62,10 @@ class ManageTokensSelectionAdapter(
             holder.binding.tokenIcon.setImageDrawable(ThemedCircularProgressDrawable(context))
         }
 
-        holder.binding.title.text =
-            tokenMetadata?.name ?: context.getString(R.string.cis_loading_metadata_progress)
+        holder.binding.title.text = tokenMetadata?.name ?: if (token is PLTToken)
+            token.tokenId
+        else
+            context.getString(R.string.cis_loading_metadata_progress)
 
         if (token.metadata?.unique == true) {
             holder.binding.subtitle.text =

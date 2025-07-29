@@ -17,12 +17,21 @@ interface ProtocolLevelTokenDao {
     @Update
     suspend fun update(vararg protocolLevelToken: ProtocolLevelToken)
 
-    @Query("SELECT * FROM protocol_level_token_table WHERE tokenId = :tokenId AND account_address = :accountAddress")
+    @Query("""
+        SELECT * FROM protocol_level_token_table 
+        WHERE LOWER(tokenId) = LOWER(:tokenId) 
+        AND account_address = :accountAddress
+        """)
     suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelToken?
 
     @Query("UPDATE protocol_level_token_table SET is_newly_received = 0 WHERE tokenId = :tokenId")
     suspend fun unmarkNewlyReceived(tokenId: String)
 
-    @Query("UPDATE protocol_level_token_table SET is_hidden = 1 WHERE account_address = :accountAddress AND tokenId = :tokenId")
+    @Query("""    
+        UPDATE protocol_level_token_table 
+        SET is_hidden = 1 
+        WHERE account_address = :accountAddress 
+        AND LOWER(tokenId) = LOWER(:tokenId)
+    """)
     suspend fun hideToken(accountAddress: String, tokenId: String)
 }

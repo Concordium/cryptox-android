@@ -12,3 +12,4 @@ data class PLTModuleState(
     val name: String,
     val paused: Boolean
 ) : Serializable
+
