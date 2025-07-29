@@ -439,8 +439,12 @@ class ManageTokensViewModel(
                             addedAt = System.currentTimeMillis(),
                             tokenMetadata = selectedToken.metadata,
                             isHidden = selectedToken.isHidden,
-                            isInAllowList = selectedToken.isInAllowList,
-                            isInDenyList = selectedToken.isInDenyList
+                            isInDenyList = selectedToken.isInDenyList,
+                            isInAllowList =
+                            if (selectedToken.tokenState?.moduleState?.allowList == true)
+                                false
+                            else
+                                null
                         )
                     )
                 }

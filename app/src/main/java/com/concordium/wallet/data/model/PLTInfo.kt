@@ -24,6 +24,10 @@ fun PLTInfo.toPLTToken(
             display = null,
             totalSupply = tokenState?.totalSupply?.value
         ),
-        isSelected = isSelected
+        isSelected = isSelected,
+        isInAllowList = if (tokenState?.moduleState?.allowList == true)
+            false
+        else
+            null
     )
 }

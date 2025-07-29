@@ -7,7 +7,9 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.TokenMetadata
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
@@ -37,11 +39,13 @@ class AddTokenDetailsActivity : BaseActivity(
         binding.detailsLayout.hideToken.visibility = View.GONE
         setContractIndexAndSubIndex(token)
         setTokenId(token)
+        setPLTListStatus(token)
         token.metadata?.let { tokenMetadata ->
-            setNameAndIcon(tokenMetadata, token.metadata?.unique == true)
+            setNameAndIcon(token)
             setDescription(tokenMetadata)
             setTicker(tokenMetadata)
             setDecimals(token)
+            setTotalSupply(token)
             setRawMetadataButton(tokenMetadata)
         }
     }
@@ -62,17 +66,17 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata, isUnique: Boolean) {
-        val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
+    private fun setNameAndIcon(token: NewToken) {
+        val name = token.metadata?.name ?: token.symbol
+        val thumbnail = token.metadata?.thumbnail?.url
         binding.detailsLayout.nameAndIconHolder.visibility = View.VISIBLE
 
         if (!thumbnail.isNullOrBlank()) {
             loadImage(binding.detailsLayout.icon, thumbnail)
 
-            if (isUnique) {
+            if (token.metadata?.unique == true) {
                 binding.detailsLayout.nftIcon.visibility = View.VISIBLE
-                tokenMetadata.display?.url?.let { loadImage(binding.detailsLayout.nftIcon, it) }
+                token.metadata?.display?.url?.let { loadImage(binding.detailsLayout.nftIcon, it) }
             }
         } else {
             binding.detailsLayout.icon.setImageResource(R.drawable.mw24_ic_token_placeholder)
@@ -117,6 +121,29 @@ class AddTokenDetailsActivity : BaseActivity(
         if (token.metadata?.unique?.not() == true) {
             binding.detailsLayout.decimalsHolder.visibility = View.VISIBLE
             binding.detailsLayout.decimals.text = token.decimals.toString()
+        }
+    }
+
+    private fun setPLTListStatus(token: NewToken) {
+        if (token is PLTToken) {
+            binding.detailsLayout.pltListStatusHolder.visibility = View.VISIBLE
+            binding.detailsLayout.pltListStatus.setToken(token)
+        } else {
+            binding.detailsLayout.pltListStatusHolder.visibility = View.GONE
+        }
+    }
+
+    private fun setTotalSupply(token: NewToken) {
+        if (token is PLTToken) {
+            token.metadata?.totalSupply?.let {
+                binding.detailsLayout.totalSupplyHolder.visibility = View.VISIBLE
+                binding.detailsLayout.supply.text = CurrencyUtil.formatGTU(
+                    it,
+                    token.metadata?.decimals ?: 0
+                )
+            } ?: run {
+                binding.detailsLayout.totalSupplyHolder.visibility = View.GONE
+            }
         }
     }
 
