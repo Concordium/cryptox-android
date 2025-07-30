@@ -32,10 +32,14 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
             updateUIState(waiting = true)
             tokensInteractor.loadTokens(
                 accountAddress = accountAddress,
-                loadBalances = false
+                loadBalances = false,
+                addCCDToken = false
             )
-                .onSuccess {
-                    updateUIState(tokens = it, waiting = false)
+                .onSuccess { tokens ->
+                    updateUIState(
+                        tokens = tokens.sortedByDescending { it.addedAt },
+                        waiting = false
+                    )
                 }
                 .onFailure {
                     updateUIState(waiting = false, error = it.message ?: "Unknown error")

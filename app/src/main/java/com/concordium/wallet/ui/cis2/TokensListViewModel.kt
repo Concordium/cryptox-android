@@ -39,7 +39,7 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
             )
                 .onSuccess { tokens ->
                     _uiState.value = uiState.value.copy(
-                        tokens = tokens,
+                        tokens = tokens.sortedBy { it.addedAt },
                         isLoading = false
                     )
                 }

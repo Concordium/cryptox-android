@@ -26,6 +26,7 @@ class TokensInteractor(
         accountAddress: String,
         loadBalances: Boolean = true,
         onlyTransferable: Boolean = false,
+        addCCDToken: Boolean = true,
     ): Result<List<NewToken>> {
         return try {
             val ccdToken = getCCDDefaultToken(accountAddress)
@@ -41,7 +42,11 @@ class TokensInteractor(
                     .map { it.toPLTToken() }
                     .filter { !onlyTransferable || it.isTransferable }
 
-            val allTokens = (listOf(ccdToken) + contractTokens + pltTokens).sortedBy { it.addedAt }
+            val allTokens = buildList {
+                if (addCCDToken) add(ccdToken)
+                addAll(contractTokens)
+                addAll(pltTokens)
+            }
 
             if (loadBalances) {
                 loadTokensBalances(
