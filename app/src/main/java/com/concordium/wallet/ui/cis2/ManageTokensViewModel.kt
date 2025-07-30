@@ -54,20 +54,14 @@ class ManageTokensViewModel(
     }
 
     private var allowToLoadMore = true
-
     var tokenData = TokenData()
-    var tokens: MutableList<Token> = mutableListOf()
-
-    var newTokens: MutableList<NewToken> = mutableListOf()
+    var tokens: MutableList<NewToken> = mutableListOf()
 
     // Save found exact tokens to keep their selection once the search is dismissed.
     // For example, the user can look for multiple exact tokens and toggle them one by one.
-    private val everFoundExactTokens: MutableList<Token> = mutableListOf()
-    private val newEverFoundExactTokens: MutableList<NewToken> = mutableListOf()
-
+    private val everFoundExactTokens: MutableList<NewToken> = mutableListOf()
     private val changedTokensList: MutableList<NewToken> = mutableListOf()
-
-    var newExactToken: NewToken? = null
+    var exactToken: NewToken? = null
 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val contractAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
@@ -90,6 +84,8 @@ class ManageTokensViewModel(
     )
     private val tokensInteractor by inject<TokensInteractor>()
 
+    private var lookForExactTokenJob: Job? = null
+
     fun lookForTokens(
         accountAddress: String,
         from: String? = null,
@@ -104,9 +100,6 @@ class ManageTokensViewModel(
 
         if (from == null) {
             tokens.clear()
-            newTokens.clear()
-
-            everFoundExactTokens.clear()
             lookForTokens.postValue(TOKENS_NOT_LOADED)
             contractAddressLoading.postValue(true)
         }
@@ -130,7 +123,7 @@ class ManageTokensViewModel(
                 .map { it.toNewContractToken() }
         val selectedTokenIds =
             existingContractTokens.mapTo(mutableSetOf(), NewContractToken::token) +
-                    newEverFoundExactTokens.asSequence()
+                    everFoundExactTokens.asSequence()
                         .filterIsInstance<NewContractToken>()
                         .filter(NewContractToken::isSelected)
                         .mapTo(mutableSetOf(), NewContractToken::token)
@@ -145,11 +138,11 @@ class ManageTokensViewModel(
                 it.isSelected = it.token in selectedTokenIds
             }
 
-            newTokens.addAll(pageTokens)
+            tokens.addAll(pageTokens)
             contractAddressLoading.postValue(false)
             allowToLoadMore = pageTokens.size >= pageLimit
 
-            if (newTokens.isEmpty() && !allowToLoadMore) {
+            if (tokens.isEmpty() && !allowToLoadMore) {
                 lookForTokens.postValue(TOKENS_EMPTY)
             } else {
                 lookForTokens.postValue(TOKENS_OK)
@@ -167,7 +160,7 @@ class ManageTokensViewModel(
             tokenId = tokenData.contractIndex
         )?.toPLTToken()
 
-        val existingPLTTokenIds = newEverFoundExactTokens
+        val existingPLTTokenIds = everFoundExactTokens
             .filterIsInstance<PLTToken>()
             .mapTo(mutableSetOf()) { it.tokenId.lowercase() }
             .apply {
@@ -176,23 +169,23 @@ class ManageTokensViewModel(
 
         existingPLTToken?.let {
             if (it.isHidden) {
-                newTokens.add(it.copy(isSelected = false))
+                tokens.add(it.copy(isSelected = false))
             } else {
-                newTokens.add(it)
+                tokens.add(it)
             }
             contractAddressLoading.postValue(false)
             lookForTokens.postValue(TOKENS_OK)
         } ?: run {
             tokensInteractor.getPLTTokenById(tokenData.contractIndex)
                 .onSuccess {
-                    newTokens.add(
+                    tokens.add(
                         it.toPLTToken(
                             accountAddress = accountAddress,
                             isSelected = it.tokenId.lowercase() in existingPLTTokenIds
                         )
                     )
                     contractAddressLoading.postValue(false)
-                    if (newTokens.isEmpty()) {
+                    if (tokens.isEmpty()) {
                         lookForTokens.postValue(TOKENS_EMPTY)
                     } else {
                         lookForTokens.postValue(TOKENS_OK)
@@ -319,7 +312,6 @@ class ManageTokensViewModel(
         }
     }
 
-    private var lookForExactTokenJob: Job? = null
     fun lookForExactToken(
         accountAddress: String,
         apparentTokenId: String,
@@ -328,11 +320,13 @@ class ManageTokensViewModel(
         lookForExactTokenJob = viewModelScope.launch(Dispatchers.IO) {
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
+                    .map { it.toNewContractToken() }
             val selectedTokenIds =
-                existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
+                existingContractTokens.mapTo(mutableSetOf(), NewContractToken::token) +
                         (tokens.asSequence() + everFoundExactTokens.asSequence())
-                            .filter(Token::isSelected)
-                            .mapTo(mutableSetOf(), Token::token)
+                            .filterIsInstance<NewContractToken>()
+                            .filter(NewContractToken::isSelected)
+                            .mapTo(mutableSetOf(), NewContractToken::token)
 
             val apparentToken = NewContractToken(
                 token = apparentTokenId,
@@ -355,20 +349,16 @@ class ManageTokensViewModel(
                 )
 
                 if (apparentToken.metadata != null) {
-//                    everFoundExactTokens.add(apparentToken)
-                    newEverFoundExactTokens.add(apparentToken)
-//                    exactToken = apparentToken
-                    newExactToken = apparentToken
+                    everFoundExactTokens.add(apparentToken)
+                    exactToken = apparentToken
                     lookForExactToken.postValue(TOKENS_OK)
                 } else {
-//                    exactToken = null
-                    newExactToken = null
+                    exactToken = null
                     lookForExactToken.postValue(TOKENS_EMPTY)
                 }
             } catch (e: Throwable) {
                 handleBackendError(e)
-//                exactToken = null
-                newExactToken = null
+                exactToken = null
                 lookForExactToken.postValue(TOKENS_EMPTY)
             }
         }
@@ -376,15 +366,19 @@ class ManageTokensViewModel(
 
     fun dismissExactTokenLookup() {
         lookForExactTokenJob?.cancel()
-//        exactToken = null
-        newExactToken = null
+        exactToken = null
         lookForExactToken.value = TOKENS_NOT_LOADED
     }
 
     fun toggleNewToken(token: NewToken) {
         val isSelectedNow = !token.isSelected
-        (newTokens.asSequence() + newEverFoundExactTokens.asSequence())
-            .filter { it.symbol == token.symbol }
+        (tokens.asSequence() + everFoundExactTokens.asSequence())
+            .filter {
+                if (token is NewContractToken)
+                    (it as NewContractToken).token == token.token
+                else
+                    it.symbol == token.symbol
+            }
             .forEach {
                 it.isSelected = isSelectedNow
 
@@ -398,7 +392,7 @@ class ManageTokensViewModel(
     }
 
     fun updateWithSelectedTokens() {
-        updateTokens(newTokens + newEverFoundExactTokens)
+        updateTokens(tokens + everFoundExactTokens)
     }
 
     private fun updateTokens(loadedTokens: List<NewToken>) {
@@ -512,5 +506,6 @@ class ManageTokensViewModel(
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
     }
 
-    fun lastTokenId() = newTokens.filterIsInstance<NewContractToken>().last().uid
+    // Returns the last token ID in the list of tokens for endless loading
+    fun lastTokenId() = tokens.filterIsInstance<NewContractToken>().last().uid
 }
