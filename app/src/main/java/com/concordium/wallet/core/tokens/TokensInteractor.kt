@@ -20,6 +20,8 @@ class TokensInteractor(
     private val accountRepository: AccountRepository,
     private val tokenPriceRepository: TokenPriceRepository,
     private val loadTokensBalancesUseCase: LoadTokensBalancesUseCase,
+    private val loadCIS2TokensUseCase: LoadCIS2TokensUseCase,
+    private val loadCIS2TokensMetadataUseCase: LoadCIS2TokensMetadataUseCase
 ) {
 
     suspend fun loadTokens(
@@ -69,6 +71,35 @@ class TokensInteractor(
             proxyRepository = proxyRepository,
             tokens = tokens,
             accountAddress = accountAddress,
+        )
+    }
+
+    suspend fun loadCIS2TokensWithBalance(
+        accountAddress: String,
+        contractIndex: String,
+        subIndex: String,
+        limit: Int,
+        from: String? = null,
+    ) = runCatching {
+        val tokens = loadCIS2TokensUseCase(
+            proxyRepository = proxyRepository,
+            contractIndex = contractIndex,
+            subIndex = subIndex,
+            limit = limit,
+            from = from,
+        )
+        loadTokensBalances(
+            accountAddress = accountAddress,
+            tokens = tokens
+
+        )
+        tokens
+    }
+
+    suspend fun loadCIS2TokensMetadata(tokens: List<NewContractToken>) {
+        loadCIS2TokensMetadataUseCase(
+            proxyRepository = proxyRepository,
+            tokensToUpdate = tokens
         )
     }
 

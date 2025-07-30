@@ -27,7 +27,9 @@ val tokensInteractorModule = module {
                 App.appCore.session.walletStorage.database.accountDao()
             ),
             tokenPriceRepository = get(),
-            loadTokensBalancesUseCase = LoadTokensBalancesUseCase()
+            loadTokensBalancesUseCase = LoadTokensBalancesUseCase(),
+            loadCIS2TokensUseCase = LoadCIS2TokensUseCase(),
+            loadCIS2TokensMetadataUseCase = LoadCIS2TokensMetadataUseCase(),
         )
     }
 }
