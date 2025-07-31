@@ -91,7 +91,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private fun initializeSearchToken() {
         binding.content.setOnClickListener {
             val intent = Intent(this, SelectTokenActivity::class.java).apply {
-                putExtra(SelectTokenActivity.EXTRA_ACCOUNT, viewModel.sendTokenData.account)
+                putExtra(
+                    SelectTokenActivity.EXTRA_ACCOUNT_ADDRESS,
+                    viewModel.sendTokenData.account.address
+                )
             }
             getResultToken.launch(intent)
         }

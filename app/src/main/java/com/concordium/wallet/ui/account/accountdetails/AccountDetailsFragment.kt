@@ -43,7 +43,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.cis2.TokenDetailsActivity
-import com.concordium.wallet.ui.cis2.TokensListViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
@@ -62,7 +61,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var binding: ActivityAccountDetailsBinding
     private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModelAccountDetails: AccountDetailsViewModel
-    private lateinit var viewModelTokensList: TokensListViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
@@ -135,11 +133,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
 
-        viewModelTokensList = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[TokensListViewModel::class.java]
-
         onboardingViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
@@ -201,7 +194,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
-            viewModelTokensList.loadTokens(viewModelAccountDetails.account)
             updateBannersVisibility(viewModelAccountDetails.account)
         }
 
@@ -215,14 +207,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 gotoAccountsList()
             }
             isZeroBalance = account.balance == BigInteger.ZERO
-        }
-
-        viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it.first) {
-                it.second?.let { account ->
-                    viewModelTokensList.loadTokens(account)
-                }
-            }
         }
 
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {

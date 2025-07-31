@@ -92,8 +92,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val totalBalanceLiveData: LiveData<BigInteger>
         get() = _totalBalanceLiveData
 
-    private var _accountUpdatedFlow = MutableStateFlow<Pair<Boolean, Account?>>(Pair(false, null))
-    val accountUpdatedFlow = _accountUpdatedFlow.asStateFlow()
+    private var _accountUpdatedFlow = MutableSharedFlow<Account>()
+    val accountUpdatedFlow = _accountUpdatedFlow.asSharedFlow()
 
     private val _showDialogLiveData = MutableLiveData<Event<DialogToShow>>()
     val showDialogLiveData: LiveData<Event<DialogToShow>>
@@ -212,7 +212,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     if (::account.isInitialized) {
                         _totalBalanceLiveData.value = account.balance
                     }
-                    _accountUpdatedFlow.emit(Pair(true, activeAccount.first()))
+                    _accountUpdatedFlow.emit(activeAccount.first())
                     if (totalBalances.totalBalanceForAllAccounts > BigInteger.ZERO &&
                         App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
                     ) {

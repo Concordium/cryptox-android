@@ -599,7 +599,6 @@
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>
-    <string name="cis_no_collectibles_added">No tokens have been added to this account yet</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
     <string name="cis_hide_token">Hide token from account</string>
     <string name="cis_hide_token_item">Hide token</string>
