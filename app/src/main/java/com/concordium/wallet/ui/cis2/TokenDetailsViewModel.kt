@@ -35,7 +35,8 @@ class TokenDetailsViewModel(application: Application): AndroidViewModel(applicat
         return if (tokenDetailsData.selectedToken is PLTToken) {
             (tokenDetailsData.selectedToken as PLTToken).tokenId
         } else {
-            tokenDetailsData.selectedToken?.metadata?.symbol ?: ""
+            tokenDetailsData.selectedToken?.metadata?.symbol ?:
+            tokenDetailsData.selectedToken?.metadata?.name ?: ""
         }
     }
 }
