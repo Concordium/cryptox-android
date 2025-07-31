@@ -54,10 +54,11 @@ class SelectTokenActivity : BaseActivity(
     }
 
     private fun initViewModels() {
-        tokensListViewModel.loadTokens(
-            account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
-            onlyTransferable = true,
-        )
+
+//        tokensListViewModel.loadTokens(
+//            account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
+//            onlyTransferable = true,
+//        )
     }
 
     private fun initObservers() {

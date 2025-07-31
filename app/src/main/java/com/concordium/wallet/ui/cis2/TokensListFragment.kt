@@ -15,17 +15,20 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
-import kotlinx.coroutines.FlowPreview
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.io.Serializable
 
 class TokensListFragment : Fragment() {
     private var _binding: FragmentTokensListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AccountDetailsViewModel by lazy {
+    private val accountDetailsViewModel: AccountDetailsViewModel by lazy {
         ViewModelProvider(requireActivity())[AccountDetailsViewModel::class.java]
     }
-    private val tokensListViewModel: TokensListViewModel by lazy {
-        ViewModelProvider(requireActivity())[TokensListViewModel::class.java]
+    private val viewModel: TokensListViewModel by viewModel {
+        parametersOf(
+            accountDetailsViewModel,
+        )
     }
 
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
@@ -70,15 +73,8 @@ class TokensListFragment : Fragment() {
         }
     }
 
-    @OptIn(FlowPreview::class)
     private fun initObservers() {
-        viewModel
-            .accountUpdatedFlow
-            .collectWhenStarted(viewLifecycleOwner) { updatedAccount ->
-                tokensListViewModel.loadTokens(updatedAccount)
-            }
-
-        tokensListViewModel.uiState.collectWhenStarted(viewLifecycleOwner) { uiState ->
+        viewModel.uiState.collectWhenStarted(viewLifecycleOwner) { uiState ->
             showLoading(uiState.isLoading)
             tokensAccountDetailsAdapter.setData(uiState.tokens)
             uiState.error?.let {
@@ -95,21 +91,21 @@ class TokensListFragment : Fragment() {
 
     private fun gotoManageTokensList() {
         val intent = Intent(requireActivity(), ManageTokenListActivity::class.java)
-        intent.putExtra(ManageTokenListActivity.ACCOUNT, viewModel.account)
+        intent.putExtra(ManageTokenListActivity.ACCOUNT, accountDetailsViewModel.account)
         startActivity(intent)
     }
 
     private fun goToTokenDetails(token: NewToken) {
         val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
-            putExtra(TokenDetailsActivity.ACCOUNT, viewModel.account)
+            putExtra(TokenDetailsActivity.ACCOUNT, accountDetailsViewModel.account)
             putExtra(TokenDetailsActivity.TOKEN, token as Serializable)
             putExtra(
                 TokenDetailsActivity.PENDING_DELEGATION,
-                viewModel.hasPendingDelegationTransactions
+                accountDetailsViewModel.hasPendingDelegationTransactions
             )
             putExtra(
                 TokenDetailsActivity.PENDING_VALIDATION,
-                viewModel.hasPendingBakingTransactions
+                accountDetailsViewModel.hasPendingBakingTransactions
             )
         }
         startActivity(intent)

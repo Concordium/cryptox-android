@@ -1,34 +1,56 @@
 package com.concordium.wallet.ui.cis2
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.extension.collect
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class TokensListViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
-    private val tokensInteractor by inject<TokensInteractor>()
+class TokensListViewModel(
+    accountDetailsViewModel: AccountDetailsViewModel,
+    private val tokensInteractor: TokensInteractor,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TokensListData())
     val uiState = _uiState.asStateFlow()
 
     private var loadTokensJob: Job? = null
 
-    fun loadTokens(
+    init {
+        accountDetailsViewModel
+            .activeAccount
+            .map { it.id }
+            .distinctUntilChanged()
+            .collect(viewModelScope) {
+                reset()
+            }
+
+        accountDetailsViewModel
+            .accountUpdatedFlow
+            .collect(viewModelScope) { updatedAccount ->
+                loadTokens(updatedAccount)
+            }
+    }
+
+    private fun reset() {
+        _uiState.tryEmit(TokensListData())
+    }
+
+    private fun loadTokens(
         account: Account,
         onlyTransferable: Boolean = false,
     ) {
-        println("OOLEG load tokens ${account.address}")
         loadTokensJob?.cancel()
         loadTokensJob = null
 
