@@ -73,15 +73,10 @@ class TokensListFragment : Fragment() {
             tokensAccountDetailsAdapter.setManageButtonClickListener {
                 gotoManageTokensList(account)
             }
-            binding.noItemsManageTokens.setOnClickListener {
-                gotoManageTokensList(account)
-            }
         }
         tokensListViewModel.uiState.collectWhenStarted(this) { uiState ->
             showLoading(uiState.isLoading)
             tokensAccountDetailsAdapter.setData(uiState.tokens)
-            binding.tokensList.isVisible = uiState.tokens.isNotEmpty()
-            binding.noItemsLayout.isVisible = uiState.isLoading.not() && uiState.tokens.isEmpty()
             uiState.error?.let {
                 it.contentOrNullIfUsed?.let { res ->
                     (requireActivity() as BaseActivity).showError(res)
