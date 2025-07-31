@@ -201,7 +201,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
-            viewModelTokensList.loadTokens(viewModelAccountDetails.account)
             updateBannersVisibility(viewModelAccountDetails.account)
         }
 
@@ -215,14 +214,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 gotoAccountsList()
             }
             isZeroBalance = account.balance == BigInteger.ZERO
-        }
-
-        viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it.first) {
-                it.second?.let { account ->
-                    viewModelTokensList.loadTokens(account)
-                }
-            }
         }
 
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {

@@ -28,11 +28,14 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
         account: Account,
         onlyTransferable: Boolean = false,
     ) {
+        println("OOLEG load tokens ${account.address}")
         loadTokensJob?.cancel()
         loadTokensJob = null
 
         loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value = uiState.value.copy(account = account, isLoading = true)
+            _uiState.value = uiState.value.copy(
+                isLoading = true,
+            )
             tokensInteractor.loadTokens(
                 accountAddress = account.address,
                 onlyTransferable = onlyTransferable,
@@ -53,10 +56,9 @@ class TokensListViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     data class TokensListData(
-        val account: Account? = null,
         val tokens: List<NewToken> = emptyList(),
         val selectedToken: NewToken? = null,
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
         val error: Event<Int>? = null,
     )
 }

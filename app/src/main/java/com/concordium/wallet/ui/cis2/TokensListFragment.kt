@@ -10,12 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.data.model.NewToken
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentTokensListBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
+import kotlinx.coroutines.FlowPreview
 import java.io.Serializable
 
 class TokensListFragment : Fragment() {
@@ -33,7 +33,7 @@ class TokensListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentTokensListBinding.inflate(inflater, container, false)
         return binding.root
@@ -65,16 +65,20 @@ class TokensListFragment : Fragment() {
                 goToTokenDetails(token)
             }
         })
+        tokensAccountDetailsAdapter.setManageButtonClickListener {
+            gotoManageTokensList()
+        }
     }
 
+    @OptIn(FlowPreview::class)
     private fun initObservers() {
-        viewModel.activeAccount.collectWhenStarted(this) { account ->
-            tokensListViewModel.loadTokens(account)
-            tokensAccountDetailsAdapter.setManageButtonClickListener {
-                gotoManageTokensList(account)
+        viewModel
+            .accountUpdatedFlow
+            .collectWhenStarted(viewLifecycleOwner) { updatedAccount ->
+                tokensListViewModel.loadTokens(updatedAccount)
             }
-        }
-        tokensListViewModel.uiState.collectWhenStarted(this) { uiState ->
+
+        tokensListViewModel.uiState.collectWhenStarted(viewLifecycleOwner) { uiState ->
             showLoading(uiState.isLoading)
             tokensAccountDetailsAdapter.setData(uiState.tokens)
             uiState.error?.let {
@@ -89,9 +93,9 @@ class TokensListFragment : Fragment() {
         binding.loading.progressBar.isVisible = show
     }
 
-    private fun gotoManageTokensList(account: Account) {
+    private fun gotoManageTokensList() {
         val intent = Intent(requireActivity(), ManageTokenListActivity::class.java)
-        intent.putExtra(ManageTokenListActivity.ACCOUNT, account)
+        intent.putExtra(ManageTokenListActivity.ACCOUNT, viewModel.account)
         startActivity(intent)
     }
 
