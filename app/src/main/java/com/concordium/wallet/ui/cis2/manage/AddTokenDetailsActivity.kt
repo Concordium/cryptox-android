@@ -9,7 +9,6 @@ import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.TokenMetadata
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
@@ -45,7 +44,6 @@ class AddTokenDetailsActivity : BaseActivity(
             setDescription(tokenMetadata)
             setTicker(tokenMetadata)
             setDecimals(token)
-            setTotalSupply(token)
             setRawMetadataButton(tokenMetadata)
         }
     }
@@ -130,20 +128,6 @@ class AddTokenDetailsActivity : BaseActivity(
             binding.detailsLayout.pltListStatus.setToken(token)
         } else {
             binding.detailsLayout.pltListStatusHolder.visibility = View.GONE
-        }
-    }
-
-    private fun setTotalSupply(token: NewToken) {
-        if (token is PLTToken) {
-            token.metadata?.totalSupply?.let {
-                binding.detailsLayout.totalSupplyHolder.visibility = View.VISIBLE
-                binding.detailsLayout.supply.text = CurrencyUtil.formatGTU(
-                    it,
-                    token.metadata?.decimals ?: 0
-                )
-            } ?: run {
-                binding.detailsLayout.totalSupplyHolder.visibility = View.GONE
-            }
         }
     }
 

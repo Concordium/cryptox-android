@@ -40,7 +40,6 @@
             android:id="@+id/no_items_manage_tokens"
             style="@style/MW24_Manage_Token_List_Button"
             android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
             android:layout_gravity="center_horizontal"
             android:clickable="true"
             android:text="@string/cis_manage" />

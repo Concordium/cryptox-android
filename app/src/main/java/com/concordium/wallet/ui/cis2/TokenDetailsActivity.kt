@@ -135,7 +135,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
             setHideButton(token is CCDToken)
             setPLTListStatus(token)
-            setTotalSupply(token)
             if (token.isNewlyReceived) {
                 handleNewlyReceivedToken()
             }
@@ -396,20 +395,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.includeAbout.pltListStatus.setToken(token)
         } else {
             binding.includeAbout.pltListStatusHolder.visibility = View.GONE
-        }
-    }
-
-    private fun setTotalSupply(token: NewToken) {
-        if (token is PLTToken) {
-            token.metadata?.totalSupply?.let {
-                binding.includeAbout.totalSupplyHolder.visibility = View.VISIBLE
-                binding.includeAbout.supply.text = CurrencyUtil.formatGTU(
-                    it,
-                    token.metadata?.decimals ?: 0
-                )
-            } ?: run {
-                binding.includeAbout.totalSupplyHolder.visibility = View.GONE
-            }
         }
     }
 
