@@ -49,7 +49,6 @@ class TokensListViewModel(
 
     private fun loadTokens(
         account: Account,
-        onlyTransferable: Boolean = false,
     ) {
         loadTokensJob?.cancel()
         loadTokensJob = null
@@ -60,7 +59,6 @@ class TokensListViewModel(
             )
             tokensInteractor.loadTokens(
                 accountAddress = account.address,
-                onlyTransferable = onlyTransferable,
             )
                 .onSuccess { tokens ->
                     _uiState.value = uiState.value.copy(
