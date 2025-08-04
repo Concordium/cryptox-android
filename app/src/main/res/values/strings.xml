@@ -540,7 +540,7 @@
     <string name="cis_add_tokens">Add</string>
     <string name="cis_add_tokens_continue">Continue</string>
     <string name="cis_update_tokens">Apply</string>
-    <string name="cis_find_tokens_none">No tokens found</string>
+    <string name="cis_find_tokens_none">No search results</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
     <string name="cis_select_token_title">Choose token</string>
     <string name="cis_loading_metadata_progress">Loading metadata…</string>
@@ -594,7 +594,7 @@
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
-    <string name="cis_no_tokens_found">No tokens found</string>
+    <string name="cis_no_tokens_found">No search results</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens</string>
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
