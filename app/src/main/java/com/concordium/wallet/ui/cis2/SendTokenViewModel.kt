@@ -280,6 +280,7 @@ class SendTokenViewModel(
 
         feeRequest?.dispose()
         feeRequest = proxyRepository.getTransferCost(
+            amount = BigInteger.ZERO,
             type = ProxyRepository.UPDATE,
             sender = token.accountAddress,
             contractIndex = token.contractIndex.toInt(),

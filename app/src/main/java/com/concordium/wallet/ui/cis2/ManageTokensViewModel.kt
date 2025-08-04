@@ -12,7 +12,6 @@ import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.PLTToken
-import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toNewContractToken
 import com.concordium.wallet.data.model.toPLTToken
 import com.concordium.wallet.data.room.Account
@@ -31,7 +30,6 @@ import java.io.Serializable
 
 data class TokenData(
     var account: Account? = null,
-    var selectedToken: Token? = null,
     var contractIndex: String = "",
     var subIndex: String = "0",
     var hasPendingDelegationTransactions: Boolean = false,
