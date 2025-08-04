@@ -260,17 +260,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             mainViewModel.notificationTokenId,
             viewModelAccountDetails.activeAccount
         ) { notificationAddress, tokenId, currentAccount ->
-//            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
-//                viewModelTokens.tokenBalances.observe(viewLifecycleOwner) { ready ->
-//                    if (ready) {
-//                        viewModelTokens.tokens.find { it.uid == tokenId }?.also {
-//                            showTokenDetailsDialog(it)
-//                        }
-//                    }
-//                }
-//            } else {
-//                viewModelTokens.tokenBalances.removeObservers(viewLifecycleOwner)
-//            }
+            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
+                viewModelAccountDetails.updateNotificationTokenId(tokenId)
+            }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->

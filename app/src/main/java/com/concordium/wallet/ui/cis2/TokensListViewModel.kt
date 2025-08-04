@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.cis2
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
+import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.extension.collect
@@ -14,11 +15,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TokensListViewModel(
-    accountDetailsViewModel: AccountDetailsViewModel,
+    private val accountDetailsViewModel: AccountDetailsViewModel,
     private val tokensInteractor: TokensInteractor,
 ) : ViewModel() {
 
@@ -43,6 +46,11 @@ class TokensListViewModel(
             }
     }
 
+    fun resetSelectedToken() = viewModelScope.launch {
+        accountDetailsViewModel.updateNotificationTokenId("")
+        _uiState.update { it.copy(selectedToken = null) }
+    }
+
     private fun reset() {
         _uiState.tryEmit(TokensListData())
     }
@@ -54,24 +62,44 @@ class TokensListViewModel(
         loadTokensJob = null
 
         loadTokensJob = viewModelScope.launch(Dispatchers.IO) {
-            _uiState.value = uiState.value.copy(
-                isLoading = true,
-            )
+            _uiState.update { it.copy(isLoading = true) }
             tokensInteractor.loadTokens(
                 accountAddress = account.address,
             )
                 .onSuccess { tokens ->
-                    _uiState.value = uiState.value.copy(
-                        tokens = tokens.sortedBy { it.addedAt },
-                        isLoading = false
-                    )
+                    _uiState.update {
+                        it.copy(
+                            tokens = tokens.sortedBy { it.addedAt },
+                            isLoading = false
+                        )
+                    }
+                    goToTokenDetails(tokens)
                 }
                 .onFailure { error ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = Event(BackendErrorHandler.getExceptionStringRes(error))
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = Event(BackendErrorHandler.getExceptionStringRes(error))
+                        )
+                    }
+                }
+        }
+    }
+
+    private suspend fun goToTokenDetails(tokens: List<NewToken>) {
+        val notificationTokenId = accountDetailsViewModel.notificationTokenId.first()
+
+        if (notificationTokenId.isNotEmpty()) {
+            val token = tokens.find {
+                it is NewContractToken && it.uid == notificationTokenId
+            }
+            token?.let {
+                _uiState.update {
+                    it.copy(
+                        selectedToken = token
                     )
                 }
+            }
         }
     }
 

@@ -82,6 +82,10 @@ class TokensListFragment : Fragment() {
                     (requireActivity() as BaseActivity).showError(res)
                 }
             }
+            uiState.selectedToken?.let { token ->
+                goToTokenDetails(token)
+                viewModel.resetSelectedToken()
+            }
         }
     }
 

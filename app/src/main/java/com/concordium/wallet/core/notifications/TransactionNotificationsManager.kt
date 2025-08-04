@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewContractToken
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -91,7 +91,7 @@ class TransactionNotificationsManager(
     @SuppressLint("MissingPermission")
     fun notifyCis2Transaction(
         receivedAmount: BigInteger,
-        token: Token,
+        token: NewContractToken,
         reference: Any,
         account: Account,
     ): Notification {

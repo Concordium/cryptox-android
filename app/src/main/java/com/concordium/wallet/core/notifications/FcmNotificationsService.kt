@@ -4,7 +4,8 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.toNewContractToken
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
@@ -171,7 +172,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
             contractIndex = contractAddress.index.toString(),
             token = tokenId,
         )
-        val token: Token
+        val token: NewContractToken
 
         if (existingContractToken == null) {
             Log.d(
@@ -201,12 +202,13 @@ class FcmNotificationsService : FirebaseMessagingService() {
                     contractIndex = contractAddress.index.toString(),
                     contractName = data["contract_name"]
                         ?: error("Contract name is missing"),
-                    tokenMetadata = verifiedMetadata
+                    tokenMetadata = verifiedMetadata,
+                    addedAt = System.currentTimeMillis()
                 )
 
             contractTokensRepository.insert(newlyReceivedContractToken)
 
-            token = Token(newlyReceivedContractToken)
+            token = newlyReceivedContractToken.toNewContractToken()
         } else {
             Log.d(
                 "token_exists:" +
@@ -214,7 +216,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         "\ntokenId=$tokenId"
             )
 
-            token = Token(existingContractToken)
+            token = existingContractToken.toNewContractToken()
         }
 
         TransactionNotificationsManager(application).notifyCis2Transaction(

@@ -118,6 +118,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
 
+    private val _notificationTokenId = MutableStateFlow("")
+    val notificationTokenId = _notificationTokenId.asStateFlow()
+
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
@@ -201,6 +204,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 _totalBalanceLiveData.postValue(BigInteger.ZERO)
             }
         }
+    }
+
+    fun updateNotificationTokenId(tokenId: String) = viewModelScope.launch {
+        _notificationTokenId.emit(tokenId)
     }
 
     private fun initializeAccountUpdater() {
