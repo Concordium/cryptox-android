@@ -7,7 +7,7 @@ import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.toNewContractToken
@@ -29,7 +29,7 @@ class TokensInteractor(
         loadBalances: Boolean = true,
         onlyTransferable: Boolean = false,
         addCCDToken: Boolean = true,
-    ): Result<List<NewToken>> {
+    ): Result<List<Token>> {
         return try {
             val ccdToken = getCCDDefaultToken(accountAddress)
 
@@ -65,7 +65,7 @@ class TokensInteractor(
 
     suspend fun loadTokensBalances(
         accountAddress: String,
-        tokens: List<NewToken>,
+        tokens: List<Token>,
     ) = runCatching {
         loadTokensBalancesUseCase(
             proxyRepository = proxyRepository,
@@ -109,7 +109,7 @@ class TokensInteractor(
 
     suspend fun deleteToken(
         accountAddress: String,
-        token: NewToken,
+        token: Token,
     ): Result<Boolean> {
         return when (token) {
             is NewContractToken -> {
@@ -130,7 +130,7 @@ class TokensInteractor(
         }
     }
 
-    suspend fun unmarkNewlyReceivedToken(token: NewToken) {
+    suspend fun unmarkNewlyReceivedToken(token: Token) {
         when (token) {
             is NewContractToken -> contractTokensRepository.unmarkNewlyReceived(token.token)
             is PLTToken -> pltRepository.unmarkNewlyReceived(token.tokenId)

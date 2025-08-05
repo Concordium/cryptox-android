@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.room.Account
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ class TokenDetailsViewModel(application: Application): AndroidViewModel(applicat
 
 data class TokenDetailsData(
     var account: Account? = null,
-    var selectedToken: NewToken? = null,
+    var selectedToken: Token? = null,
     var hasPendingDelegationTransactions: Boolean = false,
     var hasPendingValidationTransactions: Boolean = false,
 ) : Serializable

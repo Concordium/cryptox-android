@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentTokensListBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
@@ -64,7 +64,7 @@ class TokensListFragment : Fragment() {
 
         tokensAccountDetailsAdapter.setTokenClickListener(object :
             TokensAccountDetailsAdapter.TokenClickListener {
-            override fun onRowClick(token: NewToken) {
+            override fun onRowClick(token: Token) {
                 goToTokenDetails(token)
             }
         })
@@ -99,7 +99,7 @@ class TokensListFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun goToTokenDetails(token: NewToken) {
+    private fun goToTokenDetails(token: Token) {
         val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
             putExtra(TokenDetailsActivity.ACCOUNT, accountDetailsViewModel.account)
             putExtra(TokenDetailsActivity.TOKEN, token as Serializable)

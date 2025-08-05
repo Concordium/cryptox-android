@@ -10,7 +10,7 @@ import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.toNewContractToken
 import com.concordium.wallet.data.model.toPLTToken
@@ -50,13 +50,13 @@ class ManageTokensViewModel(
 
     private var allowToLoadMore = true
     var tokenData = TokenData()
-    var tokens: MutableList<NewToken> = mutableListOf()
+    var tokens: MutableList<Token> = mutableListOf()
 
     // Save found exact tokens to keep their selection once the search is dismissed.
     // For example, the user can look for multiple exact tokens and toggle them one by one.
-    private val everFoundExactTokens: MutableList<NewToken> = mutableListOf()
-    private val changedTokensList: MutableList<NewToken> = mutableListOf()
-    var exactToken: NewToken? = null
+    private val everFoundExactTokens: MutableList<Token> = mutableListOf()
+    private val changedTokensList: MutableList<Token> = mutableListOf()
+    var exactToken: Token? = null
 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val contractAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
@@ -254,7 +254,7 @@ class ManageTokensViewModel(
         lookForExactToken.value = TOKENS_NOT_LOADED
     }
 
-    fun toggleNewToken(token: NewToken) {
+    fun toggleNewToken(token: Token) {
         val isSelectedNow = !token.isSelected
         (tokens.asSequence() + everFoundExactTokens.asSequence())
             .filter {
@@ -279,7 +279,7 @@ class ManageTokensViewModel(
         updateTokens(tokens + everFoundExactTokens)
     }
 
-    private fun updateTokens(loadedTokens: List<NewToken>) {
+    private fun updateTokens(loadedTokens: List<Token>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
                 updateCIS2Tokens(
@@ -295,9 +295,9 @@ class ManageTokensViewModel(
         }
     }
 
-    private suspend fun updatePLTTokens(accountAddress: String, loadedTokens: List<NewToken>) {
+    private suspend fun updatePLTTokens(accountAddress: String, loadedTokens: List<Token>) {
         loadedTokens
-            .filter(NewToken::isSelected)
+            .filter(Token::isSelected)
             .filterIsInstance<PLTToken>()
             .forEach { selectedToken ->
                 val existingPLToken = pltRepository.find(accountAddress, selectedToken.tokenId)
@@ -329,7 +329,7 @@ class ManageTokensViewModel(
             }
         // Hide each loaded not selected token.
         loadedTokens
-            .filterNot(NewToken::isSelected)
+            .filterNot(Token::isSelected)
             .filterIsInstance<PLTToken>()
             .mapTo(mutableSetOf(), PLTToken::tokenId)
             .forEach { loadedNotSelectedTokenId ->
@@ -342,10 +342,10 @@ class ManageTokensViewModel(
 
     private suspend fun updateCIS2Tokens(
         accountAddress: String,
-        loadedTokens: List<NewToken>
+        loadedTokens: List<Token>
     ) {
         loadedTokens
-            .filter(NewToken::isSelected)
+            .filter(Token::isSelected)
             .filterIsInstance<NewContractToken>()
             .forEach { selectedToken ->
                 val existingContractToken =
@@ -373,7 +373,7 @@ class ManageTokensViewModel(
 
         // Delete each loaded not selected token.
         loadedTokens
-            .filterNot(NewToken::isSelected)
+            .filterNot(Token::isSelected)
             .filterIsInstance<NewContractToken>()
             .mapTo(mutableSetOf(), NewContractToken::token)
             .forEach { loadedNotSelectedToken ->

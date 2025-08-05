@@ -32,7 +32,7 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.Transaction
@@ -60,7 +60,7 @@ import java.util.Date
 
 data class SendTokenData(
     val account: Account,
-    var token: NewToken,
+    var token: Token,
     var amount: BigInteger = BigInteger.ZERO,
     var maxAmount: BigInteger? = null,
     var receiverAddress: String? = null,
@@ -90,7 +90,7 @@ class SendTokenViewModel(
     private var feeRequest: BackendRequest<*>? = null
     private var submitTransactionJob: Job? = null
 
-    val chooseToken: MutableLiveData<NewToken> = MutableLiveData<NewToken>(sendTokenData.token)
+    val chooseToken: MutableLiveData<Token> = MutableLiveData<Token>(sendTokenData.token)
     val waiting: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     val transactionReady: MutableLiveData<String> = MutableLiveData<String>()
     val feeReady: MutableLiveData<BigInteger?> = MutableLiveData<BigInteger?>(null)
@@ -187,7 +187,7 @@ class SendTokenViewModel(
 
     private var loadEurRateJob: Job? = null
     private fun loadEurRate(
-        token: NewToken,
+        token: Token,
     ) {
         tokenEurRate.value = null
 

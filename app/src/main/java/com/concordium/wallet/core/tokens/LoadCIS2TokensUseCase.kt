@@ -2,7 +2,7 @@ package com.concordium.wallet.core.tokens
 
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toNewContractToken
 
 class LoadCIS2TokensUseCase {
@@ -18,7 +18,7 @@ class LoadCIS2TokensUseCase {
         limit: Int,
         from: String? = null,
     ): List<NewContractToken> {
-        val fullyLoadedTokens = mutableListOf<NewToken>()
+        val fullyLoadedTokens = mutableListOf<Token>()
 
         var tokenPageCursor = from
         var isLastTokenPage = false

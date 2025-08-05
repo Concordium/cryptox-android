@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,7 +47,7 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun selectToken(token: NewToken?) {
+    fun selectToken(token: Token?) {
         updateUIState(selectedToken = token)
     }
 
@@ -83,8 +83,8 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
         }
 
     private fun updateUIState(
-        tokens: List<NewToken> = uiState.value.tokens,
-        selectedToken: NewToken? = uiState.value.selectedToken,
+        tokens: List<Token> = uiState.value.tokens,
+        selectedToken: Token? = uiState.value.selectedToken,
         waiting: Boolean = uiState.value.loading,
         error: String? = uiState.value.error
     ) {
@@ -92,8 +92,8 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
     }
 
     data class TokensUIState(
-        val tokens: List<NewToken> = emptyList(),
-        val selectedToken: NewToken? = null,
+        val tokens: List<Token> = emptyList(),
+        val selectedToken: Token? = null,
         val loading: Boolean = false,
         val error: String? = null
     )

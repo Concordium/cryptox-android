@@ -16,7 +16,7 @@ data class NewContractToken(
     var contractName: String = "",
     val token: String = "",
     val isFungible: Boolean = false,
-) : NewToken {
+) : Token {
 
     override val symbol: String
         get() = metadata?.symbol ?: ""

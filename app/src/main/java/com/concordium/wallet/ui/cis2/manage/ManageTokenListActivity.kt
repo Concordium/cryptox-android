@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityManageTokenListBinding
 import com.concordium.wallet.extension.collectWhenStarted
@@ -95,7 +95,7 @@ class ManageTokenListActivity : BaseActivity(
         tokensAdapter = ManageTokensListAdapter(this)
         binding.tokensList.adapter = tokensAdapter
         tokensAdapter.setTokenClickListener(object : ManageTokensListAdapter.TokenClickListener {
-            override fun onHideClick(token: NewToken) {
+            override fun onHideClick(token: Token) {
                 onHideTokenClicked(token)
             }
         })
@@ -106,7 +106,7 @@ class ManageTokenListActivity : BaseActivity(
         }
     }
 
-    private fun onHideTokenClicked(token: NewToken) {
+    private fun onHideTokenClicked(token: Token) {
         manageTokenListViewModel.selectToken(token)
         HidingTokenDialog.newInstance(
             HidingTokenDialog.getBundle(manageTokenListViewModel.selectedTokenSymbol())

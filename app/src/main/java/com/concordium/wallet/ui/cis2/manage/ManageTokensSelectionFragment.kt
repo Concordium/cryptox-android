@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
 import com.concordium.wallet.ui.cis2.ManageTokensViewModel
 
@@ -84,11 +84,11 @@ class ManageTokensSelectionFragment : Fragment() {
 
         selectionAdapter.setTokenClickListener(object :
             ManageTokensSelectionAdapter.TokenClickListener {
-            override fun onRowClick(token: NewToken) {
+            override fun onRowClick(token: Token) {
                 gotoTokenDetails(token)
             }
 
-            override fun onCheckBoxClick(token: NewToken) {
+            override fun onCheckBoxClick(token: Token) {
                 viewModel.toggleNewToken(token)
             }
         })
@@ -190,7 +190,7 @@ class ManageTokensSelectionFragment : Fragment() {
         }
     }
 
-    private fun gotoTokenDetails(token: NewToken) {
+    private fun gotoTokenDetails(token: Token) {
         val intent = Intent(requireContext(), AddTokenDetailsActivity::class.java).apply {
             putExtra(AddTokenDetailsActivity.TOKEN, token)
         }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
@@ -86,7 +86,7 @@ class TokensListViewModel(
         }
     }
 
-    private suspend fun goToTokenDetails(tokens: List<NewToken>) {
+    private suspend fun goToTokenDetails(tokens: List<Token>) {
         val notificationTokenId = accountDetailsViewModel.notificationTokenId.first()
 
         if (notificationTokenId.isNotEmpty()) {
@@ -104,8 +104,8 @@ class TokensListViewModel(
     }
 
     data class TokensListData(
-        val tokens: List<NewToken> = emptyList(),
-        val selectedToken: NewToken? = null,
+        val tokens: List<Token> = emptyList(),
+        val selectedToken: Token? = null,
         val isLoading: Boolean = true,
         val error: Event<Int>? = null,
     )

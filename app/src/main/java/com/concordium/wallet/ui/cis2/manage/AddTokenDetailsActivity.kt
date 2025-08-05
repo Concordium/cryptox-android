@@ -6,7 +6,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
@@ -31,10 +31,10 @@ class AddTokenDetailsActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
 
-        initViews(requireNotNull(intent.getSerializable(TOKEN, NewToken::class.java)))
+        initViews(requireNotNull(intent.getSerializable(TOKEN, Token::class.java)))
     }
 
-    private fun initViews(token: NewToken) {
+    private fun initViews(token: Token) {
         binding.detailsLayout.hideToken.visibility = View.GONE
         setContractIndexAndSubIndex(token)
         setTokenId(token)
@@ -48,7 +48,7 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setTokenId(token: NewToken) {
+    private fun setTokenId(token: Token) {
         if (token is NewContractToken) {
             if (token.token.isNotBlank()) {
                 binding.detailsLayout.tokenIdHolder.visibility = View.VISIBLE
@@ -64,7 +64,7 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setNameAndIcon(token: NewToken) {
+    private fun setNameAndIcon(token: Token) {
         val name = token.metadata?.name ?: token.symbol
         val thumbnail = token.metadata?.thumbnail?.url
         binding.detailsLayout.nameAndIconHolder.visibility = View.VISIBLE
@@ -91,7 +91,7 @@ class AddTokenDetailsActivity : BaseActivity(
             .into(view)
     }
 
-    private fun setContractIndexAndSubIndex(token: NewToken) {
+    private fun setContractIndexAndSubIndex(token: Token) {
         if (token is NewContractToken) {
             val tokenIndex = token.contractIndex
 
@@ -115,14 +115,14 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setDecimals(token: NewToken) {
+    private fun setDecimals(token: Token) {
         if (token.metadata?.unique?.not() == true) {
             binding.detailsLayout.decimalsHolder.visibility = View.VISIBLE
             binding.detailsLayout.decimals.text = token.decimals.toString()
         }
     }
 
-    private fun setPLTListStatus(token: NewToken) {
+    private fun setPLTListStatus(token: Token) {
         if (token is PLTToken) {
             binding.detailsLayout.pltListStatusHolder.visibility = View.VISIBLE
             binding.detailsLayout.pltListStatus.setToken(token)

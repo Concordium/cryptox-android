@@ -16,7 +16,7 @@ data class PLTToken(
     val isHidden: Boolean = false,
     val isInAllowList: Boolean? = null,
     val isInDenyList: Boolean? = null,
-) : NewToken {
+) : Token {
 
     override val symbol: String
         get() = tokenId

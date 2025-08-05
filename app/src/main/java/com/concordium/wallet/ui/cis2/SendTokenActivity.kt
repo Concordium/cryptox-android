@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -37,7 +37,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         parametersOf(
             SendTokenData(
                 account = intent.getSerializable(ACCOUNT, Account::class.java),
-                token = intent.getSerializable(TOKEN, NewToken::class.java),
+                token = intent.getSerializable(TOKEN, Token::class.java),
             ),
         )
     }
@@ -227,7 +227,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 ?.takeIf { result.resultCode == Activity.RESULT_OK }
                 ?.getSerializable(
                     SelectTokenActivity.EXTRA_SELECTED_TOKEN,
-                    NewToken::class.java,
+                    Token::class.java,
                 )
                 ?.let(viewModel.chooseToken::postValue)
         }
@@ -333,7 +333,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
     }
 
-    private fun setTokenIcon(token: NewToken) {
+    private fun setTokenIcon(token: Token) {
         val tokenMetadata = token.metadata
         if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
             Glide.with(this)

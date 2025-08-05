@@ -1,7 +1,7 @@
 package com.concordium.wallet.data.util
 
-import com.concordium.wallet.data.model.NewToken
 import com.concordium.wallet.data.model.SimpleFraction
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -34,7 +34,7 @@ object CurrencyUtil {
     fun formatGTU(value: String, decimals: Int = 6): String =
         formatGTU(value.toBigInteger(), decimals)
 
-    fun formatGTU(value: BigInteger, token: NewToken): String =
+    fun formatGTU(value: BigInteger, token: Token): String =
         formatGTU(value, token.decimals)
 
     fun formatGTU(
@@ -99,7 +99,7 @@ object CurrencyUtil {
         return decimalFormatter.format(bigDecimalValue)
     }
 
-    fun toGTUValue(stringValue: String, token: NewToken): BigInteger? =
+    fun toGTUValue(stringValue: String, token: Token): BigInteger? =
         toGTUValue(stringValue, token.decimals)
 
     fun toGTUValue(stringValue: String, decimals: Int = 6): BigInteger? {

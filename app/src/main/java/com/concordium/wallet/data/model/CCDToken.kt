@@ -8,7 +8,7 @@ data class CCDToken(
     override val accountAddress: String,
     var isEarning: Boolean,
     val eurPerMicroCcd: SimpleFraction?,
-) : NewToken {
+) : Token {
 
     constructor(
         account: Account,

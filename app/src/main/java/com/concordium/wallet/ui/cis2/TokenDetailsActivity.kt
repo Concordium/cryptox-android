@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.TransactionStatus
@@ -62,7 +62,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
 
         @Suppress("DEPRECATION")
-        val token = intent.getSerializableExtra(TOKEN) as? NewToken
+        val token = intent.getSerializableExtra(TOKEN) as? Token
         viewModel.tokenDetailsData.selectedToken = token
 
         viewModel.tokenDetailsData.hasPendingDelegationTransactions =
@@ -158,7 +158,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setBalances(token: NewToken) {
+    private fun setBalances(token: Token) {
         binding.walletInfoCard.totalBalanceTextview.text = when (token) {
             is CCDToken -> {
                 CurrencyUtil.formatGTU(
@@ -279,7 +279,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setTokenId(token: NewToken) {
+    private fun setTokenId(token: Token) {
         if (token !is PLTToken) {
             if (token.metadata?.name?.isBlank() == false) {
                 binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
@@ -299,7 +299,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setOwnership(token: NewToken, tokenMetadata: TokenMetadata) {
+    private fun setOwnership(token: Token, tokenMetadata: TokenMetadata) {
         if (tokenMetadata.unique == true) {
             binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
             binding.includeAbout.ownership.text =
@@ -310,7 +310,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setNameAndIcon(token: NewToken) {
+    private fun setNameAndIcon(token: Token) {
         val name = when (token) {
             is CCDToken -> getString(R.string.account_details_ccd_token)
             is PLTToken -> token.tokenId
@@ -352,7 +352,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             .into(view)
     }
 
-    private fun setContractIndexAndSubIndex(token: NewToken) {
+    private fun setContractIndexAndSubIndex(token: Token) {
         if (token is NewContractToken) {
             val tokenIndex = token.contractIndex
             if (tokenIndex.isNotBlank()) {
@@ -375,7 +375,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
-    private fun setDecimals(token: NewToken) {
+    private fun setDecimals(token: Token) {
         if (token.metadata?.unique == false) {
             binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
             binding.includeAbout.decimals.text = getString(
@@ -389,7 +389,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         binding.includeAbout.hideToken.isVisible = !isCCD
     }
 
-    private fun setPLTListStatus(token: NewToken) {
+    private fun setPLTListStatus(token: Token) {
         if (token is PLTToken) {
             binding.includeAbout.pltListStatusHolder.visibility = View.VISIBLE
             binding.includeAbout.pltListStatus.setToken(token)

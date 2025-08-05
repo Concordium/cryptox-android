@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivitySelectTokenBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
@@ -51,7 +51,7 @@ class SelectTokenActivity : BaseActivity(
         tokensAccountDetailsAdapter.setTokenClickListener(object :
             TokensAccountDetailsAdapter.TokenClickListener {
 
-            override fun onRowClick(token: NewToken) {
+            override fun onRowClick(token: Token) {
                 goBackWithToken(token)
             }
         })
@@ -74,7 +74,7 @@ class SelectTokenActivity : BaseActivity(
         }
     }
 
-    private fun goBackWithToken(token: NewToken) {
+    private fun goBackWithToken(token: Token) {
         setResult(
             Activity.RESULT_OK,
             Intent().putExtra(EXTRA_SELECTED_TOKEN, token)

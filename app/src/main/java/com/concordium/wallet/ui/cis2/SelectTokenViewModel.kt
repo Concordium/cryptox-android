@@ -3,7 +3,7 @@ package com.concordium.wallet.ui.cis2
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +16,7 @@ class SelectTokenViewModel(
     private val tokensInteractor: TokensInteractor,
 ) : ViewModel() {
 
-    private val _tokenList: MutableStateFlow<List<NewToken>> = MutableStateFlow(emptyList())
+    private val _tokenList: MutableStateFlow<List<Token>> = MutableStateFlow(emptyList())
     val tokenList = _tokenList.asStateFlow()
 
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)

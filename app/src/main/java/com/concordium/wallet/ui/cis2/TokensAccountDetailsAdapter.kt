@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
@@ -28,14 +28,14 @@ class TokensAccountDetailsAdapter(
     private val iconSize: Int by lazy {
         context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
     }
-    private val dataSet: MutableList<NewToken> = mutableListOf()
+    private val dataSet: MutableList<Token> = mutableListOf()
     private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
     inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     interface TokenClickListener {
-        fun onRowClick(token: NewToken)
+        fun onRowClick(token: Token)
     }
 
     fun setTokenClickListener(tokenClickListener: TokenClickListener) {
@@ -47,7 +47,7 @@ class TokensAccountDetailsAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<NewToken>) {
+    fun setData(data: List<Token>) {
         dataSet.clear()
         dataSet.addAll(data)
         dataSize = data.size

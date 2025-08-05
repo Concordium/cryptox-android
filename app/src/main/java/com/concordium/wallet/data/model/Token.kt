@@ -3,7 +3,7 @@ package com.concordium.wallet.data.model
 import java.io.Serializable
 import java.math.BigInteger
 
-sealed interface NewToken : Serializable {
+sealed interface Token : Serializable {
     val symbol: String
     val balance: BigInteger
     val accountAddress: String

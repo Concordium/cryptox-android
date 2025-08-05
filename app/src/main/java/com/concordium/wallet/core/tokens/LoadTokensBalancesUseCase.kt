@@ -2,7 +2,7 @@ package com.concordium.wallet.core.tokens
 
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.NewToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 
@@ -10,7 +10,7 @@ class LoadTokensBalancesUseCase {
 
     suspend operator fun invoke(
         proxyRepository: ProxyRepository,
-        tokens: List<NewToken>,
+        tokens: List<Token>,
         accountAddress: String,
     ) {
         val tokensByContract: Map<String, List<NewContractToken>> = tokens
