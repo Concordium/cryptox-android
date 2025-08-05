@@ -9,12 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ItemTokenManageListBinding
-import com.concordium.wallet.ui.plt.PLTListStatus
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
-import com.concordium.wallet.util.TokenUtil
 
 class ManageTokensListAdapter(
     private val context: Context,
@@ -90,8 +88,7 @@ class ManageTokensListAdapter(
         }
 
         holder.binding.pltInAllowListIcon.isVisible = if (token is ProtocolLevelToken) {
-            TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.NOT_ON_ALLOW_LIST ||
-                    TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_DENY_LIST
+            token.isTransferable.not()
         } else {
             false
         }

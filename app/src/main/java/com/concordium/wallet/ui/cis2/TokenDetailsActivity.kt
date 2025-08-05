@@ -26,11 +26,9 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
-import com.concordium.wallet.ui.plt.PLTListStatus
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
-import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 
@@ -188,8 +186,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
         val isTokenActionButtonEnabled = if (token is ProtocolLevelToken) {
-            TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_ALLOW_LIST ||
-                    TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.UNKNOWN
+            token.isTransferable
         } else
             true
         binding.apply {
