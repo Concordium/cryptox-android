@@ -4,9 +4,9 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
-import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.toNewContractToken
-import com.concordium.wallet.data.room.ContractToken
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.toContractToken
+import com.concordium.wallet.data.room.ContractTokenEntity
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
@@ -172,7 +172,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
             contractIndex = contractAddress.index.toString(),
             token = tokenId,
         )
-        val token: NewContractToken
+        val token: ContractToken
 
         if (existingContractToken == null) {
             Log.d(
@@ -193,7 +193,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
             Log.d("verifiedMetadata: $verifiedMetadata")
 
             val newlyReceivedContractToken =
-                ContractToken(
+                ContractTokenEntity(
                     id = 0,
                     isNewlyReceived = true,
                     token = tokenId,
@@ -208,7 +208,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
 
             contractTokensRepository.insert(newlyReceivedContractToken)
 
-            token = newlyReceivedContractToken.toNewContractToken()
+            token = newlyReceivedContractToken.toContractToken()
         } else {
             Log.d(
                 "token_exists:" +
@@ -216,7 +216,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         "\ntokenId=$tokenId"
             )
 
-            token = existingContractToken.toNewContractToken()
+            token = existingContractToken.toContractToken()
         }
 
         TransactionNotificationsManager(application).notifyCis2Transaction(

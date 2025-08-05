@@ -1,6 +1,6 @@
 package com.concordium.wallet.data.model
 
-import com.concordium.wallet.data.room.ProtocolLevelToken
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import java.math.BigInteger
 
 data class PLTInfoWithAccountState(
@@ -8,13 +8,13 @@ data class PLTInfoWithAccountState(
     val tokenAccountState: TokenAccountState? = null
 )
 
-fun PLTInfoWithAccountState.toProtocolLevelToken(
+fun PLTInfoWithAccountState.toProtocolLevelTokenEntity(
     accountAddress: String,
     addedAt: Long = System.currentTimeMillis(),
     isHidden: Boolean = false,
     isNewlyReceived: Boolean = false
-): ProtocolLevelToken {
-    return ProtocolLevelToken(
+): ProtocolLevelTokenEntity {
+    return ProtocolLevelTokenEntity(
         tokenId = token.tokenId,
         tokenMetadata = TokenMetadata(
             decimals = token.tokenState?.decimals ?: 0,

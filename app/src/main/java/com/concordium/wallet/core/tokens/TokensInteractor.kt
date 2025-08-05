@@ -6,12 +6,12 @@ import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.NewContractToken
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.PLTInfo
-import com.concordium.wallet.data.model.PLTToken
-import com.concordium.wallet.data.model.toNewContractToken
-import com.concordium.wallet.data.model.toPLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.toContractToken
+import com.concordium.wallet.data.model.toProtocolLevelToken
 
 class TokensInteractor(
     private val proxyRepository: ProxyRepository,
@@ -36,12 +36,12 @@ class TokensInteractor(
             val contractTokens = contractTokensRepository.getTokens(
                 accountAddress = accountAddress,
                 isFungible = null,
-            ).map { it.toNewContractToken() }
+            ).map { it.toContractToken() }
 
             val pltTokens =
                 pltRepository.getTokens(accountAddress)
                     .filterNot { it.isHidden }
-                    .map { it.toPLTToken() }
+                    .map { it.toProtocolLevelToken() }
                     .filter { !onlyTransferable || it.isTransferable }
 
             val allTokens = buildList {
@@ -96,7 +96,7 @@ class TokensInteractor(
         tokens
     }
 
-    suspend fun loadCIS2TokensMetadata(tokens: List<NewContractToken>) {
+    suspend fun loadCIS2TokensMetadata(tokens: List<ContractToken>) {
         loadCIS2TokensMetadataUseCase(
             proxyRepository = proxyRepository,
             tokensToUpdate = tokens
@@ -112,7 +112,7 @@ class TokensInteractor(
         token: Token,
     ): Result<Boolean> {
         return when (token) {
-            is NewContractToken -> {
+            is ContractToken -> {
                 contractTokensRepository.delete(
                     accountAddress = accountAddress,
                     contractIndex = token.contractIndex,
@@ -121,7 +121,7 @@ class TokensInteractor(
                 Result.success(true)
             }
 
-            is PLTToken -> {
+            is ProtocolLevelToken -> {
                 pltRepository.hideToken(accountAddress, token.tokenId)
                 Result.success(true)
             }
@@ -132,8 +132,8 @@ class TokensInteractor(
 
     suspend fun unmarkNewlyReceivedToken(token: Token) {
         when (token) {
-            is NewContractToken -> contractTokensRepository.unmarkNewlyReceived(token.token)
-            is PLTToken -> pltRepository.unmarkNewlyReceived(token.tokenId)
+            is ContractToken -> contractTokensRepository.unmarkNewlyReceived(token.token)
+            is ProtocolLevelToken -> pltRepository.unmarkNewlyReceived(token.tokenId)
             else -> throw UnsupportedOperationException("Cannot unmark CCD token")
         }
     }

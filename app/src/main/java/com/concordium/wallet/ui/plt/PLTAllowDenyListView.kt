@@ -7,7 +7,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.databinding.ViewPltAllowDenyListBinding
 import com.concordium.wallet.util.TokenUtil
 
@@ -23,7 +23,7 @@ class PLTAllowDenyListView @JvmOverloads constructor(
         binding = ViewPltAllowDenyListBinding.bind(this)
     }
 
-    fun setToken(token: PLTToken) {
+    fun setToken(token: ProtocolLevelToken) {
         val pltListStatus = TokenUtil.getPLTPLTListStatus(token)
 
         when (pltListStatus) {

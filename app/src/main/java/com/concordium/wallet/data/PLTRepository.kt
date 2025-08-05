@@ -1,20 +1,20 @@
 package com.concordium.wallet.data
 
 import com.concordium.wallet.data.model.PLTInfoWithAccountState
-import com.concordium.wallet.data.model.toProtocolLevelToken
-import com.concordium.wallet.data.room.ProtocolLevelToken
+import com.concordium.wallet.data.model.toProtocolLevelTokenEntity
 import com.concordium.wallet.data.room.ProtocolLevelTokenDao
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 
 class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
-    suspend fun insert(protocolLevelToken: ProtocolLevelToken) {
+    suspend fun insert(protocolLevelToken: ProtocolLevelTokenEntity) {
         protocolLevelTokenDao.insert(protocolLevelToken)
     }
 
-    suspend fun getTokens(accountAddress: String): List<ProtocolLevelToken> {
+    suspend fun getTokens(accountAddress: String): List<ProtocolLevelTokenEntity> {
         return protocolLevelTokenDao.getTokens(accountAddress)
     }
 
-    suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelToken? {
+    suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelTokenEntity? {
         return protocolLevelTokenDao.find(accountAddress, tokenId)
     }
 
@@ -40,7 +40,7 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
                     tokenId = tokenWithState.token.tokenId
                 )
                 if (existsToken == null) {
-                    val protocolLevelToken = tokenWithState.toProtocolLevelToken(
+                    val protocolLevelToken = tokenWithState.toProtocolLevelTokenEntity(
                         accountAddress = accountAddress,
                         addedAt = System.currentTimeMillis(),
                         isHidden = false,
@@ -50,7 +50,7 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
                 } else {
                     if (existsToken.balance != tokenWithState.tokenAccountState?.balance?.value) {
                         // Update the existing token's balance if it has changed
-                        val updatedToken = tokenWithState.toProtocolLevelToken(
+                        val updatedToken = tokenWithState.toProtocolLevelTokenEntity(
                             accountAddress = accountAddress,
                             addedAt = existsToken.addedAt,
                             isHidden = existsToken.isHidden,

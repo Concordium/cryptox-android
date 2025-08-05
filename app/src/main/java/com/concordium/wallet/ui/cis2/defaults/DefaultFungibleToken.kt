@@ -2,7 +2,7 @@ package com.concordium.wallet.ui.cis2.defaults
 
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.UrlHolder
-import com.concordium.wallet.data.room.ContractToken
+import com.concordium.wallet.data.room.ContractTokenEntity
 
 class DefaultFungibleToken(
     val symbol: String,
@@ -14,7 +14,7 @@ class DefaultFungibleToken(
     val thumbnailUrl: String?,
     val decimals: Int,
 ) {
-    fun toContractToken(accountAddress: String) = ContractToken(
+    fun toContractToken(accountAddress: String) = ContractTokenEntity(
         id = 0,
         contractIndex = contractIndex,
         token = token,

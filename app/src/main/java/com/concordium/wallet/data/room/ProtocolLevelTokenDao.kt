@@ -9,20 +9,20 @@ import androidx.room.Update
 @Dao
 interface ProtocolLevelTokenDao {
     @Query("SELECT * FROM protocol_level_token_table WHERE account_address = :accountAddress")
-    suspend fun getTokens(accountAddress: String): List<ProtocolLevelToken>
+    suspend fun getTokens(accountAddress: String): List<ProtocolLevelTokenEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(vararg protocolLevelToken: ProtocolLevelToken)
+    suspend fun insert(vararg protocolLevelToken: ProtocolLevelTokenEntity)
 
     @Update
-    suspend fun update(vararg protocolLevelToken: ProtocolLevelToken)
+    suspend fun update(vararg protocolLevelToken: ProtocolLevelTokenEntity)
 
     @Query("""
         SELECT * FROM protocol_level_token_table 
         WHERE LOWER(tokenId) = LOWER(:tokenId) 
         AND account_address = :accountAddress
         """)
-    suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelToken?
+    suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelTokenEntity?
 
     @Query("UPDATE protocol_level_token_table SET is_newly_received = 0 WHERE tokenId = :tokenId")
     suspend fun unmarkNewlyReceived(tokenId: String)

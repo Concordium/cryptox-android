@@ -11,7 +11,7 @@ import java.math.BigInteger
 
 @Entity(tableName = "protocol_level_token_table")
 @TypeConverters(PLTTypeConverters::class)
-data class ProtocolLevelToken(
+data class ProtocolLevelTokenEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     @ColumnInfo(name = "tokenId")

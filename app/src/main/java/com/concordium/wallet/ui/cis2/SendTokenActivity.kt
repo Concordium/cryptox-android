@@ -13,7 +13,7 @@ import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -266,11 +266,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             val decimals = token.decimals
             binding.balance.text = CurrencyUtil.formatGTU(token.balance, decimals)
             binding.token.text =
-                if (token is NewContractToken && token.isUnique)
+                if (token is ContractToken && token.isUnique)
                     token.metadata?.name ?: ""
                 else
                     token.symbol
-            if (token is NewContractToken && token.isUnique && token.balance.signum() > 0) {
+            if (token is ContractToken && token.isUnique && token.balance.signum() > 0) {
                 // For owned NFTs, prefill the amount (quantity) which is 1
                 // for smoother experience.
                 binding.amount.setText("1")
@@ -285,7 +285,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             binding.sendAllButton.isEnabled = token !is CCDToken
             binding.balanceSymbol.text = token.symbol
 
-            binding.addMemo.isVisible = token !is NewContractToken
+            binding.addMemo.isVisible = token !is ContractToken
             binding.atDisposalTitle.isVisible = token is CCDToken
         }
 

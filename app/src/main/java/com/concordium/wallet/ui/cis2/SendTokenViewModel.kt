@@ -31,9 +31,9 @@ import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInpu
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -200,10 +200,10 @@ class SendTokenViewModel(
                         .getEurPerMicroCcd()
                         .getOrNull()
 
-                is NewContractToken ->
+                is ContractToken ->
                     null
 
-                is PLTToken ->
+                is ProtocolLevelToken ->
                     null
             }
 
@@ -219,10 +219,10 @@ class SendTokenViewModel(
             is CCDToken ->
                 loadCcdTransferFee()
 
-            is NewContractToken ->
+            is ContractToken ->
                 loadContractTokenTransferFee(token)
 
-            is PLTToken ->
+            is ProtocolLevelToken ->
                 loadProtocolLevelTokenTransferFee(token)
         }
     }
@@ -263,7 +263,7 @@ class SendTokenViewModel(
     }
 
     private suspend fun loadContractTokenTransferFee(
-        token: NewContractToken,
+        token: ContractToken,
     ) {
         // Contract token transfer fee can't be loaded until the receiver is known.
         if (sendTokenData.receiverAddress == null) {
@@ -301,7 +301,7 @@ class SendTokenViewModel(
     }
 
     private fun loadProtocolLevelTokenTransferFee(
-        token: PLTToken,
+        token: ProtocolLevelToken,
     ) {
         // Protocol level token transfer fee can't be loaded until the receiver is known.
         if (sendTokenData.receiverAddress == null) {
@@ -379,13 +379,13 @@ class SendTokenViewModel(
                             signer = signer,
                         )
 
-                    is NewContractToken ->
+                    is ContractToken ->
                         submitContractTokenTransaction(
                             signer = signer,
                             token = token,
                         )
 
-                    is PLTToken ->
+                    is ProtocolLevelToken ->
                         submitProtocolLevelTokenTransaction(
                             signer = signer,
                             token = token,
@@ -436,7 +436,7 @@ class SendTokenViewModel(
     }
 
     private suspend fun getContractTokenTransferParameterHex(
-        token: NewContractToken,
+        token: ContractToken,
     ): String? {
 
         val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
@@ -453,7 +453,7 @@ class SendTokenViewModel(
 
     private fun submitContractTokenTransaction(
         signer: SignerEntry,
-        token: NewContractToken,
+        token: ContractToken,
     ) = viewModelScope.launch(Dispatchers.Default) {
 
         val parameterHex: String? = getContractTokenTransferParameterHex(token)
@@ -494,7 +494,7 @@ class SendTokenViewModel(
     }
 
     private fun getProtocolLevelTokenTransferPayload(
-        token: PLTToken,
+        token: ProtocolLevelToken,
     ): TokenUpdate =
         TokenUpdate.builder()
             .tokenSymbol(token.tokenId)
@@ -523,7 +523,7 @@ class SendTokenViewModel(
 
     private fun submitProtocolLevelTokenTransaction(
         signer: SignerEntry,
-        token: PLTToken,
+        token: ProtocolLevelToken,
     ) = viewModelScope.launch(Dispatchers.Default) {
 
         val transaction = try {
@@ -599,10 +599,10 @@ class SendTokenViewModel(
                     else
                         TransactionType.TRANSFER
 
-                is NewContractToken ->
+                is ContractToken ->
                     TransactionType.UPDATE
 
-                is PLTToken ->
+                is ProtocolLevelToken ->
                     TransactionType.TOKEN_UPDATE
             },
             newSelfEncryptedAmount = null,

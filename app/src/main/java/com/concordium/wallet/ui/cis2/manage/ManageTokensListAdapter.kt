@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.databinding.ItemTokenManageListBinding
 import com.concordium.wallet.ui.plt.PLTListStatus
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -81,7 +81,7 @@ class ManageTokensListAdapter(
         }
 
         holder.binding.title.text =
-            if (token is PLTToken) token.tokenId
+            if (token is ProtocolLevelToken) token.tokenId
             else tokenMetadata?.symbol ?: tokenMetadata?.name
 
         holder.binding.hideBtn.isVisible = token !is CCDToken
@@ -89,7 +89,7 @@ class ManageTokensListAdapter(
             tokenClickListener?.onHideClick(token)
         }
 
-        holder.binding.pltInAllowListIcon.isVisible = if (token is PLTToken) {
+        holder.binding.pltInAllowListIcon.isVisible = if (token is ProtocolLevelToken) {
             TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.NOT_ON_ALLOW_LIST ||
                     TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_DENY_LIST
         } else {

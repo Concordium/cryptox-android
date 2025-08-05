@@ -5,9 +5,9 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
@@ -49,7 +49,7 @@ class AddTokenDetailsActivity : BaseActivity(
     }
 
     private fun setTokenId(token: Token) {
-        if (token is NewContractToken) {
+        if (token is ContractToken) {
             if (token.token.isNotBlank()) {
                 binding.detailsLayout.tokenIdHolder.visibility = View.VISIBLE
                 binding.detailsLayout.tokenId.text = token.token
@@ -92,7 +92,7 @@ class AddTokenDetailsActivity : BaseActivity(
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
-        if (token is NewContractToken) {
+        if (token is ContractToken) {
             val tokenIndex = token.contractIndex
 
             if (tokenIndex.isNotBlank()) {
@@ -123,7 +123,7 @@ class AddTokenDetailsActivity : BaseActivity(
     }
 
     private fun setPLTListStatus(token: Token) {
-        if (token is PLTToken) {
+        if (token is ProtocolLevelToken) {
             binding.detailsLayout.pltListStatusHolder.visibility = View.VISIBLE
             binding.detailsLayout.pltListStatus.setToken(token)
         } else {

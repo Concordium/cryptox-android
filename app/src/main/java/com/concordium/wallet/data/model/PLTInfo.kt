@@ -5,11 +5,11 @@ data class PLTInfo(
     val tokenState: PLTState?
 )
 
-fun PLTInfo.toPLTToken(
+fun PLTInfo.toProtocolLevelToken(
     accountAddress: String,
     isSelected: Boolean = false,
-): PLTToken {
-    return PLTToken(
+): ProtocolLevelToken {
+    return ProtocolLevelToken(
         accountAddress = accountAddress,
         addedAt = System.currentTimeMillis(),
         tokenId = tokenId,

@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,13 +69,13 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
 
     fun selectedTokenSymbol(): String =
         when (uiState.value.selectedToken) {
-            is PLTToken -> {
-                val token = uiState.value.selectedToken as PLTToken
+            is ProtocolLevelToken -> {
+                val token = uiState.value.selectedToken as ProtocolLevelToken
                 token.tokenId
             }
 
-            is NewContractToken -> {
-                val token = uiState.value.selectedToken as NewContractToken
+            is ContractToken -> {
+                val token = uiState.value.selectedToken as ContractToken
                 token.metadata?.symbol ?: token.metadata?.name ?: ""
             }
 

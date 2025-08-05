@@ -1,7 +1,7 @@
 package com.concordium.wallet.core.tokens
 
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
@@ -14,10 +14,10 @@ class LoadCIS2TokensMetadataUseCase {
 
     suspend operator fun invoke(
         proxyRepository: ProxyRepository,
-        tokensToUpdate: List<NewContractToken>
+        tokensToUpdate: List<ContractToken>
     ) = coroutineScope {
-        val tokensByContract: Map<String, List<NewContractToken>> = tokensToUpdate
-            .groupBy(NewContractToken::contractIndex)
+        val tokensByContract: Map<String, List<ContractToken>> = tokensToUpdate
+            .groupBy(ContractToken::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
             val contractSubIndex = contractTokens.firstOrNull()?.subIndex
@@ -28,7 +28,7 @@ class LoadCIS2TokensMetadataUseCase {
                 .forEach { contractTokensChunk ->
                     val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
                         separator = ",",
-                        transform = NewContractToken::token,
+                        transform = ContractToken::token,
                     )
 
                     try {

@@ -1,9 +1,9 @@
 package com.concordium.wallet.core.tokens
 
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.toNewContractToken
+import com.concordium.wallet.data.model.toContractToken
 
 class LoadCIS2TokensUseCase {
     private val loadCIS2TokensMetadataUseCase = LoadCIS2TokensMetadataUseCase()
@@ -17,7 +17,7 @@ class LoadCIS2TokensUseCase {
         subIndex: String = "0",
         limit: Int,
         from: String? = null,
-    ): List<NewContractToken> {
+    ): List<ContractToken> {
         val fullyLoadedTokens = mutableListOf<Token>()
 
         var tokenPageCursor = from
@@ -29,7 +29,7 @@ class LoadCIS2TokensUseCase {
                 limit = limit,
                 from = tokenPageCursor,
             ).tokens
-                .map { it.toNewContractToken() }
+                .map { it.toContractToken() }
                 .onEach {
                     it.contractIndex = contractIndex
                     it.subIndex = subIndex
@@ -42,6 +42,6 @@ class LoadCIS2TokensUseCase {
             fullyLoadedTokens.addAll(pageTokens.filter { it.metadata != null })
         }
 
-        return fullyLoadedTokens.map { it as NewContractToken }
+        return fullyLoadedTokens.map { it as ContractToken }
     }
 }

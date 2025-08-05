@@ -14,7 +14,7 @@ import java.io.Serializable
     indices = [Index(value = ["contract_index", "token_id", "account_address"], unique = true)]
 )
 @TypeConverters(ContractTypeConverters::class)
-data class ContractToken(
+data class ContractTokenEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     @ColumnInfo(name = "contract_index")

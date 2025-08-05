@@ -3,7 +3,7 @@ package com.concordium.wallet.ui.cis2
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.extension.collect
@@ -91,7 +91,7 @@ class TokensListViewModel(
 
         if (notificationTokenId.isNotEmpty()) {
             val token = tokens.find {
-                it is NewContractToken && it.uid == notificationTokenId
+                it is ContractToken && it.uid == notificationTokenId
             }
             token?.let {
                 _uiState.update {

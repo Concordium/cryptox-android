@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.ui.plt.PLTListStatus
@@ -64,7 +64,7 @@ class ManageTokensSelectionAdapter(
             holder.binding.tokenIcon.setImageDrawable(ThemedCircularProgressDrawable(context))
         }
 
-        holder.binding.title.text = tokenMetadata?.name ?: if (token is PLTToken)
+        holder.binding.title.text = tokenMetadata?.name ?: if (token is ProtocolLevelToken)
             token.tokenId
         else
             context.getString(R.string.cis_loading_metadata_progress)
@@ -95,7 +95,7 @@ class ManageTokensSelectionAdapter(
             tokenClickListener?.onCheckBoxClick(token)
         }
 
-        holder.binding.pltInAllowListIcon.isVisible = if (token is PLTToken) {
+        holder.binding.pltInAllowListIcon.isVisible = if (token is ProtocolLevelToken) {
             TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.NOT_ON_ALLOW_LIST ||
                     TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_DENY_LIST
         } else {

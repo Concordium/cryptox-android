@@ -1,9 +1,9 @@
 package com.concordium.wallet.data.model
 
-import com.concordium.wallet.data.room.ContractToken
+import com.concordium.wallet.data.room.ContractTokenEntity
 import java.math.BigInteger
 
-data class NewContractToken(
+data class ContractToken(
     override var balance: BigInteger = BigInteger.ZERO,
     override val accountAddress: String = "",
     override val isNewlyReceived: Boolean = false,
@@ -25,10 +25,10 @@ data class NewContractToken(
         get() = metadata?.unique == true
 }
 
-fun ContractToken.toNewContractToken(
+fun ContractTokenEntity.toContractToken(
     balance: BigInteger = BigInteger.ZERO,
     isSelected: Boolean = false,
-) = NewContractToken(
+) = ContractToken(
     balance = balance,
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,

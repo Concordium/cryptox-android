@@ -9,14 +9,14 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
-import com.concordium.wallet.data.model.toNewContractToken
-import com.concordium.wallet.data.model.toPLTToken
+import com.concordium.wallet.data.model.toContractToken
+import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.ContractToken
-import com.concordium.wallet.data.room.ProtocolLevelToken
+import com.concordium.wallet.data.room.ContractTokenEntity
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -114,13 +114,13 @@ class ManageTokensViewModel(
     ) = viewModelScope.launch(Dispatchers.IO) {
         val existingContractTokens =
             contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-                .map { it.toNewContractToken() }
+                .map { it.toContractToken() }
         val selectedTokenIds =
-            existingContractTokens.mapTo(mutableSetOf(), NewContractToken::token) +
+            existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
                     everFoundExactTokens.asSequence()
-                        .filterIsInstance<NewContractToken>()
-                        .filter(NewContractToken::isSelected)
-                        .mapTo(mutableSetOf(), NewContractToken::token)
+                        .filterIsInstance<ContractToken>()
+                        .filter(ContractToken::isSelected)
+                        .mapTo(mutableSetOf(), ContractToken::token)
 
         val pageLimit = 20
         tokensInteractor.loadCIS2TokensWithBalance(
@@ -154,10 +154,10 @@ class ManageTokensViewModel(
         val existingPLTToken = pltRepository.find(
             accountAddress = accountAddress,
             tokenId = tokenData.contractIndex
-        )?.toPLTToken()
+        )?.toProtocolLevelToken()
 
         val existingPLTTokenIds = everFoundExactTokens
-            .filterIsInstance<PLTToken>()
+            .filterIsInstance<ProtocolLevelToken>()
             .mapTo(mutableSetOf()) { it.tokenId.lowercase() }
             .apply {
                 existingPLTToken?.let { add(it.tokenId.lowercase()) }
@@ -175,7 +175,7 @@ class ManageTokensViewModel(
             tokensInteractor.getPLTTokenById(tokenData.contractIndex)
                 .onSuccess {
                     tokens.add(
-                        it.toPLTToken(
+                        it.toProtocolLevelToken(
                             accountAddress = accountAddress,
                             isSelected = it.tokenId.lowercase() in existingPLTTokenIds
                         )
@@ -204,15 +204,15 @@ class ManageTokensViewModel(
         lookForExactTokenJob = viewModelScope.launch(Dispatchers.IO) {
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-                    .map { it.toNewContractToken() }
+                    .map { it.toContractToken() }
             val selectedTokenIds =
-                existingContractTokens.mapTo(mutableSetOf(), NewContractToken::token) +
+                existingContractTokens.mapTo(mutableSetOf(), ContractToken::token) +
                         (tokens.asSequence() + everFoundExactTokens.asSequence())
-                            .filterIsInstance<NewContractToken>()
-                            .filter(NewContractToken::isSelected)
-                            .mapTo(mutableSetOf(), NewContractToken::token)
+                            .filterIsInstance<ContractToken>()
+                            .filter(ContractToken::isSelected)
+                            .mapTo(mutableSetOf(), ContractToken::token)
 
-            val apparentToken = NewContractToken(
+            val apparentToken = ContractToken(
                 token = apparentTokenId,
                 contractIndex = tokenData.contractIndex,
                 subIndex = tokenData.subIndex,
@@ -258,8 +258,8 @@ class ManageTokensViewModel(
         val isSelectedNow = !token.isSelected
         (tokens.asSequence() + everFoundExactTokens.asSequence())
             .filter {
-                if (token is NewContractToken)
-                    (it as NewContractToken).token == token.token
+                if (token is ContractToken)
+                    (it as ContractToken).token == token.token
                 else
                     it.symbol == token.symbol
             }
@@ -298,7 +298,7 @@ class ManageTokensViewModel(
     private suspend fun updatePLTTokens(accountAddress: String, loadedTokens: List<Token>) {
         loadedTokens
             .filter(Token::isSelected)
-            .filterIsInstance<PLTToken>()
+            .filterIsInstance<ProtocolLevelToken>()
             .forEach { selectedToken ->
                 val existingPLToken = pltRepository.find(accountAddress, selectedToken.tokenId)
                 existingPLToken?.let {
@@ -310,7 +310,7 @@ class ManageTokensViewModel(
                     }
                 } ?: run {
                     pltRepository.insert(
-                        ProtocolLevelToken(
+                        ProtocolLevelTokenEntity(
                             tokenId = selectedToken.tokenId,
                             accountAddress = accountAddress,
                             isNewlyReceived = false,
@@ -330,8 +330,8 @@ class ManageTokensViewModel(
         // Hide each loaded not selected token.
         loadedTokens
             .filterNot(Token::isSelected)
-            .filterIsInstance<PLTToken>()
-            .mapTo(mutableSetOf(), PLTToken::tokenId)
+            .filterIsInstance<ProtocolLevelToken>()
+            .mapTo(mutableSetOf(), ProtocolLevelToken::tokenId)
             .forEach { loadedNotSelectedTokenId ->
                 pltRepository.hideToken(
                     accountAddress = accountAddress,
@@ -346,7 +346,7 @@ class ManageTokensViewModel(
     ) {
         loadedTokens
             .filter(Token::isSelected)
-            .filterIsInstance<NewContractToken>()
+            .filterIsInstance<ContractToken>()
             .forEach { selectedToken ->
                 val existingContractToken =
                     contractTokensRepository.find(
@@ -356,7 +356,7 @@ class ManageTokensViewModel(
                     )
                 if (existingContractToken == null) {
                     contractTokensRepository.insert(
-                        ContractToken(
+                        ContractTokenEntity(
                             id = 0,
                             token = selectedToken.token,
                             contractIndex = selectedToken.contractIndex,
@@ -374,8 +374,8 @@ class ManageTokensViewModel(
         // Delete each loaded not selected token.
         loadedTokens
             .filterNot(Token::isSelected)
-            .filterIsInstance<NewContractToken>()
-            .mapTo(mutableSetOf(), NewContractToken::token)
+            .filterIsInstance<ContractToken>()
+            .mapTo(mutableSetOf(), ContractToken::token)
             .forEach { loadedNotSelectedToken ->
                 contractTokensRepository.delete(
                     accountAddress = accountAddress,
@@ -391,5 +391,5 @@ class ManageTokensViewModel(
     }
 
     // Returns the last token ID in the list of tokens for endless loading
-    fun lastTokenId() = tokens.filterIsInstance<NewContractToken>().last().uid
+    fun lastTokenId() = tokens.filterIsInstance<ContractToken>().last().uid
 }

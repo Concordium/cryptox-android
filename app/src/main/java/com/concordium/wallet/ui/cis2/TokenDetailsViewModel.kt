@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.room.Account
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +32,8 @@ class TokenDetailsViewModel(application: Application): AndroidViewModel(applicat
     }
 
     fun tokenSymbol(): String {
-        return if (tokenDetailsData.selectedToken is PLTToken) {
-            (tokenDetailsData.selectedToken as PLTToken).tokenId
+        return if (tokenDetailsData.selectedToken is ProtocolLevelToken) {
+            (tokenDetailsData.selectedToken as ProtocolLevelToken).tokenId
         } else {
             tokenDetailsData.selectedToken?.metadata?.symbol ?:
             tokenDetailsData.selectedToken?.metadata?.name ?: ""

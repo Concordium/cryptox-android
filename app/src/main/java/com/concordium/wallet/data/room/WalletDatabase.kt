@@ -26,8 +26,8 @@ import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
         Transfer::class,
         Recipient::class,
         EncryptedAmount::class,
-        ContractToken::class,
-        ProtocolLevelToken::class
+        ContractTokenEntity::class,
+        ProtocolLevelTokenEntity::class
     ],
     version = VERSION_NUMBER,
     exportSchema = true,

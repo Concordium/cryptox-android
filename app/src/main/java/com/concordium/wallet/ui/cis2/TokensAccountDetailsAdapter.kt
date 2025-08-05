@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.ui.plt.PLTListStatus
@@ -144,7 +144,7 @@ class TokensAccountDetailsAdapter(
             }
         } else {
             holder.binding.title.text =
-                if (token is PLTToken) token.tokenId
+                if (token is ProtocolLevelToken) token.tokenId
                 else token.metadata?.symbol ?: tokenMetadata?.name
             holder.binding.balance.isVisible = true
             holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
@@ -159,7 +159,7 @@ class TokensAccountDetailsAdapter(
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)
             }
-            pltInAllowListIcon.isVisible = if (token is PLTToken) {
+            pltInAllowListIcon.isVisible = if (token is ProtocolLevelToken) {
                 TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.NOT_ON_ALLOW_LIST ||
                         TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_DENY_LIST
             } else {

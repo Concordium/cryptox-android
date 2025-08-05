@@ -1,9 +1,9 @@
 package com.concordium.wallet.data.model
 
-import com.concordium.wallet.data.room.ProtocolLevelToken
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import java.math.BigInteger
 
-data class PLTToken(
+data class ProtocolLevelToken(
     override val balance: BigInteger = BigInteger.ZERO,
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
@@ -25,9 +25,9 @@ data class PLTToken(
         get() = isInDenyList != true && isInAllowList != false
 }
 
-fun ProtocolLevelToken.toPLTToken(
+fun ProtocolLevelTokenEntity.toProtocolLevelToken(
     isSelected: Boolean = true,
-) = PLTToken(
+) = ProtocolLevelToken(
     balance = balance,
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,

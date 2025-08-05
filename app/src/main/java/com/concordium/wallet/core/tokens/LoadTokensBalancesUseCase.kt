@@ -1,7 +1,7 @@
 package com.concordium.wallet.core.tokens
 
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
@@ -13,8 +13,8 @@ class LoadTokensBalancesUseCase {
         tokens: List<Token>,
         accountAddress: String,
     ) {
-        val tokensByContract: Map<String, List<NewContractToken>> = tokens
-            .filterIsInstance<NewContractToken>()
+        val tokensByContract: Map<String, List<ContractToken>> = tokens
+            .filterIsInstance<ContractToken>()
             .groupBy { it.contractIndex }
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
@@ -26,7 +26,7 @@ class LoadTokensBalancesUseCase {
                 .forEach { contractTokensChunk ->
                     val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
                         separator = ",",
-                        transform = NewContractToken::token,
+                        transform = ContractToken::token,
                     )
 
                     try {

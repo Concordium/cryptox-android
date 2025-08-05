@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
@@ -59,7 +59,7 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.senderName.text = viewModel.sendTokenData.account.getAccountName()
         binding.senderAddress.text = viewModel.sendTokenData.account.address
         binding.amountTitle.text =
-            if (token is NewContractToken && token.isUnique)
+            if (token is ContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
                 getString(
@@ -88,7 +88,7 @@ class SendTokenReceiptActivity : BaseActivity(
             token
         )
         binding.transactionSymbol.text =
-            if (token is NewContractToken && token.isUnique)
+            if (token is ContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
                 token.symbol

@@ -10,9 +10,9 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.NewContractToken
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.PLTToken
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
@@ -168,12 +168,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                         " ${token.metadata?.symbol}"
             }
 
-            is NewContractToken -> {
+            is ContractToken -> {
                 CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
                         " ${token.metadata?.symbol ?: ""}"
             }
 
-            is PLTToken -> {
+            is ProtocolLevelToken -> {
                 CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
                         " ${token.tokenId}"
             }
@@ -187,7 +187,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.ccdActionButtons.earnBtn.isEnabled = !it
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
-        val isTokenActionButtonEnabled = if (token is PLTToken) {
+        val isTokenActionButtonEnabled = if (token is ProtocolLevelToken) {
             TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.ON_ALLOW_LIST ||
                     TokenUtil.getPLTPLTListStatus(token) == PLTListStatus.UNKNOWN
         } else
@@ -280,7 +280,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun setTokenId(token: Token) {
-        if (token !is PLTToken) {
+        if (token !is ProtocolLevelToken) {
             if (token.metadata?.name?.isBlank() == false) {
                 binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
                 binding.includeAbout.tokenId.text = token.metadata?.name
@@ -313,7 +313,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     private fun setNameAndIcon(token: Token) {
         val name = when (token) {
             is CCDToken -> getString(R.string.account_details_ccd_token)
-            is PLTToken -> token.tokenId
+            is ProtocolLevelToken -> token.tokenId
             else -> token.metadata?.name
         }
 
@@ -353,7 +353,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
-        if (token is NewContractToken) {
+        if (token is ContractToken) {
             val tokenIndex = token.contractIndex
             if (tokenIndex.isNotBlank()) {
                 binding.includeAbout.contractIndexHolder.visibility = View.VISIBLE
@@ -390,7 +390,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
     }
 
     private fun setPLTListStatus(token: Token) {
-        if (token is PLTToken) {
+        if (token is ProtocolLevelToken) {
             binding.includeAbout.pltListStatusHolder.visibility = View.VISIBLE
             binding.includeAbout.pltListStatus.setToken(token)
         } else {
