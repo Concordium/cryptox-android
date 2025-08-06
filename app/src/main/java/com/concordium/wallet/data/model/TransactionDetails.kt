@@ -2,7 +2,7 @@ package com.concordium.wallet.data.model
 
 import java.io.Serializable
 
-data class TransactionDetails(
+class TransactionDetails(
     val type: TransactionType,
     val description: String,
     val outcome: TransactionOutcome,
@@ -10,18 +10,10 @@ data class TransactionDetails(
     val events: List<String>?,
     val transferSource: String?,
     val transferDestination: String?,
-    val transferAmount: Long?,
-    val newIndex: Int?,
     /**
      * CBOR-encoded memo as a hex string.
      */
     val memo: String?,
-    val newSelfEncryptedAmount: String?,
-    val inputEncryptedAmount: String?,
-    val encryptedAmount: String?,
-    val aggregatedIndex: Int?,
-    val amountSubtracted: String?,
-    val amountAdded: String?,
     val tokenId: String?,
     val tokenTransferAmount: TokenAmount?,
 ) : Serializable
