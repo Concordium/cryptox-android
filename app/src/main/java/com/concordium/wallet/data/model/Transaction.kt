@@ -7,7 +7,7 @@ import java.math.BigInteger
 import java.util.Date
 
 
-data class Transaction(
+class Transaction(
     val source: TransactionSource,
     val timeStamp: Date,
     var title: String = "",
@@ -27,7 +27,6 @@ data class Transaction(
     val submissionId: String?,
     val origin: TransactionOrigin?,
     val details: TransactionDetails,
-    val encrypted: TransactionEncrypted?,
 ) : Serializable {
 
     fun isRemoteTransaction(): Boolean {

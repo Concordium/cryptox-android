@@ -6,7 +6,7 @@ class TransactionDetails(
     val type: TransactionType,
     val description: String,
     val outcome: TransactionOutcome,
-    val rejectReason: String,
+    val rejectReason: String?,
     val events: List<String>?,
     val transferSource: String?,
     val transferDestination: String?,

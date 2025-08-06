@@ -30,7 +30,6 @@ fun RemoteTransaction.toTransaction() = Transaction(
     submissionId = null,
     origin = origin,
     details = details,
-    encrypted = encrypted,
 )
 
 fun Transfer.toTransaction() = Transaction(
@@ -55,7 +54,7 @@ fun Transfer.toTransaction() = Transaction(
         transactionType,
         "",
         TransactionOutcome.UNKNOWN,
-        "",
+        null,
         null,
         null,
         null,
@@ -63,5 +62,4 @@ fun Transfer.toTransaction() = Transaction(
         null,
         null,
     ),
-    encrypted = null,
 )

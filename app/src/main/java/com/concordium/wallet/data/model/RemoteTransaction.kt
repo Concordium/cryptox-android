@@ -13,5 +13,4 @@ data class RemoteTransaction(
     val total: BigInteger,
     val energy: Long?,
     val details: TransactionDetails,
-    val encrypted: TransactionEncrypted?
 )
