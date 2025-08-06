@@ -1,9 +1,7 @@
 package com.concordium.wallet.data.backend.news
 
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
-import com.concordium.wallet.data.backend.OfflineMockInterceptor
 import com.ctc.wstx.stax.WstxInputFactory
 import com.ctc.wstx.stax.WstxOutputFactory
 import com.fasterxml.jackson.dataformat.xml.XmlFactory
@@ -27,7 +25,7 @@ class NewsfeedRssBackendConfig {
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-        var okHttpClientBuilder = OkHttpClient().newBuilder()
+        return OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
@@ -42,19 +40,14 @@ class NewsfeedRssBackendConfig {
                     .addHeader("Accept", "application/rss+xml")
                     .build()
             )
-
-        if (AppConfig.useOfflineMock) {
-            okHttpClientBuilder = okHttpClientBuilder.addInterceptor(OfflineMockInterceptor())
-        }
-
-        return okHttpClientBuilder.build()
+            .build()
     }
 
     private fun initializeXmlMapper(): XmlMapper =
         XmlMapper.builder(
             XmlFactory.builder()
-                .inputFactory(WstxInputFactory())
-                .outputFactory(WstxOutputFactory())
+                .xmlInputFactory(WstxInputFactory())
+                .xmlOutputFactory(WstxOutputFactory())
                 .build()
         ).build()
 }

@@ -56,7 +56,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
             9 // nothing is set in the callback uri
     }
 
-    private val preferences: WalletIdentityCreationDataPreferences=
+    private val preferences: WalletIdentityCreationDataPreferences =
         App.appCore.session.walletStorage.identityCreationDataPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,9 +102,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
                 initializeViewModel()
                 viewModel.initialize(tempData)
                 initViews()
-                if (!viewModel.useTemporaryBackend) {
-                    viewModel.beginVerification()
-                }
+                viewModel.beginVerification()
             }
         }
     }

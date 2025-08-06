@@ -270,15 +270,6 @@
                     app:drawableStartCompat="@drawable/ccx_ico_information_circle_contained" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/dev_layout"
-                style="@style/SettingsOverviewItem">
-
-                <TextView
-                    style="@style/SettingsOverviewItemTextView"
-                    android:text="@string/settings_overview_item_developer_options" />
-
-            </LinearLayout>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

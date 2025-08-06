@@ -288,7 +288,6 @@
     <string name="settings_overview_item_nft">NFT</string>
     <string name="settings_overview_item_notifications">Notifications</string>
     <string name="settings_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
-    <string name="settings_overview_item_developer_options">Developer Options</string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
     <string name="settings_overview_erase_data">Erase Data</string>

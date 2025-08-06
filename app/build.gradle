@@ -35,8 +35,6 @@ android {
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionMeta}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("boolean", "USE_BACKEND_MOCK", "false")
-        buildConfigField("boolean", "INCL_DEV_OPTIONS", "false")
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")

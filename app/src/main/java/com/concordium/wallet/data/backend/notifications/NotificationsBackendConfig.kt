@@ -1,9 +1,7 @@
 package com.concordium.wallet.data.backend.notifications
 
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
-import com.concordium.wallet.data.backend.OfflineMockInterceptor
 import com.google.gson.Gson
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
@@ -32,7 +30,7 @@ class NotificationsBackendConfig(val gson: Gson) {
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-        var okHttpClientBuilder = OkHttpClient().newBuilder()
+        return OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
@@ -48,11 +46,6 @@ class NotificationsBackendConfig(val gson: Gson) {
                     .addHeader("Content-Type", "application/json")
                     .build()
             )
-
-        if (AppConfig.useOfflineMock) {
-            okHttpClientBuilder = okHttpClientBuilder.addInterceptor(OfflineMockInterceptor())
-        }
-
-        return okHttpClientBuilder.build()
+            .build()
     }
 }
