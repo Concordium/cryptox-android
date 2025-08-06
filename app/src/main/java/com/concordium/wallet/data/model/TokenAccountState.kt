@@ -1,15 +1,8 @@
 package com.concordium.wallet.data.model
 
-import java.math.BigInteger
-
 data class TokenAccountState(
-    val balance: TokenAccountStateBalance? = null,
+    val balance: TokenAmount? = null,
     val state: TokenAccountStateList? = null,
-)
-
-data class TokenAccountStateBalance(
-    val decimals: Int = 0,
-    val value: BigInteger = BigInteger.ZERO
 )
 
 data class TokenAccountStateList(

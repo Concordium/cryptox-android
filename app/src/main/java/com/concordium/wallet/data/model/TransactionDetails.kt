@@ -18,5 +18,7 @@ data class TransactionDetails(
     val encryptedAmount: String?,
     val aggregatedIndex: Int?,
     val amountSubtracted: String?,
-    val amountAdded: String?
+    val amountAdded: String?,
+    val tokenId: String?,
+    val tokenTransferAmount: TokenAmount?,
 ) : Serializable

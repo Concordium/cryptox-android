@@ -192,8 +192,9 @@ class OfflineMockInterceptor : Interceptor {
             "",
         0,
         "",
-        ""
-
+        "",
+            null,
+            null
         )
 
         var timeStamp = transactionListBaselineTimestamp
