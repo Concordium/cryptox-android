@@ -211,9 +211,9 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showMemo(ta: Transaction) {
-        if (ta.hasMemo()) {
+        if (ta.memoText != null) {
             binding.memoLayout.visibility = View.VISIBLE
-            binding.memoLayout.setValue(ta.getDecodedMemo() ?: "")
+            binding.memoLayout.setValue(ta.memoText)
         } else {
             binding.memoLayout.visibility = View.GONE
         }

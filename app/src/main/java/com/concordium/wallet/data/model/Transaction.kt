@@ -1,7 +1,5 @@
 package com.concordium.wallet.data.model
 
-import com.concordium.sdk.serializing.CborMapper
-import com.reown.util.hexToBytes
 import java.io.Serializable
 import java.math.BigInteger
 import java.util.Date
@@ -10,6 +8,7 @@ import java.util.Date
 class Transaction(
     val source: TransactionSource,
     val timeStamp: Date,
+    val type: TransactionType,
     var title: String = "",
     val subtotal: BigInteger?,
     val cost: BigInteger?,
@@ -26,7 +25,7 @@ class Transaction(
     var toAddressTitle: String?,
     val submissionId: String?,
     val origin: TransactionOrigin?,
-    val details: TransactionDetails,
+    val memoText: String?,
 ) : Serializable {
 
     fun isRemoteTransaction(): Boolean {
@@ -34,31 +33,31 @@ class Transaction(
     }
 
     fun isBakerTransfer(): Boolean {
-        return details.type == TransactionType.LOCAL_BAKER
+        return type == TransactionType.LOCAL_BAKER
     }
 
     fun isDelegationTransfer(): Boolean {
-        return details.type == TransactionType.LOCAL_DELEGATION
+        return type == TransactionType.LOCAL_DELEGATION
     }
 
     fun isSimpleTransfer(): Boolean {
-        return details.type == TransactionType.TRANSFER || details.type == TransactionType.TRANSFERWITHMEMO
+        return type == TransactionType.TRANSFER || type == TransactionType.TRANSFERWITHMEMO
     }
 
     fun isTransferToSecret(): Boolean {
-        return details.type == TransactionType.TRANSFERTOENCRYPTED
+        return type == TransactionType.TRANSFERTOENCRYPTED
     }
 
     fun isTransferToPublic(): Boolean {
-        return details.type == TransactionType.TRANSFERTOPUBLIC
+        return type == TransactionType.TRANSFERTOPUBLIC
     }
 
     fun isEncryptedTransfer(): Boolean {
-        return details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
+        return type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
     }
 
     fun isSmartContractUpdate(): Boolean {
-        return details.type == TransactionType.UPDATE
+        return type == TransactionType.UPDATE
     }
 
     fun isOriginSelf(): Boolean {
@@ -66,15 +65,15 @@ class Transaction(
     }
 
     fun isBakerSuspension(): Boolean {
-        return details.type == TransactionType.VALIDATOR_SUSPENDED
+        return type == TransactionType.VALIDATOR_SUSPENDED
     }
 
     fun isBakerPrimingForSuspension(): Boolean {
-        return details.type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
+        return type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
     }
 
     fun isTokenUpdate(): Boolean {
-        return details.type == TransactionType.TOKEN_UPDATE
+        return type == TransactionType.TOKEN_UPDATE
     }
 
     fun getTotalAmountForRegular(): BigInteger {
@@ -88,19 +87,5 @@ class Transaction(
 
     fun getTotalAmountForSmartContractUpdate(): BigInteger {
         return if (cost == null) BigInteger.ZERO else -cost
-    }
-
-    fun getDecodedMemo(): String? =
-        try {
-            details
-                .memo
-                ?.hexToBytes()
-                ?.let { CborMapper.INSTANCE.readValue(it, String::class.java) }
-        } catch (e: Exception){
-            details.memo
-        }
-
-    fun hasMemo(): Boolean {
-        return !details.memo.isNullOrEmpty()
     }
 }

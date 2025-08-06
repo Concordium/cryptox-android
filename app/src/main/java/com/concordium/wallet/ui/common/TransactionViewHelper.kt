@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -39,8 +40,8 @@ object TransactionViewHelper {
             }
         )
 
-        memoTextView.text = ta.getDecodedMemo()
-        memoLayout.visibility = if (ta.hasMemo()) View.VISIBLE else View.GONE
+        memoTextView.text = ta.memoText
+        memoLayout.isVisible = ta.memoText != null
 
         // Time
         subHeaderTextView.text = if (showDate) {

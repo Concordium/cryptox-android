@@ -138,8 +138,8 @@ class AccountDetailsTransfersFragment : Fragment() {
             if (transaction.isRemoteTransaction()) {
                 if (transaction.origin != null) {
                     if (transaction.origin.type != TransactionOriginType.Self &&
-                        (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER ||
-                                transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)
+                        (transaction.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER ||
+                                transaction.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)
                         ) {
                         result = false
                     }
