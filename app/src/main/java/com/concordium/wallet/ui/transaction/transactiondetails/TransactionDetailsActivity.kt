@@ -175,11 +175,11 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun enableCopy(ta: Transaction) {
-        if (ta.transactionHash != null) {
+        if (ta.hash != null) {
             binding.copyButton.setOnClickListener {
                 onCopyClicked(
                     getString(R.string.transaction_details_transaction_hash),
-                    ta.transactionHash!!
+                    ta.hash!!
                 )
             }
         } else {
@@ -259,7 +259,7 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showTransactionHash(ta: Transaction) {
-        val transactionHash = ta.transactionHash
+        val transactionHash = ta.hash
         if (transactionHash != null) {
             binding.transactionHashLayout.visibility = View.VISIBLE
             binding.transactionHashLayout.setValue(transactionHash, true)
@@ -324,7 +324,7 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showExplorerButton(ta: Transaction) {
-        binding.viewOnExplorerButton.isVisible = ta.transactionHash != null
+        binding.viewOnExplorerButton.isVisible = ta.hash != null
     }
 
     //endregion
