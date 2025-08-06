@@ -9,13 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
 
@@ -138,7 +136,7 @@ class AccountDetailsTransfersFragment : Fragment() {
         item.transaction?.let {
             val transaction: Transaction = it
             if (transaction.isRemoteTransaction()) {
-                if (transaction.origin != null && transaction.details != null) {
+                if (transaction.origin != null) {
                     if (transaction.origin.type != TransactionOriginType.Self &&
                         (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER ||
                                 transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)

@@ -26,7 +26,7 @@ data class Transaction(
     var toAddressTitle: String?,
     val submissionId: String?,
     val origin: TransactionOrigin?,
-    val details: TransactionDetails?,
+    val details: TransactionDetails,
     val encrypted: TransactionEncrypted?,
 ) : Serializable {
 
@@ -35,31 +35,31 @@ data class Transaction(
     }
 
     fun isBakerTransfer(): Boolean {
-        return details?.type == TransactionType.LOCAL_BAKER
+        return details.type == TransactionType.LOCAL_BAKER
     }
 
     fun isDelegationTransfer(): Boolean {
-        return details?.type == TransactionType.LOCAL_DELEGATION
+        return details.type == TransactionType.LOCAL_DELEGATION
     }
 
     fun isSimpleTransfer(): Boolean {
-        return details?.type == TransactionType.TRANSFER || details?.type == TransactionType.TRANSFERWITHMEMO
+        return details.type == TransactionType.TRANSFER || details.type == TransactionType.TRANSFERWITHMEMO
     }
 
     fun isTransferToSecret(): Boolean {
-        return details?.type == TransactionType.TRANSFERTOENCRYPTED
+        return details.type == TransactionType.TRANSFERTOENCRYPTED
     }
 
     fun isTransferToPublic(): Boolean {
-        return details?.type == TransactionType.TRANSFERTOPUBLIC
+        return details.type == TransactionType.TRANSFERTOPUBLIC
     }
 
     fun isEncryptedTransfer(): Boolean {
-        return details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
+        return details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
     }
 
     fun isSmartContractUpdate(): Boolean {
-        return details?.type == TransactionType.UPDATE
+        return details.type == TransactionType.UPDATE
     }
 
     fun isOriginSelf(): Boolean {
@@ -67,15 +67,15 @@ data class Transaction(
     }
 
     fun isBakerSuspension(): Boolean {
-        return details?.type == TransactionType.VALIDATOR_SUSPENDED
+        return details.type == TransactionType.VALIDATOR_SUSPENDED
     }
 
     fun isBakerPrimingForSuspension(): Boolean {
-        return details?.type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
+        return details.type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
     }
 
     fun isTokenUpdate(): Boolean {
-        return details?.type == TransactionType.TOKEN_UPDATE
+        return details.type == TransactionType.TOKEN_UPDATE
     }
 
     fun getTotalAmountForRegular(): BigInteger {
@@ -91,14 +91,17 @@ data class Transaction(
         return if (cost == null) BigInteger.ZERO else -cost
     }
 
-    fun getDecodedMemo(): String? {
-        return details
-            ?.memo
-            ?.hexToBytes()
-            ?.let { CborMapper.INSTANCE.readValue(it, String::class.java) }
-    }
+    fun getDecodedMemo(): String? =
+        try {
+            details
+                .memo
+                ?.hexToBytes()
+                ?.let { CborMapper.INSTANCE.readValue(it, String::class.java) }
+        } catch (e: Exception){
+            details.memo
+        }
 
     fun hasMemo(): Boolean {
-        return !details?.memo.isNullOrEmpty()
+        return !details.memo.isNullOrEmpty()
     }
 }

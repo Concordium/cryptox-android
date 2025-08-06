@@ -12,6 +12,9 @@ data class TransactionDetails(
     val transferDestination: String?,
     val transferAmount: Long?,
     val newIndex: Int?,
+    /**
+     * CBOR-encoded memo as a hex string.
+     */
     val memo: String?,
     val newSelfEncryptedAmount: String?,
     val inputEncryptedAmount: String?,
