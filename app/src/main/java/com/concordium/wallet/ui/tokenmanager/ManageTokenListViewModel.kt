@@ -37,7 +37,7 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
             )
                 .onSuccess { tokens ->
                     updateUIState(
-                        tokens = tokens.sortedByDescending { it.addedAt },
+                        tokens = tokens,
                         waiting = false
                     )
                 }

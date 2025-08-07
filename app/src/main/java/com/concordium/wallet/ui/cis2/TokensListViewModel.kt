@@ -69,7 +69,7 @@ class TokensListViewModel(
                 .onSuccess { tokens ->
                     _uiState.update {
                         it.copy(
-                            tokens = tokens.sortedBy { it.addedAt },
+                            tokens = tokens,
                             isLoading = false
                         )
                     }

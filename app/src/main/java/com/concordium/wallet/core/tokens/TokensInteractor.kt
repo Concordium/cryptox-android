@@ -46,8 +46,7 @@ class TokensInteractor(
 
             val allTokens = buildList {
                 if (addCCDToken) add(ccdToken)
-                addAll(contractTokens)
-                addAll(pltTokens)
+                addAll((contractTokens + pltTokens).sortedByDescending { it.addedAt })
             }
 
             if (loadBalances) {

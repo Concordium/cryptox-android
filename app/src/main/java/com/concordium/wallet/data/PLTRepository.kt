@@ -24,7 +24,12 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
 
     suspend fun unhideToken(accountAddress: String, tokenId: String) {
         find(accountAddress, tokenId)?.let {
-            protocolLevelTokenDao.update(it.copy(isHidden = false))
+            protocolLevelTokenDao.update(
+                it.copy(
+                    isHidden = false,
+                    addedAt = System.currentTimeMillis()
+                )
+            )
         }
     }
 
