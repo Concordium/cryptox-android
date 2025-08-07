@@ -38,9 +38,6 @@ class ManageTokenListActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         hideActionBarBack(isVisible = true)
-        hideAddContact(isVisible = true) {
-            goToAddTokens()
-        }
 
         initViews()
         initViewModel()
@@ -76,6 +73,12 @@ class ManageTokenListActivity : BaseActivity(
             uiState.error?.let {
                 showError(it)
             }
+
+            val isEmptyViewVisible = !uiState.loading && uiState.tokens.isEmpty()
+            binding.emptyViewLayout.isVisible = isEmptyViewVisible
+            hideAddContact(isVisible = isEmptyViewVisible.not()) {
+                goToAddTokens()
+            }
         }
     }
 
@@ -103,6 +106,9 @@ class ManageTokenListActivity : BaseActivity(
         listUpdated = intent.getBooleanExtra(LIST_UPDATED, false)
         if (listUpdated) {
             showToast()
+        }
+        binding.emptyViewButton.setOnClickListener {
+            goToAddTokens()
         }
     }
 
