@@ -18,7 +18,7 @@
             android:contentDescription="@string/account_details_buy"
             android:tooltipText="@string/account_details_buy"
             app:srcCompat="@drawable/mw24_ic_buy_btn"
-            app:tint="@color/mw24_button_secondary_small_text_color" />
+            app:tint="@color/mw24_button_tertiary_text_color" />
 
         <TextView
             android:layout_width="match_parent"
@@ -47,7 +47,7 @@
             android:contentDescription="@string/account_details_send"
             android:tooltipText="@string/account_details_send"
             app:srcCompat="@drawable/mw24_ic_send_btn"
-            app:tint="@color/mw24_button_secondary_small_text_color" />
+            app:tint="@color/mw24_button_tertiary_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
             android:contentDescription="@string/account_details_address"
             android:tooltipText="@string/account_details_address"
             app:srcCompat="@drawable/mw24_ic_receive_btn"
-            app:tint="@color/mw24_button_secondary_small_text_color" />
+            app:tint="@color/mw24_button_tertiary_text_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,7 +108,7 @@
             android:contentDescription="@string/account_details_earn_rewards"
             android:tooltipText="@string/account_details_earn_rewards"
             app:srcCompat="@drawable/mw24_ic_earn_btn"
-            app:tint="@color/mw24_button_secondary_small_text_color" />
+            app:tint="@color/mw24_button_tertiary_text_color" />
 
         <View
             android:id="@+id/earn_btn_notice"
@@ -153,7 +153,7 @@
             android:contentDescription="@string/account_details_activity"
             android:tooltipText="@string/account_details_activity"
             app:srcCompat="@drawable/mw24_ic_activity_btn"
-            app:tint="@color/mw24_button_secondary_small_text_color" />
+            app:tint="@color/mw24_button_tertiary_text_color" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.Token
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ class ManageTokenListViewModel(application: Application) : AndroidViewModel(appl
             updateUIState(waiting = true)
             tokensInteractor.loadTokens(
                 accountAddress = accountAddress,
-                loadBalances = false,
+                loadBalances = true,
                 addCCDToken = false
             )
                 .onSuccess { tokens ->

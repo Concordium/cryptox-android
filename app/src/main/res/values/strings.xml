@@ -241,6 +241,7 @@
     <string name="account_details_account_on_allow_list">Account is on the allow list</string>
     <string name="account_details_account_not_on_allow_list">Account not on the allow list</string>
     <string name="account_details_account_on_deny_list">Account on the deny list</string>
+    <string name="token_type_plt">PLT</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
@@ -538,7 +539,7 @@
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens">Add</string>
-    <string name="cis_add_tokens_continue">Continue</string>
+    <string name="cis_add_tokens_continue">Update Token List</string>
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">No search results</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
@@ -621,6 +622,7 @@
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
     <string name="ccd_details_description">CCD is the native token of the Concordium blockchain. Its main use cases are the payment of transaction fees, the payment for the execution of smart contracts, payments between users, payments for commercial transactions, staking, and the rewards offered to node operators.</string>
+    <string name="token_type_cis">CIS-2</string>
 
     <string name="your_wallet_seed">Your wallet private key</string>
     <string name="your_seed_phrase">Your seed phrase</string>

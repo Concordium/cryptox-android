@@ -99,6 +99,28 @@ object CurrencyUtil {
         return decimalFormatter.format(bigDecimalValue)
     }
 
+    fun formatCompactGTU(value: BigInteger, decimals: Int = 6): String {
+        if (value == BigInteger.ZERO) return ZERO_AMOUNT
+
+        val gtuValue = formatGTU(value, decimals, withCommas = false).toBigDecimal()
+
+        val scaledValue: Pair<BigDecimal, String> = when {
+            gtuValue < BigDecimal(1_000) -> gtuValue.setScale(2, RoundingMode.HALF_UP) to ""
+            gtuValue < BigDecimal(1_000_000) -> (gtuValue.divide(BigDecimal(1_000)))
+                .setScale(2, RoundingMode.HALF_DOWN) to "k"
+
+            gtuValue < BigDecimal(1_000_000_000) -> (gtuValue.divide(BigDecimal(1_000_000)))
+                .setScale(2, RoundingMode.HALF_DOWN) to "m"
+
+            else -> (gtuValue.divide(BigDecimal(1_000_000_000)))
+                .setScale(2, RoundingMode.HALF_DOWN) to "b"
+        }
+
+        return "${
+            scaledValue.first.stripTrailingZeros().toPlainString()
+        } ${scaledValue.second}".trim()
+    }
+
     fun toGTUValue(stringValue: String, token: Token): BigInteger? =
         toGTUValue(stringValue, token.decimals)
 

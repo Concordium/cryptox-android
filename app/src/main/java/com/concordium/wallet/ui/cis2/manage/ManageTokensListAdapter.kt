@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenManageListBinding
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 
@@ -91,6 +93,44 @@ class ManageTokensListAdapter(
             token.isTransferable.not()
         } else {
             false
+        }
+        holder.binding.tokenType.apply {
+            when (token) {
+                is ProtocolLevelToken -> {
+                    text = context.getString(R.string.token_type_plt)
+                    setTextColor(context.getColor(R.color.mw24_content_accent_secondary))
+                    setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.mw24_ic_plt_token,
+                        0,
+                        0,
+                        0
+                    )
+                }
+
+                is ContractToken -> {
+                    text = context.getString(R.string.token_type_cis)
+                    setTextColor(context.getColor(R.color.mw24_plain_white_40))
+                    setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.mw24_ic_cis2_token,
+                        0,
+                        0,
+                        0
+                    )
+                }
+
+                else -> {
+                    isVisible = false
+                }
+            }
+        }
+        if (token.metadata?.unique == true) {
+            holder.binding.balance.isVisible = false
+        } else {
+            holder.binding.balance.isVisible = true
+            holder.binding.balance.text = CurrencyUtil.formatCompactGTU(
+                value = token.balance,
+                decimals = token.decimals
+            )
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -62,10 +63,7 @@ class ManageTokensSelectionAdapter(
             holder.binding.tokenIcon.setImageDrawable(ThemedCircularProgressDrawable(context))
         }
 
-        holder.binding.title.text = tokenMetadata?.name ?: if (token is ProtocolLevelToken)
-            token.tokenId
-        else
-            context.getString(R.string.cis_loading_metadata_progress)
+        holder.binding.title.text = tokenMetadata?.name ?: token.symbol
 
         if (token.metadata?.unique == true) {
             holder.binding.subtitle.text =
@@ -74,12 +72,10 @@ class ManageTokensSelectionAdapter(
                 else
                     context.getString(R.string.cis_not_owned)
         } else {
-            val tokenBalance = CurrencyUtil.formatGTU(
-                token.balance,
-                token.decimals
+            holder.binding.subtitle.text = CurrencyUtil.formatCompactGTU(
+                value = token.balance,
+                decimals = token.decimals
             )
-            holder.binding.subtitle.text =
-                context.getString(R.string.cis_search_balance, tokenBalance)
         }
 
         // Only allow selection when the metadata is loaded.
@@ -97,6 +93,36 @@ class ManageTokensSelectionAdapter(
             token.isTransferable.not()
         } else {
             false
+        }
+
+        holder.binding.tokenType.apply {
+            when (token) {
+                is ProtocolLevelToken -> {
+                    text = context.getString(R.string.token_type_plt)
+                    setTextColor(context.getColor(R.color.mw24_content_accent_secondary))
+                    setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.mw24_ic_plt_token,
+                        0,
+                        0,
+                        0
+                    )
+                }
+
+                is ContractToken -> {
+                    text = context.getString(R.string.token_type_cis)
+                    setTextColor(context.getColor(R.color.mw24_plain_white_40))
+                    setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.mw24_ic_cis2_token,
+                        0,
+                        0,
+                        0
+                    )
+                }
+
+                else -> {
+                    isVisible = false
+                }
+            }
         }
     }
 }
