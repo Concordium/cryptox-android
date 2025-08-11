@@ -10,13 +10,12 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 
 class TransactionMappingHelper(
-    private val account: Account,
-    private val recipientList: List<Recipient>
+    private val recipientList: List<Recipient>,
 ) {
 
     data class RecipientResult(
         val hasFoundRecipient: Boolean,
-        val recipientOrAddress: String
+        val recipientOrAddress: String,
     )
 
     private fun findRecipientOrUseAddress(address: String): RecipientResult {
@@ -25,14 +24,8 @@ class TransactionMappingHelper(
                 return RecipientResult(true, recipient.name)
             }
         }
-        val addressFormatted = if (address.length > 6) {
-            "${address.substring(0, 6)}..."
-        } else {
-            address
-        }
-        return RecipientResult(false, addressFormatted)
+        return RecipientResult(false, Account.getDefaultName(address))
     }
-
 
     fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer, ctx: Context) {
         if (transaction.isDelegationTransfer()) {
@@ -44,23 +37,15 @@ class TransactionMappingHelper(
         } else if (transaction.isTokenUpdate()) {
             transaction.title = ctx.getString(R.string.account_token_update_pending)
         } else {
-            // ...else transfer is always outgoing, so just use toAddress
-            val recipientResult = findRecipientOrUseAddress(transfer.toAddress)
-            transaction.title = ctx.getString(R.string.transaction_type_transfer)
-            transaction.fromAddressTitle = account.name
-            if (recipientResult.hasFoundRecipient) {
-                transaction.toAddressTitle = recipientResult.recipientOrAddress
-            }
+            transaction.title = findRecipientOrUseAddress(transfer.toAddress).recipientOrAddress
         }
     }
 
     fun addTitleToTransaction(
         transaction: Transaction,
         remoteTransaction: RemoteTransaction,
-        ctx: Context
     ) {
         var address: String? = null
-        var recipientName: String? = null
         val source = remoteTransaction.details.transferSource
         val destination = remoteTransaction.details.transferDestination
         if (source != null && destination != null) {
@@ -71,24 +56,9 @@ class TransactionMappingHelper(
             }
         }
         if (address != null) {
-            val recipientResult = findRecipientOrUseAddress(address)
-            transaction.title = ctx.getString(R.string.transaction_type_transfer)
-            if (recipientResult.hasFoundRecipient) {
-                recipientName = recipientResult.recipientOrAddress
-            }
+            transaction.title = findRecipientOrUseAddress(address).recipientOrAddress
         } else {
             transaction.title = remoteTransaction.details.description
-        }
-        when (remoteTransaction.origin.type) {
-            TransactionOriginType.Self -> {
-                transaction.fromAddressTitle = account.name
-                transaction.toAddressTitle = recipientName ?: ""
-            }
-
-            else -> {
-                transaction.fromAddressTitle = recipientName ?: ""
-                transaction.toAddressTitle = account.name
-            }
         }
     }
 }

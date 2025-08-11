@@ -21,8 +21,6 @@ class Transaction(
     val events: List<String>?,
     val fromAddress: String?,
     val toAddress: String?,
-    var fromAddressTitle: String?,
-    var toAddressTitle: String?,
     val origin: TransactionOrigin?,
     val memoText: String?,
     val tokenTransferAmount: TokenAmount?,

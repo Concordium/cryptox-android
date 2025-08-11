@@ -73,8 +73,8 @@ object TransactionViewHelper {
                     ?: CCDToken.DECIMALS
 
             val amountSymbol =
-                ta.tokenId
-                    ?: CCDToken.SYMBOL
+                (ta.tokenId
+                    ?: CCDToken.SYMBOL)
 
             totalTextView.text =
                 CurrencyUtil.formatGTU(

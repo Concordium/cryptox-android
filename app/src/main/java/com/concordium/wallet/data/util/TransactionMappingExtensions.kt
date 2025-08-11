@@ -26,8 +26,6 @@ fun RemoteTransaction.toTransaction() = Transaction(
     events = details.events,
     fromAddress = details.transferSource,
     toAddress = details.transferDestination,
-    fromAddressTitle = "",
-    toAddressTitle = "",
     origin = origin,
     memoText = runCatching {
         CborMapper.INSTANCE.readValue(
@@ -54,8 +52,6 @@ fun Transfer.toTransaction() = Transaction(
     events = null,
     fromAddress = fromAddress,
     toAddress = toAddress,
-    fromAddressTitle = "",
-    toAddressTitle = "",
     origin = TransactionOrigin(TransactionOriginType.Self, null),
     memoText = runCatching {
         CborMapper.INSTANCE.readValue(

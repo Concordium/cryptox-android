@@ -101,7 +101,7 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
 
     private fun getLocalTransfers() = viewModelScope.launch {
         val recipientList = recipientRepository.getAll()
-        transactionMappingHelper = TransactionMappingHelper(account, recipientList)
+        transactionMappingHelper = TransactionMappingHelper(recipientList)
         val transferList = transferRepository.getAllByAccountId(account.id)
         for (transfer in transferList) {
             val transaction = transfer.toTransaction()
@@ -158,7 +158,6 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
             transactionMappingHelper.addTitleToTransaction(
                 transaction,
                 remoteTransaction,
-                getApplication()
             )
             newTransactions.add(transaction)
         }
