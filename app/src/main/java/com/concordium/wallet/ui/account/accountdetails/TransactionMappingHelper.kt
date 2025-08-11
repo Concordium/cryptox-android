@@ -13,18 +13,13 @@ class TransactionMappingHelper(
     private val recipientList: List<Recipient>,
 ) {
 
-    data class RecipientResult(
-        val hasFoundRecipient: Boolean,
-        val recipientOrAddress: String,
-    )
-
-    private fun findRecipientOrUseAddress(address: String): RecipientResult {
+    private fun getCounterpartyName(address: String): String {
         for (recipient in recipientList) {
             if (recipient.address == address) {
-                return RecipientResult(true, recipient.name)
+                return recipient.name
             }
         }
-        return RecipientResult(false, Account.getDefaultName(address))
+        return Account.getDefaultName(address)
     }
 
     fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer, ctx: Context) {
@@ -37,7 +32,7 @@ class TransactionMappingHelper(
         } else if (transaction.isTokenUpdate()) {
             transaction.title = ctx.getString(R.string.account_token_update_pending)
         } else {
-            transaction.title = findRecipientOrUseAddress(transfer.toAddress).recipientOrAddress
+            transaction.title = getCounterpartyName(transfer.toAddress)
         }
     }
 
@@ -56,7 +51,7 @@ class TransactionMappingHelper(
             }
         }
         if (address != null) {
-            transaction.title = findRecipientOrUseAddress(address).recipientOrAddress
+            transaction.title = getCounterpartyName(address)
         } else {
             transaction.title = remoteTransaction.details.description
         }
