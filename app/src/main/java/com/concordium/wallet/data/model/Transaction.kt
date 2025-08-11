@@ -13,7 +13,7 @@ class Transaction(
     val subtotal: BigInteger?,
     val cost: BigInteger?,
     val total: BigInteger,
-    var transactionStatus: TransactionStatus,
+    var status: TransactionStatus,
     var outcome: TransactionOutcome,
     var blockHashes: List<String>?,
     val hash: String?,
@@ -25,10 +25,12 @@ class Transaction(
     var toAddressTitle: String?,
     val origin: TransactionOrigin?,
     val memoText: String?,
+    val tokenTransferAmount: TokenAmount?,
+    val tokenId: String?,
 ) : Serializable {
 
     fun isRemoteTransaction(): Boolean {
-        return transactionStatus == TransactionStatus.FINALIZED
+        return status == TransactionStatus.FINALIZED
     }
 
     fun isBakerTransfer(): Boolean {
@@ -37,18 +39,6 @@ class Transaction(
 
     fun isDelegationTransfer(): Boolean {
         return type == TransactionType.LOCAL_DELEGATION
-    }
-
-    fun isSimpleTransfer(): Boolean {
-        return type == TransactionType.TRANSFER || type == TransactionType.TRANSFERWITHMEMO
-    }
-
-    fun isTransferToSecret(): Boolean {
-        return type == TransactionType.TRANSFERTOENCRYPTED
-    }
-
-    fun isTransferToPublic(): Boolean {
-        return type == TransactionType.TRANSFERTOPUBLIC
     }
 
     fun isEncryptedTransfer(): Boolean {
@@ -73,18 +63,5 @@ class Transaction(
 
     fun isTokenUpdate(): Boolean {
         return type == TransactionType.TOKEN_UPDATE
-    }
-
-    fun getTotalAmountForRegular(): BigInteger {
-        if (transactionStatus == TransactionStatus.ABSENT) {
-            return BigInteger.ZERO
-        } else if (outcome == TransactionOutcome.Reject) {
-            return if (cost == null) BigInteger.ZERO else -cost
-        }
-        return total
-    }
-
-    fun getTotalAmountForSmartContractUpdate(): BigInteger {
-        return if (cost == null) BigInteger.ZERO else -cost
     }
 }

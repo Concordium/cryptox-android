@@ -67,7 +67,7 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
             {
                 // Update the transaction - the changes are not saved (they will be updated elsewhere)
                 transaction.blockHashes = it.blockHashes
-                transaction.transactionStatus = it.status
+                transaction.status = it.status
                 transaction.outcome = it.outcome ?: TransactionOutcome.UNKNOWN
                 transaction.rejectReason = it.rejectReason
                 _waitingLiveData.value = false

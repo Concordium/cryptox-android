@@ -269,13 +269,13 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showBlockHashes(ta: Transaction) {
-        if (ta.transactionStatus == TransactionStatus.RECEIVED) {
+        if (ta.status == TransactionStatus.RECEIVED) {
             binding.blockHashLayout.visibility = View.VISIBLE
             binding.blockHashLayout.setValue(
                 getString(R.string.transaction_details_block_hash_submitted),
                 true
             )
-        } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
+        } else if (ta.status == TransactionStatus.ABSENT) {
             binding.blockHashLayout.visibility = View.VISIBLE
             binding.blockHashLayout.setValue(
                 getString(R.string.transaction_details_block_hash_failed),

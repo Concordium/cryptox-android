@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
@@ -50,106 +51,79 @@ object TransactionViewHelper {
             DateTimeUtil.formatTimeAsLocal(ta.timeStamp)
         }
 
-        fun setTotalView(total: BigInteger) {
-            totalTextView.text = totalTextView.context.getString(
-                R.string.amount,
-                CurrencyUtil.formatGTU(total)
-            )
-            val textColor = if (total.signum() > 0)
-                ContextCompat.getColor(
-                    totalTextView.context,
-                    R.color.mw24_green
-                ) else
-                ContextCompat.getColor(
-                    totalTextView.context,
-                    R.color.cryptox_white_main
-                )
-            totalTextView.setTextColor(textColor)
+        // Amount
+        val amountValue =
+            ta.tokenTransferAmount?.value
+                ?.let { tokenAmount ->
+                    if (ta.isOriginSelf())
+                        -tokenAmount
+                    else
+                        tokenAmount
+                }
+                ?: ta.subtotal
+                ?: ta.total
+
+        if (amountValue == BigInteger.ZERO) {
+            totalTextView.visibility = View.GONE
+        } else {
             totalTextView.visibility = View.VISIBLE
+
+            val amountDecimals =
+                ta.tokenTransferAmount?.decimals
+                    ?: CCDToken.DECIMALS
+
+            val amountSymbol =
+                ta.tokenId
+                    ?: CCDToken.SYMBOL
+
+            totalTextView.text =
+                CurrencyUtil.formatGTU(
+                    value = amountValue,
+                    decimals = amountDecimals,
+                ) + " $amountSymbol"
+
+            totalTextView.setTextColor(
+                if (amountValue.signum() > 0)
+                    ContextCompat.getColor(
+                        totalTextView.context,
+                        R.color.mw24_green
+                    )
+                else
+                    ContextCompat.getColor(
+                        totalTextView.context,
+                        R.color.cryptox_white_main
+                    )
+            )
         }
 
-        fun showTransactionFeeText() {
+        // Cost
+        if (ta.isEncryptedTransfer() && ta.isOriginSelf()) {
             costTextView.visibility = View.VISIBLE
             costTextView.text =
                 costTextView.context.getString(R.string.account_details_shielded_transaction_fee)
-        }
+        } else if (ta.cost != null && (ta.tokenTransferAmount != null || ta.subtotal != null)) {
+            costTextView.visibility = View.VISIBLE
 
-        fun hideCostLine() {
+            var prefix = ""
+            if (ta.status == TransactionStatus.RECEIVED ||
+                (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
+                || ta.status == TransactionStatus.ABSENT
+            ) {
+                prefix = "~"
+            }
+
+            costTextView.text = costTextView.context.getString(R.string.account_details_fee) +
+                    " $prefix" +
+                    CurrencyUtil.formatGTU(ta.cost) +
+                    " ${CCDToken.SYMBOL}"
+        } else {
             costTextView.visibility = View.GONE
         }
 
-        fun showCostLineWithAmounts() {
-            // Subtotal and cost
-            if (ta.subtotal != null && ta.cost != null) {
-                costTextView.visibility = View.VISIBLE
-
-                val cost = ta.cost
-                var costPrefix = ""
-
-                if (ta.transactionStatus == TransactionStatus.RECEIVED ||
-                    (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
-                    || ta.transactionStatus == TransactionStatus.ABSENT
-                ) {
-                    costPrefix = "~"
-                }
-
-                costTextView.text = costTextView.context.getString(R.string.account_details_fee) +
-                        " $costPrefix${
-                            CurrencyUtil.formatGTU(cost)
-                        } " + costTextView.context.getString(R.string.accounts_overview_balance_suffix)
-            } else {
-                costTextView.visibility = View.GONE
-            }
-        }
-
-        //Clear first
-        totalTextView.text = ""
-
-        // Public balance
-        // remote transactions
-        if (ta.isRemoteTransaction()) {
-            if (ta.isEncryptedTransfer()) {
-                setTotalView(ta.getTotalAmountForRegular())
-                if (ta.isOriginSelf()) {
-                    showTransactionFeeText()
-                } else {
-                    // left empty intentionally (won't be called as item is filtered out)
-                }
-            } else { // baker
-                setTotalView(ta.getTotalAmountForRegular())
-                showCostLineWithAmounts()
-            }
-        }
-        // local (unfinalized) transactions
-        else {
-
-            // simpleTransfer (handle as before)
-            // transferToSecret (as simpleTransfer)
-            if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
-                setTotalView(ta.getTotalAmountForRegular())
-                showCostLineWithAmounts()
-            } else
-            // update Smart Contract (show the fee as an estimate cost until the transaction is Finalized)
-                if (ta.isSmartContractUpdate() || ta.isTokenUpdate()) {
-                    setTotalView(ta.getTotalAmountForSmartContractUpdate())
-                    showCostLineWithAmounts()
-                } else
-                // transferToPublic (show only the cost as total, no subtotal or fee on second row - clarified with Concordium)
-                    if (ta.isTransferToPublic()) {
-                        setTotalView(ta.getTotalAmountForRegular())
-                        hideCostLine()
-                    } else
-                    // encryptedTransfer (show only the cost as total, subtotal/cost row should be "Shielded transaction fee")
-                        if (ta.isEncryptedTransfer()) {
-                            setTotalView(ta.getTotalAmountForRegular())
-                            showTransactionFeeText()
-                        }
-        }
-
         // Alert image
-        if (ta.transactionStatus == TransactionStatus.ABSENT ||
-            (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
-            (ta.transactionStatus == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
+        if (ta.status == TransactionStatus.ABSENT ||
+            (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
+            (ta.status == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
         ) {
             alertImageView.visibility = View.VISIBLE
         } else {
@@ -157,17 +131,17 @@ object TransactionViewHelper {
         }
 
         // Status image
-        if (ta.transactionStatus == TransactionStatus.RECEIVED ||
-            (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
+        if (ta.status == TransactionStatus.RECEIVED ||
+            (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
         ) {
             statusImageView.setImageDrawable(
                 ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_time)
             )
-        } else if (ta.transactionStatus == TransactionStatus.COMMITTED) {
+        } else if (ta.status == TransactionStatus.COMMITTED) {
             statusImageView.setImageDrawable(
                 ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok)
             )
-        } else if (ta.transactionStatus == TransactionStatus.FINALIZED) {
+        } else if (ta.status == TransactionStatus.FINALIZED) {
             statusImageView.setImageDrawable(
                 ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok_x2)
             )

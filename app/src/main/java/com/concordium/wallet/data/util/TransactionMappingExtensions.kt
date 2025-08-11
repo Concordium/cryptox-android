@@ -18,7 +18,7 @@ fun RemoteTransaction.toTransaction() = Transaction(
     subtotal = subtotal,
     cost = cost,
     total = total,
-    transactionStatus = TransactionStatus.FINALIZED,
+    status = TransactionStatus.FINALIZED,
     outcome = details.outcome,
     blockHashes = arrayListOf(blockHash),
     hash = transactionHash,
@@ -35,6 +35,8 @@ fun RemoteTransaction.toTransaction() = Transaction(
             String::class.java,
         )
     }.getOrNull(),
+    tokenTransferAmount = details.tokenTransferAmount,
+    tokenId = details.tokenId,
 )
 
 fun Transfer.toTransaction() = Transaction(
@@ -44,7 +46,7 @@ fun Transfer.toTransaction() = Transaction(
     subtotal = -amount,
     cost = cost,
     total = -(amount + cost),
-    transactionStatus = transactionStatus,
+    status = transactionStatus,
     outcome = outcome,
     blockHashes = null,
     hash = submissionId,
@@ -61,4 +63,6 @@ fun Transfer.toTransaction() = Transaction(
             String::class.java,
         )
     }.getOrNull(),
+    tokenTransferAmount = null,
+    tokenId = null,
 )

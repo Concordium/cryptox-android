@@ -28,8 +28,8 @@ data class CCDToken(
 
     override val metadata: TokenMetadata =
         TokenMetadata(
-            symbol = "CCD",
-            decimals = 6,
+            symbol = SYMBOL,
+            decimals = DECIMALS,
             unique = false,
             name = null,
             description = null,
@@ -40,4 +40,9 @@ data class CCDToken(
 
     override val symbol: String =
         metadata.symbol!!
+
+    companion object {
+        const val SYMBOL = "CCD"
+        const val DECIMALS = 6
+    }
 }
