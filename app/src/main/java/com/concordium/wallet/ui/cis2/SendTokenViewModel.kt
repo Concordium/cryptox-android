@@ -606,9 +606,6 @@ class SendTokenViewModel(
                 is ProtocolLevelToken ->
                     TransactionType.TOKEN_UPDATE
             },
-            newSelfEncryptedAmount = null,
-            newStartIndex = 0,
-            nonce = sendTokenData.accountNonce,
             tokenTransferAmount = TokenAmount(
                 value = sendTokenData.amount,
                 decimals = sendTokenData.token.decimals,

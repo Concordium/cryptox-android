@@ -37,9 +37,6 @@ data class Transfer(
     var transactionStatus: TransactionStatus,
     var outcome: TransactionOutcome,
     val transactionType: TransactionType,
-    val newSelfEncryptedAmount: String?,
-    val newStartIndex: Int,
-    val nonce: AccountNonce?,
     @ColumnInfo(name = "token_transfer_amount")
     val tokenTransferAmount: TokenAmount?,
     @ColumnInfo(name = "token_symbol")

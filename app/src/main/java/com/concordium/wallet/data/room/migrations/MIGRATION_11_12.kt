@@ -9,6 +9,9 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
 
         database.execSQL("ALTER TABLE `transfer_table` ADD COLUMN `token_transfer_amount` TEXT DEFAULT null")
         database.execSQL("ALTER TABLE `transfer_table` ADD COLUMN `token_symbol` TEXT DEFAULT null")
+        database.execSQL("ALTER TABLE `transfer_table` DROP COLUMN `newSelfEncryptedAmount`")
+        database.execSQL("ALTER TABLE `transfer_table` DROP COLUMN `newStartIndex`")
+        database.execSQL("ALTER TABLE `transfer_table` DROP COLUMN `nonce`")
 
         database.execSQL(
             """

@@ -283,9 +283,6 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
             transactionStatus = TransactionStatus.RECEIVED,
             outcome = TransactionOutcome.UNKNOWN,
             transactionType = TransactionType.TRANSFER,
-            newSelfEncryptedAmount = null,
-            newStartIndex = 0,
-            nonce = null,
             tokenTransferAmount = null,
             tokenSymbol = null,
         )

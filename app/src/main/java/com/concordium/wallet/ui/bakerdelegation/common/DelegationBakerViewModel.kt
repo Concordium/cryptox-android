@@ -807,9 +807,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             transactionStatus = submissionStatus,
             outcome = TransactionOutcome.UNKNOWN,
             transactionType = localTransactionType,
-            newSelfEncryptedAmount = null,
-            newStartIndex = 0,
-            nonce = null,
             tokenTransferAmount = null,
             tokenSymbol = null,
         )
