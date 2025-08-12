@@ -3,7 +3,10 @@ package com.concordium.wallet.data.model
 import java.io.Serializable
 
 class TransactionDetails(
-    val type: TransactionType,
+    /**
+     * Known transaction type or null if it is unknown.
+     */
+    val type: TransactionType?,
     val description: String,
     val outcome: TransactionOutcome,
     val rejectReason: String?,

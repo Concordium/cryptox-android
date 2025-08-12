@@ -8,7 +8,7 @@ import java.util.Date
 class Transaction(
     val source: TransactionSource,
     val timeStamp: Date,
-    val type: TransactionType,
+    val knownType: TransactionType?,
     var title: String = "",
     val subtotal: BigInteger?,
     val cost: BigInteger?,
@@ -32,19 +32,19 @@ class Transaction(
     }
 
     fun isBakerTransfer(): Boolean {
-        return type == TransactionType.LOCAL_BAKER
+        return knownType == TransactionType.LOCAL_BAKER
     }
 
     fun isDelegationTransfer(): Boolean {
-        return type == TransactionType.LOCAL_DELEGATION
+        return knownType == TransactionType.LOCAL_DELEGATION
     }
 
     fun isEncryptedTransfer(): Boolean {
-        return type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
+        return knownType == TransactionType.ENCRYPTEDAMOUNTTRANSFER || knownType == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
     }
 
     fun isSmartContractUpdate(): Boolean {
-        return type == TransactionType.UPDATE
+        return knownType == TransactionType.UPDATE
     }
 
     fun isOriginSelf(): Boolean {
@@ -52,14 +52,10 @@ class Transaction(
     }
 
     fun isBakerSuspension(): Boolean {
-        return type == TransactionType.VALIDATOR_SUSPENDED
+        return knownType == TransactionType.VALIDATOR_SUSPENDED
     }
 
     fun isBakerPrimingForSuspension(): Boolean {
-        return type == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
-    }
-
-    fun isTokenUpdate(): Boolean {
-        return type == TransactionType.TOKEN_UPDATE
+        return knownType == TransactionType.VALIDATOR_PRIMED_FOR_SUSPENSION
     }
 }

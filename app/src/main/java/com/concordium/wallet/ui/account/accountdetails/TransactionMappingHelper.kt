@@ -29,8 +29,6 @@ class TransactionMappingHelper(
             transaction.title = ctx.getString(R.string.account_baking_pending)
         } else if (transaction.isSmartContractUpdate()) {
             transaction.title = ctx.getString(R.string.account_smart_contract_update_pending)
-        } else if (transaction.isTokenUpdate()) {
-            transaction.title = ctx.getString(R.string.account_token_update_pending)
         } else {
             transaction.title = getCounterpartyName(transfer.toAddress)
         }

@@ -15,15 +15,6 @@ enum class TransactionType {
     @SerializedName("transferToPublic")
     TRANSFERTOPUBLIC,
 
-    @SerializedName("blockReward")
-    BLOCKREWARD,
-
-    @SerializedName("finalizationReward")
-    FINALIZATIONREWARD,
-
-    @SerializedName("bakingReward")
-    BAKINGREWARD,
-
     @SerializedName("transferWithMemo")
     TRANSFERWITHMEMO,
 
@@ -39,12 +30,6 @@ enum class TransactionType {
     @SerializedName("baker")
     LOCAL_BAKER,
 
-    @SerializedName("initContract", alternate = ["InitContract"])
-    INIT_CONTRACT,
-
-    @SerializedName("deployModule")
-    DEPLOY_MODULE,
-
     @SerializedName("validatorPrimedForSuspension")
     VALIDATOR_PRIMED_FOR_SUSPENSION,
 
@@ -54,9 +39,6 @@ enum class TransactionType {
     @SerializedName("tokenUpdate")
     TOKEN_UPDATE,
 
-    // This has been added to have a default value
-    @SerializedName("unknown")
-    UNKNOWN,
     ;
 }
 

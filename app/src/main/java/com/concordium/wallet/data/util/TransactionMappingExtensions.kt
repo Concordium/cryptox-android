@@ -14,7 +14,7 @@ import java.util.Date
 fun RemoteTransaction.toTransaction() = Transaction(
     source = TransactionSource.Remote,
     timeStamp = Date(blockTime.toLong() * 1000),
-    type = details.type,
+    knownType = details.type,
     subtotal = subtotal,
     cost = cost,
     total = total,
@@ -40,7 +40,7 @@ fun RemoteTransaction.toTransaction() = Transaction(
 fun Transfer.toTransaction() = Transaction(
     source = TransactionSource.Local,
     timeStamp = Date(createdAt),
-    type = transactionType,
+    knownType = transactionType,
     subtotal = -amount,
     cost = cost,
     total = -(amount + cost),

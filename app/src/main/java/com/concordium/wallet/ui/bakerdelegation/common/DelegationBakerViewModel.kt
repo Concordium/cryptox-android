@@ -794,25 +794,24 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
 
         val transfer = Transfer(
-            0,
-            accountId,
-            cost,
-            BigInteger.ZERO,
-            fromAddress,
-            fromAddress,
-            expiry,
-            "",
-            createdAt,
-            submissionId,
-            submissionStatus,
-            TransactionOutcome.UNKNOWN,
-            localTransactionType,
-            //but amount is negative so it is listed as incoming positive
-            null,
-            0,
-            null,
-            null,
-            null,
+            id = 0,
+            accountId = accountId,
+            amount = BigInteger.ZERO,
+            cost = cost,
+            fromAddress = fromAddress,
+            toAddress = "",
+            expiry = expiry,
+            memo = null,
+            createdAt = createdAt,
+            submissionId = submissionId,
+            transactionStatus = submissionStatus,
+            outcome = TransactionOutcome.UNKNOWN,
+            transactionType = localTransactionType,
+            newSelfEncryptedAmount = null,
+            newStartIndex = 0,
+            nonce = null,
+            tokenTransferAmount = null,
+            tokenSymbol = null,
         )
 
         transferRepository.insert(transfer)
