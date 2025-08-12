@@ -270,22 +270,24 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val createdAt = Date().time
         val transfer = Transfer(
-            0,
-            account.id,
-            (-20000000000).toBigInteger(),
-            BigInteger.ZERO,
-            "",
-            account.address,
-            expiry,
-            "",
-            createdAt,
-            submissionId,
-            TransactionStatus.RECEIVED,
-            TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFER,
-            null,
-            0,
-            null
+            id = 0,
+            accountId = account.id,
+            amount = (-20000000000).toBigInteger(),
+            cost = BigInteger.ZERO,
+            fromAddress = "",
+            toAddress = account.address,
+            expiry = expiry,
+            memo = null,
+            createdAt = createdAt,
+            submissionId = submissionId,
+            transactionStatus = TransactionStatus.RECEIVED,
+            outcome = TransactionOutcome.UNKNOWN,
+            transactionType = TransactionType.TRANSFER,
+            newSelfEncryptedAmount = null,
+            newStartIndex = 0,
+            nonce = null,
+            tokenTransferAmount = null,
+            tokenSymbol = null,
         )
         saveTransfer(transfer)
     }

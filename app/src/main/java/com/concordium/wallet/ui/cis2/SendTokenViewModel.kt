@@ -32,9 +32,10 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.SimpleFraction
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenAmount
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
@@ -608,6 +609,11 @@ class SendTokenViewModel(
             newSelfEncryptedAmount = null,
             newStartIndex = 0,
             nonce = sendTokenData.accountNonce,
+            tokenTransferAmount = TokenAmount(
+                value = sendTokenData.amount,
+                decimals = sendTokenData.token.decimals,
+            ),
+            tokenSymbol = sendTokenData.token.symbol,
         )
         transactionWaiting.postValue(false)
         saveNewTransfer(transfer)

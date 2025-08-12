@@ -24,7 +24,7 @@ class Transaction(
     val origin: TransactionOrigin?,
     val memoText: String?,
     val tokenTransferAmount: TokenAmount?,
-    val tokenId: String?,
+    val tokenSymbol: String?,
 ) : Serializable {
 
     fun isRemoteTransaction(): Boolean {

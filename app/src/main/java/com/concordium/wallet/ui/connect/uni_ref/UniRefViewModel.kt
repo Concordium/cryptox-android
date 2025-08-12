@@ -552,7 +552,9 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             TransactionType.UPDATE,
             tempData.newSelfEncryptedAmount,
             newStartIndex,
-            tempData.accountNonce
+            tempData.accountNonce,
+            null,
+            null,
         )
         newTransfer = transfer
         saveNewTransfer(transfer)

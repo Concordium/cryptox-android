@@ -310,7 +310,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                             Event(R.string.delegation_register_delegation_pool_id_closed)
                     else if ((bakerDelegationData.type == REGISTER_DELEGATION ||
                                 bakerDelegationData.type == UPDATE_DELEGATION) &&
-                        (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
+                        (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
+                    )
                         _errorLiveData.value =
                             Event(R.string.delegation_register_delegation_pool_id_closed)
                     else if (changePool && !isInCoolDown() && stakedAmount + delegatedCapital > delegatedCapitalCap)
@@ -809,7 +810,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             //but amount is negative so it is listed as incoming positive
             null,
             0,
-            null
+            null,
+            null,
+            null,
         )
 
         transferRepository.insert(transfer)

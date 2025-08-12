@@ -286,7 +286,9 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             transactionType = TransactionType.TRANSFER,
             newSelfEncryptedAmount = newSelfEncryptedAmount,
             newStartIndex = createTransferInput.inputEncryptedAmount?.aggIndex ?: 0,
-            nonce = accountNonce
+            nonce = accountNonce,
+            tokenTransferAmount = null,
+            tokenSymbol = null,
         )
         transferRepository.insert(newTransfer)
 

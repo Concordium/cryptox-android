@@ -3,6 +3,7 @@ package com.concordium.wallet.data.room.typeconverter
 import androidx.room.TypeConverter
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.TokenAmount
 import com.concordium.wallet.data.model.TransactionType
 
 
@@ -29,6 +30,18 @@ class TransactionTypeConverters {
 
     @TypeConverter
     fun accountNonceToJson(amount: AccountNonce?): String {
+        val gson = App.appCore.gson
+        return gson.toJson(amount)
+    }
+
+    @TypeConverter
+    fun jsonToTokenAmount(value: String): TokenAmount? {
+        val gson = App.appCore.gson
+        return gson.fromJson(value, TokenAmount::class.java)
+    }
+
+    @TypeConverter
+    fun tokenAmountToJson(amount: TokenAmount?): String {
         val gson = App.appCore.gson
         return gson.toJson(amount)
     }

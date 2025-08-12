@@ -34,7 +34,7 @@ fun RemoteTransaction.toTransaction() = Transaction(
         )
     }.getOrNull(),
     tokenTransferAmount = details.tokenTransferAmount,
-    tokenId = details.tokenId,
+    tokenSymbol = details.tokenId,
 )
 
 fun Transfer.toTransaction() = Transaction(
@@ -59,6 +59,6 @@ fun Transfer.toTransaction() = Transaction(
             String::class.java,
         )
     }.getOrNull(),
-    tokenTransferAmount = null,
-    tokenId = null,
+    tokenTransferAmount = tokenTransferAmount,
+    tokenSymbol = tokenSymbol,
 )
