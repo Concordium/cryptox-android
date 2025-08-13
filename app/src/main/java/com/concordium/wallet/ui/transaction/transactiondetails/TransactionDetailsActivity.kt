@@ -21,7 +21,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityTransactionDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.TransactionViewHelper
-import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.getSerializable
 
@@ -116,8 +116,7 @@ class TransactionDetailsActivity : BaseActivity(
         val clip = ClipData.newPlainText(title, value)
         clipboard.setPrimaryClip(clip)
 
-        showGradientToast(
-            iconResId = R.drawable.mw24_ic_address_copy_check,
+        showCustomToast(
             title = getString(R.string.transaction_details_value_copied, title.trim(':'))
         )
     }

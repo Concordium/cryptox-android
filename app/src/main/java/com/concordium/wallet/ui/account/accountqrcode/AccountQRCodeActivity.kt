@@ -12,7 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.uicore.toast.showCustomToast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
@@ -89,10 +89,7 @@ class AccountQRCodeActivity :
         val clipData = ClipData.newPlainText("txt", viewModel.account.address)
         clipboardManager.setPrimaryClip(clipData)
 
-        showGradientToast(
-            iconResId = R.drawable.mw24_ic_address_copy_check,
-            title = getString(R.string.account_qr_code_copied)
-        )
+        showCustomToast(title = getString(R.string.account_qr_code_copied))
     }
 
     private fun generateQR(qrCodeContent: String): Bitmap? {

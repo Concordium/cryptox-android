@@ -15,7 +15,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.uicore.toast.showCustomToast
 
 class CcdOnrampSitesActivity : BaseActivity(
     R.layout.activity_ccd_onramp_sites,
@@ -97,8 +97,7 @@ class CcdOnrampSitesActivity : BaseActivity(
                 getString(R.string.account_details_address),
                 viewModel.accountAddress,
             )
-            showGradientToast(
-                iconResId = R.drawable.mw24_ic_address_copy_check,
+            showCustomToast(
                 title = getString(
                     R.string.template_ccd_onramp_opening_site,
                     site.name

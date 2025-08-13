@@ -13,7 +13,7 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.HidingTokenDialog
 import com.concordium.wallet.ui.tokenmanager.ManageTokenListViewModel
-import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.getSerializable
 
 class ManageTokenListActivity : BaseActivity(
@@ -132,9 +132,6 @@ class ManageTokenListActivity : BaseActivity(
     }
 
     private fun showToast() {
-        showGradientToast(
-            R.drawable.mw24_ic_address_copy_check,
-            getString(R.string.cis_tokens_updated)
-        )
+        showCustomToast(title = getString(R.string.cis_tokens_updated))
     }
 }
