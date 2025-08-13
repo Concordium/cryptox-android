@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "9904f3236a65e1901c5f78746ae4a51a",
+    "identityHash": "f5b90e3cd2809e87cf63f319d3bc7e9a",
     "entities": [
       {
         "tableName": "identity_table",
@@ -260,7 +260,7 @@
       },
       {
         "tableName": "transfer_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` TEXT NOT NULL, `cost` TEXT NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `newSelfEncryptedAmount` TEXT, `newStartIndex` INTEGER NOT NULL, `nonce` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` TEXT NOT NULL, `cost` TEXT NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `token_transfer_amount` TEXT, `token_symbol` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -341,20 +341,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "newSelfEncryptedAmount",
-            "columnName": "newSelfEncryptedAmount",
+            "fieldPath": "tokenTransferAmount",
+            "columnName": "token_transfer_amount",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "newStartIndex",
-            "columnName": "newStartIndex",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "nonce",
-            "columnName": "nonce",
+            "fieldPath": "tokenSymbol",
+            "columnName": "token_symbol",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -592,7 +586,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9904f3236a65e1901c5f78746ae4a51a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5b90e3cd2809e87cf63f319d3bc7e9a')"
     ]
   }
 }

@@ -35,8 +35,6 @@ android {
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionMeta}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("boolean", "USE_BACKEND_MOCK", "false")
-        buildConfigField("boolean", "INCL_DEV_OPTIONS", "false")
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")
@@ -91,8 +89,8 @@ android {
 
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
-            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.devnet-plt-beta.concordium.com\"")
-            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://devnet-plt-beta.ccdscan.io/\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.devnet-plt-qa.concordium.com\"")
+            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://devnet-plt-qa.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.stagenet.concordium.com/api/\"")
             buildConfigField("String", "HOSTNAME_GRPC", "\"grpc.devnet-plt-beta.concordium.com\"")
 

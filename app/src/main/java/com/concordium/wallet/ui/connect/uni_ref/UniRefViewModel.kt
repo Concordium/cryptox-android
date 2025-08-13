@@ -28,9 +28,9 @@ import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -416,11 +416,9 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             },
             senderSecretKey = encryptionSecretKey,
             inputEncryptedAmount = SendFundsViewModel.calculateInputEncryptedAmount(
-                accountId = account.id,
                 accountBalance = checkNotNull(tempData.accountBalance) {
                     "The account balance must be loaded at this moment"
                 },
-                transferRepository = transferRepository,
                 accountUpdater = accountUpdater,
             ),
         )
@@ -550,9 +548,8 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             transferSubmissionStatus.status,
             transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
             TransactionType.UPDATE,
-            tempData.newSelfEncryptedAmount,
-            newStartIndex,
-            tempData.accountNonce
+            null,
+            null,
         )
         newTransfer = transfer
         saveNewTransfer(transfer)

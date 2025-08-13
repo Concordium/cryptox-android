@@ -175,11 +175,11 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun enableCopy(ta: Transaction) {
-        if (ta.transactionHash != null) {
+        if (ta.hash != null) {
             binding.copyButton.setOnClickListener {
                 onCopyClicked(
                     getString(R.string.transaction_details_transaction_hash),
-                    ta.transactionHash!!
+                    ta.hash!!
                 )
             }
         } else {
@@ -211,9 +211,9 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showMemo(ta: Transaction) {
-        if (ta.hasMemo()) {
+        if (ta.memoText != null) {
             binding.memoLayout.visibility = View.VISIBLE
-            binding.memoLayout.setValue(ta.getDecodedMemo() ?: "")
+            binding.memoLayout.setValue(ta.memoText)
         } else {
             binding.memoLayout.visibility = View.GONE
         }
@@ -259,7 +259,7 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showTransactionHash(ta: Transaction) {
-        val transactionHash = ta.transactionHash
+        val transactionHash = ta.hash
         if (transactionHash != null) {
             binding.transactionHashLayout.visibility = View.VISIBLE
             binding.transactionHashLayout.setValue(transactionHash, true)
@@ -269,13 +269,13 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showBlockHashes(ta: Transaction) {
-        if (ta.transactionStatus == TransactionStatus.RECEIVED) {
+        if (ta.status == TransactionStatus.RECEIVED) {
             binding.blockHashLayout.visibility = View.VISIBLE
             binding.blockHashLayout.setValue(
                 getString(R.string.transaction_details_block_hash_submitted),
                 true
             )
-        } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
+        } else if (ta.status == TransactionStatus.ABSENT) {
             binding.blockHashLayout.visibility = View.VISIBLE
             binding.blockHashLayout.setValue(
                 getString(R.string.transaction_details_block_hash_failed),
@@ -324,7 +324,7 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showExplorerButton(ta: Transaction) {
-        binding.viewOnExplorerButton.isVisible = ta.transactionHash != null
+        binding.viewOnExplorerButton.isVisible = ta.hash != null
     }
 
     //endregion

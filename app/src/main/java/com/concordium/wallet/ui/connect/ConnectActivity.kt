@@ -8,13 +8,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.Constants
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
 import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.R
-import com.concordium.wallet.data.backend.OfflineMockInterceptor
 import com.concordium.wallet.data.backend.ws.WsTransport
 import com.concordium.wallet.data.model.WsConnectionInfo
 import com.concordium.wallet.data.model.WsMessageResponse
@@ -126,26 +123,13 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-        var okHttpClientBuilder = OkHttpClient().newBuilder()
+      return OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .cache(null)
-//            .addInterceptor(ModifyHeaderInterceptor())
-
-        if (AppConfig.useOfflineMock) {
-            okHttpClientBuilder = okHttpClientBuilder.addInterceptor(OfflineMockInterceptor())
-        }
-        return okHttpClientBuilder.build()
+            .build()
     }
-
-    private fun showShopIcon(url: String) {
-        Glide.with(applicationContext).load(url).placeholder(R.drawable.ic_favicon)
-            .error(R.drawable.ic_favicon).into(shopLogo)
-    }
-
-//    https://cwb.spaceseven.cloud/condition/381743969094074370/!fI0wgh6arvEnpC8WWKIIYtB5G5fm@$nsd2JtfZydNgGxxK4HrROgUfjwt3y!Tw3qDVVkX1oGCegsxhk08A3yLVmGXz1YL73FWz3!QVb0Ep36mftbt7@o8Fy3QmHBNbf
-//    https://cwb.spaceseven.cloud/condition/381743011635134466/SlOJhHSPcmuCW1op3l9K@L@F!n5c56rhwCmjpZ1aV4KpuC@nZsko@jNkyEhR2ucsV2whe2MHebD1Q!zGmTUX8sltQVUUxZNAYBpQQ6Uqxd66gU$nIv7TWOnBOd!an9VS
 
     private fun getBridgeInfo(connectUrl: String) = GlobalScope.launch(Dispatchers.IO) {
         try {

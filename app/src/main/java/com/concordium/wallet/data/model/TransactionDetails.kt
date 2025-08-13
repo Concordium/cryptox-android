@@ -2,21 +2,21 @@ package com.concordium.wallet.data.model
 
 import java.io.Serializable
 
-data class TransactionDetails(
-    val type: TransactionType,
+class TransactionDetails(
+    /**
+     * Known transaction type or null if it is unknown.
+     */
+    val type: TransactionType?,
     val description: String,
     val outcome: TransactionOutcome,
-    val rejectReason: String,
+    val rejectReason: String?,
     val events: List<String>?,
     val transferSource: String?,
     val transferDestination: String?,
-    val transferAmount: Long?,
-    val newIndex: Int?,
+    /**
+     * CBOR-encoded memo as a hex string.
+     */
     val memo: String?,
-    val newSelfEncryptedAmount: String?,
-    val inputEncryptedAmount: String?,
-    val encryptedAmount: String?,
-    val aggregatedIndex: Int?,
-    val amountSubtracted: String?,
-    val amountAdded: String?
+    val tokenId: String?,
+    val tokenTransferAmount: TokenAmount?,
 ) : Serializable

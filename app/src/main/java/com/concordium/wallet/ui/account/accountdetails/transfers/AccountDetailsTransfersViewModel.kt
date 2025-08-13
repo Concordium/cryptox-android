@@ -101,7 +101,7 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
 
     private fun getLocalTransfers() = viewModelScope.launch {
         val recipientList = recipientRepository.getAll()
-        transactionMappingHelper = TransactionMappingHelper(account, recipientList)
+        transactionMappingHelper = TransactionMappingHelper(recipientList)
         val transferList = transferRepository.getAllByAccountId(account.id)
         for (transfer in transferList) {
             val transaction = transfer.toTransaction()
@@ -158,7 +158,6 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
             transactionMappingHelper.addTitleToTransaction(
                 transaction,
                 remoteTransaction,
-                getApplication()
             )
             newTransactions.add(transaction)
         }
@@ -271,22 +270,21 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val createdAt = Date().time
         val transfer = Transfer(
-            0,
-            account.id,
-            (-20000000000).toBigInteger(),
-            BigInteger.ZERO,
-            "",
-            account.address,
-            expiry,
-            "",
-            createdAt,
-            submissionId,
-            TransactionStatus.RECEIVED,
-            TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFER,
-            null,
-            0,
-            null
+            id = 0,
+            accountId = account.id,
+            amount = (-20000000000).toBigInteger(),
+            cost = BigInteger.ZERO,
+            fromAddress = "",
+            toAddress = account.address,
+            expiry = expiry,
+            memo = null,
+            createdAt = createdAt,
+            submissionId = submissionId,
+            transactionStatus = TransactionStatus.RECEIVED,
+            outcome = TransactionOutcome.UNKNOWN,
+            transactionType = TransactionType.TRANSFER,
+            tokenTransferAmount = null,
+            tokenSymbol = null,
         )
         saveTransfer(transfer)
     }
