@@ -258,7 +258,7 @@
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.11.0...HEAD
 
-[1.10.0]: https://github.com/Concordium/cryptox-android/compare/1.10.0...1.11.0
+[1.11.0]: https://github.com/Concordium/cryptox-android/compare/1.10.0...1.11.0
 
 [1.10.0]: https://github.com/Concordium/cryptox-android/compare/1.9.1...1.10.0
 
