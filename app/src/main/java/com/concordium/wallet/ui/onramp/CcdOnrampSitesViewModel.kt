@@ -102,20 +102,13 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                 .groupBy(CcdOnrampSite::type)
                 .forEach { (type, sites) ->
                     items.add(CcdOnrampListItem.Section(type))
-                    items.addAll(
-                        sites.map { site ->
-                            CcdOnrampListItem.Site(
-                                source = site,
-                                isDividerVisible = false,
-                            )
-                        })
+                    items.addAll(sites.map(CcdOnrampListItem::Site))
                 }
         } else {
             items.add(CcdOnrampListItem.NoneAvailable)
         }
 
         items.add(CcdOnrampListItem.ExchangesNotice)
-        items.add(CcdOnrampListItem.Disclaimer)
 
         _listItemsLiveData.postValue(items)
     }

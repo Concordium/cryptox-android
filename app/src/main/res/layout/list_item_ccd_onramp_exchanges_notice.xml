@@ -2,9 +2,9 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="40dp"
+    android:layout_marginTop="16dp"
     android:gravity="center"
     android:text="@string/ccd_onramp_exchanges_notice"
     android:textAppearance="@style/CCX_Typography_Body"
-    android:textColor="@color/ccx_neutral_tint_2"
-    android:textColorLink="@color/ccx_neutral_tint_2" />
+    android:textColor="@color/mw24_content_accent_secondary"
+    android:textColorLink="@color/mw24_content_accent_secondary" />

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
@@ -38,9 +37,6 @@ class CcdOnrampItemAdapter(
 
         CcdOnrampListItem.ExchangesNotice ->
             R.layout.list_item_ccd_onramp_exchanges_notice
-
-        CcdOnrampListItem.Disclaimer ->
-            R.layout.list_item_ccd_onramp_disclaimer
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -62,9 +58,6 @@ class CcdOnrampItemAdapter(
 
             R.layout.list_item_ccd_onramp_exchanges_notice ->
                 ViewHolder.ExchangesNotice(view)
-
-            R.layout.list_item_ccd_onramp_disclaimer ->
-                ViewHolder.Disclaimer(view)
 
             else ->
                 error("Unknown view type $viewType")
@@ -99,9 +92,6 @@ class CcdOnrampItemAdapter(
                         .circleCrop()
                         .into(logoImageView)
 
-                    creditCardImageView.isVisible = item.isCreditCardVisible
-                    divider.isVisible = item.isDividerVisible
-
                     root.setOnClickListener {
                         onSiteClicked(item)
                     }
@@ -110,7 +100,6 @@ class CcdOnrampItemAdapter(
 
             is ViewHolder.NoneAvailable,
             is ViewHolder.ExchangesNotice,
-            is ViewHolder.Disclaimer,
             -> {
             }
         }
@@ -145,7 +134,5 @@ class CcdOnrampItemAdapter(
                 }
             }
         }
-
-        class Disclaimer(itemView: View) : ViewHolder(itemView)
     }
 }

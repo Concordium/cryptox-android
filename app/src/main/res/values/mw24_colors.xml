@@ -23,6 +23,8 @@
     <color name="mw24_surface_success_tertiary">#0C261D</color>
     <color name="mw24_surface_warning_tertiary">#282418</color>
     <color name="mw24_surface_error_tertiary">#2B171B</color>
+    <color name="mw24_surface_tertiary">#212426</color>
+    <color name="mw24_surface_tertiary_pressed">#212426</color>
 
    <!-- Border colors -->
     <color name="mw24_border_accent">#6C88AA</color>

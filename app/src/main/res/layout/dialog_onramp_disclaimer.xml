@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/mw24_dialog_gradient_background">
+
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="@string/ccd_onramp_disclaimer_title"
+        android:textAppearance="@style/MW24_Typography_Text_Main"
+        android:textColor="@color/ccx_neutral_tint_7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/details_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="8dp"
+        android:gravity="start"
+        android:text="@string/ccd_onramp_disclaimer_content"
+        android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+        android:textColor="@color/mw24_black_1"
+        android:lineHeight="19sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_text_view"
+        tools:targetApi="p" />
+
+    <Button
+        android:id="@+id/close_button"
+        style="@style/CCX_Button_Primary.Modal"
+        android:layout_width="0dp"
+        android:layout_margin="32dp"
+        android:text="@string/ccd_onramp_disclaimer_close"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_text_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

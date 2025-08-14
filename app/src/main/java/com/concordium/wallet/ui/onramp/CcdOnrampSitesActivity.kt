@@ -14,6 +14,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.toast.showCustomToast
 
@@ -53,10 +54,9 @@ class CcdOnrampSitesActivity : BaseActivity(
                 item.source?.also(::onSiteClicked)
             },
             onReadDisclaimerClicked = {
-                binding.recyclerview.smoothScrollToPosition(
-                    viewModel.listItemsLiveData.value!!.indexOf(
-                        CcdOnrampListItem.Disclaimer
-                    )
+                CcdOnrampDisclaimerDialog().showSingle(
+                    supportFragmentManager,
+                    CcdOnrampDisclaimerDialog.TAG
                 )
             }
         )

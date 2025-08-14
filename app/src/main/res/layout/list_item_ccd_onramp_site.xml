@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="61dp"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:padding="12dp"
+    android:background="@drawable/mw24_container_primary_background">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo_image_view"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,32 +22,19 @@
         android:id="@+id/name_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginHorizontal="8dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:textAppearance="@style/CCX_Typography_H3"
         android:textColor="@color/ccx_neutral_tint_1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/end_barrier"
+        app:layout_constraintEnd_toStartOf="@id/external_link_image_view"
         app:layout_constraintStart_toEndOf="@id/logo_image_view"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="KuCoin" />
 
     <ImageView
-        android:id="@+id/credit_card_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:contentDescription="@string/ccd_onramp_site_accepts_credit_card"
-        android:tooltipText="@string/ccd_onramp_site_accepts_credit_card"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/arrow_image_view"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ccx_ico_credit_card" />
-
-    <ImageView
-        android:id="@+id/arrow_image_view"
+        android:id="@+id/external_link_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -53,20 +42,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cryptox_ico_chevron_right"
+        app:srcCompat="@drawable/mw24_ic_external_link"
         app:tint="@color/ccx_neutral_tint_3" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/end_barrier"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:barrierDirection="start"
-        app:constraint_referenced_ids="arrow_image_view,credit_card_image_view" />
-
-    <View
-        android:id="@+id/divider"
-        style="@style/CryptoX_Divider_Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

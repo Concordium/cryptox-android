@@ -5,6 +5,6 @@
     android:layout_height="wrap_content"
     android:paddingTop="24dp"
     android:paddingBottom="16dp"
-    android:textAppearance="@style/CCX_Typography_Caption"
-    android:textColor="@color/cryptox_black_additional"
+    android:textAppearance="@style/CCX_Typography_Body"
+    android:textColor="@color/mw24_content_secondary"
     tools:text="@string/ccd_onramp_site_type_payment_gateway" />
