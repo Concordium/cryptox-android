@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class State {
-        AccountOverview,
-        NewsOverview,
+        Home,
+        Buy,
         More,
         ;
     }
@@ -75,7 +75,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setInitialStateIfNotSet() {
         if (_stateLiveData.value == null) {
-            _stateLiveData.postValue(State.AccountOverview)
+            _stateLiveData.postValue(State.Home)
         }
     }
 

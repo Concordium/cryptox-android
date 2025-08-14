@@ -2,8 +2,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App -->
     <string name="app_name">CryptoX Wallet</string>
-    <string name="app_menu_item_accounts">Accounts</string>
-    <string name="app_menu_item_news">News</string>
+    <string name="app_menu_item_home">Home</string>
+    <string name="app_menu_item_buy">Buy</string>
     <string name="app_menu_item_tokens">NFT</string>
     <string name="app_menu_item_more">More</string>
     <string name="app_error_general">Unexpected error</string>

@@ -23,8 +23,8 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
-import com.concordium.wallet.ui.news.NewsOverviewFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
+import com.concordium.wallet.ui.onramp.CcdOnrampSitesFragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
@@ -192,7 +192,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun initializeViews() {
-        binding.bottomNavigationView.menu.findItem(R.id.menuitem_news).isVisible =
+        binding.bottomNavigationView.menu.findItem(R.id.menuitem_buy).isVisible =
             BuildConfig.SHOW_NEWSFEED
         binding.bottomNavigationView.setOnItemSelectedListener {
             onNavigationItemSelected(it)
@@ -245,8 +245,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
         return when (menuItem.itemId) {
-            R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
-            R.id.menuitem_news -> MainViewModel.State.NewsOverview
+            R.id.menuitem_accounts -> MainViewModel.State.Home
+            R.id.menuitem_buy -> MainViewModel.State.Buy
             R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
@@ -256,8 +256,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         val existingFragment = supportFragmentManager.findFragmentByTag(state.name)
 
         val fragment = existingFragment ?: when (state) {
-            MainViewModel.State.AccountOverview -> AccountDetailsFragment()
-            MainViewModel.State.NewsOverview -> NewsOverviewFragment()
+            MainViewModel.State.Home -> AccountDetailsFragment()
+            MainViewModel.State.Buy -> CcdOnrampSitesFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
         }
 

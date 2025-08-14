@@ -140,7 +140,7 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
             intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
             intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_ACCOUNT, true)
             activity.startActivity(intent)
-            EventBus.getDefault().post(MainViewModel.State.AccountOverview)
+            EventBus.getDefault().post(MainViewModel.State.Home)
         }
         builder.setNegativeButton(activity.getString(R.string.identities_overview_identity_later)) { dialog, _ ->
             dialog.dismiss()

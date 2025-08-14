@@ -4,13 +4,13 @@
         android:id="@+id/menuitem_accounts"
         android:icon="@drawable/mw24_ic_menu_home_selector"
         android:orderInCategory="1"
-        android:title="@string/app_menu_item_accounts" />
+        android:title="@string/app_menu_item_home" />
 
     <item
-        android:id="@+id/menuitem_news"
-        android:icon="@drawable/mw24_ic_menu_discover_selector"
+        android:id="@+id/menuitem_buy"
+        android:icon="@drawable/mw24_ic_menu_buy_selector"
         android:orderInCategory="2"
-        android:title="@string/app_menu_item_news" />
+        android:title="@string/app_menu_item_buy" />
 
     <item
         android:id="@+id/menuitem_more"
