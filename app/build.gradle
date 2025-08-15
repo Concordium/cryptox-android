@@ -20,10 +20,10 @@ android {
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
-    def versionMinor = 11
+    def versionMinor = 12
     def versionPatch = 0
     def versionMeta = ""
-    def versionCodeIncremental = 1453
+    def versionCodeIncremental = 1454
 
     compileSdkVersion 34
 
