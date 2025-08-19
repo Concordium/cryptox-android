@@ -3,10 +3,15 @@ package com.concordium.wallet.core.notifications
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.toContractToken
+import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.ContractTokenEntity
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
@@ -53,18 +58,15 @@ class FcmNotificationsService : FirebaseMessagingService() {
             when {
                 // CCD transactions.
                 dataType == TransactionNotificationsManager.TYPE_CCD_TX ->
-                    handleCcdTx(
-                        data = message.data
-                    )
+                    handleCcdTx(data = message.data)
 
                 // CIS2 transactions.
                 dataType == TransactionNotificationsManager.TYPE_CIS2_TX ->
-                    handleCis2Tx(
-                        data = message.data,
-                    )
+                    handleCis2Tx(data = message.data)
 
+                // PLT transactions.
                 dataType == TransactionNotificationsManager.TYPE_PLT_TX ->
-                    Log.d("fcm_plt_message: ${message.data}")
+                    handlePltTx(data = message.data)
 
                 // Announcements.
                 notificationBody != null ->
@@ -112,9 +114,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
      * @param data filled according to the
      * [specification](https://concordium.atlassian.net/wiki/spaces/EN/pages/1502019590/Message+data+payload#CCD-transactions)
      */
-    private suspend fun handleCcdTx(
-        data: Map<String, String>
-    ) {
+    private suspend fun handleCcdTx(data: Map<String, String>) {
         Log.d("handling_ccd_tx")
 
         val amount = data["amount"]?.toBigInteger()
@@ -139,9 +139,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
      * @param data filled according to the
      * [specification](https://concordium.atlassian.net/wiki/spaces/EN/pages/1502019590/Message+data+payload#CIS-2-transactions)
      */
-    private suspend fun handleCis2Tx(
-        data: Map<String, String>
-    ) {
+    private suspend fun handleCis2Tx(data: Map<String, String>) {
         Log.d("handling_cis2_tx")
 
         val amount = data["amount"]?.toBigInteger()
@@ -223,6 +221,72 @@ class FcmNotificationsService : FirebaseMessagingService() {
         }
 
         TransactionNotificationsManager(application).notifyCis2Transaction(
+            receivedAmount = amount,
+            token = token,
+            account = recipientAccount,
+            reference = data["reference"] ?: System.currentTimeMillis(),
+        )
+    }
+
+    private suspend fun handlePltTx(data: Map<String, String>) {
+        Log.d("handling_plt_tx")
+
+        val amount = data["value"]?.toBigInteger()
+            ?: error("Amount is missing or invalid")
+
+        val decimals = data["decimals"] ?: error("Decimals are missing or invalid")
+
+        val recipientAccountAddress = data["recipient"]
+            ?: error("Recipient is missing or invalid")
+
+        val recipientAccount =
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+                .findByAddress(recipientAccountAddress)
+                ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
+
+        val tokenId = data["token_id"]
+            ?: error("Token ID is missing")
+
+        val pltRepository =
+            PLTRepository(App.appCore.session.walletStorage.database.protocolLevelTokenDao())
+
+        val existingProtocolLevelToken = pltRepository.find(
+            accountAddress = recipientAccountAddress,
+            tokenId = tokenId
+        )
+
+        val token: ProtocolLevelToken
+
+        if (existingProtocolLevelToken == null) {
+            Log.d(
+                "adding_newly_received_token:" +
+                        "\naccountAddress=$recipientAccountAddress," +
+                        "\ntokenId=$tokenId"
+            )
+
+            val newlyReceivedToken = ProtocolLevelTokenEntity(
+                tokenId = tokenId,
+                tokenMetadata = TokenMetadata(
+                    decimals = decimals.toInt(),
+                    description = null,
+                    name = null,
+                    symbol = null,
+                    thumbnail = null,
+                    unique = null,
+                    display = null,
+                    totalSupply = null
+                ),
+                accountAddress = recipientAccountAddress,
+                isNewlyReceived = true
+            )
+            pltRepository.insert(newlyReceivedToken)
+            token = newlyReceivedToken.toProtocolLevelToken()
+        } else {
+            Log.d("token_exists: \ntokenId=$tokenId")
+            token = existingProtocolLevelToken.toProtocolLevelToken()
+        }
+
+        TransactionNotificationsManager(application).notifyPltTransaction(
             receivedAmount = amount,
             token = token,
             account = recipientAccount,

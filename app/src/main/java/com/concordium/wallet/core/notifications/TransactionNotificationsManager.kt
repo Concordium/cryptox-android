@@ -11,6 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -138,6 +139,61 @@ class TransactionNotificationsManager(
             .build()
 
         if (areCis2TxNotificationsEnabled) {
+            notificationsManager.notify(reference.hashCode(), notification)
+        } else {
+            Log.d("Skip notify as disabled")
+        }
+
+        return notification
+    }
+
+    @SuppressLint("MissingPermission")
+    fun notifyPltTransaction(
+        receivedAmount: BigInteger,
+        token: ProtocolLevelToken,
+        reference: Any,
+        account: Account
+    ) : Notification {
+        ensureChannel()
+
+        val notification = NotificationCompat.Builder(
+            context,
+            CHANNEL_ID
+        )
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setContentTitle(
+                context.getString(
+                    R.string.template_transaction_received_notification_title,
+                    "${CurrencyUtil.formatGTU(receivedAmount, token)} ${token.symbol}"
+                )
+            )
+            .setContentText(context.getString(R.string.transaction_received_notification_text))
+            // White icon is used for Android 5 compatibility.
+            .setSmallIcon(R.drawable.ic_notification)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    Intent(context, MainActivity::class.java)
+                        .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
+                        .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
+                        .apply {
+                            // In case the token is already in the wallet,
+                            // open its details page.
+                            if (!token.isNewlyReceived) {
+                                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN_ID, token.tokenId)
+                            }
+                        }
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+            )
+            .build()
+
+        if (arePltTxNotificationsEnabled) {
             notificationsManager.notify(reference.hashCode(), notification)
         } else {
             Log.d("Skip notify as disabled")
