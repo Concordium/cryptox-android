@@ -38,6 +38,9 @@ class TransactionNotificationsManager(
     private val areCis2TxNotificationsEnabled: Boolean
         get() = areNotificationsEnabled && walletNotificationsPreferences.areCis2TxNotificationsEnabled
 
+    private val arePltTxNotificationsEnabled: Boolean
+        get() = areNotificationsEnabled && walletNotificationsPreferences.arePltTxNotificationsEnabled
+
     @SuppressLint("MissingPermission")
     fun notifyCcdTransaction(
         receivedAmount: BigInteger,
@@ -158,5 +161,6 @@ class TransactionNotificationsManager(
         private const val CHANNEL_ID = "transactions"
         const val TYPE_CCD_TX = "ccd-tx"
         const val TYPE_CIS2_TX = "cis2-tx"
+        const val TYPE_PLT_TX = "plt-tx"
     }
 }

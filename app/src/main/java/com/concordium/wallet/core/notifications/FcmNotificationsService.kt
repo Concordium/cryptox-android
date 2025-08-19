@@ -63,6 +63,9 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         data = message.data,
                     )
 
+                dataType == TransactionNotificationsManager.TYPE_PLT_TX ->
+                    Log.d("fcm_plt_message: ${message.data}")
+
                 // Announcements.
                 notificationBody != null ->
                     handleAnnouncement(

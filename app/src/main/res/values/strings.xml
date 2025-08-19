@@ -1299,6 +1299,7 @@
     <string name="notifications_preferences_title">Notifications</string>
     <string name="notifications_preferences_ccd_transactions">CCD transactions</string>
     <string name="notifications_preferences_cis2_transactions">CIS-2 token transactions</string>
+    <string name="notifications_preferences_plt_transactions">Protocol level token transactions</string>
     <string name="transaction_notifications_channel_name">Transactions</string>
     <string name="announcements_notification_channel_name">Announcements</string>
     <string name="template_transaction_received_notification_title">You received %1$s</string>

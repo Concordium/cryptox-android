@@ -34,7 +34,8 @@ class UpdateNotificationsSubscriptionUseCase(
      */
     suspend operator fun invoke(
         isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
-        isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled
+        isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled,
+        isPltTxEnabled: Boolean = walletNotificationsPreferences.arePltTxNotificationsEnabled
     ): Boolean {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
         val fcmToken = when (googleApiAvailability.isGooglePlayServicesAvailable(context)) {
@@ -61,6 +62,9 @@ class UpdateNotificationsSubscriptionUseCase(
             }
             if (isCis2TxEnabled) {
                 add(NotificationsTopic.CIS2_TRANSACTIONS)
+            }
+            if (isPltTxEnabled) {
+                add(NotificationsTopic.PLT_TRANSACTIONS)
             }
         }
 
