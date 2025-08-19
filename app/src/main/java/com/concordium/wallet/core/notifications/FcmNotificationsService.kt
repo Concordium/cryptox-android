@@ -228,6 +228,10 @@ class FcmNotificationsService : FirebaseMessagingService() {
         )
     }
 
+    /**
+     * @param data filled according to the
+     * [specification](https://concordium.atlassian.net/wiki/spaces/PTS/pages/1502019590/Message+data+payload#PLT-transactions)
+     */
     private suspend fun handlePltTx(data: Map<String, String>) {
         Log.d("handling_plt_tx")
 
