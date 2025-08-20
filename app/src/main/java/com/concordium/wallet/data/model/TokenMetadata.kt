@@ -8,13 +8,13 @@ import java.math.BigInteger
  */
 data class TokenMetadata(
     val decimals: Int?,
-    val description: String?,
-    val name: String?,
-    val symbol: String?,
-    val thumbnail: UrlHolder?,
-    val unique: Boolean?,
-    var display: UrlHolder?,
-    val totalSupply: BigInteger?
+    val description: String? = null,
+    val name: String? = null,
+    val symbol: String? = null,
+    val thumbnail: UrlHolder? = null,
+    val unique: Boolean? = null,
+    var display: UrlHolder? = null,
+    val totalSupply: BigInteger? = null
 ) : Serializable
 
 data class UrlHolder(
