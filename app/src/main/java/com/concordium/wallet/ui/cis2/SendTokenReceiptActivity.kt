@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.cis2
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.ContractToken
@@ -132,7 +133,7 @@ class SendTokenReceiptActivity : BaseActivity(
         }
         viewModel.transactionWaiting.observe(this) {
             if (it)
-                showPageAsReceipt(TransactionProcessingStatus.LOADING)
+                showPageAsReceipt(TransactionProcessingStatus.Loading)
         }
 
         viewModel.showAuthentication.observe(this) {
@@ -146,12 +147,17 @@ class SendTokenReceiptActivity : BaseActivity(
         }
 
         viewModel.transactionReady.observe(this) {
-            showPageAsReceipt(TransactionProcessingStatus.SUCCESS)
+            showPageAsReceipt(TransactionProcessingStatus.Success)
         }
 
-        viewModel.errorInt.observe(this) {
-            showPageAsReceipt(TransactionProcessingStatus.FAIL)
+        viewModel.errorInt.observe(this) { errorRes ->
+            showPageAsReceipt(
+                TransactionProcessingStatus.Fail(
+                    errorRes = errorRes,
+                )
+            )
         }
+
         viewModel.transaction.observe(this) { transaction ->
             if (transaction != null)
                 binding.transactionDetails.setOnClickListener {
@@ -169,7 +175,7 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.finish.visibility = View.VISIBLE
 
         when (status) {
-            TransactionProcessingStatus.LOADING -> {
+            TransactionProcessingStatus.Loading -> {
                 binding.apply {
                     transactionStatusLabel.text = getString(R.string.cis_transaction_in_progress)
                     transactionAnimation.setAnimation(R.raw.transaction_loading)
@@ -179,7 +185,7 @@ class SendTokenReceiptActivity : BaseActivity(
                 }
             }
 
-            TransactionProcessingStatus.SUCCESS -> {
+            TransactionProcessingStatus.Success -> {
                 binding.apply {
                     transactionStatusLabel.text = getString(R.string.cis_transaction_success)
                     transactionAnimation.setAnimation(R.raw.transaction_success)
@@ -189,9 +195,19 @@ class SendTokenReceiptActivity : BaseActivity(
                 }
             }
 
-            TransactionProcessingStatus.FAIL -> {
+            is TransactionProcessingStatus.Fail -> {
                 binding.apply {
-                    transactionStatusLabel.text = getString(R.string.cis_transaction_fail)
+                    transactionStatusLabel.text =
+                        getString(
+                            R.string.template_cis_transaction_fail,
+                            getString(status.errorRes)
+                        )
+                    transactionStatusLabel.setTextColor(
+                        ContextCompat.getColor(
+                            this@SendTokenReceiptActivity,
+                            R.color.mw24_content_error_primary,
+                        )
+                    )
                     transactionAnimation.setAnimation(R.raw.transaction_fail)
                     transactionAnimation.repeatCount = 0
                     transactionAnimation.playAnimation()
