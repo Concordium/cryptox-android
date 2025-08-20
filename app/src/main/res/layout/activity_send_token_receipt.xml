@@ -289,6 +289,20 @@
                     app:layout_constraintTop_toBottomOf="@id/status_amount"
                     tools:text="CCD" />
 
+                <TextView
+                    android:id="@+id/fee_not_spent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/cis_fee_not_spent"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_grey_4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/transaction_symbol" />
+
                 <View
                     android:id="@+id/transaction_divider"
                     android:layout_width="0dp"

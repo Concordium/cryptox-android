@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.ContractToken
@@ -177,6 +178,7 @@ class SendTokenReceiptActivity : BaseActivity(
         when (status) {
             TransactionProcessingStatus.Loading -> {
                 binding.apply {
+                    feeNotSpent.isVisible = false
                     transactionStatusLabel.text = getString(R.string.cis_transaction_in_progress)
                     transactionAnimation.setAnimation(R.raw.transaction_loading)
                     transactionAnimation.repeatCount = LottieDrawable.INFINITE
@@ -187,6 +189,7 @@ class SendTokenReceiptActivity : BaseActivity(
 
             TransactionProcessingStatus.Success -> {
                 binding.apply {
+                    feeNotSpent.isVisible = false
                     transactionStatusLabel.text = getString(R.string.cis_transaction_success)
                     transactionAnimation.setAnimation(R.raw.transaction_success)
                     transactionAnimation.repeatCount = 0
@@ -197,9 +200,10 @@ class SendTokenReceiptActivity : BaseActivity(
 
             is TransactionProcessingStatus.Fail -> {
                 binding.apply {
+                    feeNotSpent.isVisible = true
                     transactionStatusLabel.text =
                         getString(
-                            R.string.template_cis_transaction_fail,
+                            R.string.template_cis_transaction_not_sent,
                             getString(status.errorRes)
                         )
                     transactionStatusLabel.setTextColor(

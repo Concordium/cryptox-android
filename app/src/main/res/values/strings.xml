@@ -575,7 +575,8 @@
     <string name="cis_error_recipient_not_in_allow_list">Recipient is not on the allow list</string>
     <string name="cis_transaction_in_progress">Transaction in progress</string>
     <string name="cis_transaction_success">You’ve sent</string>
-    <string name="template_cis_transaction_fail">Transaction failed to send\n%1$s</string>
+    <string name="template_cis_transaction_not_sent">Transaction not sent\n%1$s</string>
+    <string name="cis_fee_not_spent">Transaction fee was not spent</string>
     <string name="cis_transaction_details">Transaction details</string>
     <string name="cis_submit_transaction">Submit transaction</string>
     <string name="cis_slider_thumb">Slider thumb</string>
