@@ -571,6 +571,8 @@
     <string name="cis_token_id">Token ID</string>
     <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Close</string>
+    <string name="cis_error_recipient_in_deny_list">Recipient is on the deny list</string>
+    <string name="cis_error_recipient_not_in_allow_list">Recipient is not on the allow list</string>
     <string name="cis_transaction_in_progress">Transaction in progress</string>
     <string name="cis_transaction_success">You’ve sent</string>
     <string name="cis_transaction_fail">Transaction failed to send</string>
