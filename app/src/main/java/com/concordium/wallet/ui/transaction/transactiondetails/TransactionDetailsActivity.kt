@@ -221,10 +221,10 @@ class TransactionDetailsActivity : BaseActivity(
 
     private fun showRejectReason(ta: Transaction) {
         if (ta.rejectReason != null) {
-            binding.memoLayout.visibility = View.VISIBLE
+            binding.messageTextview.visibility = View.VISIBLE
             binding.messageTextview.text = ta.rejectReason
         } else {
-            binding.memoLayout.visibility = View.GONE
+            binding.messageTextview.visibility = View.GONE
         }
     }
 
