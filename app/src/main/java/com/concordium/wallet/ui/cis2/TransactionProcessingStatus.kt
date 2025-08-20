@@ -1,7 +1,12 @@
 package com.concordium.wallet.ui.cis2
 
-enum class TransactionProcessingStatus {
-    LOADING,
-    SUCCESS,
-    FAIL
+sealed interface TransactionProcessingStatus {
+
+    object Loading : TransactionProcessingStatus
+
+    object Success : TransactionProcessingStatus
+
+    class Fail(
+        val errorRes: Int,
+    ) : TransactionProcessingStatus
 }

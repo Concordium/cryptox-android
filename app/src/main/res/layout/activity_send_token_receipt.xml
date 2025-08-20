@@ -210,31 +210,31 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="16dp"
-                android:orientation="vertical"
                 android:background="@drawable/mw24_container_stroked_background"
-                android:paddingVertical="30dp"
-                android:paddingHorizontal="14dp">
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="30dp">
 
                 <com.concordium.wallet.uicore.view.TransactionSubmittedHashView
                     android:id="@+id/transaction_hash_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:visibility="gone" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/transaction_animation"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/transaction_loading"/>
-                
+                    app:lottie_rawRes="@raw/transaction_loading" />
+
                 <View
                     android:id="@+id/divider"
                     android:layout_width="0dp"
@@ -247,15 +247,16 @@
 
                 <TextView
                     android:id="@+id/transaction_status_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
+                    android:gravity="center"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/cryptox_white_main"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/divider"
-                    tools:text="Transaction failed to send"/>
+                    tools:text="Transaction failed to send" />
 
                 <com.concordium.wallet.uicore.view.BalanceGradientTextView
                     android:id="@+id/status_amount"
@@ -283,10 +284,24 @@
                     android:layout_marginTop="8dp"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/cryptox_white_main"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/status_amount"
-                    tools:text="CCD"/>
+                    tools:text="CCD" />
+
+                <TextView
+                    android:id="@+id/fee_not_spent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/cis_fee_not_spent"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_grey_4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/transaction_symbol" />
 
                 <View
                     android:id="@+id/transaction_divider"
@@ -305,19 +320,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
+                    android:drawablePadding="8dp"
                     android:paddingVertical="4dp"
                     android:text="@string/cis_transaction_details"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/cryptox_white_main"
-                    android:drawablePadding="8dp"
                     android:visibility="gone"
                     app:drawableEndCompat="@drawable/mw24_ic_arrow_right"
                     app:drawableTint="@color/cryptox_white_main"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/transaction_divider"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    tools:visibility="visible"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/transaction_divider"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

@@ -29,12 +29,14 @@ import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.AccountBalanceInfo
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenAccountStateList
 import com.concordium.wallet.data.model.TokenAmount
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -53,6 +55,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okio.IOException
 import org.koin.core.component.KoinComponent
 import java.io.Serializable
@@ -367,42 +370,82 @@ class SendTokenViewModel(
 
     private fun checkRecipientAndSubmitTransaction(
         signer: SignerEntry,
-    ) {
-        // Recipient's key is loaded just to check if the account exists on chain.
-        proxyRepository.getAccountEncryptedKey(
-            accountAddress = sendTokenData.receiverAddress!!,
-            success = {
-                sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+    ) = viewModelScope.launch {
 
-                when (val token = sendTokenData.token) {
-                    is CCDToken ->
-                        submitCcdTransaction(
-                            signer = signer,
-                        )
+        val recipientAddress = sendTokenData.receiverAddress!!
 
-                    is ContractToken ->
-                        submitContractTokenTransaction(
-                            signer = signer,
-                            token = token,
-                        )
+        val recipientBalanceInfo: AccountBalanceInfo? = try {
+            proxyRepository
+                .getAccountBalanceSuspended(
+                    accountAddress = recipientAddress,
+                )
+                .finalizedBalance
+        } catch (e: Exception) {
+            ensureActive()
+            Log.e("Error checking the recipient", e)
+            transactionWaiting.postValue(false)
+            handleBackendError(e)
+            return@launch
+        }
 
-                    is ProtocolLevelToken ->
-                        submitProtocolLevelTokenTransaction(
-                            signer = signer,
-                            token = token,
-                        )
-                }
-            },
-            failure = {
+        // Check if the recipient even exists.
+        // Sending to non-existing accounts burns the fee.
+        if (recipientBalanceInfo == null) {
+            transactionWaiting.postValue(false)
+            errorInt.postValue(R.string.app_error_backend_account_does_not_exist)
+            return@launch
+        }
+
+        val token = sendTokenData.token
+
+        // Check if the recipient can receive the protocol level token.
+        // Sending to banned or not allowed accounts burns the fee.
+        if (token is ProtocolLevelToken) {
+            val recipientTokenAccountState: TokenAccountStateList? =
+                recipientBalanceInfo
+                    .accountTokens
+                    ?.find { it.token.tokenId == token.tokenId }
+                    ?.tokenAccountState
+                    ?.state
+
+            if (recipientTokenAccountState?.denyList == true) {
                 transactionWaiting.postValue(false)
-                handleBackendError(it)
+                errorInt.postValue(R.string.cis_error_recipient_in_deny_list)
+                return@launch
+            } else if (token.isInAllowList == true
+                && recipientTokenAccountState?.allowList != true
+            ) {
+                transactionWaiting.postValue(false)
+                errorInt.postValue(R.string.cis_error_recipient_not_in_allow_list)
+                return@launch
             }
-        )
+        }
+
+        sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+
+        when (token) {
+            is CCDToken ->
+                submitCcdTransaction(
+                    signer = signer,
+                )
+
+            is ContractToken ->
+                submitContractTokenTransaction(
+                    signer = signer,
+                    token = token,
+                )
+
+            is ProtocolLevelToken ->
+                submitProtocolLevelTokenTransaction(
+                    signer = signer,
+                    token = token,
+                )
+        }
     }
 
-    private fun submitCcdTransaction(
+    private suspend fun submitCcdTransaction(
         signer: SignerEntry,
-    ) = viewModelScope.launch(Dispatchers.Default) {
+    ) = withContext(Dispatchers.Default) {
 
         val memoHex = sendTokenData.memoHex
 
@@ -427,10 +470,11 @@ class SendTokenViewModel(
                     .receiver(AccountAddress.from(sendTokenData.receiverAddress))
                     .build()
         } catch (e: Exception) {
+            ensureActive()
             Log.e("Error creating transaction", e)
             transactionWaiting.postValue(false)
             errorInt.postValue(R.string.app_error_general)
-            return@launch
+            return@withContext
         }
 
         submitTransaction(transaction)
@@ -452,16 +496,16 @@ class SendTokenViewModel(
         )?.parameter
     }
 
-    private fun submitContractTokenTransaction(
+    private suspend fun submitContractTokenTransaction(
         signer: SignerEntry,
         token: ContractToken,
-    ) = viewModelScope.launch(Dispatchers.Default) {
+    ) = withContext(Dispatchers.Default) {
 
         val parameterHex: String? = getContractTokenTransferParameterHex(token)
         if (parameterHex == null) {
             errorInt.postValue(R.string.app_error_lib)
             transactionWaiting.postValue(false)
-            return@launch
+            return@withContext
         }
 
         val transaction = try {
@@ -485,10 +529,11 @@ class SendTokenViewModel(
                 )
                 .build()
         } catch (e: Exception) {
+            ensureActive()
             Log.e("Error creating transaction", e)
             transactionWaiting.postValue(false)
             errorInt.postValue(R.string.app_error_general)
-            return@launch
+            return@withContext
         }
 
         submitTransaction(transaction)
@@ -522,10 +567,10 @@ class SendTokenViewModel(
             )
             .build()
 
-    private fun submitProtocolLevelTokenTransaction(
+    private suspend fun submitProtocolLevelTokenTransaction(
         signer: SignerEntry,
         token: ProtocolLevelToken,
-    ) = viewModelScope.launch(Dispatchers.Default) {
+    ) = withContext(Dispatchers.Default) {
 
         val transaction = try {
             TransactionFactory.newTokenUpdate()
@@ -536,10 +581,11 @@ class SendTokenViewModel(
                 .payload(getProtocolLevelTokenTransferPayload(token))
                 .build()
         } catch (e: Exception) {
+            ensureActive()
             Log.e("Error creating transaction", e)
             transactionWaiting.postValue(false)
             errorInt.postValue(R.string.app_error_general)
-            return@launch
+            return@withContext
         }
 
         submitTransaction(transaction)
