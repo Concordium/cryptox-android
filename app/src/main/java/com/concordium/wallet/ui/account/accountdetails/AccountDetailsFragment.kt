@@ -257,11 +257,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         combine(
             mainViewModel.activeAccountAddress,
-            mainViewModel.notificationTokenId,
+            mainViewModel.notificationToken,
             viewModelAccountDetails.activeAccount
-        ) { notificationAddress, tokenId, currentAccount ->
-            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
-                viewModelAccountDetails.updateNotificationTokenId(tokenId)
+        ) { notificationAddress, token, currentAccount ->
+            if (notificationAddress == currentAccount.address && token != null) {
+                viewModelAccountDetails.updateNotificationToken(token)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -441,9 +441,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private fun resetWhenPaused() {
         if (
             mainViewModel.activeAccountAddress.value.isNotEmpty() &&
-            mainViewModel.notificationTokenId.value.isNotEmpty()
+            mainViewModel.notificationToken.value != null
         ) {
-            mainViewModel.setNotificationData("", "")
+            mainViewModel.setNotificationData("", null)
         }
         viewModelAccountDetails.stopFrequentUpdater()
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.extension.collect
@@ -47,7 +48,7 @@ class TokensListViewModel(
     }
 
     fun resetSelectedToken() = viewModelScope.launch {
-        accountDetailsViewModel.updateNotificationTokenId("")
+        accountDetailsViewModel.updateNotificationToken(null)
         _uiState.update { it.copy(selectedToken = null) }
     }
 
@@ -87,17 +88,28 @@ class TokensListViewModel(
     }
 
     private suspend fun goToTokenDetails(tokens: List<Token>) {
-        val notificationTokenId = accountDetailsViewModel.notificationTokenId.first()
+        val notificationToken = accountDetailsViewModel.notificationToken.first()
 
-        if (notificationTokenId.isNotEmpty()) {
-            val token = tokens.find {
-                it is ContractToken && it.uid == notificationTokenId
+        notificationToken?.let {
+            val token = when (notificationToken) {
+                is ContractToken -> {
+                    tokens
+                        .filterIsInstance<ContractToken>()
+                        .find { it.uid == notificationToken.uid }
+                }
+
+                is ProtocolLevelToken -> {
+                    tokens
+                        .filterIsInstance<ProtocolLevelToken>()
+                        .find { it.tokenId == notificationToken.tokenId }
+                }
+
+                else -> null
             }
+
             token?.let {
                 _uiState.update {
-                    it.copy(
-                        selectedToken = token
-                    )
+                    it.copy(selectedToken = token)
                 }
             }
         }

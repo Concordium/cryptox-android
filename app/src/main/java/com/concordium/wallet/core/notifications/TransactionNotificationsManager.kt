@@ -67,7 +67,7 @@ class TransactionNotificationsManager(
         )
         val notification = buildNotification(title, account) {
             if (!token.isNewlyReceived) {
-                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN_ID, token.uid)
+                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN, token)
             }
         }
         return showNotificationIfEnabled(notification, reference, areCis2TxNotificationsEnabled)
@@ -85,7 +85,7 @@ class TransactionNotificationsManager(
         )
         val notification = buildNotification(title, account) {
             if (!token.isNewlyReceived) {
-                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN_ID, token.tokenId)
+                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN, token)
             }
         }
         return showNotificationIfEnabled(notification, reference, arePltTxNotificationsEnabled)
