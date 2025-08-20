@@ -102,7 +102,9 @@ object CurrencyUtil {
     fun formatCompactGTU(value: BigInteger, decimals: Int = 6): String {
         if (value == BigInteger.ZERO) return ZERO_AMOUNT
 
-        val gtuValue = formatGTU(value, decimals, withCommas = false).toBigDecimal()
+        val gtuValue = formatGTU(value, decimals)
+            .replace(",", "")
+            .toBigDecimal()
 
         val scaledValue: Pair<BigDecimal, String> = when {
             gtuValue < BigDecimal(1_000) -> gtuValue.setScale(2, RoundingMode.HALF_UP) to ""
