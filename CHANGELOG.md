@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Support for protocol level tokens
+- Showing transfer sender or recipient on the Activity screen
+
+### Changed
+
+- On the Activity screen, an outgoing transfer entry now shows the amount without fee,
+  having the fee separately below, separately
+
+### Fixed
+
+- Not showing failed transaction reject reason on the transaction details screen
+
 ## [1.12.0] - 2025-08-15
 
 ### Removed
