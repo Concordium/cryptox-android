@@ -66,12 +66,15 @@
 
             <TextView
                 android:id="@+id/message_textview"
-                style="@style/CryptoX_Container_Error.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:drawablePadding="12dp"
+                android:gravity="center"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                tools:text="Error message for api - this can be long 32 Segmentation fault      timeout 15s" />
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_content_error_primary"
+                tools:text="Transaction failed to send" />
 
             <LinearLayout
                 style="@style/CryptoX_Container_TextCard"
