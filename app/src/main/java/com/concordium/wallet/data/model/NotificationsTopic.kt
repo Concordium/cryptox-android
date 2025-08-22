@@ -8,5 +8,8 @@ enum class NotificationsTopic {
 
     @SerializedName("ccd-tx")
     CCD_TRANSACTIONS,
+
+    @SerializedName("plt-tx")
+    PLT_TRANSACTIONS,
     ;
 }

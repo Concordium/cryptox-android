@@ -13,6 +13,7 @@ import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
@@ -118,8 +119,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
 
-    private val _notificationTokenId = MutableStateFlow("")
-    val notificationTokenId = _notificationTokenId.asStateFlow()
+    private val _notificationToken = MutableStateFlow<Token?>(null)
+    val notificationToken = _notificationToken.asStateFlow()
 
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
@@ -206,8 +207,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun updateNotificationTokenId(tokenId: String) = viewModelScope.launch {
-        _notificationTokenId.emit(tokenId)
+    fun updateNotificationToken(token: Token?) = viewModelScope.launch {
+        _notificationToken.emit(token)
     }
 
     private fun initializeAccountUpdater() {

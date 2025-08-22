@@ -24,6 +24,9 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     private val _areCis2TxNotificationsEnabledFlow = MutableStateFlow(false)
     val areCis2TxNotificationsEnabledFlow = _areCis2TxNotificationsEnabledFlow.asStateFlow()
 
+    private val _arePltTxNotificationsEnabledFlow = MutableStateFlow(false)
+    val arePltTxNotificationsEnabledFlow = _arePltTxNotificationsEnabledFlow.asStateFlow()
+
     private val _requestNotificationPermissionFlow = MutableStateFlow(Event(false))
     val requestNotificationPermissionFlow = _requestNotificationPermissionFlow.asStateFlow()
 
@@ -33,59 +36,31 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     private val _isCis2SwitchEnabledFlow = MutableStateFlow(true)
     val isCis2SwitchEnabledFlow = _isCis2SwitchEnabledFlow.asStateFlow()
 
+    private val _isPltSwitchEnabledFlow = MutableStateFlow(true)
+    val isPltSwitchEnabledFlow = _isPltSwitchEnabledFlow.asStateFlow()
+
     init {
         _areCcdTxNotificationsEnabledFlow.value =
             walletNotificationsPreferences.areCcdTxNotificationsEnabled
         _areCis2TxNotificationsEnabledFlow.value =
             walletNotificationsPreferences.areCis2TxNotificationsEnabled
+        _arePltTxNotificationsEnabledFlow.value =
+            walletNotificationsPreferences.arePltTxNotificationsEnabled
     }
 
-    fun onCcdTxClicked() = viewModelScope.launch {
+    fun onTxClicked(switchType: TxType) = viewModelScope.launch {
         _isCcdSwitchEnabledFlow.value = false
         _isCis2SwitchEnabledFlow.value = false
+        _isPltSwitchEnabledFlow.value = false
 
-        val areCcdTxNotificationsEnabled = _areCcdTxNotificationsEnabledFlow.value.not()
-
-        if (areCcdTxNotificationsEnabled) {
-            requestNotificationPermissionIfNeeded()
+        when (switchType) {
+            is TxType.CCD -> onCcdTxClicked()
+            is TxType.CIS2 -> onCis2TxClicked()
+            is TxType.PLT -> onPltTxClicked()
         }
-
-        val success = updateNotificationsSubscription(
-            isCcdTxEnabled = areCcdTxNotificationsEnabled,
-        )
-        Log.d("success: $success")
-        if (success) {
-            _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled
-            walletNotificationsPreferences.areCcdTxNotificationsEnabled =
-                areCcdTxNotificationsEnabled
-        }
-
         _isCcdSwitchEnabledFlow.value = true
         _isCis2SwitchEnabledFlow.value = true
-    }
-
-    fun onCis2TxClicked() = viewModelScope.launch {
-        _isCcdSwitchEnabledFlow.value = false
-        _isCis2SwitchEnabledFlow.value = false
-
-        val areCis2TxNotificationsEnabled = _areCis2TxNotificationsEnabledFlow.value.not()
-
-        if (areCis2TxNotificationsEnabled) {
-            requestNotificationPermissionIfNeeded()
-        }
-
-        val success = updateNotificationsSubscription(
-            isCis2TxEnabled = areCis2TxNotificationsEnabled,
-        )
-        Log.d("success: $success")
-        if (success) {
-            _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled
-            walletNotificationsPreferences.areCis2TxNotificationsEnabled =
-                areCis2TxNotificationsEnabled
-        }
-
-        _isCcdSwitchEnabledFlow.value = true
-        _isCis2SwitchEnabledFlow.value = true
+        _isPltSwitchEnabledFlow.value = true
     }
 
     private fun requestNotificationPermissionIfNeeded() {
@@ -100,6 +75,7 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
     private suspend fun updateNotificationsSubscription(
         isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
         isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled,
+        isPltTxEnabled: Boolean = walletNotificationsPreferences.arePltTxNotificationsEnabled
     ): Boolean {
         Log.d(
             "updating_subscriptions:" +
@@ -109,6 +85,61 @@ class NotificationsPreferencesViewModel(application: Application) : AndroidViewM
         return updateNotificationsSubscriptionUseCase(
             isCcdTxEnabled = isCcdTxEnabled,
             isCis2TxEnabled = isCis2TxEnabled,
+            isPltTxEnabled = isPltTxEnabled
         )
+    }
+
+    private suspend fun onCcdTxClicked() {
+        val areCcdTxNotificationsEnabled = _areCcdTxNotificationsEnabledFlow.value.not()
+        if (areCcdTxNotificationsEnabled) {
+            requestNotificationPermissionIfNeeded()
+        }
+        val success = updateNotificationsSubscription(
+            isCcdTxEnabled = areCcdTxNotificationsEnabled,
+        )
+        Log.d("success: $success")
+        if (success) {
+            _areCcdTxNotificationsEnabledFlow.value = areCcdTxNotificationsEnabled
+            walletNotificationsPreferences.areCcdTxNotificationsEnabled =
+                areCcdTxNotificationsEnabled
+        }
+    }
+
+    private suspend fun onCis2TxClicked() {
+        val areCis2TxNotificationsEnabled = _areCis2TxNotificationsEnabledFlow.value.not()
+        if (areCis2TxNotificationsEnabled) {
+            requestNotificationPermissionIfNeeded()
+        }
+        val success = updateNotificationsSubscription(
+            isCis2TxEnabled = areCis2TxNotificationsEnabled,
+        )
+        Log.d("success: $success")
+        if (success) {
+            _areCis2TxNotificationsEnabledFlow.value = areCis2TxNotificationsEnabled
+            walletNotificationsPreferences.areCis2TxNotificationsEnabled =
+                areCis2TxNotificationsEnabled
+        }
+    }
+
+    private suspend fun onPltTxClicked() {
+        val arePltTxNotificationsEnabled = _arePltTxNotificationsEnabledFlow.value.not()
+        if (arePltTxNotificationsEnabled) {
+            requestNotificationPermissionIfNeeded()
+        }
+        val success = updateNotificationsSubscription(
+            isPltTxEnabled = arePltTxNotificationsEnabled
+        )
+        Log.d("success: $success")
+        if (success) {
+            _arePltTxNotificationsEnabledFlow.value = arePltTxNotificationsEnabled
+            walletNotificationsPreferences.arePltTxNotificationsEnabled =
+                arePltTxNotificationsEnabled
+        }
+    }
+
+    sealed interface TxType {
+        object CCD : TxType
+        object CIS2 : TxType
+        object PLT : TxType
     }
 }

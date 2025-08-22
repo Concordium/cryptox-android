@@ -1,5 +1,28 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Support for protocol level tokens
+- Showing transfer sender or recipient on the Activity screen
+
+### Changed
+
+- On the Activity screen, an outgoing transfer entry now shows the amount without fee,
+  having the fee separately below, separately
+
+### Fixed
+
+- Not showing failed transaction reject reason on the transaction details screen
+
+## [1.12.0] - 2025-08-15
+
+### Removed
+
+- Google Analytics. Although the user interface remained the same,
+  the data is no longer sent to this service
+
 ## [1.11.0] - 2025-07-08
 
 ### Added
@@ -256,9 +279,11 @@
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.11.0...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.12.0...HEAD
 
-[1.10.0]: https://github.com/Concordium/cryptox-android/compare/1.10.0...1.11.0
+[1.12.0]: https://github.com/Concordium/cryptox-android/compare/1.11.0...1.12.0
+
+[1.11.0]: https://github.com/Concordium/cryptox-android/compare/1.10.0...1.11.0
 
 [1.10.0]: https://github.com/Concordium/cryptox-android/compare/1.9.1...1.10.0
 

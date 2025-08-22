@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
@@ -37,8 +38,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
 
-    private val _notificationTokenId = MutableStateFlow("")
-    val notificationTokenId = _notificationTokenId.asStateFlow()
+    private val _notificationToken = MutableStateFlow<Token?>(null)
+    val notificationToken = _notificationToken.asStateFlow()
 
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
@@ -104,9 +105,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setNotificationData(address: String, id: String) = viewModelScope.launch {
+    fun setNotificationData(address: String, token: Token?) = viewModelScope.launch {
         _activeAccountAddress.emit(address)
-        _notificationTokenId.emit(id)
+        _notificationToken.emit(token)
     }
 
     fun showReviewDialog() {

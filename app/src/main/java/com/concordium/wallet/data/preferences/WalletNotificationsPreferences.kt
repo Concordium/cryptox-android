@@ -24,9 +24,13 @@ constructor(
     var areCis2TxNotificationsEnabled: Boolean
             by BooleanPreference(PREFKEY_ARE_CIS2_TX_NOTIFICATIONS_ENABLED, false)
 
+    var arePltTxNotificationsEnabled: Boolean
+            by BooleanPreference(PREFKEY_ARE_PLT_TX_NOTIFICATIONS_ENABLED, false)
+
     fun enableAll(areNotificationsEnabled: Boolean) {
         areCcdTxNotificationsEnabled = areNotificationsEnabled
         areCis2TxNotificationsEnabled = areNotificationsEnabled
+        arePltTxNotificationsEnabled = areNotificationsEnabled
     }
 
     private companion object {
@@ -36,5 +40,7 @@ constructor(
             "CCD_TX_NOTIFICATIONS_ENABLED"
         private const val PREFKEY_ARE_CIS2_TX_NOTIFICATIONS_ENABLED =
             "CIS2_TX_NOTIFICATIONS_ENABLED"
+        private const val PREFKEY_ARE_PLT_TX_NOTIFICATIONS_ENABLED =
+            "PLT_TX_NOTIFICATIONS_ENABLED"
     }
 }
