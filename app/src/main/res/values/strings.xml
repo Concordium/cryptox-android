@@ -1274,7 +1274,7 @@
     <string name="tracking_permission_deny">Ask not to track</string>
     <string name="ccd_onramp_title">Buy CCD</string>
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
-    <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more</u></string>
+    <string name="ccd_onramp_read_disclaimer">IMPORTANT DISCLAIMER</string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateways</string>
     <string name="ccd_onramp_exchanges_notice">
         List of supported exchanges can be found at \n<a href="https://concordium.com/ccd-wallet">concordium.com/ccd-wallet</a>

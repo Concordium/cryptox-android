@@ -14,14 +14,12 @@
         android:textAppearance="@style/CCX_Typography_Body"
         android:textColor="@color/mw24_content_accent_secondary" />
 
-    <TextView
+    <Button
         android:id="@+id/read_disclaimer_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/MW24_Button_Primary_Small"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:gravity="center"
-        android:text="@string/ccd_onramp_read_disclaimer"
-        android:textAppearance="@style/CCX_Typography_Body"
-        android:textColor="@color/mw24_content_accent_secondary" />
+        android:drawableEnd="@drawable/mw24_ic_circled_check_done"
+        android:text="@string/ccd_onramp_read_disclaimer" />
 
 </LinearLayout>

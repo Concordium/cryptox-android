@@ -25,6 +25,9 @@
     <color name="mw24_surface_error_tertiary">#2B171B</color>
     <color name="mw24_surface_tertiary">#212426</color>
     <color name="mw24_surface_tertiary_pressed">#212426</color>
+    <color name="mw24_surface_primary_pressed">#D0D4D6</color>
+    <color name="surface_secondary">#4B5357</color>
+    <color name="surface_secondary_pressed">#4B5357</color>
 
    <!-- Border colors -->
     <color name="mw24_border_accent">#6C88AA</color>
@@ -44,5 +47,6 @@
     <color name="mw24_content_warning_primary">#E8B126</color>
     <color name="mw24_content_error_primary">#D62E4C</color>
     <color name="mw24_content_secondary">#959EA3</color>
+    <color name="mw24_content_inverse_primary">#131416</color>
 
 </resources>

@@ -29,4 +29,17 @@
     <dimen name="ccx_modal_corner_radius">20dp</dimen>
     <dimen name="ccx_passcode_dot_size">8dp</dimen>
 
+    <dimen name="size2">2dp</dimen>
+    <dimen name="size4">4dp</dimen>
+    <dimen name="size6">6dp</dimen>
+    <dimen name="size8">8dp</dimen>
+    <dimen name="size12">12dp</dimen>
+    <dimen name="size16">16dp</dimen>
+    <dimen name="size24">24dp</dimen>
+    <dimen name="size28">28dp</dimen>
+    <dimen name="size32">32dp</dimen>
+    <dimen name="size40">40dp</dimen>
+    <dimen name="size48">48dp</dimen>
+    <dimen name="size64">64dp</dimen>
+
 </resources>
