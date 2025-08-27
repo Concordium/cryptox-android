@@ -66,13 +66,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
+        <com.concordium.wallet.uicore.button.PrimaryButton
             android:id="@+id/proceed_button"
-            style="@style/MW24_Button_Primary_Inverse"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size8"
-            android:text="@string/ccd_onramp_disclaimer_understand"
-            android:gravity="center_horizontal"
+            app:buttonText="@string/ccd_onramp_disclaimer_understand"
+            app:inverse="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cancel_button"
             app:layout_constraintEnd_toEndOf="parent"

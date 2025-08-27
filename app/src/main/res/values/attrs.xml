@@ -62,4 +62,11 @@
         <attr name="isGradientTextColor" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="PrimaryButton">
+        <attr name="buttonText" format="string" />
+        <attr name="iconStart" format="reference" />
+        <attr name="iconEnd" format="reference" />
+        <attr name="inverse" format="boolean" />
+    </declare-styleable>
+
 </resources>

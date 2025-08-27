@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
@@ -41,8 +42,10 @@ class CcdOnrampDisclaimerDialog : BaseGradientDialogFragment() {
             binding.acceptLayout.isVisible = true
             binding.closeButton.isVisible = false
             if (showSiteIcon) {
-                binding.proceedButton.setCompoundDrawablesWithIntrinsicBounds(
-                    0, 0, R.drawable.mw24_ic_external_link, 0
+                binding.proceedButton.setIconEndDrawable(
+                    AppCompatResources.getDrawable(
+                        requireContext(), R.drawable.mw24_ic_external_link
+                    )
                 )
             }
         }
@@ -57,7 +60,7 @@ class CcdOnrampDisclaimerDialog : BaseGradientDialogFragment() {
             }
         }
 
-        binding.proceedButton.setOnClickListener {
+        binding.proceedButton.setClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 setResultBundle(isAccepted = true)
