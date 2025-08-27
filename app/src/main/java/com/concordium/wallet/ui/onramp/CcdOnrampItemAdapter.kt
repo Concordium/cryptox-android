@@ -77,7 +77,7 @@ class CcdOnrampItemAdapter(
                     if (hasAcceptedDisclaimer) {
                         setBackgroundResource(R.drawable.mw24_button_tertiary_background)
                         setTextColor(
-                            ContextCompat.getColor(
+                            ContextCompat.getColorStateList(
                                 context,
                                 R.color.mw24_button_tertiary_text_color
                             )

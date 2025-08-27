@@ -1,8 +1,5 @@
 package com.concordium.wallet.ui.onramp
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,12 +11,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
-import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.uicore.toast.showCustomToast
 
 class CcdOnrampSitesFragment : BaseFragment() {
 
@@ -69,10 +64,12 @@ class CcdOnrampSitesFragment : BaseFragment() {
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
         viewModel.siteToOpen.collectWhenStarted(this) { site ->
             site?.let {
-                openSite(
-                    site = it.first,
-                    copyToClipboard = it.second
-                )
+                if (viewModel.isHasAcceptedOnRampDisclaimer().not()) {
+                    viewModel.launchSite = it
+                    showDisclaimerDialog(showSiteIcon = true)
+                } else {
+                    openSite(launchSite = it)
+                }
             }
         }
         viewModel.sessionLoading.collectWhenStarted(this) { isLoading ->
@@ -93,6 +90,9 @@ class CcdOnrampSitesFragment : BaseFragment() {
             if (CcdOnrampDisclaimerDialog.getResult(bundle)) {
                 viewModel.setHasAcceptedOnRampDisclaimer(true)
                 adapter.updateHeaderDisclaimerButton(viewModel.isHasAcceptedOnRampDisclaimer())
+                viewModel.launchSite?.let(::openSite)
+            } else {
+                viewModel.launchSite = null
             }
         }
     }
@@ -100,28 +100,6 @@ class CcdOnrampSitesFragment : BaseFragment() {
     private fun onSiteClicked(site: CcdOnrampSite) {
         App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name)
         viewModel.onSiteClicked(site)
-    }
-
-    private fun openSite(
-        site: CcdOnrampSite,
-        copyToClipboard: Boolean
-    ) {
-        if (copyToClipboard) {
-            val clipboardManager: ClipboardManager =
-                requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val clipData = ClipData.newPlainText(
-                getString(R.string.account_details_address),
-                viewModel.accountAddress,
-            )
-            requireActivity().showCustomToast(
-                title = getString(
-                    R.string.template_ccd_onramp_opening_site,
-                    site.name
-                )
-            )
-            clipboardManager.setPrimaryClip(clipData)
-        }
-        openSite(site)
     }
 
     private fun showLoading(isLoading: Boolean) {

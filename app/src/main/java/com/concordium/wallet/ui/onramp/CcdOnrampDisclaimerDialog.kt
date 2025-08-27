@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.onramp
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -62,6 +63,16 @@ class CcdOnrampDisclaimerDialog : BaseGradientDialogFragment() {
                 setResultBundle(isAccepted = true)
             )
             dismiss()
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (!isDisclaimerAccepted) {
+            setFragmentResult(
+                ACTION_REQUEST,
+                setResultBundle(isAccepted = false)
+            )
         }
     }
 

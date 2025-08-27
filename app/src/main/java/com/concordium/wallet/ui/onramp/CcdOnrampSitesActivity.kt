@@ -1,8 +1,5 @@
 package com.concordium.wallet.ui.onramp
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,7 +13,6 @@ import com.concordium.wallet.databinding.ActivityCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.uicore.toast.showCustomToast
 
 class CcdOnrampSitesActivity : BaseActivity(
     R.layout.activity_ccd_onramp_sites,
@@ -60,16 +56,12 @@ class CcdOnrampSitesActivity : BaseActivity(
                 )
             },
             isDisclaimerAccepted = true
+
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)
         viewModel.siteToOpen.collectWhenStarted(this) { site ->
-            site?.let {
-                openSite(
-                    site = it.first,
-                    copyToClipboard = it.second
-                )
-            }
+            site?.let(::openSite)
         }
         viewModel.sessionLoading.collectWhenStarted(this) { isLoading ->
             showLoading(isLoading)
@@ -85,29 +77,6 @@ class CcdOnrampSitesActivity : BaseActivity(
         App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name)
 
         viewModel.onSiteClicked(site)
-    }
-
-    private fun openSite(
-        site: CcdOnrampSite,
-        copyToClipboard: Boolean
-    ) {
-        if (copyToClipboard) {
-            val clipboardManager: ClipboardManager =
-                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clipData = ClipData.newPlainText(
-                getString(R.string.account_details_address),
-                viewModel.accountAddress,
-            )
-            showCustomToast(
-                title = getString(
-                    R.string.template_ccd_onramp_opening_site,
-                    site.name
-                )
-            )
-            clipboardManager.setPrimaryClip(clipData)
-        }
-
-        openSite(site)
     }
 
     private fun showLoading(isLoading: Boolean) {

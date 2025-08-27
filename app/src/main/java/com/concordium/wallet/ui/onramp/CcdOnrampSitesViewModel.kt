@@ -25,7 +25,7 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
 
-    private val _siteToOpen = MutableSharedFlow<Pair<CcdOnrampSite, Boolean>?>()
+    private val _siteToOpen = MutableSharedFlow<CcdOnrampSite?>()
     val siteToOpen = _siteToOpen.asSharedFlow()
 
     private val _sessionLoading = MutableStateFlow(false)
@@ -36,6 +36,8 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
 
     lateinit var accountAddress: String
         private set
+
+    var launchSite: CcdOnrampSite? = null
 
     init {
         postItems()
@@ -53,10 +55,7 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
         try {
             val sessionDetails = wertRepository.getWertSessionDetails(accountAddress)
             _siteToOpen.emit(
-                Pair(
-                    site.copy(url = WertWidgetHelper.getWidgetLink(sessionDetails.sessionId)),
-                    false
-                )
+                site.copy(url = WertWidgetHelper.getWidgetLink(sessionDetails.sessionId)),
             )
         } catch (e: Exception) {
             _error.emit(BackendErrorHandler.getExceptionStringRes(e))
@@ -70,25 +69,19 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
             site.name == "Wert" -> openWert(accountAddress, site)
 
             site.name == "Swipelux" -> _siteToOpen.emit(
-                Pair(
-                    site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress)),
-                    false
-                )
+                site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress))
             )
 
             site.name.startsWith("Banxa") -> _siteToOpen.emit(
-                Pair(
-                    site.copy(
-                        url = BanxaWidgetHelper.getWidgetLink(
-                            baseUrl = site.url,
-                            accountAddress = accountAddress,
-                        )
-                    ),
-                    false
+                site.copy(
+                    url = BanxaWidgetHelper.getWidgetLink(
+                        baseUrl = site.url,
+                        accountAddress = accountAddress,
+                    )
                 )
             )
 
-            else -> _siteToOpen.emit(Pair(site, true))
+            else -> _siteToOpen.emit(site)
         }
     }
 
