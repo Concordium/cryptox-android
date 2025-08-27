@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.onramp.banxa.BanxaWidgetHelper
@@ -89,6 +90,12 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
 
             else -> _siteToOpen.emit(Pair(site, true))
         }
+    }
+
+    fun isHasAcceptedOnRampDisclaimer() = App.appCore.setup.isHasAcceptedOnRampDisclaimer
+
+    fun setHasAcceptedOnRampDisclaimer(isAccepted: Boolean) {
+        App.appCore.setup.setHasAcceptedOnRampDisclaimer(isAccepted)
     }
 
     private fun postItems() {

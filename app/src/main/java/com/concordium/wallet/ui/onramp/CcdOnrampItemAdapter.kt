@@ -19,8 +19,10 @@ import com.concordium.wallet.uicore.handleUrlClicks
 class CcdOnrampItemAdapter(
     private val onReadDisclaimerClicked: () -> Unit,
     private val onSiteClicked: (item: CcdOnrampListItem.Site) -> Unit,
+    isDisclaimerAccepted: Boolean
 ) : RecyclerView.Adapter<CcdOnrampItemAdapter.ViewHolder>() {
     private var data: List<CcdOnrampListItem> = listOf()
+    private var hasAcceptedDisclaimer: Boolean = isDisclaimerAccepted
 
     override fun getItemViewType(position: Int): Int = when (data[position]) {
         CcdOnrampListItem.Header ->
@@ -64,14 +66,30 @@ class CcdOnrampItemAdapter(
         }
     }
 
-    override fun getItemCount(): Int =
-        data.size
+    override fun getItemCount(): Int = data.size
 
+    @SuppressLint("UseCompatTextViewDrawableApis")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder.Header -> {
-                holder.binding.readDisclaimerButton.setOnClickListener {
-                    onReadDisclaimerClicked()
+                with(holder.binding.readDisclaimerButton) {
+                    setOnClickListener { onReadDisclaimerClicked() }
+                    if (hasAcceptedDisclaimer) {
+                        setBackgroundResource(R.drawable.mw24_button_tertiary_background)
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.mw24_button_tertiary_text_color
+                            )
+                        )
+                        setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            0, 0, R.drawable.mw24_ic_circled_check_done, 0
+                        )
+                        compoundDrawableTintList = ContextCompat.getColorStateList(
+                            context,
+                            R.color.mw24_button_tertiary_text_color
+                        )
+                    }
                 }
             }
 
@@ -111,6 +129,14 @@ class CcdOnrampItemAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateHeaderDisclaimerButton(isDisclaimerAccepted: Boolean) {
+        this.hasAcceptedDisclaimer = isDisclaimerAccepted
+        val headerIndex = data.indexOfFirst { it is CcdOnrampListItem.Header }
+        if (headerIndex != -1) {
+            notifyItemChanged(headerIndex, DISCLAIMER_PAYLOAD)
+        }
+    }
+
     sealed class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         class Header(itemView: View) : ViewHolder(itemView) {
             val binding = ListItemCcdOnrampHeaderBinding.bind(itemView)
@@ -134,5 +160,9 @@ class CcdOnrampItemAdapter(
                 }
             }
         }
+    }
+
+    companion object {
+        private const val DISCLAIMER_PAYLOAD = "disclaimer_accepted"
     }
 }

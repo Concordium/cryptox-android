@@ -24,6 +24,7 @@ import com.concordium.wallet.uicore.toast.showCustomToast
 class CcdOnrampSitesFragment : BaseFragment() {
 
     private lateinit var binding: FragmentCcdOnrampSitesBinding
+    private lateinit var adapter: CcdOnrampItemAdapter
 
     private val viewModel: CcdOnrampSitesViewModel by lazy {
         ViewModelProvider(
@@ -48,6 +49,7 @@ class CcdOnrampSitesFragment : BaseFragment() {
             accountAddress = requireActivity().intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA) ?: "",
         )
         initList()
+        initObservers()
     }
 
     override fun onResume() {
@@ -56,16 +58,12 @@ class CcdOnrampSitesFragment : BaseFragment() {
     }
 
     private fun initList() {
-        val adapter = CcdOnrampItemAdapter(
+        adapter = CcdOnrampItemAdapter(
             onSiteClicked = { item: CcdOnrampListItem.Site ->
                 item.source?.also(::onSiteClicked)
             },
-            onReadDisclaimerClicked = {
-                CcdOnrampDisclaimerDialog().showSingle(
-                    parentFragmentManager,
-                    CcdOnrampDisclaimerDialog.TAG
-                )
-            }
+            onReadDisclaimerClicked = { showDisclaimerDialog() },
+            isDisclaimerAccepted = viewModel.isHasAcceptedOnRampDisclaimer()
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
@@ -83,6 +81,18 @@ class CcdOnrampSitesFragment : BaseFragment() {
         viewModel.error.collectWhenStarted(this) { error ->
             if (error != -1) {
                 Toast.makeText(requireActivity(), getString(error), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun initObservers() {
+        parentFragmentManager.setFragmentResultListener(
+            CcdOnrampDisclaimerDialog.ACTION_REQUEST,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            if (CcdOnrampDisclaimerDialog.getResult(bundle)) {
+                viewModel.setHasAcceptedOnRampDisclaimer(true)
+                adapter.updateHeaderDisclaimerButton(viewModel.isHasAcceptedOnRampDisclaimer())
             }
         }
     }
@@ -121,6 +131,15 @@ class CcdOnrampSitesFragment : BaseFragment() {
     private fun openSite(launchSite: CcdOnrampSite) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(launchSite.url))
         startActivity(Intent.createChooser(browserIntent, launchSite.name))
+    }
+
+    private fun showDisclaimerDialog(showSiteIcon: Boolean = false) {
+        CcdOnrampDisclaimerDialog.newInstance(
+            CcdOnrampDisclaimerDialog.setBundle(
+                isDisclaimerAccepted = viewModel.isHasAcceptedOnRampDisclaimer(),
+                showSiteIcon = showSiteIcon
+            )
+        ).showSingle(parentFragmentManager, CcdOnrampDisclaimerDialog.TAG)
     }
 
     companion object {

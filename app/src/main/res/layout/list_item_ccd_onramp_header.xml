@@ -19,7 +19,6 @@
         style="@style/MW24_Button_Primary_Small"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:drawableEnd="@drawable/mw24_ic_circled_check_done"
         android:text="@string/ccd_onramp_read_disclaimer" />
 
 </LinearLayout>

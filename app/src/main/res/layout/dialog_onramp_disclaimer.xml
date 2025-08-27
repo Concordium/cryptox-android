@@ -36,13 +36,48 @@
 
     <Button
         android:id="@+id/close_button"
-        style="@style/CCX_Button_Primary.Modal"
+        style="@style/MW24_Button_Primary_Inverse"
         android:layout_width="0dp"
         android:layout_margin="32dp"
         android:text="@string/ccd_onramp_disclaimer_close"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/details_text_view" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/accept_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_text_view">
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="@style/MW24_Button_Secondary_Inverse"
+            android:layout_width="0dp"
+            android:text="@string/ccd_onramp_disclaimer_cancel"
+            app:layout_constraintBottom_toTopOf="@id/proceed_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/proceed_button"
+            style="@style/MW24_Button_Primary_Inverse"
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/size8"
+            android:text="@string/ccd_onramp_disclaimer_understand"
+            android:gravity="center_horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cancel_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

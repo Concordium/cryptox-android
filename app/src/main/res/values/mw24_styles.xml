@@ -176,6 +176,12 @@
         <item name="android:paddingVertical">@dimen/size6</item>
     </style>
 
+    <style name="MW24_Button_Primary_Inverse" parent="MW24_Button_Primary">
+        <item name="android:background">@drawable/mw24_button_primary_inverse_background</item>
+        <item name="android:textColor">@color/mw24_button_primary_inverse_text_color</item>
+        <item name="drawableTint">@color/mw24_button_primary_inverse_text_color</item>
+    </style>
+
     <style name="MW24_Button_Secondary">
         <item name="android:layout_height">@dimen/size48</item>
         <item name="android:layout_width">wrap_content</item>
@@ -202,6 +208,12 @@
         <item name="android:drawablePadding">@dimen/size6</item>
         <item name="android:paddingHorizontal">@dimen/size8</item>
         <item name="android:paddingVertical">@dimen/size6</item>
+    </style>
+
+    <style name="MW24_Button_Secondary_Inverse" parent="MW24_Button_Secondary">
+        <item name="android:background">@drawable/mw24_button_secondary_inverse_background</item>
+        <item name="android:textColor">@color/mw24_button_secondary_inverse_text_color</item>
+        <item name="drawableTint">@color/mw24_button_secondary_inverse_text_color</item>
     </style>
 
     <style name="MW24_Button_Tertiary">

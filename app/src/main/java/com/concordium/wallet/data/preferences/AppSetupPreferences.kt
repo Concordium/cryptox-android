@@ -134,6 +134,14 @@ class AppSetupPreferences(
         return getBoolean(PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_HALF_YEAR, false)
     }
 
+    fun setHasAcceptedOnRampDisclaimer(value: Boolean) {
+        setBoolean(PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER, value)
+    }
+
+    fun getHasAcceptedOnRampDisclaimer(): Boolean {
+        return getBoolean(PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER, false)
+    }
+
     private companion object {
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
@@ -154,5 +162,7 @@ class AppSetupPreferences(
             "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_SEND_FUNDS"
         const val PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP =
             "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP"
+        const val PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER =
+            "PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER"
     }
 }

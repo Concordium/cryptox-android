@@ -58,7 +58,8 @@ class CcdOnrampSitesActivity : BaseActivity(
                     supportFragmentManager,
                     CcdOnrampDisclaimerDialog.TAG
                 )
-            }
+            },
+            isDisclaimerAccepted = true
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(this, adapter::setData)

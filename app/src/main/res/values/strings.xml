@@ -1292,6 +1292,8 @@
         in relation to the use of such services.
     </string>
     <string name="ccd_onramp_disclaimer_close">Close</string>
+    <string name="ccd_onramp_disclaimer_cancel">Cancel</string>
+    <string name="ccd_onramp_disclaimer_understand">I Understand</string>
     <string name="ccd_onramp_none_available">No sites available for this network</string>
     <string name="ccd_onramp_site_accepts_credit_card">Accepts credit card</string>
     <string name="template_ccd_onramp_opening_site">Account address copied. Opening %1$s…</string>
