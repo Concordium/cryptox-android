@@ -26,6 +26,8 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.ui.plt.PLTInfoDialog
+import com.concordium.wallet.ui.plt.PLTListInfoDialog
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
@@ -132,7 +134,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 setRawMetadataButton(token is CCDToken, tokenMetadata)
             }
             setHideButton(token is CCDToken)
-            setPLTListStatus(token)
+            setTokenTypeLabel(token)
             if (token.isNewlyReceived) {
                 handleNewlyReceivedToken()
             }
@@ -386,12 +388,37 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         binding.includeAbout.hideToken.isVisible = !isCCD
     }
 
-    private fun setPLTListStatus(token: Token) {
-        if (token is ProtocolLevelToken) {
-            binding.includeAbout.pltListStatusHolder.visibility = View.VISIBLE
-            binding.includeAbout.pltListStatus.setToken(token)
-        } else {
-            binding.includeAbout.pltListStatusHolder.visibility = View.GONE
+    private fun setTokenTypeLabel(token: Token) {
+        when (token) {
+            is ProtocolLevelToken -> {
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
+                binding.includeAbout.pltListStatusHolder.visibility = View.VISIBLE
+                binding.includeAbout.pltListStatus.setToken(
+                    token = token,
+                    onTokenLabelClick = {
+                        PLTInfoDialog().showSingle(supportFragmentManager, PLTInfoDialog.TAG)
+                    },
+                    onTokenStatusClick = {
+                        PLTListInfoDialog().showSingle(
+                            supportFragmentManager,
+                            PLTListInfoDialog.TAG
+                        )
+                    }
+                )
+            }
+
+            is ContractToken -> {
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.visibility = View.VISIBLE
+                binding.includeAbout.pltListStatusHolder.visibility = View.GONE
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.setOnClickListener {
+                    CIS2InfoDialog().showSingle(supportFragmentManager, CIS2InfoDialog.TAG)
+                }
+            }
+
+            else -> {
+                binding.includeAbout.pltListStatusHolder.visibility = View.GONE
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
+            }
         }
     }
 

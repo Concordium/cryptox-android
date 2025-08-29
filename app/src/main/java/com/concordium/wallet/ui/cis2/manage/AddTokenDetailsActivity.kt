@@ -6,13 +6,16 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.ActivityAddTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.CIS2InfoDialog
 import com.concordium.wallet.ui.cis2.RawMetadataDialog
+import com.concordium.wallet.ui.plt.PLTInfoDialog
+import com.concordium.wallet.ui.plt.PLTListInfoDialog
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.PrettyPrint.asJsonString
 import com.concordium.wallet.util.getSerializable
@@ -38,7 +41,7 @@ class AddTokenDetailsActivity : BaseActivity(
         binding.detailsLayout.hideToken.visibility = View.GONE
         setContractIndexAndSubIndex(token)
         setTokenId(token)
-        setPLTListStatus(token)
+        setTokenTypeLabel(token)
         token.metadata?.let { tokenMetadata ->
             setNameAndIcon(token)
             setDescription(tokenMetadata)
@@ -122,12 +125,37 @@ class AddTokenDetailsActivity : BaseActivity(
         }
     }
 
-    private fun setPLTListStatus(token: Token) {
-        if (token is ProtocolLevelToken) {
-            binding.detailsLayout.pltListStatusHolder.visibility = View.VISIBLE
-            binding.detailsLayout.pltListStatus.setToken(token)
-        } else {
-            binding.detailsLayout.pltListStatusHolder.visibility = View.GONE
+    private fun setTokenTypeLabel(token: Token) {
+        when (token) {
+            is ProtocolLevelToken -> {
+                binding.detailsLayout.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
+                binding.detailsLayout.pltListStatusHolder.visibility = View.VISIBLE
+                binding.detailsLayout.pltListStatus.setToken(
+                    token = token,
+                    onTokenLabelClick = {
+                        PLTInfoDialog().showSingle(supportFragmentManager, PLTInfoDialog.TAG)
+                    },
+                    onTokenStatusClick = {
+                        PLTListInfoDialog().showSingle(
+                            supportFragmentManager,
+                            PLTListInfoDialog.TAG
+                        )
+                    }
+                )
+            }
+
+            is ContractToken -> {
+                binding.detailsLayout.cis2TokenTypeHolder.rootLayout.visibility = View.VISIBLE
+                binding.detailsLayout.pltListStatusHolder.visibility = View.GONE
+                binding.detailsLayout.cis2TokenTypeHolder.rootLayout.setOnClickListener {
+                    CIS2InfoDialog().showSingle(supportFragmentManager, CIS2InfoDialog.TAG)
+                }
+            }
+
+            else -> {
+                binding.detailsLayout.pltListStatusHolder.visibility = View.GONE
+                binding.detailsLayout.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
+            }
         }
     }
 
