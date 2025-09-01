@@ -17,6 +17,8 @@ configurableSigningProperties.load(new FileInputStream(
 ))
 
 android {
+    namespace "com.concordium.wallet"
+
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
@@ -25,14 +27,18 @@ android {
     def versionMeta = "-qa.2"
     def versionCodeIncremental = 1456
 
-    compileSdkVersion 34
-
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
-        minSdkVersion 26
-        targetSdkVersion 34
+
+        //noinspection OldTargetApi
+        targetSdk 35
+        //noinspection GradleDependency
+        compileSdk 35
+        minSdk 26
+
         versionCode versionCodeIncremental
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionMeta}"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
@@ -80,11 +86,16 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+        flavorDimensions += "network"
+    }
 
     productFlavors {
         // Unstable Concordium test network, fake funds and identities. No Spaceseven instance.
         stagenet {
+            dimension "network"
             applicationIdSuffix ".stagenet"
 
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
@@ -119,6 +130,7 @@ android {
         // Public Concordium test network, fake funds and identities. Spaceseven stage.
         // It is called 'tstnet' because flavour names can't start with 'test'
         tstnet {
+            dimension "network"
             applicationIdSuffix ".testnet"
 
             buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
@@ -151,6 +163,8 @@ android {
 
         // Public Concordium network, real funds and identities. Spaceseven production.
         mainnet {
+            dimension "network"
+
             buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
             buildConfigField("String", "ENV_NAME", "\"production\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.mainnet.concordium.software\"")
@@ -179,13 +193,10 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     packagingOptions {
         resources {
             excludes += ['META-INF/atomicfu.kotlin_module']
@@ -195,11 +206,13 @@ android {
             excludes += ['META-INF/NOTICE.md']
             excludes += ['META-INF/versions/**']
         }
+        doNotStrip "**/*.so"
     }
-    buildFeatures {
-        viewBinding true
+
+    dependenciesInfo {
+        includeInApk false
+        includeInBundle false
     }
-    namespace 'com.concordium.wallet'
 
     // Set meaningful names for build artifacts.
     applicationVariants.all { variant ->

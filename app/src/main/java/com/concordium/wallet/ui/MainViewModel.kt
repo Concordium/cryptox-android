@@ -50,6 +50,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
 
+    @Suppress("UNUSED_VARIABLE")
     fun initialize() {
         try {
             val dbVersion =

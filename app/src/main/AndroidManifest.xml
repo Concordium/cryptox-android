@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- Protection level: normal -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- Protection level: normal -->
@@ -16,6 +17,7 @@
 
     <application
         android:name=".App"
+        tools:ignore="DiscouragedApi,LockedOrientationActivity"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -79,10 +81,10 @@
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter
-                android:autoVerify="true"
                 android:icon="@mipmap/ic_launcher_round"
                 android:label="@string/app_name"
                 android:priority="50">
+
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -304,11 +306,6 @@
             android:parentActivityName=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" /> <!-- More -->
-        <activity
-            android:name=".ui.more.dev.DevActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.export.ExportActivity"
             android:launchMode="singleTop"

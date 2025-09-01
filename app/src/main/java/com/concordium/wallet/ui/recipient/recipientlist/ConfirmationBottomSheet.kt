@@ -1,10 +1,7 @@
 package com.concordium.wallet.ui.recipient.recipientlist
 
 import android.content.Context
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import com.concordium.wallet.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -29,8 +26,6 @@ class ConfirmationBottomSheet(context: Context, callback: INotification) : Botto
 
     init {
         setContentView(R.layout.confirmation_bottomsheet)
-        val v = findViewById<View>(R.id.design_bottom_sheet)
-        v?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
         behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         behavior.skipCollapsed = true
         behavior.isFitToContents = false

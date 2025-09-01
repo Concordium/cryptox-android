@@ -20,24 +20,24 @@ data class MessageFrame(
     val payload: String
 )
 
-enum class MessageType(value: Int) {
+enum class MessageType {
     @SerializedName("0")
-    REQUEST(0),
+    REQUEST,
 
     @SerializedName("1")
-    REPLY(1),
+    REPLY,
 
     @SerializedName("2")
-    SUBSCRIBE_TO_EVENT(2),
+    SUBSCRIBE_TO_EVENT,
 
     @SerializedName("3")
-    EVENT(3),
+    EVENT,
 
     @SerializedName("4")
-    UNSUBSCRIBE_FROM_EVENT(4),
+    UNSUBSCRIBE_FROM_EVENT,
 
     @SerializedName("5")
-    ERROR(5)
+    ERROR
 }
 
 interface IWsBridge {

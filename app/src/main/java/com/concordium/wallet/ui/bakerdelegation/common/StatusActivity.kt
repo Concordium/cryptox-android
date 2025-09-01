@@ -21,13 +21,17 @@ abstract class StatusActivity(
     protected lateinit var binding: DelegationbakerStatusBinding
     protected lateinit var viewModel: DelegationBakerViewModel
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DelegationbakerStatusBinding.bind(findViewById(R.id.root_layout))
         hideActionBarBack(isVisible = true)
 
         initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
+        viewModel.initialize(
+            intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA)
+                    as BakerDelegationData
+        )
         initView()
     }
 
@@ -101,26 +105,28 @@ abstract class StatusActivity(
 
     protected fun addPendingChange(
         pendingChange: PendingChange,
-        dateStringId: Int,
-        takeEffectOnStringId: Int,
-        removeStakeStringId: Int,
-        reduceStakeStringId: Int,
     ) {
-        pendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
-            val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
-            val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
-            val dateStr = getString(dateStringId, prefix, postfix)
-            addContent(getString(takeEffectOnStringId) + "\n" + dateStr, "")
-            if (pendingChange.change == "RemoveStake") {
-                binding.statusButtonTop.isEnabled = false
-                addContent(getString(removeStakeStringId), "")
-            } else if (pendingChange.change == "ReduceStake") {
-                pendingChange.newStake?.let { newStake ->
-                    addContent(
-                        getString(reduceStakeStringId),
-                        CurrencyUtil.formatGTU(newStake)
-                    )
-                }
+        val estimatedChangeTime = pendingChange.estimatedChangeTime
+            ?: return
+        val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
+        val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
+        val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
+        addContent(
+            getString(R.string.delegation_status_content_take_effect_on) + "\n" + dateStr,
+            ""
+        )
+        if (pendingChange.change == "RemoveStake") {
+            binding.statusButtonTop.isEnabled = false
+            addContent(
+                getString(R.string.delegation_status_content_delegation_will_be_stopped),
+                ""
+            )
+        } else if (pendingChange.change == "ReduceStake") {
+            pendingChange.newStake?.let { newStake ->
+                addContent(
+                    getString(R.string.delegation_status_new_amount),
+                    CurrencyUtil.formatGTU(newStake)
+                )
             }
         }
     }

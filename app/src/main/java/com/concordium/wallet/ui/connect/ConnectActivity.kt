@@ -1,3 +1,5 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package com.concordium.wallet.ui.connect
 
 import android.content.Intent
@@ -22,6 +24,7 @@ import com.concordium.wallet.ui.connect.add_wallet.AddWalletNftActivity
 import com.concordium.wallet.ui.connect.uni_ref.UniRefActivity
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -52,8 +55,12 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         shopLogo = findViewById(R.id.shopLogo)
         accountsPool = findViewById(R.id.accountsPool)
 
-        findViewById<Button>(R.id.btnConnect).setOnClickListener(this::sendAccept)
-        findViewById<Button>(R.id.btnCancel).setOnClickListener(this::sendCancel)
+        findViewById<Button>(R.id.btnConnect).setOnClickListener {
+            sendAccept()
+        }
+        findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            sendCancel()
+        }
 
         val walletConnectPrefixes = setOf(
             DEFAULT_WALLET_CONNECT_PREFIX,
@@ -123,7 +130,7 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-      return OkHttpClient().newBuilder()
+        return OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
@@ -153,11 +160,7 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
                 println(">>>>>>>>>>>>>>>>>>>>>>> Mark 1")
                 currentSiteInfo = json.site
                 runOnUiThread {
-                    shopName.text = if (json.site.title.isNullOrEmpty()) {
-                        "Spaceseven.com"
-                    } else {
-                        json.site.title
-                    }
+                    shopName.text = json.site.title.ifEmpty { "Spaceseven.com" }
                     shopDescription.text = json.site.description
 //                    showShopIcon(json.site.iconLink)
                 }
@@ -187,12 +190,12 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         }
     }
 
-    private fun sendCancel(v: View) {
+    private fun sendCancel() {
         wsTransport?.sendConnectionReject()
         finish()
     }
 
-    private fun sendAccept(v: View) = wsTransport?.sendConnectionAccept()
+    private fun sendAccept() = wsTransport?.sendConnectionAccept()
 
     private fun connectWs(wsUrl: String) {
         wsTransport = WsTransport.connect(wsUrl)
@@ -219,7 +222,8 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
                 }
 
                 WsMessageResponse.MESSAGE_TYPE_SIMPLE_TRANSFER,
-                WsMessageResponse.MESSAGE_TYPE_TRANSACTION -> {
+                WsMessageResponse.MESSAGE_TYPE_TRANSACTION,
+                -> {
                     Intent(applicationContext, UniRefActivity::class.java).also {
                         val bundle = Bundle()
                         bundle.putString(

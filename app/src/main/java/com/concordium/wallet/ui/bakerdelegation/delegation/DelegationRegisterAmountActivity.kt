@@ -101,8 +101,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 onContinueClicked()
                 true
+            } else {
+                false
             }
-            false
         }
         setAmountHint(binding.amount)
         binding.amount.addTextChangedListener {

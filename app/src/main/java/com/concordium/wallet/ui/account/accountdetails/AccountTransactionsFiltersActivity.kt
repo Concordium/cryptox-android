@@ -25,6 +25,7 @@ class AccountTransactionsFiltersActivity : BaseActivity(
     //region Lifecycle
     // ************************************************************
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mAccount = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account

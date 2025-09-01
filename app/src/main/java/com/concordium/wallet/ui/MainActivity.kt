@@ -67,6 +67,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         super.onCreate(savedInstanceState)
 
         // Make the navigation bar color match the bottom navigation bar.
+        @Suppress("DEPRECATION")
         window.navigationBarColor =
             ContextCompat.getColor(this, R.color.cryptox_black_main)
 

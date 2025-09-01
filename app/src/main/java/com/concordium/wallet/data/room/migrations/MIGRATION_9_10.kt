@@ -20,7 +20,7 @@ fun MIGRATION_9_10(
         gson = gson,
     )
 
-    override fun migrate(database: SupportSQLiteDatabase) = with(database) {
+    override fun migrate(db: SupportSQLiteDatabase) = with(db) {
         execSQL("CREATE TABLE IF NOT EXISTS `_new_identity_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `status` TEXT NOT NULL, `detail` TEXT, `code_uri` TEXT NOT NULL, `next_account_number` INTEGER NOT NULL, `identity_provider` TEXT NOT NULL, `identity_object` TEXT, `private_id_object_data_encrypted` TEXT, `identity_provider_id` INTEGER NOT NULL, `identity_index` INTEGER NOT NULL)")
         execSQL("INSERT INTO `_new_identity_table` (`id`,`name`,`status`,`detail`,`code_uri`,`next_account_number`,`identity_provider`,`identity_object`,`private_id_object_data_encrypted`,`identity_provider_id`,`identity_index`) SELECT `id`,`name`,`status`,`detail`,`code_uri`,`next_account_number`,`identity_provider`,`identity_object`,`private_id_object_data_encrypted`,`identity_provider_id`,`identity_index` FROM `identity_table`")
         execSQL("DROP TABLE `identity_table`")
@@ -29,7 +29,7 @@ fun MIGRATION_9_10(
 
         // Migrate identity encrypted data:
         // wrap the existing data into EncryptedData, or overwrite with null if missing.
-        database.query("SELECT `id`, `private_id_object_data_encrypted` FROM `identity_table`")
+        db.query("SELECT `id`, `private_id_object_data_encrypted` FROM `identity_table`")
             .use { identitiesCursor ->
                 while (identitiesCursor.moveToNext()) {
                     val oldPrivateIdObjectDataEncrypted = identitiesCursor.getString(1)
@@ -64,7 +64,7 @@ fun MIGRATION_9_10(
 
         // Migrate account encrypted data:
         // wrap the existing data into EncryptedData, or overwrite with null if missing.
-        database.query("SELECT `id`, `encrypted_account_data` FROM `account_table`")
+        db.query("SELECT `id`, `encrypted_account_data` FROM `account_table`")
             .use { accountsCursor ->
                 while (accountsCursor.moveToNext()) {
                     val oldEncryptedAccountData = accountsCursor.getString(1)

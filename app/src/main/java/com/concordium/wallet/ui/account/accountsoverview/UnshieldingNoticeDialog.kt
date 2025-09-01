@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogUnshieldingNoticeBinding
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class UnshieldingNoticeDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
@@ -22,7 +25,7 @@ class UnshieldingNoticeDialog : AppCompatDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = DialogUnshieldingNoticeBinding.inflate(inflater)
         return binding.root
@@ -38,9 +41,11 @@ class UnshieldingNoticeDialog : AppCompatDialogFragment() {
         }
 
         // Track showing the notice once it is visible to the user.
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            delay(500)
-            App.appCore.session.setUnshieldingNoticeShown()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                delay(500)
+                App.appCore.session.setUnshieldingNoticeShown()
+            }
         }
     }
 

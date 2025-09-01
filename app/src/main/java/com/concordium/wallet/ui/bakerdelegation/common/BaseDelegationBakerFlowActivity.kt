@@ -10,6 +10,7 @@ abstract class BaseDelegationBakerFlowActivity(titleId: Int) :
 
     var bakerDelegationData: BakerDelegationData? = null
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         intent.extras?.getSerializable(EXTRA_DELEGATION_BAKER_DATA)?.let {

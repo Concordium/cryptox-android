@@ -51,7 +51,7 @@ class MoreOverviewFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentMoreOverviewBinding.inflate(inflater, container, false)
         return binding.root
@@ -211,7 +211,9 @@ class MoreOverviewFragment : BaseFragment() {
             MoreOverviewViewModel.Event.ShowAuthentication ->
                 authDelegate.showAuthentication(
                     activity = activity,
-                    onAuthenticated = viewModel::onAuthenticated
+                    onAuthenticated = {
+                        viewModel.onAuthenticated()
+                    }
                 )
 
             MoreOverviewViewModel.Event.ShowDataErasedMessage ->

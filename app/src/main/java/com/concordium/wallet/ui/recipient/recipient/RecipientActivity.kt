@@ -30,6 +30,7 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
     //region Lifecycle
     // ************************************************************
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -153,6 +154,7 @@ class RecipientActivity : BaseActivity(R.layout.activity_recipient, R.string.rec
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun gotoScanBarCode() {
         val intent = Intent(this, ScanQRActivity::class.java)
         intent.putExtra("add_contact", true)

@@ -24,11 +24,6 @@ class ExportSetupPasswordFragment(val titleId: Int? = null) : BaseFragment(title
     //region Lifecycle
     // ************************************************************
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(false)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -123,7 +118,7 @@ class ExportSetupPasswordFragment(val titleId: Int? = null) : BaseFragment(title
 
     private fun showPasswordError() {
         binding.passwordEdittext.setText("")
-        KeyboardUtil.hideKeyboard(activity!!.parent)
+        KeyboardUtil.hideKeyboard(requireActivity())
         popup.showSnackbar(binding.root, R.string.export_error_password_setup)
     }
 

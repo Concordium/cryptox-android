@@ -31,6 +31,7 @@ class AuthenticationDialogFragment : AppCompatDialogFragment(),
 
     private var callback: Callback? = null
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
