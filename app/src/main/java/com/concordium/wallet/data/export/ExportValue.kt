@@ -3,7 +3,7 @@ package com.concordium.wallet.data.export
 import java.io.Serializable
 
 data class ExportValue(
-    val identities: List<IdentityExport>,
+    val identities: List<IdentityExport>?,
     val recipients: List<RecipientExport>
 ) : Serializable {
 
@@ -14,6 +14,6 @@ data class ExportValue(
     }
 
     fun hasRequiredIdentities(): Boolean {
-        return identities != null && identities.isNotEmpty()
+        return !identities.isNullOrEmpty()
     }
 }

@@ -41,6 +41,7 @@ class ImportActivity : BaseActivity(
     //region Lifecycle
     // ************************************************************
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeViewModel()
@@ -189,6 +190,7 @@ class ImportActivity : BaseActivity(
             .commit()
     }
 
+    @Suppress("DEPRECATION")
     private fun showFilePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)

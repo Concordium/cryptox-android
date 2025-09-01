@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -26,6 +27,8 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.ui.plt.PLTInfoDialog
+import com.concordium.wallet.ui.plt.PLTListInfoDialog
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.asJsonString
@@ -119,21 +122,21 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             showDeleteDialog()
         }
 
-        viewModel.tokenDetailsData.selectedToken?.let { token ->
-            setContractIndexAndSubIndex(token)
-            setTokenId(token)
-            setBalances(token)
-            token.metadata?.let { tokenMetadata ->
-                setNameAndIcon(token)
-                setOwnership(token, tokenMetadata)
-                setDescription(token is CCDToken, tokenMetadata)
+        viewModel.tokenDetailsData.selectedToken?.let { selectedToken ->
+            setContractIndexAndSubIndex(selectedToken)
+            setTokenId(selectedToken)
+            setBalances(selectedToken)
+            selectedToken.metadata?.let { tokenMetadata ->
+                setNameAndIcon(selectedToken)
+                setOwnership(selectedToken, tokenMetadata)
+                setDescription(selectedToken is CCDToken, tokenMetadata)
                 setTicker(tokenMetadata)
-                setDecimals(token)
-                setRawMetadataButton(token is CCDToken, tokenMetadata)
+                setDecimals(selectedToken)
+                setRawMetadataButton(selectedToken is CCDToken, tokenMetadata)
             }
-            setHideButton(token is CCDToken)
-            setPLTListStatus(token)
-            if (token.isNewlyReceived) {
+            setHideButton(selectedToken is CCDToken)
+            setTokenTypeLabel(selectedToken)
+            if (selectedToken.isNewlyReceived) {
                 handleNewlyReceivedToken()
             }
         }
@@ -156,28 +159,16 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setBalances(token: Token) {
-        binding.walletInfoCard.totalBalanceTextview.text = when (token) {
-            is CCDToken -> {
-                CurrencyUtil.formatGTU(
-                    viewModel.tokenDetailsData.account?.balance!!,
-                    token.metadata?.decimals ?: 6
-                ) +
-                        " ${token.metadata?.symbol}"
-            }
+        val balance: BigInteger =
+            if (token is CCDToken)
+                viewModel.tokenDetailsData.account?.balance!!
+            else
+                token.balance
 
-            is ContractToken -> {
-                CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
-                        " ${token.metadata?.symbol ?: ""}"
-            }
-
-            is ProtocolLevelToken -> {
-                CurrencyUtil.formatGTU(token.balance, token.metadata?.decimals ?: 0) +
-                        " ${token.tokenId}"
-            }
-
-            else -> ""
-        }
+        binding.walletInfoCard.totalBalanceTextview.text =
+            CurrencyUtil.formatGTU(balance, token) + " ${token.symbol}"
 
         viewModel.tokenDetailsData.account?.readOnly?.let {
             binding.ccdActionButtons.sendFundsBtn.isEnabled = !it
@@ -386,12 +377,37 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         binding.includeAbout.hideToken.isVisible = !isCCD
     }
 
-    private fun setPLTListStatus(token: Token) {
-        if (token is ProtocolLevelToken) {
-            binding.includeAbout.pltListStatusHolder.visibility = View.VISIBLE
-            binding.includeAbout.pltListStatus.setToken(token)
-        } else {
-            binding.includeAbout.pltListStatusHolder.visibility = View.GONE
+    private fun setTokenTypeLabel(token: Token) {
+        when (token) {
+            is ProtocolLevelToken -> {
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
+                binding.includeAbout.pltListStatusHolder.visibility = View.VISIBLE
+                binding.includeAbout.pltListStatus.setToken(
+                    token = token,
+                    onTokenLabelClick = {
+                        PLTInfoDialog().showSingle(supportFragmentManager, PLTInfoDialog.TAG)
+                    },
+                    onTokenStatusClick = {
+                        PLTListInfoDialog().showSingle(
+                            supportFragmentManager,
+                            PLTListInfoDialog.TAG
+                        )
+                    }
+                )
+            }
+
+            is ContractToken -> {
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.visibility = View.VISIBLE
+                binding.includeAbout.pltListStatusHolder.visibility = View.GONE
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.setOnClickListener {
+                    CIS2InfoDialog().showSingle(supportFragmentManager, CIS2InfoDialog.TAG)
+                }
+            }
+
+            else -> {
+                binding.includeAbout.pltListStatusHolder.visibility = View.GONE
+                binding.includeAbout.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
+            }
         }
     }
 

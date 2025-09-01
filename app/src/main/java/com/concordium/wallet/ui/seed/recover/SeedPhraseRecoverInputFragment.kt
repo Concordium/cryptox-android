@@ -56,6 +56,7 @@ class SeedPhraseRecoverInputFragment : Fragment() {
         initObservers()
     }
 
+    @Suppress("DEPRECATION")
     override fun onResume() {
         super.onResume()
         val inputMethodManager =

@@ -1,8 +1,10 @@
 package com.concordium.wallet.ui.cis2.manage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -43,6 +45,7 @@ class ManageTokensSelectionAdapter(
         return ViewHolder(binding)
     }
 
+    @SuppressLint("UseCompatTextViewDrawableApis")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val token = dataSet[position]
         val tokenMetadata = token.metadata
@@ -106,6 +109,10 @@ class ManageTokensSelectionAdapter(
                         0,
                         0
                     )
+                    compoundDrawableTintList = ContextCompat.getColorStateList(
+                        context,
+                        R.color.mw24_content_accent_secondary
+                    )
                 }
 
                 is ContractToken -> {
@@ -117,11 +124,14 @@ class ManageTokensSelectionAdapter(
                         0,
                         0
                     )
+                    compoundDrawableTintList = ContextCompat.getColorStateList(
+                        context,
+                        R.color.mw24_plain_white_40
+                    )
                 }
 
-                else -> {
-                    isVisible = false
-                }
+                else -> isVisible = false
+
             }
         }
     }

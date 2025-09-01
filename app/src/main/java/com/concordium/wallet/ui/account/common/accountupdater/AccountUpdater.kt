@@ -301,9 +301,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                         Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                     } catch (httpEx: HttpException) {
-                        //if (httpEx.code() == 502) transferRepository.delete(request.transfer)
-                        //else throw httpEx
-                        // TODO: maybe delete transaction
+                        // Doesn't matter.
                     }
                 }
             } catch (e: Exception) {
@@ -473,9 +471,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     containsEncrypted = ShieldedAccountEncryptionStatus.ENCRYPTED
                 }
                 it.incomingAmounts.forEach {
-                    val amount = lookupMappedAmount(it)
-                    if (amount != null) {
-                        accountShieldedBalance += amount.toBigInteger()
+                    val incomingAmount = lookupMappedAmount(it)
+                    if (incomingAmount != null) {
+                        accountShieldedBalance += incomingAmount.toBigInteger()
                     } else {
                         if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
                             containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED

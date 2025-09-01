@@ -178,7 +178,7 @@ class TransactionDetailsActivity : BaseActivity(
             binding.copyButton.setOnClickListener {
                 onCopyClicked(
                     getString(R.string.transaction_details_transaction_hash),
-                    ta.hash!!
+                    ta.hash
                 )
             }
         } else {

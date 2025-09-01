@@ -74,7 +74,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         accountUpdater.dispose()
     }
 
-    fun updateState(notifyWaitingLiveData: Boolean = true) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateState() = viewModelScope.launch(Dispatchers.IO) {
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts if any exists.
         updateSubmissionStatesAndBalances()
@@ -106,7 +106,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                     return
                 }
                 if (isRegularUpdateNeeded()) {
-                    updateState(false)
+                    updateState()
                     // Log.d("Tick.....")
                 }
             }

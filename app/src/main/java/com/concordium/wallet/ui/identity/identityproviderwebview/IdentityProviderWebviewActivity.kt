@@ -59,6 +59,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
     private val preferences: WalletIdentityCreationDataPreferences =
         App.appCore.session.walletStorage.identityCreationDataPreferences
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -70,6 +70,13 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include
+            android:id="@+id/cis2_token_type_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            layout="@layout/view_cis2_token_type"/>
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/description_holder"
             android:layout_width="match_parent"

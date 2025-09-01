@@ -71,7 +71,7 @@ class AirDropViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun getWallets() = viewModelScope.launch(Dispatchers.IO) {
-        val wallets = accountRepository?.getAll() ?: emptyList()
+        val wallets = accountRepository.getAll()
         _walletsLiveData.postValue(Event(wallets))
         _viewState.emit(AirDropState.SelectWallet)
     }

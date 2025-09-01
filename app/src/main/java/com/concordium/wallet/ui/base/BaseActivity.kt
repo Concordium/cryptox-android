@@ -44,7 +44,7 @@ import javax.crypto.Cipher
 
 abstract class BaseActivity(
     private val layout: Int? = null,
-    private val titleId: Int = R.string.app_name
+    private val titleId: Int = R.string.app_name,
 ) : AppCompatActivity() {
 
     private var titleView: TextView? = null
@@ -167,16 +167,11 @@ abstract class BaseActivity(
         titleView?.setText(titleId)
     }
 
-    fun setActionBarTitle(title: String) {
-        // supportActionBar?.title = title
-        titleView?.text = title
-    }
-
     fun hideActionBarTitle(isVisible: Boolean) {
         titleView?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
-    fun setActionBarTitle(title: String, subtitle: String?) {
+    fun setActionBarTitle(title: String) {
         // supportActionBar?.title = title
         titleView?.text = title
         titleView?.setSingleLine()
@@ -224,7 +219,7 @@ abstract class BaseActivity(
     fun hideRightPlus(
         isVisible: Boolean,
         hasNotice: Boolean = false,
-        listener: View.OnClickListener? = null
+        listener: View.OnClickListener? = null,
     ) {
         plusRightBtn?.isVisible = isVisible
         plusRightBtn?.setOnClickListener(listener)
@@ -234,7 +229,7 @@ abstract class BaseActivity(
     fun hideLeftPlus(
         isVisible: Boolean,
         hasNotice: Boolean = false,
-        listener: View.OnClickListener? = null
+        listener: View.OnClickListener? = null,
     ) {
         plusLeftBtn?.isVisible = isVisible
         plusLeftBtn?.setOnClickListener(listener)
@@ -250,7 +245,7 @@ abstract class BaseActivity(
         isVisible: Boolean = false,
         text: String,
         icon: Drawable?,
-        listener: View.OnClickListener? = null
+        listener: View.OnClickListener? = null,
     ) {
         accountBtn?.isVisible = isVisible
         accountBtnImage?.isVisible = isVisible
@@ -304,7 +299,7 @@ abstract class BaseActivity(
         text: String?,
         shouldUseBiometrics: Boolean,
         usePasscode: Boolean,
-        callback: AuthenticationCallback
+        callback: AuthenticationCallback,
     ) {
         if (shouldUseBiometrics) {
             showBiometrics(text, usePasscode, callback)
@@ -346,9 +341,9 @@ abstract class BaseActivity(
     private fun showBiometrics(
         text: String?,
         usePasscode: Boolean,
-        callback: AuthenticationCallback
+        callback: AuthenticationCallback,
     ) {
-        var biometricPrompt = createBiometricPrompt(text, callback)
+        val biometricPrompt = createBiometricPrompt(text, callback)
 
         val promptInfo = createPromptInfo(text, usePasscode)
         val cipher = callback.getCipherForBiometrics()
@@ -359,11 +354,11 @@ abstract class BaseActivity(
 
     private fun createBiometricPrompt(
         text: String?,
-        callback: AuthenticationCallback
+        callback: AuthenticationCallback,
     ): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(this)
 
-        val callback = object : BiometricPromptCallback() {
+        val promptCallback = object : BiometricPromptCallback() {
             override fun onNegativeButtonClicked() {
                 showPasswordDialog(text, callback)
             }
@@ -378,10 +373,13 @@ abstract class BaseActivity(
             }
         }
 
-        return BiometricPrompt(this, executor, callback)
+        return BiometricPrompt(this, executor, promptCallback)
     }
 
-    fun createPromptInfo(description: String?, usePasscode: Boolean): BiometricPrompt.PromptInfo {
+    private fun createPromptInfo(
+        description: String?,
+        usePasscode: Boolean,
+    ): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_login_biometrics_dialog_title))
             .setDescription(description)
@@ -390,7 +388,7 @@ abstract class BaseActivity(
             .build()
     }
 
-    fun authenticateText(): String {
+    private fun authenticateText(): String {
         val useBiometrics = App.appCore.auth.isBiometricsUsed()
         val usePasscode = App.appCore.auth.isPasscodeUsed()
         return when {
@@ -411,7 +409,7 @@ abstract class BaseActivity(
         canonicalClassName: String?,
         thenStart: String? = null,
         withKey: String? = null,
-        withData: Serializable? = null
+        withData: Serializable? = null,
     ) {
         canonicalClassName?.let {
             val intent = Intent()
@@ -429,6 +427,7 @@ abstract class BaseActivity(
     }
 
     // Upon returning, we check the result and pop if needed
+    @Suppress("DEPRECATION")
     private val getResultGeneric =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -443,9 +442,8 @@ abstract class BaseActivity(
                     } else {
                         it.data?.getStringExtra("THEN_START")?.let { thenStart ->
                             val intent = Intent(this, Class.forName(thenStart))
-                            if (it.data?.getStringExtra("WITH_KEY") != null && it.data?.getSerializableExtra(
-                                    "WITH_DATA"
-                                ) != null
+                            if (it.data?.getStringExtra("WITH_KEY") != null &&
+                                it.data?.getSerializableExtra("WITH_DATA") != null
                             ) {
                                 intent.putExtra(
                                     it.data?.getStringExtra("WITH_KEY"),
@@ -463,6 +461,7 @@ abstract class BaseActivity(
         getResultGeneric.launch(intent)
     }
 
+    @Suppress("DEPRECATION")
     protected fun openFolderPicker(activityResult: ActivityResultLauncher<Intent>) {
         val intent: Intent?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

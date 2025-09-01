@@ -39,6 +39,7 @@ class AccountReleaseScheduleActivity : BaseActivity(
     //region Lifecycle
     // ************************************************************
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account

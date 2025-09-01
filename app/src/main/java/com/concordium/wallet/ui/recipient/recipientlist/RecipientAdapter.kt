@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.recipient.recipientlist
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ interface IListCallback {
     fun handleRowClick(item: Recipient)
 }
 
+@SuppressLint("NotifyDataSetChanged")
 class RecipientAdapter(private val callback: IListCallback) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -30,8 +32,8 @@ class RecipientAdapter(private val callback: IListCallback) :
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
 
-        if (holder.adapterPosition != RecyclerView.NO_POSITION && holder is ItemViewHolder) {
-            if (holder.adapterPosition == swipedPos && holder.view.swipe == lastSwipeLayout) {
+        if (holder.bindingAdapterPosition != RecyclerView.NO_POSITION && holder is ItemViewHolder) {
+            if (holder.bindingAdapterPosition == swipedPos && holder.view.swipe == lastSwipeLayout) {
                 if (holder.view.swipe.offset == 0) {
                     lastSwipeLayout = null
                     swipedPos = -1
@@ -71,7 +73,7 @@ class RecipientAdapter(private val callback: IListCallback) :
                 }
 
                 override fun onSwipeClampReached(swipeLayout: SwipeLayout?, moveToRight: Boolean) {
-                    swipedPos = adapterPosition
+                    swipedPos = bindingAdapterPosition
                 }
 
                 override fun onLeftStickyEdge(swipeLayout: SwipeLayout?, moveToRight: Boolean) {

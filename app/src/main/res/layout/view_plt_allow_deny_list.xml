@@ -10,7 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/plt_token_view_background"
-        android:padding="6dp">
+        android:clickable="true"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="6dp">
 
         <ImageView
             android:id="@+id/label_icon"
@@ -20,20 +22,34 @@
             android:src="@drawable/mw24_ic_ccd_token_colored"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_content_accent_secondary" />
 
         <TextView
             android:id="@+id/label_status_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
+            android:layout_marginHorizontal="6dp"
             android:text="@string/account_details_plt_token"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-            android:textColor="@color/mw24_content_accent_primary"
+            android:textColor="@color/mw24_content_accent_secondary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/question_icon"
             app:layout_constraintStart_toEndOf="@id/label_icon"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/question_icon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:alpha="0.5"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_circled_question_mark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/label_status_title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_content_accent_secondary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,7 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:background="@drawable/plt_in_allow_list_background"
-        android:padding="6dp">
+        android:clickable="true"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="6dp">
 
         <ImageView
             android:id="@+id/list_status_icon"
@@ -58,14 +76,27 @@
             android:id="@+id/list_status_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
+            android:layout_marginHorizontal="6dp"
             android:text="@string/account_details_account_on_allow_list"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/mw24_content_success_primary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/list_status_question_icon"
             app:layout_constraintStart_toEndOf="@id/list_status_icon"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/list_status_question_icon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:alpha="0.5"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_circled_question_mark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/list_status_title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_content_success_primary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Flow for wrapping layouts -->

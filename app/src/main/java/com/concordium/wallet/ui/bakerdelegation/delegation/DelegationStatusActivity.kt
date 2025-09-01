@@ -102,13 +102,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         )
 
         viewModel.bakerDelegationData.account.delegation?.pendingChange?.let { pendingChange ->
-            addPendingChange(
-                pendingChange,
-                R.string.delegation_status_effective_time,
-                R.string.delegation_status_content_take_effect_on,
-                R.string.delegation_status_content_delegation_will_be_stopped,
-                R.string.delegation_status_new_amount
-            )
+            addPendingChange(pendingChange)
             binding.actionButtonsLayout.stopBtn.isEnabled =
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }

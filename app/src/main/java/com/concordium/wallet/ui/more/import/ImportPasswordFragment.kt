@@ -23,11 +23,6 @@ class ImportPasswordFragment(titleId: Int? = null) : BaseFragment(titleId) {
     //region Lifecycle
     // ************************************************************
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(false)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

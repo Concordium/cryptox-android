@@ -1,3 +1,5 @@
+@file:Suppress("ConvertObjectToDataObject")
+
 package com.concordium.wallet.ui.more.moreoverview
 
 import android.app.Application
@@ -34,13 +36,11 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     private val _seedRevealVisibilityLiveData = MutableLiveData<Boolean>()
     val seedRevealVisibilityLiveData: LiveData<Boolean> = _seedRevealVisibilityLiveData
     private val _walletEraseVisibilityLiveData = MutableLiveData<Boolean>()
-    val walletEraseVisibilityLiveData: LiveData<Boolean> = _walletEraseVisibilityLiveData
     private val _unshieldingVisibilityLiveData = MutableLiveData(false)
     val unshieldingVisibilityLiveData: LiveData<Boolean> = _unshieldingVisibilityLiveData
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean> = _waitingLiveData
     private val _passwordAlterVisibilityLiveData = MutableLiveData<Boolean>()
-    val passwordAlterVisibilityLiveData: LiveData<Boolean> = _passwordAlterVisibilityLiveData
     private val mutableEventsFlow =
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
@@ -88,7 +88,7 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
         mutableEventsFlow.tryEmit(Event.ShowAuthentication)
     }
 
-    fun onAuthenticated(password: String) {
+    fun onAuthenticated() {
         eraseDataAndGoToWelcome()
     }
 

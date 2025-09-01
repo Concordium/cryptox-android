@@ -1,5 +1,8 @@
+@file:SuppressLint("SetTextI18n")
+
 package com.concordium.wallet.ui.airdrop
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +16,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.underline
 import androidx.core.view.children
@@ -28,15 +32,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import timber.log.Timber
-
-// {
-//    "api_url": "https://stage.spaceseven.cloud/api/v2/airdrop/register-wallet",
-//    "airdrop_id": "3446112874593",
-//    "airdrop_name": "MasterChef",
-//    "marketplace_name": "Spaceseven",
-//    "marketplace_url": "https://stage.spaceseven.cloud",
-//    "marketplace_icon": " https://weeny.link/1KRq431"
-// }
 
 data class AirDropPayload(
     @SerializedName("api_url")
@@ -211,6 +206,7 @@ class AirdropActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showWallets(wallets: List<Account>) {
         binding?.accountsPool?.removeAllViews()
         wallets.forEach { acc ->
@@ -222,14 +218,22 @@ class AirdropActivity : BaseActivity() {
             v.setOnClickListener {
                 clearAccSelection()
                 selectedAccount = acc
-                v.findViewById<ConstraintLayout>(R.id.accRoot).background = resources.getDrawable(R.drawable.btn_round_outline_bg_active)
+                v.findViewById<ConstraintLayout>(R.id.accRoot).background =
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.btn_round_outline_bg_active
+                    )
             }
         }
     }
 
     private fun clearAccSelection() {
         binding?.accountsPool?.children?.forEach {
-            it.findViewById<ConstraintLayout>(R.id.accRoot).background = resources.getDrawable(R.drawable.btn_round_outline_bg)
+            it.findViewById<ConstraintLayout>(R.id.accRoot).background =
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.btn_round_outline_bg
+                )
         }
     }
 }

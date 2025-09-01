@@ -1,5 +1,8 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package com.concordium.wallet.ui.connect.add_wallet
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -7,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.bumptech.glide.Glide
 import com.concordium.wallet.App
@@ -16,11 +20,11 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.ws.WsTransport
 import com.concordium.wallet.data.model.AccountInfo
 import com.concordium.wallet.data.model.WsConnectionInfo
-import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.gson.Gson
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,7 +34,6 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
     private val accountRepository =
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private var siteInfo: WsConnectionInfo.SiteInfo? = null
-    private var payload: WsMessageResponse.Payload? = null
 
     private var accountsPool: LinearLayout? = null
     private var selectedAccount: Account? = null
@@ -96,10 +99,10 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun getWallets() = GlobalScope.launch(Dispatchers.IO) {
-        val wallets = accountRepository?.getAllDone()
-            ?.filterNot(Account::readOnly)
-            ?: emptyList()
+        val wallets = accountRepository.getAllDone()
+            .filterNot(Account::readOnly)
         runOnUiThread {
             accountsPool?.removeAllViews()
             wallets.forEach { acc ->
@@ -120,7 +123,10 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
                     clearAccSelection()
                     selectedAccount = acc
                     v.findViewById<ConstraintLayout>(R.id.accRoot).background =
-                        resources.getDrawable(R.drawable.btn_round_outline_bg_active)
+                        ContextCompat.getDrawable(
+                            this@AddWalletNftActivity,
+                            R.drawable.btn_round_outline_bg_active
+                        )
                 }
             }
         }
@@ -129,7 +135,10 @@ class AddWalletNftActivity : BaseActivity(R.layout.activity_connect, R.string.ti
     private fun clearAccSelection() {
         accountsPool?.children?.forEach {
             it.findViewById<ConstraintLayout>(R.id.accRoot).background =
-                resources.getDrawable(R.drawable.btn_round_outline_bg)
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.btn_round_outline_bg
+                )
         }
     }
 }

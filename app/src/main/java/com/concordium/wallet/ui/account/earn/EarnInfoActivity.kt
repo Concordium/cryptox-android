@@ -28,6 +28,7 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
         const val EXTRA_ACCOUNT_DATA = "EXTRA_ACCOUNT_DATA"
     }
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEarnInfoBinding.bind(findViewById(R.id.toastLayoutTopError))

@@ -1,5 +1,8 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package com.concordium.wallet.ui.connect.uni_ref
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
@@ -26,6 +29,7 @@ import com.concordium.wallet.ui.connect.TransactionResult
 import com.concordium.wallet.ui.connect.TransactionResultBottomSheet
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -221,15 +225,8 @@ class UniRefActivity : BaseActivity(
             }
         })
 
-        viewModel.gotoSendFundsConfirmLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-//                    finish()
-                }
-            }
-        })
-
         viewModel.walletDataLiveData.observe(this, object : EventObserver<WalletData>() {
+            @SuppressLint("SetTextI18n")
             override fun onUnhandledEvent(value: WalletData) {
                 walletName.text = "${value.name} (${value.address})"
                 walletBalance.text = getString(R.string.amount, formatGTU(value.balance))

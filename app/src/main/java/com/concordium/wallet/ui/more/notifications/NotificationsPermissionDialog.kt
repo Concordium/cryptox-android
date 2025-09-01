@@ -10,13 +10,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NotificationsPermissionDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
@@ -70,9 +73,11 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
         }
 
         // Track showing the dialog once it is visible to the user.
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            delay(500)
-            walletNotificationsPreferences.hasEverShownPermissionDialog = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                delay(500)
+                walletNotificationsPreferences.hasEverShownPermissionDialog = true
+            }
         }
     }
 
@@ -85,7 +90,7 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
         walletNotificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
 
         if (isGranted) {
-            lifecycleScope.launchWhenStarted {
+            lifecycleScope.launch {
                 val success = updateNotificationsSubscriptionUseCase()
                 Log.d("success: $success")
                 dismiss()

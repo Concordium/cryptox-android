@@ -28,6 +28,7 @@ class FailedActivity : BaseActivity(
     //region Lifecycle
     // ************************************************************
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val source = intent.extras!!.getSerializable(EXTRA_SOURCE) as FailedViewModel.Source

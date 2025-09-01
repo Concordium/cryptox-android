@@ -16,6 +16,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 data class Token(
@@ -65,6 +66,7 @@ data class ProviderMeta(
     var wallets: List<WalletMeta> = emptyList()
 ) : Parcelable {
 
+    @IgnoredOnParcel
     @Transient
     var isShowMenu = false
 }
@@ -124,9 +126,5 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
         accounts.addAll(acc.map { WalletMeta(it.name, it.address, 0) })
 
         _onAccountReadyLiveData.postValue(Event(accounts.toList()))
-    }
-
-    private fun getMarketplaces(): List<String> {
-        return listOf(BuildConfig.S7_DOMAIN)
     }
 }

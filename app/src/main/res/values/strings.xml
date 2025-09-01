@@ -240,7 +240,17 @@
     <string name="account_details_account_on_allow_list">Account is on the allow list</string>
     <string name="account_details_account_not_on_allow_list">Account not on the allow list</string>
     <string name="account_details_account_on_deny_list">Account on the deny list</string>
+    <string name="account_details_dialog_plt_title">Protocol-Level Tokens</string>
+    <string name="account_details_dialog_plt_description">
+        Protocol-Level Tokens (PLTs) are tokens issued and managed directly on the Concordium blockchain without a need for smart contracts. PLTs provide enhanced security by reducing attack vectors, improved efficiency in execution, and direct governance controls for token issuers. \n\nPLTs are implemented on protocol level. All account (balances, transfers etc.) and management operations are handled natively by the chain itself through transactions from regular Concordium accounts.
+    </string>
+    <string name="account_details_dialog_done">Done</string>
+    <string name="account_details_dialog_plt_list_title"><![CDATA[Allow & Deny Lists]]></string>
+    <string name="account_details_dialog_plt_list_description">Protocol-level tokens can optionally support allow and deny lists to control the ability of Concordium accounts to hold/transfer that PLT. Allow and deny lists are managed by the PLT issuer. </string>
     <string name="token_type_plt">PLT</string>
+    <string name="account_details_dialog_cis2_title">CIS-2 Tokens</string>
+    <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
+    <string name="account_details_cis2_token_type_label">CIS-2 Token</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
     <string name="account_settings_name_changed">Account name changed</string>

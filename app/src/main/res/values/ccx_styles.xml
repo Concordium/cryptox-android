@@ -84,12 +84,14 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <!-- The background @drawable/ccx_dialog_background must be set
         as the background of the content layout -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <style name="CCX_BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/CCX_BottomSheetDialogBottomSheetStyle</item>
         <!-- The background @drawable/ccx_bottom_sheet_dialog_background must be set
         as the background of the content layout -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <style name="CCX_BottomSheetDialogBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
@@ -184,6 +186,7 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <style name="CCX_WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
@@ -194,6 +197,7 @@
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <style name="CCX_MainScreen" parent="Theme.AppCompat.NoActionBar">
@@ -204,6 +208,7 @@
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <!-- endregion -->
