@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- region Screens -->
     <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar">
@@ -156,9 +156,10 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textAppearance">@style/MW24_Typography_Text_Mid</item>
         <item name="android:textColor">@color/mw24_button_primary_text_color</item>
+        <item name="android:lineHeight" tools:targetApi="p">20sp</item>
         <item name="drawableTint">@color/mw24_button_primary_text_color</item>
         <item name="android:paddingHorizontal">@dimen/size24</item>
-        <item name="android:paddingVertical">@dimen/size16</item>
+        <item name="android:paddingVertical">@dimen/size12</item>
         <item name="android:drawablePadding">@dimen/size8</item>
     </style>
 
@@ -182,18 +183,10 @@
         <item name="drawableTint">@color/mw24_button_primary_inverse_text_color</item>
     </style>
 
-    <style name="MW24_Button_Secondary">
-        <item name="android:layout_height">@dimen/size48</item>
-        <item name="android:layout_width">wrap_content</item>
+    <style name="MW24_Button_Secondary" parent="MW24_Button_Primary">
         <item name="android:background">@drawable/mw24_button_secondary_background</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textAppearance">@style/MW24_Typography_Text_Mid</item>
         <item name="android:textColor">@color/mw24_button_secondary_text_color</item>
         <item name="drawableTint">@color/mw24_button_secondary_text_color</item>
-        <item name="android:paddingHorizontal">@dimen/size24</item>
-        <item name="android:paddingVertical">@dimen/size16</item>
-        <item name="android:drawablePadding">@dimen/size8</item>
     </style>
 
     <style name="MW24_Button_Secondary_Medium" parent="MW24_Button_Secondary">
@@ -216,9 +209,7 @@
         <item name="drawableTint">@color/mw24_button_secondary_inverse_text_color</item>
     </style>
 
-    <style name="MW24_Button_Tertiary">
-        <item name="android:layout_height">@dimen/size48</item>
-        <item name="android:layout_width">wrap_content</item>
+    <style name="MW24_Button_Tertiary" parent="MW24_Button_Primary">
         <item name="android:background">@drawable/mw24_button_tertiary_background</item>
         <item name="android:textColor">@color/mw24_button_tertiary_text_color</item>
         <item name="drawableTint">@color/mw24_button_tertiary_text_color</item>
