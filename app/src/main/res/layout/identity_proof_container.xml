@@ -22,7 +22,6 @@
         app:layout_constraintTop_toTopOf="parent"
         >
 
-        <!-- TODO: Redesign the account card-->
         <include
             android:id="@+id/selected_account_include"
             layout="@layout/account_info_row" />

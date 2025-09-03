@@ -9,8 +9,10 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.AccountInfoRowBinding
+import com.concordium.wallet.util.ImageUtil
 
-class ChooseAccountListAdapter(private val context: Context, var arrayList: List<Account>) : BaseAdapter() {
+class ChooseAccountListAdapter(private val context: Context, var arrayList: List<Account>) :
+    BaseAdapter() {
     private var chooseAccountClickListener: ChooseAccountClickListener? = null
 
     fun interface ChooseAccountClickListener {
@@ -50,6 +52,12 @@ class ChooseAccountListAdapter(private val context: Context, var arrayList: List
             CurrencyUtil.formatGTU(atDisposalBalance)
         )
 
+        holder.binding.accIcon.setImageDrawable(
+            ImageUtil.getIconById(
+                holder.binding.accIcon.context,
+                account.iconId
+            )
+        )
         holder.binding.root.setOnClickListener {
             chooseAccountClickListener?.onClick(account)
         }
