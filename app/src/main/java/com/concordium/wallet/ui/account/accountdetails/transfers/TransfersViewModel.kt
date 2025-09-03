@@ -79,19 +79,15 @@ class TransfersViewModel(
 
         viewModelScope.launch {
             mainViewModel.activeAccount.collect { account ->
-                account?.let {
-                    initialize(it)
-
-                }
+                account?.let(::updateAccount)
             }
         }
     }
 
-    fun initialize(account: Account) {
+    fun updateAccount(account: Account) {
         this.account = account
         _totalBalanceFlow.value = account.balance
 
-        Log.d("TransfersViewModel: Active account changed: ${account.address}")
         clearTransactionListState()
         _waitingFlow.value = true
         getLocalTransfers()

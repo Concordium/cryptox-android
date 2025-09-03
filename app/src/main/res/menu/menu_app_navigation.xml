@@ -7,20 +7,26 @@
         android:title="@string/app_menu_item_home" />
 
     <item
+        android:id="@+id/menuitem_transfer"
+        android:icon="@drawable/mw24_ic_menu_transfer"
+        android:orderInCategory="2"
+        android:title="@string/app_menu_item_transfer" />
+
+    <item
         android:id="@+id/menuitem_buy"
         android:icon="@drawable/mw24_ic_menu_buy_selector"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/app_menu_item_buy" />
 
     <item
         android:id="@+id/menuitem_activity"
         android:icon="@drawable/mw24_ic_menu_activity"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/app_menu_item_activity" />
 
     <item
         android:id="@+id/menuitem_more"
         android:icon="@drawable/mw24_ic_menu_settings_selector"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/app_menu_item_more" />
 </menu>

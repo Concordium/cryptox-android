@@ -17,6 +17,7 @@ import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.TransferFragment
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
@@ -246,6 +247,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.Home
+            R.id.menuitem_transfer -> MainViewModel.State.Transfer
             R.id.menuitem_buy -> MainViewModel.State.Buy
             R.id.menuitem_activity -> MainViewModel.State.Activity
             R.id.menuitem_more -> MainViewModel.State.More
@@ -258,6 +260,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
         val fragment = existingFragment ?: when (state) {
             MainViewModel.State.Home -> AccountDetailsFragment()
+            MainViewModel.State.Transfer -> TransferFragment()
             MainViewModel.State.Buy -> CcdOnrampSitesFragment()
             MainViewModel.State.Activity -> AccountDetailsTransfersFragment()
             MainViewModel.State.More -> MoreOverviewFragment()

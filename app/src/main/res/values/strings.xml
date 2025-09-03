@@ -7,6 +7,7 @@
     <string name="app_menu_item_tokens">NFT</string>
     <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_activity">Activity</string>
+    <string name="app_menu_item_transfer">Transfer</string>
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected cryptography error</string>

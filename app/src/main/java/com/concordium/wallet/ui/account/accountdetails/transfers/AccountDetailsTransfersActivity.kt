@@ -8,10 +8,13 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountDetailsTransfersBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.getSerializable
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AccountDetailsTransfersActivity : BaseActivity(
     R.layout.activity_account_details_transfers,
@@ -22,7 +25,14 @@ class AccountDetailsTransfersActivity : BaseActivity(
         ActivityAccountDetailsTransfersBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private lateinit var transfersViewModel: TransfersViewModel
+    private val transfersViewModel: TransfersViewModel by viewModel {
+        parametersOf(
+            ViewModelProvider(
+                this,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            )[MainViewModel::class.java]
+        )
+    }
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -39,12 +49,7 @@ class AccountDetailsTransfersActivity : BaseActivity(
     }
 
     private fun initializeViewModel(account: Account) {
-        transfersViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[TransfersViewModel::class.java]
-
-        transfersViewModel.initialize(account)
+        transfersViewModel.updateAccount(account)
 
         transfersViewModel.errorFlow.collectWhenStarted(this) { event ->
             event.contentIfNotHandled?.let {

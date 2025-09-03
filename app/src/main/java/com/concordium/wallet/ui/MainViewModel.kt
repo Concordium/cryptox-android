@@ -23,6 +23,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class State {
         Home,
+        Transfer,
         Buy,
         Activity,
         More,
