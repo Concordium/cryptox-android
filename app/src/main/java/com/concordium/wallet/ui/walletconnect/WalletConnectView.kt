@@ -21,6 +21,7 @@ import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.AccountInfoRowBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectProgressBinding
@@ -33,6 +34,7 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import com.concordium.wallet.util.ImageUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
@@ -63,7 +65,8 @@ class WalletConnectView(
         viewModel.stateFlow.collect(this) { state ->
             when (state) {
                 is WalletConnectViewModel.State.SessionProposalReview,
-                is WalletConnectViewModel.State.SessionRequestReview -> {
+                is WalletConnectViewModel.State.SessionRequestReview,
+                -> {
                     val lifecycleState = lifecycle.currentState
                     if (lifecycleState >= Lifecycle.State.CREATED
                         && lifecycleState < Lifecycle.State.STARTED
@@ -203,7 +206,8 @@ class WalletConnectView(
 
                 val duration = when (event.error) {
                     WalletConnectViewModel.Error.ConnectionFailed,
-                    WalletConnectViewModel.Error.AccountNotFound->
+                    WalletConnectViewModel.Error.AccountNotFound,
+                    ->
                         Toast.LENGTH_LONG
 
                     else ->
@@ -264,15 +268,10 @@ class WalletConnectView(
 
         appUrlTextView.text = appMetadata.url
 
-        with(selectedAccountInclude) {
-            accAddress.text = selectedAccount.getAccountName()
-            accBalance.text = root.context.getString(
-                R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    selectedAccount.balanceAtDisposal
-                )
-            )
-        }
+        initAccountView(
+            view = selectedAccountInclude,
+            account = selectedAccount,
+        )
 
         chooseAccountButton.setOnClickListener {
             viewModel.onChooseAccountClicked()
@@ -356,15 +355,10 @@ class WalletConnectView(
         methodTextView.text = method
         receiverTextView.text = receiver
 
-        with(selectedAccountInclude) {
-            accAddress.text = account.getAccountName()
-            accBalance.text = root.context.getString(
-                R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    account.balanceAtDisposal
-                )
-            )
-        }
+        initAccountView(
+            view = selectedAccountInclude,
+            account = account,
+        )
 
         amountTextView.text =
             root.context.getString(R.string.amount, CurrencyUtil.formatGTU(amount))
@@ -470,15 +464,10 @@ class WalletConnectView(
 
         appNameTextView.text = appMetadata.name
 
-        with(selectedAccountInclude) {
-            accAddress.text = account.getAccountName()
-            accBalance.text = root.context.getString(
-                R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    account.balanceAtDisposal
-                )
-            )
-        }
+        initAccountView(
+            view = selectedAccountInclude,
+            account = account,
+        )
 
         messageTextView.text = message
 
@@ -509,7 +498,7 @@ class WalletConnectView(
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
         currentStatement: Int,
-        provableState: WalletConnectViewModel.ProofProvableState
+        provableState: WalletConnectViewModel.ProofProvableState,
     ) {
         getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
             initIdentityProofRequestReview(
@@ -531,7 +520,7 @@ class WalletConnectView(
         appMetadata: WalletConnectViewModel.AppMetadata,
         statements: List<RequestStatement>,
         currentStatement: Int,
-        provableState: WalletConnectViewModel.ProofProvableState
+        provableState: WalletConnectViewModel.ProofProvableState,
     ) = with(view) {
         Glide.with(appIconImageView.context)
             .load(appMetadata.iconUrl)
@@ -614,6 +603,25 @@ class WalletConnectView(
         view: FragmentWalletConnectProgressBinding,
     ) = with(view) {
         progressTextView.text = root.context.getString(R.string.wallet_connect_connecting)
+    }
+
+    private fun initAccountView(
+        view: AccountInfoRowBinding,
+        account: Account,
+    ) = with(view) {
+        accIcon.setImageDrawable(
+            ImageUtil.getIconById(
+                accIcon.context,
+                account.iconId,
+            )
+        )
+        accAddress.text = account.getAccountName()
+        accBalance.text = root.context.getString(
+            R.string.acc_balance_placeholder,
+            CurrencyUtil.formatGTU(
+                account.balanceAtDisposal
+            )
+        )
     }
 
     private fun hideBottomSheet() {

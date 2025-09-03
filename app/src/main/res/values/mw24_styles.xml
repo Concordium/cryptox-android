@@ -2,23 +2,14 @@
 <resources>
 
     <!-- region Screens -->
-    <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
+    <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar" />
 
-    <style name="MW24_Screen" parent="CCX_Screen">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
+    <style name="MW24_Screen" parent="CCX_Screen" />
 
-    <style name="MW24_WelcomeScreen" parent="CCX_WelcomeScreen">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
+    <style name="MW24_WelcomeScreen" parent="CCX_WelcomeScreen" />
 
-    <style name="MW24_MainScreen" parent="CCX_MainScreen">
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
-    </style>
+    <style name="MW24_MainScreen" parent="CCX_MainScreen" />
     <!-- end region -->
-
 
     <!-- region Typography -->
     <style name="MW24_Typography_Headline_Large">
