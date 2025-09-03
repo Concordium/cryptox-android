@@ -13,8 +13,10 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -22,11 +24,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
         Home,
         Buy,
+        Activity,
         More,
         ;
     }
 
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
+
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
 
     var databaseVersionAllowed = true
 
@@ -44,14 +50,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
 
+    private val _activeAccount = MutableStateFlow<Account?>(null)
+    val activeAccount = _activeAccount.asStateFlow()
+
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
 
-    @Suppress("UNUSED_VARIABLE")
-    fun initialize() {
+    init {
+        viewModelScope.launch {
+            accountRepository.getActiveAccountFlow()
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    _activeAccount.emit(it)
+                }
+        }
+
         try {
             val dbVersion =
                 App.appCore.session.walletStorage.database.openHelper.readableDatabase.version.toString()

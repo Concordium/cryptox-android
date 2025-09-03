@@ -4,12 +4,10 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountDetailsTransfersBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsErrorFragment
 import com.concordium.wallet.ui.account.accountdetails.other.AccountDetailsPendingFragment
 import com.concordium.wallet.ui.base.BaseActivity
@@ -24,7 +22,7 @@ class AccountDetailsTransfersActivity : BaseActivity(
         ActivityAccountDetailsTransfersBinding.bind(findViewById(R.id.root_layout))
     }
 
-    private lateinit var transfersViewModel: AccountDetailsTransfersViewModel
+    private lateinit var transfersViewModel: TransfersViewModel
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -44,7 +42,7 @@ class AccountDetailsTransfersActivity : BaseActivity(
         transfersViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[AccountDetailsTransfersViewModel::class.java]
+        )[TransfersViewModel::class.java]
 
         transfersViewModel.initialize(account)
 

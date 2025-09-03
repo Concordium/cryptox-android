@@ -20,6 +20,7 @@ import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.TransactionMappingHelper
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
@@ -32,7 +33,10 @@ import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.util.Date
 
-class AccountDetailsTransfersViewModel(application: Application) : AndroidViewModel(application) {
+class TransfersViewModel(
+    application: Application,
+    mainViewModel: MainViewModel,
+) : AndroidViewModel(application) {
 
     private val session: Session = App.appCore.session
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
@@ -70,11 +74,28 @@ class AccountDetailsTransfersViewModel(application: Application) : AndroidViewMo
     private val _errorFlow = MutableStateFlow(Event(-1))
     val errorFlow = _errorFlow.asStateFlow()
 
+    init {
+        initializeAccountUpdater()
+
+        viewModelScope.launch {
+            mainViewModel.activeAccount.collect { account ->
+                account?.let {
+                    initialize(it)
+
+                }
+            }
+        }
+    }
+
     fun initialize(account: Account) {
         this.account = account
-
-        initializeAccountUpdater()
         _totalBalanceFlow.value = account.balance
+
+        Log.d("TransfersViewModel: Active account changed: ${account.address}")
+        clearTransactionListState()
+        _waitingFlow.value = true
+        getLocalTransfers()
+        _waitingFlow.value = false
     }
 
     fun getAccount(): Account = account

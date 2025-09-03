@@ -1,8 +1,15 @@
 package com.concordium.wallet.data.room
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.concordium.wallet.data.model.TransactionStatus
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AccountDao {
@@ -49,6 +56,9 @@ interface AccountDao {
 
     @Query("SELECT * FROM account_table WHERE is_active = 1")
     suspend fun getActive(): Account?
+
+    @Query("SELECT * FROM account_table WHERE is_active = 1 LIMIT 1")
+    fun getActiveFlow(): Flow<Account?>
 
     @Query("UPDATE account_table SET is_active = CASE WHEN address = :address THEN 1 ELSE 0 END")
     suspend fun activate(address: String)

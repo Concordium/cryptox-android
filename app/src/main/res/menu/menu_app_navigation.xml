@@ -13,6 +13,12 @@
         android:title="@string/app_menu_item_buy" />
 
     <item
+        android:id="@+id/menuitem_activity"
+        android:icon="@drawable/mw24_ic_menu_activity"
+        android:orderInCategory="3"
+        android:title="@string/app_menu_item_activity" />
+
+    <item
         android:id="@+id/menuitem_more"
         android:icon="@drawable/mw24_ic_menu_settings_selector"
         android:orderInCategory="4"

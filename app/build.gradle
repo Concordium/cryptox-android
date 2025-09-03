@@ -364,6 +364,9 @@ dependencies {
     // In-app rating
     implementation 'com.google.android.play:review:2.0.2'
     implementation 'com.google.android.play:review-ktx:2.0.2'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    kapt 'org.projectlombok:lombok:1.18.38'
 }
 
 task printVersionName {

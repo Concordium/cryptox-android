@@ -9,12 +9,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
+import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -72,7 +72,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             ContextCompat.getColor(this, R.color.cryptox_black_main)
 
         initializeViewModel()
-        viewModel.initialize()
         walletConnectViewModel.initialize()
 
         initializeViews()
@@ -195,8 +194,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun initializeViews() {
-        binding.bottomNavigationView.menu.findItem(R.id.menuitem_buy).isVisible =
-            BuildConfig.SHOW_NEWSFEED
         binding.bottomNavigationView.setOnItemSelectedListener {
             onNavigationItemSelected(it)
         }
@@ -250,6 +247,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.Home
             R.id.menuitem_buy -> MainViewModel.State.Buy
+            R.id.menuitem_activity -> MainViewModel.State.Activity
             R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
@@ -261,6 +259,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         val fragment = existingFragment ?: when (state) {
             MainViewModel.State.Home -> AccountDetailsFragment()
             MainViewModel.State.Buy -> CcdOnrampSitesFragment()
+            MainViewModel.State.Activity -> AccountDetailsTransfersFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
         }
 

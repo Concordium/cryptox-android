@@ -164,8 +164,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             account.isBaking().not()
 
     private fun getActiveAccount() = viewModelScope.launch {
-        val acc = accountRepository.getActive()
-        acc?.let {
+        accountRepository.getActive()?.let {
             account = it
             _activeAccount.emit(it)
             _totalBalanceLiveData.postValue(it.balance)

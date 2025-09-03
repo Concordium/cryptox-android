@@ -14,14 +14,23 @@ import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AccountDetailsTransfersFragment : Fragment() {
     private var _binding: FragmentAccountDetailsTransfersBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var transfersViewModel: AccountDetailsTransfersViewModel
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
+    private val transfersViewModel: TransfersViewModel by viewModel {
+        parametersOf(mainViewModel)
+    }
+
     private lateinit var transactionAdapter: TransactionAdapter
 
     override fun onCreateView(
@@ -45,7 +54,6 @@ class AccountDetailsTransfersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        transfersViewModel.populateTransferList()
         transfersViewModel.initiateFrequentUpdater()
     }
 
@@ -55,11 +63,6 @@ class AccountDetailsTransfersFragment : Fragment() {
     }
 
     private fun initializeViewModel() {
-        transfersViewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[AccountDetailsTransfersViewModel::class.java]
-
         transfersViewModel.totalBalanceFlow.collectWhenStarted(viewLifecycleOwner) {
             transactionAdapter.onDataSetChanged()
         }
@@ -140,7 +143,7 @@ class AccountDetailsTransfersFragment : Fragment() {
                     if (transaction.origin.type != TransactionOriginType.Self &&
                         (transaction.knownType == TransactionType.ENCRYPTEDAMOUNTTRANSFER ||
                                 transaction.knownType == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)
-                        ) {
+                    ) {
                         result = false
                     }
                 }
