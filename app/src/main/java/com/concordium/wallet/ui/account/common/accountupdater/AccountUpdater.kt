@@ -181,7 +181,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 PerformanceUtil.showDeltaTime("Account updater run")
                 updateListener?.onDone(totalBalances)
             } catch (e: Exception) {
-                Log.e("Exception in primary job")
+                Log.e("Exception in primary job", e)
             }
         }
     }

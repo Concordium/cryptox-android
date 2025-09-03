@@ -7,11 +7,18 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE `contract_token_table` ADD COLUMN `added_at` INTEGER NOT NULL DEFAULT 0")
 
-        db.execSQL("ALTER TABLE `transfer_table` ADD COLUMN `token_transfer_amount` TEXT DEFAULT null")
-        db.execSQL("ALTER TABLE `transfer_table` ADD COLUMN `token_symbol` TEXT DEFAULT null")
-        db.execSQL("ALTER TABLE `transfer_table` DROP COLUMN `newSelfEncryptedAmount`")
-        db.execSQL("ALTER TABLE `transfer_table` DROP COLUMN `newStartIndex`")
-        db.execSQL("ALTER TABLE `transfer_table` DROP COLUMN `nonce`")
+        db.execSQL("CREATE TABLE `new_transfer_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` TEXT NOT NULL, `cost` TEXT NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transaction_type` TEXT NOT NULL, `token_transfer_amount` TEXT, `token_symbol` TEXT)");
+        db.execSQL("INSERT INTO `new_transfer_table` (`id`, `account_id`, `amount`, `cost`, " +
+                "`from_address`, `to_address`, `expiry`, `memo`, `created_at`, `submission_id`, " +
+                "`transaction_status`, `outcome`, `transaction_type`, " +
+                "`token_transfer_amount`, `token_symbol`) " +
+                "SELECT `id`, `account_id`, `amount`, `cost`, " +
+                "`from_address`, `to_address`, `expiry`, `memo`, `created_at`, `submission_id`, " +
+                "`transaction_status`, `outcome`, `transactionType`, " +
+                "NULL as `token_transfer_amount`, NULL as `token_symbol` " +
+                "FROM `transfer_table`")
+        db.execSQL("DROP TABLE `transfer_table`")
+        db.execSQL("ALTER TABLE `new_transfer_table` RENAME TO `transfer_table`")
 
         db.execSQL(
             """

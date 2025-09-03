@@ -6,7 +6,7 @@ import com.concordium.wallet.data.model.TokenMetadata
 
 class ContractTypeConverters {
     @TypeConverter
-    fun jsonToTokenMetadata(value: String): TokenMetadata? {
+    fun jsonToTokenMetadata(value: String?): TokenMetadata? {
         val gson = App.appCore.gson
         return gson.fromJson(value, TokenMetadata::class.java)
     }

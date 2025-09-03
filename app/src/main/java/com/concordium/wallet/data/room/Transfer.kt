@@ -36,6 +36,7 @@ data class Transfer(
     @ColumnInfo(name = "transaction_status")
     var transactionStatus: TransactionStatus,
     var outcome: TransactionOutcome,
+    @ColumnInfo(name = "transaction_type")
     val transactionType: TransactionType,
     @ColumnInfo(name = "token_transfer_amount")
     val tokenTransferAmount: TokenAmount?,

@@ -8,7 +8,7 @@ class PLTTypeConverters {
     private val gson = App.appCore.gson
 
     @TypeConverter
-    fun jsonToTokenMetadata(value: String): TokenMetadata? {
+    fun jsonToTokenMetadata(value: String?): TokenMetadata? {
         return gson.fromJson(value, TokenMetadata::class.java)
     }
 
