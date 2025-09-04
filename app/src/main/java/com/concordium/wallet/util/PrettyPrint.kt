@@ -1,7 +1,5 @@
 package com.concordium.wallet.util
 
-import com.google.gson.Gson
-
 object PrettyPrint {
 
     fun Any.prettyPrint(): String {
@@ -40,9 +38,5 @@ object PrettyPrint {
         }
 
         return stringBuilder.toString()
-    }
-
-    fun Any.asJsonString(): String {
-        return Gson().toJson(this)
     }
 }
