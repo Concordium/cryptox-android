@@ -9,26 +9,26 @@ import com.concordium.wallet.data.model.TransactionType
 class TransactionTypeConverters {
 
     @TypeConverter
-    fun jsonToTransactionType(value: String): TransactionType? {
-        val gson = App.appCore.gson
-        return gson.fromJson(value, TransactionType::class.java)
+    fun jsonToTransactionType(value: String?): TransactionType? {
+        return value?.let {
+            App.appCore.gson.fromJson(value, TransactionType::class.java)
+        }
     }
 
     @TypeConverter
-    fun transactionTypeToJson(amount: TransactionType?): String {
-        val gson = App.appCore.gson
-        return gson.toJson(amount)
+    fun transactionTypeToJson(type: TransactionType?): String? {
+        return type?.let(App.appCore.gson::toJson)
     }
 
     @TypeConverter
-    fun jsonToTokenAmount(value: String): TokenAmount? {
-        val gson = App.appCore.gson
-        return gson.fromJson(value, TokenAmount::class.java)
+    fun jsonToTokenAmount(value: String?): TokenAmount? {
+        return value?.let {
+            App.appCore.gson.fromJson(value, TokenAmount::class.java)
+        }
     }
 
     @TypeConverter
-    fun tokenAmountToJson(amount: TokenAmount?): String {
-        val gson = App.appCore.gson
-        return gson.toJson(amount)
+    fun tokenAmountToJson(amount: TokenAmount?): String? {
+        return amount?.let(App.appCore.gson::toJson)
     }
 }

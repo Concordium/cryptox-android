@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "f5b90e3cd2809e87cf63f319d3bc7e9a",
+    "identityHash": "fcab303d4624e52ab1b1d8cc4dc19107",
     "entities": [
       {
         "tableName": "identity_table",
@@ -260,7 +260,7 @@
       },
       {
         "tableName": "transfer_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` TEXT NOT NULL, `cost` TEXT NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `token_transfer_amount` TEXT, `token_symbol` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` TEXT NOT NULL, `cost` TEXT NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transaction_type` TEXT NOT NULL, `token_transfer_amount` TEXT, `token_symbol` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -336,7 +336,7 @@
           },
           {
             "fieldPath": "transactionType",
-            "columnName": "transactionType",
+            "columnName": "transaction_type",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -422,7 +422,7 @@
       },
       {
         "tableName": "contract_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `contract_name` TEXT NOT NULL DEFAULT '', `token_id` TEXT NOT NULL, `account_address` TEXT, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `added_at` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `contract_name` TEXT NOT NULL DEFAULT '', `token_id` TEXT NOT NULL, `account_address` TEXT, `metadata` TEXT, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `added_at` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -456,14 +456,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "isFungible",
-            "columnName": "is_fungible",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "tokenMetadata",
-            "columnName": "token_metadata",
+            "fieldPath": "metadata",
+            "columnName": "metadata",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -505,7 +499,7 @@
       },
       {
         "tableName": "protocol_level_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tokenId` TEXT NOT NULL, `token_metadata` TEXT, `account_address` TEXT, `token_balance` TEXT NOT NULL, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null, `is_in_deny_list` INTEGER DEFAULT null)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `token_id` TEXT NOT NULL, `name` TEXT, `decimals` INTEGER NOT NULL, `account_address` TEXT, `balance` TEXT NOT NULL, `metadata` TEXT, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null, `is_in_deny_list` INTEGER DEFAULT null)",
         "fields": [
           {
             "fieldPath": "id",
@@ -515,15 +509,21 @@
           },
           {
             "fieldPath": "tokenId",
-            "columnName": "tokenId",
+            "columnName": "token_id",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "tokenMetadata",
-            "columnName": "token_metadata",
+            "fieldPath": "name",
+            "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "decimals",
+            "columnName": "decimals",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "accountAddress",
@@ -533,9 +533,15 @@
           },
           {
             "fieldPath": "balance",
-            "columnName": "token_balance",
+            "columnName": "balance",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "metadata",
+            "columnName": "metadata",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "addedAt",
@@ -586,7 +592,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5b90e3cd2809e87cf63f319d3bc7e9a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fcab303d4624e52ab1b1d8cc4dc19107')"
     ]
   }
 }

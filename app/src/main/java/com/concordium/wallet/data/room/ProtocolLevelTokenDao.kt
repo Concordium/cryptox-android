@@ -19,19 +19,19 @@ interface ProtocolLevelTokenDao {
 
     @Query("""
         SELECT * FROM protocol_level_token_table 
-        WHERE LOWER(tokenId) = LOWER(:tokenId) 
+        WHERE LOWER(token_id) = LOWER(:tokenId) 
         AND account_address = :accountAddress
         """)
     suspend fun find(accountAddress: String, tokenId: String): ProtocolLevelTokenEntity?
 
-    @Query("UPDATE protocol_level_token_table SET is_newly_received = 0 WHERE tokenId = :tokenId")
+    @Query("UPDATE protocol_level_token_table SET is_newly_received = 0 WHERE token_id = :tokenId")
     suspend fun unmarkNewlyReceived(tokenId: String)
 
     @Query("""    
         UPDATE protocol_level_token_table 
         SET is_hidden = 1 
         WHERE account_address = :accountAddress 
-        AND LOWER(tokenId) = LOWER(:tokenId)
+        AND LOWER(token_id) = LOWER(:tokenId)
     """)
     suspend fun hideToken(accountAddress: String, tokenId: String)
 }

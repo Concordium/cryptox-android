@@ -12,6 +12,8 @@ import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toContractToken
 import com.concordium.wallet.data.model.toProtocolLevelToken
+import com.concordium.wallet.data.room.ContractTokenEntity
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 
 class TokensInteractor(
     private val proxyRepository: ProxyRepository,
@@ -21,7 +23,7 @@ class TokensInteractor(
     private val tokenPriceRepository: TokenPriceRepository,
     private val loadTokensBalancesUseCase: LoadTokensBalancesUseCase,
     private val loadCIS2TokensUseCase: LoadCIS2TokensUseCase,
-    private val loadCIS2TokensMetadataUseCase: LoadCIS2TokensMetadataUseCase
+    private val loadCIS2TokensMetadataUseCase: LoadCIS2TokensMetadataUseCase,
 ) {
 
     suspend fun loadTokens(
@@ -33,14 +35,15 @@ class TokensInteractor(
         return try {
             val ccdToken = getCCDDefaultToken(accountAddress)
 
-            val contractTokens = contractTokensRepository.getTokens(
-                accountAddress = accountAddress,
-                isFungible = null,
-            ).map { it.toContractToken() }
+            val contractTokens =
+                contractTokensRepository
+                    .getTokens(accountAddress)
+                    .map(ContractTokenEntity::toContractToken)
 
             val pltTokens =
-                pltRepository.getTokens(accountAddress)
-                    .filterNot { it.isHidden }
+                pltRepository
+                    .getTokens(accountAddress)
+                    .filterNot(ProtocolLevelTokenEntity::isHidden)
                     .map { it.toProtocolLevelToken() }
                     .filter { !onlyTransferable || it.isTransferable }
 

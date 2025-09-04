@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -89,78 +90,85 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
-        holder.binding.eurRate.visibility = View.GONE
-
-        val tokenMetadata = token.metadata
-        if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
-            Glide.with(context)
-                .load(tokenMetadata.thumbnail.url)
-                .override(iconSize)
-                .placeholder(ThemedCircularProgressDrawable(context))
-                .error(R.drawable.mw24_ic_token_placeholder)
-                .fitCenter()
-                .into(holder.binding.tokenIcon)
-        } else if (token is CCDToken) {
-            Glide.with(context)
-                .load(R.drawable.mw24_ic_ccd)
-                .into(holder.binding.tokenIcon)
-
-            holder.binding.eurRate.visibility = View.VISIBLE
-            holder.binding.eurRate.text =
-                if (showManageButton) {
-                    if (token.eurPerMicroCcd != null) {
-                        context.getString(
-                            R.string.cis_eur_rate,
-                            CurrencyUtil.toEURRate(
-                                token.balance,
-                                token.eurPerMicroCcd
-                            )
-                        )
-                    } else {
-                        ""
-                    }
-                } else {
-                    context.getString(R.string.cis_at_disposal)
-                }
-            holder.binding.earningLabel.isVisible = token.isEarning
-        } else {
-            Glide.with(context)
-                .load(R.drawable.mw24_ic_token_placeholder)
-                .into(holder.binding.tokenIcon)
-        }
-
-        if (token.metadata?.unique == true) {
-            holder.binding.apply {
-                title.text = token.metadata?.name
+        with(holder.binding) {
+            title.text = token.symbol
+            if (token is ContractToken && token.metadata?.unique == true) {
                 balance.isVisible = false
-                subtitle.isVisible = true
-                subtitle.text =
-                    if (token.balance > BigInteger.ZERO)
-                        context.getString(R.string.cis_owned)
-                    else
-                        context.getString(R.string.cis_not_owned)
+            } else {
+                balance.isVisible = true
+                balance.text = CurrencyUtil.formatAndRoundGTU(
+                    value = token.balance,
+                    roundDecimals = 2,
+                    decimals = token.decimals,
+                )
             }
-        } else {
-            holder.binding.title.text =
-                if (token is ProtocolLevelToken) token.tokenId
-                else token.metadata?.symbol ?: tokenMetadata?.name
-            holder.binding.balance.isVisible = true
-            holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
-                value = token.balance,
-                roundDecimals = 2,
-                decimals = token.metadata?.decimals ?: 0
-            )
-            holder.binding.subtitle.isVisible = false
-        }
-        holder.binding.apply {
+            if (token is CCDToken) {
+                eurRate.isVisible = true
+                eurRate.text =
+                    if (showManageButton) {
+                        if (token.eurPerMicroCcd != null) {
+                            context.getString(
+                                R.string.cis_eur_rate,
+                                CurrencyUtil.toEURRate(
+                                    token.balance,
+                                    token.eurPerMicroCcd
+                                )
+                            )
+                        } else {
+                            ""
+                        }
+                    } else {
+                        context.getString(R.string.cis_at_disposal)
+                    }
+            } else {
+                eurRate.isVisible = false
+            }
+            subtitle.isVisible = false
             notice.isVisible = token.isNewlyReceived
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)
             }
-            pltInAllowListIcon.isVisible = if (token is ProtocolLevelToken) {
-                token.isTransferable.not()
-            } else {
-                false
+            earningLabel.isVisible = token is CCDToken && token.isEarning
+            pltInAllowListIcon.isVisible = token is ProtocolLevelToken && !token.isTransferable
+        }
+
+        when (token) {
+            is CCDToken -> {
+                Glide.with(context)
+                    .load(R.drawable.mw24_ic_ccd)
+                    .into(holder.binding.tokenIcon)
+            }
+
+            is ContractToken -> {
+                val metadata = token.metadata
+                val iconUrl =
+                    metadata
+                        ?.thumbnail
+                        ?.url
+                        ?.takeIf(String::isNotBlank)
+
+                Glide.with(context)
+                    .load(iconUrl)
+                    .override(iconSize)
+                    .placeholder(ThemedCircularProgressDrawable(context))
+                    .error(R.drawable.mw24_ic_token_placeholder)
+                    .fitCenter()
+                    .into(holder.binding.tokenIcon)
+
+                if (metadata?.unique == true) {
+                    holder.binding.subtitle.isVisible = true
+                    holder.binding.subtitle.text =
+                        if (token.balance > BigInteger.ZERO)
+                            context.getString(R.string.cis_owned)
+                        else
+                            context.getString(R.string.cis_not_owned)
+                }
+            }
+
+            is ProtocolLevelToken -> {
+                Glide.with(context)
+                    .load(R.drawable.mw24_ic_token_placeholder)
+                    .into(holder.binding.tokenIcon)
             }
         }
     }

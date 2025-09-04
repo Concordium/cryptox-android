@@ -579,7 +579,6 @@
     <string name="cis_sender">Sender</string>
     <string name="cis_amount">Amount (%1$s):</string>
     <string name="cis_token">Token</string>
-    <string name="cis_token_symbol">Symbol</string>
     <string name="cis_token_id">Token ID</string>
     <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Close</string>

@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
@@ -19,7 +20,7 @@ import java.math.BigInteger
 
 class ManageTokensSelectionAdapter(
     private val context: Context,
-    var dataSet: Array<Token>
+    var dataSet: Array<Token>,
 ) : RecyclerView.Adapter<ManageTokensSelectionAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private val iconSize: Int by lazy {
@@ -48,41 +49,55 @@ class ManageTokensSelectionAdapter(
     @SuppressLint("UseCompatTextViewDrawableApis")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val token = dataSet[position]
-        val tokenMetadata = token.metadata
 
-        val thumbnailUrl = tokenMetadata?.thumbnail?.url?.takeUnless(String::isBlank)
-        if (thumbnailUrl != null) {
-            Glide.with(context)
-                .load(thumbnailUrl)
-                .placeholder(ThemedCircularProgressDrawable(context))
-                .error(R.drawable.mw24_ic_token_placeholder)
-                .override(iconSize)
-                .fitCenter()
-                .into(holder.binding.tokenIcon)
-        } else if (tokenMetadata != null) {
-            holder.binding.tokenIcon.setImageResource(R.drawable.mw24_ic_token_placeholder)
-        } else {
-            // While the metadata is loading, show progress in the icon view.
-            holder.binding.tokenIcon.setImageDrawable(ThemedCircularProgressDrawable(context))
-        }
+        holder.binding.title.text = token.symbol
+        holder.binding.subtitle.text = CurrencyUtil.formatCompactGTU(
+            value = token.balance,
+            decimals = token.decimals
+        )
 
-        holder.binding.title.text = tokenMetadata?.name ?: token.symbol
+        when (token) {
+            is CCDToken -> {
+                Glide.with(context)
+                    .load(R.drawable.mw24_ic_ccd)
+                    .into(holder.binding.tokenIcon)
+            }
 
-        if (token.metadata?.unique == true) {
-            holder.binding.subtitle.text =
-                if (token.balance != BigInteger.ZERO)
-                    context.getString(R.string.cis_owned)
-                else
-                    context.getString(R.string.cis_not_owned)
-        } else {
-            holder.binding.subtitle.text = CurrencyUtil.formatCompactGTU(
-                value = token.balance,
-                decimals = token.decimals
-            )
+            is ContractToken -> {
+                val metadata = token.metadata
+                val iconUrl =
+                    metadata
+                        ?.thumbnail
+                        ?.url
+                        ?.takeIf(String::isNotBlank)
+
+                Glide.with(context)
+                    .load(iconUrl)
+                    .override(iconSize)
+                    .placeholder(ThemedCircularProgressDrawable(context))
+                    .error(R.drawable.mw24_ic_token_placeholder)
+                    .fitCenter()
+                    .into(holder.binding.tokenIcon)
+
+                if (metadata?.unique == true) {
+                    holder.binding.subtitle.isVisible = true
+                    holder.binding.subtitle.text =
+                        if (token.balance > BigInteger.ZERO)
+                            context.getString(R.string.cis_owned)
+                        else
+                            context.getString(R.string.cis_not_owned)
+                }
+            }
+
+            is ProtocolLevelToken -> {
+                Glide.with(context)
+                    .load(R.drawable.mw24_ic_token_placeholder)
+                    .into(holder.binding.tokenIcon)
+            }
         }
 
         // Only allow selection when the metadata is loaded.
-        holder.binding.selection.isVisible = token.metadata != null
+        holder.binding.selection.isVisible = !(token is ContractToken && token.metadata == null)
         holder.binding.selection.isChecked = token.isSelected
 
         holder.binding.root.setOnClickListener {
@@ -131,7 +146,6 @@ class ManageTokensSelectionAdapter(
                 }
 
                 else -> isVisible = false
-
             }
         }
     }

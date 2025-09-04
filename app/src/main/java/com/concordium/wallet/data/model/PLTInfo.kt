@@ -1,8 +1,8 @@
 package com.concordium.wallet.data.model
 
-data class PLTInfo(
+class PLTInfo(
     val tokenId: String,
-    val tokenState: PLTState?
+    val tokenState: PLTState,
 )
 
 fun PLTInfo.toProtocolLevelToken(
@@ -10,22 +10,14 @@ fun PLTInfo.toProtocolLevelToken(
     isSelected: Boolean = false,
 ): ProtocolLevelToken {
     return ProtocolLevelToken(
+        name = tokenState.moduleState.name,
+        decimals = tokenState.decimals,
         accountAddress = accountAddress,
         addedAt = System.currentTimeMillis(),
         tokenId = tokenId,
-        tokenState = tokenState,
-        metadata = TokenMetadata(
-            decimals = tokenState?.decimals ?: 0,
-            description = tokenState?.moduleState?.name,
-            name = null,
-            symbol = tokenId,
-            thumbnail = UrlHolder(tokenState?.moduleState?.metadata?.url),
-            unique = false,
-            display = null,
-            totalSupply = tokenState?.totalSupply?.value
-        ),
         isSelected = isSelected,
-        isInAllowList = if (tokenState?.moduleState?.allowList == true)
+        isInAllowList =
+        if (tokenState.moduleState.allowList == true)
             false
         else
             null

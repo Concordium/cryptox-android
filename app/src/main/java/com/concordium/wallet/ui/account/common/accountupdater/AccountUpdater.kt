@@ -25,7 +25,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.EncryptedAmount
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
+import com.concordium.wallet.ui.cis2.defaults.DefaultContractTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
@@ -69,7 +69,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
-    private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val defaultContractTokensManager: DefaultContractTokensManager
     private val pltRepository = PLTRepository(
         App.appCore.session.walletStorage.database.protocolLevelTokenDao()
     )
@@ -96,7 +96,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao()),
         )
-        defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
+        defaultContractTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
 
     interface UpdateListener {
@@ -181,7 +181,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 PerformanceUtil.showDeltaTime("Account updater run")
                 updateListener?.onDone(totalBalances)
             } catch (e: Exception) {
-                Log.e("Exception in primary job")
+                Log.e("Exception in primary job", e)
             }
         }
     }
@@ -228,7 +228,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                             recipientRepository.insert(Recipient(request.account))
 
                             // Add default CIS-2 fungible tokens for it.
-                            defaultFungibleTokensManager.addForAccount(request.account.address)
+                            defaultContractTokensManager.addForAccount(request.account.address)
                             updateNotificationsSubscriptionUseCase()
                         }
                     }

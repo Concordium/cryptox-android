@@ -36,9 +36,6 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun jsonToAccountDelegation(value: String?): AccountDelegation? {
-        if (value == null) {
-            return null
-        }
         val gson = App.appCore.gson
         return gson.fromJson(value, AccountDelegation::class.java)
     }
@@ -54,9 +51,6 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun jsonToAccountBaker(value: String?): AccountBaker? {
-        if (value == null) {
-            return null
-        }
         val gson = App.appCore.gson
         return gson.fromJson(value, AccountBaker::class.java)
     }
@@ -72,9 +66,6 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun jsonToCredentialWrapper(value: String?): CredentialWrapper? {
-        if (value == null) {
-            return null
-        }
         val gson = App.appCore.gson
         return gson.fromJson(value, CredentialWrapper::class.java)
     }

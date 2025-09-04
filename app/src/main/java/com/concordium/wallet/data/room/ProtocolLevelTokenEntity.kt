@@ -4,24 +4,29 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.concordium.wallet.data.model.TokenMetadata
-import com.concordium.wallet.data.room.typeconverter.PLTTypeConverters
+import com.concordium.wallet.data.model.ContractTokenMetadata
+import com.concordium.wallet.data.model.ProtocolLevelTokenMetadata
+import com.concordium.wallet.data.room.typeconverter.ProtocolLevelTokenTypeConverters
 import java.io.Serializable
 import java.math.BigInteger
 
 @Entity(tableName = "protocol_level_token_table")
-@TypeConverters(PLTTypeConverters::class)
+@TypeConverters(ProtocolLevelTokenTypeConverters::class)
 data class ProtocolLevelTokenEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    @ColumnInfo(name = "tokenId")
+    @ColumnInfo(name = "token_id")
     val tokenId: String,
-    @ColumnInfo(name = "token_metadata")
-    val tokenMetadata: TokenMetadata?,
+    @ColumnInfo("name")
+    val name: String?,
+    @ColumnInfo(name = "decimals")
+    val decimals: Int,
     @ColumnInfo(name = "account_address")
     val accountAddress: String?,
-    @ColumnInfo(name = "token_balance")
+    @ColumnInfo(name = "balance")
     var balance: BigInteger = BigInteger.ZERO,
+    @ColumnInfo(name = "metadata")
+    val metadata: ProtocolLevelTokenMetadata?,
     @ColumnInfo(name = "added_at", defaultValue = "0")
     var addedAt: Long = 0L,
     @ColumnInfo(name = "is_hidden", defaultValue = "0")

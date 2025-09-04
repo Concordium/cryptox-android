@@ -59,43 +59,48 @@ class ManageTokensListAdapter(
     @SuppressLint("UseCompatTextViewDrawableApis")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val token = tokensList[position]
-        val tokenMetadata = token.metadata
 
-        val thumbnailUrl = tokenMetadata?.thumbnail?.url?.takeUnless(String::isBlank)
-        if (thumbnailUrl != null) {
-            Glide.with(context)
-                .load(thumbnailUrl)
-                .placeholder(ThemedCircularProgressDrawable(context))
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.mw24_ic_token_placeholder)
-                .into(holder.binding.tokenIcon)
-        } else if (token is CCDToken) {
-            Glide.with(context)
-                .load(R.drawable.mw24_ic_ccd)
-                .into(holder.binding.tokenIcon)
-        } else if (tokenMetadata != null) {
-            holder.binding.tokenIcon.setImageResource(R.drawable.mw24_ic_token_placeholder)
-        } else {
-            Glide.with(context)
-                .load(R.drawable.mw24_ic_token_placeholder)
-                .into(holder.binding.tokenIcon)
+        when (token) {
+            is CCDToken -> {
+                Glide.with(context)
+                    .load(R.drawable.mw24_ic_ccd)
+                    .into(holder.binding.tokenIcon)
+            }
+
+            is ContractToken -> {
+                val metadata = token.metadata
+                val iconUrl =
+                    metadata
+                        ?.thumbnail
+                        ?.url
+                        ?.takeIf(String::isNotBlank)
+
+                Glide.with(context)
+                    .load(iconUrl)
+                    .override(iconSize)
+                    .placeholder(ThemedCircularProgressDrawable(context))
+                    .error(R.drawable.mw24_ic_token_placeholder)
+                    .fitCenter()
+                    .into(holder.binding.tokenIcon)
+            }
+
+            is ProtocolLevelToken -> {
+                Glide.with(context)
+                    .load(R.drawable.mw24_ic_token_placeholder)
+                    .into(holder.binding.tokenIcon)
+            }
         }
 
-        holder.binding.title.text =
-            if (token is ProtocolLevelToken) token.tokenId
-            else tokenMetadata?.symbol ?: tokenMetadata?.name
+        holder.binding.title.text = token.symbol
 
         holder.binding.hideBtn.isVisible = token !is CCDToken
         holder.binding.hideBtn.setOnClickListener {
             tokenClickListener?.onHideClick(token)
         }
 
-        holder.binding.pltInAllowListIcon.isVisible = if (token is ProtocolLevelToken) {
-            token.isTransferable.not()
-        } else {
-            false
-        }
+        holder.binding.pltInAllowListIcon.isVisible =
+            token is ProtocolLevelToken && !token.isTransferable
+
         holder.binding.tokenType.apply {
             when (token) {
                 is ProtocolLevelToken -> {
@@ -129,7 +134,7 @@ class ManageTokensListAdapter(
                 else -> isVisible = false
             }
         }
-        if (token.metadata?.unique == true) {
+        if (token is ContractToken && token.metadata?.unique == true) {
             holder.binding.balance.isVisible = false
         } else {
             holder.binding.balance.isVisible = true

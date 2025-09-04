@@ -312,17 +312,15 @@ class ManageTokensViewModel(
                     pltRepository.insert(
                         ProtocolLevelTokenEntity(
                             tokenId = selectedToken.tokenId,
+                            name = selectedToken.name,
+                            decimals = selectedToken.decimals,
                             accountAddress = accountAddress,
+                            metadata = null,
                             isNewlyReceived = false,
                             addedAt = System.currentTimeMillis(),
-                            tokenMetadata = selectedToken.metadata,
                             isHidden = selectedToken.isHidden,
                             isInDenyList = selectedToken.isInDenyList,
-                            isInAllowList =
-                            if (selectedToken.tokenState?.moduleState?.allowList == true)
-                                false
-                            else
-                                null
+                            isInAllowList = selectedToken.isInAllowList,
                         )
                     )
                 }
@@ -362,8 +360,7 @@ class ManageTokensViewModel(
                             contractIndex = selectedToken.contractIndex,
                             contractName = selectedToken.contractName,
                             accountAddress = accountAddress,
-                            isFungible = selectedToken.metadata?.unique?.not() ?: false,
-                            tokenMetadata = selectedToken.metadata,
+                            metadata = selectedToken.metadata,
                             isNewlyReceived = false,
                             addedAt = System.currentTimeMillis()
                         )
