@@ -20,13 +20,20 @@ data class ContractToken(
      */
     val token: String = "",
     var metadata: ContractTokenMetadata? = null,
-) : Token {
+) : Token, WithThumbnail {
 
     override val symbol: String
         get() = metadata?.symbol ?: ""
 
     override val decimals: Int
         get() = metadata?.decimals ?: 0
+
+    override val thumbnailUrl: String?
+        get() =
+            metadata
+                ?.thumbnail
+                ?.url
+                ?.takeIf(String::isNotBlank)
 
     val isUnique: Boolean
         get() = metadata?.unique == true

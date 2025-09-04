@@ -136,34 +136,18 @@ class TokenDetailsView(
     private fun setNameAndIcon(token: Token) {
         binding.nameAndIconHolder.visibility = View.VISIBLE
 
-        when (token) {
-            is CCDToken -> {
-                binding.name.text = context.getString(R.string.account_details_ccd_token)
-                binding.icon.setImageResource(R.drawable.mw24_ic_ccd)
-            }
+        TokenIconView(binding.icon)
+            .showTokenIcon(token)
 
-            is ProtocolLevelToken -> {
-                binding.name.text = token.name ?: token.symbol
-                binding.icon.setImageResource(R.drawable.mw24_ic_token_placeholder)
-            }
+        binding.name.text = when (token) {
+            is CCDToken ->
+                context.getString(R.string.account_details_ccd_token)
 
-            is ContractToken -> {
-                binding.name.text = token.metadata?.name ?: token.symbol
+            is ContractToken ->
+                token.metadata?.name ?: token.symbol
 
-                val iconUrl =
-                    token
-                        .metadata
-                        ?.thumbnail
-                        ?.url
-                        ?.takeIf(String::isNotBlank)
-
-                Glide.with(context)
-                    .load(iconUrl)
-                    .placeholder(ThemedCircularProgressDrawable(context))
-                    .error(R.drawable.mw24_ic_token_placeholder)
-                    .fitCenter()
-                    .into(binding.icon)
-            }
+            is ProtocolLevelToken ->
+                token.name ?: token.symbol
         }
     }
 
@@ -182,9 +166,7 @@ class TokenDetailsView(
     }
 
     private fun setDecimals(token: Token) {
-        if (!(token is ContractToken && token.metadata?.unique == true)
-            && token.decimals != 0
-        ) {
+        if (token.decimals != 0) {
             binding.decimalsHolder.visibility = View.VISIBLE
             binding.decimals.text =
                 context.getString(
