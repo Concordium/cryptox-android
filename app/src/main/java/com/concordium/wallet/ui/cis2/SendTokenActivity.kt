@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -333,23 +334,34 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
     }
 
-    private fun setTokenIcon(token: Token) {
-        val tokenMetadata = token.metadata
-        if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
+    private fun setTokenIcon(token: Token) = when (token) {
+
+        is CCDToken -> {
             Glide.with(this)
-                .load(tokenMetadata.thumbnail.url)
+                .load(R.drawable.mw24_ic_ccd)
+                .into(binding.tokenIcon)
+        }
+
+        is ProtocolLevelToken -> {
+            Glide.with(this)
+                .load(R.drawable.mw24_ic_token_placeholder)
+                .into(binding.tokenIcon)
+        }
+
+        is ContractToken -> {
+            val thumbnailUrl =
+                token
+                    .metadata
+                    ?.thumbnail
+                    ?.url
+                    ?.takeIf(String::isNotBlank)
+
+            Glide.with(this)
+                .load(thumbnailUrl)
                 .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
                 .placeholder(ThemedCircularProgressDrawable(this))
                 .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
-                .into(binding.tokenIcon)
-        } else if (token is CCDToken) {
-            Glide.with(this)
-                .load(R.drawable.mw24_ic_ccd)
-                .into(binding.tokenIcon)
-        } else {
-            Glide.with(this)
-                .load(R.drawable.mw24_ic_token_placeholder)
                 .into(binding.tokenIcon)
         }
     }
@@ -368,7 +380,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun showWaiting(waiting: Boolean) {
-        binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.includeProgress.progressBar.visibility =
+            if (waiting) View.VISIBLE else View.GONE
     }
 
     private fun gotoReceipt() {

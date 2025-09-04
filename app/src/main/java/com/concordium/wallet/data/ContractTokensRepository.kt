@@ -8,24 +8,21 @@ class ContractTokensRepository(private val contractTokenDao: ContractTokenDao) {
         contractTokenDao.insert(contractToken)
     }
 
-    suspend fun getTokens(accountAddress: String, contractIndex: String): List<ContractTokenEntity> {
+    suspend fun getTokens(
+        accountAddress: String,
+        contractIndex: String,
+    ): List<ContractTokenEntity> {
         return contractTokenDao.getTokens(accountAddress, contractIndex)
     }
 
-    suspend fun getTokens(
-        accountAddress: String,
-        isFungible: Boolean? = null,
-    ): List<ContractTokenEntity> {
-        return if (isFungible != null)
-            contractTokenDao.getTokens(accountAddress, isFungible)
-        else
-            contractTokenDao.getTokens(accountAddress)
+    suspend fun getTokens(accountAddress: String): List<ContractTokenEntity> {
+        return contractTokenDao.getTokens(accountAddress)
     }
 
     suspend fun find(
         accountAddress: String,
         contractIndex: String,
-        token: String
+        token: String,
     ): ContractTokenEntity? {
         return contractTokenDao.find(accountAddress, contractIndex, token)
     }

@@ -26,20 +26,9 @@ data class CCDToken(
 
     override var isSelected: Boolean = false
 
-    override val metadata: TokenMetadata =
-        TokenMetadata(
-            symbol = SYMBOL,
-            decimals = DECIMALS,
-            unique = false,
-            name = null,
-            description = null,
-            thumbnail = null,
-            display = null,
-            totalSupply = null
-        )
+    override val symbol: String = SYMBOL
 
-    override val symbol: String =
-        metadata.symbol!!
+    override val decimals: Int = DECIMALS
 
     companion object {
         const val SYMBOL = "CCD"

@@ -30,7 +30,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityDao
 import com.concordium.wallet.data.room.IdentityWithAccounts
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
+import com.concordium.wallet.ui.cis2.defaults.DefaultContractTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
@@ -65,7 +65,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
-    private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val defaultContractTokensManager: DefaultContractTokensManager
 
     private val identitiesWithAccountsFound = mutableListOf<IdentityWithAccounts>()
     private var stop = false
@@ -95,7 +95,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 App.appCore.session.walletStorage.database.contractTokenDao()
             ),
         )
-        defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
+        defaultContractTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
 
     fun recoverIdentitiesAndAccounts(password: String, identityNamePrefix: String) {
@@ -341,7 +341,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     if (recipientRepository.getRecipientByAddress(account.address) == null) {
                         recipientRepository.insert(Recipient(account))
                     }
-                    defaultFungibleTokensManager.addForAccount(account.address)
+                    defaultContractTokensManager.addForAccount(account.address)
                     updateNotificationsSubscriptionUseCase()
 
                     val iWithAFound =

@@ -6,8 +6,8 @@ import com.concordium.wallet.data.ContractTokensRepository
 class DefaultTokensManagerFactory(
     private val contractTokensRepository: ContractTokensRepository,
 ) {
-    private val testnetDefaultFungibleTokens: List<DefaultFungibleToken> = listOf(
-        DefaultFungibleToken(
+    private val testnetDefaultContractTokens: List<DefaultContractToken> = listOf(
+        DefaultContractToken(
             symbol = "wCCD",
             name = "Wrapped CCD Token",
             contractIndex = "2059",
@@ -19,8 +19,8 @@ class DefaultTokensManagerFactory(
         ),
     )
 
-    private val mainnetDefaultFungibleTokens: List<DefaultFungibleToken> = listOf(
-        DefaultFungibleToken(
+    private val mainnetDefaultContractTokens: List<DefaultContractToken> = listOf(
+        DefaultContractToken(
             symbol = "wCCD",
             name = "Wrapped CCD Token",
             contractIndex = "9354",
@@ -32,12 +32,13 @@ class DefaultTokensManagerFactory(
         ),
     )
 
+    @Suppress("KotlinConstantConditions")
     fun getDefaultFungibleTokensManager() =
-        DefaultFungibleTokensManager(
+        DefaultContractTokensManager(
             defaults =
             when (BuildConfig.ENV_NAME) {
-                "production" -> mainnetDefaultFungibleTokens
-                "testnet" -> testnetDefaultFungibleTokens
+                "production" -> mainnetDefaultContractTokens
+                "testnet" -> testnetDefaultContractTokens
                 else -> emptyList()
             },
             contractTokensRepository = contractTokensRepository,

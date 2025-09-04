@@ -7,7 +7,6 @@ import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
-import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.model.toContractToken
 import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.ContractTokenEntity
@@ -147,10 +146,6 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         "\ntokenId=$tokenId"
             )
 
-            val isTokenUnique = data["token_is_unique"]
-                ?.let { it == "true" }
-                ?: false
-
             val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
                 url = tokenMetadata.url,
                 checksum = tokenMetadata.hash
@@ -164,11 +159,10 @@ class FcmNotificationsService : FirebaseMessagingService() {
                     isNewlyReceived = true,
                     token = tokenId,
                     accountAddress = recipientAccount.address,
-                    isFungible = !isTokenUnique,
                     contractIndex = contractAddress.index.toString(),
                     contractName = data["contract_name"]
                         ?: error("Contract name is missing"),
-                    tokenMetadata = verifiedMetadata,
+                    metadata = verifiedMetadata,
                     addedAt = System.currentTimeMillis()
                 )
 
@@ -220,11 +214,11 @@ class FcmNotificationsService : FirebaseMessagingService() {
             )
 
             val newlyReceivedToken = ProtocolLevelTokenEntity(
+                name = null,
+                decimals = decimals,
                 tokenId = tokenId,
-                tokenMetadata = TokenMetadata(
-                    decimals = decimals
-                ),
                 accountAddress = recipientAccount.address,
+                metadata = null,
                 isNewlyReceived = true
             )
             pltRepository.insert(newlyReceivedToken)
@@ -251,7 +245,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         @SerializedName("url")
         val url: String,
         @SerializedName("hash")
-        val hash: String?
+        val hash: String?,
     )
 
     // Helpers

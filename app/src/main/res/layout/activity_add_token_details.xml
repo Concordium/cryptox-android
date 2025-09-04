@@ -25,7 +25,7 @@
 
         <include
             android:id="@+id/details_layout"
-            layout="@layout/activity_token_details_about"
+            layout="@layout/include_token_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="20dp"

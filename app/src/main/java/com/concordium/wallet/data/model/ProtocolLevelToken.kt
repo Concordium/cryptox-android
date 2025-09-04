@@ -4,18 +4,18 @@ import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import java.math.BigInteger
 
 data class ProtocolLevelToken(
+    override val decimals: Int,
     override val balance: BigInteger = BigInteger.ZERO,
     override val accountAddress: String,
     override val isNewlyReceived: Boolean = false,
     override val addedAt: Long,
-    override val metadata: TokenMetadata? = null,
     override var isSelected: Boolean = false,
     val tokenId: String,
-    val tokenState: PLTState?,
-    val tokenAccountState: TokenAccountState? = null,
+    val name: String?,
     val isHidden: Boolean = false,
     val isInAllowList: Boolean? = null,
     val isInDenyList: Boolean? = null,
+    var metadata: ProtocolLevelTokenMetadata? = null,
 ) : Token {
 
     override val symbol: String
@@ -29,16 +29,15 @@ fun ProtocolLevelTokenEntity.toProtocolLevelToken(
     isSelected: Boolean = true,
 ) = ProtocolLevelToken(
     balance = balance,
+    name = name,
+    decimals = decimals,
     accountAddress = accountAddress ?: "",
     isNewlyReceived = isNewlyReceived,
     addedAt = addedAt,
-    metadata = tokenMetadata,
     isSelected = isSelected,
     tokenId = tokenId,
-    tokenState = null,
-    tokenAccountState = null,
     isHidden = isHidden,
     isInAllowList = isInAllowList,
-    isInDenyList = isInDenyList
+    isInDenyList = isInDenyList,
 )
 

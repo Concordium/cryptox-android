@@ -1,10 +1,10 @@
 package com.concordium.wallet.ui.cis2.defaults
 
-import com.concordium.wallet.data.model.TokenMetadata
+import com.concordium.wallet.data.model.ContractTokenMetadata
 import com.concordium.wallet.data.model.UrlHolder
 import com.concordium.wallet.data.room.ContractTokenEntity
 
-class DefaultFungibleToken(
+class DefaultContractToken(
     val symbol: String,
     val contractIndex: String,
     val contractName: String,
@@ -19,9 +19,8 @@ class DefaultFungibleToken(
         contractIndex = contractIndex,
         token = token,
         accountAddress = accountAddress,
-        isFungible = true,
         contractName = contractName,
-        tokenMetadata = TokenMetadata(
+        metadata = ContractTokenMetadata(
             decimals = decimals,
             description = description,
             name = name,
@@ -31,7 +30,6 @@ class DefaultFungibleToken(
             ),
             unique = false,
             display = null,
-            totalSupply = null
         ),
         isNewlyReceived = false,
     )

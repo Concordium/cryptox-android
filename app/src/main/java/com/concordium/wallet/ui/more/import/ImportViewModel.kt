@@ -38,7 +38,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.ExportEncryptionHelper
-import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
+import com.concordium.wallet.ui.cis2.defaults.DefaultContractTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.uicore.Formatter
@@ -62,7 +62,7 @@ class ImportViewModel(application: Application) :
         AccountRepository(session.walletStorage.database.accountDao())
     private val recipientRepository: RecipientRepository =
         RecipientRepository(session.walletStorage.database.recipientDao())
-    private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val defaultContractTokensManager: DefaultContractTokensManager
 
     private val gson = App.appCore.gson
 
@@ -108,7 +108,7 @@ class ImportViewModel(application: Application) :
                 App.appCore.session.walletStorage.database.contractTokenDao()
             ),
         )
-        defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
+        defaultContractTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
 
     fun initialize() {
@@ -361,7 +361,7 @@ class ImportViewModel(application: Application) :
                 // Updated read-only accounts are not affected,
                 // as their tokens may be already managed by the user.
                 accountList.forEach { account ->
-                    defaultFungibleTokensManager.addForAccount(account.address)
+                    defaultContractTokensManager.addForAccount(account.address)
                 }
                 if (accountList.isNotEmpty()) {
                     updateNotificationsSubscriptionUseCase()
@@ -474,7 +474,7 @@ class ImportViewModel(application: Application) :
 
         // Add default fungible tokens for the accounts.
         readOnlyAccountList.forEach { account ->
-            defaultFungibleTokensManager.addForAccount(account.address)
+            defaultContractTokensManager.addForAccount(account.address)
         }
         if (readOnlyAccountList.isNotEmpty()) {
             updateNotificationsSubscriptionUseCase()
