@@ -80,33 +80,26 @@ class TokenDetailsView(
     }
 
     private fun setDescription(token: Token) {
-        when (token) {
-            is CCDToken -> {
-                binding.descriptionHolder.visibility = View.VISIBLE
-                binding.description.text = context.getString(R.string.ccd_details_description)
-            }
+        val description: String? = when (token) {
+            is CCDToken ->
+                context.getString(R.string.ccd_details_description)
 
-            is ContractToken -> {
-                val description =
-                    token
-                        .metadata
-                        ?.description
-                        ?.takeIf(String::isNotBlank)
+            is ContractToken ->
+                token.metadata?.description
 
-                if (description != null) {
-                    binding.descriptionHolder.visibility = View.VISIBLE
-                    binding.description.text = description
-                }
-            }
+            is ProtocolLevelToken ->
+                token.metadata?.description
+        }
+            ?.takeIf(String::isNotBlank)
 
-            is ProtocolLevelToken -> {
-                binding.descriptionHolder.visibility = View.GONE
-            }
+        if (description != null) {
+            binding.descriptionHolder.visibility = View.VISIBLE
+            binding.description.text = description
         }
     }
 
     private fun setOwnership(token: ContractToken) {
-        if (token.metadata?.unique == true) {
+        if (token.isUnique) {
             binding.ownershipHolder.visibility = View.VISIBLE
             binding.ownership.text =
                 if (token.balance != BigInteger.ZERO)
