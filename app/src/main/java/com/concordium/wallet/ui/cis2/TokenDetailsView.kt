@@ -15,7 +15,7 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.plt.PLTInfoDialog
 import com.concordium.wallet.ui.plt.PLTListInfoDialog
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
-import com.concordium.wallet.util.PrettyPrint.asJsonString
+import com.google.gson.GsonBuilder
 import java.math.BigInteger
 
 class TokenDetailsView(
@@ -35,13 +35,13 @@ class TokenDetailsView(
         setTokenTypeLabel(token)
         setDescription(token)
         setDecimals(token)
+        setRawMetadataButton(token)
 
         if (token is ContractToken) {
             setDisplay(token)
             setContractIndexAndSubIndex(token)
             setTokenId(token)
             setOwnership(token)
-            setRawMetadataButton(token)
         }
 
         if (isHideVisible) {
@@ -52,14 +52,29 @@ class TokenDetailsView(
         }
     }
 
-    private fun setRawMetadataButton(token: ContractToken) {
-        val metadata = token.metadata
-        if (metadata != null) {
+    private fun setRawMetadataButton(token: Token) {
+        val prettyPrintingGson =
+            GsonBuilder()
+                .setPrettyPrinting()
+                .create()
+
+        val rawMetadata: String? = when (token) {
+            is CCDToken ->
+                null
+
+            is ContractToken ->
+                prettyPrintingGson.toJson(token.metadata)
+
+            is ProtocolLevelToken ->
+                prettyPrintingGson.toJson(token.metadata)
+        }
+
+        if (rawMetadata != null) {
             binding.rawMetadataBtn.isVisible = true
             binding.rawMetadataBtn.setOnClickListener {
                 RawMetadataDialog.newInstance(
                     RawMetadataDialog.setBundle(
-                        rawMetadata = metadata.asJsonString()
+                        rawMetadata = rawMetadata,
                     )
                 ).showSingle(fragmentManager, RawMetadataDialog.TAG)
             }
