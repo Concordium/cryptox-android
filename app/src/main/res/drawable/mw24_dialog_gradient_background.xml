@@ -7,9 +7,9 @@
                 android:gradientRadius="700dp"
                 android:centerX="0%"
                 android:centerY="10%"
-                android:startColor="#9EF2EB"
-                android:centerColor="#EDDABF"
-                android:endColor="#A49AE3"
+                android:startColor="@color/mw24_gradient_start_color"
+                android:centerColor="@color/mw24_gradient_center_color"
+                android:endColor="@color/mw24_gradient_end_color"
                 android:useLevel="false" />
             <corners android:radius="16dp" />
         </shape>

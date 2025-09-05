@@ -2,6 +2,7 @@
 <resources>
    <color name="mw24_plain_white_10">#1AFFFFFF</color>
    <color name="mw24_plain_white_40">#66FFFFFF</color>
+   <color name="mw24_plain_white_60">#99FFFFFF</color>
    <color name="mw24_plain_white_70">#B2FFFFFF</color>
 
    <color name="mw24_black_1">#151819</color>
@@ -17,6 +18,10 @@
    <color name="mw24_green">#24D4AB</color>
    <color name="mw24_attention_red">#CD2E4A</color>
    <color name="mw24_info_orange">#E8B126</color>
+
+    <color name="mw24_gradient_start_color">#9EF2EB</color>
+    <color name="mw24_gradient_center_color">#EDDABF</color>
+    <color name="mw24_gradient_end_color">#A49AE3</color>
 
    <!-- Surface (background) colors -->
     <color name="mw24_surface_primary_disabled">#2F3437</color>
