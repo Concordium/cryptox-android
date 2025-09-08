@@ -5,5 +5,6 @@ import java.io.Serializable
 class PLTModuleState(
     val allowList: Boolean?,
     val name: String,
+    val paused: Boolean
 ) : Serializable
 

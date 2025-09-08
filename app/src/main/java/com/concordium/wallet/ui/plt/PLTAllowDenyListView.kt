@@ -98,12 +98,11 @@ class PLTAllowDenyListView @JvmOverloads constructor(
             else -> binding.pltListStatusLayout.isVisible = false
         }
 
-        binding.pltListStatusLayout.setOnClickListener { onTokenStatusClick() }
-        binding.pltLabelLayout.setOnClickListener {
-            if (pltListStatus == PLTListStatus.PAUSED) {
-                onTokenPausedClick()
-            } else {
-                onTokenLabelClick()
+        binding.pltLabelLayout.setOnClickListener { onTokenLabelClick() }
+        binding.pltListStatusLayout.setOnClickListener {
+            when (pltListStatus) {
+                PLTListStatus.PAUSED -> onTokenPausedClick()
+                else -> onTokenStatusClick()
             }
         }
     }

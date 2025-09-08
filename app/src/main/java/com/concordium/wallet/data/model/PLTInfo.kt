@@ -16,6 +16,7 @@ fun PLTInfo.toProtocolLevelToken(
         addedAt = System.currentTimeMillis(),
         tokenId = tokenId,
         isSelected = isSelected,
+        isPaused = tokenState.moduleState.paused,
         isInAllowList =
         if (tokenState.moduleState.allowList == true)
             false

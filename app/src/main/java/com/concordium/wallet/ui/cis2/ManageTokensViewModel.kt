@@ -321,6 +321,7 @@ class ManageTokensViewModel(
                             isHidden = selectedToken.isHidden,
                             isInDenyList = selectedToken.isInDenyList,
                             isInAllowList = selectedToken.isInAllowList,
+                            isPaused = selectedToken.isPaused
                         )
                     )
                 }

@@ -31,38 +31,36 @@ class TokensInteractor(
         loadBalances: Boolean = true,
         onlyTransferable: Boolean = false,
         addCCDToken: Boolean = true,
-    ): Result<List<Token>> {
-        return try {
-            val ccdToken = getCCDDefaultToken(accountAddress)
+    ): Result<List<Token>> = runCatching {
+        val ccdToken = getCCDDefaultToken(accountAddress)
 
-            val contractTokens =
-                contractTokensRepository
-                    .getTokens(accountAddress)
-                    .map(ContractTokenEntity::toContractToken)
+        val contractTokens =
+            contractTokensRepository
+                .getTokens(accountAddress)
+                .map(ContractTokenEntity::toContractToken)
 
-            val pltTokens =
-                pltRepository
-                    .getTokens(accountAddress)
-                    .filterNot(ProtocolLevelTokenEntity::isHidden)
-                    .map { it.toProtocolLevelToken() }
-                    .filter { !onlyTransferable || it.isTransferable }
+        val pltTokens =
+            pltRepository
+                .getTokens(accountAddress)
+                .filterNot(ProtocolLevelTokenEntity::isHidden)
+                .map { it.toProtocolLevelToken() }
+                .filter { token ->
+                    if (!onlyTransferable) return@filter true
+                    token.isPaused.not() && token.isTransferable
+                }
 
-            val allTokens = buildList {
-                if (addCCDToken) add(ccdToken)
-                addAll((contractTokens + pltTokens).sortedByDescending { it.addedAt })
-            }
-
-            if (loadBalances) {
-                loadTokensBalances(
-                    accountAddress = accountAddress,
-                    tokens = allTokens,
-                )
-            }
-
-            Result.success(allTokens)
-        } catch (e: Exception) {
-            Result.failure(e)
+        val allTokens = buildList {
+            if (addCCDToken) add(ccdToken)
+            addAll((contractTokens + pltTokens).sortedByDescending { it.addedAt })
         }
+
+        if (loadBalances) {
+            loadTokensBalances(
+                accountAddress = accountAddress,
+                tokens = allTokens,
+            )
+        }
+        allTokens
     }
 
     suspend fun loadTokensBalances(

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import com.concordium.wallet.databinding.DialogPltPausedInfoBinding
 import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
 
-class PLTPausedInfoDialog : BaseGradientDialogFragment() {
+class PLTPausedInfoDialog: BaseGradientDialogFragment() {
 
     private lateinit var binding: DialogPltPausedInfoBinding
 

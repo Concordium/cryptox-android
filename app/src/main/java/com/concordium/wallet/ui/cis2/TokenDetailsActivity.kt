@@ -164,7 +164,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
         val isTokenActionButtonEnabled = if (token is ProtocolLevelToken) {
-            token.isTransferable
+            token.isTransferable && token.isPaused.not()
         } else
             true
         binding.apply {
