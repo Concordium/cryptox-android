@@ -204,11 +204,8 @@ class SendTokenViewModel(
                         .getEurPerMicroCcd()
                         .getOrNull()
 
-                is ContractToken ->
-                    null
-
-                is ProtocolLevelToken ->
-                    null
+                is ContractToken -> null
+                is ProtocolLevelToken -> null
             }
 
             tokenEurRate.postValue(rate)
@@ -220,14 +217,9 @@ class SendTokenViewModel(
         feeReady.value = null
 
         when (val token = sendTokenData.token) {
-            is CCDToken ->
-                loadCcdTransferFee()
-
-            is ContractToken ->
-                loadContractTokenTransferFee(token)
-
-            is ProtocolLevelToken ->
-                loadProtocolLevelTokenTransferFee(token)
+            is CCDToken -> loadCcdTransferFee()
+            is ContractToken -> loadContractTokenTransferFee(token)
+            is ProtocolLevelToken -> loadProtocolLevelTokenTransferFee(token)
         }
     }
 

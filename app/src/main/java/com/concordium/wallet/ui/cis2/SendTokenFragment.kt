@@ -1,15 +1,55 @@
 package com.concordium.wallet.ui.cis2
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.concordium.wallet.R
+import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentSendTokenBinding
+import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.SendTokenActivity.Companion.ACCOUNT
+import com.concordium.wallet.ui.cis2.SendTokenActivity.Companion.PARENT_ACTIVITY
+import com.concordium.wallet.ui.cis2.SendTokenActivity.Companion.TOKEN
+import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
+import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
+import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
+import com.concordium.wallet.util.KeyboardUtil
+import com.concordium.wallet.util.KeyboardUtil.showKeyboard
+import com.concordium.wallet.util.getSerializable
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import java.math.BigInteger
+import kotlin.jvm.java
 
 class SendTokenFragment : Fragment() {
 
     private lateinit var binding: FragmentSendTokenBinding
+    private val viewModel: SendTokenViewModel by viewModel {
+        parametersOf(
+            SendTokenData(
+                account = intent.getSerializable(ACCOUNT, Account::class.java),
+                token = intent.getSerializable(TOKEN, Token::class.java),
+            ),
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,5 +58,354 @@ class SendTokenFragment : Fragment() {
     ): View {
         binding = FragmentSendTokenBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initObservers()
+        initFragmentListener()
+        initViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableSend()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.dispose()
+    }
+
+    private fun initViews() {
+        binding.amount.hint = BigInteger.ZERO.toString()
+        initializeAmount()
+        initializeMax()
+        initializeAddressBook()
+        initializeSend()
+        initializeSearchToken()
+        initializeMemo()
+    }
+
+    private fun initializeSend() {
+        binding.continueBtn.setOnClickListener {
+            send()
+        }
+    }
+
+    private fun send() {
+        binding.continueBtn.isEnabled = false
+        gotoReceipt()
+    }
+
+    private fun initializeSearchToken() {
+        binding.content.setOnClickListener {
+            val intent = Intent(requireActivity(), SelectTokenActivity::class.java).apply {
+                putExtra(
+                    SelectTokenActivity.EXTRA_ACCOUNT_ADDRESS,
+                    viewModel.sendTokenData.account.address
+                )
+            }
+            getResultToken.launch(intent)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun initializeAmount() {
+        binding.amount.addTextChangedListener { amountText ->
+            val amountString = amountText.toString()
+            val token = viewModel.sendTokenData.token
+
+            viewModel.sendTokenData.amount =
+                CurrencyUtil.toGTUValue(amountString, token) ?: BigInteger.ZERO
+
+            if (amountString.isEmpty()) {
+                binding.balanceSymbol.alpha = 0.5f
+            } else {
+                binding.balanceSymbol.alpha = 1f
+            }
+            viewModel.loadFee()
+            enableSend()
+            setEstimatedAmountInEur()
+        }
+        binding.amount.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                if (viewModel.sendTokenData.amount.signum() == 0) {
+                    binding.amount.setText("")
+                }
+                showKeyboard(requireActivity(), binding.amount)
+            }
+        }
+        binding.amount.setOnEditorActionListener { _, actionId, _ ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    KeyboardUtil.hideKeyboard(requireActivity())
+                    if (enableSend())
+                        send()
+                    true
+                }
+
+                else -> false
+            }
+        }
+        binding.balanceSymbol.setOnClickListener {
+            showKeyboard(requireActivity(), binding.amount)
+        }
+    }
+
+    private fun initializeMax() {
+        binding.sendAllButton.setOnClickListener {
+            binding.amount.setText(
+                CurrencyUtil.formatGTU(
+                    viewModel.sendTokenData.maxAmount ?: BigInteger.ZERO,
+                    viewModel.sendTokenData.token
+                )
+            )
+            enableSend()
+        }
+    }
+
+    private fun enableSend(): Boolean {
+        binding.continueBtn.isEnabled = viewModel.canSend
+        return binding.continueBtn.isEnabled
+    }
+
+    private fun initializeAddressBook() {
+        binding.recipientLayout.setOnClickListener {
+            val intent = Intent(requireActivity(), RecipientListActivity::class.java)
+            intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.sendTokenData.account)
+            intent.putExtra(
+                RecipientListActivity.EXTRA_SENDER_ACCOUNT,
+                viewModel.sendTokenData.account
+            )
+            getResultRecipient.launch(intent)
+        }
+    }
+
+    private fun initializeMemo() {
+        binding.addMemo.setOnClickListener {
+            if (viewModel.showMemoWarning()) {
+                MemoNoticeDialog().showSingle(
+                    parentFragmentManager,
+                    MemoNoticeDialog.TAG
+                )
+            } else {
+                goToEnterMemo()
+            }
+        }
+    }
+
+    private fun goToEnterMemo() {
+        val intent = Intent(requireActivity(), AddMemoActivity::class.java)
+        intent.putExtra(AddMemoActivity.EXTRA_MEMO, viewModel.getMemoText())
+        getResultMemo.launch(intent)
+    }
+
+    private val getResultMemo =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
+                    handleMemo(memo)
+                }
+            }
+        }
+
+    private val getResultRecipient =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getSerializable(
+                    RecipientListActivity.EXTRA_RECIPIENT,
+                    Recipient::class.java
+                )?.let { recipient ->
+                    viewModel.onReceiverEntered(recipient.address)
+                    binding.recipientPlaceholder.visibility = View.GONE
+                    binding.recipientNameLayout.visibility = View.VISIBLE
+                    binding.recipientAddress.text = recipient.address
+
+                    if (recipient.name.isNotEmpty()) {
+                        onReceiverNameFound(recipient.name)
+                    } else {
+                        binding.recipientName.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+    private val getResultToken =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            result.data
+                ?.takeIf { result.resultCode == Activity.RESULT_OK }
+                ?.getSerializable(
+                    SelectTokenActivity.EXTRA_SELECTED_TOKEN,
+                    Token::class.java,
+                )
+                ?.let(viewModel.chooseToken::postValue)
+        }
+
+    private fun handleMemo(memoText: String) {
+        if (memoText.isNotEmpty()) {
+            viewModel.setMemoText(memoText)
+            setMemoText(memoText)
+        } else {
+            viewModel.setMemoText(null)
+            setMemoText("")
+        }
+    }
+
+    private fun setMemoText(memoText: String) {
+        if (memoText.isNotEmpty()) {
+            binding.addMemo.text = memoText
+        } else {
+            binding.addMemo.text = getString(R.string.cis_add_memo)
+        }
+    }
+
+    private fun onReceiverNameFound(name: String) {
+        viewModel.onReceiverNameFound(name)
+        binding.recipientName.visibility = View.VISIBLE
+        binding.recipientName.text = name
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun initObservers() {
+        viewModel.waiting.observe(viewLifecycleOwner, ::showWaiting)
+
+        viewModel.chooseToken.observe(viewLifecycleOwner) { token ->
+            setTokenIcon(token)
+
+            val decimals = token.decimals
+            binding.balance.text = CurrencyUtil.formatGTU(token.balance, decimals)
+            binding.token.text =
+                if (token is ContractToken && token.isUnique)
+                    token.metadata?.name ?: ""
+                else
+                    token.symbol
+            if (token is ContractToken && token.isUnique && token.balance.signum() > 0) {
+                // For owned NFTs, prefill the amount (quantity) which is 1
+                // for smoother experience.
+                binding.amount.setText("1")
+                binding.balanceSymbol.visibility = View.GONE
+            } else {
+                // Clearing the text reveals the "0,00" hint.
+                binding.amount.text.clear()
+                binding.balanceSymbol.visibility = View.VISIBLE
+            }
+            binding.amount.decimals = decimals
+            // For non-CCD tokens Max is always available.
+            binding.sendAllButton.isEnabled = token !is CCDToken
+            binding.balanceSymbol.text = token.symbol
+
+            binding.addMemo.isVisible = token !is ContractToken
+            binding.atDisposalTitle.isVisible = token is CCDToken
+        }
+
+        viewModel.feeReady.observe(viewLifecycleOwner) { fee ->
+            // Null value means the fee is outdated.
+            binding.fee.text =
+                if (fee != null)
+                    getString(
+                        R.string.cis_estimated_fee,
+                        CurrencyUtil.formatGTU(fee)
+                    )
+                else
+                    ""
+            binding.sendAllButton.isEnabled =
+                viewModel.sendTokenData.token !is CCDToken || fee != null
+            binding.amountError.isVisible = !viewModel.hasEnoughFunds()
+
+            enableSend()
+        }
+
+        viewModel.errorInt.observe(viewLifecycleOwner) {
+            Toast.makeText(requireActivity(), getString(it), Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.tokenEurRate.observe(viewLifecycleOwner) {
+            setEstimatedAmountInEur()
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setEstimatedAmountInEur() {
+        val rate = viewModel.tokenEurRate.value
+
+        if (rate != null) {
+            binding.eurRate.text =
+                getString(
+                    R.string.cis_estimated_eur_rate,
+                    CurrencyUtil.toEURRate(
+                        viewModel.sendTokenData.amount,
+                        rate,
+                    )
+                )
+        } else {
+            binding.eurRate.text = ""
+        }
+    }
+
+    private fun setTokenIcon(token: Token) = when (token) {
+
+        is CCDToken -> {
+            Glide.with(this)
+                .load(R.drawable.mw24_ic_ccd)
+                .into(binding.tokenIcon)
+        }
+
+        is ProtocolLevelToken -> {
+            Glide.with(this)
+                .load(R.drawable.mw24_ic_token_placeholder)
+                .into(binding.tokenIcon)
+        }
+
+        is ContractToken -> {
+            val thumbnailUrl =
+                token
+                    .metadata
+                    ?.thumbnail
+                    ?.url
+                    ?.takeIf(String::isNotBlank)
+
+            Glide.with(this)
+                .load(thumbnailUrl)
+                .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
+                .placeholder(ThemedCircularProgressDrawable(requireActivity()))
+                .error(R.drawable.mw24_ic_token_placeholder)
+                .fitCenter()
+                .into(binding.tokenIcon)
+        }
+    }
+
+    private fun initFragmentListener() {
+        parentFragmentManager.setFragmentResultListener(
+            MemoNoticeDialog.ACTION_REQUEST,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val showAgain = MemoNoticeDialog.getResult(bundle)
+            if (!showAgain) {
+                viewModel.dontShowMemoWarning()
+            }
+            goToEnterMemo()
+        }
+    }
+
+    private fun showWaiting(waiting: Boolean) {
+        binding.includeProgress.progressBar.visibility =
+            if (waiting) View.VISIBLE else View.GONE
+    }
+
+    private fun gotoReceipt() {
+        val intent = Intent(requireActivity(), SendTokenReceiptActivity::class.java)
+        intent.putExtra(
+            SendTokenReceiptActivity.SEND_TOKEN_DATA,
+            viewModel.sendTokenData,
+        )
+        intent.putExtra(
+            SendTokenReceiptActivity.PARENT_ACTIVITY,
+            checkNotNull(requireActivity().intent.getStringExtra(PARENT_ACTIVITY)) {
+                "Missing $PARENT_ACTIVITY extra"
+            }
+        )
+        (activity as BaseActivity).startActivityForResultAndHistoryCheck(intent)
     }
 }
