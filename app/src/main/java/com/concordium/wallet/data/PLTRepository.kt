@@ -55,7 +55,8 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
                 } else {
                     if (existsToken.balance != tokenWithState.tokenAccountState.balance.value ||
                         existsToken.isInDenyList != tokenWithState.tokenAccountState.state.denyList ||
-                        existsToken.isInAllowList != tokenWithState.tokenAccountState.state.allowList
+                        existsToken.isInAllowList != tokenWithState.tokenAccountState.state.allowList ||
+                        existsToken.isPaused != tokenWithState.tokenAccountState.state.paused
                     ) {
                         // Update the existing token if it has changed
                         val updatedToken = tokenWithState.toProtocolLevelTokenEntity(

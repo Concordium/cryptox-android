@@ -25,5 +25,6 @@ fun PLTInfoWithAccountState.toProtocolLevelTokenEntity(
         isNewlyReceived = isNewlyReceived,
         isInAllowList = tokenAccountState.state.allowList,
         isInDenyList = tokenAccountState.state.denyList,
+        isPaused = tokenAccountState.state.paused
     )
 }

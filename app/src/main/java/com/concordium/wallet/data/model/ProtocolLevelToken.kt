@@ -15,6 +15,7 @@ data class ProtocolLevelToken(
     val isHidden: Boolean = false,
     val isInAllowList: Boolean? = null,
     val isInDenyList: Boolean? = null,
+    val isPaused: Boolean = false,
     var metadata: ProtocolLevelTokenMetadata? = null,
 ) : Token, WithThumbnail {
 
@@ -46,5 +47,6 @@ fun ProtocolLevelTokenEntity.toProtocolLevelToken(
     isHidden = isHidden,
     isInAllowList = isInAllowList,
     isInDenyList = isInDenyList,
+    isPaused = isPaused,
 )
 

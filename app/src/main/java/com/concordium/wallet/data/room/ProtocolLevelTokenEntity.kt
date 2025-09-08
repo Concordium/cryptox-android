@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.concordium.wallet.data.model.ContractTokenMetadata
 import com.concordium.wallet.data.model.ProtocolLevelTokenMetadata
 import com.concordium.wallet.data.room.typeconverter.ProtocolLevelTokenTypeConverters
 import java.io.Serializable
@@ -37,4 +36,6 @@ data class ProtocolLevelTokenEntity(
     val isInAllowList: Boolean? = null,
     @ColumnInfo(name = "is_in_deny_list", defaultValue = "null")
     val isInDenyList: Boolean? = null,
+    @ColumnInfo(name = "is_paused", defaultValue = "0")
+    val isPaused: Boolean = false,
 ) : Serializable
