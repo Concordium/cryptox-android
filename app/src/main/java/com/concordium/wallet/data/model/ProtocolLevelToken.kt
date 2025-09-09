@@ -16,10 +16,17 @@ data class ProtocolLevelToken(
     val isInAllowList: Boolean? = null,
     val isInDenyList: Boolean? = null,
     var metadata: ProtocolLevelTokenMetadata? = null,
-) : Token {
+) : Token, WithThumbnail {
 
     override val symbol: String
         get() = tokenId
+
+    override val thumbnailUrl: String?
+        get() =
+            metadata
+                ?.thumbnail
+                ?.url
+                ?.takeIf(String::isNotBlank)
 
     val isTransferable: Boolean
         get() = isInDenyList != true && isInAllowList != false

@@ -95,7 +95,7 @@ class ManageTokenListActivity : BaseActivity(
     }
 
     private fun initViews() {
-        tokensAdapter = ManageTokensListAdapter(this)
+        tokensAdapter = ManageTokensListAdapter()
         binding.tokensList.adapter = tokensAdapter
         tokensAdapter.setTokenClickListener(object : ManageTokensListAdapter.TokenClickListener {
             override fun onHideClick(token: Token) {

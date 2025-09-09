@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
@@ -15,7 +14,6 @@ import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
@@ -30,8 +28,12 @@ class TokensAccountDetailsAdapter(
     private val dataSet: MutableList<Token> = mutableListOf()
     private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
-    inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(
+        val binding: ItemTokenAccountDetailsBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        val iconView = TokenIconView(binding.tokenIcon)
+    }
 
     interface TokenClickListener {
         fun onRowClick(token: Token)
@@ -91,9 +93,15 @@ class TokensAccountDetailsAdapter(
         val token = dataSet[position]
 
         with(holder.binding) {
-            title.text = token.symbol
-            if (token is ContractToken && token.metadata?.unique == true) {
+
+            if (token is ContractToken && token.isUnique) {
                 balance.isVisible = false
+                subtitle.isVisible = true
+                subtitle.text =
+                    if (token.balance > BigInteger.ZERO)
+                        context.getString(R.string.cis_owned)
+                    else
+                        context.getString(R.string.cis_not_owned)
             } else {
                 balance.isVisible = true
                 balance.text = CurrencyUtil.formatAndRoundGTU(
@@ -101,7 +109,9 @@ class TokensAccountDetailsAdapter(
                     roundDecimals = 2,
                     decimals = token.decimals,
                 )
+                subtitle.isVisible = false
             }
+
             if (token is CCDToken) {
                 eurRate.isVisible = true
                 eurRate.text =
@@ -123,52 +133,21 @@ class TokensAccountDetailsAdapter(
             } else {
                 eurRate.isVisible = false
             }
-            subtitle.isVisible = false
+
+            title.text =
+                if (token is ContractToken && token.isUnique)
+                    token.metadata?.name ?: ""
+                else
+                    token.symbol
+
             notice.isVisible = token.isNewlyReceived
-            content.setOnClickListener {
-                tokenClickListener?.onRowClick(token)
-            }
             earningLabel.isVisible = token is CCDToken && token.isEarning
             pltInAllowListIcon.isVisible = token is ProtocolLevelToken && !token.isTransferable
-        }
 
-        when (token) {
-            is CCDToken -> {
-                Glide.with(context)
-                    .load(R.drawable.mw24_ic_ccd)
-                    .into(holder.binding.tokenIcon)
-            }
+            holder.iconView.showTokenIcon(token)
 
-            is ContractToken -> {
-                val metadata = token.metadata
-                val iconUrl =
-                    metadata
-                        ?.thumbnail
-                        ?.url
-                        ?.takeIf(String::isNotBlank)
-
-                Glide.with(context)
-                    .load(iconUrl)
-                    .override(iconSize)
-                    .placeholder(ThemedCircularProgressDrawable(context))
-                    .error(R.drawable.mw24_ic_token_placeholder)
-                    .fitCenter()
-                    .into(holder.binding.tokenIcon)
-
-                if (metadata?.unique == true) {
-                    holder.binding.subtitle.isVisible = true
-                    holder.binding.subtitle.text =
-                        if (token.balance > BigInteger.ZERO)
-                            context.getString(R.string.cis_owned)
-                        else
-                            context.getString(R.string.cis_not_owned)
-                }
-            }
-
-            is ProtocolLevelToken -> {
-                Glide.with(context)
-                    .load(R.drawable.mw24_ic_token_placeholder)
-                    .into(holder.binding.tokenIcon)
+            content.setOnClickListener {
+                tokenClickListener?.onRowClick(token)
             }
         }
     }

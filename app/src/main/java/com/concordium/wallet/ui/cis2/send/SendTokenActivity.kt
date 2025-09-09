@@ -9,11 +9,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -24,7 +22,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.MemoNoticeDialog
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
@@ -334,36 +331,9 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         }
     }
 
-    private fun setTokenIcon(token: Token) = when (token) {
-
-        is CCDToken -> {
-            Glide.with(this)
-                .load(R.drawable.mw24_ic_ccd)
-                .into(binding.tokenIcon)
-        }
-
-        is ProtocolLevelToken -> {
-            Glide.with(this)
-                .load(R.drawable.mw24_ic_token_placeholder)
-                .into(binding.tokenIcon)
-        }
-
-        is ContractToken -> {
-            val thumbnailUrl =
-                token
-                    .metadata
-                    ?.thumbnail
-                    ?.url
-                    ?.takeIf(String::isNotBlank)
-
-            Glide.with(this)
-                .load(thumbnailUrl)
-                .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
-                .placeholder(ThemedCircularProgressDrawable(this))
-                .error(R.drawable.mw24_ic_token_placeholder)
-                .fitCenter()
-                .into(binding.tokenIcon)
-        }
+    private fun setTokenIcon(token: Token) {
+        TokenIconView(binding.tokenIcon)
+            .showTokenIcon(token)
     }
 
     private fun initFragmentListener() {
