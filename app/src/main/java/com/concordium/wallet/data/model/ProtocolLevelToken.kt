@@ -30,7 +30,7 @@ data class ProtocolLevelToken(
                 ?.takeIf(String::isNotBlank)
 
     val isTransferable: Boolean
-        get() = isInDenyList != true && isInAllowList != false
+        get() = isInDenyList != true && isInAllowList != false && !isPaused
 }
 
 fun ProtocolLevelTokenEntity.toProtocolLevelToken(

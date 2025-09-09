@@ -142,8 +142,7 @@ class TokensAccountDetailsAdapter(
 
             notice.isVisible = token.isNewlyReceived
             earningLabel.isVisible = token is CCDToken && token.isEarning
-            pltInAllowListIcon.isVisible =
-                token is ProtocolLevelToken && (token.isPaused || !token.isTransferable)
+            pltInAllowListIcon.isVisible = token is ProtocolLevelToken && !token.isTransferable
 
             holder.iconView.showTokenIcon(token)
 

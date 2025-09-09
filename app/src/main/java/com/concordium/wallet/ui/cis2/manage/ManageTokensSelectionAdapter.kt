@@ -84,7 +84,7 @@ class ManageTokensSelectionAdapter(
         }
 
         holder.binding.pltInAllowListIcon.isVisible =
-            token is ProtocolLevelToken && (token.isPaused || !token.isTransferable)
+            token is ProtocolLevelToken && !token.isTransferable
 
         holder.typeView.showTokenType(token)
     }

@@ -44,10 +44,7 @@ class TokensInteractor(
                 .getTokens(accountAddress)
                 .filterNot(ProtocolLevelTokenEntity::isHidden)
                 .map { it.toProtocolLevelToken() }
-                .filter { token ->
-                    if (!onlyTransferable) return@filter true
-                    token.isPaused.not() && token.isTransferable
-                }
+                .filter { !onlyTransferable || it.isTransferable }
 
         val allTokens = buildList {
             if (addCCDToken) add(ccdToken)
