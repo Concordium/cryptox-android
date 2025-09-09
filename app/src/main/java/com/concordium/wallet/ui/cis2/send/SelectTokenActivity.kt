@@ -1,6 +1,5 @@
-package com.concordium.wallet.ui.cis2
+package com.concordium.wallet.ui.cis2.send
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.isVisible
@@ -10,6 +9,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivitySelectTokenBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.TokensAccountDetailsAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -76,7 +76,7 @@ class SelectTokenActivity : BaseActivity(
 
     private fun goBackWithToken(token: Token) {
         setResult(
-            Activity.RESULT_OK,
+            RESULT_OK,
             Intent().putExtra(EXTRA_SELECTED_TOKEN, token)
         )
         finish()

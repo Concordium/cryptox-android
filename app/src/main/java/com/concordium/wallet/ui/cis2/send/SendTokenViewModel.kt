@@ -1,0 +1,339 @@
+package com.concordium.wallet.ui.cis2.send
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.concordium.sdk.serializing.CborMapper
+import com.concordium.sdk.transactions.TokenUpdate
+import com.concordium.sdk.transactions.tokens.CborMemo
+import com.concordium.sdk.transactions.tokens.TaggedTokenHolderAccount
+import com.concordium.sdk.transactions.tokens.TokenOperation
+import com.concordium.sdk.transactions.tokens.TokenOperationAmount
+import com.concordium.sdk.transactions.tokens.TransferTokenOperation
+import com.concordium.sdk.types.AccountAddress
+import com.concordium.sdk.types.UInt64
+import com.concordium.wallet.App
+import com.concordium.wallet.R
+import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.backend.price.TokenPriceRepository
+import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.SimpleFraction
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.Log
+import com.reown.util.bytesToHex
+import com.reown.util.hexToBytes
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+import okio.IOException
+import org.koin.core.component.KoinComponent
+import java.math.BigInteger
+
+class SendTokenViewModel(
+    private val tokenPriceRepository: TokenPriceRepository,
+    mainViewModel: MainViewModel,
+    application: Application,
+) : AndroidViewModel(application),
+    KoinComponent {
+
+    private val proxyRepository = ProxyRepository()
+    private val sendFundsPreferences: WalletSendFundsPreferences =
+        App.appCore.session.walletStorage.sendFundsPreferences
+
+    private var accountNonceRequest: BackendRequest<*>? = null
+    private var submitTransaction: BackendRequest<*>? = null
+    private var feeRequest: BackendRequest<*>? = null
+    lateinit var sendTokenData: SendTokenData
+
+    val chooseToken: MutableLiveData<Token> = MutableLiveData<Token>()
+    val waiting: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val feeReady: MutableLiveData<BigInteger?> = MutableLiveData<BigInteger?>(null)
+    val errorInt: MutableLiveData<Int> = MutableLiveData<Int>()
+    val tokenEurRate: MutableLiveData<SimpleFraction?> = MutableLiveData()
+    private val _accountUpdated = MutableSharedFlow<Boolean>(replay = 1)
+    val accountUpdated = _accountUpdated.asSharedFlow()
+
+    val canSend: Boolean
+        get() = with(sendTokenData) {
+            receiverAddress != null
+                    && amount.signum() > 0
+                    && fee != null
+                    && hasEnoughFunds()
+        }
+
+    init {
+        viewModelScope.launch {
+            mainViewModel.activeAccount.collect {
+                it?.let(::updateAccount)
+            }
+        }
+
+        chooseToken.observeForever { token ->
+            sendTokenData.token = token
+            sendTokenData.maxAmount = if (token is CCDToken) null else token.balance
+
+            loadEurRate(token)
+        }
+
+        if (sendTokenData.fee == null) {
+            loadFee()
+        }
+    }
+
+    private fun updateAccount(account: Account) {
+        val token = CCDToken(
+            account = account,
+            eurPerMicroCcd = null,
+        )
+        sendTokenData = SendTokenData(
+            account = account,
+            token = token
+        )
+        chooseToken.value = token
+        _accountUpdated.tryEmit(true)
+    }
+
+    fun dispose() {
+        accountNonceRequest?.dispose()
+        submitTransaction?.dispose()
+        feeRequest?.dispose()
+    }
+
+    fun setMemoText(memoText: String?) {
+        sendTokenData.memoHex = memoText
+            ?.let(CborMapper.INSTANCE::writeValueAsBytes)
+            ?.bytesToHex()
+        loadFee()
+    }
+
+    fun getMemoText(): String? =
+        sendTokenData
+            .memoHex
+            ?.hexToBytes()
+            ?.let { CborMapper.INSTANCE.readValue(it, String::class.java) }
+
+    fun showMemoWarning(): Boolean {
+        return sendFundsPreferences.shouldShowMemoWarning()
+    }
+
+    fun dontShowMemoWarning() {
+        return sendFundsPreferences.disableShowMemoWarning()
+    }
+
+    fun onReceiverEntered(input: String) {
+        sendTokenData.receiverName = null
+
+        if (App.appCore.cryptoLibrary.checkAccountAddress(input)) {
+            sendTokenData.receiverAddress = input
+
+            // Fee should be updated for non-CCD transfers.
+            if (sendTokenData.token !is CCDToken) {
+                loadFee()
+            }
+        } else {
+            sendTokenData.receiverAddress = null
+        }
+    }
+
+    fun onReceiverNameFound(name: String) {
+        sendTokenData.receiverName = name
+    }
+
+    private var loadEurRateJob: Job? = null
+    private fun loadEurRate(
+        token: Token,
+    ) {
+        tokenEurRate.value = null
+
+        loadEurRateJob?.cancel()
+        loadEurRateJob = viewModelScope.launch {
+
+            val rate = when (token) {
+                is CCDToken ->
+                    tokenPriceRepository
+                        .getEurPerMicroCcd()
+                        .getOrNull()
+
+                is ContractToken -> null
+                is ProtocolLevelToken -> null
+            }
+
+            tokenEurRate.postValue(rate)
+        }
+    }
+
+    fun loadFee() = viewModelScope.launch {
+        sendTokenData.fee = null
+        feeReady.value = null
+
+        when (val token = sendTokenData.token) {
+            is CCDToken -> loadCcdTransferFee()
+            is ContractToken -> loadContractTokenTransferFee(token)
+            is ProtocolLevelToken -> loadProtocolLevelTokenTransferFee(token)
+        }
+    }
+
+    fun hasEnoughFunds(): Boolean {
+        val ccdAtDisposal = sendTokenData.account.balanceAtDisposal
+
+        return if (sendTokenData.token is CCDToken) {
+            ccdAtDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
+        } else {
+            ccdAtDisposal >= (sendTokenData.fee ?: BigInteger.ZERO)
+                    && sendTokenData.token.balance >= sendTokenData.amount
+        }
+    }
+
+    private fun loadCcdTransferFee() {
+        feeRequest?.dispose()
+        feeRequest = proxyRepository.getTransferCost(
+            type = ProxyRepository.SIMPLE_TRANSFER,
+            memoSize = sendTokenData.memoHex?.length?.div(2),
+            success = {
+                sendTokenData.maxEnergy = it.energy
+                sendTokenData.fee = it.cost
+                sendTokenData.maxAmount =
+                    sendTokenData.account.balanceAtDisposal - (sendTokenData.fee ?: BigInteger.ZERO)
+                waiting.postValue(false)
+                feeReady.postValue(sendTokenData.fee)
+            },
+            failure = {
+                waiting.postValue(false)
+                handleBackendError(it)
+            }
+        )
+    }
+
+    private suspend fun loadContractTokenTransferFee(
+        token: ContractToken,
+    ) {
+        // Contract token transfer fee can't be loaded until the receiver is known.
+        if (sendTokenData.receiverAddress == null) {
+            return
+        }
+
+        val parameter: String? = getContractTokenTransferParameterHex(token)
+
+        if (parameter == null) {
+            waiting.postValue(false)
+            errorInt.postValue(R.string.app_error_lib)
+            return
+        }
+
+        feeRequest?.dispose()
+        feeRequest = proxyRepository.getTransferCost(
+            amount = BigInteger.ZERO,
+            type = ProxyRepository.UPDATE,
+            sender = token.accountAddress,
+            contractIndex = token.contractIndex.toInt(),
+            contractSubindex = token.subIndex.toInt(),
+            receiveName = token.contractName + ".transfer",
+            parameter = parameter,
+            success = {
+                sendTokenData.maxEnergy = it.energy
+                sendTokenData.fee = it.cost
+                waiting.postValue(false)
+                feeReady.postValue(sendTokenData.fee)
+            },
+            failure = {
+                waiting.postValue(false)
+                handleBackendError(it)
+            }
+        )
+    }
+
+    private fun loadProtocolLevelTokenTransferFee(
+        token: ProtocolLevelToken,
+    ) {
+        // Protocol level token transfer fee can't be loaded until the receiver is known.
+        if (sendTokenData.receiverAddress == null) {
+            return
+        }
+
+        val payload = getProtocolLevelTokenTransferPayload(token)
+
+        feeRequest?.dispose()
+        feeRequest = proxyRepository.getTransferCost(
+            type = ProxyRepository.TOKEN_UPDATE,
+            sender = token.accountAddress,
+            tokenId = token.tokenId,
+            listOperationsSize = CborMapper.INSTANCE.writeValueAsBytes(payload.operations).size,
+            tokenOperationTypeCount = payload.operations
+                .groupBy(TokenOperation::getType)
+                .mapValues { it.value.size },
+            success = {
+                sendTokenData.maxEnergy = it.energy
+                sendTokenData.fee = it.cost
+                waiting.postValue(false)
+                feeReady.postValue(sendTokenData.fee)
+            },
+            failure = {
+                waiting.postValue(false)
+                handleBackendError(it)
+            }
+        )
+    }
+
+    private suspend fun getContractTokenTransferParameterHex(
+        token: ContractToken,
+    ): String? {
+
+        val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
+            tokenId = token.token,
+            amount = sendTokenData.amount.toString(),
+            from = token.accountAddress,
+            to = sendTokenData.receiverAddress!!,
+        )
+
+        return App.appCore.cryptoLibrary.serializeTokenTransferParameters(
+            serializeTokenTransferParametersInput
+        )?.parameter
+    }
+
+    private fun getProtocolLevelTokenTransferPayload(
+        token: ProtocolLevelToken,
+    ): TokenUpdate =
+        TokenUpdate.builder()
+            .tokenSymbol(token.tokenId)
+            .operation(
+                TransferTokenOperation.builder()
+                    .recipient(
+                        TaggedTokenHolderAccount(
+                            AccountAddress.from(sendTokenData.receiverAddress)
+                        )
+                    )
+                    .amount(
+                        TokenOperationAmount(
+                            UInt64.from(sendTokenData.amount.toString()),
+                            token.decimals,
+                        )
+                    )
+                    .memo(
+                        sendTokenData
+                            .memoHex
+                            ?.hexToBytes()
+                            ?.let(CborMemo::from)
+                    )
+                    .build()
+            )
+            .build()
+
+    private fun handleBackendError(throwable: Throwable) {
+        if (throwable is IOException && throwable.message == "Canceled") {
+            return
+        }
+
+        Log.e("Backend request failed", throwable)
+        errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
+    }
+}

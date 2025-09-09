@@ -20,6 +20,7 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.send.SendTokenActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity

@@ -38,7 +38,7 @@ import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.cis2.SendTokenActivity
+import com.concordium.wallet.ui.cis2.send.SendTokenActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.multiwallet.WalletsActivity

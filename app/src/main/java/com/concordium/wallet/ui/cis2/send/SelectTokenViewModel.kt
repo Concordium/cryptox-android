@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.cis2
+package com.concordium.wallet.ui.cis2.send
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

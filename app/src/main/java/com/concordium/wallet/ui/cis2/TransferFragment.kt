@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentTransferContainerBinding
 import com.concordium.wallet.ui.account.accountqrcode.ReceiveFragment
+import com.concordium.wallet.ui.cis2.send.SendTokenFragment
 import com.concordium.wallet.uicore.view.GradientTabsView
 
 class TransferFragment: Fragment() {

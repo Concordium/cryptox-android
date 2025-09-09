@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.cis2
+package com.concordium.wallet.ui.cis2.send
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.TransactionProcessingStatus
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
@@ -30,7 +31,7 @@ class SendTokenReceiptActivity : BaseActivity(
 ), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySendTokenReceiptBinding
     private lateinit var sliderButton: SliderButton
-    private val viewModel: SendTokenViewModel by viewModel {
+    private val viewModel: SendTokenReceiptViewModel by viewModel {
         parametersOf(
             intent.getSerializable(SEND_TOKEN_DATA, SendTokenData::class.java),
         )

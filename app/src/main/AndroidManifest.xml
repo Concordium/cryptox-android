@@ -290,7 +290,7 @@
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.cis2.SendTokenActivity"
+            android:parentActivityName=".ui.cis2.send.SendTokenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"
             android:windowSoftInputMode="adjustResize" />
@@ -360,12 +360,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />
         <activity
-            android:name=".ui.cis2.SendTokenActivity"
+            android:name=".ui.cis2.send.SendTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />
         <activity
-            android:name=".ui.cis2.SendTokenReceiptActivity"
+            android:name=".ui.cis2.send.SendTokenReceiptActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
@@ -583,7 +583,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />
         <activity
-            android:name=".ui.cis2.SelectTokenActivity"
+            android:name=".ui.cis2.send.SelectTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />

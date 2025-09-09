@@ -1,27 +1,33 @@
-package com.concordium.wallet.ui.cis2
+package com.concordium.wallet.ui.cis2.send
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.databinding.ActivitySendTokenBinding
+import com.concordium.wallet.databinding.FragmentSendTokenBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.MemoNoticeDialog
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -32,30 +38,29 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.math.BigInteger
 
-class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.cis_send_funds) {
-    private lateinit var binding: ActivitySendTokenBinding
+class SendTokenFragment : Fragment() {
+
+    private lateinit var binding: FragmentSendTokenBinding
     private val viewModel: SendTokenViewModel by viewModel {
         parametersOf(
-            SendTokenData(
-                account = intent.getSerializable(ACCOUNT, Account::class.java),
-                token = intent.getSerializable(TOKEN, Token::class.java),
-            ),
+            ViewModelProvider(requireActivity())[MainViewModel::class.java]
         )
     }
 
-    companion object {
-        const val ACCOUNT = "ACCOUNT"
-        const val TOKEN = "TOKEN"
-        const val PARENT_ACTIVITY = "PARENT_ACTIVITY"
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSendTokenBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySendTokenBinding.bind(findViewById(R.id.root_layout))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         initObservers()
         initFragmentListener()
-        initViews()
-        hideActionBarBack(isVisible = true)
     }
 
     override fun onResume() {
@@ -91,7 +96,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initializeSearchToken() {
         binding.content.setOnClickListener {
-            val intent = Intent(this, SelectTokenActivity::class.java).apply {
+            val intent = Intent(requireActivity(), SelectTokenActivity::class.java).apply {
                 putExtra(
                     SelectTokenActivity.EXTRA_ACCOUNT_ADDRESS,
                     viewModel.sendTokenData.account.address
@@ -124,13 +129,13 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                 if (viewModel.sendTokenData.amount.signum() == 0) {
                     binding.amount.setText("")
                 }
-                showKeyboard(this, binding.amount)
+                showKeyboard(requireActivity(), binding.amount)
             }
         }
         binding.amount.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    KeyboardUtil.hideKeyboard(this)
+                    KeyboardUtil.hideKeyboard(requireActivity())
                     if (enableSend())
                         send()
                     true
@@ -140,7 +145,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             }
         }
         binding.balanceSymbol.setOnClickListener {
-            showKeyboard(this, binding.amount)
+            showKeyboard(requireActivity(), binding.amount)
         }
     }
 
@@ -163,7 +168,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initializeAddressBook() {
         binding.recipientLayout.setOnClickListener {
-            val intent = Intent(this, RecipientListActivity::class.java)
+            val intent = Intent(requireActivity(), RecipientListActivity::class.java)
             intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.sendTokenData.account)
             intent.putExtra(
                 RecipientListActivity.EXTRA_SENDER_ACCOUNT,
@@ -177,8 +182,8 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         binding.addMemo.setOnClickListener {
             if (viewModel.showMemoWarning()) {
                 MemoNoticeDialog().showSingle(
-                    supportFragmentManager,
-                    MemoNoticeDialog.TAG
+                    parentFragmentManager,
+                    MemoNoticeDialog.Companion.TAG
                 )
             } else {
                 goToEnterMemo()
@@ -187,7 +192,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun goToEnterMemo() {
-        val intent = Intent(this, AddMemoActivity::class.java)
+        val intent = Intent(requireActivity(), AddMemoActivity::class.java)
         intent.putExtra(AddMemoActivity.EXTRA_MEMO, viewModel.getMemoText())
         getResultMemo.launch(intent)
     }
@@ -259,9 +264,13 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     @SuppressLint("SetTextI18n")
     private fun initObservers() {
-        viewModel.waiting.observe(this, ::showWaiting)
+        viewModel.accountUpdated.collectWhenStarted(viewLifecycleOwner) {
+            initViews()
+        }
 
-        viewModel.chooseToken.observe(this) { token ->
+        viewModel.waiting.observe(viewLifecycleOwner, ::showWaiting)
+
+        viewModel.chooseToken.observe(viewLifecycleOwner) { token ->
             setTokenIcon(token)
 
             val decimals = token.decimals
@@ -290,7 +299,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             binding.atDisposalTitle.isVisible = token is CCDToken
         }
 
-        viewModel.feeReady.observe(this) { fee ->
+        viewModel.feeReady.observe(viewLifecycleOwner) { fee ->
             // Null value means the fee is outdated.
             binding.fee.text =
                 if (fee != null)
@@ -307,11 +316,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             enableSend()
         }
 
-        viewModel.errorInt.observe(this) {
-            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        viewModel.errorInt.observe(viewLifecycleOwner) {
+            Toast.makeText(requireActivity(), getString(it), Toast.LENGTH_SHORT).show()
         }
 
-        viewModel.tokenEurRate.observe(this) {
+        viewModel.tokenEurRate.observe(viewLifecycleOwner) {
             setEstimatedAmountInEur()
         }
     }
@@ -359,7 +368,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             Glide.with(this)
                 .load(thumbnailUrl)
                 .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
-                .placeholder(ThemedCircularProgressDrawable(this))
+                .placeholder(ThemedCircularProgressDrawable(requireActivity()))
                 .error(R.drawable.mw24_ic_token_placeholder)
                 .fitCenter()
                 .into(binding.tokenIcon)
@@ -367,11 +376,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun initFragmentListener() {
-        supportFragmentManager.setFragmentResultListener(
-            MemoNoticeDialog.ACTION_REQUEST,
-            this
+        parentFragmentManager.setFragmentResultListener(
+            MemoNoticeDialog.Companion.ACTION_REQUEST,
+            viewLifecycleOwner
         ) { _, bundle ->
-            val showAgain = MemoNoticeDialog.getResult(bundle)
+            val showAgain = MemoNoticeDialog.Companion.getResult(bundle)
             if (!showAgain) {
                 viewModel.dontShowMemoWarning()
             }
@@ -385,17 +394,11 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     }
 
     private fun gotoReceipt() {
-        val intent = Intent(this, SendTokenReceiptActivity::class.java)
+        val intent = Intent(requireActivity(), SendTokenReceiptActivity::class.java)
         intent.putExtra(
             SendTokenReceiptActivity.SEND_TOKEN_DATA,
             viewModel.sendTokenData,
         )
-        intent.putExtra(
-            SendTokenReceiptActivity.PARENT_ACTIVITY,
-            checkNotNull(this.intent.getStringExtra(PARENT_ACTIVITY)) {
-                "Missing $PARENT_ACTIVITY extra"
-            }
-        )
-        startActivityForResultAndHistoryCheck(intent)
+        (activity as BaseActivity).startActivityForResultAndHistoryCheck(intent)
     }
 }
