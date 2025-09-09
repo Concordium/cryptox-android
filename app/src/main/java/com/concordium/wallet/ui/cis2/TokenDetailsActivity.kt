@@ -9,21 +9,14 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
-import com.concordium.wallet.ui.MainActivity
-import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
-import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.cis2.send.SendTokenActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
-import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
@@ -75,43 +68,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         setActionBarTitle(getString(R.string.cis_token_details_balance))
         hideActionBarBack(true)
 
-        binding.ccdActionButtons.onrampBtn.setOnClickListener {
-            onOnrampClicked()
-        }
-        binding.ccdActionButtons.sendFundsBtn.isEnabled =
-            viewModel.tokenDetailsData.account.let {
-                it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED
-            }
-        binding.ccdActionButtons.sendFundsBtn.setOnClickListener {
-            onSendClicked()
-        }
-        binding.ccdActionButtons.receiveBtn.setOnClickListener {
-            onReceiveClicked()
-        }
-
-        binding.ccdActionButtons.earnBtnNotice.isVisible =
-            viewModel.tokenDetailsData.account.let {
-                it != null && (it.isBakerSuspended || it.isBakerPrimedForSuspension || it.isDelegationBakerSuspended)
-            }
-        binding.ccdActionButtons.earnBtn.setOnClickListener {
-            onEarnClicked()
-        }
-
-        binding.ccdActionButtons.activityBtn.setOnClickListener {
-            onActivityClicked()
-        }
-
-        binding.cisTokenActionButtons.sendFundsBtn.isEnabled =
-            viewModel.tokenDetailsData.account.let {
-                it != null && !it.readOnly && it.transactionStatus == TransactionStatus.FINALIZED
-            }
-        binding.cisTokenActionButtons.sendFundsBtn.setOnClickListener {
-            onSendClicked()
-        }
-        binding.cisTokenActionButtons.receiveBtn.setOnClickListener {
-            onReceiveClicked()
-        }
-
         setBalances(token)
 
         TokenDetailsView(
@@ -159,27 +115,15 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             CurrencyUtil.formatGTU(balance, token) + " ${token.symbol}"
 
         viewModel.tokenDetailsData.account?.readOnly?.let {
-            binding.ccdActionButtons.sendFundsBtn.isEnabled = !it
-            binding.cisTokenActionButtons.sendFundsBtn.isEnabled = !it
-            binding.ccdActionButtons.earnBtn.isEnabled = !it
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
-        val isTokenActionButtonEnabled = if (token is ProtocolLevelToken) {
-            token.isTransferable
-        } else
             true
         binding.apply {
-            ccdActionButtons.onrampBtn.isEnabled = true
-            ccdActionButtons.receiveBtn.isEnabled = true
-            cisTokenActionButtons.receiveBtn.isEnabled = isTokenActionButtonEnabled
-            cisTokenActionButtons.sendFundsBtn.isEnabled = isTokenActionButtonEnabled
             walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
             walletInfoCard.disposalBlock.visibility = View.VISIBLE
         }
 
         if (token is CCDToken) {
-            binding.ccdActionButtons.root.visibility = View.VISIBLE
-            binding.cisTokenActionButtons.root.visibility = View.GONE
             binding.walletInfoCard.accountsOverviewTotalDetailsBakerId.text =
                 viewModel.tokenDetailsData.account?.baker?.bakerId?.toString()
 
@@ -238,8 +182,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         } else {
             binding.apply {
                 walletInfoCard.disposalBlock.isVisible = false
-                ccdActionButtons.root.visibility = View.GONE
-                cisTokenActionButtons.root.visibility = View.VISIBLE
             }
         }
     }
@@ -276,60 +218,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 )
                 finish()
             }
-        }
-    }
-
-    private fun onOnrampClicked() {
-        val intent = Intent(this, CcdOnrampSitesActivity::class.java)
-        intent.putExtras(CcdOnrampSitesActivity.getBundle(viewModel.tokenDetailsData.account?.address))
-        startActivity(intent)
-    }
-
-    private fun onSendClicked() {
-        val intent = Intent(this, SendTokenActivity::class.java)
-        intent.putExtra(
-            SendTokenActivity.ACCOUNT,
-            viewModel.tokenDetailsData.account,
-        )
-        intent.putExtra(
-            SendTokenActivity.TOKEN,
-            viewModel.tokenDetailsData.selectedToken,
-        )
-        intent.putExtra(
-            SendTokenActivity.PARENT_ACTIVITY,
-            MainActivity::class.java.canonicalName,
-        )
-        startActivityForResultAndHistoryCheck(intent)
-    }
-
-    private fun onReceiveClicked() {
-        val intent = Intent(this, AccountQRCodeActivity::class.java)
-        intent.putExtra(
-            AccountQRCodeActivity.EXTRA_ACCOUNT,
-            viewModel.tokenDetailsData.account
-        )
-        startActivity(intent)
-    }
-
-    private fun onEarnClicked() {
-        viewModel.tokenDetailsData.account?.let {
-            gotoEarn(
-                this,
-                it,
-                viewModel.tokenDetailsData.hasPendingDelegationTransactions,
-                viewModel.tokenDetailsData.hasPendingValidationTransactions
-            )
-        }
-    }
-
-    private fun onActivityClicked() {
-        viewModel.tokenDetailsData.selectedToken?.let {
-            val intent = Intent(this, AccountDetailsTransfersActivity::class.java)
-            intent.putExtra(
-                AccountDetailsTransfersActivity.EXTRA_ACCOUNT,
-                viewModel.tokenDetailsData.account
-            )
-            startActivity(intent)
         }
     }
 }

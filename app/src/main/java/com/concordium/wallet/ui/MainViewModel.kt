@@ -26,7 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Transfer,
         Buy,
         Activity,
-        More,
+        Earn,
         ;
     }
 

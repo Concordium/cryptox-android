@@ -9,6 +9,7 @@ import com.concordium.wallet.data.backend.price.tokenPriceModule
 import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.ui.account.accountdetails.transfers.transfersModule
 import com.concordium.wallet.ui.account.accountqrcode.receiveModule
+import com.concordium.wallet.ui.account.earn.earnModule
 import com.concordium.wallet.ui.cis2.send.sendTokenModule
 import com.concordium.wallet.ui.cis2.tokensListModule
 import com.concordium.wallet.util.Log
@@ -55,7 +56,8 @@ class App : Application() {
                 tokensListModule,
                 sendTokenModule,
                 transfersModule,
-                receiveModule
+                receiveModule,
+                earnModule
             )
         }
 

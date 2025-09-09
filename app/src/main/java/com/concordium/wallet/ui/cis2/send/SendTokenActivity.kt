@@ -20,6 +20,7 @@ import com.concordium.wallet.databinding.ActivitySendTokenBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.MemoNoticeDialog
+import com.concordium.wallet.ui.cis2.TokenIconView
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.KeyboardUtil

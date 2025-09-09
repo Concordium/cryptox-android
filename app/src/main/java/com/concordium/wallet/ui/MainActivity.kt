@@ -15,6 +15,7 @@ import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
+import com.concordium.wallet.ui.account.earn.EarnFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.TransferFragment
@@ -23,7 +24,6 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.more.import.ImportActivity
-import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesFragment
@@ -249,8 +249,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             R.id.menuitem_accounts -> MainViewModel.State.Home
             R.id.menuitem_transfer -> MainViewModel.State.Transfer
             R.id.menuitem_buy -> MainViewModel.State.Buy
+            R.id.menuitem_earn -> MainViewModel.State.Earn
             R.id.menuitem_activity -> MainViewModel.State.Activity
-            R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
     }
@@ -263,7 +263,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             MainViewModel.State.Transfer -> TransferFragment()
             MainViewModel.State.Buy -> CcdOnrampSitesFragment()
             MainViewModel.State.Activity -> AccountDetailsTransfersFragment()
-            MainViewModel.State.More -> MoreOverviewFragment()
+            MainViewModel.State.Earn -> EarnFragment()
         }
 
         if (existingFragment == null) {

@@ -21,7 +21,7 @@ import com.concordium.wallet.util.UnitConvertUtil
 
 class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn_title) {
     private lateinit var binding: ActivityEarnInfoBinding
-    private lateinit var viewModel: EarnViewModel
+    private lateinit var viewModel: EarnInfoViewModel
     private lateinit var account: Account
 
     companion object {
@@ -76,7 +76,7 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[EarnViewModel::class.java]
+        )[EarnInfoViewModel::class.java]
 
         viewModel
     }
