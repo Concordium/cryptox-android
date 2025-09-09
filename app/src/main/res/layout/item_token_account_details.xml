@@ -87,7 +87,8 @@
             android:backgroundTint="@color/mw24_attention_red"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toStartOf="@id/arrow"
-            app:layout_constraintStart_toEndOf="@id/title"
+            app:layout_constraintStart_toEndOf="@id/plt_in_allow_list_icon"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintTop_toTopOf="@id/title" />
 
         <ImageView
