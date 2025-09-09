@@ -8,5 +8,4 @@ class TokenAccountState(
 class TokenAccountStateList(
     val allowList: Boolean? = null,
     val denyList: Boolean? = null,
-    val paused: Boolean = false,
 )
