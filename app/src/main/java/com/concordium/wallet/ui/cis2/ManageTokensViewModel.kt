@@ -13,7 +13,6 @@ import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toContractToken
-import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.ContractTokenEntity
 import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
@@ -110,7 +109,7 @@ class ManageTokensViewModel(
 
     private fun lookForCIS2Tokens(
         accountAddress: String,
-        from: String? = null
+        from: String? = null,
     ) = viewModelScope.launch(Dispatchers.IO) {
         val existingContractTokens =
             contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
@@ -151,49 +150,43 @@ class ManageTokensViewModel(
     }
 
     private fun lookForPLTTokens(accountAddress: String) = viewModelScope.launch(Dispatchers.IO) {
-        val existingPLTToken = pltRepository.find(
-            accountAddress = accountAddress,
-            tokenId = tokenData.contractIndex
-        )?.toProtocolLevelToken()
+        val existingToken =
+            pltRepository
+                .find(
+                    accountAddress = accountAddress,
+                    tokenId = tokenData.contractIndex
+                )
+                ?.toProtocolLevelToken()
+                ?.takeUnless(ProtocolLevelToken::isHidden)
 
-        val existingPLTTokenIds = everFoundExactTokens
+        val selectedTokenIds = everFoundExactTokens
             .filterIsInstance<ProtocolLevelToken>()
+            .filter(ProtocolLevelToken::isSelected)
             .mapTo(mutableSetOf()) { it.tokenId.lowercase() }
             .apply {
-                existingPLTToken?.let { add(it.tokenId.lowercase()) }
+                existingToken?.let { add(it.tokenId.lowercase()) }
             }
 
-        existingPLTToken?.let {
-            if (it.isHidden) {
-                tokens.add(it.copy(isSelected = false))
-            } else {
-                tokens.add(it)
-            }
-            contractAddressLoading.postValue(false)
-            lookForTokens.postValue(TOKENS_OK)
-        } ?: run {
-            tokensInteractor.getPLTTokenById(tokenData.contractIndex)
-                .onSuccess {
-                    tokens.add(
-                        it.toProtocolLevelToken(
-                            accountAddress = accountAddress,
-                            isSelected = it.tokenId.lowercase() in existingPLTTokenIds
-                        )
+        tokensInteractor
+            .loadProtocolLevelTokenWithMetadata(
+                accountAddress = accountAddress,
+                tokenId = tokenData.contractIndex,
+            )
+            .onSuccess { loadedToken ->
+                tokens.add(
+                    loadedToken.copy(
+                        isSelected = loadedToken.tokenId.lowercase() in selectedTokenIds,
                     )
-                    contractAddressLoading.postValue(false)
-                    if (tokens.isEmpty()) {
-                        lookForTokens.postValue(TOKENS_EMPTY)
-                    } else {
-                        lookForTokens.postValue(TOKENS_OK)
-                    }
-                }
-                .onFailure {
-                    Log.e("Failed to load PLT token by ID: ${tokenData.contractIndex}", it)
-                    handleBackendError(it)
-                    contractAddressLoading.postValue(false)
-                    lookForTokens.postValue(TOKENS_EMPTY)
-                }
-        }
+                )
+                contractAddressLoading.postValue(false)
+                lookForTokens.postValue(TOKENS_OK)
+            }
+            .onFailure {
+                Log.e("Failed to load PLT token by ID: ${tokenData.contractIndex}", it)
+                handleBackendError(it)
+                contractAddressLoading.postValue(false)
+                lookForTokens.postValue(TOKENS_EMPTY)
+            }
     }
 
     fun lookForExactToken(
@@ -310,19 +303,7 @@ class ManageTokensViewModel(
                     }
                 } ?: run {
                     pltRepository.insert(
-                        ProtocolLevelTokenEntity(
-                            tokenId = selectedToken.tokenId,
-                            name = selectedToken.name,
-                            decimals = selectedToken.decimals,
-                            accountAddress = accountAddress,
-                            metadata = null,
-                            isNewlyReceived = false,
-                            addedAt = System.currentTimeMillis(),
-                            isHidden = selectedToken.isHidden,
-                            isInDenyList = selectedToken.isInDenyList,
-                            isInAllowList = selectedToken.isInAllowList,
-                            isPaused = selectedToken.isPaused
-                        )
+                        ProtocolLevelTokenEntity(selectedToken)
                     )
                 }
             }
@@ -341,7 +322,7 @@ class ManageTokensViewModel(
 
     private suspend fun updateCIS2Tokens(
         accountAddress: String,
-        loadedTokens: List<Token>
+        loadedTokens: List<Token>,
     ) {
         loadedTokens
             .filter(Token::isSelected)

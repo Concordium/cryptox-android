@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.ProtocolLevelTokenMetadata
 import com.concordium.wallet.data.room.typeconverter.ProtocolLevelTokenTypeConverters
 import java.io.Serializable
@@ -38,4 +39,37 @@ data class ProtocolLevelTokenEntity(
     val isInDenyList: Boolean? = null,
     @ColumnInfo(name = "is_paused", defaultValue = "0")
     val isPaused: Boolean = false,
-) : Serializable
+) : Serializable {
+
+    constructor(token: ProtocolLevelToken) : this(
+        tokenId = token.tokenId,
+        name = token.name,
+        decimals = token.decimals,
+        accountAddress = token.accountAddress,
+        balance = token.balance,
+        metadata = token.metadata,
+        addedAt = token.addedAt,
+        isHidden = token.isHidden,
+        isNewlyReceived = token.isNewlyReceived,
+        isInAllowList = token.isInAllowList,
+        isInDenyList = token.isInDenyList,
+        isPaused = token.isPaused,
+    )
+
+    fun toProtocolLevelToken(
+        isSelected: Boolean = true,
+    ) = ProtocolLevelToken(
+        balance = balance,
+        name = name,
+        decimals = decimals,
+        accountAddress = accountAddress ?: "",
+        isNewlyReceived = isNewlyReceived,
+        addedAt = addedAt,
+        isSelected = isSelected,
+        tokenId = tokenId,
+        isHidden = isHidden,
+        isInAllowList = isInAllowList,
+        isInDenyList = isInDenyList,
+        isPaused = isPaused,
+    )
+}

@@ -1,6 +1,5 @@
 package com.concordium.wallet.data.model
 
-import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import java.math.BigInteger
 
 data class ProtocolLevelToken(
@@ -16,7 +15,7 @@ data class ProtocolLevelToken(
     val isInAllowList: Boolean? = null,
     val isInDenyList: Boolean? = null,
     val isPaused: Boolean = false,
-    var metadata: ProtocolLevelTokenMetadata? = null,
+    val metadata: ProtocolLevelTokenMetadata? = null,
 ) : Token, WithThumbnail {
 
     override val symbol: String
@@ -32,21 +31,3 @@ data class ProtocolLevelToken(
     val isTransferable: Boolean
         get() = isInDenyList != true && isInAllowList != false && !isPaused
 }
-
-fun ProtocolLevelTokenEntity.toProtocolLevelToken(
-    isSelected: Boolean = true,
-) = ProtocolLevelToken(
-    balance = balance,
-    name = name,
-    decimals = decimals,
-    accountAddress = accountAddress ?: "",
-    isNewlyReceived = isNewlyReceived,
-    addedAt = addedAt,
-    isSelected = isSelected,
-    tokenId = tokenId,
-    isHidden = isHidden,
-    isInAllowList = isInAllowList,
-    isInDenyList = isInDenyList,
-    isPaused = isPaused,
-)
-

@@ -64,10 +64,10 @@ class TokenDetailsView(
                 null
 
             is ContractToken ->
-                prettyPrintingGson.toJson(token.metadata)
+                token.metadata?.let(prettyPrintingGson::toJson)
 
             is ProtocolLevelToken ->
-                prettyPrintingGson.toJson(token.metadata)
+                token.metadata?.let(prettyPrintingGson::toJson)
         }
 
         if (rawMetadata != null) {

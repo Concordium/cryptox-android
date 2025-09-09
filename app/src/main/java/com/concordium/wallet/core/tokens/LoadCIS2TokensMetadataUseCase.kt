@@ -1,20 +1,22 @@
 package com.concordium.wallet.core.tokens
 
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataHashException
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
-import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
+import com.concordium.wallet.data.model.ContractTokenMetadata
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
 
 class LoadCIS2TokensMetadataUseCase {
 
     suspend operator fun invoke(
         proxyRepository: ProxyRepository,
-        tokensToUpdate: List<ContractToken>
+        tokensToUpdate: List<ContractToken>,
     ) = coroutineScope {
         val tokensByContract: Map<String, List<ContractToken>> = tokensToUpdate
             .groupBy(ContractToken::contractIndex)
@@ -43,22 +45,27 @@ class LoadCIS2TokensMetadataUseCase {
                             .map { metadataItem ->
                                 async(Dispatchers.IO) {
                                     try {
-                                        val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
-                                            url = metadataItem.metadataURL,
-                                            checksum = metadataItem.metadataChecksum,
-                                        ).getOrThrow()
+                                        val verifiedMetadata: ContractTokenMetadata =
+                                            TokenMetadataBackendInstance
+                                                .getContractTokenMetadata(
+                                                    url = metadataItem.metadataURL,
+                                                    sha256HashHex = metadataItem.metadataChecksum,
+                                                )
+                                                .getOrThrow()
                                         val correspondingToken = contractTokens.first {
                                             it.token == metadataItem.tokenId
                                         }
-                                        correspondingToken.metadata = verifiedMetadata
+                                        correspondingToken.metadata =
+                                            verifiedMetadata
                                         correspondingToken.contractName =
                                             ciS2TokensMetadata.contractName
-                                    } catch (e: IncorrectChecksumException) {
+                                    } catch (e: TokenMetadataHashException) {
                                         Log.w(
-                                            "Metadata checksum incorrect:\n" +
+                                            "Metadata hash mismatch:\n" +
                                                     "metadataItem=$metadataItem"
                                         )
                                     } catch (e: Throwable) {
+                                        ensureActive()
                                         Log.e(
                                             "Failed to load metadata:\n" +
                                                     "metadataItem=$metadataItem" +
@@ -68,6 +75,7 @@ class LoadCIS2TokensMetadataUseCase {
                                 }
                             }.awaitAll()
                     } catch (e: Throwable) {
+                        ensureActive()
                         Log.e(
                             "Failed to load metadata chunk:\n" +
                                     "contract=$contractIndex:$contractSubIndex,\n" +

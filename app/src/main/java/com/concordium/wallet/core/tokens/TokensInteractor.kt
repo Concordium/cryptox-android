@@ -5,15 +5,16 @@ import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.ProtocolLevelTokenMetadata
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toContractToken
-import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.ContractTokenEntity
 import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
+import com.concordium.wallet.util.Log
 
 class TokensInteractor(
     private val proxyRepository: ProxyRepository,
@@ -100,8 +101,35 @@ class TokensInteractor(
         )
     }
 
-    suspend fun getPLTTokenById(tokenId: String): Result<PLTInfo> = runCatching {
-        proxyRepository.getPLTTokenById(tokenId)
+    suspend fun loadProtocolLevelTokenWithMetadata(
+        accountAddress: String,
+        tokenId: String,
+    ): Result<ProtocolLevelToken> = runCatching {
+
+        val tokenInfo = proxyRepository.getPLTTokenById(tokenId)
+        val metadataInfo = tokenInfo.tokenState.moduleState.metadata
+
+        val verifiedMetadata: ProtocolLevelTokenMetadata? =
+            if (metadataInfo != null)
+                TokenMetadataBackendInstance
+                    .getProtocolLevelTokenMetadata(
+                        url = metadataInfo.url,
+                        sha256HashHex = metadataInfo.checksumSha256,
+                    )
+                    .onFailure {
+                        Log.w(
+                            "Failed loading metadata for token ${tokenInfo.tokenId}: " +
+                                    it.message
+                        )
+                    }
+                    .getOrNull()
+            else
+                null
+
+        return@runCatching tokenInfo.toProtocolLevelToken(
+            accountAddress = accountAddress,
+            metadata = verifiedMetadata,
+        )
     }
 
     suspend fun deleteToken(

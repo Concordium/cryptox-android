@@ -1,7 +1,5 @@
 package com.concordium.wallet.data
 
-import com.concordium.wallet.data.model.PLTInfoWithAccountState
-import com.concordium.wallet.data.model.toProtocolLevelTokenEntity
 import com.concordium.wallet.data.room.ProtocolLevelTokenDao
 import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 
@@ -37,40 +35,7 @@ class PLTRepository(private val protocolLevelTokenDao: ProtocolLevelTokenDao) {
         protocolLevelTokenDao.unmarkNewlyReceived(tokenId)
     }
 
-    suspend fun addForAccount(accountAddress: String, tokens: List<PLTInfoWithAccountState>) {
-        if (tokens.isNotEmpty()) {
-            tokens.forEach { tokenWithState ->
-                val existsToken = find(
-                    accountAddress = accountAddress,
-                    tokenId = tokenWithState.token.tokenId
-                )
-                if (existsToken == null) {
-                    val protocolLevelToken = tokenWithState.toProtocolLevelTokenEntity(
-                        accountAddress = accountAddress,
-                        addedAt = System.currentTimeMillis(),
-                        isHidden = false,
-                        isNewlyReceived = true
-                    )
-                    insert(protocolLevelToken)
-                } else {
-                    if (existsToken.balance != tokenWithState.tokenAccountState.balance.value ||
-                        existsToken.isInDenyList != tokenWithState.tokenAccountState.state.denyList ||
-                        existsToken.isInAllowList != tokenWithState.tokenAccountState.state.allowList ||
-                        existsToken.isPaused != tokenWithState.token.tokenState.moduleState.paused
-                    ) {
-                        // Update the existing token if it has changed
-                        val updatedToken = tokenWithState.toProtocolLevelTokenEntity(
-                            accountAddress = accountAddress,
-                            addedAt = existsToken.addedAt,
-                            isHidden = existsToken.isHidden,
-                            isNewlyReceived = existsToken.isNewlyReceived
-                        ).apply {
-                            id = existsToken.id // Keep the same ID for the existing token
-                        }
-                        protocolLevelTokenDao.update(updatedToken)
-                    }
-                }
-            }
-        }
+    suspend fun updateToken(updatedEntity: ProtocolLevelTokenEntity) {
+        protocolLevelTokenDao.update(updatedEntity)
     }
 }
