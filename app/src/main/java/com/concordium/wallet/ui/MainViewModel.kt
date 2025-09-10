@@ -132,6 +132,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _showReviewDialog.postValue(Event(true))
     }
 
+    fun onEarnClicked() = setState(State.Earn)
+
+    fun onOnrampClicked() = setState(State.Buy)
+
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {
             override fun onError(identity: Identity, account: Account?) {

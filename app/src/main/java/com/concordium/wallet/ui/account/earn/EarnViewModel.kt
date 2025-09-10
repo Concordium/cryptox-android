@@ -33,17 +33,14 @@ class EarnViewModel(
     }
 
     private fun checkBakingDelegationStatus(account: Account) = viewModelScope.launch {
+        _uiState.update { it.copy(loading = true) }
         val transferList = transferRepository.getAllByAccountId(account.id)
 
         for (transfer in transferList) {
             if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
-                _uiState.update {
-                    it.copy(hasPendingDelegationTransactions = true)
-                }
+                _uiState.update { it.copy(hasPendingDelegationTransactions = true) }
             if (transfer.transactionType == TransactionType.LOCAL_BAKER)
-                _uiState.update {
-                    it.copy(hasPendingBakingTransactions = true)
-                }
+                _uiState.update { it.copy(hasPendingBakingTransactions = true) }
         }
         _uiState.update { it.copy(account = account, loading = false) }
     }
@@ -52,6 +49,6 @@ class EarnViewModel(
         val account: Account? = null,
         val hasPendingBakingTransactions: Boolean = false,
         val hasPendingDelegationTransactions: Boolean = false,
-        val loading: Boolean = true
+        val loading: Boolean = false
     )
 }

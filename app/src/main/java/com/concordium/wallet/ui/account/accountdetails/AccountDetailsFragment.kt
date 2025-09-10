@@ -23,7 +23,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
-import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -32,20 +31,16 @@ import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
-import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.cis2.send.SendTokenActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
-import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.util.ImageUtil
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -211,7 +206,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.suspensionNotice.collectWhenStarted(viewLifecycleOwner) { notice ->
-            binding.earnBtnNotice.isVisible = notice != null && notice.isCurrentAccountAffected
             binding.suspensionNotice.isVisible = notice != null
 
             if (notice == null) {
@@ -330,7 +324,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setFinalizedMode(account: Account) {
-        setActiveButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner() &&
                     account.balance == BigInteger.ZERO
@@ -338,18 +331,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
-            onrampBtn.isEnabled = true
-            sendFundsBtn.isEnabled = !account.readOnly
-            receiveBtn.isEnabled = true
-            earnBtn.isEnabled = !account.readOnly
-            activityBtn.isEnabled = true
         }
         setupOnrampBanner(active = true)
         setupEarnBanner(account)
     }
 
     private fun showStateOnboarding() {
-        setPendingButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
             tokensFragmentContainer.visibility = View.GONE
@@ -360,7 +347,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showStateDefault(account: Account) {
-        setActiveButtons()
         setupEarnBanner(account)
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner() &&
@@ -383,7 +369,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setPendingMode() {
-        setPendingButtons()
         binding.apply {
             onrampBanner.isVisible = viewModelAccountDetails.isShowOnrampBanner()
             includeEarnBanner.earnBanner.isVisible = false
@@ -392,44 +377,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             onboardingLayout.visibility = View.GONE
         }
         setupOnrampBanner(active = false)
-    }
-
-    private fun setPendingButtons() {
-        binding.apply {
-            listOf(
-                onrampBtn,
-                sendFundsBtn,
-                receiveBtn,
-                earnBtn,
-                activityBtn
-            ).forEach {
-                it.setOnClickListener {
-                    (activity as BaseActivity).showUnlockFeatureDialog()
-                }
-            }
-        }
-    }
-
-    private fun setActiveButtons() {
-        binding.onrampBtn.setOnClickListener {
-            onOnrampClicked()
-        }
-
-        binding.sendFundsBtn.setOnClickListener {
-            onSendFundsClicked()
-        }
-
-        binding.receiveBtn.setOnClickListener {
-            onReceiveClicked()
-        }
-
-        binding.earnBtn.setOnClickListener {
-            viewModelAccountDetails.onEarnClicked()
-        }
-
-        binding.activityBtn.setOnClickListener {
-            onActivityClicked()
-        }
     }
 
     private fun updateWhenResumed() {
@@ -459,7 +406,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         var handledContainerHeight = -1
         binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
             val containerHeight = binding.scrollView.measuredHeight
-            val buttonsHeight = binding.buttonsBlock.measuredHeight
             val fileWalletDisclaimerHeight =
                 binding.fileWalletMigrationDisclaimerLayout.measuredHeight
             val onRampHeight = if (viewModelAccountDetails.isShowOnrampBanner() && isZeroBalance)
@@ -485,7 +431,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             if (handledContainerHeight != containerHeight) {
                 handledContainerHeight = containerHeight
 
-                val scrollContainerHeight = containerHeight - buttonsHeight - buttonsMargin -
+                val scrollContainerHeight = containerHeight - buttonsMargin -
                         fileWalletDisclaimerHeight - fileWalletDisclaimerMargin -
                         onRampHeight - onRampMargin - earnBannerHeight - earnBannerMargin
 
@@ -562,53 +508,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    private fun onOnrampClicked() {
-        val intent = Intent(requireActivity(), CcdOnrampSitesActivity::class.java)
-        intent.putExtras(
-            CcdOnrampSitesActivity.getBundle(
-                accountAddress = viewModelAccountDetails.account.address,
-            )
-        )
-        startActivity(intent)
-    }
-
-    private fun onSendFundsClicked() {
-        val intent = Intent(requireActivity(), SendTokenActivity::class.java)
-        intent.putExtra(
-            SendTokenActivity.ACCOUNT,
-            viewModelAccountDetails.account
-        )
-        intent.putExtra(
-            SendTokenActivity.TOKEN,
-            CCDToken(
-                account = viewModelAccountDetails.account,
-                eurPerMicroCcd = null,
-            )
-        )
-        intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, this::class.java.canonicalName)
-
-        (requireActivity() as BaseActivity).startActivityForResultAndHistoryCheck(intent)
-    }
-
-    private fun onReceiveClicked() {
-        val intent = Intent(requireActivity(), AccountQRCodeActivity::class.java)
-        intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        startActivity(intent)
-    }
-
-    private fun onActivityClicked() {
-        val intent = Intent(requireActivity(), AccountDetailsTransfersActivity::class.java)
-        intent.putExtra(
-            AccountDetailsTransfersActivity.EXTRA_ACCOUNT,
-            viewModelAccountDetails.account
-        )
-        startActivity(intent)
-    }
-
     private fun setupOnrampBanner(active: Boolean) {
         binding.onrampBanner.setOnClickListener {
             if (active)
-                onOnrampClicked()
+                mainViewModel.onOnrampClicked()
             else
                 (requireActivity() as BaseActivity).showUnlockFeatureDialog()
         }
@@ -629,7 +532,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         binding.includeEarnBanner.earnBanner.isVisible =
             viewModelAccountDetails.isEarnBannerVisible()
         binding.includeEarnBanner.earnBanner.setOnClickListener {
-            viewModelAccountDetails.onEarnClicked()
+            mainViewModel.onEarnClicked()
         }
         binding.includeEarnBanner.closeImageView.setOnClickListener {
             closeEarnBanner()

@@ -41,7 +41,7 @@ class EarnFragment : Fragment(), NewEarnDelegate by NewEranDelegateImpl() {
                     account = it,
                     hasPendingDelegationTransactions = state.hasPendingDelegationTransactions,
                     hasPendingBakingTransactions = state.hasPendingBakingTransactions,
-                    launchFragment = { fragment -> replaceFragment(fragment) }
+                    launchFragment = ::replaceFragment
                 )
             }
             binding.loading.progressBar.isVisible = state.loading

@@ -110,170 +110,170 @@
                 tools:text="203.00 CCD at disposal"
                 tools:visibility="visible" />
 
-            <LinearLayout
-                android:id="@+id/buttonsBlock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/at_disposal_label">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/buttonsBlock"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="40dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/at_disposal_label">-->
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    tools:ignore="UseCompoundDrawables">-->
 
-                    <ImageView
-                        android:id="@+id/onramp_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_buy"
-                        android:tooltipText="@string/account_details_buy"
-                        app:srcCompat="@drawable/mw24_ic_buy_btn" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/onramp_btn"-->
+<!--                        style="@style/MW24_Action_Button"-->
+<!--                        android:contentDescription="@string/account_details_buy"-->
+<!--                        android:tooltipText="@string/account_details_buy"-->
+<!--                        app:srcCompat="@drawable/mw24_ic_buy_btn" />-->
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:gravity="center_horizontal"
-                        android:text="@string/account_details_buy"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
+<!--                    <TextView-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="2dp"-->
+<!--                        android:gravity="center_horizontal"-->
+<!--                        android:text="@string/account_details_buy"-->
+<!--                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"-->
+<!--                        android:textColor="@color/mw24_blue_2" />-->
 
-                </LinearLayout>
+<!--                </LinearLayout>-->
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+<!--                <View-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1" />-->
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    tools:ignore="UseCompoundDrawables">-->
 
-                    <ImageView
-                        android:id="@+id/send_funds_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_send"
-                        android:tooltipText="@string/account_details_send"
-                        app:srcCompat="@drawable/mw24_ic_send_btn" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/send_funds_btn"-->
+<!--                        style="@style/MW24_Action_Button"-->
+<!--                        android:contentDescription="@string/account_details_send"-->
+<!--                        android:tooltipText="@string/account_details_send"-->
+<!--                        app:srcCompat="@drawable/mw24_ic_send_btn" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_send"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
-                </LinearLayout>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:layout_marginTop="2dp"-->
+<!--                        android:text="@string/account_details_send"-->
+<!--                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"-->
+<!--                        android:textColor="@color/mw24_blue_2" />-->
+<!--                </LinearLayout>-->
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+<!--                <View-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1" />-->
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    tools:ignore="UseCompoundDrawables">-->
 
-                    <ImageView
-                        android:id="@+id/receive_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_address"
-                        android:tooltipText="@string/account_details_address"
-                        app:srcCompat="@drawable/mw24_ic_receive_btn" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/receive_btn"-->
+<!--                        style="@style/MW24_Action_Button"-->
+<!--                        android:contentDescription="@string/account_details_address"-->
+<!--                        android:tooltipText="@string/account_details_address"-->
+<!--                        app:srcCompat="@drawable/mw24_ic_receive_btn" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_receive"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:layout_marginTop="2dp"-->
+<!--                        android:text="@string/account_details_receive"-->
+<!--                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"-->
+<!--                        android:textColor="@color/mw24_blue_2" />-->
 
-                </LinearLayout>
+<!--                </LinearLayout>-->
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+<!--                <View-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1" />-->
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    tools:ignore="UseCompoundDrawables">-->
 
-                    <ImageView
-                        android:id="@+id/earn_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_earn_rewards"
-                        android:tooltipText="@string/account_details_earn_rewards"
-                        app:srcCompat="@drawable/mw24_ic_earn_btn" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/earn_btn"-->
+<!--                        style="@style/MW24_Action_Button"-->
+<!--                        android:contentDescription="@string/account_details_earn_rewards"-->
+<!--                        android:tooltipText="@string/account_details_earn_rewards"-->
+<!--                        app:srcCompat="@drawable/mw24_ic_earn_btn" />-->
 
-                    <View
-                        android:id="@+id/earn_btn_notice"
-                        android:layout_width="9dp"
-                        android:layout_height="9dp"
-                        android:layout_alignTop="@id/earn_btn"
-                        android:layout_alignEnd="@id/earn_btn"
-                        android:layout_gravity="top|end"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/simple_circle_bg"
-                        android:backgroundTint="@color/mw24_attention_red"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
+<!--                    <View-->
+<!--                        android:id="@+id/earn_btn_notice"-->
+<!--                        android:layout_width="9dp"-->
+<!--                        android:layout_height="9dp"-->
+<!--                        android:layout_alignTop="@id/earn_btn"-->
+<!--                        android:layout_alignEnd="@id/earn_btn"-->
+<!--                        android:layout_gravity="top|end"-->
+<!--                        android:layout_margin="3dp"-->
+<!--                        android:background="@drawable/simple_circle_bg"-->
+<!--                        android:backgroundTint="@color/mw24_attention_red"-->
+<!--                        android:visibility="gone"-->
+<!--                        tools:visibility="visible" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/earn_btn"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_earn"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_below="@id/earn_btn"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:layout_marginTop="2dp"-->
+<!--                        android:text="@string/account_details_earn"-->
+<!--                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"-->
+<!--                        android:textColor="@color/mw24_blue_2" />-->
 
-                </RelativeLayout>
+<!--                </RelativeLayout>-->
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+<!--                <View-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1" />-->
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    tools:ignore="UseCompoundDrawables">-->
 
-                    <ImageView
-                        android:id="@+id/activity_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_activity"
-                        android:tooltipText="@string/account_details_activity"
-                        app:srcCompat="@drawable/mw24_ic_activity_btn" />
+<!--                    <ImageView-->
+<!--                        android:id="@+id/activity_btn"-->
+<!--                        style="@style/MW24_Action_Button"-->
+<!--                        android:contentDescription="@string/account_details_activity"-->
+<!--                        android:tooltipText="@string/account_details_activity"-->
+<!--                        app:srcCompat="@drawable/mw24_ic_activity_btn" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_activity"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:layout_marginTop="2dp"-->
+<!--                        android:text="@string/account_details_activity"-->
+<!--                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"-->
+<!--                        android:textColor="@color/mw24_blue_2" />-->
 
-                </LinearLayout>
-            </LinearLayout>
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/file_wallet_migration_disclaimer_layout"
