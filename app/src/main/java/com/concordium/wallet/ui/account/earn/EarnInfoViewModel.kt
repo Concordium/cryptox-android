@@ -19,7 +19,11 @@ class EarnInfoViewModel(
     val chainParameters: MutableLiveData<ChainParameters> by lazy { MutableLiveData<ChainParameters>() }
     val error: MutableLiveData<Event<Int>> by lazy { MutableLiveData<Event<Int>>() }
 
-    fun loadChainParameters() = viewModelScope.launch {
+    init {
+        loadChainParameters()
+    }
+
+    private fun loadChainParameters() = viewModelScope.launch {
         try {
             chainParameters.value = proxyRepository.getChainParameters()
         } catch (e: Exception) {

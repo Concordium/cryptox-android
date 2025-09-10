@@ -4,6 +4,7 @@
     <string name="app_name">CryptoX Wallet</string>
     <string name="app_menu_item_home">Home</string>
     <string name="app_menu_item_buy">Buy</string>
+    <string name="app_menu_item_tokens">NFT</string>
     <string name="app_menu_item_earn">Earn</string>
     <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_activity">Activity</string>

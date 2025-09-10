@@ -32,7 +32,9 @@ class NewEranDelegateImpl : NewEarnDelegate {
                 launchFragment(BakerStatusFragment())
             }
 
-            else -> launchFragment(EarnInfoFragment())
+            else -> launchFragment(
+                EarnInfoFragment.newInstance(EarnInfoFragment.setBundle(account))
+            )
         }
     }
 }

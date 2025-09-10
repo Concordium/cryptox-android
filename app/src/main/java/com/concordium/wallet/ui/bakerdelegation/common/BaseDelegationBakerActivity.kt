@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.bakerdelegation.common
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.BakerDelegationData
@@ -14,29 +13,22 @@ import com.concordium.wallet.ui.bakerdelegation.dialog.NotEnoughFundsForFeeDialo
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 abstract class BaseDelegationBakerActivity(
     layout: Int?,
     titleId: Int,
 ) : BaseActivity(layout, titleId), AuthDelegate by AuthDelegateImpl() {
-    protected lateinit var viewModel: DelegationBakerViewModel
+    protected val viewModel: DelegationBakerViewModel by viewModel()
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideActionBarBack(isVisible = true)
-        initializeViewModel()
         viewModel.initialize(
             intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA)
                     as BakerDelegationData
         )
-    }
-
-    open fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[DelegationBakerViewModel::class.java]
     }
 
     protected fun initializeWaitingLiveData(progressLayout: View) {

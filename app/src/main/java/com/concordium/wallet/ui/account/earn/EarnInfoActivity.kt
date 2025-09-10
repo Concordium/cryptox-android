@@ -37,7 +37,6 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
         initViews()
         initializeViewModel()
         initObservers()
-        viewModel.loadChainParameters()
     }
 
     private fun initViews() {
