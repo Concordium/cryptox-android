@@ -2,9 +2,14 @@ package com.concordium.wallet.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +20,7 @@ import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
+import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.account.earn.EarnFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -24,6 +30,7 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.more.import.ImportActivity
+import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesFragment
@@ -31,6 +38,7 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
+import com.concordium.wallet.util.ImageUtil
 import com.concordium.wallet.util.getOptionalSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
@@ -47,6 +55,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
         const val EXTRA_NOTIFICATION_TOKEN = "EXTRA_NOTIFICATION_TOKEN"
         const val EXTRA_SHOW_REVIEW_POPUP = "EXTRA_SHOW_REVIEW_POPUP"
+        const val DRAWER_TAG = "DRAWER_TAG"
     }
 
     private val binding by lazy {
@@ -57,6 +66,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private lateinit var walletConnectViewModel: WalletConnectViewModel
     private lateinit var walletSwitchViewModel: WalletSwitchViewModel
     private var hasHandledPossibleImportFile = false
+    private lateinit var gestureDetector: GestureDetectorCompat
 
     //region Lifecycle
     // ************************************************************
@@ -92,6 +102,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_SEED, false)) {
             goToImportFromSeed()
         }
+        initGestureDetector()
+        initObservers()
     }
 
     override fun onResume() {
@@ -179,8 +191,18 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             hideLeftPlus(false)
             hideRightPlus(false)
             hideQrScan(false)
-            hideAccountSelector(false, "", null)
             replaceFragment(state)
+        }
+        viewModel.activeAccount.collectWhenStarted(this) { account ->
+            account?.let {
+                hideAccountSelector(
+                    isVisible = true,
+                    text = it.getAccountName(),
+                    icon = ImageUtil.getIconById(this, it.iconId)
+                ) {
+                    gotoAccountsList()
+                }
+            }
         }
 
         walletConnectViewModel = viewModelProvider.get()
@@ -200,6 +222,10 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
         hideActionBarBack(false)
 
+        hideMenuDrawer(isVisible = true) {
+            showDrawer()
+        }
+
         WalletConnectView(
             activity = this,
             fragmentManager = supportFragmentManager,
@@ -208,6 +234,43 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         ).init()
 
         binding.walletSwitchView.bind(walletSwitchViewModel)
+    }
+
+    private fun initGestureDetector() {
+        gestureDetector =
+            GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onFling(
+                    e1: MotionEvent?,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (e1 != null) {
+                        val deltaX = e2.x - e1.x
+                        if (deltaX > 200 && velocityX > 500) {
+                            showDrawer()
+                            return true
+                        }
+                    }
+                    return false
+                }
+            })
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.dispatchTouchEvent(event)
+    }
+
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            MoreOverviewFragment.CLOSE_ACTION,
+            this
+        ) { _, bundle ->
+            if (MoreOverviewFragment.getResult(bundle))
+                hideDrawer()
+        }
+
     }
 
     private fun handleNotificationReceived(intent: Intent) {
@@ -273,6 +336,49 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
     }
 
+    private fun showDrawer() {
+        val fragment = supportFragmentManager.findFragmentByTag(DRAWER_TAG)
+            ?: MoreOverviewFragment()
+
+        if (fragment.isAdded.not()) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.slide_in_left,
+                    R.anim.slide_out_left
+                )
+                .replace(R.id.drawer_container, fragment, DRAWER_TAG)
+                .commit()
+        }
+
+        binding.drawerContainer.apply {
+            visibility = View.VISIBLE
+            isClickable = true
+        }
+    }
+
+    private fun hideDrawer() {
+        val fragment = supportFragmentManager.findFragmentByTag(DRAWER_TAG)
+        if (fragment != null) {
+            val anim = AnimationUtils.loadAnimation(this, R.anim.slide_out_left)
+            val animDuration = anim.duration
+
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    0,
+                    R.anim.slide_out_left
+                )
+                .remove(fragment)
+                .commit()
+
+            binding.drawerContainer.postDelayed({
+                binding.drawerContainer.apply {
+                    visibility = View.GONE
+                    isClickable = false
+                }
+            }, animDuration)
+        }
+    }
+
     //endregion
 
     //region Control/UI
@@ -318,10 +424,16 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun goToImportFromSeed() {
         val intent = Intent(this, WelcomeRecoverWalletActivity::class.java)
-        intent.putExtras(WelcomeRecoverWalletActivity.getBundle(
-            showFileOptions = false,
-        ))
+        intent.putExtras(
+            WelcomeRecoverWalletActivity.getBundle(
+                showFileOptions = false,
+            )
+        )
         startActivity(intent)
     }
-    //endregion
+
+    private fun gotoAccountsList() {
+        val intent = Intent(this, AccountsListActivity::class.java)
+        startActivity(intent)
+    }
 }

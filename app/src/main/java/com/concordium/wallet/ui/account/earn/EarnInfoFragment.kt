@@ -29,6 +29,8 @@ class EarnInfoFragment : Fragment() {
     private val account: Account by lazy {
         requireArguments().getSerializable(EXTRA_ACCOUNT) as Account
     }
+    private val activity: BaseActivity
+        get() = requireActivity() as BaseActivity
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +65,7 @@ class EarnInfoFragment : Fragment() {
     private fun initObservers() {
         viewModel.error.observe(viewLifecycleOwner, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
-                (activity as BaseActivity).showError(value)
+                activity.showError(value)
             }
         })
         viewModel.chainParameters.observe(viewLifecycleOwner) { chainParameters ->
@@ -99,7 +101,7 @@ class EarnInfoFragment : Fragment() {
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
         )
-        (activity as BaseActivity).startActivityForResultAndHistoryCheck(intent)
+        activity.startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoReadMore() {
@@ -108,7 +110,7 @@ class EarnInfoFragment : Fragment() {
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
         )
-        (activity as BaseActivity).startActivityForResultAndHistoryCheck(intent)
+        activity.startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoStartValidating() {
@@ -117,7 +119,7 @@ class EarnInfoFragment : Fragment() {
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             BakerDelegationData(account, type = ProxyRepository.REGISTER_BAKER)
         )
-        (activity as BaseActivity).startActivityForResultAndHistoryCheck(intent)
+        activity.startActivityForResultAndHistoryCheck(intent)
     }
 
     companion object {

@@ -66,6 +66,7 @@ abstract class BaseActivity(
     protected var closeBtn: ImageView? = null
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
+    private var menuDrawerBtn: ImageView? = null
     protected var searchView: SearchView? = null
 
     private var toastLayoutTopError: ViewGroup? = null
@@ -100,6 +101,7 @@ abstract class BaseActivity(
         accountBtn = toolbar?.findViewById(R.id.toolbar_account_btn)
         accountBtnText = toolbar?.findViewById(R.id.toolbar_account_label)
         accountBtnImage = toolbar?.findViewById(R.id.toolbar_account_btn_image)
+        menuDrawerBtn = toolbar?.findViewById(R.id.toolbar_menu_drawer_btn)
 
         setupActionBar(this, titleId)
 
@@ -253,6 +255,11 @@ abstract class BaseActivity(
         accountBtnText?.text = text
         accountBtnText?.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
         accountBtn?.setOnClickListener(listener)
+    }
+
+    fun hideMenuDrawer(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        menuDrawerBtn?.isVisible = isVisible
+        menuDrawerBtn?.setOnClickListener(listener)
     }
 //    fun hideClose(isVisible: Boolean) {
 //        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE

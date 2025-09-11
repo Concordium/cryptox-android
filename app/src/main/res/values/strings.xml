@@ -290,6 +290,8 @@
     <string name="transaction_details_view_on_explorer">View transaction on block explorer</string>
     <!-- ***** More ***** -->
     <!-- More overview -->
+    <string name="settings_overview_close_menu_description">Close menu</string>
+    <string name="settings_overview_menu">Menu</string>
     <string name="settings_overview_title">Wallet Settings</string>
     <string name="settings_overview_item_unshielding">Funds to Unshield</string>
     <string name="settings_overview_item_identities">Identities</string>

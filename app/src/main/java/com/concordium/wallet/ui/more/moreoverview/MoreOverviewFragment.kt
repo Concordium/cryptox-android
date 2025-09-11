@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentMoreOverviewBinding
@@ -100,7 +101,13 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun initializeViews() {
         binding.progress.progressLayout.visibility = View.GONE
-        mainViewModel.setTitle(getString(R.string.settings_overview_title))
+
+        binding.closeMenuBtn.setOnClickListener {
+            setFragmentResult(
+                CLOSE_ACTION,
+                setResult()
+            )
+        }
 
         binding.unshieldingLayout.setOnClickListener {
             gotoUnshielding()
@@ -355,5 +362,14 @@ class MoreOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    //endregion
+    companion object {
+        const val CLOSE_ACTION = "close_action"
+        private const val CLOSE_MENU = "close_menu"
+
+        fun getResult(bundle: Bundle): Boolean = bundle.getBoolean(CLOSE_MENU, false)
+
+        private fun setResult() = Bundle().apply {
+            putBoolean(CLOSE_MENU, true)
+        }
+    }
 }

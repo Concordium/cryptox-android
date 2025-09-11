@@ -41,7 +41,6 @@ import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
-import com.concordium.wallet.util.ImageUtil
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -190,13 +189,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             updateViews(account)
-            (requireActivity() as BaseActivity).hideAccountSelector(
-                isVisible = true,
-                text = account.getAccountName(),
-                icon = ImageUtil.getIconById(requireContext(), account.iconId)
-            ) {
-                gotoAccountsList()
-            }
             isZeroBalance = account.balance == BigInteger.ZERO
         }
 
