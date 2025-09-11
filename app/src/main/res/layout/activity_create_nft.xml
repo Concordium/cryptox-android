@@ -148,7 +148,7 @@
                     style="@style/CryptoX_Typography_Body_Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/account_release_schedule_amount"
+                    android:text="Amount"
                     android:textColor="@color/yellow"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
