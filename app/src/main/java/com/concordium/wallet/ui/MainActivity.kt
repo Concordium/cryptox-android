@@ -30,7 +30,7 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.more.import.ImportActivity
-import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
+import com.concordium.wallet.ui.more.moreoverview.MenuSettingFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesFragment
@@ -264,10 +264,10 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun initObservers() {
         supportFragmentManager.setFragmentResultListener(
-            MoreOverviewFragment.CLOSE_ACTION,
+            MenuSettingFragment.CLOSE_ACTION,
             this
         ) { _, bundle ->
-            if (MoreOverviewFragment.getResult(bundle))
+            if (MenuSettingFragment.getResult(bundle))
                 hideDrawer()
         }
 
@@ -338,7 +338,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun showDrawer() {
         val fragment = supportFragmentManager.findFragmentByTag(DRAWER_TAG)
-            ?: MoreOverviewFragment()
+            ?: MenuSettingFragment()
 
         if (fragment.isAdded.not()) {
             supportFragmentManager.beginTransaction()

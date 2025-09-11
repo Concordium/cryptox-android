@@ -96,11 +96,13 @@
                 android:paddingHorizontal="@dimen/size12"
                 android:layout_marginHorizontal="72dp"
                 android:background="@drawable/mw24_toolbar_account_button_background"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseCompoundDrawables">
+                tools:ignore="UseCompoundDrawables"
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/toolbar_account_label"

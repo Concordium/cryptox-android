@@ -302,7 +302,7 @@
     <string name="settings_overview_item_analytics">Analytics</string>
     <string name="settings_overview_item_nft">NFT</string>
     <string name="settings_overview_item_notifications">Notifications</string>
-    <string name="settings_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
+    <string name="settings_overview_item_alter_password"><![CDATA[App Passcode & Biometrics]]></string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
     <string name="settings_overview_erase_data">Erase Data</string>
@@ -314,8 +314,11 @@
     </string>
     <string name="settings_overview_erase_data_continue">@string/dialog_yes</string>
     <string name="settings_overview_erase_data_erased">All the data has been successfully erased</string>
-    <string name="settings_overview_reveal_seed_phrase">Seed Phrase</string>
+    <string name="settings_overview_reveal_seed_phrase"><![CDATA[Seed Phrase & Backup]]></string>
     <string name="settings_overview_reveal_seed">Wallet Private Key</string>
+    <string name="settings_overview_block_options">Options</string>
+    <string name="settings_overview_block_security">Security</string>
+    <string name="settings_overview_block_other">Miscellaneous</string>
     <!-- Export -->
     <string name="export_title">Export</string>
     <string name="export_confirm">Export</string>

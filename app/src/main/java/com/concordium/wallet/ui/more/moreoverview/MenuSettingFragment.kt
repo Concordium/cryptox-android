@@ -35,7 +35,7 @@ import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
 import com.concordium.wallet.ui.tokens.provider.NFTActivity
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 
-class MoreOverviewFragment : BaseFragment() {
+class MenuSettingFragment : BaseFragment() {
 
     private lateinit var viewModel: MoreOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
@@ -189,12 +189,12 @@ class MoreOverviewFragment : BaseFragment() {
             openTrackingPreferences()
         }
 
-        binding.nftLayout.setOnClickListener {
-            if (mainViewModel.hasCompletedOnboarding())
-                gotoNFT()
-            else
-                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
-        }
+//        binding.nftLayout.setOnClickListener {
+//            if (mainViewModel.hasCompletedOnboarding())
+//                gotoNFT()
+//            else
+//                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
+//        }
 
         binding.aboutLayout.setOnClickListener {
             about()
@@ -362,7 +362,7 @@ class MoreOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    companion object {
+    companion object Companion {
         const val CLOSE_ACTION = "close_action"
         private const val CLOSE_MENU = "close_menu"
 
