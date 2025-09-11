@@ -25,11 +25,28 @@ class PLTAllowDenyListView @JvmOverloads constructor(
     fun setToken(
         token: ProtocolLevelToken,
         onTokenLabelClick: () -> Unit,
-        onTokenStatusClick: () -> Unit
+        onTokenStatusClick: () -> Unit,
+        onTokenPausedClick: () -> Unit,
     ) {
         val pltListStatus = getPLTPLTListStatus(token)
 
         when (pltListStatus) {
+            PLTListStatus.PAUSED -> {
+                binding.pltListStatusLayout.background = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.plt_paused_background
+                )
+                binding.listStatusTitle.text =
+                    context.getString(R.string.account_details_token_paused)
+                binding.listStatusTitle.setTextColor(context.getColor(R.color.mw24_content_warning_primary))
+                binding.listStatusIcon.setImageResource(R.drawable.mw24_ic_circled_block_warning)
+                binding.listStatusQuestionIcon.imageTintList =
+                    AppCompatResources.getColorStateList(
+                        context,
+                        R.color.mw24_content_warning_primary
+                    )
+            }
+
             PLTListStatus.ON_ALLOW_LIST -> {
                 binding.pltListStatusLayout.background = AppCompatResources.getDrawable(
                     context,
@@ -40,7 +57,10 @@ class PLTAllowDenyListView @JvmOverloads constructor(
                 binding.listStatusTitle.setTextColor(context.getColor(R.color.mw24_content_success_primary))
                 binding.listStatusIcon.setImageResource(R.drawable.mw24_ic_circled_check_done)
                 binding.listStatusQuestionIcon.imageTintList =
-                    AppCompatResources.getColorStateList(context, R.color.mw24_content_success_primary)
+                    AppCompatResources.getColorStateList(
+                        context,
+                        R.color.mw24_content_success_primary
+                    )
             }
 
             PLTListStatus.NOT_ON_ALLOW_LIST -> {
@@ -53,7 +73,10 @@ class PLTAllowDenyListView @JvmOverloads constructor(
                 binding.listStatusTitle.setTextColor(context.getColor(R.color.mw24_content_warning_primary))
                 binding.listStatusIcon.setImageResource(R.drawable.mw24_ic_circled_block_warning)
                 binding.listStatusQuestionIcon.imageTintList =
-                    AppCompatResources.getColorStateList(context, R.color.mw24_content_warning_primary)
+                    AppCompatResources.getColorStateList(
+                        context,
+                        R.color.mw24_content_warning_primary
+                    )
             }
 
             PLTListStatus.ON_DENY_LIST -> {
@@ -66,19 +89,26 @@ class PLTAllowDenyListView @JvmOverloads constructor(
                 binding.listStatusTitle.setTextColor(context.getColor(R.color.mw24_content_error_primary))
                 binding.listStatusIcon.setImageResource(R.drawable.mw24_ic_circled_block_deny)
                 binding.listStatusQuestionIcon.imageTintList =
-                    AppCompatResources.getColorStateList(context, R.color.mw24_content_error_primary)
+                    AppCompatResources.getColorStateList(
+                        context,
+                        R.color.mw24_content_error_primary
+                    )
             }
 
-            else -> {
-                binding.pltListStatusLayout.isVisible = false
-            }
+            else -> binding.pltListStatusLayout.isVisible = false
         }
 
         binding.pltLabelLayout.setOnClickListener { onTokenLabelClick() }
-        binding.pltListStatusLayout.setOnClickListener { onTokenStatusClick() }
+        binding.pltListStatusLayout.setOnClickListener {
+            when (pltListStatus) {
+                PLTListStatus.PAUSED -> onTokenPausedClick()
+                else -> onTokenStatusClick()
+            }
+        }
     }
 
     private fun getPLTPLTListStatus(token: ProtocolLevelToken): PLTListStatus = when {
+        token.isPaused -> PLTListStatus.PAUSED
         (token.isInDenyList != null && token.isInDenyList) -> PLTListStatus.ON_DENY_LIST
         (token.isInAllowList != null && token.isInAllowList) -> PLTListStatus.ON_ALLOW_LIST
         token.isInAllowList != null -> PLTListStatus.NOT_ON_ALLOW_LIST

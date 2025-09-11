@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "fcab303d4624e52ab1b1d8cc4dc19107",
+    "identityHash": "4b2c207ff53360c4b560a13ded893868",
     "entities": [
       {
         "tableName": "identity_table",
@@ -499,7 +499,7 @@
       },
       {
         "tableName": "protocol_level_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `token_id` TEXT NOT NULL, `name` TEXT, `decimals` INTEGER NOT NULL, `account_address` TEXT, `balance` TEXT NOT NULL, `metadata` TEXT, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null, `is_in_deny_list` INTEGER DEFAULT null)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `token_id` TEXT NOT NULL, `name` TEXT, `decimals` INTEGER NOT NULL, `account_address` TEXT, `balance` TEXT NOT NULL, `metadata` TEXT, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null, `is_in_deny_list` INTEGER DEFAULT null, `is_paused` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -577,6 +577,13 @@
             "affinity": "INTEGER",
             "notNull": false,
             "defaultValue": "null"
+          },
+          {
+            "fieldPath": "isPaused",
+            "columnName": "is_paused",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -592,7 +599,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fcab303d4624e52ab1b1d8cc4dc19107')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b2c207ff53360c4b560a13ded893868')"
     ]
   }
 }

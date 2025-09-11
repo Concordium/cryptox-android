@@ -1,17 +1,18 @@
 package com.concordium.wallet.core.notifications
 
 import com.concordium.wallet.App
+import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ContractTokenMetadata
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.toContractToken
-import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.ContractTokenEntity
 import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
-import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -21,9 +22,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class FcmNotificationsService : FirebaseMessagingService() {
+class FcmNotificationsService :
+    FirebaseMessagingService(),
+    KoinComponent {
+
     private val serviceCoroutineContext = Dispatchers.IO + SupervisorJob()
+    private val tokenInteractor: TokensInteractor by inject()
 
     override fun onNewToken(token: String) = runBlocking(serviceCoroutineContext) {
         Log.d("updating_subscriptions_with_new_token: \ntoken=$token")
@@ -146,10 +153,13 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         "\ntokenId=$tokenId"
             )
 
-            val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
-                url = tokenMetadata.url,
-                checksum = tokenMetadata.hash
-            ).getOrThrow()
+            val verifiedMetadata: ContractTokenMetadata =
+                TokenMetadataBackendInstance
+                    .getContractTokenMetadata(
+                        url = tokenMetadata.url,
+                        sha256HashHex = tokenMetadata.hash,
+                    )
+                    .getOrThrow()
 
             Log.d("verifiedMetadata: $verifiedMetadata")
 
@@ -194,17 +204,19 @@ class FcmNotificationsService : FirebaseMessagingService() {
         Log.d("handling_plt_tx")
 
         val amount = data.getAmount("value")
-        val decimals = data.getByKey("decimals").toInt()
         val tokenId = data.getByKey("token_id")
         val recipientAccount = data.getRecipientAccount()
 
         val pltRepository =
             PLTRepository(App.appCore.session.walletStorage.database.protocolLevelTokenDao())
 
-        val existingProtocolLevelToken = pltRepository.find(
-            accountAddress = recipientAccount.address,
-            tokenId = tokenId
-        )
+        val existingProtocolLevelToken =
+            pltRepository
+                .find(
+                    accountAddress = recipientAccount.address,
+                    tokenId = tokenId
+                )
+                ?.toProtocolLevelToken()
 
         val token: ProtocolLevelToken = if (existingProtocolLevelToken == null) {
             Log.d(
@@ -213,19 +225,25 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         "\ntokenId=$tokenId"
             )
 
-            val newlyReceivedToken = ProtocolLevelTokenEntity(
-                name = null,
-                decimals = decimals,
-                tokenId = tokenId,
-                accountAddress = recipientAccount.address,
-                metadata = null,
-                isNewlyReceived = true
+            val newlyReceivedToken =
+                tokenInteractor
+                    .loadProtocolLevelTokenWithMetadata(
+                        accountAddress = recipientAccount.address,
+                        tokenId = tokenId,
+                    )
+                    .getOrThrow()
+                    .copy(
+                        isNewlyReceived = true,
+                    )
+
+            pltRepository.insert(
+                ProtocolLevelTokenEntity(newlyReceivedToken)
             )
-            pltRepository.insert(newlyReceivedToken)
-            newlyReceivedToken.toProtocolLevelToken()
+
+            newlyReceivedToken
         } else {
             Log.d("token_exists: \ntokenId=$tokenId")
-            existingProtocolLevelToken.toProtocolLevelToken()
+            existingProtocolLevelToken
         }
 
         TransactionNotificationsManager(application).notifyPltTransaction(

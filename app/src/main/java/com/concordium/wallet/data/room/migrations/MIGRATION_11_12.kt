@@ -20,7 +20,15 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
         db.execSQL("DROP TABLE `transfer_table`")
         db.execSQL("ALTER TABLE `new_transfer_table` RENAME TO `transfer_table`")
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS `protocol_level_token_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `token_id` TEXT NOT NULL, `name` TEXT, `decimals` INTEGER NOT NULL, `account_address` TEXT, `balance` TEXT NOT NULL, `metadata` TEXT, `added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null, `is_in_deny_list` INTEGER DEFAULT null)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `protocol_level_token_table` " +
+                    "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`token_id` TEXT NOT NULL, `name` TEXT, `decimals` INTEGER NOT NULL, " +
+                    "`account_address` TEXT, `balance` TEXT NOT NULL, `metadata` TEXT, " +
+                    "`added_at` INTEGER NOT NULL DEFAULT 0, `is_hidden` INTEGER NOT NULL DEFAULT 0, " +
+                    "`is_newly_received` INTEGER NOT NULL DEFAULT 0, `is_in_allow_list` INTEGER DEFAULT null," +
+                    " `is_in_deny_list` INTEGER DEFAULT null, `is_paused` INTEGER NOT NULL DEFAULT 0)"
+        )
 
         db.execSQL("CREATE TABLE IF NOT EXISTS `new_contract_token_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `contract_name` TEXT NOT NULL DEFAULT '', `token_id` TEXT NOT NULL, `account_address` TEXT, `metadata` TEXT, `is_newly_received` INTEGER NOT NULL DEFAULT 0, `added_at` INTEGER NOT NULL DEFAULT 0)")
         db.execSQL(

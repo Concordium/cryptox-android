@@ -243,6 +243,9 @@
     <string name="account_details_account_on_allow_list">Account is on the allow list</string>
     <string name="account_details_account_not_on_allow_list">Account not on the allow list</string>
     <string name="account_details_account_on_deny_list">Account on the deny list</string>
+    <string name="account_details_token_paused">Token paused</string>
+    <string name="account_details_dialog_plt_paused_title">Paused Tokens</string>
+    <string name="account_details_dialog_plt_paused_description">A paused token refers to a protocol-level token (PLT) whose balance-affecting operations, such as transfers, minting, and burning, are temporarily disabled by the token’s governance account. When a token is paused, any attempt to perform these actions will fail until the token is unpaused.</string>
     <string name="account_details_dialog_plt_title">Protocol-Level Tokens</string>
     <string name="account_details_dialog_plt_description">
         Protocol-Level Tokens (PLTs) are tokens issued and managed directly on the Concordium blockchain without a need for smart contracts. PLTs provide enhanced security by reducing attack vectors, improved efficiency in execution, and direct governance controls for token issuers. \n\nPLTs are implemented on protocol level. All account (balances, transfers etc.) and management operations are handled natively by the chain itself through transactions from regular Concordium accounts.

@@ -5,15 +5,16 @@ import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.ProtocolLevelTokenMetadata
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toContractToken
-import com.concordium.wallet.data.model.toProtocolLevelToken
 import com.concordium.wallet.data.room.ContractTokenEntity
 import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
+import com.concordium.wallet.util.Log
 
 class TokensInteractor(
     private val proxyRepository: ProxyRepository,
@@ -31,38 +32,33 @@ class TokensInteractor(
         loadBalances: Boolean = true,
         onlyTransferable: Boolean = false,
         addCCDToken: Boolean = true,
-    ): Result<List<Token>> {
-        return try {
-            val ccdToken = getCCDDefaultToken(accountAddress)
+    ): Result<List<Token>> = runCatching {
+        val ccdToken = getCCDDefaultToken(accountAddress)
 
-            val contractTokens =
-                contractTokensRepository
-                    .getTokens(accountAddress)
-                    .map(ContractTokenEntity::toContractToken)
+        val contractTokens =
+            contractTokensRepository
+                .getTokens(accountAddress)
+                .map(ContractTokenEntity::toContractToken)
 
-            val pltTokens =
-                pltRepository
-                    .getTokens(accountAddress)
-                    .filterNot(ProtocolLevelTokenEntity::isHidden)
-                    .map { it.toProtocolLevelToken() }
-                    .filter { !onlyTransferable || it.isTransferable }
+        val pltTokens =
+            pltRepository
+                .getTokens(accountAddress)
+                .filterNot(ProtocolLevelTokenEntity::isHidden)
+                .map { it.toProtocolLevelToken() }
+                .filter { !onlyTransferable || it.isTransferable }
 
-            val allTokens = buildList {
-                if (addCCDToken) add(ccdToken)
-                addAll((contractTokens + pltTokens).sortedByDescending { it.addedAt })
-            }
-
-            if (loadBalances) {
-                loadTokensBalances(
-                    accountAddress = accountAddress,
-                    tokens = allTokens,
-                )
-            }
-
-            Result.success(allTokens)
-        } catch (e: Exception) {
-            Result.failure(e)
+        val allTokens = buildList {
+            if (addCCDToken) add(ccdToken)
+            addAll((contractTokens + pltTokens).sortedByDescending { it.addedAt })
         }
+
+        if (loadBalances) {
+            loadTokensBalances(
+                accountAddress = accountAddress,
+                tokens = allTokens,
+            )
+        }
+        allTokens
     }
 
     suspend fun loadTokensBalances(
@@ -105,8 +101,35 @@ class TokensInteractor(
         )
     }
 
-    suspend fun getPLTTokenById(tokenId: String): Result<PLTInfo> = runCatching {
-        proxyRepository.getPLTTokenById(tokenId)
+    suspend fun loadProtocolLevelTokenWithMetadata(
+        accountAddress: String,
+        tokenId: String,
+    ): Result<ProtocolLevelToken> = runCatching {
+
+        val tokenInfo = proxyRepository.getPLTTokenById(tokenId)
+        val metadataInfo = tokenInfo.tokenState.moduleState.metadata
+
+        val verifiedMetadata: ProtocolLevelTokenMetadata? =
+            if (metadataInfo != null)
+                TokenMetadataBackendInstance
+                    .getProtocolLevelTokenMetadata(
+                        url = metadataInfo.url,
+                        sha256HashHex = metadataInfo.checksumSha256,
+                    )
+                    .onFailure {
+                        Log.w(
+                            "Failed loading metadata for token ${tokenInfo.tokenId}: " +
+                                    it.message
+                        )
+                    }
+                    .getOrNull()
+            else
+                null
+
+        return@runCatching tokenInfo.toProtocolLevelToken(
+            accountAddress = accountAddress,
+            metadata = verifiedMetadata,
+        )
     }
 
     suspend fun deleteToken(

@@ -14,6 +14,7 @@ import com.concordium.wallet.databinding.IncludeTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.plt.PLTInfoDialog
 import com.concordium.wallet.ui.plt.PLTListInfoDialog
+import com.concordium.wallet.ui.plt.PLTPausedInfoDialog
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.gson.GsonBuilder
 import java.math.BigInteger
@@ -63,10 +64,10 @@ class TokenDetailsView(
                 null
 
             is ContractToken ->
-                prettyPrintingGson.toJson(token.metadata)
+                token.metadata?.let(prettyPrintingGson::toJson)
 
             is ProtocolLevelToken ->
-                prettyPrintingGson.toJson(token.metadata)
+                token.metadata?.let(prettyPrintingGson::toJson)
         }
 
         if (rawMetadata != null) {
@@ -208,6 +209,12 @@ class TokenDetailsView(
                         PLTListInfoDialog().showSingle(
                             fragmentManager,
                             PLTListInfoDialog.TAG
+                        )
+                    },
+                    onTokenPausedClick = {
+                        PLTPausedInfoDialog().showSingle(
+                            fragmentManager,
+                            PLTPausedInfoDialog.TAG
                         )
                     }
                 )
