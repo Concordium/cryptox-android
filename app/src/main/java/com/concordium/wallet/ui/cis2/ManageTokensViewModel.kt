@@ -294,14 +294,14 @@ class ManageTokensViewModel(
             .filterIsInstance<ProtocolLevelToken>()
             .forEach { selectedToken ->
                 val existingPLToken = pltRepository.find(accountAddress, selectedToken.tokenId)
-                existingPLToken?.let {
-                    if (it.isHidden) {
-                        pltRepository.unhideToken(
-                            accountAddress = accountAddress,
-                            tokenId = selectedToken.tokenId
+                if (existingPLToken != null) {
+                    pltRepository.updateToken(
+                        updatedEntity = existingPLToken.copy(
+                            isHidden = false,
+                            metadata = selectedToken.metadata,
                         )
-                    }
-                } ?: run {
+                    )
+                } else {
                     pltRepository.insert(
                         ProtocolLevelTokenEntity(selectedToken)
                     )

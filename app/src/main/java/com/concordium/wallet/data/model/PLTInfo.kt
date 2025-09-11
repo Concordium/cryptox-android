@@ -7,9 +7,7 @@ class PLTInfo(
 
     fun toProtocolLevelToken(
         accountAddress: String,
-        metadata: ProtocolLevelTokenMetadata? = null,
-        isNewlyReceived: Boolean = false,
-        isSelected: Boolean = false,
+        metadata: ProtocolLevelTokenMetadata?,
     ) = ProtocolLevelToken(
         name = tokenState.moduleState.name,
         decimals = tokenState.decimals,
@@ -17,13 +15,14 @@ class PLTInfo(
         addedAt = System.currentTimeMillis(),
         tokenId = tokenId,
         metadata = metadata,
-        isNewlyReceived = isNewlyReceived,
-        isSelected = isSelected,
+        isNewlyReceived = false,
         isPaused = tokenState.moduleState.paused,
         isInAllowList =
         if (tokenState.moduleState.allowList == true)
             false
         else
-            null
+            null,
+        isInDenyList = null,
+        isHidden = false,
     )
 }

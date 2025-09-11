@@ -62,6 +62,7 @@ data class ProtocolLevelTokenEntity(
         balance = balance,
         name = name,
         decimals = decimals,
+        metadata = metadata,
         accountAddress = accountAddress ?: "",
         isNewlyReceived = isNewlyReceived,
         addedAt = addedAt,

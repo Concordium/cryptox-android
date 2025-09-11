@@ -6,16 +6,16 @@ data class ProtocolLevelToken(
     override val decimals: Int,
     override val balance: BigInteger = BigInteger.ZERO,
     override val accountAddress: String,
-    override val isNewlyReceived: Boolean = false,
+    override val isNewlyReceived: Boolean,
     override val addedAt: Long,
     override var isSelected: Boolean = false,
     val tokenId: String,
     val name: String?,
-    val isHidden: Boolean = false,
-    val isInAllowList: Boolean? = null,
-    val isInDenyList: Boolean? = null,
-    val isPaused: Boolean = false,
-    val metadata: ProtocolLevelTokenMetadata? = null,
+    val isHidden: Boolean,
+    val isInAllowList: Boolean?,
+    val isInDenyList: Boolean?,
+    val isPaused: Boolean,
+    val metadata: ProtocolLevelTokenMetadata?,
 ) : Token, WithThumbnail {
 
     override val symbol: String
