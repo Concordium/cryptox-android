@@ -1,64 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/size48"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
+    <TextView
+        android:id="@+id/button_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/MW24_Typography_Text_Mid"
+        android:textColor="@color/mw24_button_primary_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/icon_end"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Placeholder" />
+
+    <ImageView
+        android:id="@+id/icon_end"
+        android:layout_width="@dimen/size16"
+        android:layout_height="@dimen/size16"
+        android:layout_marginStart="@dimen/size8"
+        android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/button_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/mw24_button_primary_text_color"
+        tools:src="@drawable/mw24_ic_menu_buy" />
+
+    <ImageView
+        android:id="@+id/icon_start"
+        android:layout_width="@dimen/size16"
+        android:layout_height="@dimen/size16"
+        android:layout_marginEnd="@dimen/size8"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_text"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/button_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/MW24_Typography_Text_Mid"
-            android:textColor="@color/mw24_button_primary_text_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/icon_end"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Placeholder" />
-
-        <ImageView
-            android:id="@+id/icon_end"
-            android:layout_width="@dimen/size16"
-            android:layout_height="@dimen/size16"
-            android:layout_marginStart="@dimen/size8"
-            android:importantForAccessibility="no"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/button_text"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/mw24_button_primary_text_color"
-            tools:src="@drawable/mw24_ic_menu_buy" />
-
-        <ImageView
-            android:id="@+id/icon_start"
-            android:layout_width="@dimen/size16"
-            android:layout_height="@dimen/size16"
-            android:layout_marginEnd="@dimen/size8"
-            android:importantForAccessibility="no"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/button_text"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/mw24_button_primary_text_color"
-            tools:src="@drawable/mw24_ic_menu_buy" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/mw24_button_primary_text_color"
+        tools:src="@drawable/mw24_ic_menu_buy" />
+</merge>

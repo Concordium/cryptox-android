@@ -60,7 +60,7 @@ class CcdOnrampDisclaimerDialog : BaseGradientDialogFragment() {
             }
         }
 
-        binding.proceedButton.setClickListener {
+        binding.proceedButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 setResultBundle(isAccepted = true)

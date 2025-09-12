@@ -42,6 +42,7 @@
     <color name="mw24_surface_inverse_primary_disabled">#D0D4D6</color>
     <color name="mw24_surface_inverse_secondary">#B2B9BC</color>
     <color name="mw24_surface_inverse_secondary_pressed">#78858B</color>
+    <color name="mw24_surface_inverse_tertiary_pressed">#D0D4D6</color>
 
    <!-- Border colors -->
     <color name="mw24_border_accent">#6C88AA</color>
@@ -53,6 +54,9 @@
     <color name="mw24_border_primary_disabled">#4B5357</color>
     <color name="mw24_border_tertiary">#4B5357</color>
     <color name="mw24_border_tertiary_pressed">#2F3437</color>
+    <color name="mw24_border_inverse_tertiary">#D0D4D6</color>
+    <color name="mw24_border_inverse_tertiary_pressed">#D0D4D6</color>
+    <color name="mw24_border_inverse_disabled">#D0D4D6</color>
 
    <!-- Content colors -->
     <color name="mw24_content_primary">#FFFFFF</color>
@@ -64,5 +68,6 @@
     <color name="mw24_content_error_primary">#D62E4C</color>
     <color name="mw24_content_secondary">#959EA3</color>
     <color name="mw24_content_inverse_primary">#131416</color>
-
+    <color name="mw24_content_inverse_secondary">#2F3437</color>
+    <color name="mw24_content_inverse_disabled">#959EA3</color>
 </resources>

@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
+    android:id="@+id/toastLayoutTopError"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,106 +18,118 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@id/done"
+        android:fadingEdge="vertical"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/copy_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="16dp"
             android:orientation="vertical">
 
-            <TextView
-                style="@style/CryptoX_Container_Information.TextView"
-                android:text="@string/export_account_keys_reveal_explain" />
-
-
-            <LinearLayout
-                android:id="@+id/hidden"
-                style="@style/CryptoX_Container_TextCard"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:id="@+id/reveal_message_text_view"
-                    style="@style/CryptoX_Typography_Headline_Large"
-                    android:text="@string/export_account_keys_reveal_message" />
-
-                <Button
-                    android:id="@+id/reveal_button"
-                    style="@style/MW24_Button_Primary"
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/export_account_keys_reveal" />
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/account_private_key_warning_background"
+                android:drawablePadding="12dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:text="@string/export_account_keys_reveal_explain"
+                android:textAppearance="@style/MW24_Typography_Body_M_Regular"
+                android:textColor="@color/mw24_content_warning_primary"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/revealed"
-                style="@style/CryptoX_Container_TextCard"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:visibility="gone"
-                tools:visibility="visible">
+                android:id="@+id/key_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/account_private_key_card_background"
+                android:paddingHorizontal="40dp"
+                android:paddingVertical="64dp">
 
                 <TextView
-                    android:id="@+id/key_text_view"
-                    style="@style/CryptoX_Container_Stroked"
-                    android:padding="20dp"
-                    android:textAppearance="@style/CryptoX_Typography_Body_Medium"
-                    android:textColor="@color/cryptox_white_main"
+                    android:id="@+id/revealed_key_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="9938475938475927985725870325702938509374095387450937450938745555"
+                    android:textAppearance="@style/MW24_Typography_Body_L_Medium"
+                    android:textColor="@color/mw24_content_primary"
                     android:textIsSelectable="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="5598jdh8s5jfkd,0d8f7dnsmss0s6s43fyfj8f99djdudd7d89s7s5d578sjdhdgyjskcmc" />
+                    tools:alpha="0.1"
+                    tools:ignore="HardcodedText" />
 
-                <FrameLayout
-                    android:id="@+id/copy_button_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="4dp"
-                    android:text="@string/export_account_keys_copy"
-                    app:layout_constraintEnd_toStartOf="@id/export_button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/key_text_view">
-
-                    <Button
-                        android:id="@+id/copy_button"
-                        style="@style/MW24_Button_Secondary"
-                        android:layout_width="match_parent"
-                        android:textAllCaps="false"
-                        android:text="@string/export_account_keys_copy"/>
-                </FrameLayout>
-
-                <Button
-                    android:id="@+id/export_button"
-                    style="@style/MW24_Button_Primary"
-                    android:layout_width="0dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/export_account_keys_to_file"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/reveal_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    app:layout_constraintBottom_toTopOf="@id/reveal_text_view"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/copy_button_layout"
-                    app:layout_constraintTop_toBottomOf="@id/key_text_view" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/mw24_ic_eye_closed_show"
+                    app:tint="@color/mw24_content_accent_secondary" />
+
+                <TextView
+                    android:id="@+id/reveal_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/export_account_keys_reveal_message"
+                    android:textAppearance="@style/MW24_Typography_Body_M_Regular"
+                    android:textColor="@color/mw24_content_secondary"
+                    app:layout_constraintBottom_toTopOf="@id/account_name_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/reveal_icon" />
+
+                <TextView
+                    android:id="@+id/account_name_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:textAppearance="@style/MW24_Typography_Body_L_Medium"
+                    android:textColor="@color/mw24_content_accent_secondary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/reveal_text_view"
+                    tools:text="My account" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/done"
-        style="@style/MW24_Button_Secondary"
+    <com.concordium.wallet.uicore.button.IconButton
+        android:id="@+id/copy_button"
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/export_account_keys_done"
-        android:visibility="gone"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:buttonText="@string/export_account_keys_copy"
+        app:iconStart="@drawable/mw24_ic_address_copy"
+        app:layout_constraintBottom_toTopOf="@id/export_button"
+        app:priority="secondary" />
+
+    <com.concordium.wallet.uicore.button.IconButton
+        android:id="@+id/export_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:buttonText="@string/export_account_keys_export_file"
+        app:iconStart="@drawable/mw24_ic_export_download"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
+        app:priority="primary" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
