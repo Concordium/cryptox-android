@@ -22,9 +22,6 @@ class TokensAccountDetailsAdapter(
 ) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private var addButtonClickListener: () -> Unit = {}
-    private val iconSize: Int by lazy {
-        context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
-    }
     private val dataSet: MutableList<Token> = mutableListOf()
     private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
@@ -33,6 +30,7 @@ class TokensAccountDetailsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         val iconView = TokenIconView(binding.tokenIcon)
+        val typeView = TokenTypeView(binding.tokenType)
     }
 
     interface TokenClickListener {
@@ -145,6 +143,8 @@ class TokensAccountDetailsAdapter(
             pltInAllowListIcon.isVisible = token is ProtocolLevelToken && !token.isTransferable
 
             holder.iconView.showTokenIcon(token)
+            holder.typeView.showTokenType(token)
+            subtitleLayout.isVisible = token !is CCDToken
 
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)

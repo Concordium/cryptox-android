@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/cryptox_white_main"
-            app:layout_constraintBottom_toTopOf="@id/subtitle"
+            app:layout_constraintBottom_toTopOf="@id/subtitle_layout"
             app:layout_constraintEnd_toStartOf="@id/notice"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -58,7 +58,7 @@
             android:visibility="gone"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="@id/title"
-            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/title"
             app:layout_constraintTop_toTopOf="@id/title"
             tools:visibility="visible">
@@ -86,7 +86,7 @@
             android:background="@drawable/simple_circle_bg"
             android:backgroundTint="@color/mw24_attention_red"
             app:layout_constraintBottom_toBottomOf="@id/title"
-            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/plt_in_allow_list_icon"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintTop_toTopOf="@id/title" />
@@ -99,46 +99,56 @@
             android:importantForAccessibility="no"
             android:src="@drawable/mw24_ic_circled_block_deny"
             app:layout_constraintBottom_toBottomOf="@id/title"
-            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/title"
             app:layout_constraintTop_toTopOf="@id/title"
             app:tint="@color/mw24_content_accent_secondary" />
 
-        <TextView
-            android:id="@+id/subtitle"
-            style="@style/MW24_Typography_Text_Mid_Alternative"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/subtitle_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="4dp"
-            android:textColor="@color/cryptox_grey_main"
             app:layout_constraintBottom_toBottomOf="@id/token_icon"
             app:layout_constraintStart_toStartOf="@id/title"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="@string/cis_not_owned" />
+            app:layout_constraintTop_toBottomOf="@id/title">
 
-        <ImageView
-            android:id="@+id/arrow"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:importantForAccessibility="no"
-            android:src="@drawable/cryptox_ico_chevron_right"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/mw24_grey_4" />
+            <TextView
+                android:id="@+id/token_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_plain_white_40"
+                app:drawableStartCompat="@drawable/mw24_ic_cis2_token"
+                app:drawableTint="@color/mw24_plain_white_40"
+                tools:text="CIS-2" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                style="@style/MW24_Typography_Text_Mid_Alternative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/cryptox_grey_main"
+                app:layout_constraintBottom_toBottomOf="@id/token_icon"
+                app:layout_constraintStart_toStartOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                tools:text="@string/cis_not_owned" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/balance"
             style="@style/MW24_Typography_Label_Main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
             android:gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/cryptox_white_main"
-            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/eur_rate"
             app:layout_goneMarginEnd="12dp"
