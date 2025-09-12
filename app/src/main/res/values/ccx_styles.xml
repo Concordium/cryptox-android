@@ -181,8 +181,7 @@
     <style name="CCX_Screen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
+        <item name="android:windowBackground">@color/mw24_main_background</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
@@ -193,7 +192,7 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
+        <item name="android:windowBackground">@color/mw24_main_background</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
@@ -203,8 +202,7 @@
     <style name="CCX_MainScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/cryptox_black_main</item>
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
+        <item name="android:windowBackground">@color/mw24_main_background</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>

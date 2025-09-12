@@ -77,11 +77,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
         super.onCreate(savedInstanceState)
 
-        // Make the navigation bar color match the bottom navigation bar.
-        @Suppress("DEPRECATION")
-        window.navigationBarColor =
-            ContextCompat.getColor(this, R.color.cryptox_black_main)
-
         initializeViewModel()
         walletConnectViewModel.initialize()
 
@@ -216,10 +211,16 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun initializeViews() {
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            onNavigationItemSelected(it)
+        window.navigationBarColor =
+            ContextCompat.getColor(this, R.color.mw24_black_60)
+
+        binding.bottomNavigationView.apply {
+            itemIconTintList = null
+            setOnItemSelectedListener(::onNavigationItemSelected)
         }
+
         hideActionBarBack(false)
 
         hideMenuDrawer(isVisible = true) {

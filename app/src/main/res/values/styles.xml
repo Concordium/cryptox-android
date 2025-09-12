@@ -15,10 +15,9 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/cryptox_black_main</item>
+        <item name="android:windowBackground">@color/mw24_main_background</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
