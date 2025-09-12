@@ -30,7 +30,7 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.more.import.ImportActivity
-import com.concordium.wallet.ui.more.moreoverview.MenuSettingFragment
+import com.concordium.wallet.ui.more.moreoverview.MenuSettingsFragment
 import com.concordium.wallet.ui.multiwallet.WalletSwitchViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesFragment
@@ -42,6 +42,7 @@ import com.concordium.wallet.util.ImageUtil
 import com.concordium.wallet.util.getOptionalSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
     AuthDelegate by AuthDelegateImpl(),
@@ -238,24 +239,38 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     }
 
     private fun initGestureDetector() {
-        gestureDetector =
-            GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener() {
+        gestureDetector = GestureDetectorCompat(
+            this,
+            object : GestureDetector.SimpleOnGestureListener() {
+                private val SWIPE_THRESHOLD = 100
+                private val SWIPE_VELOCITY_THRESHOLD = 200
+
                 override fun onFling(
                     e1: MotionEvent?,
                     e2: MotionEvent,
                     velocityX: Float,
                     velocityY: Float
                 ): Boolean {
-                    if (e1 != null) {
-                        val deltaX = e2.x - e1.x
-                        if (deltaX > 200 && velocityX > 500) {
+                    if (e1 == null) return false
+
+                    val deltaX = e2.x - e1.x
+                    val deltaY = e2.y - e1.y
+
+                    if (abs(deltaX) > abs(deltaY)) {
+                        if (deltaX > SWIPE_THRESHOLD && velocityX > SWIPE_VELOCITY_THRESHOLD) {
+                            // Swipe right to open drawer
                             showDrawer()
+                            return true
+                        } else if (deltaX < -SWIPE_THRESHOLD && velocityX < -SWIPE_VELOCITY_THRESHOLD) {
+                            // Swipe left to close drawer
+                            hideDrawer()
                             return true
                         }
                     }
                     return false
                 }
-            })
+            }
+        )
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -265,10 +280,10 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun initObservers() {
         supportFragmentManager.setFragmentResultListener(
-            MenuSettingFragment.CLOSE_ACTION,
+            MenuSettingsFragment.CLOSE_ACTION,
             this
         ) { _, bundle ->
-            if (MenuSettingFragment.getResult(bundle))
+            if (MenuSettingsFragment.getResult(bundle))
                 hideDrawer()
         }
 
@@ -339,7 +354,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
     private fun showDrawer() {
         val fragment = supportFragmentManager.findFragmentByTag(DRAWER_TAG)
-            ?: MenuSettingFragment()
+            ?: MenuSettingsFragment()
 
         if (fragment.isAdded.not()) {
             supportFragmentManager.beginTransaction()

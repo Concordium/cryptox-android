@@ -35,7 +35,7 @@ import com.concordium.wallet.ui.seed.reveal.SavedSeedRevealActivity
 import com.concordium.wallet.ui.tokens.provider.NFTActivity
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 
-class MenuSettingFragment : BaseFragment() {
+class MenuSettingsFragment : BaseFragment() {
 
     private lateinit var viewModel: MoreOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
