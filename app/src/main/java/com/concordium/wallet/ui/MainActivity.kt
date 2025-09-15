@@ -69,6 +69,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private var hasHandledPossibleImportFile = false
     private lateinit var menuDrawerGestureDetector: GestureDetectorCompat
     private lateinit var accountGestureDetector: GestureDetectorCompat
+    private var lastAccountId: Int? = null
 
     //region Lifecycle
     // ************************************************************
@@ -198,9 +199,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                     text = it.getAccountName(),
                     icon = ImageUtil.getIconById(this, it.iconId),
                     onClickListener = { gotoAccountsList() },
-                    onTouchListener = { _, event ->
-                        accountGestureDetector.onTouchEvent(event)
-                        true
+                    onTouchListener = { v, event ->
+                        val handled = accountGestureDetector.onTouchEvent(event)
+                        if (!handled && event.action == MotionEvent.ACTION_UP) {
+                            v.performClick()
+                        }
+                        handled
                     }
                 )
             }
