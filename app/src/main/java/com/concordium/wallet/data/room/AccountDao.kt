@@ -99,4 +99,38 @@ interface AccountDao {
 
     @Query("DELETE FROM account_table")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM account_table WHERE id > :currentId ORDER BY id ASC LIMIT 1")
+    suspend fun getNextAccount(currentId: Int): Account?
+
+    @Query("SELECT * FROM account_table WHERE id < :currentId ORDER BY id DESC LIMIT 1")
+    suspend fun getPreviousAccount(currentId: Int): Account?
+
+    @Query("SELECT * FROM account_table ORDER BY id ASC LIMIT 1")
+    suspend fun getFirstAccount(): Account?
+
+    @Query("SELECT * FROM account_table ORDER BY id DESC LIMIT 1")
+    suspend fun getLastAccount(): Account?
+
+    @Transaction
+    suspend fun activateNext() {
+        val active = getActive() ?: return
+        val next = getNextAccount(active.id)
+        if (next != null) {
+            activate(next.address)
+        } else {
+            getFirstAccount()?.let { activate(it.address) }
+        }
+    }
+
+    @Transaction
+    suspend fun activatePrevious() {
+        val active = getActive() ?: return
+        val prev = getPreviousAccount(active.id)
+        if (prev != null) {
+            activate(prev.address)
+        } else {
+            getLastAccount()?.let { activate(it.address) }
+        }
+    }
 }

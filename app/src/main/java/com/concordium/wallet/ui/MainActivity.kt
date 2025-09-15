@@ -1,8 +1,8 @@
 package com.concordium.wallet.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -38,11 +38,11 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
+import com.concordium.wallet.util.GestureDetectorUtil
 import com.concordium.wallet.util.ImageUtil
 import com.concordium.wallet.util.getOptionalSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
     AuthDelegate by AuthDelegateImpl(),
@@ -67,7 +67,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private lateinit var walletConnectViewModel: WalletConnectViewModel
     private lateinit var walletSwitchViewModel: WalletSwitchViewModel
     private var hasHandledPossibleImportFile = false
-    private lateinit var gestureDetector: GestureDetectorCompat
+    private lateinit var menuDrawerGestureDetector: GestureDetectorCompat
+    private lateinit var accountGestureDetector: GestureDetectorCompat
 
     //region Lifecycle
     // ************************************************************
@@ -98,7 +99,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_SEED, false)) {
             goToImportFromSeed()
         }
-        initGestureDetector()
+        initGestureDetectors()
         initObservers()
     }
 
@@ -173,6 +174,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     //region Initialize
     // ************************************************************
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initializeViewModel() {
         val viewModelProvider = ViewModelProvider(
             this,
@@ -194,10 +196,13 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                 hideAccountSelector(
                     isVisible = true,
                     text = it.getAccountName(),
-                    icon = ImageUtil.getIconById(this, it.iconId)
-                ) {
-                    gotoAccountsList()
-                }
+                    icon = ImageUtil.getIconById(this, it.iconId),
+                    onClickListener = { gotoAccountsList() },
+                    onTouchListener = { _, event ->
+                        accountGestureDetector.onTouchEvent(event)
+                        true
+                    }
+                )
             }
         }
 
@@ -246,43 +251,21 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         binding.walletSwitchView.bind(walletSwitchViewModel)
     }
 
-    private fun initGestureDetector() {
-        gestureDetector = GestureDetectorCompat(
-            this,
-            object : GestureDetector.SimpleOnGestureListener() {
-                private val SWIPE_THRESHOLD = 100
-                private val SWIPE_VELOCITY_THRESHOLD = 200
-
-                override fun onFling(
-                    e1: MotionEvent?,
-                    e2: MotionEvent,
-                    velocityX: Float,
-                    velocityY: Float
-                ): Boolean {
-                    if (e1 == null) return false
-
-                    val deltaX = e2.x - e1.x
-                    val deltaY = e2.y - e1.y
-
-                    if (abs(deltaX) > abs(deltaY)) {
-                        if (deltaX > SWIPE_THRESHOLD && velocityX > SWIPE_VELOCITY_THRESHOLD) {
-                            // Swipe right to open drawer
-                            showDrawer()
-                            return true
-                        } else if (deltaX < -SWIPE_THRESHOLD && velocityX < -SWIPE_VELOCITY_THRESHOLD) {
-                            // Swipe left to close drawer
-                            hideDrawer()
-                            return true
-                        }
-                    }
-                    return false
-                }
-            }
+    private fun initGestureDetectors() {
+        menuDrawerGestureDetector = GestureDetectorUtil.getDrawerGestureDetector(
+            context = this,
+            onSwipeRight = { showDrawer() },
+            onSwipeLeft = { hideDrawer() }
+        )
+        accountGestureDetector = GestureDetectorUtil.getAccountGestureDetector(
+            context = this,
+            onSwipeUp = { viewModel.activateNextAccount() },
+            onSwipeDown = { viewModel.activatePreviousAccount() }
         )
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(event)
+        menuDrawerGestureDetector.onTouchEvent(event)
         return super.dispatchTouchEvent(event)
     }
 

@@ -150,6 +150,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         setState(State.Buy)
     }
 
+    fun activateNextAccount() = viewModelScope.launch {
+        accountRepository.activateNext()
+    }
+
+    fun activatePreviousAccount() = viewModelScope.launch {
+        accountRepository.activatePrevious()
+    }
+
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {
             override fun onError(identity: Identity, account: Account?) {

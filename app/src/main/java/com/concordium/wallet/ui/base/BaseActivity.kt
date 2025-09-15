@@ -247,14 +247,16 @@ abstract class BaseActivity(
         isVisible: Boolean = false,
         text: String,
         icon: Drawable?,
-        listener: View.OnClickListener? = null,
+        onClickListener: View.OnClickListener? = null,
+        onTouchListener: View.OnTouchListener? = null
     ) {
         accountBtn?.isVisible = isVisible
         accountBtnImage?.isVisible = isVisible
         accountBtnText?.isVisible = isVisible
         accountBtnText?.text = text
         accountBtnText?.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
-        accountBtn?.setOnClickListener(listener)
+        accountBtn?.setOnClickListener(onClickListener)
+        accountBtn?.setOnTouchListener(onTouchListener)
     }
 
     fun hideMenuDrawer(isVisible: Boolean, listener: View.OnClickListener? = null) {

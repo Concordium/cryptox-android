@@ -63,6 +63,14 @@ class AccountRepository(private val accountDao: AccountDao) {
         accountDao.activate(address)
     }
 
+    suspend fun activateNext() {
+        accountDao.activateNext()
+    }
+
+    suspend fun activatePrevious() {
+        accountDao.activatePrevious()
+    }
+
     suspend fun insert(account: Account): Long {
         return accountDao.insert(account).first()
     }
