@@ -50,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingVertical="@dimen/size12"
-        app:itemBackground="@null"
+        app:itemBackground="@drawable/mw24_navigation_item_background"
         app:itemTextAppearanceActive="@style/CCX_Typography_TabTitle"
         app:itemTextAppearanceInactive="@style/CCX_Typography_TabTitle"
         app:itemTextColor="@color/ccx_bottom_navigation_bar_item_color"
