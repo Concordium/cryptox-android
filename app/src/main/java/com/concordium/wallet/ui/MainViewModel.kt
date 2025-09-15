@@ -14,7 +14,9 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -53,6 +55,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _activeAccount = MutableStateFlow<Account?>(null)
     val activeAccount = _activeAccount.asStateFlow()
+
+    private val _launchEarn = MutableSharedFlow<Unit>(replay = 0)
+    val launchEarn = _launchEarn.asSharedFlow()
+
+    private val _launchOnRamp = MutableSharedFlow<Unit>(replay = 0)
+    val launchOnRamp = _launchOnRamp.asSharedFlow()
 
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
@@ -132,9 +140,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _showReviewDialog.postValue(Event(true))
     }
 
-    fun onEarnClicked() = setState(State.Earn)
+    fun onEarnClicked() = viewModelScope.launch {
+        _launchEarn.emit(Unit)
+        setState(State.Earn)
+    }
 
-    fun onOnrampClicked() = setState(State.Buy)
+    fun onOnrampClicked() = viewModelScope.launch {
+        _launchOnRamp.emit(Unit)
+        setState(State.Buy)
+    }
 
     fun startIdentityUpdate() {
         val updateListener = object : IdentityUpdater.UpdateListener {

@@ -201,6 +201,14 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             }
         }
 
+        viewModel.launchEarn.collectWhenStarted(this) {
+            binding.bottomNavigationView.selectedItemId = R.id.menuitem_earn
+        }
+
+        viewModel.launchOnRamp.collectWhenStarted(this) {
+            binding.bottomNavigationView.selectedItemId = R.id.menuitem_buy
+        }
+
         walletConnectViewModel = viewModelProvider.get()
         onboardingViewModel = viewModelProvider.get()
 
