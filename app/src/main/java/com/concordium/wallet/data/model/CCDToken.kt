@@ -12,9 +12,10 @@ data class CCDToken(
 
     constructor(
         account: Account,
+        withTotalBalance: Boolean = false,
         eurPerMicroCcd: SimpleFraction?,
     ) : this(
-        balance = account.balanceAtDisposal,
+        balance = if (withTotalBalance) account.balance else account.balanceAtDisposal,
         accountAddress = account.address,
         isEarning = account.isBaking() || account.isDelegating(),
         eurPerMicroCcd = eurPerMicroCcd,

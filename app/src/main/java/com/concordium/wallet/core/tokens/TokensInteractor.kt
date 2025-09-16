@@ -32,8 +32,9 @@ class TokensInteractor(
         loadBalances: Boolean = true,
         onlyTransferable: Boolean = false,
         addCCDToken: Boolean = true,
+        ccdWithTotalBalance: Boolean = false
     ): Result<List<Token>> = runCatching {
-        val ccdToken = getCCDDefaultToken(accountAddress)
+        val ccdToken = getCCDDefaultToken(accountAddress, ccdWithTotalBalance)
 
         val contractTokens =
             contractTokensRepository
@@ -165,9 +166,11 @@ class TokensInteractor(
 
     private suspend fun getCCDDefaultToken(
         accountAddress: String,
+        withTotalBalance: Boolean = false
     ) = CCDToken(
         account = accountRepository.findByAddress(accountAddress)
             ?: error("Account $accountAddress not found"),
+        withTotalBalance = withTotalBalance,
         eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
             .getOrNull()
     )
