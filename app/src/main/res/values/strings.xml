@@ -1090,7 +1090,7 @@
     <string name="export_account_keys_key_copied">Private Key copied to clipboard</string>
 
     <!-- TX log export -->
-    <string name="export_transaction_log_title">Export transaction logs</string>
+    <string name="export_transaction_log_title">Export Transaction Logs</string>
     <string name="export_transaction_log_notice">
         Transaction logs of an account can be generated and saved
         via <a href="#ccdscan">CCDScan.io</a>.\n\nIf
