@@ -186,6 +186,7 @@
         <item name="android:paddingHorizontal">@dimen/size24</item>
         <item name="android:paddingVertical">@dimen/size12</item>
         <item name="android:drawablePadding">@dimen/size8</item>
+        <item name="priority">primary</item>
     </style>
 
     <style name="MW24_Button_Primary_Medium" parent="MW24_Button_Primary">
