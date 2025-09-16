@@ -4,7 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="6dp">
+    android:layout_marginBottom="@dimen/size4">
+
+    <TextView
+        android:id="@+id/concordium_network_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size24"
+        android:paddingBottom="@dimen/size16"
+        android:text="@string/cis_concordium_network"
+        android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+        android:textColor="@color/mw24_content_secondary"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/content"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content"
@@ -15,7 +31,7 @@
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/concordium_network_label"
         tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -63,18 +79,11 @@
             app:layout_constraintTop_toTopOf="@id/title"
             tools:visibility="visible">
 
-            <View
-                android:layout_width="3dp"
-                android:layout_height="3dp"
-                android:background="@drawable/simple_circle_bg"
-                android:backgroundTint="@color/cryptox_white_main" />
-
             <TextView
                 style="@style/MW24_Typography_Label_Main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textColor="@color/cryptox_white_main"
+                android:textColor="@color/mw24_content_accent_secondary"
                 android:text="@string/cis_percent" />
         </LinearLayout>
 
@@ -161,7 +170,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/mw24_blue_3_50"
+            android:textColor="@color/mw24_content_accent_secondary"
             app:layout_constraintEnd_toEndOf="@id/balance"
             app:layout_constraintTop_toBottomOf="@id/balance"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -174,7 +183,7 @@
         android:id="@+id/manage_tokens"
         style="@style/MW24_Manage_Token_List_Button"
         android:layout_below="@id/content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/size24"
         android:clickable="true"
         android:text="@string/cis_manage"
         android:visibility="gone"

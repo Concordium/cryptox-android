@@ -549,9 +549,10 @@
     <string name="transaction_submitted">Transaction submitted!</string>
 
     <string name="cis_tab_tokens">Tokens</string>
-    <string name="cis_manage">Manage token list</string>
+    <string name="cis_manage">Manage Tokens</string>
     <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
-    <string name="cis_manage_token_list">Manage token list</string>
+    <string name="cis_manage_token_list">Manage Tokens</string>
+    <string name="cis_concordium_network">Concordium Network</string>
     <string name="cis_add_token_title">Add Tokens</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
     <string name="cis_token_details_balance">Balance</string>
