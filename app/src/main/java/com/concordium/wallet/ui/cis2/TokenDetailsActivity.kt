@@ -118,7 +118,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             fragmentManager = supportFragmentManager,
         )
             .showTokenDetails(
-                token=token,
+                token = token,
                 isHideVisible = true,
                 onHideClicked = ::showDeleteDialog,
             )
@@ -292,7 +292,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         )
         intent.putExtra(
             SendTokenActivity.TOKEN,
-            viewModel.tokenDetailsData.selectedToken,
+            if (viewModel.tokenDetailsData.selectedToken is CCDToken) {
+                (viewModel.tokenDetailsData.selectedToken as CCDToken)
+                    .copy(balance = viewModel.tokenDetailsData.account?.balanceAtDisposal!!)
+            } else {
+                viewModel.tokenDetailsData.selectedToken
+            },
         )
         intent.putExtra(
             SendTokenActivity.PARENT_ACTIVITY,
