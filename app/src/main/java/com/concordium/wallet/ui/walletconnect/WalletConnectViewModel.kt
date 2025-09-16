@@ -418,6 +418,7 @@ private constructor(
                 proposerPublicKey = sessionProposalPublicKey,
                 namespaces = mapOf(
                     sessionProposalNamespaceKey to Sign.Model.Namespace.Session(
+                        chains = listOf(sessionProposalNamespaceChain),
                         accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,

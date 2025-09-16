@@ -44,7 +44,7 @@ import javax.crypto.Cipher
 
 abstract class BaseActivity(
     private val layout: Int? = null,
-    private val titleId: Int = R.string.app_name,
+    private val titleId: Int = R.string.app_name
 ) : AppCompatActivity() {
 
     private var titleView: TextView? = null

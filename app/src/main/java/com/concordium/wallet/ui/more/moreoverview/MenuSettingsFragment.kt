@@ -362,7 +362,7 @@ class MenuSettingsFragment : BaseFragment() {
         startActivity(intent)
     }
 
-    companion object Companion {
+    companion object {
         const val CLOSE_ACTION = "close_action"
         private const val CLOSE_MENU = "close_menu"
 
