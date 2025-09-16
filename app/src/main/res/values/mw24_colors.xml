@@ -63,6 +63,7 @@
     <color name="mw24_content_primary_disabled">#4B5357</color>
     <color name="mw24_content_accent_primary">#6C88AA</color>
     <color name="mw24_content_accent_secondary">#B6C9E2</color>
+    <color name="mw24_content_accent_tertiary">#D7E3EF</color>
     <color name="mw24_content_success_primary">#24D4AB</color>
     <color name="mw24_content_warning_primary">#E8B126</color>
     <color name="mw24_content_error_primary">#D62E4C</color>

@@ -227,7 +227,7 @@
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
     <string name="account_details_total_balance">%1$s CCD</string>
-    <string name="account_details_balance_at_disposal">%1$s CCD at disposal</string>
+    <string name="account_details_balance_at_disposal">%1$s CCD available</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
     <string name="account_details_change_name_popup_cancel">Cancel</string>
@@ -1478,6 +1478,6 @@
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
 
-    <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
-    <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
+    <string name="account_details_earn_banner_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
+    <string name="account_details_earn_banner_description">Stake your CCD and receive staking rewards</string>
 </resources>

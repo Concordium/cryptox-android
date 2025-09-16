@@ -422,17 +422,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-
     fun hasShownInitialAnimation(): Boolean {
         return App.appCore.session.walletStorage.setupPreferences.getHasShownInitialAnimation()
     }
 
     fun setHasShownInitialAnimation() {
         return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
-    }
-
-    fun onEarnClicked() {
-        goToEarnIfPossible()
     }
 
     fun onSuspensionNoticeClicked() = viewModelScope.launch {
