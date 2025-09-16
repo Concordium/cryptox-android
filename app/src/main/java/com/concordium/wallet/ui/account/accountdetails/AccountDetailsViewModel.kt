@@ -13,6 +13,7 @@ import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
@@ -92,8 +93,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val totalBalanceLiveData: LiveData<BigInteger>
         get() = _totalBalanceLiveData
 
-    private var _accountUpdatedFlow = MutableStateFlow(false)
-    val accountUpdatedFlow = _accountUpdatedFlow.asStateFlow()
+    private var _accountUpdatedFlow = MutableSharedFlow<Account>()
+    val accountUpdatedFlow = _accountUpdatedFlow.asSharedFlow()
 
     private val _showDialogLiveData = MutableLiveData<Event<DialogToShow>>()
     val showDialogLiveData: LiveData<Event<DialogToShow>>
@@ -117,6 +118,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
+
+    private val _notificationToken = MutableStateFlow<Token?>(null)
+    val notificationToken = _notificationToken.asStateFlow()
 
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
@@ -203,6 +207,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+    fun updateNotificationToken(token: Token?) = viewModelScope.launch {
+        _notificationToken.emit(token)
+    }
+
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
@@ -212,7 +220,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     if (::account.isInitialized) {
                         _totalBalanceLiveData.value = account.balance
                     }
-                    _accountUpdatedFlow.emit(true)
+                    _accountUpdatedFlow.emit(activeAccount.first())
                     if (totalBalances.totalBalanceForAllAccounts > BigInteger.ZERO &&
                         App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
                     ) {

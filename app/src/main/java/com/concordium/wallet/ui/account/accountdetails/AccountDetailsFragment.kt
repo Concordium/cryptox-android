@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.account.accountdetails
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +14,6 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.animation.AccelerateInterpolator
 import android.widget.ListPopupWindow.WRAP_CONTENT
 import android.widget.PopupWindow
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -25,7 +23,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -41,8 +39,6 @@ import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
-import com.concordium.wallet.ui.cis2.TokenDetailsActivity
-import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
@@ -61,7 +57,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     private lateinit var binding: ActivityAccountDetailsBinding
     private lateinit var mainViewModel: MainViewModel
     private lateinit var viewModelAccountDetails: AccountDetailsViewModel
-    private lateinit var viewModelTokens: TokensViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
@@ -134,11 +129,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
 
-        viewModelTokens = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[TokensViewModel::class.java]
-
         onboardingViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
@@ -200,14 +190,11 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             })
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
-            viewModelTokens.loadTokensBalances()
             updateBannersVisibility(viewModelAccountDetails.account)
         }
 
         viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
             updateViews(account)
-            viewModelTokens.tokenData.account = account
-            viewModelTokens.loadTokens(account.address)
             (requireActivity() as BaseActivity).hideAccountSelector(
                 isVisible = true,
                 text = account.getAccountName(),
@@ -216,12 +203,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                 gotoAccountsList()
             }
             isZeroBalance = account.balance == BigInteger.ZERO
-        }
-
-        viewModelAccountDetails.accountUpdatedFlow.collectWhenStarted(viewLifecycleOwner) {
-            if (it) {
-                viewModelTokens.loadTokensBalances()
-            }
         }
 
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
@@ -276,27 +257,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         combine(
             mainViewModel.activeAccountAddress,
-            mainViewModel.notificationTokenId,
+            mainViewModel.notificationToken,
             viewModelAccountDetails.activeAccount
-        ) { notificationAddress, tokenId, currentAccount ->
-            if (notificationAddress == currentAccount.address && tokenId.isNotEmpty()) {
-                viewModelTokens.tokenBalances.observe(viewLifecycleOwner) { ready ->
-                    if (ready) {
-                        viewModelTokens.tokens.find { it.uid == tokenId }?.also {
-                            showTokenDetailsDialog(it)
-                        }
-                    }
-                }
-            } else {
-                viewModelTokens.tokenBalances.removeObservers(viewLifecycleOwner)
+        ) { notificationAddress, token, currentAccount ->
+            if (notificationAddress == currentAccount.address && token != null) {
+                viewModelAccountDetails.updateNotificationToken(token)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-        viewModelTokens.chooseToken.observe(viewLifecycleOwner) { token ->
-            token?.let {
-                showTokenDetailsDialog(it)
-            }
-        }
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
@@ -469,15 +436,14 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.updateState()
         viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
-        viewModelTokens.chooseToken.postValue(null) //prevent auto open TokenDetailsActivity
     }
 
     private fun resetWhenPaused() {
         if (
             mainViewModel.activeAccountAddress.value.isNotEmpty() &&
-            mainViewModel.notificationTokenId.value.isNotEmpty()
+            mainViewModel.notificationToken.value != null
         ) {
-            mainViewModel.setNotificationData("", "")
+            mainViewModel.setNotificationData("", null)
         }
         viewModelAccountDetails.stopFrequentUpdater()
     }
@@ -608,10 +574,16 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun onSendFundsClicked() {
         val intent = Intent(requireActivity(), SendTokenActivity::class.java)
-        intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
+        intent.putExtra(
+            SendTokenActivity.ACCOUNT,
+            viewModelAccountDetails.account
+        )
         intent.putExtra(
             SendTokenActivity.TOKEN,
-            Token.ccd(viewModelAccountDetails.account)
+            CCDToken(
+                account = viewModelAccountDetails.account,
+                eurPerMicroCcd = null,
+            )
         )
         intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, this::class.java.canonicalName)
 
@@ -631,22 +603,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             viewModelAccountDetails.account
         )
         startActivity(intent)
-    }
-
-    private fun showTokenDetailsDialog(token: Token) {
-        val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
-            putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
-            putExtra(TokenDetailsActivity.TOKEN, token)
-            putExtra(
-                TokenDetailsActivity.PENDING_DELEGATION,
-                viewModelAccountDetails.hasPendingDelegationTransactions
-            )
-            putExtra(
-                TokenDetailsActivity.PENDING_VALIDATION,
-                viewModelAccountDetails.hasPendingBakingTransactions
-            )
-        }
-        showTokenDetails.launch(intent)
     }
 
     private fun setupOnrampBanner(active: Boolean) {
@@ -708,17 +664,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         updateScrollContainerView(account.isDelegating() || account.isBaking())
     }
-
-    private val showTokenDetails =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val isChanged =
-                    it.data?.getBooleanExtra(TokenDetailsActivity.CHANGED, false) == true
-                if (isChanged) {
-                    viewModelTokens.updateWithSelectedTokensDone.postValue(true)
-                }
-            }
-        }
 
     private fun gotoAccountsList() {
         val intent = Intent(activity, AccountsListActivity::class.java)

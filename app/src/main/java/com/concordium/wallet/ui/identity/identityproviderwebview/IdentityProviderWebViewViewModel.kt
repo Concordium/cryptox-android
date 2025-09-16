@@ -10,10 +10,8 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendError
-import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.model.AttributeList
 import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityCreationData
@@ -25,7 +23,6 @@ import com.concordium.wallet.data.model.PreIdentityObject
 import com.concordium.wallet.data.model.PubInfoForIp
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.seed.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonParseException
@@ -70,9 +67,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     private val gson = App.appCore.gson
     private val identityRepository =
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
-    private val repository = IdentityProviderRepository()
     private var identityRequest: BackendRequest<IdentityContainer>? = null
-    val useTemporaryBackend = BuildConfig.USE_BACKEND_MOCK
 
     init {
         _waitingLiveData.value = true
@@ -80,27 +75,11 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
 
     fun initialize(tempData: IdentityCreationData) {
         this.identityCreationData = tempData
-        if (useTemporaryBackend) {
-            getIdentityObjectFromProvider(
-                IdentityRequest(
-                    tempData.idObjectRequest
-                )
-            )
-        }
     }
 
     override fun onCleared() {
         super.onCleared()
         identityRequest?.dispose()
-    }
-
-    private fun handleBackendError(throwable: Throwable) {
-        Log.e("Backend request failed", throwable)
-        if (throwable is BackendErrorException) {
-            _gotoFailedLiveData.value = Event(Pair(true, throwable.error))
-        } else {
-            _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(throwable))
-        }
     }
 
     /**
@@ -212,21 +191,5 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         } else {
             _identityCreationError.value = event
         }
-    }
-
-    private fun getIdentityObjectFromProvider(request: IdentityRequest) {
-        _waitingLiveData.value = true
-        identityRequest?.dispose()
-        identityRequest = repository.requestIdentity(
-            request,
-            {
-                saveNewIdentity(it.value)
-                _waitingLiveData.value = false
-            },
-            {
-                _waitingLiveData.value = false
-                handleBackendError(it)
-            }
-        )
     }
 }

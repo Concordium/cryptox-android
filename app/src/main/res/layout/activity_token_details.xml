@@ -33,17 +33,17 @@
 
         <include
             android:id="@+id/ccd_action_buttons"
+            layout="@layout/token_details_action_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            layout="@layout/token_details_action_buttons" />
+            android:layout_marginTop="20dp" />
 
         <include
             android:id="@+id/cis_token_action_buttons"
+            layout="@layout/cis_token_details_action_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            layout="@layout/cis_token_details_action_buttons" />
+            android:layout_marginTop="20dp" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -51,8 +51,8 @@
             android:layout_marginVertical="20dp">
 
             <include
-                android:id="@+id/include_about"
-                layout="@layout/activity_token_details_about" />
+                android:id="@+id/details_layout"
+                layout="@layout/include_token_details" />
         </androidx.core.widget.NestedScrollView>
 
         <include

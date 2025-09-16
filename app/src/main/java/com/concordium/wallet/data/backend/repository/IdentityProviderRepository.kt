@@ -4,9 +4,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
-import com.concordium.wallet.data.model.IdentityRequest
 
 class IdentityProviderRepository {
 
@@ -46,35 +44,6 @@ class IdentityProviderRepository {
         call.enqueue(object : BackendCallback<GlobalParamsWrapper>() {
 
             override fun onResponseData(response: GlobalParamsWrapper) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-
-        return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
-
-    fun requestIdentity(
-        request: IdentityRequest,
-        success: (IdentityContainer) -> Unit,
-        failure: ((Throwable) -> Unit)?
-    ): BackendRequest<IdentityContainer> {
-        val json = gson.toJson(
-            IdentityRequest(
-                request.idObjectRequest
-            )
-        )
-        val call = backend.requestIdentity(json)
-        call.enqueue(object : BackendCallback<IdentityContainer>() {
-
-            override fun onResponseData(response: IdentityContainer) {
                 success(response)
             }
 

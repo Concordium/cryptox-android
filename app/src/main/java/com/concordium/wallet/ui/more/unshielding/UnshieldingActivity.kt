@@ -118,6 +118,7 @@ class UnshieldingActivity : BaseActivity(
             putSerializable(UNSHIELDED_RESULT_EXTRA, unshieldingResult)
         }
 
+        @Suppress("DEPRECATION")
         fun getResult(bundle: Bundle): UnshieldingResult =
             checkNotNull(bundle.getSerializable(UNSHIELDED_RESULT_EXTRA) as? UnshieldingResult) {
                 "No $UNSHIELDED_RESULT_EXTRA specified"

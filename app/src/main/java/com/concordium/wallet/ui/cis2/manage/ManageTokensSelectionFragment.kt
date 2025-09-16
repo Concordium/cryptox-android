@@ -15,12 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentManageTokensSelectionBinding
-import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.ManageTokensViewModel
 
 class ManageTokensSelectionFragment : Fragment() {
     private var _binding: FragmentManageTokensSelectionBinding? = null
     private val binding get() = _binding!!
-    private val _viewModel: TokensViewModel
+    private val viewModel: ManageTokensViewModel
         get() = (parentFragment as ManageTokensMainFragment).viewModel
     private lateinit var selectionAdapter: ManageTokensSelectionAdapter
     private var firstTime = true
@@ -41,13 +41,13 @@ class ManageTokensSelectionFragment : Fragment() {
         initObservers()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 
         if (!firstTime)
             selectionAdapter.notifyDataSetChanged()
         firstTime = false
-        _viewModel.checkExistingTokens()
         binding.nonSelected.visibility = View.INVISIBLE
     }
 
@@ -58,7 +58,7 @@ class ManageTokensSelectionFragment : Fragment() {
 
     private fun initViews() {
         selectionAdapter = ManageTokensSelectionAdapter(requireActivity(), arrayOf())
-        selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        selectionAdapter.dataSet = viewModel.tokens.toTypedArray()
 
         binding.tokensFound.adapter = selectionAdapter
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -68,14 +68,14 @@ class ManageTokensSelectionFragment : Fragment() {
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (_viewModel.tokens.size > 0 &&
+                if (viewModel.tokens.size > 0 &&
                     visibleItemCount + firstVisibleItemPosition >= totalItemCount &&
                     firstVisibleItemPosition >= 0 &&
                     totalItemCount > 3
                 ) {
-                    _viewModel.lookForTokens(
-                        accountAddress = _viewModel.tokenData.account!!.address,
-                        from = _viewModel.tokens.last().uid,
+                    viewModel.lookForTokens(
+                        accountAddress = viewModel.tokenData.account!!.address,
+                        from = viewModel.lastTokenId(),
                     )
                 }
             }
@@ -85,44 +85,43 @@ class ManageTokensSelectionFragment : Fragment() {
         selectionAdapter.setTokenClickListener(object :
             ManageTokensSelectionAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
-                _viewModel.chooseTokenInfo.postValue(token)
                 gotoTokenDetails(token)
             }
 
             override fun onCheckBoxClick(token: Token) {
-                _viewModel.toggleNewToken(token)
+                viewModel.toggleNewToken(token)
             }
         })
 
-        binding.continueBtn.setOnClickListener {
+        binding.addTokensBtn.setOnClickListener {
             updateTokens()
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initObservers() {
-        _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-            binding.searchLayout.isVisible = _viewModel.tokens.size > 1
-            selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        viewModel.lookForTokens.observe(viewLifecycleOwner) {
+            binding.searchLayout.isVisible = viewModel.tokens.size > 1
+            selectionAdapter.dataSet = viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
             binding.searchLayout.setText("")
         }
-        _viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
+        viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
             showWaiting(false)
-            binding.noTokensFound.isVisible = status == TokensViewModel.TOKENS_EMPTY
-            if (status == TokensViewModel.TOKENS_OK) {
-                selectionAdapter.dataSet = arrayOf(checkNotNull(_viewModel.exactToken))
+            binding.noTokensFound.isVisible = status == ManageTokensViewModel.TOKENS_EMPTY
+            if (status == ManageTokensViewModel.TOKENS_OK) {
+                selectionAdapter.dataSet = arrayOf(checkNotNull(viewModel.exactToken))
                 selectionAdapter.notifyDataSetChanged()
             }
         }
-        _viewModel.tokenDetails.observe(viewLifecycleOwner) {
-            selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        viewModel.tokenDetails.observe(viewLifecycleOwner) {
+            selectionAdapter.dataSet = viewModel.tokens.toTypedArray()
             selectionAdapter.notifyDataSetChanged()
         }
-        _viewModel.selectedTokensChanged.observe(viewLifecycleOwner) { changed ->
-            binding.continueBtn.isEnabled = changed
+        viewModel.selectedTokensChanged.observe(viewLifecycleOwner) { changed ->
+            binding.addTokensBtn.isEnabled = changed
         }
-        _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
+        viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
             if (nonSelected)
                 binding.nonSelected.visibility = View.VISIBLE
             else
@@ -136,9 +135,9 @@ class ManageTokensSelectionFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun resetSearch() {
-        selectionAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        selectionAdapter.dataSet = viewModel.tokens.toTypedArray()
         selectionAdapter.notifyDataSetChanged()
-        _viewModel.dismissExactTokenLookup()
+        viewModel.dismissExactTokenLookup()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -173,17 +172,17 @@ class ManageTokensSelectionFragment : Fragment() {
         selectionAdapter.dataSet = emptyArray()
         selectionAdapter.notifyDataSetChanged()
         showWaiting(true)
-        _viewModel.lookForExactToken(
+        viewModel.lookForExactToken(
             apparentTokenId = binding.searchLayout.getText().trim(),
-            accountAddress = _viewModel.tokenData.account!!.address,
+            accountAddress = viewModel.tokenData.account!!.address,
         )
     }
 
     private fun updateTokens() {
-        _viewModel.updateWithSelectedTokens()
-        _viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { value ->
+        viewModel.updateWithSelectedTokens()
+        viewModel.updateWithSelectedTokensDone.observe(viewLifecycleOwner) { value ->
             val intent = Intent(requireContext(), ManageTokenListActivity::class.java).apply {
-                putExtra(ManageTokenListActivity.ACCOUNT, _viewModel.tokenData.account)
+                putExtra(ManageTokenListActivity.ACCOUNT, viewModel.tokenData.account)
                 putExtra(ManageTokenListActivity.LIST_UPDATED, value)
             }
             startActivity(intent)

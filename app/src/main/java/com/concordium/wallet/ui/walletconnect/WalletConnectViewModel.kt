@@ -1,3 +1,5 @@
+@file:Suppress("ConvertObjectToDataObject")
+
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
@@ -270,6 +272,7 @@ private constructor(
                         "\npairing=$currentPairing"
             )
 
+            @Suppress("DEPRECATION")
             CoreClient.Pairing.disconnect(Core.Params.Disconnect(currentPairing.topic)) { error ->
                 Log.e(
                     "failed_active_pairing_disconnect:" +

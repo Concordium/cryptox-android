@@ -14,6 +14,7 @@ import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.PassiveDelegation
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
@@ -57,22 +58,26 @@ interface ProxyBackend {
     suspend fun submissionStatusSuspended(@Path("submissionId") submissionId: String): SubmissionStatusResponse
 
     @GET("v0/transactionCost")
+    @JvmSuppressWildcards
     fun transferCost(
-        @Query("type") type: String? = null,
-        @Query("memoSize") memoSize: Int? = null,
-        @Query("amount") amount: String? = null,
-        @Query("restake") restake: Boolean? = null,
-        @Query("target") target: Boolean? = null,
-        @Query("passive") passive: Boolean? = null,
-        @Query("metadataSize") metadataSize: Int? = null,
-        @Query("openStatus") openStatus: String? = null,
-        @Query("suspended") suspended: Boolean? = null,
-        @Query("sender") sender: String? = null,
-        @Query("contractIndex") contractIndex: Int? = null,
-        @Query("contractSubindex") contractSubindex: Int? = null,
-        @Query("receiveName") receiveName: String? = null,
-        @Query("parameter") parameter: String? = null,
-        @Query("executionNRGBuffer") executionNRGBuffer: Int? = null,
+        @Query("type") type: String?,
+        @Query("memoSize") memoSize: Int?,
+        @Query("amount") amount: String?,
+        @Query("restake") restake: Boolean?,
+        @Query("target") target: Boolean?,
+        @Query("passive") passive: Boolean?,
+        @Query("metadataSize") metadataSize: Int?,
+        @Query("openStatus") openStatus: String?,
+        @Query("suspended") suspended: Boolean?,
+        @Query("sender") sender: String?,
+        @Query("contractIndex") contractIndex: Int?,
+        @Query("contractSubindex") contractSubindex: Int?,
+        @Query("receiveName") receiveName: String?,
+        @Query("parameter") parameter: String?,
+        @Query("executionNRGBuffer") executionNRGBuffer: Int?,
+        @Query("tokenId") tokenId: String?,
+        @Query("listOperationsSize") listOperationsSize: Int?,
+        @Query("tokenOperationTypeCount") tokenOperationTypeCountJson: String?,
     ): Call<TransactionCost>
 
     @GET("v0/chainParameters")
@@ -84,10 +89,10 @@ interface ProxyBackend {
     @GET("v1/accBalance/{accountAddress}")
     fun accountBalance(@Path("accountAddress") accountAddress: String): Call<AccountBalance>
 
-    @GET("v1/accBalance/{accountAddress}")
+    @GET("v2/accBalance/{accountAddress}")
     suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
 
-    @GET("v2/accTransactions/{accountAddress}")
+    @GET("v3/accTransactions/{accountAddress}")
     fun accountTransactions(
         @Path("accountAddress") accountAddress: String,
         @Query("order") order: String? = null,
@@ -136,4 +141,10 @@ interface ProxyBackend {
         @Path("accountAddress") accountAddress: String,
         @Query("tokenId") tokenId: String,
     ): CIS2TokensBalances
+
+    @GET("/v0/plt/tokens")
+    suspend fun pltTokens(): List<PLTInfo>
+
+    @GET("/v0/plt/tokenInfo/{tokenId}")
+    suspend fun getPLTTokenById(@Path("tokenId") tokenId: String): PLTInfo
 }

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/mw24_container_primary_background">
+    android:background="@drawable/mw24_container_primary_background"
+    android:padding="12dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/token_icon"
@@ -14,6 +14,7 @@
         android:layout_height="@dimen/cis_token_icon_size"
         android:layout_gravity="center_vertical"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_logo_placeholder" />
@@ -21,39 +22,74 @@
     <TextView
         android:id="@+id/title"
         style="@style/MW24_Typography_Label_Main"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
+        android:layout_marginStart="12dp"
         android:textColor="@color/cryptox_white_main"
-        app:layout_constraintBottom_toTopOf="@id/subtitle"
-        app:layout_constraintEnd_toStartOf="@id/selection"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/token_type"
+        app:layout_constraintEnd_toStartOf="@id/plt_in_allow_list_icon"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/token_icon"
         app:layout_constraintTop_toTopOf="@id/token_icon"
         tools:text="Wrapped Bitcoin" />
 
+    <ImageView
+        android:id="@+id/plt_in_allow_list_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/mw24_ic_circled_block_deny"
+        app:layout_constraintBottom_toBottomOf="@id/title"
+        app:layout_constraintEnd_toStartOf="@id/subtitle"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/title"
+        app:layout_constraintTop_toTopOf="@id/title"
+        app:tint="@color/mw24_content_accent_secondary" />
+
     <TextView
         android:id="@+id/subtitle"
-        style="@style/MW24_Typography_Text_Mid_Alternative"
-        android:layout_width="0dp"
+        style="@style/MW24_Typography_Label_Main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/selection"
+        app:layout_constraintEnd_toStartOf="@id/selection"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@id/selection"
+        tools:text="@string/cis_not_owned" />
+
+    <TextView
+        android:id="@+id/token_type"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="@color/cryptox_grey_main"
-        app:layout_constraintBottom_toBottomOf="@id/token_icon"
+        android:drawablePadding="4dp"
+        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+        android:textColor="@color/mw24_plain_white_40"
+        app:drawableStartCompat="@drawable/mw24_ic_cis2_token"
+        app:drawableTint="@color/mw24_plain_white_40"
         app:layout_constraintEnd_toEndOf="@id/title"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@id/title"
         app:layout_constraintTop_toBottomOf="@id/title"
-        tools:text="@string/cis_not_owned" />
+        tools:text="CIS-2" />
+
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/selection"
-        android:button="@drawable/mw24_checkbox_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:button="@drawable/mw24_checkbox_button"
         android:importantForAccessibility="no"
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

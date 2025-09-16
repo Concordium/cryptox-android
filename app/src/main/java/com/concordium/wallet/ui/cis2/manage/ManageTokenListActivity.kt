@@ -8,10 +8,11 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityManageTokenListBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.HidingTokenDialog
-import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.tokenmanager.ManageTokenListViewModel
 import com.concordium.wallet.uicore.toast.showGradientToast
 import com.concordium.wallet.util.getSerializable
 
@@ -22,7 +23,7 @@ class ManageTokenListActivity : BaseActivity(
     private val binding by lazy {
         ActivityManageTokenListBinding.bind(findViewById(R.id.root_layout))
     }
-    private lateinit var viewModelTokens: TokensViewModel
+    private lateinit var manageTokenListViewModel: ManageTokenListViewModel
     private lateinit var tokensAdapter: ManageTokensListAdapter
 
     private lateinit var account: Account
@@ -37,9 +38,6 @@ class ManageTokenListActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         hideActionBarBack(isVisible = true)
-        hideAddContact(isVisible = true) {
-            goToAddTokens()
-        }
 
         initViews()
         initViewModel()
@@ -48,7 +46,7 @@ class ManageTokenListActivity : BaseActivity(
 
     override fun onResume() {
         super.onResume()
-        viewModelTokens.loadTokens(account.address)
+        manageTokenListViewModel.loadTokens(account.address)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -56,23 +54,31 @@ class ManageTokenListActivity : BaseActivity(
 
         listUpdated = intent?.getBooleanExtra(LIST_UPDATED, false) == true
         if (listUpdated) {
-            showToast(showDescription = false)
+            showToast()
         }
     }
 
     private fun initViewModel() {
-        viewModelTokens = ViewModelProvider(
+        manageTokenListViewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[TokensViewModel::class.java]
+        )[ManageTokenListViewModel::class.java]
 
         account = intent.getSerializable(ACCOUNT, Account::class.java)
 
-        viewModelTokens.tokenData.account = account
+        manageTokenListViewModel.uiState.collectWhenStarted(this) { uiState ->
+            binding.progress.progressBar.isVisible = uiState.loading
+            tokensAdapter.setData(uiState.tokens)
+            binding.tokensList.isVisible = uiState.tokens.isNotEmpty()
+            uiState.error?.let {
+                showError(it)
+            }
 
-        viewModelTokens.waiting.observe(this) {
-            tokensAdapter.setData(viewModelTokens.tokens)
-            binding.progress.progressBar.isVisible = it
+            val isEmptyViewVisible = !uiState.loading && uiState.tokens.isEmpty()
+            binding.emptyViewLayout.isVisible = isEmptyViewVisible
+            hideAddContact(isVisible = isEmptyViewVisible.not()) {
+                goToAddTokens()
+            }
         }
     }
 
@@ -89,7 +95,7 @@ class ManageTokenListActivity : BaseActivity(
     }
 
     private fun initViews() {
-        tokensAdapter = ManageTokensListAdapter(this)
+        tokensAdapter = ManageTokensListAdapter()
         binding.tokensList.adapter = tokensAdapter
         tokensAdapter.setTokenClickListener(object : ManageTokensListAdapter.TokenClickListener {
             override fun onHideClick(token: Token) {
@@ -99,46 +105,36 @@ class ManageTokenListActivity : BaseActivity(
 
         listUpdated = intent.getBooleanExtra(LIST_UPDATED, false)
         if (listUpdated) {
-            showToast(showDescription = false)
+            showToast()
+        }
+        binding.emptyViewButton.setOnClickListener {
+            goToAddTokens()
         }
     }
 
     private fun onHideTokenClicked(token: Token) {
-        viewModelTokens.tokenData.selectedToken = token
-        viewModelTokens.tokenData.selectedToken?.symbol?.let {
-            HidingTokenDialog.newInstance(
-                HidingTokenDialog.getBundle(tokenName = it)
-            ).showSingle(supportFragmentManager, HidingTokenDialog.TAG)
-        }
+        manageTokenListViewModel.selectToken(token)
+        HidingTokenDialog.newInstance(
+            HidingTokenDialog.getBundle(manageTokenListViewModel.selectedTokenSymbol())
+        ).showSingle(supportFragmentManager, HidingTokenDialog.TAG)
     }
 
     private fun onHideToken() {
-        viewModelTokens.deleteSelectedToken()
-        viewModelTokens.loadTokens(viewModelTokens.tokenData.account?.address!!)
-        showToast(showDescription = true)
+        manageTokenListViewModel.deleteSelectedToken(account.address)
+        manageTokenListViewModel.loadTokens(account.address)
+        showToast()
     }
 
     private fun goToAddTokens() {
         val intent = Intent(this, AddTokenActivity::class.java)
-        intent.putExtra(ACCOUNT, viewModelTokens.tokenData.account)
+        intent.putExtra(ACCOUNT, account)
         startActivity(intent)
     }
 
-    private fun showToast(showDescription: Boolean) {
-        if (showDescription) {
-            showGradientToast(
-                R.drawable.mw24_ic_eye_close,
-                getString(R.string.cis_tokens_updated),
-                getString(
-                    R.string.cis_tokens_updated_details,
-                    viewModelTokens.tokenData.selectedToken?.symbol
-                )
-            )
-        } else {
-            showGradientToast(
-                R.drawable.mw24_ic_address_copy_check,
-                getString(R.string.cis_tokens_updated)
-            )
-        }
+    private fun showToast() {
+        showGradientToast(
+            R.drawable.mw24_ic_address_copy_check,
+            getString(R.string.cis_tokens_updated)
+        )
     }
 }

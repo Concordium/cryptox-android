@@ -17,26 +17,30 @@ configurableSigningProperties.load(new FileInputStream(
 ))
 
 android {
+    namespace "com.concordium.wallet"
+
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
-    def versionMinor = 12
+    def versionMinor = 13
     def versionPatch = 0
-    def versionMeta = ""
-    def versionCodeIncremental = 1454
-
-    compileSdkVersion 34
+    def versionMeta = "-qa.8"
+    def versionCodeIncremental = 1462
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
-        minSdkVersion 26
-        targetSdkVersion 34
+
+        //noinspection OldTargetApi
+        targetSdk 35
+        //noinspection GradleDependency
+        compileSdk 35
+        minSdk 26
+
         versionCode versionCodeIncremental
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionMeta}"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("boolean", "USE_BACKEND_MOCK", "false")
-        buildConfigField("boolean", "INCL_DEV_OPTIONS", "false")
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")
@@ -82,11 +86,16 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+        flavorDimensions += "network"
+    }
 
     productFlavors {
         // Unstable Concordium test network, fake funds and identities. No Spaceseven instance.
         stagenet {
+            dimension "network"
             applicationIdSuffix ".stagenet"
 
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
@@ -121,6 +130,7 @@ android {
         // Public Concordium test network, fake funds and identities. Spaceseven stage.
         // It is called 'tstnet' because flavour names can't start with 'test'
         tstnet {
+            dimension "network"
             applicationIdSuffix ".testnet"
 
             buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
@@ -153,6 +163,8 @@ android {
 
         // Public Concordium network, real funds and identities. Spaceseven production.
         mainnet {
+            dimension "network"
+
             buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
             buildConfigField("String", "ENV_NAME", "\"production\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.mainnet.concordium.software\"")
@@ -181,13 +193,10 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     packagingOptions {
         resources {
             excludes += ['META-INF/atomicfu.kotlin_module']
@@ -197,11 +206,13 @@ android {
             excludes += ['META-INF/NOTICE.md']
             excludes += ['META-INF/versions/**']
         }
+        doNotStrip "**/*.so"
     }
-    buildFeatures {
-        viewBinding true
+
+    dependenciesInfo {
+        includeInApk false
+        includeInBundle false
     }
-    namespace 'com.concordium.wallet'
 
     // Set meaningful names for build artifacts.
     applicationVariants.all { variant ->
@@ -233,13 +244,13 @@ allprojects {
 
 dependencies {
 
-    implementation("com.concordium.sdk:concordium-android-sdk:10.0.1") {
+    implementation("com.concordium.sdk:concordium-android-sdk:11.0.1") {
         exclude group: "org.bouncycastle"
         exclude group: "net.jcip"
     }
 
     def lifecycle_version = "2.4.0"
-    def room_version = "2.5.0"
+    def room_version = "2.6.1"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -264,7 +275,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.biometric:biometric:1.1.0'
-    implementation 'com.google.iot.cbor:cbor:0.01.02'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
     // Lifecycles
@@ -316,7 +326,7 @@ dependencies {
     testImplementation "android.arch.persistence.room:testing:1.1.1"
 
     // Reown (formerly WalletConnect)
-    implementation(platform "com.reown:android-bom:1.0.0")
+    implementation(platform "com.reown:android-bom:1.0.4")
     implementation "com.reown:android-core"
     implementation "com.reown:sign"
 
@@ -333,12 +343,12 @@ dependencies {
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 
     // Jackson
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.19.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.19.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.19.1'
 
     // Jackson XML
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.10.1'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.14.2'
     implementation 'javax.xml.stream:stax-api:1.0-2'
 
     // Push notifications (version lock for Kotlin version compatibility)
@@ -354,6 +364,9 @@ dependencies {
     // In-app rating
     implementation 'com.google.android.play:review:2.0.2'
     implementation 'com.google.android.play:review-ktx:2.0.2'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    kapt 'org.projectlombok:lombok:1.18.38'
 }
 
 task printVersionName {

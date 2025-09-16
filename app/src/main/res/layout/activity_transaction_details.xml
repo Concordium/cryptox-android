@@ -64,69 +64,77 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/message_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_content_error_primary"
+                tools:text="Transaction failed to send" />
+
             <LinearLayout
-                android:layout_marginTop="16dp"
                 style="@style/CryptoX_Container_TextCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/message_textview"
-                style="@style/CryptoX_Container_Error.TextView"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp"
-                tools:text="Error message for api - this can be long 32 Segmentation fault      timeout 15s" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="8dp" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="8dp" />
+                <include
+                    android:id="@+id/transaction_item"
+                    layout="@layout/item_transaction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp">
 
-            <include
-                android:id="@+id/transaction_item"
-                layout="@layout/item_transaction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"/>
+                    <!-- The background is removed programmatically. -->
+                </include>
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/transaction_date_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_date" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/transaction_date_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_date" />
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/from_address_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_from_address" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/from_address_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_from_address" />
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/to_address_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_to_address" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/to_address_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_to_address" />
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/transaction_hash_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_transaction_hash" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/transaction_hash_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_transaction_hash" />
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/block_hash_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_block_hash" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/block_hash_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_block_hash" />
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/memo_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_memo" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/memo_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_memo" />
 
-            <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
-                android:id="@+id/details_layout"
-                style="@style/Layout"
-                app:entry_title="@string/transaction_details_details" />
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/details_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_details" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="18dp" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="18dp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

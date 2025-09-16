@@ -3,8 +3,6 @@ package com.concordium.wallet
 @Suppress("KotlinConstantConditions")
 object AppConfig {
 
-    const val useOfflineMock = BuildConfig.USE_BACKEND_MOCK
-
     val appVersion: String
         get() = if (!BuildConfig.ENV_NAME.equals("production")) {
             BuildConfig.VERSION_NAME + (if (BuildConfig.DEBUG) " (debug)" else " (release)") +

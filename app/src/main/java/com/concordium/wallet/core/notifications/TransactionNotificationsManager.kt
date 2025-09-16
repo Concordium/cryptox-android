@@ -10,7 +10,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -38,108 +39,105 @@ class TransactionNotificationsManager(
     private val areCis2TxNotificationsEnabled: Boolean
         get() = areNotificationsEnabled && walletNotificationsPreferences.areCis2TxNotificationsEnabled
 
-    @SuppressLint("MissingPermission")
+    private val arePltTxNotificationsEnabled: Boolean
+        get() = areNotificationsEnabled && walletNotificationsPreferences.arePltTxNotificationsEnabled
+
     fun notifyCcdTransaction(
         receivedAmount: BigInteger,
         reference: Any,
         account: Account,
     ): Notification {
-        ensureChannel()
-
-        val notification = NotificationCompat.Builder(
-            context,
-            CHANNEL_ID
+        val title = context.getString(
+            R.string.template_transaction_received_notification_title,
+            context.getString(R.string.amount, CurrencyUtil.formatGTU(receivedAmount))
         )
-            .setDefaults(Notification.DEFAULT_ALL)
-            .setContentTitle(
-                context.getString(
-                    R.string.template_transaction_received_notification_title,
-                    context.getString(
-                        R.string.amount,
-                        CurrencyUtil.formatGTU(receivedAmount)
-                    )
-                )
-            )
-            .setContentText(context.getString(R.string.transaction_received_notification_text))
-            // White icon is used for Android 5 compatibility.
-            .setSmallIcon(R.drawable.ic_notification)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-            .setContentIntent(
-                PendingIntent.getActivity(
-                    context,
-                    0,
-                    Intent(context, MainActivity::class.java)
-                        .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
-                        .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-                )
-            )
-            .build()
-
-        if (areCcdTxNotificationsEnabled) {
-            notificationsManager.notify(reference.hashCode(), notification)
-        } else {
-            Log.d("Skip notify as disabled")
-        }
-
-        return notification
+        val notification = buildNotification(title, account)
+        return showNotificationIfEnabled(notification, reference, areCcdTxNotificationsEnabled)
     }
 
-    @SuppressLint("MissingPermission")
     fun notifyCis2Transaction(
         receivedAmount: BigInteger,
-        token: Token,
+        token: ContractToken,
         reference: Any,
         account: Account,
     ): Notification {
-        ensureChannel()
-
-        val notification = NotificationCompat.Builder(
-            context,
-            CHANNEL_ID
+        val title = context.getString(
+            R.string.template_transaction_received_notification_title,
+            "${CurrencyUtil.formatGTU(receivedAmount, token)} ${token.symbol}"
         )
+        val notification = buildNotification(title, account) {
+            if (!token.isNewlyReceived) {
+                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN, token)
+            }
+        }
+        return showNotificationIfEnabled(notification, reference, areCis2TxNotificationsEnabled)
+    }
+
+    fun notifyPltTransaction(
+        receivedAmount: BigInteger,
+        token: ProtocolLevelToken,
+        reference: Any,
+        account: Account
+    ): Notification {
+        val title = context.getString(
+            R.string.template_transaction_received_notification_title,
+            "${CurrencyUtil.formatGTU(receivedAmount, token)} ${token.symbol}"
+        )
+        val notification = buildNotification(title, account) {
+            if (!token.isNewlyReceived) {
+                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN, token)
+            }
+        }
+        return showNotificationIfEnabled(notification, reference, arePltTxNotificationsEnabled)
+    }
+
+    private fun buildNotification(
+        title: String,
+        account: Account,
+        intentExtras: Intent.() -> Unit = {}
+    ): Notification {
+        ensureChannel()
+        return NotificationCompat.Builder(context, CHANNEL_ID)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setContentTitle(
-                context.getString(
-                    R.string.template_transaction_received_notification_title,
-                    "${CurrencyUtil.formatGTU(receivedAmount, token)} ${token.symbol}"
-                )
-            )
+            .setContentTitle(title)
             .setContentText(context.getString(R.string.transaction_received_notification_text))
-            // White icon is used for Android 5 compatibility.
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.ic_notification) // White icon for Android 5
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-            .setContentIntent(
-                PendingIntent.getActivity(
-                    context,
-                    0,
-                    Intent(context, MainActivity::class.java)
-                        .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
-                        .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
-                        .apply {
-                            // In case the token is already in the wallet,
-                            // open its details page.
-                            if (!token.isNewlyReceived) {
-                                putExtra(MainActivity.EXTRA_NOTIFICATION_TOKEN_ID, token.uid)
-                            }
-                        }
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-                )
-            )
+            .setContentIntent(createPendingIntent(account, intentExtras))
             .build()
+    }
 
-        if (areCis2TxNotificationsEnabled) {
+    private fun createPendingIntent(
+        account: Account,
+        intentExtras: Intent.() -> Unit
+    ): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+            .putExtra(MainActivity.EXTRA_ACTIVATE_ACCOUNT, true)
+            .putExtra(MainActivity.EXTRA_ACCOUNT_ADDRESS, account.address)
+            .apply(intentExtras)
+            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun showNotificationIfEnabled(
+        notification: Notification,
+        reference: Any,
+        isEnabled: Boolean
+    ): Notification {
+        if (isEnabled) {
             notificationsManager.notify(reference.hashCode(), notification)
         } else {
             Log.d("Skip notify as disabled")
         }
-
         return notification
     }
 
@@ -158,5 +156,6 @@ class TransactionNotificationsManager(
         private const val CHANNEL_ID = "transactions"
         const val TYPE_CCD_TX = "ccd-tx"
         const val TYPE_CIS2_TX = "cis2-tx"
+        const val TYPE_PLT_TX = "plt-tx"
     }
 }

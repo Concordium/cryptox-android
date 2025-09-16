@@ -1,3 +1,5 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package com.concordium.wallet.ui.connect
 
 import android.content.Intent
@@ -8,13 +10,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.Constants
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
 import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.R
-import com.concordium.wallet.data.backend.OfflineMockInterceptor
 import com.concordium.wallet.data.backend.ws.WsTransport
 import com.concordium.wallet.data.model.WsConnectionInfo
 import com.concordium.wallet.data.model.WsMessageResponse
@@ -25,6 +24,7 @@ import com.concordium.wallet.ui.connect.add_wallet.AddWalletNftActivity
 import com.concordium.wallet.ui.connect.uni_ref.UniRefActivity
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -55,8 +55,12 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         shopLogo = findViewById(R.id.shopLogo)
         accountsPool = findViewById(R.id.accountsPool)
 
-        findViewById<Button>(R.id.btnConnect).setOnClickListener(this::sendAccept)
-        findViewById<Button>(R.id.btnCancel).setOnClickListener(this::sendCancel)
+        findViewById<Button>(R.id.btnConnect).setOnClickListener {
+            sendAccept()
+        }
+        findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            sendCancel()
+        }
 
         val walletConnectPrefixes = setOf(
             DEFAULT_WALLET_CONNECT_PREFIX,
@@ -126,26 +130,13 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-        var okHttpClientBuilder = OkHttpClient().newBuilder()
+        return OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .cache(null)
-//            .addInterceptor(ModifyHeaderInterceptor())
-
-        if (AppConfig.useOfflineMock) {
-            okHttpClientBuilder = okHttpClientBuilder.addInterceptor(OfflineMockInterceptor())
-        }
-        return okHttpClientBuilder.build()
+            .build()
     }
-
-    private fun showShopIcon(url: String) {
-        Glide.with(applicationContext).load(url).placeholder(R.drawable.ic_favicon)
-            .error(R.drawable.ic_favicon).into(shopLogo)
-    }
-
-//    https://cwb.spaceseven.cloud/condition/381743969094074370/!fI0wgh6arvEnpC8WWKIIYtB5G5fm@$nsd2JtfZydNgGxxK4HrROgUfjwt3y!Tw3qDVVkX1oGCegsxhk08A3yLVmGXz1YL73FWz3!QVb0Ep36mftbt7@o8Fy3QmHBNbf
-//    https://cwb.spaceseven.cloud/condition/381743011635134466/SlOJhHSPcmuCW1op3l9K@L@F!n5c56rhwCmjpZ1aV4KpuC@nZsko@jNkyEhR2ucsV2whe2MHebD1Q!zGmTUX8sltQVUUxZNAYBpQQ6Uqxd66gU$nIv7TWOnBOd!an9VS
 
     private fun getBridgeInfo(connectUrl: String) = GlobalScope.launch(Dispatchers.IO) {
         try {
@@ -169,11 +160,7 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
                 println(">>>>>>>>>>>>>>>>>>>>>>> Mark 1")
                 currentSiteInfo = json.site
                 runOnUiThread {
-                    shopName.text = if (json.site.title.isNullOrEmpty()) {
-                        "Spaceseven.com"
-                    } else {
-                        json.site.title
-                    }
+                    shopName.text = json.site.title.ifEmpty { "Spaceseven.com" }
                     shopDescription.text = json.site.description
 //                    showShopIcon(json.site.iconLink)
                 }
@@ -203,12 +190,12 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         }
     }
 
-    private fun sendCancel(v: View) {
+    private fun sendCancel() {
         wsTransport?.sendConnectionReject()
         finish()
     }
 
-    private fun sendAccept(v: View) = wsTransport?.sendConnectionAccept()
+    private fun sendAccept() = wsTransport?.sendConnectionAccept()
 
     private fun connectWs(wsUrl: String) {
         wsTransport = WsTransport.connect(wsUrl)
@@ -235,7 +222,8 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
                 }
 
                 WsMessageResponse.MESSAGE_TYPE_SIMPLE_TRANSFER,
-                WsMessageResponse.MESSAGE_TYPE_TRANSACTION -> {
+                WsMessageResponse.MESSAGE_TYPE_TRANSACTION,
+                -> {
                     Intent(applicationContext, UniRefActivity::class.java).also {
                         val bundle = Bundle()
                         bundle.putString(

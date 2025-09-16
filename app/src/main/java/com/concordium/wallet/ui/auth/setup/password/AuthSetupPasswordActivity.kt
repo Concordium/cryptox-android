@@ -147,6 +147,7 @@ class AuthSetupPasswordActivity : BaseActivity(
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun gotoAuthSetupPasswordRepeat() {
         val intent = Intent(this, AuthSetupPasswordRepeatActivity::class.java)
         startActivityForResult(intent, REQUEST_CODE_AUTH_SETUP_PASSWORD_REPEAT)

@@ -8,16 +8,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
+import com.concordium.sdk.serializing.CborMapper
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAddMemoBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.util.CBORUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_memo_title) {
 
     companion object {
         const val EXTRA_MEMO = "EXTRA_MEMO"
+        const val MAX_MEMO_SIZE_BYTES = 256
     }
 
     private val binding by  lazy {
@@ -46,8 +47,8 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
                 val isNotEmpty = str.trim().isNotEmpty()
                 binding.confirmButton.isEnabled = isNotEmpty
                 handleDeleteBtn(isVisible = isNotEmpty)
-                val bytes = CBORUtil.encodeCBOR(str)
-                val change = bytes.size <= CBORUtil.MAX_BYTES
+                val bytes = CborMapper.INSTANCE.writeValueAsBytes(str)
+                val change = bytes.size <= MAX_MEMO_SIZE_BYTES
                 if (!change) {
                     if (previousText.isNotEmpty()) {
                         editable.replace(0, editable.length, previousText)

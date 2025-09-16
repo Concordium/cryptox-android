@@ -310,7 +310,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                             Event(R.string.delegation_register_delegation_pool_id_closed)
                     else if ((bakerDelegationData.type == REGISTER_DELEGATION ||
                                 bakerDelegationData.type == UPDATE_DELEGATION) &&
-                        (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
+                        (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
+                    )
                         _errorLiveData.value =
                             Event(R.string.delegation_register_delegation_pool_id_closed)
                     else if (changePool && !isInCoolDown() && stakedAmount + delegatedCapital > delegatedCapitalCap)
@@ -793,23 +794,21 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
 
         val transfer = Transfer(
-            0,
-            accountId,
-            cost,
-            BigInteger.ZERO,
-            fromAddress,
-            fromAddress,
-            expiry,
-            "",
-            createdAt,
-            submissionId,
-            submissionStatus,
-            TransactionOutcome.UNKNOWN,
-            localTransactionType,
-            //but amount is negative so it is listed as incoming positive
-            null,
-            0,
-            null
+            id = 0,
+            accountId = accountId,
+            amount = BigInteger.ZERO,
+            cost = cost,
+            fromAddress = fromAddress,
+            toAddress = "",
+            expiry = expiry,
+            memo = null,
+            createdAt = createdAt,
+            submissionId = submissionId,
+            transactionStatus = submissionStatus,
+            outcome = TransactionOutcome.UNKNOWN,
+            transactionType = localTransactionType,
+            tokenTransferAmount = null,
+            tokenSymbol = null,
         )
 
         transferRepository.insert(transfer)

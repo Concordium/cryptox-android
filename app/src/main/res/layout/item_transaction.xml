@@ -19,9 +19,9 @@
         android:layout_marginEnd="8dp"
         android:src="@drawable/ccx_ico_information_circle_contained"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/main_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/main_container"
         app:tint="@color/cryptox_pinky_main"
         tools:visibility="visible" />
 
@@ -57,15 +57,16 @@
             style="@style/MW24_Typography_Label_Main"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingVertical="2dp"
+            android:ellipsize="end"
             android:gravity="end"
             android:maxLines="1"
+            android:paddingVertical="2dp"
             android:textColor="@color/cryptox_white_main"
-            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintBottom_toTopOf="@id/cost_textview"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/title_textview"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/cost_textview"
             tools:text="- Ͼ10000023524.124345" />
 
         <TextView
@@ -102,11 +103,11 @@
             android:layout_marginTop="4dp"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/mw24_blue_3_50"
+            app:layout_constraintBottom_toTopOf="@id/layout_memo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/total_textview"
-            app:layout_constraintBottom_toTopOf="@id/layout_memo"
             tools:text="with fee 0.059 CCD"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/layout_memo"

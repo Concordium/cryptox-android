@@ -1,12 +1,18 @@
 package com.concordium.wallet.core.notifications
 
 import com.concordium.wallet.App
+import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.PLTRepository
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
 import com.concordium.wallet.data.cryptolib.ContractAddress
-import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.room.ContractToken
-import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ContractTokenMetadata
+import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.toContractToken
+import com.concordium.wallet.data.room.ContractTokenEntity
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -16,15 +22,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class FcmNotificationsService : FirebaseMessagingService() {
+class FcmNotificationsService :
+    FirebaseMessagingService(),
+    KoinComponent {
+
     private val serviceCoroutineContext = Dispatchers.IO + SupervisorJob()
+    private val tokenInteractor: TokensInteractor by inject()
 
     override fun onNewToken(token: String) = runBlocking(serviceCoroutineContext) {
-        Log.d(
-            "updating_subscriptions_with_new_token:" +
-                    "\ntoken=$token"
-        )
+        Log.d("updating_subscriptions_with_new_token: \ntoken=$token")
 
         try {
             UpdateNotificationsSubscriptionUseCase().invoke()
@@ -52,15 +61,15 @@ class FcmNotificationsService : FirebaseMessagingService() {
             when {
                 // CCD transactions.
                 dataType == TransactionNotificationsManager.TYPE_CCD_TX ->
-                    handleCcdTx(
-                        data = message.data
-                    )
+                    handleCcdTx(data = message.data)
 
                 // CIS2 transactions.
                 dataType == TransactionNotificationsManager.TYPE_CIS2_TX ->
-                    handleCis2Tx(
-                        data = message.data,
-                    )
+                    handleCis2Tx(data = message.data)
+
+                // PLT transactions.
+                dataType == TransactionNotificationsManager.TYPE_PLT_TX ->
+                    handlePltTx(data = message.data)
 
                 // Announcements.
                 notificationBody != null ->
@@ -70,20 +79,12 @@ class FcmNotificationsService : FirebaseMessagingService() {
                         messageId = message.messageId,
                     )
 
-                else ->
-                    error("Unsupported message")
+                else -> error("Unsupported message")
             }
 
-            Log.d(
-                "message_handled:" +
-                        "\nmessageId=${message.messageId}"
-            )
+            Log.d("message_handled: \nmessageId=${message.messageId}")
         } catch (error: Exception) {
-            Log.e(
-                "failed_handling_message:" +
-                        "\nmessageId=${message.messageId}",
-                error
-            )
+            Log.e("failed_handling_message: \nmessageId=${message.messageId}", error)
         }
     }
 
@@ -92,10 +93,7 @@ class FcmNotificationsService : FirebaseMessagingService() {
         notificationBody: String,
         messageId: String?,
     ) {
-        Log.d(
-            "handling_announcement:" +
-                    "\nmessageId=$messageId"
-        )
+        Log.d("handling_announcement: \nmessageId=$messageId")
 
         AnnouncementNotificationManager(application).notifyAnnouncement(
             title = notificationTitle,
@@ -108,21 +106,11 @@ class FcmNotificationsService : FirebaseMessagingService() {
      * @param data filled according to the
      * [specification](https://concordium.atlassian.net/wiki/spaces/EN/pages/1502019590/Message+data+payload#CCD-transactions)
      */
-    private suspend fun handleCcdTx(
-        data: Map<String, String>
-    ) {
+    private suspend fun handleCcdTx(data: Map<String, String>) {
         Log.d("handling_ccd_tx")
 
-        val amount = data["amount"]?.toBigInteger()
-            ?: error("Amount is missing or invalid")
-
-        val recipientAccountAddress = data["recipient"]
-            ?: error("Recipient is missing or invalid")
-
-        val recipientAccount =
-            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-                .findByAddress(recipientAccountAddress)
-                ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
+        val amount = data.getAmount("amount")
+        val recipientAccount = data.getRecipientAccount()
 
         TransactionNotificationsManager(application).notifyCcdTransaction(
             receivedAmount = amount,
@@ -135,29 +123,16 @@ class FcmNotificationsService : FirebaseMessagingService() {
      * @param data filled according to the
      * [specification](https://concordium.atlassian.net/wiki/spaces/EN/pages/1502019590/Message+data+payload#CIS-2-transactions)
      */
-    private suspend fun handleCis2Tx(
-        data: Map<String, String>
-    ) {
+    private suspend fun handleCis2Tx(data: Map<String, String>) {
         Log.d("handling_cis2_tx")
 
-        val amount = data["amount"]?.toBigInteger()
-            ?: error("Amount is missing or invalid")
-
-        val recipientAccountAddress = data["recipient"]
-            ?: error("Recipient is missing or invalid")
-
-        val recipientAccount =
-            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-                .findByAddress(recipientAccountAddress)
-                ?: error("Recipient account not found in the wallet: $recipientAccountAddress")
-
+        val amount = data.getAmount("amount")
+        val recipientAccount = data.getRecipientAccount()
         val contractAddress: ContractAddress = data["contract_address"]
             ?.let { App.appCore.gson.fromJson(it, ContractAddress::class.java) }
             ?: error("Contract address is missing")
 
-        val tokenId = data["token_id"]
-            ?: error("Token ID is missing")
-
+        val tokenId = data.getByKey("token_id")
         val tokenMetadata: NotificationTokenMetadata = data["token_metadata"]
             ?.let { App.appCore.gson.fromJson(it, NotificationTokenMetadata::class.java) }
             ?: error("tokenMetadata is missing or invalid")
@@ -167,57 +142,111 @@ class FcmNotificationsService : FirebaseMessagingService() {
             ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao())
 
         val existingContractToken = contractTokensRepository.find(
-            accountAddress = recipientAccountAddress,
+            accountAddress = recipientAccount.address,
             contractIndex = contractAddress.index.toString(),
             token = tokenId,
         )
-        val token: Token
-
-        if (existingContractToken == null) {
+        val token: ContractToken = if (existingContractToken == null) {
             Log.d(
                 "adding_newly_received_token:" +
                         "\ncontractAddress=$contractAddress," +
                         "\ntokenId=$tokenId"
             )
 
-            val isTokenUnique = data["token_is_unique"]
-                ?.let { it == "true" }
-                ?: false
-
-            val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
-                url = tokenMetadata.url,
-                checksum = tokenMetadata.hash
-            ).getOrThrow()
+            val verifiedMetadata: ContractTokenMetadata =
+                TokenMetadataBackendInstance
+                    .getContractTokenMetadata(
+                        url = tokenMetadata.url,
+                        sha256HashHex = tokenMetadata.hash,
+                    )
+                    .getOrThrow()
 
             Log.d("verifiedMetadata: $verifiedMetadata")
 
             val newlyReceivedContractToken =
-                ContractToken(
+                ContractTokenEntity(
                     id = 0,
                     isNewlyReceived = true,
                     token = tokenId,
-                    accountAddress = recipientAccountAddress,
-                    isFungible = !isTokenUnique,
+                    accountAddress = recipientAccount.address,
                     contractIndex = contractAddress.index.toString(),
                     contractName = data["contract_name"]
                         ?: error("Contract name is missing"),
-                    tokenMetadata = verifiedMetadata
+                    metadata = verifiedMetadata,
+                    addedAt = System.currentTimeMillis()
                 )
 
             contractTokensRepository.insert(newlyReceivedContractToken)
 
-            token = Token(newlyReceivedContractToken)
+            newlyReceivedContractToken.toContractToken()
         } else {
             Log.d(
                 "token_exists:" +
                         "\ncontractAddress=$contractAddress," +
                         "\ntokenId=$tokenId"
             )
-
-            token = Token(existingContractToken)
+            existingContractToken.toContractToken()
         }
 
         TransactionNotificationsManager(application).notifyCis2Transaction(
+            receivedAmount = amount,
+            token = token,
+            account = recipientAccount,
+            reference = data["reference"] ?: System.currentTimeMillis(),
+        )
+    }
+
+    /**
+     * @param data filled according to the
+     * [specification](https://concordium.atlassian.net/wiki/spaces/PTS/pages/1502019590/Message+data+payload#PLT-transactions)
+     */
+    private suspend fun handlePltTx(data: Map<String, String>) {
+        Log.d("handling_plt_tx")
+
+        val amount = data.getAmount("value")
+        val tokenId = data.getByKey("token_id")
+        val recipientAccount = data.getRecipientAccount()
+
+        val pltRepository =
+            PLTRepository(App.appCore.session.walletStorage.database.protocolLevelTokenDao())
+
+        val existingProtocolLevelToken =
+            pltRepository
+                .find(
+                    accountAddress = recipientAccount.address,
+                    tokenId = tokenId
+                )
+                ?.toProtocolLevelToken()
+
+        val token: ProtocolLevelToken = if (existingProtocolLevelToken == null) {
+            Log.d(
+                "adding_newly_received_token:" +
+                        "\naccountAddress=${recipientAccount.address}" +
+                        "\ntokenId=$tokenId"
+            )
+
+            val newlyReceivedToken =
+                tokenInteractor
+                    .loadProtocolLevelTokenWithMetadata(
+                        accountAddress = recipientAccount.address,
+                        tokenId = tokenId,
+                    )
+                    .getOrThrow()
+                    .copy(
+                        isNewlyReceived = true,
+                    )
+
+            pltRepository.insert(
+                ProtocolLevelTokenEntity(newlyReceivedToken)
+            )
+
+            newlyReceivedToken
+        } else {
+            Log.d("token_exists: \ntokenId=$tokenId")
+            existingProtocolLevelToken
+        }
+
+        TransactionNotificationsManager(application).notifyPltTransaction(
             receivedAmount = amount,
             token = token,
             account = recipientAccount,
@@ -234,6 +263,20 @@ class FcmNotificationsService : FirebaseMessagingService() {
         @SerializedName("url")
         val url: String,
         @SerializedName("hash")
-        val hash: String?
+        val hash: String?,
     )
+
+    // Helpers
+    private fun Map<String, String>.getAmount(key: String) =
+        this[key]?.toBigInteger() ?: error("$key is missing or invalid")
+
+    private fun Map<String, String>.getByKey(key: String): String =
+        this[key] ?: error("$key is missing or invalid")
+
+    private suspend fun Map<String, String>.getRecipientAccount() =
+        getByKey("recipient").let { address ->
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+                .findByAddress(address)
+                ?: error("Recipient account not found in wallet: $address")
+        }
 }

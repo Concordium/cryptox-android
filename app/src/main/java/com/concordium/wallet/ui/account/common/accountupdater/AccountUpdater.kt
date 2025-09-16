@@ -9,12 +9,16 @@ import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionU
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.EncryptedAmountRepository
+import com.concordium.wallet.data.PLTRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountEncryptedAmount
+import com.concordium.wallet.data.model.PLTInfoWithAccountState
+import com.concordium.wallet.data.model.ProtocolLevelTokenMetadata
 import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -22,9 +26,10 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.EncryptedAmount
+import com.concordium.wallet.data.room.ProtocolLevelTokenEntity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
+import com.concordium.wallet.ui.cis2.defaults.DefaultContractTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
@@ -46,17 +51,17 @@ import java.math.BigInteger
 class AccountUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
     data class AccountSubmissionStatusRequestData(
         val deferred: Deferred<SubmissionStatusResponse>,
-        val account: Account
+        val account: Account,
     )
 
     data class TransferSubmissionStatusRequestData(
         val deferred: Deferred<SubmissionStatusResponse>,
-        val transfer: Transfer
+        val transfer: Transfer,
     )
 
     data class AccountBalanceRequestData(
         val deferred: Deferred<AccountBalance>,
-        val account: Account
+        val account: Account,
     )
 
     private val proxyRepository = ProxyRepository()
@@ -68,7 +73,10 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
-    private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val defaultContractTokensManager: DefaultContractTokensManager
+    private val pltRepository = PLTRepository(
+        App.appCore.session.walletStorage.database.protocolLevelTokenDao()
+    )
 
     private var accountSubmissionStatusRequestList: MutableList<AccountSubmissionStatusRequestData> =
         ArrayList()
@@ -92,7 +100,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         val defaultTokensManagerFactory = DefaultTokensManagerFactory(
             contractTokensRepository = ContractTokensRepository(App.appCore.session.walletStorage.database.contractTokenDao()),
         )
-        defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
+        defaultContractTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
 
     interface UpdateListener {
@@ -177,7 +185,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 PerformanceUtil.showDeltaTime("Account updater run")
                 updateListener?.onDone(totalBalances)
             } catch (e: Exception) {
-                Log.e("Exception in primary job")
+                Log.e("Exception in primary job", e)
             }
         }
     }
@@ -224,7 +232,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                             recipientRepository.insert(Recipient(request.account))
 
                             // Add default CIS-2 fungible tokens for it.
-                            defaultFungibleTokensManager.addForAccount(request.account.address)
+                            defaultContractTokensManager.addForAccount(request.account.address)
                             updateNotificationsSubscriptionUseCase()
                         }
                     }
@@ -297,9 +305,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                         Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                     } catch (httpEx: HttpException) {
-                        //if (httpEx.code() == 502) transferRepository.delete(request.transfer)
-                        //else throw httpEx
-                        // TODO: maybe delete transaction
+                        // Doesn't matter.
                     }
                 }
             } catch (e: Exception) {
@@ -362,6 +368,11 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.releaseSchedule = accountFinalizedBalance.accountReleaseSchedule
                     request.account.cooldowns = accountFinalizedBalance.accountCooldowns
 
+                    updateAccountProtocolLevelTokens(
+                        accountAddress = request.account.address,
+                        tokens = accountFinalizedBalance.accountTokens ?: emptyList()
+                    )
+
                     if (areValuesDecrypted(request.account.encryptedBalance)) {
                         request.account.encryptedBalanceStatus =
                             ShieldedAccountEncryptionStatus.DECRYPTED
@@ -380,6 +391,63 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             }
         }
         Log.d("end")
+    }
+
+    private suspend fun updateAccountProtocolLevelTokens(
+        accountAddress: String,
+        tokens: List<PLTInfoWithAccountState>,
+    ) {
+        val existingTokenEntitiesById =
+            pltRepository
+                .getTokens(
+                    accountAddress = accountAddress,
+                )
+                .associateBy(ProtocolLevelTokenEntity::tokenId)
+
+        tokens.forEach { tokenInfoWithAccountState ->
+
+            val tokenInfo = tokenInfoWithAccountState.token
+            val existingTokenEntity = existingTokenEntitiesById[tokenInfo.tokenId]
+
+            if (existingTokenEntity != null) {
+                val tokenAccountState = tokenInfoWithAccountState.tokenAccountState
+
+                pltRepository.updateToken(
+                    updatedEntity = existingTokenEntity.copy(
+                        balance = tokenAccountState.balance.value,
+                        isInAllowList = tokenAccountState.state.allowList,
+                        isInDenyList = tokenAccountState.state.denyList,
+                        isPaused = tokenInfo.tokenState.moduleState.paused,
+                    )
+                )
+            } else {
+                val metadataInfo = tokenInfo.tokenState.moduleState.metadata
+
+                val verifiedMetadata: ProtocolLevelTokenMetadata? =
+                    if (metadataInfo != null)
+                        TokenMetadataBackendInstance
+                            .getProtocolLevelTokenMetadata(
+                                url = metadataInfo.url,
+                                sha256HashHex = metadataInfo.checksumSha256,
+                            )
+                            .onFailure {
+                                Log.w(
+                                    "Failed loading metadata for token ${tokenInfo.tokenId}: " +
+                                            it.message
+                                )
+                            }
+                            .getOrNull()
+                    else
+                        null
+
+                val newTokenEntity = tokenInfoWithAccountState.toProtocolLevelTokenEntity(
+                    accountAddress = accountAddress,
+                    metadata = verifiedMetadata,
+                )
+
+                pltRepository.insert(newTokenEntity)
+            }
+        }
     }
 
     private suspend fun areValuesDecrypted(finalizedEncryptedBalance: AccountEncryptedAmount?): Boolean {
@@ -464,9 +532,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     containsEncrypted = ShieldedAccountEncryptionStatus.ENCRYPTED
                 }
                 it.incomingAmounts.forEach {
-                    val amount = lookupMappedAmount(it)
-                    if (amount != null) {
-                        accountShieldedBalance += amount.toBigInteger()
+                    val incomingAmount = lookupMappedAmount(it)
+                    if (incomingAmount != null) {
+                        accountShieldedBalance += incomingAmount.toBigInteger()
                     } else {
                         if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
                             containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
@@ -548,7 +616,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         return output
     }
 
-    suspend fun saveDecryptedAmount(key: String, amount: String?) {
+    private suspend fun saveDecryptedAmount(key: String, amount: String?) {
         encryptedAmountRepository.insert(EncryptedAmount(key, amount))
     }
 

@@ -3,24 +3,26 @@ package com.concordium.wallet.ui.cis2
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.airbnb.lottie.LottieDrawable
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.button.SliderButton
-import com.concordium.wallet.util.CBORUtil
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SendTokenReceiptActivity : BaseActivity(
     R.layout.activity_send_token_receipt,
@@ -28,16 +30,20 @@ class SendTokenReceiptActivity : BaseActivity(
 ), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySendTokenReceiptBinding
     private lateinit var sliderButton: SliderButton
-    private val viewModel: SendTokenViewModel by viewModels()
+    private val viewModel: SendTokenViewModel by viewModel {
+        parametersOf(
+            intent.getSerializable(SEND_TOKEN_DATA, SendTokenData::class.java),
+        )
+    }
     private var receiptMode = false
 
     companion object {
+        const val SEND_TOKEN_DATA = "SEND_TOKEN_DATA"
         const val PARENT_ACTIVITY = "PARENT_ACTIVITY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.sendTokenData = intent.getSerializable(SEND_TOKEN_DATA, SendTokenData::class.java)
         binding = ActivitySendTokenReceiptBinding.bind(findViewById(R.id.root_layout))
         initViews()
         initObservers()
@@ -49,20 +55,22 @@ class SendTokenReceiptActivity : BaseActivity(
     }
 
     private fun initViews() {
+        val token = viewModel.sendTokenData.token
+
         sliderButton = binding.sendFunds
-        binding.senderName.text = viewModel.sendTokenData.account?.getAccountName()
-        binding.senderAddress.text = viewModel.sendTokenData.account?.address
+        binding.senderName.text = viewModel.sendTokenData.account.getAccountName()
+        binding.senderAddress.text = viewModel.sendTokenData.account.address
         binding.amountTitle.text =
-            if (viewModel.sendTokenData.token?.isUnique == true)
+            if (token is ContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
                 getString(
                     R.string.cis_amount,
-                    viewModel.sendTokenData.token?.symbol
+                    token.symbol,
                 )
         binding.amount.text =
-            CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, viewModel.sendTokenData.token)
-        binding.receiver.text = viewModel.sendTokenData.receiver
+            CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, token)
+        binding.receiver.text = viewModel.sendTokenData.receiverAddress
         viewModel.sendTokenData.receiverName?.let {
             binding.receiverName.visibility = View.VISIBLE
             binding.receiverName.text = it
@@ -79,13 +87,13 @@ class SendTokenReceiptActivity : BaseActivity(
         }
         binding.statusAmount.text = CurrencyUtil.formatGTU(
             viewModel.sendTokenData.amount,
-            viewModel.sendTokenData.token
+            token
         )
         binding.transactionSymbol.text =
-            if (viewModel.sendTokenData.token?.isUnique == true)
+            if (token is ContractToken && token.isUnique)
                 getString(R.string.cis_token_quantity)
             else
-                viewModel.sendTokenData.token?.symbol
+                token.symbol
 
         binding.sendFunds.setOnSliderCompleteListener {
             onSend()
@@ -93,11 +101,11 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.finish.setOnClickListener {
             onFinish()
         }
-        viewModel.sendTokenData.memo.let { encodedMemo ->
-            if (encodedMemo != null) {
+        viewModel.getMemoText().also { memoText ->
+            if (memoText != null) {
                 binding.memoDivider.visibility = View.VISIBLE
                 binding.memoLayout.visibility = View.VISIBLE
-                binding.memo.text = CBORUtil.decodeHexAndCBOR(encodedMemo)
+                binding.memo.text = memoText
             } else {
                 binding.memoDivider.visibility = View.GONE
                 binding.memoLayout.visibility = View.GONE
@@ -126,7 +134,7 @@ class SendTokenReceiptActivity : BaseActivity(
         }
         viewModel.transactionWaiting.observe(this) {
             if (it)
-                showPageAsReceipt(TransactionProcessingStatus.LOADING)
+                showPageAsReceipt(TransactionProcessingStatus.Loading)
         }
 
         viewModel.showAuthentication.observe(this) {
@@ -140,12 +148,17 @@ class SendTokenReceiptActivity : BaseActivity(
         }
 
         viewModel.transactionReady.observe(this) {
-            showPageAsReceipt(TransactionProcessingStatus.SUCCESS)
+            showPageAsReceipt(TransactionProcessingStatus.Success)
         }
 
-        viewModel.errorInt.observe(this) {
-            showPageAsReceipt(TransactionProcessingStatus.FAIL)
+        viewModel.errorInt.observe(this) { errorRes ->
+            showPageAsReceipt(
+                TransactionProcessingStatus.Fail(
+                    errorRes = errorRes,
+                )
+            )
         }
+
         viewModel.transaction.observe(this) { transaction ->
             if (transaction != null)
                 binding.transactionDetails.setOnClickListener {
@@ -163,8 +176,9 @@ class SendTokenReceiptActivity : BaseActivity(
         binding.finish.visibility = View.VISIBLE
 
         when (status) {
-            TransactionProcessingStatus.LOADING -> {
+            TransactionProcessingStatus.Loading -> {
                 binding.apply {
+                    feeNotSpent.isVisible = false
                     transactionStatusLabel.text = getString(R.string.cis_transaction_in_progress)
                     transactionAnimation.setAnimation(R.raw.transaction_loading)
                     transactionAnimation.repeatCount = LottieDrawable.INFINITE
@@ -173,8 +187,9 @@ class SendTokenReceiptActivity : BaseActivity(
                 }
             }
 
-            TransactionProcessingStatus.SUCCESS -> {
+            TransactionProcessingStatus.Success -> {
                 binding.apply {
+                    feeNotSpent.isVisible = false
                     transactionStatusLabel.text = getString(R.string.cis_transaction_success)
                     transactionAnimation.setAnimation(R.raw.transaction_success)
                     transactionAnimation.repeatCount = 0
@@ -183,9 +198,20 @@ class SendTokenReceiptActivity : BaseActivity(
                 }
             }
 
-            TransactionProcessingStatus.FAIL -> {
+            is TransactionProcessingStatus.Fail -> {
                 binding.apply {
-                    transactionStatusLabel.text = getString(R.string.cis_transaction_fail)
+                    feeNotSpent.isVisible = true
+                    transactionStatusLabel.text =
+                        getString(
+                            R.string.template_cis_transaction_not_sent,
+                            getString(status.errorRes)
+                        )
+                    transactionStatusLabel.setTextColor(
+                        ContextCompat.getColor(
+                            this@SendTokenReceiptActivity,
+                            R.color.mw24_content_error_primary,
+                        )
+                    )
                     transactionAnimation.setAnimation(R.raw.transaction_fail)
                     transactionAnimation.repeatCount = 0
                     transactionAnimation.playAnimation()

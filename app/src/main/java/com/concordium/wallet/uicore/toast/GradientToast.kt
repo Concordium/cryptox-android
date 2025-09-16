@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import com.concordium.wallet.databinding.GradientToastBinding
 
+@Suppress("DEPRECATION")
 fun Context.showGradientToast(iconResId: Int, title: String, description: String = "") {
     val binding = GradientToastBinding.inflate(LayoutInflater.from(this))
 

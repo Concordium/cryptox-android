@@ -14,6 +14,7 @@ import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.messageadapter.gson.GsonMessageAdapter
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import com.tinder.streamadapter.coroutines.CoroutinesStreamAdapterFactory
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -53,6 +54,7 @@ object WsTransport {
         return this
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun subscribe(callback: (WsMessageResponse?, Throwable?) -> Unit) =
         GlobalScope.launch(Dispatchers.Main) {
             bridge?.observeWebSocketEvent()?.consumeAsFlow()?.asLiveData()

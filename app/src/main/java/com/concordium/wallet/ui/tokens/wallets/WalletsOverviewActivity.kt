@@ -28,6 +28,7 @@ class WalletsOverviewActivity : BaseActivity(R.layout.activity_wallets_overview)
 
     private var providerData: ProviderMeta? = null
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

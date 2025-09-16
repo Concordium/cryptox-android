@@ -13,7 +13,7 @@ data class DataToken(
     val token: String = ""
 )
 
-fun DataToken.toToken() = Token(
+fun DataToken.toContractToken() = ContractToken(
     uid = id.toString(),
     token = token
 )

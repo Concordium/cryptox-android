@@ -1,5 +1,8 @@
+@file:SuppressLint("NotifyDataSetChanged")
+
 package com.concordium.wallet.ui.tokens.tokens
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -69,6 +72,7 @@ class TokensAdapter(private val callback: TokenItemView.ITokenItemView) : Recycl
                 return filterResults
             }
 
+            @Suppress("UNCHECKED_CAST")
             override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
                 val res = p1?.values as? List<Token>
                 data.clear()

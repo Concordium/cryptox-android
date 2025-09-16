@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
@@ -29,6 +30,7 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
+import com.concordium.wallet.util.getOptionalSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
@@ -42,7 +44,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_WALLET_CONNECT_URI = "wc_uri"
         const val EXTRA_ACTIVATE_ACCOUNT = "EXTRA_ACTIVATE_ACCOUNT"
         const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
-        const val EXTRA_NOTIFICATION_TOKEN_ID = "EXTRA_NOTIFICATION_TOKEN_ID"
+        const val EXTRA_NOTIFICATION_TOKEN = "EXTRA_NOTIFICATION_TOKEN"
         const val EXTRA_SHOW_REVIEW_POPUP = "EXTRA_SHOW_REVIEW_POPUP"
     }
 
@@ -65,6 +67,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         super.onCreate(savedInstanceState)
 
         // Make the navigation bar color match the bottom navigation bar.
+        @Suppress("DEPRECATION")
         window.navigationBarColor =
             ContextCompat.getColor(this, R.color.cryptox_black_main)
 
@@ -212,11 +215,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private fun handleNotificationReceived(intent: Intent) {
         if (intent.getBooleanExtra(EXTRA_ACTIVATE_ACCOUNT, false)) {
             val address = intent.getStringExtra(EXTRA_ACCOUNT_ADDRESS)
-            val tokenId = intent.getStringExtra(EXTRA_NOTIFICATION_TOKEN_ID)
+            val token = intent.getOptionalSerializable(EXTRA_NOTIFICATION_TOKEN, Token::class.java)
             address?.let {
                 viewModel.activateAccount(it)
-                tokenId?.let {
-                    viewModel.setNotificationData(address, tokenId)
+                token?.let {
+                    viewModel.setNotificationData(address, token)
                 }
             }
         }

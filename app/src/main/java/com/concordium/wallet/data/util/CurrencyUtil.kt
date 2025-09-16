@@ -25,15 +25,17 @@ object CurrencyUtil {
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*(\\.[0-9]{0,77})?\$")
 
     //Format the Decimal value with comma separators for thousands
-    private val formatter = DecimalFormat("#,###.######", DecimalFormatSymbols(Locale.US))
+    private val formatter = DecimalFormat().apply {
+        decimalFormatSymbols = DecimalFormatSymbols(Locale.US)
+        maximumIntegerDigits = Int.MAX_VALUE
+        maximumFractionDigits = Int.MAX_VALUE
+    }
 
     fun formatGTU(value: String, decimals: Int = 6): String =
         formatGTU(value.toBigInteger(), decimals)
 
-    fun formatGTU(value: BigInteger, token: Token?): String {
-        val decimals = token?.decimals ?: 0
-        return formatGTU(value, decimals)
-    }
+    fun formatGTU(value: BigInteger, token: Token): String =
+        formatGTU(value, token.decimals)
 
     fun formatGTU(
         value: BigInteger,
@@ -97,8 +99,32 @@ object CurrencyUtil {
         return decimalFormatter.format(bigDecimalValue)
     }
 
-    fun toGTUValue(stringValue: String, token: Token?): BigInteger? =
-        toGTUValue(stringValue, token?.decimals ?: 0)
+    fun formatCompactGTU(value: BigInteger, decimals: Int = 6): String {
+        if (value == BigInteger.ZERO) return ZERO_AMOUNT
+
+        val gtuValue = formatGTU(value, decimals)
+            .replace(",", "")
+            .toBigDecimal()
+
+        val scaledValue: Pair<BigDecimal, String> = when {
+            gtuValue < BigDecimal(1_000) -> gtuValue.setScale(2, RoundingMode.HALF_UP) to ""
+            gtuValue < BigDecimal(1_000_000) -> (gtuValue.divide(BigDecimal(1_000)))
+                .setScale(2, RoundingMode.HALF_DOWN) to "K"
+
+            gtuValue < BigDecimal(1_000_000_000) -> (gtuValue.divide(BigDecimal(1_000_000)))
+                .setScale(2, RoundingMode.HALF_DOWN) to "M"
+
+            else -> (gtuValue.divide(BigDecimal(1_000_000_000)))
+                .setScale(2, RoundingMode.HALF_DOWN) to "B"
+        }
+
+        return "${
+            scaledValue.first.stripTrailingZeros().toPlainString()
+        }${scaledValue.second}".trim()
+    }
+
+    fun toGTUValue(stringValue: String, token: Token): BigInteger? =
+        toGTUValue(stringValue, token.decimals)
 
     fun toGTUValue(stringValue: String, decimals: Int = 6): BigInteger? {
         var str = stringValue.replace("Ͼ", "")

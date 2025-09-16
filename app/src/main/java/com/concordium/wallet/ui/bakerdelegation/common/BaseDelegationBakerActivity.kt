@@ -21,11 +21,15 @@ abstract class BaseDelegationBakerActivity(
 ) : BaseActivity(layout, titleId), AuthDelegate by AuthDelegateImpl() {
     protected lateinit var viewModel: DelegationBakerViewModel
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideActionBarBack(isVisible = true)
         initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
+        viewModel.initialize(
+            intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA)
+                    as BakerDelegationData
+        )
     }
 
     open fun initializeViewModel() {
@@ -50,7 +54,7 @@ abstract class BaseDelegationBakerActivity(
 
     protected fun initializeTransactionFeeLiveData(
         progressLayout: View,
-        estimatedTransactionFee: TextView
+        estimatedTransactionFee: TextView,
     ) {
         viewModel.transactionFeeLiveData.observe(this) { response ->
             response?.first?.let {
@@ -89,7 +93,10 @@ abstract class BaseDelegationBakerActivity(
     }
 
     protected fun showNotEnoughFundsForFee() {
-        NotEnoughFundsForFeeDialog().showSingle(supportFragmentManager, NotEnoughFundsForFeeDialog.TAG)
+        NotEnoughFundsForFeeDialog().showSingle(
+            supportFragmentManager,
+            NotEnoughFundsForFeeDialog.TAG
+        )
     }
 
     protected fun showNoChange() {

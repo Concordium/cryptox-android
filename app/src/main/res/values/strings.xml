@@ -10,17 +10,17 @@
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected cryptography error</string>
     <string name="app_error_json">Unexpected json format</string>
-    <string name="app_import_missing_identities">The file imported did not contain any identities. This indicates a corrupted backup file.</string>
-    <string name="app_error_wrong_environment">Files exported on Concordium MainNet, TestNet or StageNet are not compatible with the other chains. Please import on the correct chain.</string>
+    <string name="app_import_missing_identities">The file imported did not contain any identities. This indicates a corrupted backup file</string>
+    <string name="app_error_wrong_environment">Files exported on Concordium MainNet, TestNet or StageNet are not compatible with the other chains. Please import on the correct chain</string>
     <string name="app_error_keystore">Unexpected keystore error</string>
-    <string name="app_error_keystore_key_invalidated">Biometrics has been changed and therefore disabled.</string>
-    <string name="app_error_backend_unknown_host_exception">Cannot connect. Please check the internet connection.</string>
-    <string name="app_error_backend_connect_exception">Cannot connect. Please check the internet connection.</string>
-    <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
-    <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
-    <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
-    <string name="app_error_backend_account_does_not_exist">The account does not exist.</string>
-    <string name="app_error_backend_unknown">Unknown backend error.</string>
+    <string name="app_error_keystore_key_invalidated">Biometrics has been changed and therefore disabled</string>
+    <string name="app_error_backend_unknown_host_exception">Cannot connect. Please check the internet connection</string>
+    <string name="app_error_backend_connect_exception">Cannot connect. Please check the internet connection</string>
+    <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection</string>
+    <string name="app_error_backend_internal_server">Cannot establish communication with the server</string>
+    <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server</string>
+    <string name="app_error_backend_account_does_not_exist">The account does not exist</string>
+    <string name="app_error_backend_unknown">Unknown backend error</string>
     <string name="app_gstroke">CCD</string>
     <!-- Dialogs -->
     <string name="dialog_ok">OK</string>
@@ -235,6 +235,25 @@
     <string name="account_details_tooltip_title">Total CCD balance</string>
     <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>
     <string name="account_token_details_decimals">0 – %1$s</string>
+    <!-- Account PLT status -->
+    <string name="account_details_plt_token">Protocol Level Token</string>
+    <string name="account_details_account_on_allow_list">Account is on the allow list</string>
+    <string name="account_details_account_not_on_allow_list">Account not on the allow list</string>
+    <string name="account_details_account_on_deny_list">Account on the deny list</string>
+    <string name="account_details_token_paused">Token paused</string>
+    <string name="account_details_dialog_plt_paused_title">Paused Tokens</string>
+    <string name="account_details_dialog_plt_paused_description">A paused token refers to a protocol-level token (PLT) whose balance-affecting operations, such as transfers, minting, and burning, are temporarily disabled by the token’s governance account. When a token is paused, any attempt to perform these actions will fail until the token is unpaused.</string>
+    <string name="account_details_dialog_plt_title">Protocol-Level Tokens</string>
+    <string name="account_details_dialog_plt_description">
+        Protocol-Level Tokens (PLTs) are tokens issued and managed directly on the Concordium blockchain without a need for smart contracts. PLTs provide enhanced security by reducing attack vectors, improved efficiency in execution, and direct governance controls for token issuers. \n\nPLTs are implemented on protocol level. All account (balances, transfers etc.) and management operations are handled natively by the chain itself through transactions from regular Concordium accounts.
+    </string>
+    <string name="account_details_dialog_done">Done</string>
+    <string name="account_details_dialog_plt_list_title"><![CDATA[Allow & Deny Lists]]></string>
+    <string name="account_details_dialog_plt_list_description">Protocol-level tokens can optionally support allow and deny lists to control the ability of Concordium accounts to hold/transfer that PLT. Allow and deny lists are managed by the PLT issuer. </string>
+    <string name="token_type_plt">PLT</string>
+    <string name="account_details_dialog_cis2_title">CIS-2 Tokens</string>
+    <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
+    <string name="account_details_cis2_token_type_label">CIS-2 Token</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
@@ -282,7 +301,6 @@
     <string name="settings_overview_item_nft">NFT</string>
     <string name="settings_overview_item_notifications">Notifications</string>
     <string name="settings_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
-    <string name="settings_overview_item_developer_options">Developer Options</string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
     <string name="settings_overview_erase_data">Erase Data</string>
@@ -524,17 +542,17 @@
 
     <string name="cis_tab_tokens">Tokens</string>
     <string name="cis_manage">Manage token list</string>
-    <string name="cis_manage_tokens">Enter a contract index to add tokens.</string>
+    <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
     <string name="cis_manage_token_list">Manage token list</string>
-    <string name="cis_add_token_title">Add token</string>
+    <string name="cis_add_token_title">Add Tokens</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
     <string name="cis_token_details_balance">Balance</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens">Add</string>
-    <string name="cis_add_tokens_continue">Continue</string>
+    <string name="cis_add_tokens_continue">Update Token List</string>
     <string name="cis_update_tokens">Apply</string>
-    <string name="cis_find_tokens_none">This contract has no valid tokens</string>
+    <string name="cis_find_tokens_none">No search results</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
     <string name="cis_select_token_title">Choose token</string>
     <string name="cis_loading_metadata_progress">Loading metadata…</string>
@@ -562,37 +580,39 @@
     <string name="cis_sender">Sender</string>
     <string name="cis_amount">Amount (%1$s):</string>
     <string name="cis_token">Token</string>
-    <string name="cis_token_symbol">Symbol</string>
     <string name="cis_token_id">Token ID</string>
     <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Close</string>
+    <string name="cis_error_recipient_in_deny_list">Recipient is on the deny list</string>
+    <string name="cis_error_recipient_not_in_allow_list">Recipient is not on the allow list</string>
     <string name="cis_transaction_in_progress">Transaction in progress</string>
     <string name="cis_transaction_success">You’ve sent</string>
-    <string name="cis_transaction_fail">Transaction failed to send</string>
+    <string name="template_cis_transaction_not_sent">Transaction not sent\n%1$s</string>
+    <string name="cis_fee_not_spent">Transaction fee was not spent</string>
     <string name="cis_transaction_details">Transaction details</string>
     <string name="cis_submit_transaction">Submit transaction</string>
     <string name="cis_slider_thumb">Slider thumb</string>
     <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Transaction fee ≈ %1$s CCD</string>
     <string name="cis_estimated_eur_rate">≈ %1$s EUR</string>
-    <string name="cis_eur_rate">%1$s EUR</string>
+    <string name="cis_eur_rate">€%1$s</string>
     <string name="cis_back_to_list">Back to list</string>
     <string name="cis_about_token">About the token</string>
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_image">Image</string>
     <string name="cis_description">Description</string>
-    <string name="cis_contract_index">Contract index</string>
+    <string name="cis_contract_index">Token name or contract index</string>
     <string name="cis_contract_index_subindex">Contract index, subindex</string>
+    <string name="cis_total_supply">Total Supply</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
-    <string name="cis_no_tokens_found">No tokens found</string>
+    <string name="cis_no_tokens_found">No search results</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens</string>
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>
-    <string name="cis_no_collectibles_added">No tokens have been added to this account yet</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
     <string name="cis_hide_token">Hide token from account</string>
     <string name="cis_hide_token_item">Hide token</string>
@@ -615,6 +635,8 @@
     <string name="cis_newly_received_notice_keep_token">Keep it</string>
     <string name="cis_newly_received_notice_remove_token">Remove from the wallet</string>
     <string name="ccd_details_description">CCD is the native token of the Concordium blockchain. Its main use cases are the payment of transaction fees, the payment for the execution of smart contracts, payments between users, payments for commercial transactions, staking, and the rewards offered to node operators.</string>
+    <string name="token_type_cis">CIS-2</string>
+    <string name="manage_tokens_empty_list_title">There are no tokens on your list</string>
 
     <string name="your_wallet_seed">Your wallet private key</string>
     <string name="your_seed_phrase">Your seed phrase</string>
@@ -1292,6 +1314,7 @@
     <string name="notifications_preferences_title">Notifications</string>
     <string name="notifications_preferences_ccd_transactions">CCD transactions</string>
     <string name="notifications_preferences_cis2_transactions">CIS-2 token transactions</string>
+    <string name="notifications_preferences_plt_transactions">Protocol level token transactions</string>
     <string name="transaction_notifications_channel_name">Transactions</string>
     <string name="announcements_notification_channel_name">Announcements</string>
     <string name="template_transaction_received_notification_title">You received %1$s</string>
@@ -1308,7 +1331,7 @@
     <string name="unlock_feature_title">Unlock this feature</string>
     <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
     <string name="unlock_feature_go_back_button">Go back</string>
-    
+
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>
     <string name="onboarding_status_card_description_second">Final step: Verify your identity</string>
@@ -1444,7 +1467,7 @@
     <string name="delegation_status_resume_button">Resume</string>
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
-    
+
     <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
 </resources>

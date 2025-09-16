@@ -38,7 +38,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.ExportEncryptionHelper
-import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
+import com.concordium.wallet.ui.cis2.defaults.DefaultContractTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.uicore.Formatter
@@ -62,7 +62,7 @@ class ImportViewModel(application: Application) :
         AccountRepository(session.walletStorage.database.accountDao())
     private val recipientRepository: RecipientRepository =
         RecipientRepository(session.walletStorage.database.recipientDao())
-    private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val defaultContractTokensManager: DefaultContractTokensManager
 
     private val gson = App.appCore.gson
 
@@ -108,7 +108,7 @@ class ImportViewModel(application: Application) :
                 App.appCore.session.walletStorage.database.contractTokenDao()
             ),
         )
-        defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
+        defaultContractTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
 
     fun initialize() {
@@ -119,7 +119,7 @@ class ImportViewModel(application: Application) :
     }
 
     fun handleImportFile(importFile: ImportFile) = viewModelScope.launch {
-        var fileContent: String
+        val fileContent: String
         try {
             fileContent = importFile.getContentAsString(getApplication())
         } catch (e: IOException) {
@@ -174,7 +174,7 @@ class ImportViewModel(application: Application) :
             _errorLiveData.postValue(Event(R.string.app_error_general))
             return@launch
         }
-        var exportData: ExportData?
+        val exportData: ExportData?
         try {
             val decryptedImportData =
                 ExportEncryptionHelper.decryptExportData(importPassword, encryptedExportData)
@@ -214,7 +214,7 @@ class ImportViewModel(application: Application) :
             return@launch
         }
 
-        val allowedEnvironments =
+        @Suppress("KotlinConstantConditions") val allowedEnvironments =
         // To eliminate confusion of "CryptoX Stage" working on testnet chain,
             // allow both testnet and stage exports to be used when using testnet or stage.
             if (BuildConfig.ENV_NAME == "staging" || BuildConfig.ENV_NAME == "testnet")
@@ -242,7 +242,7 @@ class ImportViewModel(application: Application) :
         // There may be duplicates caused by old bugs that should be filtered out.
         // As long as RecipientExport is a data class, distinct does the thing,
         // also preserving the original order.
-        for (recipientExport in exportValue.recipients.distinct()) {
+        exportValue?.recipients?.distinct()?.forEach { recipientExport ->
             try {
                 val recipient = Recipient(0, recipientExport.name, recipientExport.address)
                 val isDuplicate = existingRecipientList.any { existingRecipient ->
@@ -272,7 +272,7 @@ class ImportViewModel(application: Application) :
         val existingIdentityList = identityRepository.getAll()
         val existingAccountList = accountRepository.getAll()
         nextIdentityIndicesByProviderId.clear()
-        exportValue.identities.forEach { identityExport ->
+        exportValue?.identities?.forEach { identityExport ->
             var identity: Identity? = null
             var identityId: Long? = null
             var identityImportResult =
@@ -329,7 +329,9 @@ class ImportViewModel(application: Application) :
                     } else {
                         var status = ImportResult.Status.Ok
                         val existingDuplicate =
-                            existingAccountList.firstOrNull() { existingAccount -> existingAccount.address == account.address }
+                            existingAccountList.firstOrNull { existingAccount ->
+                                existingAccount.address == account.address
+                            }
                         if (existingDuplicate == null) {
                             accountList.add(account)
                         } else {
@@ -359,7 +361,7 @@ class ImportViewModel(application: Application) :
                 // Updated read-only accounts are not affected,
                 // as their tokens may be already managed by the user.
                 accountList.forEach { account ->
-                    defaultFungibleTokensManager.addForAccount(account.address)
+                    defaultContractTokensManager.addForAccount(account.address)
                 }
                 if (accountList.isNotEmpty()) {
                     updateNotificationsSubscriptionUseCase()
@@ -388,7 +390,7 @@ class ImportViewModel(application: Application) :
         identityId: Long,
         identityImportResult: ImportResult.IdentityImportResult,
     ) {
-        var globalParams: GlobalParams?
+        val globalParams: GlobalParams?
         try {
             val globalParamsWrapper = identityProviderRepository.getGlobalInfoSuspended()
             globalParams = globalParamsWrapper.value
@@ -472,7 +474,7 @@ class ImportViewModel(application: Application) :
 
         // Add default fungible tokens for the accounts.
         readOnlyAccountList.forEach { account ->
-            defaultFungibleTokensManager.addForAccount(account.address)
+            defaultContractTokensManager.addForAccount(account.address)
         }
         if (readOnlyAccountList.isNotEmpty()) {
             updateNotificationsSubscriptionUseCase()
@@ -621,8 +623,8 @@ class ImportViewModel(application: Application) :
         if (allAccounts.isNotEmpty() && activeAccount == null) {
             accountRepository.activate(
                 allAccounts
-                    .sortedBy { it.id }
-                    .first().address
+                    .minByOrNull { it.id }!!
+                    .address
             )
             App.appCore.setup.setShowReviewDialogSnapshotTime()
         }

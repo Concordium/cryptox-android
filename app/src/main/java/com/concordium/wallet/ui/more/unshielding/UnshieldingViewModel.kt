@@ -206,9 +206,7 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             receiverPublicKey = credentialsOutput.encryptionSecretKey,
             senderSecretKey = credentialsOutput.encryptionSecretKey,
             inputEncryptedAmount = SendFundsViewModel.calculateInputEncryptedAmount(
-                accountId = account.id,
                 accountBalance = accountBalance,
-                transferRepository = transferRepository,
                 accountUpdater = accountUpdater,
             ),
         )
@@ -284,9 +282,8 @@ class UnshieldingViewModel(application: Application) : AndroidViewModel(applicat
             transactionStatus = TransactionStatus.RECEIVED,
             outcome = TransactionOutcome.UNKNOWN,
             transactionType = TransactionType.TRANSFER,
-            newSelfEncryptedAmount = newSelfEncryptedAmount,
-            newStartIndex = createTransferInput.inputEncryptedAmount?.aggIndex ?: 0,
-            nonce = accountNonce
+            tokenTransferAmount = null,
+            tokenSymbol = null,
         )
         transferRepository.insert(newTransfer)
 

@@ -7,6 +7,7 @@ import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessViewModel.Comp
 abstract class RecoverProcessBaseFragment : Fragment() {
     protected lateinit var recoverProcessData: RecoverProcessData
 
+    @Suppress("DEPRECATION")
     override fun onAttach(context: Context) {
         super.onAttach(context)
         arguments?.getSerializable(RECOVER_PROCESS_DATA)?.let {

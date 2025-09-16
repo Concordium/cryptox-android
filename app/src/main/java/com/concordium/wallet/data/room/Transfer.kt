@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.TokenAmount
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
@@ -23,7 +24,7 @@ data class Transfer(
     val amount: BigInteger,
     var cost: BigInteger,
     @ColumnInfo(name = "from_address")
-    var fromAddress: String,
+    val fromAddress: String,
     @ColumnInfo(name = "to_address")
     val toAddress: String,
     val expiry: Long,   //seconds
@@ -35,9 +36,10 @@ data class Transfer(
     @ColumnInfo(name = "transaction_status")
     var transactionStatus: TransactionStatus,
     var outcome: TransactionOutcome,
-    var transactionType: TransactionType,
-    var newSelfEncryptedAmount: String?,
-    var newStartIndex: Int,
-    var nonce: AccountNonce?
-
+    @ColumnInfo(name = "transaction_type")
+    val transactionType: TransactionType,
+    @ColumnInfo(name = "token_transfer_amount")
+    val tokenTransferAmount: TokenAmount?,
+    @ColumnInfo(name = "token_symbol")
+    val tokenSymbol: String?,
 ) : Serializable

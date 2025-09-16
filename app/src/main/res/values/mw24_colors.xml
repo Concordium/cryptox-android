@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <color name="mw24_plain_white_10">#1AFFFFFF</color>
+   <color name="mw24_plain_white_40">#66FFFFFF</color>
 
    <color name="mw24_black_1">#151819</color>
 
@@ -15,5 +16,30 @@
    <color name="mw24_green">#24D4AB</color>
    <color name="mw24_attention_red">#CD2E4A</color>
    <color name="mw24_info_orange">#E8B126</color>
+
+   <!-- Surface (background) colors -->
+    <color name="mw24_surface_primary_disabled">#2F3437</color>
+    <color name="mw24_surface_success_tertiary">#0C261D</color>
+    <color name="mw24_surface_warning_tertiary">#282418</color>
+    <color name="mw24_surface_error_tertiary">#2B171B</color>
+
+   <!-- Border colors -->
+    <color name="mw24_border_accent">#6C88AA</color>
+    <color name="mw24_border_accent_secondary">#B6C9E2</color>
+    <color name="mw24_border_success_secondary">#007050</color>
+    <color name="mw24_border_warning_secondary">#A17716</color>
+    <color name="mw24_border_error_secondary">#830E30</color>
+    <color name="mw24_border_primary_disabled">#4B5357</color>
+    <color name="mw24_border_tertiary">#4B5357</color>
+    <color name="mw24_border_tertiary_pressed">#2F3437</color>
+
+   <!-- Content colors -->
+    <color name="mw24_content_primary_disabled">#4B5357</color>
+    <color name="mw24_content_accent_primary">#6C88AA</color>
+    <color name="mw24_content_accent_secondary">#B6C9E2</color>
+    <color name="mw24_content_success_primary">#24D4AB</color>
+    <color name="mw24_content_warning_primary">#E8B126</color>
+    <color name="mw24_content_error_primary">#D62E4C</color>
+    <color name="mw24_content_secondary">#959EA3</color>
 
 </resources>

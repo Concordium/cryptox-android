@@ -67,6 +67,16 @@ class NotificationsPreferencesActivity : BaseActivity(
                 progress.progressBar.isVisible = it.not()
             }
         }
+        viewModel.arePltTxNotificationsEnabledFlow.collectWhenStarted(this) {
+            binding.pltTxSwitch.isChecked = it
+        }
+        viewModel.isPltSwitchEnabledFlow.collectWhenStarted(this) {
+            binding.apply {
+                pltTxSwitch.isEnabled = it
+                pltTxTextView.isClickable = it
+                progress.progressBar.isVisible = it.not()
+            }
+        }
         viewModel.requestNotificationPermissionFlow.collectWhenStarted(this) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationPermissionLauncher.launch(Unit)
@@ -83,7 +93,7 @@ class NotificationsPreferencesActivity : BaseActivity(
 
         ccdTxSwitch.setOnClickListener {
             ccdTxSwitch.isChecked = !ccdTxSwitch.isChecked
-            viewModel.onCcdTxClicked()
+            viewModel.onTxClicked(NotificationsPreferencesViewModel.TxType.CCD)
         }
 
         cis2TxTextView.setOnClickListener {
@@ -92,7 +102,16 @@ class NotificationsPreferencesActivity : BaseActivity(
 
         cis2TxSwitch.setOnClickListener {
             cis2TxSwitch.isChecked = !cis2TxSwitch.isChecked
-            viewModel.onCis2TxClicked()
+            viewModel.onTxClicked(NotificationsPreferencesViewModel.TxType.CIS2)
+        }
+
+        pltTxTextView.setOnClickListener {
+            pltTxSwitch.performClick()
+        }
+
+        pltTxSwitch.setOnClickListener {
+            pltTxSwitch.isChecked = !pltTxSwitch.isChecked
+            viewModel.onTxClicked(NotificationsPreferencesViewModel.TxType.PLT)
         }
     }
 

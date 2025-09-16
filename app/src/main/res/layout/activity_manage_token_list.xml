@@ -34,4 +34,37 @@
         android:id="@+id/progress"
         layout="@layout/progress" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/empty_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/empty_view_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/manage_tokens_empty_list_title"
+            android:textAppearance="@style/MW24_Typography_Title"
+            android:textColor="@color/mw24_content_secondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        
+        <TextView
+            android:id="@+id/empty_view_button"
+            style="@style/MW24_Button_Tertiary_Medium"
+            android:layout_marginTop="16dp"
+            android:text="@string/cis_add_token_title"
+            app:drawableStartCompat="@drawable/mw24_ic_plus_add"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/empty_view_text"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

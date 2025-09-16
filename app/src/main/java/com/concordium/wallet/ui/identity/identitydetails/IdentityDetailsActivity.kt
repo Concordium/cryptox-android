@@ -23,6 +23,7 @@ class IdentityDetailsActivity : BaseActivity(
     private lateinit var binding: ActivityIdentityDetailsBinding
     private lateinit var viewModel: IdentityDetailsViewModel
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityDetailsBinding.bind(findViewById(R.id.root_layout))

@@ -15,6 +15,7 @@ import com.concordium.wallet.data.model.CIS2TokensBalances
 import com.concordium.wallet.data.model.CIS2TokensMetadata
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.PLTInfo
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionCost
@@ -42,6 +43,7 @@ class ProxyRepository {
         const val REMOVE_BAKER = "removeBaker"
         const val CONFIGURE_BAKER = "configureBaker"
         const val UPDATE = "update"
+        const val TOKEN_UPDATE = "tokenUpdate"
 
         const val CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS = 20
         const val CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS = 20
@@ -181,6 +183,9 @@ class ProxyRepository {
         receiveName: String? = null,
         parameter: String? = null,
         executionNRGBuffer: Int? = null,
+        tokenId: String? = null,
+        listOperationsSize: Int? = null,
+        tokenOperationTypeCount: Map<String, Int>? = null,
         success: (TransactionCost) -> Unit,
         failure: ((Throwable) -> Unit)?,
     ): BackendRequest<TransactionCost> {
@@ -199,7 +204,10 @@ class ProxyRepository {
             contractSubindex,
             receiveName,
             parameter,
-            executionNRGBuffer
+            executionNRGBuffer,
+            tokenId,
+            listOperationsSize,
+            App.appCore.gson.toJson(tokenOperationTypeCount),
         )
         call.enqueue(object : BackendCallback<TransactionCost>() {
             override fun onResponseData(response: TransactionCost) {
@@ -400,4 +408,14 @@ class ProxyRepository {
         accountAddress: String,
         tokenIds: String,
     ): CIS2TokensBalances = backend.cis2TokenBalanceV1(index, subIndex, accountAddress, tokenIds)
+
+    /**
+     * @return a list of plt token infos.
+     */
+    suspend fun getPLTTokens(): List<PLTInfo> = backend.pltTokens()
+
+    /**
+     * @return token info and decoded module state
+     */
+    suspend fun getPLTTokenById(tokenId: String): PLTInfo = backend.getPLTTokenById(tokenId)
 }

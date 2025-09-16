@@ -3,8 +3,6 @@ package com.concordium.wallet.ui.connect
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,6 +13,7 @@ import com.concordium.wallet.data.util.CurrencyUtil.formatGTU
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.math.BigInteger
+import java.util.Locale
 
 interface ITransactionResult {
     fun onResultBottomSheetDismissed()
@@ -33,8 +32,6 @@ class TransactionResultBottomSheet(context: Context, callback: ITransactionResul
 
     init {
         setContentView(R.layout.transaction_result_bottomsheet)
-        val v = findViewById<View>(R.id.design_bottom_sheet)
-        v?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.skipCollapsed = true
 
@@ -64,7 +61,8 @@ class TransactionResultBottomSheet(context: Context, callback: ITransactionResul
         totalTv?.text = context.getString(R.string.amount, total)
         transactionTv?.text = transfer.title
         transactionHashTv?.text = transfer.submissionId
-        transactionStatusTv?.text = transfer.transactionStatus.capitalize()
+        @Suppress("DEPRECATION")
+        transactionStatusTv?.text = transfer.transactionStatus.capitalize(Locale.ENGLISH)
 
         copyImageview?.setOnClickListener {
             onCopyClicked(transfer.submissionId)

@@ -8,10 +8,10 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionSource
-import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.ui.common.BackendErrorHandler
 
@@ -48,7 +48,7 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     fun showData() {
         if (transaction.source == TransactionSource.Local) {
             // Update the local transaction before showing it
-            transaction.submissionId?.let {
+            transaction.hash?.let {
                 _waitingLiveData.value = true
                 loadTransferSubmissionStatus(it)
                 return
@@ -66,9 +66,8 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
         transferSubmissionStatusRequest = proxyRepository.getSubmissionStatus(submissionId,
             {
                 // Update the transaction - the changes are not saved (they will be updated elsewhere)
-                transaction.transactionHash = it.transactionHash
                 transaction.blockHashes = it.blockHashes
-                transaction.transactionStatus = it.status
+                transaction.status = it.status
                 transaction.outcome = it.outcome ?: TransactionOutcome.UNKNOWN
                 transaction.rejectReason = it.rejectReason
                 _waitingLiveData.value = false
@@ -85,5 +84,5 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
         BuildConfig.URL_EXPLORER_BASE +
                 "?dcount=1" +
                 "&dentity=transaction" +
-                "&dhash=${transaction.transactionHash}"
+                "&dhash=${transaction.hash}"
 }

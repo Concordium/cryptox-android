@@ -13,7 +13,6 @@ import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.ws.WsTransport
 import com.concordium.wallet.data.cryptolib.ContractAddress
@@ -28,9 +27,9 @@ import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.WsMessageResponse
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -66,8 +65,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val accountRepository =
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-    private val transferRepository =
-        TransferRepository(App.appCore.session.walletStorage.database.transferDao())
 
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
     private var transferSubmissionStatusRequest: BackendRequest<SubmissionStatusResponse>? = null
@@ -76,12 +73,12 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private var recipientEncryptedKeyRequest: BackendRequest<AccountKeyData>? = null
 
     lateinit var account: Account
-    var isShielded: Boolean = false
+    private var isShielded: Boolean = false
 
-    var selectedRecipient: Recipient? = null
+    private var selectedRecipient: Recipient? = null
 
     private var tempData = TempData()
-    var newTransfer: Transfer? = null
+    private var newTransfer: Transfer? = null
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -90,10 +87,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
     val showAuthenticationLiveData: LiveData<Event<Boolean>>
         get() = _showAuthenticationLiveData
-
-    private val _gotoSendFundsConfirmLiveData = MutableLiveData<Event<Boolean>>()
-    val gotoSendFundsConfirmLiveData: LiveData<Event<Boolean>>
-        get() = _gotoSendFundsConfirmLiveData
 
     private val _backendErrorLiveData = MutableLiveData<Event<BackendError>>()
     val backendErrorLiveData: LiveData<Event<BackendError>>
@@ -123,7 +116,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         var expiry: Long? = null
         var globalParams: GlobalParams? = null
         var createTransferOutput: CreateTransferOutput? = null
-        var newSelfEncryptedAmount: String? = null
         var accountBalance: AccountBalance? = null
         var receiverPublicKey: String? = null
         lateinit var origPayload: WsMessageResponse.Payload
@@ -242,7 +234,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         )
     }
 
-    fun isTransferToSameAccount(): Boolean {
+    private fun isTransferToSameAccount(): Boolean {
         return account.address == selectedRecipient?.address
     }
 
@@ -416,11 +408,9 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             },
             senderSecretKey = encryptionSecretKey,
             inputEncryptedAmount = SendFundsViewModel.calculateInputEncryptedAmount(
-                accountId = account.id,
                 accountBalance = checkNotNull(tempData.accountBalance) {
                     "The account balance must be loaded at this moment"
                 },
-                transferRepository = transferRepository,
                 accountUpdater = accountUpdater,
             ),
         )
@@ -531,10 +521,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             return
         }
         val createdAt = Date().time
-        val newStartIndex: Int = 0
-//        tempData.createTransferInput?.let {
-//            newStartIndex = it.inputEncryptedAmount?.aggIndex ?: 0
-//        }
 
         val transfer = Transfer(
             0,
@@ -550,12 +536,10 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             transferSubmissionStatus.status,
             transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
             TransactionType.UPDATE,
-            tempData.newSelfEncryptedAmount,
-            newStartIndex,
-            tempData.accountNonce
+            null,
+            null,
         )
         newTransfer = transfer
-        saveNewTransfer(transfer)
 
         _transactionResultData.value = TransactionResult(
             amount = amount,
@@ -564,9 +548,5 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             submissionId = submissionId,
             transactionStatus = transferSubmissionStatus.status.name
         )
-    }
-
-    private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
-        _gotoSendFundsConfirmLiveData.value = Event(true)
     }
 }

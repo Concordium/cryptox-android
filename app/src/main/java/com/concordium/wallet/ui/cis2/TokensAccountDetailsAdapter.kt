@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ContractToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
@@ -21,14 +22,16 @@ class TokensAccountDetailsAdapter(
 ) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private var addButtonClickListener: () -> Unit = {}
-    private val iconSize: Int by lazy {
-        context.resources.getDimensionPixelSize(R.dimen.cis_token_icon_size)
-    }
     private val dataSet: MutableList<Token> = mutableListOf()
     private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
-    inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(
+        val binding: ItemTokenAccountDetailsBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        val iconView = TokenIconView(binding.tokenIcon)
+        val typeView = TokenTypeView(binding.tokenType)
+    }
 
     interface TokenClickListener {
         fun onRowClick(token: Token)
@@ -87,48 +90,9 @@ class TokensAccountDetailsAdapter(
 
         val token = dataSet[position]
 
-        holder.binding.eurRate.visibility = View.GONE
+        with(holder.binding) {
 
-        val tokenMetadata = token.metadata
-        if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
-            Glide.with(context)
-                .load(tokenMetadata.thumbnail.url)
-                .override(iconSize)
-                .placeholder(ThemedCircularProgressDrawable(context))
-                .error(R.drawable.mw24_ic_token_placeholder)
-                .fitCenter()
-                .into(holder.binding.tokenIcon)
-        } else if (token.isCcd) {
-            Glide.with(context)
-                .load(R.drawable.mw24_ic_ccd)
-                .into(holder.binding.tokenIcon)
-
-            holder.binding.eurRate.visibility = View.VISIBLE
-            holder.binding.eurRate.text =
-                if (showManageButton) {
-                    if (token.eurPerUnit != null) {
-                        context.getString(
-                            R.string.cis_eur_rate,
-                            CurrencyUtil.toEURRate(
-                                token.balance,
-                                token.eurPerUnit
-                            )
-                        )
-                    } else {
-                        ""
-                    }
-                } else {
-                    context.getString(R.string.cis_at_disposal)
-                }
-        } else {
-            Glide.with(context)
-                .load(R.drawable.mw24_ic_token_placeholder)
-                .into(holder.binding.tokenIcon)
-        }
-
-        if (token.isUnique) {
-            holder.binding.apply {
-                title.text = token.name
+            if (token is ContractToken && token.isUnique) {
                 balance.isVisible = false
                 subtitle.isVisible = true
                 subtitle.text =
@@ -136,20 +100,52 @@ class TokensAccountDetailsAdapter(
                         context.getString(R.string.cis_owned)
                     else
                         context.getString(R.string.cis_not_owned)
+            } else {
+                balance.isVisible = true
+                balance.text = CurrencyUtil.formatAndRoundGTU(
+                    value = token.balance,
+                    roundDecimals = 2,
+                    decimals = token.decimals,
+                )
+                subtitle.isVisible = false
             }
-        } else {
-            holder.binding.title.text = token.symbol
-            holder.binding.balance.isVisible = true
-            holder.binding.balance.text = CurrencyUtil.formatAndRoundGTU(
-                value = token.balance,
-                roundDecimals = 2,
-                decimals = token.decimals
-            )
-            holder.binding.subtitle.isVisible = false
-        }
-        holder.binding.apply {
+
+            if (token is CCDToken) {
+                eurRate.isVisible = true
+                eurRate.text =
+                    if (showManageButton) {
+                        if (token.eurPerMicroCcd != null) {
+                            context.getString(
+                                R.string.cis_eur_rate,
+                                CurrencyUtil.toEURRate(
+                                    token.balance,
+                                    token.eurPerMicroCcd
+                                )
+                            )
+                        } else {
+                            ""
+                        }
+                    } else {
+                        context.getString(R.string.cis_at_disposal)
+                    }
+            } else {
+                eurRate.isVisible = false
+            }
+
+            title.text =
+                if (token is ContractToken && token.isUnique)
+                    token.metadata?.name ?: ""
+                else
+                    token.symbol
+
             notice.isVisible = token.isNewlyReceived
-            earningLabel.isVisible = token.isEarning
+            earningLabel.isVisible = token is CCDToken && token.isEarning
+            pltInAllowListIcon.isVisible = token is ProtocolLevelToken && !token.isTransferable
+
+            holder.iconView.showTokenIcon(token)
+            holder.typeView.showTokenType(token)
+            subtitleLayout.isVisible = token !is CCDToken
+
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)
             }

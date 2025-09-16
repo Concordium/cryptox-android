@@ -14,7 +14,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.ui.cis2.defaults.DefaultFungibleTokensManager
+import com.concordium.wallet.ui.cis2.defaults.DefaultContractTokensManager
 import com.concordium.wallet.ui.cis2.defaults.DefaultTokensManagerFactory
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +35,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
-    private val defaultFungibleTokensManager: DefaultFungibleTokensManager
+    private val defaultContractTokensManager: DefaultContractTokensManager
     private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
 
     private var updateListener: UpdateListener? = null
@@ -48,7 +48,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                 App.appCore.session.walletStorage.database.contractTokenDao()
             ),
         )
-        defaultFungibleTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
+        defaultContractTokensManager = defaultTokensManagerFactory.getDefaultFungibleTokensManager()
     }
 
     interface UpdateListener {
@@ -130,7 +130,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                                             recipientRepository.insert(Recipient(account))
 
                                             // Add default CIS-2 fungible tokens for it.
-                                            defaultFungibleTokensManager.addForAccount(account.address)
+                                            defaultContractTokensManager.addForAccount(account.address)
                                             updateNotificationsSubscriptionUseCase()
                                         }
                                         account.transactionStatus = TransactionStatus.FINALIZED

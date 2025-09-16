@@ -7,7 +7,7 @@ object BiometricsUtil {
 
     fun isBiometricsAvailable(): Boolean {
         val biometricManager = BiometricManager.from(App.appContext)
-        when (biometricManager.canAuthenticate()) {
+        when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 Log.d("App can authenticate using biometrics.")
                 return true
@@ -22,6 +22,21 @@ object BiometricsUtil {
             }
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 Log.e("The user hasn't associated any biometric credentials with their account.")
+                return false
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> {
+                Log.e("The user can't authenticate because a security vulnerability has been discovered with one or more hardware sensors.")
+                return false
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> {
+                Log.e("The user can't authenticate because the specified options are incompatible with the current Android version.")
+                return false
+            }
+
+            BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
+                Log.e("Unable to determine whether the user can authenticate.")
                 return false
             }
         }

@@ -24,6 +24,7 @@ class TokensOverviewActivity : BaseActivity(R.layout.activity_tokens_overview),
     }
     private var tokensAdapter = TokensAdapter(this)
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

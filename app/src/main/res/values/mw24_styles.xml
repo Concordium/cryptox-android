@@ -84,6 +84,11 @@
         <item name="android:textSize">55sp</item>
     </style>
 
+    <style name="MW24_Typography_Title">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <!-- end region -->
 
 
@@ -116,13 +121,15 @@
     </style>
 
     <style name="MW24_Manage_Token_List_Button">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">4dp</item>
-        <item name="android:textColor">@color/mw24_primary_text_button_color</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:background">@drawable/mw24_button_tertiary_background</item>
+        <item name="android:textColor">@color/mw24_button_tertiary_text_color</item>
         <item name="android:drawablePadding">8dp</item>
         <item name="drawableStartCompat">@drawable/mw24_ic_manage_token_list</item>
-        <item name="drawableTint">@color/mw24_primary_text_button_color</item>
+        <item name="drawableTint">@color/mw24_button_tertiary_text_color</item>
         <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
     </style>
 
@@ -160,6 +167,35 @@
         <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
         <item name="android:textColor">@color/mw24_button_secondary_text_color</item>
         <item name="android:paddingHorizontal">24dp</item>
+    </style>
+
+    <style name="MW24_Action_Button">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/mw24_account_action_button_background</item>
+        <item name="android:padding">10dp</item>
+    </style>
+    
+    <style name="MW24_Button_Tertiary">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/mw24_button_tertiary_background</item>
+        <item name="android:textColor">@color/mw24_button_tertiary_text_color</item>
+        <item name="drawableTint">@color/mw24_button_tertiary_text_color</item>
+    </style>
+
+    <style name="MW24_Button_Tertiary_Small" parent="MW24_Button_Tertiary">
+        <item name="android:paddingHorizontal">8dp</item>
+        <item name="android:paddingVertical">6dp</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Main_Capture_Small</item>
+    </style>
+
+    <style name="MW24_Button_Tertiary_Medium" parent="MW24_Button_Tertiary">
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Text_Mid</item>
     </style>
 
     <!-- end region -->

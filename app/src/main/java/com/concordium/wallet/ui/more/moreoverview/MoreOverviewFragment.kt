@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentMoreOverviewBinding
 import com.concordium.wallet.extension.collect
@@ -20,7 +19,6 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
-import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.more.dialog.ClearWalletConnectDialog
 import com.concordium.wallet.ui.more.dialog.RemoveWalletDialog
 import com.concordium.wallet.ui.more.export.ExportActivity
@@ -53,7 +51,7 @@ class MoreOverviewFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentMoreOverviewBinding.inflate(inflater, container, false)
         return binding.root
@@ -103,14 +101,6 @@ class MoreOverviewFragment : BaseFragment() {
     private fun initializeViews() {
         binding.progress.progressLayout.visibility = View.GONE
         mainViewModel.setTitle(getString(R.string.settings_overview_title))
-
-        binding.devLayout.visibility = View.GONE
-        binding.devLayout.setOnClickListener {
-            gotoDevConfig()
-        }
-        if (BuildConfig.INCL_DEV_OPTIONS) {
-            binding.devLayout.visibility = View.VISIBLE
-        }
 
         binding.unshieldingLayout.setOnClickListener {
             gotoUnshielding()
@@ -221,7 +211,9 @@ class MoreOverviewFragment : BaseFragment() {
             MoreOverviewViewModel.Event.ShowAuthentication ->
                 authDelegate.showAuthentication(
                     activity = activity,
-                    onAuthenticated = viewModel::onAuthenticated
+                    onAuthenticated = {
+                        viewModel.onAuthenticated()
+                    }
                 )
 
             MoreOverviewViewModel.Event.ShowDataErasedMessage ->
@@ -290,11 +282,6 @@ class MoreOverviewFragment : BaseFragment() {
             parentFragmentManager,
             RemoveWalletDialog.TAG
         )
-    }
-
-    private fun gotoDevConfig() {
-        val intent = Intent(activity, DevActivity::class.java)
-        startActivity(intent)
     }
 
     private fun gotoUnshielding() {
