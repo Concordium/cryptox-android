@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
+    android:id="@+id/toastLayoutTopError"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,44 +18,44 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:requiresFadingEdge="vertical"
         app:layout_constraintBottom_toTopOf="@id/buttons_layout"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/notice"
-                style="@style/CryptoX_Container_Information.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mw24_export_transaction_log_card_background"
+                android:padding="16dp"
                 android:text="@string/export_transaction_log_notice"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-
-            <TextView
-                android:id="@+id/description"
-                style="@style/CryptoX_Container_TextCard"
-                android:layout_marginTop="16dp"
-                android:padding="20dp"
-                android:textAppearance="@style/CryptoX_Typography_Body_Medium"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notice"
-                tools:text="@string/export_transaction_log_description" />
+                android:textAppearance="@style/MW24_Typography_Body_M_Regular"
+                android:textColor="@color/mw24_content_primary"
+                android:textColorLink="@color/mw24_content_accent_primary" />
 
             <LinearLayout
                 android:id="@+id/download_progress_layout"
-                style="@style/CryptoX_Container_TextCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mw24_export_transaction_log_card_background"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:padding="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/description">
 
                 <TextView
-                    style="@style/CryptoX_Typography_Body_Medium"
-                    android:text="@string/export_transaction_log_downloading" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/export_transaction_log_downloading"
+                    android:textAppearance="@style/MW24_Typography_Body_M_Regular"
+                    android:textColor="@color/mw24_content_primary" />
 
                 <ProgressBar
                     android:id="@+id/download_progress"
@@ -67,43 +67,13 @@
 
                 <TextView
                     android:id="@+id/progress_text_view"
-                    style="@style/CryptoX_Typography_Headline_Medium"
-                    android:layout_marginTop="8dp"
-                    tools:text="47%" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/success_layout"
-                style="@style/CryptoX_Container_TextCard"
-                android:gravity="top"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                tools:ignore="UseCompoundDrawables">
-
-                <ImageView
-                    android:id="@+id/icon_image_view"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/cryptox_ico_successfully" />
-
-                <TextView
-                    style="@style/CryptoX_Typography_Headline_Large"
                     android:layout_width="match_parent"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/export_transaction_log_saved" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
+                    android:textColor="@color/mw24_content_secondary"
+                    tools:text="47%" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/failed_layout"
-                style="@style/CryptoX_Container_Error.TextView"
-                android:text="@string/export_transaction_log_failed" />
-
-            <TextView
-                android:id="@+id/no_content_layout"
-                style="@style/CryptoX_Container_Information.TextView"
-                android:text="@string/export_transaction_log_no_content" />
 
             <View
                 android:layout_width="0dp"
@@ -121,25 +91,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <com.concordium.wallet.uicore.button.IconButton
             android:id="@+id/generate"
             style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/export_transaction_log_save" />
+            app:buttonText="@string/export_transaction_log_save"
+            app:iconStart="@drawable/mw24_ic_export_download" />
 
         <Button
             android:id="@+id/cancel"
             style="@style/MW24_Button_Secondary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="@string/export_transaction_log_cancel" />
-
-        <Button
-            android:id="@+id/done"
-            style="@style/MW24_Button_Primary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/export_transaction_log_done" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
