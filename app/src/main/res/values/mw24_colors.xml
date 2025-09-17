@@ -3,6 +3,7 @@
     <color name="mw24_main_background">#131416</color>
 
    <color name="mw24_plain_white_10">#1AFFFFFF</color>
+   <color name="mw24_plain_white_20">#33FFFFFF</color>
    <color name="mw24_plain_white_40">#66FFFFFF</color>
    <color name="mw24_plain_white_60">#99FFFFFF</color>
    <color name="mw24_plain_white_70">#B2FFFFFF</color>
@@ -68,6 +69,7 @@
     <color name="mw24_content_success_primary">#24D4AB</color>
     <color name="mw24_content_warning_primary">#E8B126</color>
     <color name="mw24_content_error_primary">#D62E4C</color>
+    <color name="mw24_content_error_secondary">#B61F3E</color>
     <color name="mw24_content_secondary">#959EA3</color>
     <color name="mw24_content_inverse_primary">#131416</color>
     <color name="mw24_content_inverse_secondary">#2F3437</color>

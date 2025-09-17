@@ -71,6 +71,7 @@ class TokenDetailsView(
         }
 
         if (rawMetadata != null) {
+            binding.optionsLabel.isVisible = true
             binding.rawMetadataBtn.isVisible = true
             binding.rawMetadataBtn.setOnClickListener {
                 RawMetadataDialog.newInstance(

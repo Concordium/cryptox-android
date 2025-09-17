@@ -233,7 +233,8 @@
     <string name="account_details_change_name_popup_cancel">Cancel</string>
     <string name="account_details_change_name_popup_save">Save</string>
     <string name="account_details_change_name_hint">Enter name</string>
-    <string name="account_details_raw_metadata">Show raw metadata</string>
+    <string name="account_details_options">Options</string>
+    <string name="account_details_raw_metadata">Show Raw Metadata</string>
     <string name="account_details_ccd_token">CCD token</string>
     <string name="account_details_tooltip_title">Total CCD balance</string>
     <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>
@@ -623,7 +624,7 @@
     <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
-    <string name="cis_hide_token">Hide token from account</string>
+    <string name="cis_hide_token">Hide Token From Account</string>
     <string name="cis_hide_token_item">Hide token</string>
     <string name="cis_hide_token_title">Hiding a Token</string>
     <string name="cis_hide_token_body">Are you sure you want to hide %1$s token from your wallet?</string>
