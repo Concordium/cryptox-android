@@ -70,7 +70,6 @@
             android:id="@+id/proceed_button"
             style="@style/MW24_Button_Primary"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size8"
             app:buttonText="@string/ccd_onramp_disclaimer_understand"
             app:inverse="true"

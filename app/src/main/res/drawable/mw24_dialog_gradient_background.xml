@@ -3,18 +3,21 @@
     <item>
         <shape android:shape="rectangle">
             <gradient
-                android:type="radial"
-                android:gradientRadius="700dp"
+                android:centerColor="@color/mw24_gradient_center_color"
                 android:centerX="0%"
                 android:centerY="10%"
-                android:startColor="@color/mw24_gradient_start_color"
-                android:centerColor="@color/mw24_gradient_center_color"
                 android:endColor="@color/mw24_gradient_end_color"
+                android:gradientRadius="700dp"
+                android:startColor="@color/mw24_gradient_start_color"
+                android:type="radial"
                 android:useLevel="false" />
             <corners android:radius="16dp" />
         </shape>
     </item>
     <item>
-        <color android:color="@color/mw24_plain_white_70"/>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/mw24_plain_white_70" />
+            <corners android:radius="16dp" />
+        </shape>
     </item>
 </layer-list>
