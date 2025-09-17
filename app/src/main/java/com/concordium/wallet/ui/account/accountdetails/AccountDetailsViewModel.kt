@@ -85,9 +85,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val finishLiveData: LiveData<Event<Boolean>>
         get() = _finishLiveData
 
-    private val _goToEarnLiveData = MutableLiveData<Event<GoToEarnPayload>>()
-    val goToEarnLiveData: LiveData<Event<GoToEarnPayload>>
-        get() = _goToEarnLiveData
+    private val _goToEarn = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val goToEarn = _goToEarn.asSharedFlow()
 
     private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
     val totalBalanceLiveData: LiveData<BigInteger>
@@ -450,24 +449,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             getActiveAccount().join()
         }
 
-        goToEarnIfPossible()
-    }
-
-    private fun goToEarnIfPossible() {
         if (account.readOnly) {
             Log.d("Not going to earn for a read-only account")
-            return
+            return@launch
         }
 
-        _goToEarnLiveData.postValue(
-            Event(
-                GoToEarnPayload(
-                    account = account,
-                    hasPendingBakingTransactions = hasPendingBakingTransactions,
-                    hasPendingDelegationTransactions = hasPendingDelegationTransactions,
-                )
-            )
-        )
+        _goToEarn.emit(Unit)
     }
 
     private fun showReviewDialog() = viewModelScope.launch {

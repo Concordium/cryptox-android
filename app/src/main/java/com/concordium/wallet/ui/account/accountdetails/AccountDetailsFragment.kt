@@ -170,18 +170,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                     requireActivity().finish()
                 }
             })
-        viewModelAccountDetails.goToEarnLiveData.observe(
-            viewLifecycleOwner,
-            object : EventObserver<AccountDetailsViewModel.GoToEarnPayload>() {
-                override fun onUnhandledEvent(value: AccountDetailsViewModel.GoToEarnPayload) {
-                    gotoEarn(
-                        activity = requireActivity() as BaseActivity,
-                        account = value.account,
-                        hasPendingDelegationTransactions = value.hasPendingDelegationTransactions,
-                        hasPendingBakingTransactions = value.hasPendingBakingTransactions,
-                    )
-                }
-            })
+        viewModelAccountDetails.goToEarn.collectWhenStarted(viewLifecycleOwner) {
+            mainViewModel.onEarnClicked()
+        }
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
             updateBannersVisibility(viewModelAccountDetails.account)
