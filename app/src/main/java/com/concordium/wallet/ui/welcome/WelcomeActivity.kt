@@ -72,9 +72,15 @@ class WelcomeActivity :
             when (WelcomeActivateAccountBottomSheet.getResult(bundle)) {
                 WelcomeActivateAccountBottomSheet.ChosenAction.CREATE ->
                     if (viewModel.shouldSetUpPassword) {
-                        // Set up password and create a new wallet.
+                        // Set up password and create a new seed phrase wallet.
                         passcodeSetupForCreateLauncher
-                            .launch(Intent(this, AuthSetupPasscodeActivity::class.java))
+                            .launch(
+                                Intent(this, AuthSetupPasscodeActivity::class.java)
+                                    .putExtra(
+                                        AuthSetupPasscodeActivity.SET_UP_SEED_PHRASE_WALLET_EXTRA,
+                                        true
+                                    )
+                            )
                     } else {
                         gotoAccountOverview()
                     }
@@ -148,9 +154,6 @@ class WelcomeActivity :
     }
 
     private fun gotoAccountOverview() {
-        // hasCompletedInitialSetup has positive value at the fresh app start,
-        // hence we can skip this screen if the user created the password.
-        App.appCore.setup.finishInitialSetup()
         finish()
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
