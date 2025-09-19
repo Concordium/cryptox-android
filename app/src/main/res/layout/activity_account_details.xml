@@ -311,6 +311,10 @@
                     android:id="@+id/include_earn_banner"
                     layout="@layout/earn_banner_view" />
 
+                <include
+                    android:id="@+id/include_seed_phrase_backup_banner"
+                    layout="@layout/seed_phrase_backup_banner_view" />
+
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/tokens_fragment_container"
                     android:name="com.concordium.wallet.ui.cis2.TokensListFragment"

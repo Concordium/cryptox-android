@@ -45,6 +45,7 @@ import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
+import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import com.concordium.wallet.util.ImageUtil
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -583,6 +584,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
             viewModelAccountDetails.onCloseEarnBannerClicked()
         }
 
+        binding.includeSeedPhraseBackupBanner.root.setOnClickListener {
+            gotoSeedPhraseReveal()
+        }
+
         updateBannersVisibility()
     }
 
@@ -592,6 +597,14 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         binding.includeOnrampBanner.root.isVisible =
             viewModelAccountDetails.isOnrampBannerVisible
+
+        binding.includeSeedPhraseBackupBanner.root.isVisible =
+            viewModelAccountDetails.isSeedPhraseBackupBannerVisible
+    }
+
+    private fun gotoSeedPhraseReveal() {
+        val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
+        startActivity(intent)
     }
 
     private fun gotoAccountsList() {

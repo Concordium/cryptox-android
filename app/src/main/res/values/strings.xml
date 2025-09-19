@@ -1470,4 +1470,6 @@
 
     <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
+    <string name="account_details_seed_phrase_backup_banner_title">Backup Your Wallet</string>
+    <string name="account_details_seed_phrase_backup_banner_description">Keep your account safe by making a copy of your wallet seed phrase</string>
 </resources>

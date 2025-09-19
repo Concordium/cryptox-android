@@ -142,22 +142,24 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         )
     }
 
+    val isSeedPhraseBackupBannerVisible: Boolean
+        get() = ::account.isInitialized
+                && App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeedPhrase()
+                && App.appCore.session.walletStorage.setupPreferences.getRequireSeedPhraseBackupConfirmation()
+
     val isOnrampBannerVisible: Boolean
-        get() = App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
+        get() = !isSeedPhraseBackupBannerVisible
                 && ::account.isInitialized
+                && App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
                 && account.balance == BigInteger.ZERO
 
     val isEarnBannerVisible: Boolean
-        get() = App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
+        get() = !isSeedPhraseBackupBannerVisible
                 && ::account.isInitialized
+                && App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
                 && account.balance > BigInteger.ZERO
                 && account.isDelegating().not()
                 && account.isBaking().not()
-
-    val isSeedPhraseBackupBannerVisible: Boolean
-        get() = App.appCore.session.activeWallet.type == AppWallet.Type.SEED
-                && App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeedPhrase()
-                && App.appCore.session.walletStorage.setupPreferences.getRequireSeedPhraseBackupConfirmation()
 
     fun onCloseOnrampBannerClicked() {
         App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(false)
@@ -169,16 +171,15 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
-        acc?.let {
-            account = it
-            _activeAccount.emit(it)
-            _totalBalanceLiveData.postValue(it.balance)
+            ?: return@launch
+        account = acc
+        _activeAccount.emit(acc)
+        _totalBalanceLiveData.postValue(acc.balance)
 
-            if (account.transactionStatus == TransactionStatus.COMMITTED ||
-                account.transactionStatus == TransactionStatus.RECEIVED
-            ) {
-                restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
-            }
+        if (account.transactionStatus == TransactionStatus.COMMITTED ||
+            account.transactionStatus == TransactionStatus.RECEIVED
+        ) {
+            restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
         }
     }
 
