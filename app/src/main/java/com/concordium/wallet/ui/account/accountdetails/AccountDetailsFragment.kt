@@ -420,6 +420,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.updateState()
         viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
+        updateBannersVisibility()
     }
 
     private fun resetWhenPaused() {
