@@ -11,435 +11,388 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="1">
-
-        <LinearLayout
+        <com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="1">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/scroll_view_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:autoSizeMaxTextSize="55sp"
-                app:autoSizeMinTextSize="10sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform">
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/suspension_notice"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/mw24_attention_background"
-                    android:drawableStart="@drawable/mw24_ic_pause"
-                    android:drawablePadding="12dp"
-                    android:gravity="center_vertical|start"
-                    android:paddingHorizontal="32dp"
-                    android:paddingVertical="16dp"
-                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                    android:textColor="@color/text_white"
-                    android:visibility="gone"
-                    app:drawableEndCompat="@drawable/mw24_ic_arrow_right_24"
-                    app:layout_constraintBottom_toTopOf="@id/total_balance_textview"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/your_validation_has_been_suspended"
-                    tools:visibility="visible" />
-
-                <com.concordium.wallet.uicore.view.BalanceGradientTextView
-                    android:id="@+id/total_balance_textview"
-                    style="@style/MW24_Typography_IBM_Balance"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@string/accounts_overview_balance_placeholder"
-                    android:textColor="@color/cryptox_deep_blue"
                     app:autoSizeMaxTextSize="55sp"
                     app:autoSizeMinTextSize="10sp"
                     app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/tooltip_button"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/suspension_notice"
-                    app:layout_constraintWidth_default="wrap"
-                    tools:text="12,678.234 CCD" />
+                    app:autoSizeTextType="uniform">
 
-                <ImageView
-                    android:id="@+id/tooltip_button"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginTop="16dp"
-                    android:contentDescription="@string/account_details_tooltip_description"
-                    android:padding="2dp"
-                    android:src="@drawable/mw24_ic_tooltip_info"
-                    app:layout_constraintBottom_toBottomOf="@id/total_balance_textview"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toEndOf="@id/total_balance_textview"
-                    app:layout_constraintTop_toTopOf="@id/total_balance_textview"
-                    app:layout_constraintVertical_bias="0"
-                    app:layout_constraintWidth_default="wrap" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/suspension_notice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/mw24_attention_background"
+                        android:drawableStart="@drawable/mw24_ic_pause"
+                        android:drawablePadding="12dp"
+                        android:gravity="center_vertical|start"
+                        android:paddingHorizontal="32dp"
+                        android:paddingVertical="16dp"
+                        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                        android:textColor="@color/text_white"
+                        android:visibility="gone"
+                        app:drawableEndCompat="@drawable/mw24_ic_arrow_right_24"
+                        app:layout_constraintBottom_toTopOf="@id/total_balance_textview"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="@string/your_validation_has_been_suspended"
+                        tools:visibility="visible" />
 
-            <com.concordium.wallet.uicore.view.BalanceGradientTextView
-                android:id="@+id/at_disposal_label"
-                style="@style/MW24_Typography_Label_Main"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/accounts_overview_balance_placeholder"
-                android:textColor="@color/cryptox_deep_blue"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/total_balance_textview"
-                tools:text="203.00 CCD at disposal"
-                tools:visibility="visible" />
-
-            <LinearLayout
-                android:id="@+id/buttonsBlock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/at_disposal_label">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
+                    <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                        android:id="@+id/total_balance_textview"
+                        style="@style/MW24_Typography_IBM_Balance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@string/accounts_overview_balance_placeholder"
+                        android:textColor="@color/cryptox_deep_blue"
+                        app:autoSizeMaxTextSize="55sp"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeStepGranularity="2sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tooltip_button"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/suspension_notice"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="12,678.234 CCD" />
 
                     <ImageView
-                        android:id="@+id/onramp_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_buy"
-                        android:tooltipText="@string/account_details_buy"
-                        app:srcCompat="@drawable/mw24_ic_buy_btn" />
+                        android:id="@+id/tooltip_button"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="16dp"
+                        android:contentDescription="@string/account_details_tooltip_description"
+                        android:padding="2dp"
+                        android:src="@drawable/mw24_ic_tooltip_info"
+                        app:layout_constraintBottom_toBottomOf="@id/total_balance_textview"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toEndOf="@id/total_balance_textview"
+                        app:layout_constraintTop_toTopOf="@id/total_balance_textview"
+                        app:layout_constraintVertical_bias="0"
+                        app:layout_constraintWidth_default="wrap" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                    android:id="@+id/at_disposal_label"
+                    style="@style/MW24_Typography_Label_Main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accounts_overview_balance_placeholder"
+                    android:textColor="@color/cryptox_deep_blue"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/total_balance_textview"
+                    tools:text="203.00 CCD at disposal"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/buttonsBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/at_disposal_label">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:id="@+id/onramp_btn"
+                            style="@style/MW24_Action_Button"
+                            android:contentDescription="@string/account_details_buy"
+                            android:tooltipText="@string/account_details_buy"
+                            app:srcCompat="@drawable/mw24_ic_buy_btn" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:gravity="center_horizontal"
+                            android:text="@string/account_details_buy"
+                            android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                            android:textColor="@color/mw24_blue_2" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:id="@+id/send_funds_btn"
+                            style="@style/MW24_Action_Button"
+                            android:contentDescription="@string/account_details_send"
+                            android:tooltipText="@string/account_details_send"
+                            app:srcCompat="@drawable/mw24_ic_send_btn" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/account_details_send"
+                            android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                            android:textColor="@color/mw24_blue_2" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:id="@+id/receive_btn"
+                            style="@style/MW24_Action_Button"
+                            android:contentDescription="@string/account_details_address"
+                            android:tooltipText="@string/account_details_address"
+                            app:srcCompat="@drawable/mw24_ic_receive_btn" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/account_details_receive"
+                            android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                            android:textColor="@color/mw24_blue_2" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:id="@+id/earn_btn"
+                            style="@style/MW24_Action_Button"
+                            android:contentDescription="@string/account_details_earn_rewards"
+                            android:tooltipText="@string/account_details_earn_rewards"
+                            app:srcCompat="@drawable/mw24_ic_earn_btn" />
+
+                        <View
+                            android:id="@+id/earn_btn_notice"
+                            android:layout_width="9dp"
+                            android:layout_height="9dp"
+                            android:layout_alignTop="@id/earn_btn"
+                            android:layout_alignEnd="@id/earn_btn"
+                            android:layout_gravity="top|end"
+                            android:layout_margin="3dp"
+                            android:background="@drawable/simple_circle_bg"
+                            android:backgroundTint="@color/mw24_attention_red"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/earn_btn"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/account_details_earn"
+                            android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                            android:textColor="@color/mw24_blue_2" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:id="@+id/activity_btn"
+                            style="@style/MW24_Action_Button"
+                            android:contentDescription="@string/account_details_activity"
+                            android:tooltipText="@string/account_details_activity"
+                            app:srcCompat="@drawable/mw24_ic_activity_btn" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/account_details_activity"
+                            android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                            android:textColor="@color/mw24_blue_2" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/file_wallet_migration_disclaimer_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:ignore="UseCompoundDrawables"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="16sp"
+                        android:layout_height="16sp"
+                        android:layout_marginTop="2sp"
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ccx_ico_information_circle_contained" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:gravity="center_horizontal"
-                        android:text="@string/account_details_buy"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
-
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="@string/file_wallet_migration_disclaimer"
+                        android:textAppearance="@style/CCX_Typography_Body"
+                        android:textColor="@color/cryptox_white_main" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="0dp"
+                <include
+                    android:id="@+id/include_onramp_banner"
+                    layout="@layout/onramp_banner_view" />
+
+                <include
+                    android:id="@+id/include_earn_banner"
+                    layout="@layout/earn_banner_view" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/tokens_fragment_container"
+                    android:name="com.concordium.wallet.ui.cis2.TokensListFragment"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_marginTop="40dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <ImageView
-                        android:id="@+id/send_funds_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_send"
-                        android:tooltipText="@string/account_details_send"
-                        app:srcCompat="@drawable/mw24_ic_send_btn" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_send"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <ImageView
-                        android:id="@+id/receive_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_address"
-                        android:tooltipText="@string/account_details_address"
-                        app:srcCompat="@drawable/mw24_ic_receive_btn" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_receive"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <ImageView
-                        android:id="@+id/earn_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_earn_rewards"
-                        android:tooltipText="@string/account_details_earn_rewards"
-                        app:srcCompat="@drawable/mw24_ic_earn_btn" />
-
-                    <View
-                        android:id="@+id/earn_btn_notice"
-                        android:layout_width="9dp"
-                        android:layout_height="9dp"
-                        android:layout_alignTop="@id/earn_btn"
-                        android:layout_alignEnd="@id/earn_btn"
-                        android:layout_gravity="top|end"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/simple_circle_bg"
-                        android:backgroundTint="@color/mw24_attention_red"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/earn_btn"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_earn"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
-
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <ImageView
-                        android:id="@+id/activity_btn"
-                        style="@style/MW24_Action_Button"
-                        android:contentDescription="@string/account_details_activity"
-                        android:tooltipText="@string/account_details_activity"
-                        app:srcCompat="@drawable/mw24_ic_activity_btn" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/account_details_activity"
-                        android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
-                        android:textColor="@color/mw24_blue_2" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/file_wallet_migration_disclaimer_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                tools:ignore="UseCompoundDrawables"
-                tools:visibility="visible">
-
-                <ImageView
-                    android:layout_width="16sp"
-                    android:layout_height="16sp"
-                    android:layout_marginTop="2sp"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ccx_ico_information_circle_contained" />
-
-                <TextView
+                <include
+                    android:id="@+id/pending_fragment_container"
+                    layout="@layout/fragment_account_details_pending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="@string/file_wallet_migration_disclaimer"
-                    android:textAppearance="@style/CCX_Typography_Body"
-                    android:textColor="@color/cryptox_white_main" />
-            </LinearLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/onramp_banner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:background="@drawable/mw24_container_primary_background"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/logo_image_view"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:importantForAccessibility="no"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/account_retry_button"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/mw24_ic_onramp_ccd" />
+                    app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
 
-                <TextView
-                    android:id="@+id/title_text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/ccd_onramp_banner_title"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
-                    android:textColor="@color/cryptox_white_main"
+                <com.concordium.wallet.ui.onboarding.OnboardingFragment
+                    android:id="@+id/onboarding_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/account_retry_button"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/logo_image_view"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/ccd_onramp_banner_content"
-                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                    android:textColor="@color/cryptox_white_main"
-                    app:layout_constraintEnd_toEndOf="@id/title_text_view"
-                    app:layout_constraintStart_toStartOf="@id/title_text_view"
-                    app:layout_constraintTop_toBottomOf="@id/title_text_view" />
-
-                <ImageView
-                    android:id="@+id/close_image_view"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/ccd_onramp_close_banner"
+                <Button
+                    android:id="@+id/account_retry_button"
+                    style="@style/MW24_Button_Primary"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/account_details_retry_button"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/mw24_ic_onramp_close" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/account_remove_button"
+                    style="@style/MW24_Button_Primary"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/account_details_remove_button"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </LinearLayout>
+        </com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView>
 
-            <include
-                android:id="@+id/include_earn_banner"
-                layout="@layout/earn_banner_view" />
+        <include
+            android:id="@+id/progress"
+            layout="@layout/progress" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/tokens_fragment_container"
-                android:name="com.concordium.wallet.ui.cis2.TokensListFragment"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="40dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/confetti_animation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_rawRes="@raw/confetti" />
 
-            <include
-                android:id="@+id/pending_fragment_container"
-                layout="@layout/fragment_account_details_pending"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@id/account_retry_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
-
-            <com.concordium.wallet.ui.onboarding.OnboardingFragment
-                android:id="@+id/onboarding_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="top"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/account_retry_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/onramp_banner" />
-
-            <Button
-                android:id="@+id/account_retry_button"
-                style="@style/MW24_Button_Primary"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/account_details_retry_button"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/account_remove_button"
-                style="@style/MW24_Button_Primary"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/account_details_remove_button"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </LinearLayout>
-    </com.concordium.wallet.uicore.view.ScrollingHeaderNestedScrollView>
-
-    <include
-        android:id="@+id/progress"
-        layout="@layout/progress" />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/confetti_animation"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="false"
-        app:lottie_rawRes="@raw/confetti" />
-
-    <View
-        android:id="@+id/bottom_empty_view"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:id="@+id/bottom_empty_view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

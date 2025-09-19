@@ -142,26 +142,30 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         )
     }
 
-    fun setShowOnrampBanner(show: Boolean) {
-        return App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(show)
+    val isOnrampBannerVisible: Boolean
+        get() = App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
+                && ::account.isInitialized
+                && account.balance == BigInteger.ZERO
+
+    val isEarnBannerVisible: Boolean
+        get() = App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
+                && ::account.isInitialized
+                && account.balance > BigInteger.ZERO
+                && account.isDelegating().not()
+                && account.isBaking().not()
+
+    val isSeedPhraseBackupBannerVisible: Boolean
+        get() = App.appCore.session.activeWallet.type == AppWallet.Type.SEED
+                && App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeedPhrase()
+                && App.appCore.session.walletStorage.setupPreferences.getRequireSeedPhraseBackupConfirmation()
+
+    fun onCloseOnrampBannerClicked() {
+        App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(false)
     }
 
-    fun isShowOnrampBanner(): Boolean {
-        return App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
+    fun onCloseEarnBannerClicked() {
+        App.appCore.session.walletStorage.setupPreferences.setShowEarnBanner(false)
     }
-
-    fun setShowEarnBanner(show: Boolean) {
-        return App.appCore.session.walletStorage.setupPreferences.setShowEarnBanner(show)
-    }
-
-    fun isShowEarnBanner(): Boolean {
-        return App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
-    }
-
-    fun isEarnBannerVisible(): Boolean = isShowEarnBanner() &&
-            account.balance > BigInteger.ZERO &&
-            account.isDelegating().not() &&
-            account.isBaking().not()
 
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
