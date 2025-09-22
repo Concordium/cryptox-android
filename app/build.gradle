@@ -23,9 +23,9 @@ android {
     // https://semver.org/
     def versionMajor = 1
     def versionMinor = 13
-    def versionPatch = 0
+    def versionPatch = 1
     def versionMeta = ""
-    def versionCodeIncremental = 1463
+    def versionCodeIncremental = 1464
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
@@ -217,7 +217,7 @@ android {
     // Set meaningful names for build artifacts.
     applicationVariants.all { variant ->
         def flavor = variant.productFlavors[0].name
-        def artifactName = "cryptox-" +
+        def artifactName = "concordium-wallet-" +
                 flavor + "-" +
                 variant.buildType.name + "-" +
                 variant.versionName
