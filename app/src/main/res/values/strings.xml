@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App -->
-    <string name="app_name">CryptoX Wallet</string>
+    <string name="app_name">Concordium Wallet</string>
     <string name="app_menu_item_accounts">Accounts</string>
     <string name="app_menu_item_news">News</string>
     <string name="app_menu_item_tokens">NFT</string>
@@ -338,7 +338,7 @@
     <string name="about_support">Support</string>
     <string name="about_support_text">If you encountered a problem, or need help with something, you can reach out to us via <a href="mailto:support@concordium.com?subject=CryptoX">support@concordium.com</a></string>
     <string name="about_contact">Website</string>
-    <string name="about_contact_text">For more info about CryptoX Wallet you can visit <a href="https://concordium.com">concordium.com</a></string>
+    <string name="about_contact_text">For more info about Concordium Wallet you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
     <string name="about_legal">Legal Information</string>
     <string name="about_social_networks">Social</string>
@@ -475,7 +475,7 @@
     <string name="approximate_fee">Approximate fee</string>
     <string name="your_owned_nft">Your NFTs</string>
     <string name="discover_your_nft">Discover your NFTs</string>
-    <string name="add_provider_description">To add NFTs from a particular marketplace to your CryptoX wallet you have to enter the marketplace URL and name below.\nExample:</string>
+    <string name="add_provider_description">To add NFTs from a particular marketplace to your wallet you have to enter the marketplace URL and name below.\nExample:</string>
     <string name="hint_website_url">Website URL <font color='#FF0000'>*</font></string>
     <string name="hint_provider_name">Provider name <font color='#FF0000'>*</font></string>
     <string name="delete">Delete</string>
@@ -676,7 +676,7 @@
     <string name="seed_phrase_recover_process_finished_accounts_count">ACCOUNTS: %1$d</string>
 
     <string name="earn_title">Earn</string>
-    <string name="earn_subtitle">Below are two options for earning rewards on CryptoX Wallet:</string>
+    <string name="earn_subtitle">Below are two options for earning rewards on Concordium Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
     <string name="earn_delegation_title">Earn up to <font color='#24D4AB'>6%</font></string>
@@ -1113,7 +1113,7 @@
     </plurals>
 
     <string name="welcome_point_1">Safe and secure</string>
-    <string name="welcome_point_1_details">The CryptoX wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
+    <string name="welcome_point_1_details">Concordium Wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
     <string name="welcome_point_2">Easily manage digital assets</string>
     <string name="welcome_point_2_details">Seamlessly store, spend and send tokens, crypto, and collectibles.</string>
     <string name="welcome_point_3">For a safer tomorrow</string>
@@ -1358,7 +1358,7 @@
     <string name="wallets_adding">Adding wallets</string>
     <string name="wallets_adding_summary">You can now add and remove wallets.</string>
     <string name="wallets_adding_explanation">
-        You can have a total of 2 wallets in CryptoX. They can be:\n
+        You can have a total of 2 wallets in Concordium Wallet. They can be:\n
          • 1 file wallet (imported via backup file)\n
          • 1 seed phrase wallet (newly created or imported via either seed phrase or wallet private key)
     </string>
@@ -1387,7 +1387,7 @@
     </string>
     <string name="wallets_action_removing_wallet">Removing a wallet</string>
     <string name="wallets_action_removing_wallet_explanation">
-        After removing a wallet you will not be able to access it in CryptoX.
+        After removing a wallet you will not be able to access it in Concordium Wallet.
         But you can restore it whenever you like.
     </string>
     <string name="wallets_action_add_wallet">Add wallet</string>
@@ -1404,7 +1404,7 @@
         Be aware that you can not create new accounts or identities in your file wallet.
         \n\n
         We recommend that you migrate to a seed phrase wallet
-        in order to make use of the full range of CryptoX features.
+        in order to make use of the full range of Concordium Wallet features.
     </string>
     <string name="file_wallet_creation_limitation_okay">Okay</string>
     <string name="seed_wallet_adding_title">@string/adding_seed_wallet</string>
@@ -1423,7 +1423,7 @@
     <string name="seed_wallet_adding_import_wallet">Import Wallet</string>
     <string name="file_wallet_migration_disclaimer">
         We recommend that you migrate to a seed phrase wallet
-        in order to make use of the full range of CryptoX features.
+        in order to make use of the full range of Concordium Wallet features.
     </string>
     <string name="your_validator_has_been_suspended">Your validator has been suspended</string>
     <string name="your_validation_has_been_suspended">Your validation has been suspended</string>

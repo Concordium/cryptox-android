@@ -1,10 +1,13 @@
-# <img src="app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="Icon" style="vertical-align: bottom; height: 36px;"/>  CryptoX Concordium Wallet
+# <img src="app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="Icon" style="vertical-align: bottom; height: 36px;"/> Concordium Wallet
 
-Use CryptoX Concordium Wallet to get started with the open-source, privacy-centric and public Concordium Blockchain. 
+Use the Concordium Android Wallet to get started with the open-source, privacy-centric, public,
+and permissionless Concordium Blockchain.
+The wallet enables you to create and deploy a privacy-centric digital identity, create and manage accounts on the Concordium Blockchain.
 
 ![Screenshots](screens.png)
 
-With CryptoX Wallet, you can:
+With Concordium Wallet, crypto transactions are finally easy and secure!
+
 - Create digital identities and your initial account via an identity provider (IDP)
 - Create additional accounts with your digital identities
 - Send and receive CCD
@@ -14,20 +17,16 @@ With CryptoX Wallet, you can:
 - Manage your addresses in the address book for fast and easy transactions
 - Export and import backups of your accounts, identities, address book, and keys
 - Import both phrase- and file-based wallets simultaneously and switch between them
-- Send, receive and view CIS-2 tokens
-- Browse owned NFTs from [Spaceseven](https://spaceseven.com/marketplace)
+- Send, receive and view CIS-2 and Protocol-Level tokens
 - Connect to Concordium dApps with WalletConnect
 
-## What is Concordium?
 [Concordium](https://www.concordium.com/) is a blockchain-based technology project 
 that aims to create a decentralized, secure, and scalable platform for business applications. 
 It is designed to provide a transparent and compliant blockchain infrastructure with 
 built-in identity verification at the protocol level. This makes it suitable for businesses 
 and organizations that require a reliable, efficient, and regulatory-compliant blockchain solution.
 
-## What is CryptoX?
-CryptoX is a Concordium wallet with an advanced set of features. 
-It is based on Concordium reference wallet and can be used instead of both Concordium and Concordium Legacy wallets.
+The Concordium wallet was formerly known as "CryptoX".
 
 ## Download
 | Mainnet| Testnet|
