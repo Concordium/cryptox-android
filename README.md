@@ -1,6 +1,6 @@
 # <img src="app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="Icon" style="vertical-align: bottom; height: 36px;"/> Concordium Wallet
 
-Use the Concordium Wallet to get started with the open-source, privacy-centric, public,
+Use the Concordium Android Wallet to get started with the open-source, privacy-centric, public,
 and permissionless Concordium Blockchain.
 The wallet enables you to create and deploy a privacy-centric digital identity, create and manage accounts on the Concordium Blockchain.
 
