@@ -67,6 +67,8 @@ class OneStepSetupWalletViewModel(
 
         if (isSetUpSuccessfully) {
             App.appCore.setup.finishInitialSetup()
+            App.appCore.session.walletStorage.setupPreferences
+                .setRequireSeedPhraseBackupConfirmation(false)
             mutableEventsFlow.emit(Event.GoToAccountOverview)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)
