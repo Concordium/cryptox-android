@@ -1472,4 +1472,12 @@
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
     <string name="account_details_seed_phrase_backup_banner_title">Backup Your Wallet</string>
     <string name="account_details_seed_phrase_backup_banner_description">Keep your account safe by making a copy of your wallet seed phrase</string>
+    <string name="seed_phrase_backup_notice_title">Are you sure you want to hide this reminder?</string>
+    <string name="seed_phrase_backup_notice_message">
+        We highly recommend that you make a secure backup of your unique wallet seed phrase.
+        You will not be able to restore your wallet without your seed phrase.\n\nAlternatively,
+        you can find it later in the wallet settings
+    </string>
+    <string name="seed_phrase_backup_notice_backup">Backup Your Seed phrase</string>
+    <string name="seed_phrase_backup_notice_hide_anyway">Hide anyway</string>
 </resources>

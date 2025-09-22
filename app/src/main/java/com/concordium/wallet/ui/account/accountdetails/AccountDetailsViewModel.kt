@@ -40,7 +40,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val session: Session = App.appCore.session
 
     enum class DialogToShow {
-        UNSHIELDING
+        UNSHIELDING,
+        SEED_PHRASE_BACKUP_NOTICE,
     }
 
     sealed class SuspensionNotice(
@@ -160,6 +161,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 && account.balance > BigInteger.ZERO
                 && account.isDelegating().not()
                 && account.isBaking().not()
+
+    fun onCloseSeedPhraseBackupBannerClicked() {
+        _showDialogLiveData.postValue(Event(DialogToShow.SEED_PHRASE_BACKUP_NOTICE))
+    }
 
     fun onCloseOnrampBannerClicked() {
         App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(false)

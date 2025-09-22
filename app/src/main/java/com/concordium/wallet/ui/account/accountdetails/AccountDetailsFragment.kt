@@ -34,6 +34,7 @@ import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
+import com.concordium.wallet.ui.account.accountsoverview.SeedPhraseBackupNoticeDialog
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
@@ -232,6 +233,25 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                         UnshieldingNoticeDialog().showSingle(
                             childFragmentManager,
                             UnshieldingNoticeDialog.TAG
+                        )
+                    }
+
+                    AccountDetailsViewModel.DialogToShow.SEED_PHRASE_BACKUP_NOTICE -> {
+                        childFragmentManager.setFragmentResultListener(
+                            SeedPhraseBackupNoticeDialog.CONFIRMATION_REQUEST,
+                            viewLifecycleOwner,
+                        ) { _, result ->
+                            if (SeedPhraseBackupNoticeDialog.isHidingConfirmed(result)) {
+                                updateBannersVisibility()
+                            }
+                            childFragmentManager.clearFragmentResultListener(
+                                SeedPhraseBackupNoticeDialog.CONFIRMATION_REQUEST
+                            )
+                        }
+
+                        SeedPhraseBackupNoticeDialog().showSingle(
+                            childFragmentManager,
+                            SeedPhraseBackupNoticeDialog.TAG
                         )
                     }
 
@@ -587,6 +607,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
         binding.includeSeedPhraseBackupBanner.root.setOnClickListener {
             gotoSeedPhraseReveal()
+        }
+
+        binding.includeSeedPhraseBackupBanner.closeImageView.setOnClickListener {
+            viewModelAccountDetails.onCloseSeedPhraseBackupBannerClicked()
         }
 
         updateBannersVisibility()
