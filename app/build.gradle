@@ -217,7 +217,7 @@ android {
     // Set meaningful names for build artifacts.
     applicationVariants.all { variant ->
         def flavor = variant.productFlavors[0].name
-        def artifactName = "cryptox-" +
+        def artifactName = "concordium-wallet-" +
                 flavor + "-" +
                 variant.buildType.name + "-" +
                 variant.versionName
