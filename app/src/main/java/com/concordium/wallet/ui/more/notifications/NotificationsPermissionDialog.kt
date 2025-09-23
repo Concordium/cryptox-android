@@ -18,8 +18,11 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 class NotificationsPermissionDialog : AppCompatDialogFragment() {
     override fun getTheme(): Int =
@@ -43,7 +46,7 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = DialogNotificationsPermissionBinding.inflate(inflater, container, false)
         return binding.root
@@ -74,7 +77,7 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
         // Track showing the dialog once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 delay(500)
                 walletNotificationsPreferences.hasEverShownPermissionDialog = true
             }
@@ -89,15 +92,16 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
 
         walletNotificationsPreferences.enableAll(areNotificationsEnabled = isGranted)
 
+        @OptIn(DelicateCoroutinesApi::class)
         if (isGranted) {
-            lifecycleScope.launch {
-                val success = updateNotificationsSubscriptionUseCase()
-                Log.d("success: $success")
-                dismiss()
+            GlobalScope.launch {
+                withTimeout(10000) {
+                    updateNotificationsSubscriptionUseCase()
+                }
             }
-        } else {
-            dismiss()
         }
+
+        dismiss()
     }
 
     companion object {
