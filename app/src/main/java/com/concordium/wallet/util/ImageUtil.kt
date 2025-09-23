@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.util.Base64
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 
@@ -15,13 +14,6 @@ object ImageUtil {
         val imageBytes = Base64.decode(image, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(
             imageBytes, 0, imageBytes.size
-        )
-    }
-
-    fun changeImageViewTintColor(imageView: ImageView, color: Int) {
-        imageView.setColorFilter(
-            ContextCompat.getColor(imageView.context, color),
-            android.graphics.PorterDuff.Mode.MULTIPLY
         )
     }
 

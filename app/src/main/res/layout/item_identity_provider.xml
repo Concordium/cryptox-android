@@ -18,13 +18,11 @@
             android:id="@+id/logo_imageview"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:padding="10dp"
             android:importantForAccessibility="no"
-            android:scaleType="centerInside"
-            android:background="@drawable/ccx_identity_provider_image_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/simple_circle_bg" />
 
         <TextView
             android:id="@+id/header_textview"
