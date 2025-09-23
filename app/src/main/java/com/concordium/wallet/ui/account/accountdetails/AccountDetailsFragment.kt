@@ -41,6 +41,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
@@ -233,6 +234,13 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                         UnshieldingNoticeDialog().showSingle(
                             childFragmentManager,
                             UnshieldingNoticeDialog.TAG
+                        )
+                    }
+
+                    AccountDetailsViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
+                        NotificationsPermissionDialog().showSingle(
+                            childFragmentManager,
+                            NotificationsPermissionDialog.TAG
                         )
                     }
 

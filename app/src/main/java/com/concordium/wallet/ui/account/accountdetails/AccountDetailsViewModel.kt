@@ -41,6 +41,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     enum class DialogToShow {
         UNSHIELDING,
+        NOTIFICATIONS_PERMISSION,
         SEED_PHRASE_BACKUP_NOTICE,
     }
 
@@ -395,12 +396,17 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
         val dialogsToShow = linkedSetOf<DialogToShow>()
 
+        if (!App.appCore.session.walletStorage.notificationsPreferences.hasEverShownPermissionDialog) {
+            dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
+        }
+
         // Show unshielding notice if never shown and some accounts may need unshielding.
         if (!App.appCore.session.isUnshieldingNoticeShown()
             && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
         ) {
             dialogsToShow += DialogToShow.UNSHIELDING
         }
+
         // Show a single dialog if needed.
         if (dialogsToShow.isNotEmpty()) {
             _showDialogLiveData.postValue(Event(dialogsToShow.first()))
