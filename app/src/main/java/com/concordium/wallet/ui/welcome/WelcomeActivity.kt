@@ -69,6 +69,10 @@ class WelcomeActivity :
                                     )
                             )
                     } else {
+                        // If the password was created for Import, but now they returned
+                        // and want to Create, initial setup must be marked as finished
+                        // to avoid getting back again.
+                        App.appCore.setup.finishInitialSetup()
                         gotoAccountOverview()
                     }
 
