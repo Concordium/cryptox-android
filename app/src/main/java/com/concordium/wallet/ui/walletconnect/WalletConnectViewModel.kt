@@ -543,41 +543,13 @@ private constructor(
             return
         }
 
-        // We do not want to queue more than one request for each topic (dApp),
-        // as the dApp may be broken and spam requests.
-        // At this point, topic pending requests may already contain this sessionRequest.
-        val topicPendingRequests = SignClient.getPendingSessionRequests(sessionRequest.topic)
-        if (topicPendingRequests.isEmpty() || topicPendingRequests.size == 1) {
-            // Only handle the request if the session ID is different from the current one
-            // Otherwise, ignore the re-processing call
-            if (sessionRequest.request.id != this.sessionRequestId) {
-                handleSessionRequest(
-                    topic = sessionRequest.topic,
-                    id = sessionRequest.request.id,
-                    method = sessionRequest.request.method,
-                    params = sessionRequest.request.params,
-                    peerMetadata = sessionRequestPeerMetadata
-                )
-            } else {
-                Log.w(
-                    "received_next_session_request_in_topic_with_the_same_id" +
-                    "\ndon't handle the request again"
-                )
-            }
-        } else {
-            Log.w(
-                "received_next_session_request_in_topic_before_current_is_handled:" +
-                        "\nrequestId=${topicPendingRequests.last().request.id}" +
-                        "\nrequestTopic=${topicPendingRequests.last().topic}"
-            )
-
-            respondError(
-                message = "Subsequent requests are rejected until the current one is handled: " +
-                        topicPendingRequests.first().request.id,
-                sessionRequestId = topicPendingRequests.last().request.id,
-                sessionRequestTopic = topicPendingRequests.last().topic,
-            )
-        }
+        handleSessionRequest(
+            topic = sessionRequest.topic,
+            id = sessionRequest.request.id,
+            method = sessionRequest.request.method,
+            params = sessionRequest.request.params,
+            peerMetadata = sessionRequestPeerMetadata
+        )
     }
 
     /**
