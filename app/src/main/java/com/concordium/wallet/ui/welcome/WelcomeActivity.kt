@@ -2,34 +2,23 @@ package com.concordium.wallet.ui.welcome
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ActivityWelcomeBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.uicore.handleUrlClicks
 
 class WelcomeActivity :
-    BaseActivity(R.layout.activity_welcome),
-    WelcomeAccountActivationLauncher {
-
-    private val binding: ActivityWelcomeBinding by lazy {
-        ActivityWelcomeBinding.bind(findViewById(R.id.root_layout))
-    }
-
-    private val trackingPreferences = App.appCore.appTrackingPreferences
+    BaseActivity(R.layout.activity_welcome) {
 
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                gotoAccountOverview()
+                goToAccountOverview()
             }
         }
     private val passcodeSetupForImportLauncher =
@@ -53,11 +42,11 @@ class WelcomeActivity :
 
         // Subscribe to activation bottom sheet chosen action.
         supportFragmentManager.setFragmentResultListener(
-            WelcomeActivateAccountBottomSheet.ACTION_REQUEST,
+            WelcomeGetStartedFragment.ACTION_REQUEST,
             this
         ) { _, bundle ->
-            when (WelcomeActivateAccountBottomSheet.getResult(bundle)) {
-                WelcomeActivateAccountBottomSheet.ChosenAction.CREATE ->
+            when (WelcomeGetStartedFragment.getChosenAction(bundle)) {
+                WelcomeGetStartedFragment.ChosenAction.CREATE ->
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a new seed phrase wallet.
                         passcodeSetupForCreateLauncher
@@ -73,10 +62,10 @@ class WelcomeActivity :
                         // and want to Create, initial setup must be marked as finished
                         // to avoid getting back again.
                         App.appCore.setup.finishInitialSetup()
-                        gotoAccountOverview()
+                        goToAccountOverview()
                     }
 
-                WelcomeActivateAccountBottomSheet.ChosenAction.IMPORT ->
+                WelcomeGetStartedFragment.ChosenAction.IMPORT ->
                     if (viewModel.shouldSetUpPassword) {
                         // Set up password and create a import an existing wallet.
                         passcodeSetupForImportLauncher
@@ -94,57 +83,18 @@ class WelcomeActivity :
     }
 
     private fun initViews() {
-        binding.termsTextView.handleUrlClicks { url ->
-            when (url) {
-                "#terms" ->
-                    openTerms()
 
-                else -> {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    ContextCompat.startActivity(this, browserIntent, null)
-                }
-            }
-        }
-
-        binding.termsCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                App.appCore.tracker.welcomeTermAndConditionsCheckBoxChecked()
-            }
-            binding.getStartedButton.isEnabled = isChecked
-        }
-
-        binding.activityTrackingCheckBox.isChecked = trackingPreferences.isTrackingEnabled
-        binding.activityTrackingCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                App.appCore.tracker.welcomeActivityTrackingCheckBoxChecked()
-            }
-            trackingPreferences.isTrackingEnabled = isChecked
-        }
-
-        binding.getStartedButton.setOnClickListener {
-            App.appCore.tracker.welcomeGetStartedClicked()
-            proceedWithAccountActivation()
-        }
-    }
-
-    private fun openTerms() {
-        startActivity(Intent(this, WelcomeTermsActivity::class.java))
     }
 
     override fun loggedOut() {
         // do nothing as we are one of the root activities
     }
 
-    override fun proceedWithAccountActivation() {
-        WelcomeActivateAccountBottomSheet()
-            .show(supportFragmentManager, WelcomeActivateAccountBottomSheet.TAG)
-    }
-
     private fun goToImportWallet() {
         startActivity(Intent(this, WelcomeRecoverWalletActivity::class.java))
     }
 
-    private fun gotoAccountOverview() {
+    private fun goToAccountOverview() {
         finish()
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

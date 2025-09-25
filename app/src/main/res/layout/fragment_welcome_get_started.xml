@@ -16,7 +16,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp">
 
             <TextView
                 android:id="@+id/point_1_text_view"
@@ -186,11 +187,12 @@
 
     <Button
         android:id="@+id/import_wallet_button"
-        style="@style/MW24_Button_Tertiary_Medium"
+        style="@style/MW24_Button_Tertiary"
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:layout_marginBottom="16dp"
         android:enabled="false"
         android:text="@string/welcome_restore_wallet"
+        android:textAppearance="@style/MW24_Typography_Label_Main"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
