@@ -1112,6 +1112,7 @@
         <item quantity="other">Showing %1$d items</item>
     </plurals>
 
+    <string name="welcome_greeting">Welcome to Concordium</string>
     <string name="welcome_point_1">Safe and secure</string>
     <string name="welcome_point_1_details">Concordium Wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
     <string name="welcome_point_2">Easily manage digital assets</string>
