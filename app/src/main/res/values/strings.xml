@@ -1113,13 +1113,15 @@
     </plurals>
 
     <string name="welcome_greeting">Welcome to Concordium</string>
-    <string name="welcome_point_1">Safe and secure</string>
-    <string name="welcome_point_1_details">Concordium Wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
-    <string name="welcome_point_2">Easily manage digital assets</string>
-    <string name="welcome_point_2_details">Seamlessly store, spend and send tokens, crypto, and collectibles.</string>
-    <string name="welcome_point_3">For a safer tomorrow</string>
-    <string name="welcome_point_3_details">Access a global ecosystem and contribute to a secure digital future.</string>
+    <string name="welcome_point_1">Passcode</string>
+    <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
+    <string name="welcome_point_2">Digital Identity</string>
+    <string name="welcome_point_2_details">Request your digital Identity from one of our trusted external identity providers.</string>
+    <string name="welcome_point_3">Finish</string>
+    <string name="welcome_point_3_details">Complete set-up and finalize your account to unlock all features. </string>
     <string name="welcome_get_started">Get started</string>
+    <string name="welcome_create_wallet">Create a New Wallet</string>
+    <string name="welcome_restore_wallet">Restore Existing Wallet</string>
     <string name="welcome_terms">I have read and understood the
         <a href="#terms">Terms and Conditions</a>
         and the <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>

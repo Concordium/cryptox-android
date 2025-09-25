@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="16dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@id/terms_check_box"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/point_1_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:maxLines="1"
+                android:text="@string/welcome_point_1"
+                android:textAppearance="@style/CCX_Typography_H3_Bold"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/point_1_image_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/point_1_details_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:lineHeight="20sp"
+                android:text="@string/welcome_point_1_details"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2"
+                app:layout_constraintBottom_toTopOf="@id/point_1_details_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/point_1_text_view"
+                app:layout_constraintTop_toBottomOf="@id/point_1_text_view"
+                tools:targetApi="p" />
+
+            <ImageView
+                android:id="@+id/point_1_image_view"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="2dp"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/point_1_text_view"
+                app:srcCompat="@drawable/ccx_ico_square_shield" />
+
+            <!-- -->
+
+            <TextView
+                android:id="@+id/point_2_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="24dp"
+                android:maxLines="1"
+                android:text="@string/welcome_point_2"
+                android:textAppearance="@style/CCX_Typography_H3_Bold"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/point_2_image_view"
+                app:layout_constraintTop_toBottomOf="@id/point_1_details_text_view" />
+
+            <TextView
+                android:id="@+id/point_2_details_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineHeight="20sp"
+                android:text="@string/welcome_point_2_details"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/point_2_text_view"
+                app:layout_constraintTop_toBottomOf="@id/point_2_text_view"
+                tools:targetApi="p" />
+
+            <ImageView
+                android:id="@+id/point_2_image_view"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="2dp"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/point_2_text_view"
+                app:srcCompat="@drawable/ccx_ico_blockchain_27" />
+
+            <!-- -->
+
+            <TextView
+                android:id="@+id/point_3_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="24dp"
+                android:maxLines="1"
+                android:text="@string/welcome_point_3"
+                android:textAppearance="@style/CCX_Typography_H3_Bold"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/point_3_image_view"
+                app:layout_constraintTop_toBottomOf="@id/point_2_details_text_view" />
+
+            <TextView
+                android:id="@+id/point_3_details_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineHeight="20sp"
+                android:text="@string/welcome_point_3_details"
+                android:textAppearance="@style/CCX_Typography_Body"
+                android:textColor="@color/ccx_neutral_tint_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/point_3_text_view"
+                app:layout_constraintTop_toBottomOf="@id/point_3_text_view"
+                tools:targetApi="p" />
+
+            <ImageView
+                android:id="@+id/point_3_image_view"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="2dp"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/point_3_text_view"
+                app:srcCompat="@drawable/ccx_ico_blockchain_35" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/terms_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="24dp"
+        android:paddingBottom="4dp"
+        android:text="@string/welcome_terms"
+        android:textAppearance="@style/CCX_Typography_Body"
+        android:textColor="@color/ccx_neutral_tint_1"
+        android:textColorLink="@color/mw24_primary_text_button_color"
+        app:layout_constraintBottom_toTopOf="@id/create_wallet_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/terms_check_box">
+
+        <!-- Bottom padding is required to avoid cutting part
+       of the URL underline.
+       Separate TextView is required as clickable text
+       interferes with the checkbox-->
+
+    </TextView>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/terms_check_box"
+        style="@style/CCX_CompoundButton_Checkbox"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="16dp"
+        android:paddingVertical="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/terms_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/terms_text_view" />
+
+    <Button
+        android:id="@+id/create_wallet_button"
+        style="@style/MW24_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
+        android:enabled="false"
+        android:text="@string/welcome_create_wallet"
+        app:layout_constraintBottom_toTopOf="@id/import_wallet_button" />
+
+    <Button
+        android:id="@+id/import_wallet_button"
+        style="@style/MW24_Button_Tertiary_Medium"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:text="@string/welcome_restore_wallet"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
