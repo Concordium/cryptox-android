@@ -1,5 +1,6 @@
 package com.concordium.wallet.core.tokens
 
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.PLTRepository
@@ -18,9 +19,6 @@ import com.concordium.wallet.util.Log
 
 class TokensInteractor(
     private val proxyRepository: ProxyRepository,
-    private val contractTokensRepository: ContractTokensRepository,
-    private val pltRepository: PLTRepository,
-    private val accountRepository: AccountRepository,
     private val tokenPriceRepository: TokenPriceRepository,
     private val loadTokensBalancesUseCase: LoadTokensBalancesUseCase,
     private val loadCIS2TokensUseCase: LoadCIS2TokensUseCase,
@@ -32,13 +30,23 @@ class TokensInteractor(
         loadBalances: Boolean = true,
         onlyTransferable: Boolean = false,
         addCCDToken: Boolean = true,
+        ccdWithTotalBalance: Boolean = false,
     ): Result<List<Token>> = runCatching {
-        val ccdToken = getCCDDefaultToken(accountAddress)
+
+        val contractTokensRepository = ContractTokensRepository(
+            App.appCore.session.walletStorage.database.contractTokenDao()
+        )
+
+        val ccdToken = getCCDDefaultToken(accountAddress, ccdWithTotalBalance)
 
         val contractTokens =
             contractTokensRepository
                 .getTokens(accountAddress)
                 .map(ContractTokenEntity::toContractToken)
+
+        val pltRepository = PLTRepository(
+            App.appCore.session.walletStorage.database.protocolLevelTokenDao()
+        )
 
         val pltTokens =
             pltRepository
@@ -138,6 +146,9 @@ class TokensInteractor(
     ): Result<Boolean> {
         return when (token) {
             is ContractToken -> {
+                val contractTokensRepository = ContractTokensRepository(
+                    App.appCore.session.walletStorage.database.contractTokenDao()
+                )
                 contractTokensRepository.delete(
                     accountAddress = accountAddress,
                     contractIndex = token.contractIndex,
@@ -147,6 +158,9 @@ class TokensInteractor(
             }
 
             is ProtocolLevelToken -> {
+                val pltRepository = PLTRepository(
+                    App.appCore.session.walletStorage.database.protocolLevelTokenDao()
+                )
                 pltRepository.hideToken(accountAddress, token.tokenId)
                 Result.success(true)
             }
@@ -157,18 +171,37 @@ class TokensInteractor(
 
     suspend fun unmarkNewlyReceivedToken(token: Token) {
         when (token) {
-            is ContractToken -> contractTokensRepository.unmarkNewlyReceived(token.token)
-            is ProtocolLevelToken -> pltRepository.unmarkNewlyReceived(token.tokenId)
+            is ContractToken -> {
+                val contractTokensRepository = ContractTokensRepository(
+                    App.appCore.session.walletStorage.database.contractTokenDao()
+                )
+                contractTokensRepository.unmarkNewlyReceived(token.token)
+            }
+
+            is ProtocolLevelToken -> {
+                val pltRepository = PLTRepository(
+                    App.appCore.session.walletStorage.database.protocolLevelTokenDao()
+                )
+                pltRepository.unmarkNewlyReceived(token.tokenId)
+            }
+
             else -> throw UnsupportedOperationException("Cannot unmark CCD token")
         }
     }
 
     private suspend fun getCCDDefaultToken(
         accountAddress: String,
-    ) = CCDToken(
-        account = accountRepository.findByAddress(accountAddress)
-            ?: error("Account $accountAddress not found"),
-        eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
-            .getOrNull()
-    )
+        withTotalBalance: Boolean = false,
+    ): CCDToken {
+        val accountRepository = AccountRepository(
+            App.appCore.session.walletStorage.database.accountDao()
+        )
+        return CCDToken(
+            account = accountRepository.findByAddress(accountAddress)
+                ?: error("Account $accountAddress not found"),
+            withTotalBalance = withTotalBalance,
+            eurPerMicroCcd = tokenPriceRepository.getEurPerMicroCcd()
+                .getOrNull()
+        )
+    }
 }
