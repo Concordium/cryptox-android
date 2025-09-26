@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Not showing tokens after switching wallets
 
+### Changed
+
+- Updated the launcher icon
+
 ## [1.13.1] - 2025-09-22
 
 ### Changed
