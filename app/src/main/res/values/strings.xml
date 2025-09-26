@@ -627,7 +627,7 @@
     <string name="cis_hide_token">Hide Token From Account</string>
     <string name="cis_hide_token_item">Hide token</string>
     <string name="cis_hide_token_title">Hiding a Token</string>
-    <string name="cis_hide_token_body">Are you sure you want to hide %1$s token from your wallet?</string>
+    <string name="cis_hide_token_body">Are you sure you want to hide %1$s from your wallet?</string>
     <string name="cis_hide_token_confirm">Yes, hide it</string>
     <string name="cis_hide_token_cancel">Go back</string>
     <string name="cis_delete_dialog_title">Confirm removal</string>

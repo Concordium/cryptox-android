@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -89,7 +88,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         viewModel.unmarkNewlyReceivedSelectedToken()
         showNewlyReceivedNotice(tokenName = token.symbol)
         setResult(
-            Activity.RESULT_OK,
+            RESULT_OK,
             Intent().putExtra(CHANGED, true)
         )
     }
@@ -213,7 +212,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             if (isHidingToken) {
                 viewModel.deleteSelectedToken()
                 setResult(
-                    Activity.RESULT_OK,
+                    RESULT_OK,
                     Intent().putExtra(CHANGED, true)
                 )
                 finish()
