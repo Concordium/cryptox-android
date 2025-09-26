@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
@@ -12,8 +14,7 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 
-class WelcomeActivity :
-    BaseActivity(R.layout.activity_welcome) {
+class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
     private val passcodeSetupForCreateLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -40,7 +41,6 @@ class WelcomeActivity :
 
         initViews()
 
-        // Subscribe to activation bottom sheet chosen action.
         supportFragmentManager.setFragmentResultListener(
             WelcomeGetStartedFragment.ACTION_REQUEST,
             this
@@ -73,6 +73,20 @@ class WelcomeActivity :
                     } else {
                         goToImportWallet()
                     }
+            }
+        }
+
+        supportFragmentManager.setFragmentResultListener(
+            WelcomeCarouselFragment.GET_STARTED_REQUEST,
+            this
+        ) { _, _ ->
+            supportFragmentManager.commit {
+                replace(
+                    R.id.fragment_container,
+                    WelcomeGetStartedFragment()
+                )
+                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                disallowAddToBackStack()
             }
         }
     }

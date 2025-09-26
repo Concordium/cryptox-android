@@ -1112,6 +1112,14 @@
         <item quantity="other">Showing %1$d items</item>
     </plurals>
 
+    <string name="welcome_verified_people_title">Verified People. Verified Trust.</string>
+    <string name="welcome_verified_people_description">The Concordium Wallet connects you to apps and services via a secure ID verification process.</string>
+    <string name="welcome_your_data_title">Your Data. Your Rules.</string>
+    <string name="welcome_your_data_description">Your wallet is tied to a verified digital identity – verified once, controlled by you.</string>
+    <string name="welcome_verified_and_private_title">Verified and Private</string>
+    <string name="welcome_verified_and_private_description">Prove what matters (like being over 18) without sharing anything else – powered by Zero-Knowledge Proof technology.</string>
+    <string name="welcome_trust_title">A Wallet with Built-In Trust</string>
+    <string name="welcome_trust_description">Transact, stake and explore with enterprise-grade security and full control.</string>
     <string name="welcome_greeting">Welcome to Concordium</string>
     <string name="welcome_point_1">Passcode</string>
     <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
@@ -1119,6 +1127,7 @@
     <string name="welcome_point_2_details">Request your digital Identity from one of our trusted external identity providers.</string>
     <string name="welcome_point_3">Finish</string>
     <string name="welcome_point_3_details">Complete set-up and finalize your account to unlock all features. </string>
+    <string name="welcome_continue">Continue</string>
     <string name="welcome_get_started">Get started</string>
     <string name="welcome_create_wallet">Create a New Wallet</string>
     <string name="welcome_restore_wallet">Restore Existing Wallet</string>
