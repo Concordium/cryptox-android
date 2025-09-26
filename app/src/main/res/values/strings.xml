@@ -235,6 +235,7 @@
     <string name="account_details_change_name_hint">Enter name</string>
     <string name="account_details_options">Options</string>
     <string name="account_details_raw_metadata">Show Raw Metadata</string>
+    <string name="account_details_release_schedule">Release Schedule</string>
     <string name="account_details_ccd_token">CCD token</string>
     <string name="account_details_tooltip_title">Total CCD balance</string>
     <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>

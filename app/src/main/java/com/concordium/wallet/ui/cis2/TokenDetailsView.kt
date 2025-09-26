@@ -31,6 +31,7 @@ class TokenDetailsView(
         token: Token,
         isHideVisible: Boolean,
         onHideClicked: (() -> Unit)? = null,
+        onReleaseScheduleClicked: (() -> Unit)? = null
     ) {
         setNameAndIcon(token)
         setTokenTypeLabel(token)
@@ -51,6 +52,11 @@ class TokenDetailsView(
                 onClick = onHideClicked,
             )
         }
+
+        setReleaseScheduleButton(
+            token = token,
+            onClick = onReleaseScheduleClicked
+        )
     }
 
     private fun setRawMetadataButton(token: Token) {
@@ -190,6 +196,7 @@ class TokenDetailsView(
         token: Token,
         onClick: (() -> Unit)?,
     ) {
+        binding.optionsLabel.isVisible = true
         binding.hideToken.isVisible = token !is CCDToken
         binding.hideToken.setOnClickListener {
             onClick?.invoke()
@@ -234,5 +241,13 @@ class TokenDetailsView(
                 binding.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
             }
         }
+    }
+
+    private fun setReleaseScheduleButton(
+        token: Token,
+        onClick: (() -> Unit)?
+    ) {
+        binding.releaseScheduleBtn.isVisible = token is CCDToken
+        binding.releaseScheduleBtn.setOnClickListener { onClick?.invoke() }
     }
 }

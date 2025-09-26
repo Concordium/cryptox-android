@@ -269,6 +269,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size24"
+        android:layout_marginBottom="@dimen/size12"
         android:text="@string/account_details_options"
         android:textAppearance="@style/MW24_Typography_Label_M_Regular"
         android:textColor="@color/mw24_content_secondary"
@@ -276,10 +277,57 @@
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/release_schedule_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size4"
+        android:background="@drawable/mw24_container_primary_background"
+        android:padding="@dimen/size16"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/release_schedule_start_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_release_schedule"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_content_secondary" />
+
+        <TextView
+            android:id="@+id/release_schedule_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size12"
+            android:text="@string/account_details_release_schedule"
+            android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+            android:textColor="@color/mw24_content_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/release_schedule_end_icon"
+            app:layout_constraintStart_toEndOf="@id/release_schedule_start_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/release_schedule_end_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size4"
+            android:importantForAccessibility="no"
+            android:src="@drawable/cryptox_ico_chevron_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_plain_white_20" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/raw_metadata_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size16"
+        android:layout_marginTop="@dimen/size4"
         android:background="@drawable/mw24_container_primary_background"
         android:padding="@dimen/size16"
         android:visibility="gone"

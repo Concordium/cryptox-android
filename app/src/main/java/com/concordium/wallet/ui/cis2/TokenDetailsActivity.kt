@@ -13,6 +13,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.account.accountdetails.AccountReleaseScheduleActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
@@ -74,9 +75,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             fragmentManager = supportFragmentManager,
         )
             .showTokenDetails(
-                token=token,
+                token = token,
                 isHideVisible = true,
                 onHideClicked = ::showDeleteDialog,
+                onReleaseScheduleClicked = {
+                    gotoAccountReleaseSchedule(viewModel.tokenDetailsData.account!!)
+                }
             )
 
         if (token.isNewlyReceived) {
@@ -97,7 +101,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         HidingTokenDialog.newInstance(
             HidingTokenDialog.getBundle(
                 tokenName =
-                viewModel.tokenDetailsData.selectedToken?.symbol!!,
+                    viewModel.tokenDetailsData.selectedToken?.symbol!!,
             )
         ).showSingle(supportFragmentManager, HidingTokenDialog.TAG)
     }
@@ -116,7 +120,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         viewModel.tokenDetailsData.account?.readOnly?.let {
             binding.walletInfoCard.readonlyDesc.visibility = if (it) View.VISIBLE else View.GONE
         }
-            true
+        true
         binding.apply {
             walletInfoCard.accountsOverviewTotalDetailsBakerId.visibility = View.VISIBLE
             walletInfoCard.disposalBlock.visibility = View.VISIBLE
@@ -218,5 +222,11 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                 finish()
             }
         }
+    }
+
+    private fun gotoAccountReleaseSchedule(account: Account) {
+        val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
+        intent.putExtra(AccountReleaseScheduleActivity.EXTRA_ACCOUNT, account)
+        startActivity(intent)
     }
 }
