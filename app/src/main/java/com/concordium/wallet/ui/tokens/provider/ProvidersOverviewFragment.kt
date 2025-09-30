@@ -13,7 +13,6 @@ import androidx.lifecycle.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants
-import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentProvidersOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -85,7 +84,6 @@ class ProvidersOverviewFragment : BaseFragment(), ProviderItemView.IProviderItem
     }
 
     private fun initializeViews() {
-        mainViewModel.setTitle(getString(R.string.app_menu_item_tokens))
         showWaiting(true)
         with(binding.providersPool) {
             setHasFixedSize(true)

@@ -78,7 +78,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         initTooltipBanner()
         initViews()
         initializeViewModels()
-        mainViewModel.setTitle("")
 
         val baseActivity = (activity as BaseActivity)
 

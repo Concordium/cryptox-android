@@ -44,7 +44,7 @@ import com.concordium.wallet.util.getOptionalSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
-class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_overview_title),
+class MainActivity : BaseActivity(R.layout.activity_main),
     AuthDelegate by AuthDelegateImpl(),
     IdentityStatusDelegate by IdentityStatusDelegateImpl() {
 
@@ -56,6 +56,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         const val EXTRA_ACCOUNT_ADDRESS = "EXTRA_ACCOUNT_ADDRESS"
         const val EXTRA_NOTIFICATION_TOKEN = "EXTRA_NOTIFICATION_TOKEN"
         const val EXTRA_SHOW_REVIEW_POPUP = "EXTRA_SHOW_REVIEW_POPUP"
+        const val EXTRA_GOTO_EARN = "EXTRA_GOTO_EARN"
         const val DRAWER_TAG = "DRAWER_TAG"
     }
 
@@ -69,7 +70,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
     private var hasHandledPossibleImportFile = false
     private lateinit var menuDrawerGestureDetector: GestureDetectorCompat
     private lateinit var accountGestureDetector: GestureDetectorCompat
-    private var lastAccountId: Int? = null
 
     //region Lifecycle
     // ************************************************************
@@ -79,6 +79,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         setTheme(R.style.MW24_MainScreen)
 
         super.onCreate(savedInstanceState)
+
+        setActionBarTitle("")
+        hideLeftPlus(false)
+        hideRightPlus(false)
+        hideQrScan(false)
 
         initializeViewModel()
         walletConnectViewModel.initialize()
@@ -94,6 +99,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
         handlePossibleWalletConnectUri(intent)
         handleReviewPopup(intent)
+        handleEarnIntent(intent)
 
         if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_FILE, false)) {
             goToImportFromFile()
@@ -123,8 +129,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
                 val intent = Intent(this, AuthLoginActivity::class.java)
                 startActivity(intent)
             } else {
-                viewModel.setInitialStateIfNotSet()
-
                 if (!hasHandledPossibleImportFile) {
                     hasHandledPossibleImportFile = true
                     val handlingImportFile = handlePossibleImportFile()
@@ -168,6 +172,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         handleNotificationReceived(newIntent)
         handlePossibleWalletConnectUri(newIntent)
         handleReviewPopup(newIntent)
+        handleEarnIntent(newIntent)
     }
 
     //endregion
@@ -183,15 +188,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         )
 
         viewModel = viewModelProvider.get()
-        viewModel.titleLiveData.observe(this, this::setActionBarTitle)
-        viewModel.stateLiveData.observe(this) { state ->
-            checkNotNull(state)
-
-            hideLeftPlus(false)
-            hideRightPlus(false)
-            hideQrScan(false)
-            replaceFragment(state)
-        }
+        viewModel.navigationState.collectWhenStarted(this, ::replaceFragment)
         viewModel.activeAccount.collectWhenStarted(this) { account ->
             account?.let {
                 hideAccountSelector(
@@ -303,6 +300,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         }
     }
 
+    private fun handleEarnIntent(intent: Intent) {
+        if (intent.getBooleanExtra(EXTRA_GOTO_EARN, false)) {
+            binding.bottomNavigationView.selectedItemId = R.id.menuitem_earn
+        }
+    }
+
     //endregion
 
     //region Menu Navigation
@@ -313,7 +316,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
 
         val state = getState(menuItem) ?: return false
 
-        if (viewModel.stateLiveData.value == state) return false
+        if (viewModel.navigationState.value == state) return false
         viewModel.setState(state)
         return true
     }

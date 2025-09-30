@@ -39,13 +39,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     var databaseVersionAllowed = true
 
-    private val _titleLiveData = MutableLiveData<String>()
-    val titleLiveData: LiveData<String>
-        get() = _titleLiveData
-
-    private val _stateLiveData = MutableLiveData<State>()
-    val stateLiveData: LiveData<State>
-        get() = _stateLiveData
+    private val _navigationState = MutableStateFlow(State.Home)
+    val navigationState = _navigationState.asStateFlow()
 
     private val _notificationToken = MutableStateFlow<Token?>(null)
     val notificationToken = _notificationToken.asStateFlow()
@@ -92,22 +87,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         identityUpdater.stop()
     }
 
-    fun setTitle(title: String) {
-        _titleLiveData.postValue(title)
-    }
-
-    fun setState(state: State) {
-        _stateLiveData.postValue(state)
-    }
-
-    fun setInitialStateIfNotSet() {
-        if (_stateLiveData.value == null) {
-            _stateLiveData.postValue(State.Home)
-        }
+    fun setState(state: State) = viewModelScope.launch {
+        _navigationState.emit(state)
     }
 
     fun shouldShowAuthentication(): Boolean {
-        App.appCore.session.isLoggedIn.value.let { return it == null || it == false }
+        App.appCore.session.isLoggedIn.value.let { return it == null || !it }
     }
 
     fun shouldShowPasswordSetup(): Boolean {

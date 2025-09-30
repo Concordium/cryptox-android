@@ -13,6 +13,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountdetails.AccountReleaseScheduleActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
@@ -190,6 +191,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                     getString(R.string.accounts_overview_staked_mode_pool)
                 else
                     getString(R.string.accounts_overview_staked_mode_passive)
+            binding.earningCard.root.setOnClickListener { gotoEarn() }
         } else {
             binding.apply {
                 walletInfoCard.disposalBlock.isVisible = false
@@ -237,5 +239,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
         intent.putExtra(AccountReleaseScheduleActivity.EXTRA_ACCOUNT, account)
         startActivity(intent)
+    }
+
+    private fun gotoEarn() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(MainActivity.EXTRA_GOTO_EARN, true)
+        startActivity(intent)
+        finishAffinity()
     }
 }
