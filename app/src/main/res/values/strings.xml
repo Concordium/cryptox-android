@@ -430,6 +430,11 @@
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
+    <string name="accounts_overview_earning_label">Earning</string>
+    <string name="accounts_overview_staked_balance">Staked Balance</string>
+    <string name="accounts_overview_staked_mode">Mode</string>
+    <string name="accounts_overview_staked_mode_passive">Passive</string>
+    <string name="accounts_overview_staked_mode_pool">Pool</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_change_name">Change account name</string>

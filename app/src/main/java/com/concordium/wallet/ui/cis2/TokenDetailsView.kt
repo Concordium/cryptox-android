@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
@@ -15,7 +14,6 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.plt.PLTInfoDialog
 import com.concordium.wallet.ui.plt.PLTListInfoDialog
 import com.concordium.wallet.ui.plt.PLTPausedInfoDialog
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.gson.GsonBuilder
 import java.math.BigInteger
 
@@ -40,7 +38,6 @@ class TokenDetailsView(
         setRawMetadataButton(token)
 
         if (token is ContractToken) {
-            setDisplay(token)
             setContractIndexAndSubIndex(token)
             setTokenId(token)
             setOwnership(token)
@@ -130,23 +127,6 @@ class TokenDetailsView(
                 else
                     context.getString(R.string.cis_not_owned)
         }
-    }
-
-    private fun setDisplay(token: ContractToken) {
-        val displayUrl =
-            token
-                .metadata
-                ?.display
-                ?.url
-                ?.takeIf(String::isNotBlank)
-                ?: return
-
-        binding.display.isVisible = true
-        Glide.with(context)
-            .load(displayUrl)
-            .placeholder(ThemedCircularProgressDrawable(context))
-            .fitCenter()
-            .into(binding.display)
     }
 
     private fun setNameAndIcon(token: Token) {

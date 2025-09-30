@@ -143,6 +143,7 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                     binding.walletInfoCard.delegatingLabel.isVisible = delegating
                     binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.isVisible =
                         delegating
+                    binding.earningCard.root.isVisible = delegating
                 }
                 account.hasCooldowns().also { hasCooldown ->
                     binding.walletInfoCard.cooldownLabel.isVisible = hasCooldown
@@ -171,10 +172,12 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
             }
 
             viewModel.tokenDetailsData.account?.delegatedAmount?.let {
-                binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text = getString(
+                val amount = getString(
                     R.string.amount,
                     CurrencyUtil.formatGTU(it)
                 )
+                binding.walletInfoCard.accountsOverviewTotalDetailsDelegating.text = amount
+                binding.earningCard.stakedBalance.text = amount
             }
             viewModel.tokenDetailsData.account?.cooldownAmount?.let {
                 binding.walletInfoCard.accountsOverviewTotalDetailsCooldown.text = getString(
@@ -182,9 +185,15 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
                     CurrencyUtil.formatGTU(it)
                 )
             }
+            binding.earningCard.stakedMode.text =
+                if (viewModel.tokenDetailsData.account?.delegation?.delegationTarget?.bakerId != null)
+                    getString(R.string.accounts_overview_staked_mode_pool)
+                else
+                    getString(R.string.accounts_overview_staked_mode_passive)
         } else {
             binding.apply {
                 walletInfoCard.disposalBlock.isVisible = false
+                earningCard.root.isVisible = false
             }
         }
     }

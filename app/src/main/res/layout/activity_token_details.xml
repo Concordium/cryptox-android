@@ -34,11 +34,23 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginVertical="20dp">
+            android:layout_marginTop="@dimen/size24"
+            android:layout_marginBottom="@dimen/size16">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <include
+                android:id="@+id/earning_card"
+                layout="@layout/token_details_earning_card"/>
 
             <include
                 android:id="@+id/details_layout"
                 layout="@layout/include_token_details" />
+
+            </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
         <include
