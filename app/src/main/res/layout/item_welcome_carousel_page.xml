@@ -12,8 +12,10 @@
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="1"
+        android:background="@drawable/welcome_carousel_image_background"
         android:importantForAccessibility="no"
-        tools:background="@drawable/simple_circle_bg" />
+        android:padding="40dp"
+        tools:srcCompat="@drawable/carousel_1" />
 
     <TextView
         android:id="@+id/title_text_view"

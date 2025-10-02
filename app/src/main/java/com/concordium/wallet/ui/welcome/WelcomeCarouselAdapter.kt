@@ -2,8 +2,10 @@ package com.concordium.wallet.ui.welcome
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ItemWelcomeCarouselPageBinding
 
@@ -11,18 +13,22 @@ class WelcomeCarouselAdapter : RecyclerView.Adapter<WelcomeCarouselAdapter.ViewH
 
     private val pages = listOf(
         Page(
+            imageRes = R.drawable.carousel_1,
             titleRes = R.string.welcome_verified_people_title,
             descriptionRes = R.string.welcome_verified_people_description,
         ),
         Page(
+            imageRes = R.drawable.carousel_2,
             titleRes = R.string.welcome_your_data_title,
             descriptionRes = R.string.welcome_your_data_description,
         ),
         Page(
+            imageRes = R.drawable.carousel_3,
             titleRes = R.string.welcome_verified_and_private_title,
             descriptionRes = R.string.welcome_verified_and_private_description,
         ),
         Page(
+            imageRes = R.drawable.carousel_4,
             titleRes = R.string.welcome_trust_title,
             descriptionRes = R.string.welcome_trust_description,
         ),
@@ -47,6 +53,11 @@ class WelcomeCarouselAdapter : RecyclerView.Adapter<WelcomeCarouselAdapter.ViewH
         with(holder.binding) {
             titleTextView.text = root.context.getString(page.titleRes)
             descriptionTextView.text = root.context.getString(page.descriptionRes)
+
+            Glide.with(imageView.context)
+                .load(page.imageRes)
+                .fitCenter()
+                .into(imageView)
         }
     }
 
@@ -55,6 +66,8 @@ class WelcomeCarouselAdapter : RecyclerView.Adapter<WelcomeCarouselAdapter.ViewH
     ) : RecyclerView.ViewHolder(binding.root)
 
     private class Page(
+        @DrawableRes
+        val imageRes: Int,
         @StringRes
         val titleRes: Int,
         @StringRes

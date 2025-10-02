@@ -24,6 +24,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
                 android:maxLines="1"
                 android:text="@string/welcome_point_1"
                 android:textAppearance="@style/CCX_Typography_H3_Bold"
@@ -48,16 +49,22 @@
                 app:layout_constraintTop_toBottomOf="@id/point_1_text_view"
                 tools:targetApi="p" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/point_1_image_view"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="2dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/simple_circle_bg"
+                android:backgroundTint="#212426"
+                android:gravity="center"
                 android:importantForAccessibility="no"
                 android:scaleType="centerCrop"
+                android:text="1"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintBottom_toBottomOf="@id/point_1_text_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/point_1_text_view"
-                app:srcCompat="@drawable/ccx_ico_square_shield" />
+                tools:ignore="HardcodedText" />
 
             <!-- -->
 
@@ -89,16 +96,22 @@
                 app:layout_constraintTop_toBottomOf="@id/point_2_text_view"
                 tools:targetApi="p" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/point_2_image_view"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="2dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/simple_circle_bg"
+                android:backgroundTint="#212426"
+                android:gravity="center"
                 android:importantForAccessibility="no"
                 android:scaleType="centerCrop"
+                android:text="2"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintBottom_toBottomOf="@id/point_2_text_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/point_2_text_view"
-                app:srcCompat="@drawable/ccx_ico_blockchain_27" />
+                tools:ignore="HardcodedText" />
 
             <!-- -->
 
@@ -130,16 +143,22 @@
                 app:layout_constraintTop_toBottomOf="@id/point_3_text_view"
                 tools:targetApi="p" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/point_3_image_view"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="2dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/simple_circle_bg"
+                android:backgroundTint="#212426"
+                android:gravity="center"
                 android:importantForAccessibility="no"
                 android:scaleType="centerCrop"
+                android:text="3"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_1"
+                app:layout_constraintBottom_toBottomOf="@id/point_3_text_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/point_3_text_view"
-                app:srcCompat="@drawable/ccx_ico_blockchain_35" />
+                tools:ignore="HardcodedText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
