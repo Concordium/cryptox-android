@@ -33,7 +33,6 @@
             android:layout_marginTop="12dp"
             android:ellipsize="middle"
             android:maxLines="1"
-            android:text="Identity 1"
             android:textAppearance="@style/MW24_Typography_Title_Light"
             android:textColor="@color/cryptox_white_main"
             android:visibility="gone"

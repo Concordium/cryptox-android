@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.walletconnect
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.data.room.Account
@@ -43,11 +44,9 @@ class CredentialStatementAdapter(
         holder.containerBinding.statements.setStatement(statements[position], identity)
         with(holder.containerBinding.selectedAccountInclude) {
             accAddress.text = account.getAccountName()
-            // TODO do we want to show amount here or identity?
-            accBalance.text = root.context.getString(
-                com.concordium.wallet.R.string.acc_balance_placeholder,
-                com.concordium.wallet.data.util.CurrencyUtil.formatGTU(account.balanceAtDisposal)
-            )
+            accBalance.isVisible = false
+            accIdentity.isVisible = true
+            accIdentity.text = identity.name
         }
         holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
             onChangeAccountClicked(position)

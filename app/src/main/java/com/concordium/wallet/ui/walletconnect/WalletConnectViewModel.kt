@@ -20,7 +20,6 @@ import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.Log
@@ -28,12 +27,14 @@ import com.reown.android.Core
 import com.reown.android.CoreClient
 import com.reown.sign.client.Sign
 import com.reown.sign.client.SignClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
 
 /**
@@ -345,62 +346,62 @@ private constructor(
             return@launch
         }
 
-            // Check if the proposer requests unsupported methods, and reject the session proposal
-            // if that is the case.
-            val requestedMethods = singleNamespaceEntry.value.methods
-            if (!allowedRequestMethods.containsAll(requestedMethods)) {
-                Log.e("Received an unsupported request method: $requestedMethods")
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.UnsupportedMethod
-                    )
-                )
-                rejectSession(
-                    proposerPublicKey,
-                    "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
-                )
-                return@launch
-            }
-
-            Log.d("loading_accounts")
-
-            val accounts = getAvailableAccounts()
-            if (accounts.isEmpty()) {
-                Log.d("there_are_no_accounts")
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.NoAccounts
-                    )
-                )
-                rejectSession(
-                    proposerPublicKey,
-                    "The wallet does not contain any accounts to open a session for"
-                )
-                return@launch
-            }
-
-            this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
-            this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
-            this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
-            this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
-
-            // Initially select the account with the biggest balance.
-            val initiallySelectedAccount = accounts.maxBy { account ->
-                account.balanceAtDisposal
-            }
-
-            Log.d(
-                "handling_session_proposal:" +
-                        "\ninitiallySelectedAccountId=${initiallySelectedAccount.id}"
-            )
-
-            mutableStateFlow.tryEmit(
-                State.SessionProposalReview(
-                    selectedAccount = initiallySelectedAccount,
-                    appMetadata = AppMetadata(sessionProposal),
+        // Check if the proposer requests unsupported methods, and reject the session proposal
+        // if that is the case.
+        val requestedMethods = singleNamespaceEntry.value.methods
+        if (!allowedRequestMethods.containsAll(requestedMethods)) {
+            Log.e("Received an unsupported request method: $requestedMethods")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.UnsupportedMethod
                 )
             )
-        }.let { /* Return nothing */ }
+            rejectSession(
+                proposerPublicKey,
+                "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
+            )
+            return@launch
+        }
+
+        Log.d("loading_accounts")
+
+        val accounts = getAvailableAccounts()
+        if (accounts.isEmpty()) {
+            Log.d("there_are_no_accounts")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.NoAccounts
+                )
+            )
+            rejectSession(
+                proposerPublicKey,
+                "The wallet does not contain any accounts to open a session for"
+            )
+            return@launch
+        }
+
+        this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
+        this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
+        this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
+        this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
+
+        // Initially select the account with the biggest balance.
+        val initiallySelectedAccount = accounts.maxBy { account ->
+            account.balanceAtDisposal
+        }
+
+        Log.d(
+            "handling_session_proposal:" +
+                    "\ninitiallySelectedAccountId=${initiallySelectedAccount.id}"
+        )
+
+        mutableStateFlow.tryEmit(
+            State.SessionProposalReview(
+                selectedAccount = initiallySelectedAccount,
+                appMetadata = AppMetadata(sessionProposal),
+            )
+        )
+    }.let { /* Return nothing */ }
 
     private suspend fun getAvailableAccounts(): List<Account> =
         accountRepository.getAllDone()
@@ -863,6 +864,10 @@ private constructor(
 
     fun getIdentity(account: Account): Identity? =
         verifiablePresentationRequestHandler.getIdentity(account)
+
+    fun getIdentityFromRepository(account: Account) = runBlocking(Dispatchers.IO) {
+        identityRepository.getAllDone().firstOrNull { it.id == account.identityId }
+    }
 
     fun onShowSignRequestDetailsClicked() = viewModelScope.launch {
         val reviewState = state as? State.SessionRequestReview.SignRequestReview
