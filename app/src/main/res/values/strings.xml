@@ -1120,7 +1120,7 @@
     <string name="welcome_verified_and_private_title">Verified and Private</string>
     <string name="welcome_verified_and_private_description">Prove what matters (like being over 18) without sharing anything else – powered by Zero-Knowledge Proof technology.</string>
     <string name="welcome_trust_title">A Wallet with Built-In Trust</string>
-    <string name="welcome_trust_description">Transact, stake and explore with enterprise-grade security and full control.</string>
+    <string name="welcome_trust_description">Discover the Concordium ecosystem – secure, private, and fully under your control.</string>
     <string name="welcome_greeting">Welcome to Concordium</string>
     <string name="welcome_point_1">Passcode</string>
     <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
