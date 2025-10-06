@@ -230,6 +230,7 @@ class WalletConnectView(
                         }
                     }
             }
+            else -> {}
         }
     }
 

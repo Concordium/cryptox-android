@@ -192,6 +192,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
             finishAffinity()
             startActivity(Intent(this, MainActivity::class.java))
         }
+        walletConnectViewModel.eventsFlow.collectWhenStarted(this) {
+            if (it == WalletConnectViewModel.Event.GoBack) {
+               moveTaskToBack(true)
+            }
+        }
     }
 
     private fun initializeViews() {

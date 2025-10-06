@@ -48,6 +48,8 @@ import java.math.BigInteger
  * *Session request* – a request from a dApp within an active session that requires performing
  * some action with the account of the session.
  *
+ * *go_back* - whether to navigate back after handling the URI
+ *
  * Currently supported requests:
  * - [REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION] – create, sign and submit an account transaction
  * of the requested type. Send back the submission ID;
@@ -56,6 +58,7 @@ import java.math.BigInteger
  *
  * @see State
  * @see allowedAccountTransactionTypes
+ * @see goBack
  */
 class WalletConnectViewModel
 private constructor(
@@ -136,6 +139,7 @@ private constructor(
         isBusyFlow.combine(stateFlow) { isBusy, state ->
             !isBusy && state is State.SessionRequestReview && state.canApprove
         }
+    private var goBack = false
 
     private val signTransactionRequestHandler: WalletConnectSignTransactionRequestHandler by lazy {
         WalletConnectSignTransactionRequestHandler(
@@ -226,6 +230,8 @@ private constructor(
 
         // Pairing URI is always 'wc'.
         val isPairingUri = !isRequestUri && wcUri.startsWith(WC_URI_PREFIX)
+
+        goBack = wcUri.contains(WC_GO_BACK_PARAM)
 
         Log.d(
             "handling_uri:" +
@@ -920,6 +926,10 @@ private constructor(
                 signTransactionRequestHandler.onTransactionSubmittedViewClosed()
             }
         }
+        if (goBack) {
+            mutableEventsFlow.tryEmit(Event.GoBack)
+            goBack = false
+        }
     }
 
     fun onTransactionSubmittedFinishClicked() =
@@ -1246,6 +1256,11 @@ private constructor(
             val title: String?,
             val prettyPrintDetails: String,
         ) : Event
+
+        /**
+         * Event to navigate back after handling the URI
+         */
+        object GoBack : Event
     }
 
     private companion object {
@@ -1257,5 +1272,6 @@ private constructor(
         private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
         private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
         private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
+        private const val WC_GO_BACK_PARAM = "goBack=true"
     }
 }
