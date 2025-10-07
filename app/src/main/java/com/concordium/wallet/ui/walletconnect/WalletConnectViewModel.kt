@@ -226,6 +226,12 @@ private constructor(
                         "\nsupported:${wcUriPrefixes.joinToString(",")}"
             )
 
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidLink
+                )
+            )
+
             return
         }
 
@@ -273,7 +279,7 @@ private constructor(
 
                 mutableEventsFlow.tryEmit(
                     Event.ShowFloatingError(
-                        Error.InvalidRequest
+                        Error.InvalidLink
                     )
                 )
             }
@@ -1204,6 +1210,11 @@ private constructor(
          * The dApp sent a session proposal requesting an unsupported method.
          */
         object UnsupportedMethod : Error
+
+        /**
+         * The dApp opened the wallet with an invalid URI.
+         */
+        object InvalidLink : Error
 
         /**
          * The dApp sent a request that can't be parsed.
