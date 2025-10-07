@@ -157,7 +157,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = "concordium-team"
             }
         }
 
@@ -188,7 +188,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = "concordium-team"
             }
         }
     }
