@@ -1302,6 +1302,6 @@ private constructor(
         private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
         private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
         private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
-        private const val WC_GO_BACK_PARAM = "goBack=true"
+        private const val WC_GO_BACK_PARAM = "go_back=true"
     }
 }
