@@ -69,19 +69,30 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         val supportedPrefixes = walletConnectPrefixes + MARKETPLACE_CONNECT_PREFIX
 
         var isDepLink = false
+        var isWalletConnect = false
+
         val connectUrl: String? =
             intent?.getStringExtra(EXTRA_CONNECT_URL).let { intentConnectUrl ->
                 if (!intentConnectUrl.isNullOrEmpty()) {
                     intentConnectUrl
                 } else {
                     isDepLink = true
+
                     val urlData = intent?.data
-                    if (urlData != null && urlData.isHierarchical)
-                    // Case for NFT marketplace.
+                    val urlDataString = urlData?.toString()
+
+                    if (urlDataString != null &&
+                        walletConnectPrefixes.any { urlDataString.startsWith(it) }
+                    ) {
+                        isWalletConnect = true
+                        urlDataString
+                    } else if (urlData != null && urlData.isHierarchical) {
+                        // Case for NFT marketplace.
                         urlData.getQueryParameter("uri")
-                    else
-                    // Case for WalletConnect or something else.
-                        urlData?.toString()
+                    } else {
+                        // Case for something else.
+                        urlDataString
+                    }
                 }
             }
         val isAddContact = intent?.getBooleanExtra(EXTRA_ADD_CONTACT, false) ?: false
@@ -116,11 +127,11 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         }
 
         when {
+            isWalletConnect ->
+                connectWc(connectUrl)
+
             connectUrl.startsWith(MARKETPLACE_CONNECT_PREFIX) ->
                 getBridgeInfo(connectUrl)
-
-            walletConnectPrefixes.any { connectUrl.startsWith(it) } ->
-                connectWc(connectUrl)
         }
 
         closeBtn?.visibility = View.VISIBLE
