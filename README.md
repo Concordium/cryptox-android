@@ -1,4 +1,4 @@
-# <img src="app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="Icon" style="vertical-align: bottom; height: 36px;"/> Concordium Wallet
+# <img src="app/src/main/res/drawable/mw24_app_icon.png" alt="Icon" style="vertical-align: bottom; height: 36px;"/> Concordium Wallet
 
 Use the Concordium Android Wallet to get started with the open-source, privacy-centric, public,
 and permissionless Concordium Blockchain.
