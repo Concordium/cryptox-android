@@ -3,6 +3,7 @@
 package com.concordium.wallet.ui.connect
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -71,30 +72,30 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         var isDepLink = false
         var isWalletConnect = false
 
-        val connectUrl: String? =
-            intent?.getStringExtra(EXTRA_CONNECT_URL).let { intentConnectUrl ->
-                if (!intentConnectUrl.isNullOrEmpty()) {
-                    intentConnectUrl
-                } else {
+        val intentUri =
+            intent
+                ?.getStringExtra(EXTRA_CONNECT_URL)
+                ?.let {
                     isDepLink = true
-
-                    val urlData = intent?.data
-                    val urlDataString = urlData?.toString()
-
-                    if (urlDataString != null &&
-                        walletConnectPrefixes.any { urlDataString.startsWith(it) }
-                    ) {
-                        isWalletConnect = true
-                        urlDataString
-                    } else if (urlData != null && urlData.isHierarchical) {
-                        // Case for NFT marketplace.
-                        urlData.getQueryParameter("uri")
-                    } else {
-                        // Case for something else.
-                        urlDataString
-                    }
+                    Uri.parse(it)
                 }
+                ?: intent?.data
+        val intentUriString = intentUri?.toString()
+
+        val connectUrl =
+            if (intentUriString != null &&
+                walletConnectPrefixes.any { intentUriString.startsWith(it) }
+            ) {
+                isWalletConnect = true
+                intentUriString
+            } else if (intentUri != null && intentUri.isHierarchical) {
+                // Case for NFT marketplace.
+                intentUri.getQueryParameter("uri")
+            } else {
+                // Case for something else.
+                intentUriString
             }
+
         val isAddContact = intent?.getBooleanExtra(EXTRA_ADD_CONTACT, false) ?: false
 
         if (connectUrl.isNullOrEmpty()) {
