@@ -232,6 +232,7 @@ private constructor(
         val isPairingUri = !isRequestUri && wcUri.startsWith(WC_URI_PREFIX)
 
         goBack = wcUri.contains(WC_GO_BACK_PARAM)
+        Log.d("is go_back = $goBack")
 
         Log.d(
             "handling_uri:" +
@@ -443,6 +444,7 @@ private constructor(
         }
 
         mutableStateFlow.tryEmit(State.Idle)
+        handleGoBack()
     }
 
     private fun rejectSession(proposerPublicKey: String, reason: String) {
@@ -461,6 +463,7 @@ private constructor(
         }
 
         mutableStateFlow.tryEmit(State.Idle)
+        handleGoBack()
     }
 
     fun rejectSessionProposal() {
@@ -730,6 +733,7 @@ private constructor(
 
     private fun onSessionRequestHandlingFinished() {
         mutableStateFlow.tryEmit(State.Idle)
+        handleGoBack()
         handleNextOldestPendingSessionRequest()
     }
 
@@ -926,10 +930,7 @@ private constructor(
                 signTransactionRequestHandler.onTransactionSubmittedViewClosed()
             }
         }
-        if (goBack) {
-            mutableEventsFlow.tryEmit(Event.GoBack)
-            goBack = false
-        }
+        handleGoBack()
     }
 
     fun onTransactionSubmittedFinishClicked() =
@@ -1017,6 +1018,14 @@ private constructor(
                     Error.ResponseFailed
                 )
             )
+        }
+        handleGoBack()
+    }
+
+    private fun handleGoBack() {
+        if (goBack) {
+            mutableEventsFlow.tryEmit(Event.GoBack)
+            goBack = false
         }
     }
 
@@ -1272,6 +1281,6 @@ private constructor(
         private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
         private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
         private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
-        private const val WC_GO_BACK_PARAM = "goBack=true"
+        private const val WC_GO_BACK_PARAM = "go_back=true"
     }
 }
