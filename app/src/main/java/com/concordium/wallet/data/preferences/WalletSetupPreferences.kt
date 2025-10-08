@@ -166,7 +166,7 @@ constructor(
     }
 
     fun getRequireSeedPhraseBackupConfirmation(): Boolean {
-        return getBoolean(PREFKEY_REQUIRE_SEED_PHRASE_BACKUP_CONFIRMATION, true)
+        return getBoolean(PREFKEY_REQUIRE_SEED_PHRASE_BACKUP_CONFIRMATION, false)
     }
 
     private companion object {

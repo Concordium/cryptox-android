@@ -4,17 +4,19 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 
-class SetUpSeedPhraseWalletUseCase() {
+class SetUpSeedPhraseWalletUseCase {
 
     /**
      * Sets up the current wallet as a [AppWallet.Type.SEED] wallet with the given [seedPhraseString]
      * encrypted with the given [password].
+     * If [isBackupConfirmed] is false, the user will later see the backup banner.
      *
      * @return **true** if the setup succeeded.
      */
     suspend operator fun invoke(
         seedPhraseString: String,
         password: String,
+        isBackupConfirmed: Boolean,
     ): Boolean {
 
         check(!App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed()) {
@@ -37,6 +39,12 @@ class SetUpSeedPhraseWalletUseCase() {
             SwitchActiveWalletTypeUseCase().invoke(
                 newWalletType = AppWallet.Type.SEED,
             )
+            App
+                .appCore
+                .session
+                .walletStorage
+                .setupPreferences
+                .setRequireSeedPhraseBackupConfirmation(!isBackupConfirmed)
         }
 
         return isSavedSuccessfully

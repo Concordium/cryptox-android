@@ -106,7 +106,6 @@ class SeedPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
             )
             App.appCore.setup.finishInitialSetup()
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
-            App.appCore.session.walletStorage.setupPreferences.setRequireSeedPhraseBackupConfirmation(false)
         }
 
         _saveSeedLiveData.value = isSavedSuccessfully

@@ -127,6 +127,7 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
                 password = checkNotNull(App.appCore.setup.authSetupPassword) {
                     "The set up password must be available at this moment"
                 },
+                isBackupConfirmed = false,
             )
 
         if (isSetUpSuccessfully) {

@@ -63,12 +63,11 @@ class OneStepSetupWalletViewModel(
                         "The phrase must be generated at this moment"
                     },
                     password = password,
+                    isBackupConfirmed = true,
                 )
 
         if (isSetUpSuccessfully) {
             App.appCore.setup.finishInitialSetup()
-            App.appCore.session.walletStorage.setupPreferences
-                .setRequireSeedPhraseBackupConfirmation(false)
             mutableEventsFlow.emit(Event.GoToAccountOverview)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)
