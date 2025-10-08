@@ -22,10 +22,10 @@ android {
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
-    def versionMinor = 13
-    def versionPatch = 1
-    def versionMeta = ""
-    def versionCodeIncremental = 1464
+    def versionMinor = 14
+    def versionPatch = 0
+    def versionMeta = "-qa.6"
+    def versionCodeIncremental = 1470
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
@@ -157,7 +157,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = "concordium-team"
             }
         }
 
@@ -188,7 +188,7 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
-                groups = "concordium-team, spaceseven-team"
+                groups = "concordium-team"
             }
         }
     }
@@ -364,6 +364,9 @@ dependencies {
     // In-app rating
     implementation 'com.google.android.play:review:2.0.2'
     implementation 'com.google.android.play:review-ktx:2.0.2'
+
+    // Dot indicator for pagers.
+    implementation 'com.tbuonomo:dotsindicator:4.3!!'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.38'
     kapt 'org.projectlombok:lombok:1.18.38'

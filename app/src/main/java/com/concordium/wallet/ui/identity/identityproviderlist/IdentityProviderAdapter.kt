@@ -1,17 +1,19 @@
 package com.concordium.wallet.ui.identity.identityproviderlist
 
 import android.annotation.SuppressLint
-import android.text.TextUtils
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.databinding.ItemIdentityProviderBinding
-import com.concordium.wallet.util.ImageUtil.getImageBitmap
+import com.concordium.wallet.util.ImageUtil
 
 class IdentityProviderAdapter(
-    private var data: List<IdentityProvider>
+    private var data: List<IdentityProvider>,
 ) : RecyclerView.Adapter<IdentityProviderAdapter.ItemViewHolder>() {
 
     private var onItemClickListener: OnItemClickListener? = null
@@ -32,10 +34,20 @@ class IdentityProviderAdapter(
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) = with(holder) {
         val identityProvider = data[position]
-        if (!TextUtils.isEmpty(identityProvider.metadata.icon)) {
-            val image = getImageBitmap(identityProvider.metadata.icon)
-            binding.logoImageview.setImageBitmap(image)
-        }
+
+        val logoBitmap: Bitmap? =
+            identityProvider
+                .metadata
+                .icon
+                .takeIf(String::isNotEmpty)
+                ?.let(ImageUtil::getImageBitmap)
+
+        Glide.with(binding.logoImageview.context)
+            .load(logoBitmap)
+            .placeholder(R.drawable.circle_bg)
+            .circleCrop()
+            .into(binding.logoImageview)
+
         binding.headerTextview.text = identityProvider.displayName
         binding.itemDivider.isVisible = position != data.size - 1
 

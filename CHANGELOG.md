@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Starting the Send flow when scanned a QR code with a Concordium address from the main screen
+- A few slides explaining the wallet when you first install it
+
 ### Fixed
 
 - Not showing tokens after switching wallets
@@ -14,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated the launcher icon
+- Updated icon of the CCD token
+- Updated the look of WalletConnect dialogs
+
+### Removed
+
+- Asking to save the seed phrase when creating a wallet – now it can be saved later
+- Analytics consent from the first screen
 
 ## [1.13.1] - 2025-09-22
 

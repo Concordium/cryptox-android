@@ -90,6 +90,16 @@ class SavedSeedPhraseRevealActivity :
                 null,
             )
         }
+
+        binding.consentCheckBox.isVisible = viewModel.isBackupConfirmationVisible
+        binding.consentCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onConsentCheckboxClicked(isChecked)
+        }
+
+        binding.continueButton.isVisible = viewModel.isBackupConfirmationVisible
+        binding.continueButton.setOnClickListener {
+            viewModel.onContinueClicked()
+        }
     }
 
     private fun subscribeToEvents(
@@ -106,19 +116,34 @@ class SavedSeedPhraseRevealActivity :
             SavedSeedPhraseRevealViewModel.Event.ShowFatalError -> {
                 showError(R.string.saved_seed_phrase_reveal_failed)
             }
+
+            SavedSeedPhraseRevealViewModel.Event.Finish -> {
+                finish()
+            }
         }
     }
 
-    private fun subscribeToState(
-    ) = viewModel.stateFlow.collectWhenStarted(this) { state ->
+    private fun subscribeToState() {
+        viewModel.stateFlow.collectWhenStarted(this) { state ->
 
-        with (binding.blurView) {
-            isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
-            setBlurEnabled(isVisible)
+            with(binding.blurView) {
+                isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
+                setBlurEnabled(isVisible)
+            }
+
+            binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
+            binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
         }
 
-        binding.copyButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Revealed
-        binding.showButton.isVisible = state is SavedSeedPhraseRevealViewModel.State.Hidden
+        viewModel.isConsentCheckBoxEnabledFlow.collectWhenStarted(
+            this,
+            binding.consentCheckBox::setEnabled,
+        )
+
+        viewModel.isContinueButtonEnabledFlow.collectWhenStarted(
+            this,
+            binding.continueButton::setEnabled,
+        )
     }
 
     override fun loggedOut() {

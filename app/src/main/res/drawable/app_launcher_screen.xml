@@ -6,21 +6,12 @@
 
     <!-- When set as window background via the theme,
          some of the background will be hidden behind status bar and button bar -->
-    <item android:drawable="@drawable/cryptox_gradient_main"/>
+    <item android:drawable="@drawable/cryptox_gradient_main" />
 
     <item
-        android:drawable="@drawable/crypto_x_logo"
-        android:width="219dp"
-        android:height="219dp"
+        android:width="120dp"
+        android:height="120dp"
+        android:drawable="@drawable/mw24_app_icon"
         android:gravity="center" />
 
-    <!-- When set as window background via the theme,
-         the bottom text will have to have extra bottom padding
-         because of the button bar that as placed on top of this background -->
-<!--    <item-->
-<!--        android:drawable="@drawable/ic_concordium_logo_only_text"-->
-<!--        android:width="220dp"-->
-<!--        android:height="21dp"-->
-<!--        android:gravity="center|bottom"-->
-<!--        android:bottom="80dp" />-->
 </layer-list>

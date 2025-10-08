@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:background="@color/cryptox_black_secondary">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/app_icon_image_view"
@@ -54,7 +53,7 @@
         android:id="@+id/data_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginVertical="28dp"
         android:fadingEdge="vertical"
         android:requiresFadingEdge="vertical"
         app:layout_constraintBottom_toTopOf="@id/decline_button"

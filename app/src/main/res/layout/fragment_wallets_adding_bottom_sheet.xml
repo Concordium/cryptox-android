@@ -73,8 +73,7 @@
                 android:backgroundTint="#14191F"
                 android:gravity="center"
                 android:text="@string/wallets_adding_okay"
-                android:textColor="#ffffff"
-                app:layout_constraintTop_toBottomOf="@id/create_wallet_step_3_text_view" />
+                android:textColor="#ffffff" />
 
             <Space
                 android:layout_width="0dp"

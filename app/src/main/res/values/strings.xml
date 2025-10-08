@@ -446,6 +446,7 @@
     <string name="network_comission">Network commission</string>
     <string name="acc_address_placeholder">%1$s (%2$s)</string>
     <string name="acc_balance_placeholder">Balance: %1$s CCD</string>
+    <string name="acc_balance_at_disposal_placeholder">At Disposal: %1$s CCD</string>
     <string name="amount">%1$s CCD</string>
     <string name="amount_max">up to %1$s CCD</string>
     <string name="close_nft">Burn NFT</string>
@@ -491,6 +492,7 @@
     <string name="wallet_connect_clear_data_warning_cancel">Cancel</string>
     <string name="wallet_connect_error_connection_failed">dApp connection failed. Please, refresh the page and try again</string>
     <string name="wallet_connect_error_invalid_request">The WalletConnect request is invalid</string>
+    <string name="wallet_connect_error_invalid_link">The WalletConnect link is invalid</string>
     <string name="wallet_connect_error_cryptography_failed">Unexpected cryptography error</string>
     <string name="wallet_connect_error_loading_failed">Could not load the required data</string>
     <string name="wallet_connect_error_account_not_found">The WalletConnect request account is not in this wallet</string>
@@ -1112,13 +1114,25 @@
         <item quantity="other">Showing %1$d items</item>
     </plurals>
 
-    <string name="welcome_point_1">Safe and secure</string>
-    <string name="welcome_point_1_details">Concordium Wallet is self-custodial, has best-in-class security and is trusted by thousands.</string>
-    <string name="welcome_point_2">Easily manage digital assets</string>
-    <string name="welcome_point_2_details">Seamlessly store, spend and send tokens, crypto, and collectibles.</string>
-    <string name="welcome_point_3">For a safer tomorrow</string>
-    <string name="welcome_point_3_details">Access a global ecosystem and contribute to a secure digital future.</string>
+    <string name="welcome_verified_people_title">Verified People. Verified Trust.</string>
+    <string name="welcome_verified_people_description">The Concordium Wallet connects you to apps and services via a secure ID verification process.</string>
+    <string name="welcome_your_data_title">Your Data. Your Rules.</string>
+    <string name="welcome_your_data_description">Your wallet is tied to a verified digital identity – verified once, controlled by you.</string>
+    <string name="welcome_verified_and_private_title">Verified and Private</string>
+    <string name="welcome_verified_and_private_description">Prove what matters (like being over 18) without sharing anything else – powered by Zero-Knowledge Proof technology.</string>
+    <string name="welcome_trust_title">A Wallet with Built-In Trust</string>
+    <string name="welcome_trust_description">Discover the Concordium ecosystem – secure, private, and fully under your control.</string>
+    <string name="welcome_greeting">Welcome to Concordium</string>
+    <string name="welcome_point_1">Passcode</string>
+    <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
+    <string name="welcome_point_2">Digital Identity</string>
+    <string name="welcome_point_2_details">Request your digital Identity from one of our trusted external identity providers.</string>
+    <string name="welcome_point_3">Finish</string>
+    <string name="welcome_point_3_details">Complete set-up and finalize your account to unlock all features. </string>
+    <string name="welcome_continue">Continue</string>
     <string name="welcome_get_started">Get started</string>
+    <string name="welcome_create_wallet">Create a New Wallet</string>
+    <string name="welcome_restore_wallet">Restore Existing Wallet</string>
     <string name="welcome_terms">I have read and understood the
         <a href="#terms">Terms and Conditions</a>
         and the <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
@@ -1470,4 +1484,14 @@
 
     <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
+    <string name="account_details_seed_phrase_backup_banner_title">Backup Your Wallet</string>
+    <string name="account_details_seed_phrase_backup_banner_description">Keep your account safe by making a copy of your wallet seed phrase</string>
+    <string name="seed_phrase_backup_notice_title">Are you sure you want to hide this reminder?</string>
+    <string name="seed_phrase_backup_notice_message">
+        We highly recommend that you make a secure backup of your unique wallet seed phrase.
+        You will not be able to restore your wallet without your seed phrase.\n\nAlternatively,
+        you can find it later in the wallet settings
+    </string>
+    <string name="seed_phrase_backup_notice_backup">Backup Your Seed phrase</string>
+    <string name="seed_phrase_backup_notice_hide_anyway">Hide anyway</string>
 </resources>

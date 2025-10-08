@@ -1,6 +1,7 @@
 package com.concordium.wallet.uicore.view
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -11,6 +12,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
+import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
@@ -53,10 +55,20 @@ constructor(
     }
 
     fun setIdentityData(identity: Identity) {
-        if (!TextUtils.isEmpty(identity.identityProvider.metadata.icon)) {
-            val image = ImageUtil.getImageBitmap(identity.identityProvider.metadata.icon)
-            binding.logoImageview.setImageBitmap(image)
-        }
+
+        val logoBitmap: Bitmap? =
+            identity
+                .identityProvider
+                .metadata
+                .icon
+                .takeIf(String::isNotEmpty)
+                ?.let(ImageUtil::getImageBitmap)
+
+        Glide.with(binding.logoImageview.context)
+            .load(logoBitmap)
+            .placeholder(R.drawable.circle_bg)
+            .circleCrop()
+            .into(binding.logoImageview)
 
         binding.nameTextview.text = identity.name
 

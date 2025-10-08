@@ -4,11 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.core.multiwallet.AppWallet
-import com.concordium.wallet.core.multiwallet.SwitchActiveWalletTypeUseCase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class OneStepSetupWalletViewModel(
     application: Application,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : AndroidViewModel(application) {
 
     private val mutablePhraseFlow = MutableStateFlow<List<String>?>(savedStateHandle[PHRASE_KEY])
@@ -35,9 +32,8 @@ class OneStepSetupWalletViewModel(
             generatePhrase()
     }
 
-    private fun generatePhrase() = viewModelScope.launch(Dispatchers.IO) {
-        val mnemonicCode: Mnemonics.MnemonicCode = Mnemonics.MnemonicCode(PHRASE_WORD_COUNT)
-        val phrase = mnemonicCode.words.map(CharArray::concatToString)
+    private fun generatePhrase() = viewModelScope.launch {
+        val phrase = GenerateSeedPhraseUseCase().invoke()
 
         if (BuildConfig.DEBUG) {
             Log.d(
@@ -59,20 +55,19 @@ class OneStepSetupWalletViewModel(
     }
 
     private fun setUpPhrase(password: String) = viewModelScope.launch(Dispatchers.IO) {
-        val isSavedSuccessfully = App.appCore.session.walletStorage.setupPreferences
-            .tryToSetEncryptedSeedPhrase(
-                seedPhraseString = checkNotNull(phraseString) {
-                    "The phrase must be generated at this moment"
-                },
-                password = password,
-            )
 
-        if (isSavedSuccessfully) {
-            SwitchActiveWalletTypeUseCase().invoke(
-                newWalletType = AppWallet.Type.SEED,
-            )
+        val isSetUpSuccessfully =
+            SetUpSeedPhraseWalletUseCase()
+                .invoke(
+                    seedPhraseString = checkNotNull(phraseString) {
+                        "The phrase must be generated at this moment"
+                    },
+                    password = password,
+                    isBackupConfirmed = true,
+                )
+
+        if (isSetUpSuccessfully) {
             App.appCore.setup.finishInitialSetup()
-
             mutableEventsFlow.emit(Event.GoToAccountOverview)
         } else {
             mutableEventsFlow.emit(Event.ShowFatalError)
@@ -81,12 +76,11 @@ class OneStepSetupWalletViewModel(
 
     sealed interface Event {
         object Authenticate : Event
-        object ShowFatalError: Event
+        object ShowFatalError : Event
         object GoToAccountOverview : Event
     }
 
     private companion object {
-        private val PHRASE_WORD_COUNT = Mnemonics.WordCount.COUNT_24
         private const val PHRASE_KEY = "PHRASE_KEY"
     }
 }

@@ -54,7 +54,7 @@
             android:importantForAccessibility="no"
             app:layout_constraintDimensionRatio="H,2:1"
             tools:background="@color/ccx_neutral_tint_3"
-            tools:srcCompat="@drawable/crypto_x_logo" />
+            tools:srcCompat="@drawable/mw24_app_icon" />
     </androidx.cardview.widget.CardView>
 
     <TextView

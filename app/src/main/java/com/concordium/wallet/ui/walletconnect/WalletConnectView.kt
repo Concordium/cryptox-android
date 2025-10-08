@@ -173,6 +173,9 @@ class WalletConnectView(
                     WalletConnectViewModel.Error.InvalidRequest ->
                         R.string.wallet_connect_error_invalid_request
 
+                    WalletConnectViewModel.Error.InvalidLink ->
+                        R.string.wallet_connect_error_invalid_link
+
                     WalletConnectViewModel.Error.LoadingFailed ->
                         R.string.wallet_connect_error_loading_failed
 
@@ -230,6 +233,7 @@ class WalletConnectView(
                         }
                     }
             }
+            else -> {}
         }
     }
 
@@ -266,12 +270,9 @@ class WalletConnectView(
 
         with(selectedAccountInclude) {
             accAddress.text = selectedAccount.getAccountName()
-            accBalance.text = root.context.getString(
-                R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    selectedAccount.balanceAtDisposal
-                )
-            )
+            accBalance.isVisible = false
+            accIdentity.isVisible = true
+            accIdentity.text = viewModel.getIdentityFromRepository(selectedAccount)?.name ?: ""
         }
 
         chooseAccountButton.setOnClickListener {
@@ -361,9 +362,18 @@ class WalletConnectView(
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
                 CurrencyUtil.formatGTU(
+                    account.balance
+                )
+            )
+            accBalanceAtDisposal.isVisible = true
+            accBalanceAtDisposal.text = root.context.getString(
+                R.string.acc_balance_at_disposal_placeholder,
+                CurrencyUtil.formatGTU(
                     account.balanceAtDisposal
                 )
             )
+            accIdentity.isVisible = true
+            accIdentity.text = viewModel.getIdentityFromRepository(account)?.name ?: ""
         }
 
         amountTextView.text =
@@ -472,12 +482,9 @@ class WalletConnectView(
 
         with(selectedAccountInclude) {
             accAddress.text = account.getAccountName()
-            accBalance.text = root.context.getString(
-                R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    account.balanceAtDisposal
-                )
-            )
+            accBalance.isVisible = false
+            accIdentity.isVisible = true
+            accIdentity.text = viewModel.getIdentityFromRepository(account)?.name ?: ""
         }
 
         messageTextView.text = message

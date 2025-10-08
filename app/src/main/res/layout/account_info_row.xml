@@ -1,57 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:paddingBottom="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:paddingBottom="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/accRoot"
-        android:padding="24dp"
-        android:background="@drawable/btn_round_outline_bg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_round_outline_bg"
+        android:padding="24dp">
 
-        <ImageView
-            android:id="@+id/globe_img"
+        <TextView
+            android:id="@+id/accAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:maxLines="1"
+            android:textAppearance="@style/MW24_Typography_Title"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/image_512_round"
-            android:layout_width="42dp"
-            android:layout_height="42dp"/>
+            tools:text="Valera (sefergrgergergwergewrgwergergergerg)" />
 
         <TextView
-            android:layout_marginStart="10dp"
-            android:maxLines="1"
+            android:id="@+id/accIdentity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:ellipsize="middle"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/globe_img"
+            android:maxLines="1"
+            android:textAppearance="@style/MW24_Typography_Title_Light"
+            android:textColor="@color/cryptox_white_main"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="0dp"
-            android:id="@+id/accAddress"
-            tools:text="Valera (sefergrgergergwergewrgwergergergerg)"
-            android:textColor="@color/text_white"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/accAddress"
+            tools:text="Identity 1"
+            tools:visibility="visible" />
 
         <TextView
-            tools:text="Balance: 2345670 CCD"
-            android:layout_marginStart="10dp"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/globe_img"
-            android:layout_width="0dp"
-            android:textColor="#09CFA0"
             android:id="@+id/accBalance"
-            android:layout_height="wrap_content"/>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/MW24_Typography_Title"
+            android:textColor="@color/cryptox_white_main"
+            app:layout_constraintStart_toStartOf="@id/accAddress"
+            app:layout_constraintTop_toBottomOf="@id/accIdentity"
+            tools:text="Balance: 2345670 CCD" />
+
+        <TextView
+            android:id="@+id/accBalanceAtDisposal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/MW24_Typography_Title_Light"
+            android:textColor="@color/cryptox_white_main"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/accAddress"
+            app:layout_constraintTop_toBottomOf="@id/accBalance"
+            tools:text="At Disposal: 23456.70 CCD"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 </LinearLayout>

@@ -4,7 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.ui.seed.setup.GenerateSeedPhraseUseCase
+import com.concordium.wallet.ui.seed.setup.SetUpSeedPhraseWalletUseCase
 import com.concordium.wallet.util.BiometricsUtil
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +26,7 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
 
     val passcodeLength = 6
     private var createdPasscode: String? = null
+    var isSeedPhraseWalletSetupRequired = false
 
     fun onPasscodeEntered(passcode: String) = viewModelScope.launch {
         require(passcode.length == passcodeLength) {
@@ -80,12 +84,54 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
-    private fun onSetUpSuccessfully() {
+    private suspend fun onSetUpSuccessfully() {
+        if (isSeedPhraseWalletSetupRequired) {
+            trySettingUpSeedPhraseWallet()
+        }
+
         if (BiometricsUtil.isBiometricsAvailable()) {
             mutableEventsFlow.tryEmit(Event.SuggestBiometricsSetup)
         } else {
             App.appCore.setup.finishAuthSetup()
             mutableEventsFlow.tryEmit(Event.FinishWithSuccess)
+        }
+    }
+
+    /**
+     * Sets up a seed phrase wallet while there is the password in the memory.
+     * If for any reason this fails, there's a fallback way to explicitly set up a phrase
+     * through the onboarding flow on the main screen.
+     */
+    private suspend fun trySettingUpSeedPhraseWallet() {
+
+        check(!App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed()) {
+            "Seed phrase wallet setup required, yet there already is an encrypted seed " +
+                    "which is not expected"
+        }
+
+        val phraseString =
+            GenerateSeedPhraseUseCase()
+                .invoke()
+                .joinToString(
+                    separator = " ",
+                )
+
+        Log.d(
+            "phrase_generated:" +
+                    "\nphrase=$phraseString"
+        )
+
+        val isSetUpSuccessfully = SetUpSeedPhraseWalletUseCase()
+            .invoke(
+                seedPhraseString = phraseString,
+                password = checkNotNull(App.appCore.setup.authSetupPassword) {
+                    "The set up password must be available at this moment"
+                },
+                isBackupConfirmed = false,
+            )
+
+        if (isSetUpSuccessfully) {
+            App.appCore.setup.finishInitialSetup()
         }
     }
 
@@ -104,7 +150,9 @@ class AuthSetupPasscodeViewModel(application: Application) : AndroidViewModel(ap
         )
 
         if (isSetUpSuccessfully) {
-            onSetUpSuccessfully()
+            viewModelScope.launch {
+                onSetUpSuccessfully()
+            }
         } else {
             App.appCore.setup.finishAuthSetup()
             mutableEventsFlow.tryEmit(Event.ShowFatalError)
