@@ -3,6 +3,7 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
@@ -20,6 +21,7 @@ import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.Log
@@ -209,36 +211,57 @@ private constructor(
     }
 
     /**
-     * @param wcUri 'wc:' pair or redirect request URI
-     *
-     * @see R.string.wc_scheme
+     * @param originalUri either 'wc' or app specific WalletConnect URI.
+     * For example:
+     * - cryptox-wc://wc?uri=wc%3A00e46b69
+     * - wc:00e46b69...
+     * - cryptox-wc://r?requestId=1759846918165693
+     * - wc:00e46b69@2/wc?requestId=1759846918165693
      */
-    fun handleWcUri(wcUri: String) {
-        if (wcUriPrefixes.none { wcUri.startsWith(it) }) {
+    fun handleUri(originalUri: String) {
+        if (wcUriPrefixes.none { originalUri.startsWith(it) }) {
             Log.w(
-                "url_scheme_invalid:" +
-                        "\nuri=$wcUri," +
+                "uri_scheme_invalid:" +
+                        "\nuri=$originalUri," +
                         "\nsupported:${wcUriPrefixes.joinToString(",")}"
+            )
+
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidLink
+                )
             )
 
             return
         }
 
-        // Request URI contains a corresponding query param,
-        // but may have 'wc' or redirect scheme.
-        val isRequestUri = wcUri.contains("$WC_URI_REQUEST_ID_PARAM=")
+        val actualUri: String =
+            Uri.parse(originalUri)
+                .takeIf(Uri::isHierarchical)
+                ?.getQueryParameter("uri")
+                ?.also {
+                    Log.d(
+                        "using_uri_from_query:" +
+                                "\noriginalUri=$originalUri," +
+                                "\nactualUri=$it"
+                    )
+                }
+                ?: originalUri
+
+        // Request URI contains a corresponding query param.
+        val isRequestUri = actualUri.contains("$WC_URI_REQUEST_ID_PARAM=")
 
         // Pairing URI is always 'wc'.
-        val isPairingUri = !isRequestUri && wcUri.startsWith(WC_URI_PREFIX)
+        val isPairingUri = !isRequestUri && actualUri.startsWith(WC_URI_PREFIX)
 
-        goBack = wcUri.contains(WC_GO_BACK_PARAM)
-        Log.d("is go_back = $goBack")
+        goBack = originalUri.contains(WC_GO_BACK_PARAM) || actualUri.contains(WC_GO_BACK_PARAM)
 
         Log.d(
             "handling_uri:" +
-                    "\nuri=$wcUri," +
+                    "\nuri=$actualUri," +
                     "\nisRequestUri=$isRequestUri," +
-                    "\nisPairingUri=$isPairingUri"
+                    "\nisPairingUri=$isPairingUri," +
+                    "\ngoBack=$goBack"
         )
 
         when {
@@ -246,17 +269,17 @@ private constructor(
                 onRequestWcUriReceived()
 
             isPairingUri ->
-                pair(wcUri)
+                pair(originalUri)
 
             else -> {
                 Log.w(
                     "cant_handle_uri:" +
-                            "\nuri=$wcUri"
+                            "\nuri=$actualUri"
                 )
 
                 mutableEventsFlow.tryEmit(
                     Event.ShowFloatingError(
-                        Error.InvalidRequest
+                        Error.InvalidLink
                     )
                 )
             }
@@ -322,7 +345,7 @@ private constructor(
 
     override fun onSessionProposal(
         sessionProposal: Sign.Model.SessionProposal,
-        verifyContext: Sign.Model.VerifyContext
+        verifyContext: Sign.Model.VerifyContext,
     ) = viewModelScope.launch {
         defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
 
@@ -538,7 +561,7 @@ private constructor(
 
     override fun onSessionRequest(
         sessionRequest: Sign.Model.SessionRequest,
-        verifyContext: Sign.Model.VerifyContext
+        verifyContext: Sign.Model.VerifyContext,
     ) {
         defaultWalletDelegate.onSessionRequest(sessionRequest, verifyContext)
         val sessionRequestPeerMetadata: Core.Model.AppMetaData? = sessionRequest.peerMetaData
@@ -733,7 +756,6 @@ private constructor(
 
     private fun onSessionRequestHandlingFinished() {
         mutableStateFlow.tryEmit(State.Idle)
-        handleGoBack()
         handleNextOldestPendingSessionRequest()
     }
 
@@ -906,7 +928,8 @@ private constructor(
             }
 
             State.WaitingForSessionProposal,
-            State.WaitingForSessionRequest -> {
+            State.WaitingForSessionRequest,
+            -> {
                 mutableStateFlow.tryEmit(State.Idle)
             }
 
@@ -1194,6 +1217,11 @@ private constructor(
          * The dApp sent a session proposal requesting an unsupported method.
          */
         object UnsupportedMethod : Error
+
+        /**
+         * The dApp opened the wallet with an invalid URI.
+         */
+        object InvalidLink : Error
 
         /**
          * The dApp sent a request that can't be parsed.

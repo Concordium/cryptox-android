@@ -173,6 +173,9 @@ class WalletConnectView(
                     WalletConnectViewModel.Error.InvalidRequest ->
                         R.string.wallet_connect_error_invalid_request
 
+                    WalletConnectViewModel.Error.InvalidLink ->
+                        R.string.wallet_connect_error_invalid_link
+
                     WalletConnectViewModel.Error.LoadingFailed ->
                         R.string.wallet_connect_error_loading_failed
 

@@ -310,7 +310,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.accounts_over
         val walletConnectUri = intent.getStringExtra(EXTRA_WALLET_CONNECT_URI)
             ?.takeIf(String::isNotEmpty)
         if (walletConnectUri != null) {
-            walletConnectViewModel.handleWcUri(walletConnectUri)
+            walletConnectViewModel.handleUri(walletConnectUri)
         }
     }
 
