@@ -22,6 +22,7 @@ import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.Log
@@ -756,7 +757,9 @@ private constructor(
 
     private fun onSessionRequestHandlingFinished() {
         mutableStateFlow.tryEmit(State.Idle)
-        handleNextOldestPendingSessionRequest()
+        if (!handleGoBack()) {
+            handleNextOldestPendingSessionRequest()
+        }
     }
 
     private fun handleNextOldestPendingSessionRequest() {
@@ -1042,13 +1045,15 @@ private constructor(
                 )
             )
         }
-        handleGoBack()
     }
 
-    private fun handleGoBack() {
-        if (goBack) {
+    private fun handleGoBack(): Boolean {
+        return if (goBack) {
             mutableEventsFlow.tryEmit(Event.GoBack)
             goBack = false
+            true
+        } else {
+            false
         }
     }
 
