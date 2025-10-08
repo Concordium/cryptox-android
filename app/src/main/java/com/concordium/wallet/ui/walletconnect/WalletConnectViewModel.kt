@@ -4,6 +4,7 @@ package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
@@ -21,7 +22,6 @@ import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.Log
@@ -236,7 +236,7 @@ private constructor(
         }
 
         val actualUri: String =
-            Uri.parse(originalUri)
+            originalUri.toUri()
                 .takeIf(Uri::isHierarchical)
                 ?.getQueryParameter("uri")
                 ?.also {
