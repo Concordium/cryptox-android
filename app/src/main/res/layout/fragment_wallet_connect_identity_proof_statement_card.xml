@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
+    android:paddingTop="16dp"
     app:layout_constraintTop_toTopOf="parent">
 
     <TextView
@@ -14,16 +14,18 @@
         android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
         android:textColor="#A9AEB9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/verification_request" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:background="@drawable/wallet_connect_statement_card_background"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingBottom="16dp"
-        android:orientation="vertical"
-        android:background="@drawable/wallet_connect_statement_card_background"
+        android:paddingTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/statementHeader">
@@ -32,23 +34,20 @@
             android:id="@+id/reveal_lines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:listitem="@layout/identity_proof_statement_line" />
+            android:orientation="vertical" />
 
         <LinearLayout
             android:id="@+id/secret_lines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@color/cryptox_black_additional_20"
-            android:orientation="vertical"
-            android:showDividers="middle" />
+            android:orientation="vertical" />
 
         <TextView
             android:id="@+id/reveal_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minLines="1"
             android:layout_marginTop="12dp"
+            android:minLines="1"
             android:text="@string/reveal_description"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="#BBBDBD" />
