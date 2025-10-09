@@ -1209,6 +1209,7 @@
     <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.com</string>
 
     <!-- Identity proofs in WalletConnect -->
+    <string name="verification_request">Verification request</string>
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
     <string name="information_to_reveal">Information to reveal</string>
     <string name="reveal_description">Note that all the information above will be revealed to the connected service.</string>
