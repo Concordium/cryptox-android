@@ -1114,28 +1114,24 @@
         <item quantity="other">Showing %1$d items</item>
     </plurals>
 
-    <string name="welcome_verified_people_title">Verified People. Verified Trust.</string>
-    <string name="welcome_verified_people_description">The Concordium Wallet connects you to apps and services via a secure ID verification process.</string>
     <string name="welcome_your_data_title">Your Data. Your Rules.</string>
-    <string name="welcome_your_data_description">Your wallet is tied to a verified digital identity – verified once, controlled by you.</string>
-    <string name="welcome_verified_and_private_title">Verified and Private</string>
-    <string name="welcome_verified_and_private_description">Prove what matters (like being over 18) without sharing anything else – powered by Zero-Knowledge Proof technology.</string>
-    <string name="welcome_trust_title">A Wallet with Built-In Trust</string>
-    <string name="welcome_trust_description">Discover the Concordium ecosystem – secure, private, and fully under your control.</string>
-    <string name="welcome_greeting">Welcome to Concordium</string>
-    <string name="welcome_point_1">Passcode</string>
+    <string name="welcome_your_data_description">Verify your access, without exposing your identity.</string>
+    <string name="welcome_speed_title">Speed Matters</string>
+    <string name="welcome_speed_description">Make payments faster and cheaper using Stablecoins.</string>
+    <string name="welcome_greeting">Smart Money starts here</string>
+    <string name="welcome_point_1">Create Passcode</string>
     <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
-    <string name="welcome_point_2">Digital Identity</string>
-    <string name="welcome_point_2_details">Request your digital Identity from one of our trusted external identity providers.</string>
+    <string name="welcome_point_2">Get Concordium ID</string>
+    <string name="welcome_point_2_details">Get your digital identity from a trusted ID provider.</string>
     <string name="welcome_point_3">Finish</string>
-    <string name="welcome_point_3_details">Complete set-up and finalize your account to unlock all features. </string>
+    <string name="welcome_point_3_details">Setup your account to unlock all features.</string>
     <string name="welcome_continue">Continue</string>
     <string name="welcome_get_started">Get started</string>
     <string name="welcome_create_wallet">Create a New Wallet</string>
     <string name="welcome_restore_wallet">Restore Existing Wallet</string>
-    <string name="welcome_terms">I have read and understood the
+    <string name="welcome_terms">I agree and understand the
         <a href="#terms">Terms and Conditions</a>
-        and the <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
+        and <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
     <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
     <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
@@ -1209,6 +1205,7 @@
     <string name="saved_seed_reveal_failed">Failed to reveal the key, please contact \nsupport@concordium.com</string>
 
     <!-- Identity proofs in WalletConnect -->
+    <string name="verification_request">Verification request</string>
     <string name="zero_knowledge_proof">Zero-knowledge proof</string>
     <string name="information_to_reveal">Information to reveal</string>
     <string name="reveal_description">Note that all the information above will be revealed to the connected service.</string>
