@@ -13,24 +13,14 @@ class WelcomeCarouselAdapter : RecyclerView.Adapter<WelcomeCarouselAdapter.ViewH
 
     private val pages = listOf(
         Page(
-            imageRes = R.drawable.carousel_1,
-            titleRes = R.string.welcome_verified_people_title,
-            descriptionRes = R.string.welcome_verified_people_description,
-        ),
-        Page(
-            imageRes = R.drawable.carousel_2,
+            imageRes = R.drawable.carousel_3,
             titleRes = R.string.welcome_your_data_title,
             descriptionRes = R.string.welcome_your_data_description,
         ),
         Page(
-            imageRes = R.drawable.carousel_3,
-            titleRes = R.string.welcome_verified_and_private_title,
-            descriptionRes = R.string.welcome_verified_and_private_description,
-        ),
-        Page(
             imageRes = R.drawable.carousel_4,
-            titleRes = R.string.welcome_trust_title,
-            descriptionRes = R.string.welcome_trust_description,
+            titleRes = R.string.welcome_speed_title,
+            descriptionRes = R.string.welcome_speed_description,
         ),
     )
 

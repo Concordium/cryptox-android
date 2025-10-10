@@ -15,7 +15,7 @@
         android:background="@drawable/welcome_carousel_image_background"
         android:importantForAccessibility="no"
         android:padding="40dp"
-        tools:srcCompat="@drawable/carousel_1" />
+        tools:srcCompat="@drawable/carousel_4" />
 
     <TextView
         android:id="@+id/title_text_view"
@@ -33,8 +33,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:gravity="top|center_horizontal"
-        android:maxLines="3"
-        android:minLines="3"
+        android:maxLines="2"
+        android:minLines="2"
         android:textAppearance="@style/CCX_Typography_Body"
         android:textColor="@color/ccx_neutral_tint_2"
         tools:text="Our verified verification enables verified interaction between verified apps and verified identities" />
