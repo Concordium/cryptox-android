@@ -24,8 +24,8 @@ android {
     def versionMajor = 1
     def versionMinor = 14
     def versionPatch = 0
-    def versionMeta = "-qa.6"
-    def versionCodeIncremental = 1470
+    def versionMeta = ""
+    def versionCodeIncremental = 1472
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
