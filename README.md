@@ -35,6 +35,30 @@ The Concordium wallet was formerly known as "CryptoX".
 
 *APKs attached to GitHub releases have signature different from the packages distributed through GooglePlay, therefore can't be installed over each other without manual uninstall.*
 
+## Integration through WalletConnect (Reown)
+
+Concordium Wallet can establish WalletConnect sessions initiated by [Wallet Connectors from the JS SDK](https://github.com/Concordium/concordium-node-sdk-js/tree/main/packages/wallet-connectors). 
+If you can't use the JS SDK, you can implement WalletConnect flow manually using the JS SDK as a reference implementation.
+
+On the device, the wallet responds to a general `wc:` or an explicit `cryptox-wc:` (or `cryptox-wc-testnet:` for Testnet) URI schemes.
+Launching a `wc:` URI may require the user to select which app to use if they have multiple crypto wallets installed,
+while a `cryptox-wc:` (or `cryptox-wc-testnet:` for Testnet) URI explicitly launches Concordium Wallet.
+
+To launch Concordium Wallet for WalletConnect session establishment from your app, either use:
+- An original `wc:` URI provided by WalletConnect or Concordium JS SDK
+- An explicit `cryptox-wc://wc?uri=...` (or `cryptox-wc-testnet:` for Testnet) URI, where the `uri` query param is the URL-encoded original `wc:` URI
+
+The same URI can be turned into a QR code and scanned with the QR scanner from the Concordium Wallet main screen.
+
+To launch Concordium Wallet for WalletConnect session request handling (signing transaction, creating an ID proof) from your app, either use:
+- An original `wc:` URI provided by Concordium JS SDK
+- An explitit app redirect URI from the WalletConnect session metadata, adding `requestId` query parameter with the WalletConnect request ID (large number). For example, `cryptox-wc://r?requestId=1759846918165693`. Do not hardcode this URI, use the one from the session metadata.
+
+To make Concordium Wallet go back to your app or the browser once the request handling is finished,
+add the `go_back=true` query parameter to the URI you launch.
+
+A good example of WalletConnect integration is the [Testnet WalletConnect test bench](https://wallet-test-bench.testnet.concordium.com/) ([source code](https://github.com/Concordium/concordium-misc-tools/tree/main/wallet-connect-test-bench))
+
 ## Development notes
 
 The app requires Java 17 JDK for development.
