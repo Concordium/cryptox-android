@@ -20,6 +20,11 @@
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
 
+    <style name="MW24_Typography_H2">
+        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
     <style name="MW24_Typography_H3">
         <item name="android:fontFamily">@font/w500</item>
         <item name="android:textSize">24sp</item>
@@ -100,6 +105,11 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="MW24_Typography_Title_Light">
+        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="MW24_Typography_Body_S_Medium">
         <item name="android:fontFamily">@font/w500</item>
         <item name="android:textSize">12sp</item>
@@ -129,8 +139,7 @@
     </style>
 
     <style name="MW24_Receive_Funds_Action_Button">
-        <item name="android:background">@drawable/mw24_account_receive_funds_button_background
-        </item>
+        <item name="android:background">@drawable/mw24_account_receive_funds_button_background</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingVertical">8dp</item>

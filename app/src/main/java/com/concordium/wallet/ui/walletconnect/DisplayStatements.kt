@@ -27,14 +27,10 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(context, attrs) {
-    var binding: FragmentWalletConnectIdentityProofStatementsBinding;
-
-    val MIN_DATE = "18000101"
-    val MAX_DATE = "99990101";
-    val EU_MEMBERS = listOf("AT", "BE", "BG", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "HR")
+    var binding: FragmentWalletConnectIdentityProofStatementsBinding =
+        FragmentWalletConnectIdentityProofStatementsBinding.inflate(LayoutInflater.from(context))
 
     init {
-        binding = FragmentWalletConnectIdentityProofStatementsBinding.inflate(LayoutInflater.from(context))
         binding.secretStatements.statementHeader.setText(R.string.zero_knowledge_proof)
         binding.secretStatements.revealDescription.visibility = GONE
         binding.secretStatements.revealLines.visibility = GONE
@@ -321,6 +317,12 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
 
             else -> throw IllegalArgumentException("Unknown statement type")
         }
+    }
+
+    companion object {
+        const val MIN_DATE = "18000101"
+        const val MAX_DATE = "99990101"
+        val EU_MEMBERS = listOf("AT", "BE", "BG", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "HR")
     }
 }
 

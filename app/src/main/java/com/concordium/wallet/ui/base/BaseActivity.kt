@@ -30,15 +30,21 @@ import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.Constants.Extras.EXTRA_QR_CONNECT
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
+import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.RecipientRepository
+import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
+import com.concordium.wallet.ui.cis2.send.SendTokenActivity
 import com.concordium.wallet.ui.connect.ConnectActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import com.concordium.wallet.uicore.popup.Popup
+import kotlinx.coroutines.runBlocking
 import java.io.Serializable
 import javax.crypto.Cipher
 
@@ -272,14 +278,49 @@ abstract class BaseActivity(
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data?.extras
-                val qrData = data?.let(ScanQRActivity.Companion::getScannedQrContent)
                 val isAddContact = data?.let(ScanQRActivity.Companion::isAddContact)
-                if (qrData?.startsWith(Constants.QRPrefix.AIR_DROP) == true) { // airdrop://stage.spaceseven.cloud/api/v2/airdrop/register-wallet/3446112874593
+                val qrData = data?.let(ScanQRActivity.Companion::getScannedQrContent)
+                    ?: return@registerForActivityResult
+
+                if (qrData.startsWith(Constants.QRPrefix.AIR_DROP)) { // airdrop://stage.spaceseven.cloud/api/v2/airdrop/register-wallet/3446112874593
                     Intent(applicationContext, AirdropActivity::class.java).also {
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         it.putExtra(EXTRA_AIR_DROP_PAYLOAD, qrData)
                         startActivity(it)
                     }
+                } else if (App.appCore.cryptoLibrary.checkAccountAddress(qrData)) {
+                    val activeAccount = runBlocking {
+                        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+                            .getActive()
+                    } ?: error("The scanner must not be called if there are no accounts")
+                    val knownRecipient: Recipient? = runBlocking {
+                        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
+                            .getRecipientByAddress(qrData)
+                    }
+                    val intent = Intent(this, SendTokenActivity::class.java)
+                        .putExtra(
+                            SendTokenActivity.ACCOUNT,
+                            activeAccount
+                        )
+                        .putExtra(
+                            SendTokenActivity.TOKEN,
+                            CCDToken(
+                                account = activeAccount,
+                                eurPerMicroCcd = null,
+                            )
+                        )
+                        .putExtra(
+                            SendTokenActivity.RECIPIENT,
+                            knownRecipient
+                                ?: Recipient(
+                                    address = qrData,
+                                )
+                        )
+                        .putExtra(
+                            SendTokenActivity.PARENT_ACTIVITY,
+                            this::class.java.canonicalName
+                        )
+                    startActivityForResultAndHistoryCheck(intent)
                 } else {
                     Intent(applicationContext, ConnectActivity::class.java).also {
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK

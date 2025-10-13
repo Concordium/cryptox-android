@@ -2,12 +2,12 @@ package com.concordium.wallet.ui.walletconnect
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.IdentityProofContainerBinding
-import com.concordium.wallet.util.ImageUtil
 import com.concordium.wallet.util.Log
 
 class CredentialStatementAdapter(
@@ -43,17 +43,10 @@ class CredentialStatementAdapter(
 
         holder.containerBinding.statements.setStatement(statements[position], identity)
         with(holder.containerBinding.selectedAccountInclude) {
-            accIcon.setImageDrawable(
-                ImageUtil.getIconById(
-                    accIcon.context,
-                    account.iconId,
-                )
-            )
             accAddress.text = account.getAccountName()
-            accBalance.text = root.context.getString(
-                com.concordium.wallet.R.string.acc_balance_placeholder,
-                com.concordium.wallet.data.util.CurrencyUtil.formatGTU(account.balanceAtDisposal)
-            )
+            accBalance.isVisible = false
+            accIdentity.isVisible = true
+            accIdentity.text = identity.name
         }
         holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
             onChangeAccountClicked(position)

@@ -7,8 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.view.isInvisible
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAuthSetupPasscodeBinding
@@ -24,12 +24,7 @@ class AuthSetupPasscodeActivity :
     private val binding: ActivityAuthSetupPasscodeBinding by lazy {
         ActivityAuthSetupPasscodeBinding.bind(findViewById(R.id.toastLayoutTopError))
     }
-    private val viewModel: AuthSetupPasscodeViewModel by lazy {
-        ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[AuthSetupPasscodeViewModel::class.java]
-    }
+    private val viewModel: AuthSetupPasscodeViewModel by viewModels()
 
     private val getResultAuthSetupFullPassword =
         registerForActivityResult(
@@ -39,6 +34,9 @@ class AuthSetupPasscodeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.isSeedPhraseWalletSetupRequired =
+            intent.getBooleanExtra(SET_UP_SEED_PHRASE_WALLET_EXTRA, false)
 
         initInput()
         initButtons()
@@ -144,5 +142,13 @@ class AuthSetupPasscodeActivity :
         )
 
     override fun loggedOut() {
+    }
+
+    companion object {
+        /**
+         * Whether to also set up a seed phrase wallet
+         * on a successful passcode/password setup.
+         */
+        const val SET_UP_SEED_PHRASE_WALLET_EXTRA = "set_up_seed_phrase_wallet"
     }
 }

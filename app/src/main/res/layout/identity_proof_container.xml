@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/scroll_statements"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll_statements"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/proof_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/selected_account_include_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:paddingBottom="-30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        <FrameLayout
+            android:id="@+id/selected_account_include_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="-30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <include
-            android:id="@+id/selected_account_include"
-            layout="@layout/account_info_row" />
+            <include
+                android:id="@+id/selected_account_include"
+                layout="@layout/account_info_row" />
 
-    </FrameLayout>
+        </FrameLayout>
 
-    <com.concordium.wallet.ui.walletconnect.DisplayStatements
-        android:id="@+id/statements"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/selected_account_include_container"
-        app:layout_constraintStart_toStartOf="parent"
-  />
+        <com.concordium.wallet.ui.walletconnect.DisplayStatements
+            android:id="@+id/statements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/selected_account_include_container" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

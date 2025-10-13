@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    tools:background="@android:color/white">
+    android:paddingTop="4dp">
 
     <TextView
         android:id="@+id/attributeTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/CryptoX_Typography_Headline_Medium"
+        android:textAppearance="@style/MW24_Typography_Title"
+        android:textColor="@color/cryptox_white_main"
         tools:text="Age:" />
 
     <TextView
@@ -23,14 +23,15 @@
         android:breakStrategy="balanced"
         android:singleLine="false"
         android:textAlignment="textEnd"
-        style="@style/CryptoX_Typography_Headline_Medium"
+        android:textAppearance="@style/MW24_Typography_Title"
+        android:textColor="@color/cryptox_white_main"
         tools:text="Over 18 years old" />
 
     <ImageView
         android:id="@+id/checkMark"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:src="@drawable/ccx_ico_approved"
-        />
+        android:importantForAccessibility="no"
+        android:src="@drawable/ccx_ico_approved" />
 
 </LinearLayout>

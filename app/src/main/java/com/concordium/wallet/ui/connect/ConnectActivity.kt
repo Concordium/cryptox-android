@@ -3,6 +3,7 @@
 package com.concordium.wallet.ui.connect
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -69,21 +70,32 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         val supportedPrefixes = walletConnectPrefixes + MARKETPLACE_CONNECT_PREFIX
 
         var isDepLink = false
-        val connectUrl: String? =
-            intent?.getStringExtra(EXTRA_CONNECT_URL).let { intentConnectUrl ->
-                if (!intentConnectUrl.isNullOrEmpty()) {
-                    intentConnectUrl
-                } else {
+        var isWalletConnect = false
+
+        val intentUri =
+            intent
+                ?.getStringExtra(EXTRA_CONNECT_URL)
+                ?.let {
                     isDepLink = true
-                    val urlData = intent?.data
-                    if (urlData != null && urlData.isHierarchical)
-                    // Case for NFT marketplace.
-                        urlData.getQueryParameter("uri")
-                    else
-                    // Case for WalletConnect or something else.
-                        urlData?.toString()
+                    Uri.parse(it)
                 }
+                ?: intent?.data
+        val intentUriString = intentUri?.toString()
+
+        val connectUrl =
+            if (intentUriString != null &&
+                walletConnectPrefixes.any { intentUriString.startsWith(it) }
+            ) {
+                isWalletConnect = true
+                intentUriString
+            } else if (intentUri != null && intentUri.isHierarchical) {
+                // Case for NFT marketplace.
+                intentUri.getQueryParameter("uri")
+            } else {
+                // Case for something else.
+                intentUriString
             }
+
         val isAddContact = intent?.getBooleanExtra(EXTRA_ADD_CONTACT, false) ?: false
 
         if (connectUrl.isNullOrEmpty()) {
@@ -116,11 +128,11 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         }
 
         when {
+            isWalletConnect ->
+                connectWc(connectUrl)
+
             connectUrl.startsWith(MARKETPLACE_CONNECT_PREFIX) ->
                 getBridgeInfo(connectUrl)
-
-            walletConnectPrefixes.any { connectUrl.startsWith(it) } ->
-                connectWc(connectUrl)
         }
 
         closeBtn?.visibility = View.VISIBLE

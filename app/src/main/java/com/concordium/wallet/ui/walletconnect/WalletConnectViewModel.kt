@@ -3,6 +3,8 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
@@ -28,12 +30,14 @@ import com.reown.android.Core
 import com.reown.android.CoreClient
 import com.reown.sign.client.Sign
 import com.reown.sign.client.SignClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.math.BigInteger
 
 /**
@@ -47,6 +51,8 @@ import java.math.BigInteger
  * *Session request* – a request from a dApp within an active session that requires performing
  * some action with the account of the session.
  *
+ * *go_back* - whether to navigate back after handling the URI
+ *
  * Currently supported requests:
  * - [REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION] – create, sign and submit an account transaction
  * of the requested type. Send back the submission ID;
@@ -55,6 +61,7 @@ import java.math.BigInteger
  *
  * @see State
  * @see allowedAccountTransactionTypes
+ * @see goBack
  */
 class WalletConnectViewModel
 private constructor(
@@ -135,6 +142,7 @@ private constructor(
         isBusyFlow.combine(stateFlow) { isBusy, state ->
             !isBusy && state is State.SessionRequestReview && state.canApprove
         }
+    private var goBack = false
 
     private val signTransactionRequestHandler: WalletConnectSignTransactionRequestHandler by lazy {
         WalletConnectSignTransactionRequestHandler(
@@ -204,33 +212,57 @@ private constructor(
     }
 
     /**
-     * @param wcUri 'wc:' pair or redirect request URI
-     *
-     * @see R.string.wc_scheme
+     * @param originalUri either 'wc' or app specific WalletConnect URI.
+     * For example:
+     * - cryptox-wc://wc?uri=wc%3A00e46b69
+     * - wc:00e46b69...
+     * - cryptox-wc://r?requestId=1759846918165693
+     * - wc:00e46b69@2/wc?requestId=1759846918165693
      */
-    fun handleWcUri(wcUri: String) {
-        if (wcUriPrefixes.none { wcUri.startsWith(it) }) {
+    fun handleUri(originalUri: String) {
+        if (wcUriPrefixes.none { originalUri.startsWith(it) }) {
             Log.w(
-                "url_scheme_invalid:" +
-                        "\nuri=$wcUri," +
+                "uri_scheme_invalid:" +
+                        "\nuri=$originalUri," +
                         "\nsupported:${wcUriPrefixes.joinToString(",")}"
+            )
+
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.InvalidLink
+                )
             )
 
             return
         }
 
-        // Request URI contains a corresponding query param,
-        // but may have 'wc' or redirect scheme.
-        val isRequestUri = wcUri.contains("$WC_URI_REQUEST_ID_PARAM=")
+        val actualUri: String =
+            originalUri.toUri()
+                .takeIf(Uri::isHierarchical)
+                ?.getQueryParameter("uri")
+                ?.also {
+                    Log.d(
+                        "using_uri_from_query:" +
+                                "\noriginalUri=$originalUri," +
+                                "\nactualUri=$it"
+                    )
+                }
+                ?: originalUri
+
+        // Request URI contains a corresponding query param.
+        val isRequestUri = actualUri.contains("$WC_URI_REQUEST_ID_PARAM=")
 
         // Pairing URI is always 'wc'.
-        val isPairingUri = !isRequestUri && wcUri.startsWith(WC_URI_PREFIX)
+        val isPairingUri = !isRequestUri && actualUri.startsWith(WC_URI_PREFIX)
+
+        goBack = originalUri.contains(WC_GO_BACK_PARAM) || actualUri.contains(WC_GO_BACK_PARAM)
 
         Log.d(
             "handling_uri:" +
-                    "\nuri=$wcUri," +
+                    "\nuri=$actualUri," +
                     "\nisRequestUri=$isRequestUri," +
-                    "\nisPairingUri=$isPairingUri"
+                    "\nisPairingUri=$isPairingUri," +
+                    "\ngoBack=$goBack"
         )
 
         when {
@@ -238,17 +270,17 @@ private constructor(
                 onRequestWcUriReceived()
 
             isPairingUri ->
-                pair(wcUri)
+                pair(originalUri)
 
             else -> {
                 Log.w(
                     "cant_handle_uri:" +
-                            "\nuri=$wcUri"
+                            "\nuri=$actualUri"
                 )
 
                 mutableEventsFlow.tryEmit(
                     Event.ShowFloatingError(
-                        Error.InvalidRequest
+                        Error.InvalidLink
                     )
                 )
             }
@@ -314,7 +346,7 @@ private constructor(
 
     override fun onSessionProposal(
         sessionProposal: Sign.Model.SessionProposal,
-        verifyContext: Sign.Model.VerifyContext
+        verifyContext: Sign.Model.VerifyContext,
     ) = viewModelScope.launch {
         defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
 
@@ -345,62 +377,62 @@ private constructor(
             return@launch
         }
 
-            // Check if the proposer requests unsupported methods, and reject the session proposal
-            // if that is the case.
-            val requestedMethods = singleNamespaceEntry.value.methods
-            if (!allowedRequestMethods.containsAll(requestedMethods)) {
-                Log.e("Received an unsupported request method: $requestedMethods")
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.UnsupportedMethod
-                    )
-                )
-                rejectSession(
-                    proposerPublicKey,
-                    "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
-                )
-                return@launch
-            }
-
-            Log.d("loading_accounts")
-
-            val accounts = getAvailableAccounts()
-            if (accounts.isEmpty()) {
-                Log.d("there_are_no_accounts")
-                mutableEventsFlow.tryEmit(
-                    Event.ShowFloatingError(
-                        Error.NoAccounts
-                    )
-                )
-                rejectSession(
-                    proposerPublicKey,
-                    "The wallet does not contain any accounts to open a session for"
-                )
-                return@launch
-            }
-
-            this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
-            this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
-            this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
-            this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
-
-            // Initially select the account with the biggest balance.
-            val initiallySelectedAccount = accounts.maxBy { account ->
-                account.balanceAtDisposal
-            }
-
-            Log.d(
-                "handling_session_proposal:" +
-                        "\ninitiallySelectedAccountId=${initiallySelectedAccount.id}"
-            )
-
-            mutableStateFlow.tryEmit(
-                State.SessionProposalReview(
-                    selectedAccount = initiallySelectedAccount,
-                    appMetadata = AppMetadata(sessionProposal),
+        // Check if the proposer requests unsupported methods, and reject the session proposal
+        // if that is the case.
+        val requestedMethods = singleNamespaceEntry.value.methods
+        if (!allowedRequestMethods.containsAll(requestedMethods)) {
+            Log.e("Received an unsupported request method: $requestedMethods")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.UnsupportedMethod
                 )
             )
-        }.let { /* Return nothing */ }
+            rejectSession(
+                proposerPublicKey,
+                "An unsupported method was requested: $requestedMethods, supported methods are $allowedRequestMethods"
+            )
+            return@launch
+        }
+
+        Log.d("loading_accounts")
+
+        val accounts = getAvailableAccounts()
+        if (accounts.isEmpty()) {
+            Log.d("there_are_no_accounts")
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.NoAccounts
+                )
+            )
+            rejectSession(
+                proposerPublicKey,
+                "The wallet does not contain any accounts to open a session for"
+            )
+            return@launch
+        }
+
+        this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
+        this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
+        this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
+        this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
+
+        // Initially select the account with the biggest balance.
+        val initiallySelectedAccount = accounts.maxBy { account ->
+            account.balanceAtDisposal
+        }
+
+        Log.d(
+            "handling_session_proposal:" +
+                    "\ninitiallySelectedAccountId=${initiallySelectedAccount.id}"
+        )
+
+        mutableStateFlow.tryEmit(
+            State.SessionProposalReview(
+                selectedAccount = initiallySelectedAccount,
+                appMetadata = AppMetadata(sessionProposal),
+            )
+        )
+    }.let { /* Return nothing */ }
 
     private suspend fun getAvailableAccounts(): List<Account> =
         accountRepository.getAllDone()
@@ -436,6 +468,7 @@ private constructor(
         }
 
         mutableStateFlow.tryEmit(State.Idle)
+        handleGoBack()
     }
 
     private fun rejectSession(proposerPublicKey: String, reason: String) {
@@ -454,6 +487,7 @@ private constructor(
         }
 
         mutableStateFlow.tryEmit(State.Idle)
+        handleGoBack()
     }
 
     fun rejectSessionProposal() {
@@ -528,7 +562,7 @@ private constructor(
 
     override fun onSessionRequest(
         sessionRequest: Sign.Model.SessionRequest,
-        verifyContext: Sign.Model.VerifyContext
+        verifyContext: Sign.Model.VerifyContext,
     ) {
         defaultWalletDelegate.onSessionRequest(sessionRequest, verifyContext)
         val sessionRequestPeerMetadata: Core.Model.AppMetaData? = sessionRequest.peerMetaData
@@ -543,41 +577,13 @@ private constructor(
             return
         }
 
-        // We do not want to queue more than one request for each topic (dApp),
-        // as the dApp may be broken and spam requests.
-        // At this point, topic pending requests may already contain this sessionRequest.
-        val topicPendingRequests = SignClient.getPendingSessionRequests(sessionRequest.topic)
-        if (topicPendingRequests.isEmpty() || topicPendingRequests.size == 1) {
-            // Only handle the request if the session ID is different from the current one
-            // Otherwise, ignore the re-processing call
-            if (sessionRequest.request.id != this.sessionRequestId) {
-                handleSessionRequest(
-                    topic = sessionRequest.topic,
-                    id = sessionRequest.request.id,
-                    method = sessionRequest.request.method,
-                    params = sessionRequest.request.params,
-                    peerMetadata = sessionRequestPeerMetadata
-                )
-            } else {
-                Log.w(
-                    "received_next_session_request_in_topic_with_the_same_id" +
-                    "\ndon't handle the request again"
-                )
-            }
-        } else {
-            Log.w(
-                "received_next_session_request_in_topic_before_current_is_handled:" +
-                        "\nrequestId=${topicPendingRequests.last().request.id}" +
-                        "\nrequestTopic=${topicPendingRequests.last().topic}"
-            )
-
-            respondError(
-                message = "Subsequent requests are rejected until the current one is handled: " +
-                        topicPendingRequests.first().request.id,
-                sessionRequestId = topicPendingRequests.last().request.id,
-                sessionRequestTopic = topicPendingRequests.last().topic,
-            )
-        }
+        handleSessionRequest(
+            topic = sessionRequest.topic,
+            id = sessionRequest.request.id,
+            method = sessionRequest.request.method,
+            params = sessionRequest.request.params,
+            peerMetadata = sessionRequestPeerMetadata
+        )
     }
 
     /**
@@ -751,7 +757,9 @@ private constructor(
 
     private fun onSessionRequestHandlingFinished() {
         mutableStateFlow.tryEmit(State.Idle)
-        handleNextOldestPendingSessionRequest()
+        if (!handleGoBack()) {
+            handleNextOldestPendingSessionRequest()
+        }
     }
 
     private fun handleNextOldestPendingSessionRequest() {
@@ -892,6 +900,10 @@ private constructor(
     fun getIdentity(account: Account): Identity? =
         verifiablePresentationRequestHandler.getIdentity(account)
 
+    fun getIdentityFromRepository(account: Account) = runBlocking(Dispatchers.IO) {
+        identityRepository.getAllDone().firstOrNull { it.id == account.identityId }
+    }
+
     fun onShowSignRequestDetailsClicked() = viewModelScope.launch {
         val reviewState = state as? State.SessionRequestReview.SignRequestReview
         check(reviewState != null && reviewState.canShowDetails) {
@@ -919,7 +931,8 @@ private constructor(
             }
 
             State.WaitingForSessionProposal,
-            State.WaitingForSessionRequest -> {
+            State.WaitingForSessionRequest,
+            -> {
                 mutableStateFlow.tryEmit(State.Idle)
             }
 
@@ -943,6 +956,7 @@ private constructor(
                 signTransactionRequestHandler.onTransactionSubmittedViewClosed()
             }
         }
+        handleGoBack()
     }
 
     fun onTransactionSubmittedFinishClicked() =
@@ -1030,6 +1044,16 @@ private constructor(
                     Error.ResponseFailed
                 )
             )
+        }
+    }
+
+    private fun handleGoBack(): Boolean {
+        return if (goBack) {
+            mutableEventsFlow.tryEmit(Event.GoBack)
+            goBack = false
+            true
+        } else {
+            false
         }
     }
 
@@ -1200,6 +1224,11 @@ private constructor(
         object UnsupportedMethod : Error
 
         /**
+         * The dApp opened the wallet with an invalid URI.
+         */
+        object InvalidLink : Error
+
+        /**
          * The dApp sent a request that can't be parsed.
          */
         object InvalidRequest : Error
@@ -1269,6 +1298,11 @@ private constructor(
             val title: String?,
             val prettyPrintDetails: String,
         ) : Event
+
+        /**
+         * Event to navigate back after handling the URI
+         */
+        object GoBack : Event
     }
 
     private companion object {
@@ -1280,5 +1314,6 @@ private constructor(
         private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
         private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
         private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
+        private const val WC_GO_BACK_PARAM = "go_back=true"
     }
 }

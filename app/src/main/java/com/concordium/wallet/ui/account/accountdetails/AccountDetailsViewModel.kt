@@ -40,7 +40,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val session: Session = App.appCore.session
 
     enum class DialogToShow {
-        UNSHIELDING
+        UNSHIELDING,
+        NOTIFICATIONS_PERMISSION,
+        SEED_PHRASE_BACKUP_NOTICE,
     }
 
     sealed class SuspensionNotice(
@@ -55,12 +57,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         class DelegatorsBakerSuspended(isCurrentAccountAffected: Boolean) :
             SuspensionNotice(isCurrentAccountAffected)
     }
-
-    class GoToEarnPayload(
-        val account: Account,
-        val hasPendingDelegationTransactions: Boolean,
-        val hasPendingBakingTransactions: Boolean,
-    )
 
     lateinit var account: Account
 
@@ -141,38 +137,48 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         )
     }
 
-    fun setShowOnrampBanner(show: Boolean) {
-        return App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(show)
+    val isSeedPhraseBackupBannerVisible: Boolean
+        get() = ::account.isInitialized
+                && App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeedPhrase()
+                && App.appCore.session.walletStorage.setupPreferences.getRequireSeedPhraseBackupConfirmation()
+
+    val isOnrampBannerVisible: Boolean
+        get() = !isSeedPhraseBackupBannerVisible
+                && ::account.isInitialized
+                && App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
+                && account.balance == BigInteger.ZERO
+
+    val isEarnBannerVisible: Boolean
+        get() = !isSeedPhraseBackupBannerVisible
+                && ::account.isInitialized
+                && App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
+                && account.balance > BigInteger.ZERO
+                && account.isDelegating().not()
+                && account.isBaking().not()
+
+    fun onCloseSeedPhraseBackupBannerClicked() {
+        _showDialogLiveData.postValue(Event(DialogToShow.SEED_PHRASE_BACKUP_NOTICE))
     }
 
-    fun isShowOnrampBanner(): Boolean {
-        return App.appCore.session.walletStorage.setupPreferences.getShowOnrampBanner()
+    fun onCloseOnrampBannerClicked() {
+        App.appCore.session.walletStorage.setupPreferences.setShowOnrampBanner(false)
     }
 
-    fun setShowEarnBanner(show: Boolean) {
-        return App.appCore.session.walletStorage.setupPreferences.setShowEarnBanner(show)
+    fun onCloseEarnBannerClicked() {
+        App.appCore.session.walletStorage.setupPreferences.setShowEarnBanner(false)
     }
-
-    fun isShowEarnBanner(): Boolean {
-        return App.appCore.session.walletStorage.setupPreferences.getShowEarnBanner()
-    }
-
-    fun isEarnBannerVisible(): Boolean = isShowEarnBanner() &&
-            account.balance > BigInteger.ZERO &&
-            account.isDelegating().not() &&
-            account.isBaking().not()
 
     private fun getActiveAccount() = viewModelScope.launch {
-        accountRepository.getActive()?.let {
-            account = it
-            _activeAccount.emit(it)
-            _totalBalanceLiveData.postValue(it.balance)
+        val acc = accountRepository.getActive()
+            ?: return@launch
+        account = acc
+        _activeAccount.emit(acc)
+        _totalBalanceLiveData.postValue(acc.balance)
 
-            if (account.transactionStatus == TransactionStatus.COMMITTED ||
-                account.transactionStatus == TransactionStatus.RECEIVED
-            ) {
-                restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
-            }
+        if (account.transactionStatus == TransactionStatus.COMMITTED ||
+            account.transactionStatus == TransactionStatus.RECEIVED
+        ) {
+            restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
         }
     }
 
@@ -383,12 +389,17 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
         val dialogsToShow = linkedSetOf<DialogToShow>()
 
+        if (!App.appCore.session.walletStorage.notificationsPreferences.hasEverShownPermissionDialog) {
+            dialogsToShow += DialogToShow.NOTIFICATIONS_PERMISSION
+        }
+
         // Show unshielding notice if never shown and some accounts may need unshielding.
         if (!App.appCore.session.isUnshieldingNoticeShown()
             && accountRepository.getAllDone().any(Account::mayNeedUnshielding)
         ) {
             dialogsToShow += DialogToShow.UNSHIELDING
         }
+
         // Show a single dialog if needed.
         if (dialogsToShow.isNotEmpty()) {
             _showDialogLiveData.postValue(Event(dialogsToShow.first()))

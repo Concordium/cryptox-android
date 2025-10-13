@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewModel(application) {
@@ -27,6 +28,16 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
     val stateFlow: Flow<State> = mutableStateFlow
     val state: State
         get() = mutableStateFlow.value
+    val isBackupConfirmationVisible: Boolean
+        get() = App.appCore.session.walletStorage.setupPreferences.getRequireSeedPhraseBackupConfirmation()
+    val isConsentCheckBoxEnabledFlow: Flow<Boolean> =
+        stateFlow.map { state ->
+            state is State.Revealed
+        }
+    private val _isContinueButtonEnabledFlow: MutableStateFlow<Boolean> =
+        MutableStateFlow(false)
+    val isContinueButtonEnabledFlow: Flow<Boolean> =
+        _isContinueButtonEnabledFlow
 
     private val mutableEventsFlow =
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
@@ -54,6 +65,15 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
         mutableStateFlow.emit(State.Revealed)
     }
 
+    fun onConsentCheckboxClicked(isChecked: Boolean) {
+        _isContinueButtonEnabledFlow.tryEmit(isChecked)
+    }
+
+    fun onContinueClicked() {
+        App.appCore.session.walletStorage.setupPreferences.setRequireSeedPhraseBackupConfirmation(false)
+        mutableEventsFlow.tryEmit(Event.Finish)
+    }
+
     sealed interface State {
         object Hidden : State
         object Revealed : State
@@ -62,6 +82,7 @@ class SavedSeedPhraseRevealViewModel(application: Application) : AndroidViewMode
     sealed interface Event {
         object Authenticate : Event
         object ShowFatalError : Event
+        object Finish : Event
     }
 
     private companion object {

@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.14.0] - 2025-10-08
+
+### Added
+
+- Starting the Send flow when scanned a QR code with a Concordium address from the main screen
+- A few slides explaining the wallet when you first install it
 
 ### Fixed
 
@@ -14,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated the launcher icon
+- Updated icon of the CCD token
+- Updated the look of WalletConnect dialogs
+
+### Removed
+
+- Asking to save the seed phrase when creating a wallet – now it can be saved later
+- Analytics consent from the first screen
 
 ## [1.13.1] - 2025-09-22
 
@@ -300,7 +312,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.13.1...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.14.0...HEAD
+
+[1.14.0]: https://github.com/Concordium/cryptox-android/compare/1.13.1...1.14.0
 
 [1.13.0]: https://github.com/Concordium/cryptox-android/compare/1.13.0...1.13.1
 

@@ -224,6 +224,11 @@ class MainActivity : BaseActivity(R.layout.activity_main),
             finishAffinity()
             startActivity(Intent(this, MainActivity::class.java))
         }
+        walletConnectViewModel.eventsFlow.collectWhenStarted(this) {
+            if (it == WalletConnectViewModel.Event.GoBack) {
+               moveTaskToBack(true)
+            }
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -427,7 +432,7 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         val walletConnectUri = intent.getStringExtra(EXTRA_WALLET_CONNECT_URI)
             ?.takeIf(String::isNotEmpty)
         if (walletConnectUri != null) {
-            walletConnectViewModel.handleWcUri(walletConnectUri)
+            walletConnectViewModel.handleUri(walletConnectUri)
         }
     }
 

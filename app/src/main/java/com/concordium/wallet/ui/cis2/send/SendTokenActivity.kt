@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
+import com.concordium.wallet.util.getOptionalSerializable
 import com.concordium.wallet.util.getSerializable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -45,6 +46,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
         const val PARENT_ACTIVITY = "PARENT_ACTIVITY"
+        const val RECIPIENT = "RECIPIENT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +56,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         initFragmentListener()
         initViews()
         hideActionBarBack(isVisible = true)
+
+        intent
+            .getOptionalSerializable(RECIPIENT, Recipient::class.java)
+            ?.also(::onRecipientSelected)
     }
 
     override fun onResume() {
@@ -176,7 +182,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
             if (viewModel.showMemoWarning()) {
                 MemoNoticeDialog().showSingle(
                     supportFragmentManager,
-                    MemoNoticeDialog.Companion.TAG
+                    MemoNoticeDialog.TAG
                 )
             } else {
                 goToEnterMemo()
@@ -202,23 +208,28 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private val getResultRecipient =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                result.data?.getSerializable(
-                    RecipientListActivity.EXTRA_RECIPIENT,
-                    Recipient::class.java
-                )?.let { recipient ->
-                    viewModel.onReceiverEntered(recipient.address)
-                    binding.recipientPlaceholder.visibility = View.GONE
-                    binding.recipientNameLayout.visibility = View.VISIBLE
-                    binding.recipientAddress.text = recipient.address
-
-                    if (recipient.name.isNotEmpty()) {
-                        onReceiverNameFound(recipient.name)
-                    } else {
-                        binding.recipientName.visibility = View.GONE
-                    }
-                }
+                result
+                    .data
+                    ?.getSerializable(
+                        RecipientListActivity.EXTRA_RECIPIENT,
+                        Recipient::class.java
+                    )
+                    ?.also(::onRecipientSelected)
             }
         }
+
+    private fun onRecipientSelected(recipient: Recipient) {
+        viewModel.onReceiverEntered(recipient.address)
+        binding.recipientPlaceholder.visibility = View.GONE
+        binding.recipientNameLayout.visibility = View.VISIBLE
+        binding.recipientAddress.text = recipient.address
+
+        if (recipient.name.isNotEmpty()) {
+            onReceiverNameFound(recipient.name)
+        } else {
+            binding.recipientName.visibility = View.GONE
+        }
+    }
 
     private val getResultToken =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -339,10 +350,10 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
 
     private fun initFragmentListener() {
         supportFragmentManager.setFragmentResultListener(
-            MemoNoticeDialog.Companion.ACTION_REQUEST,
+            MemoNoticeDialog.ACTION_REQUEST,
             this
         ) { _, bundle ->
-            val showAgain = MemoNoticeDialog.Companion.getResult(bundle)
+            val showAgain = MemoNoticeDialog.getResult(bundle)
             if (!showAgain) {
                 viewModel.dontShowMemoWarning()
             }
