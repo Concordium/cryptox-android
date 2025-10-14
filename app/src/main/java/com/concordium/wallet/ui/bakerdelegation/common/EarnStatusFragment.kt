@@ -1,45 +1,40 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AccountCooldown
-import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
-import com.concordium.wallet.databinding.DelegationbakerStatusBinding
-import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.databinding.DelegationbakerStatusFragmentBinding
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-abstract class StatusActivity(
-    titleId: Int = R.string.app_name,
-) : BaseActivity(R.layout.delegationbaker_status_fragment, titleId) {
-    protected lateinit var binding: DelegationbakerStatusBinding
-    protected lateinit var viewModel: DelegationBakerViewModel
 
-    @Suppress("DEPRECATION")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DelegationbakerStatusBinding.bind(findViewById(R.id.root_layout))
-        hideActionBarBack(isVisible = true)
+abstract class EarnStatusFragment : Fragment() {
 
-        initializeViewModel()
-        viewModel.initialize(
-            intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA)
-                    as BakerDelegationData
-        )
-        initView()
+    protected val viewModel: DelegationBakerViewModel by viewModel()
+    protected lateinit var binding: DelegationbakerStatusFragmentBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = DelegationbakerStatusFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    protected open fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[DelegationBakerViewModel::class.java]
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViewModel()
+        initView()
     }
 
     fun setContentTitle(res: Int) {
@@ -65,7 +60,11 @@ abstract class StatusActivity(
         if (title.isNotEmpty()) {
             delegationBakerStatusBinding.statusItemTitle.text = title
             titleTextColor?.let {
-                delegationBakerStatusBinding.statusItemTitle.setTextColor(getColor(it))
+                delegationBakerStatusBinding.statusItemTitle.setTextColor(
+                    requireActivity().getColor(
+                        it
+                    )
+                )
             }
             delegationBakerStatusBinding.divider.visibility = View.GONE
         } else
@@ -103,6 +102,8 @@ abstract class StatusActivity(
         binding.statusExplanationTextView.isVisible = false
     }
 
+    abstract fun initViewModel()
+
     protected fun addPendingChange(
         pendingChange: PendingChange,
     ) {
@@ -134,7 +135,7 @@ abstract class StatusActivity(
     protected fun addWaitingForTransaction(contentTitleStringId: Int, emptyStateStringId: Int) {
         binding.statusButtonTop.isEnabled = false
         binding.statusButtonBottom.isEnabled = false
-        binding.statusTextView.setTextColor(getColor(R.color.cryptox_white_main))
+        binding.statusTextView.setTextColor(requireActivity().getColor(R.color.cryptox_white_main))
         setContentTitle(contentTitleStringId)
         setEmptyState(getString(emptyStateStringId))
     }

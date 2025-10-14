@@ -25,7 +25,11 @@ class EranDelegateImpl : EarnDelegate {
     ) {
         when {
             (account.delegation != null || hasPendingDelegationTransactions) -> {
-                launchFragment(DelegationStatusFragment())
+                launchFragment(
+                    DelegationStatusFragment.newInstance(
+                        DelegationStatusFragment.setBundle(account)
+                    )
+                )
             }
 
             (account.baker != null || hasPendingBakingTransactions) -> {

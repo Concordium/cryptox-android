@@ -6,22 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/toolbar_layout"
-        layout="@layout/app_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="@dimen/size16"
         app:layout_constraintBottom_toTopOf="@id/button_layout"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,9 +22,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/status_layout"
                 style="@style/CryptoX_Container_TextCard"
-                android:layout_marginHorizontal="18dp"
-                android:layout_marginTop="20dp"
-                android:padding="14dp">
+                android:layout_marginTop="@dimen/size8"
+                android:padding="@dimen/size16">
 
                 <TextView
                     android:id="@+id/status_text_view"
@@ -77,15 +67,13 @@
                 android:id="@+id/action_buttons_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="14dp"
-                android:layout_marginHorizontal="18dp"
+                android:layout_marginVertical="@dimen/size16"
                 layout="@layout/delegation_validation_action_buttons" />
 
             <LinearLayout
                 android:id="@+id/status_list_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="18dp"
                 android:orientation="vertical"
                 android:background="@drawable/mw24_container_primary_background_default"
                 android:paddingHorizontal="14dp"
@@ -95,7 +83,6 @@
                 android:id="@+id/cooldown_list_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="18dp"
                 android:orientation="vertical" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -104,8 +91,8 @@
         android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginVertical="20dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginVertical="@dimen/size16"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
