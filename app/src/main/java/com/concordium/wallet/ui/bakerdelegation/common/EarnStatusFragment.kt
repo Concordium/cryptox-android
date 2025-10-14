@@ -12,10 +12,11 @@ import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
 import com.concordium.wallet.databinding.DelegationbakerStatusFragmentBinding
+import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.account.earn.EarnLegalDisclaimerDialog
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 abstract class EarnStatusFragment : Fragment() {
 
@@ -35,6 +36,13 @@ abstract class EarnStatusFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         initView()
+
+        binding.btnLegalDisclaimer.setOnClickListener {
+            EarnLegalDisclaimerDialog().showSingle(
+                parentFragmentManager,
+                EarnLegalDisclaimerDialog.TAG
+            )
+        }
     }
 
     fun setContentTitle(res: Int) {
@@ -97,8 +105,6 @@ abstract class EarnStatusFragment : Fragment() {
     fun clearState() {
         binding.statusEmptyTextView.text = ""
         binding.statusListContainer.removeAllViews()
-        binding.statusButtonTop.isEnabled = true
-        binding.statusButtonBottom.isEnabled = true
         binding.statusExplanationTextView.isVisible = false
     }
 
@@ -117,7 +123,6 @@ abstract class EarnStatusFragment : Fragment() {
             ""
         )
         if (pendingChange.change == "RemoveStake") {
-            binding.statusButtonTop.isEnabled = false
             addContent(
                 getString(R.string.delegation_status_content_delegation_will_be_stopped),
                 ""
@@ -133,8 +138,6 @@ abstract class EarnStatusFragment : Fragment() {
     }
 
     protected fun addWaitingForTransaction(contentTitleStringId: Int, emptyStateStringId: Int) {
-        binding.statusButtonTop.isEnabled = false
-        binding.statusButtonBottom.isEnabled = false
         binding.statusTextView.setTextColor(requireActivity().getColor(R.color.cryptox_white_main))
         setContentTitle(contentTitleStringId)
         setEmptyState(getString(emptyStateStringId))

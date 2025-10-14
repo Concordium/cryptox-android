@@ -59,10 +59,6 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         if (accountDelegation == null) {
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
-            binding.statusButtonBottom.text = getString(R.string.delegation_status_continue)
-            binding.statusButtonBottom.setOnClickListener {
-                continueToCreate()
-            }
             return
         }
 
@@ -103,23 +99,17 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
 
         viewModel.bakerDelegationData.account.delegation?.pendingChange?.let { pendingChange ->
             addPendingChange(pendingChange)
-            binding.actionButtonsLayout.stopBtn.isEnabled =
+            binding.actionButtonsLayout.stopButton.isEnabled =
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
         addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
-        binding.actionButtonsLayout.stopBtn.setOnClickListener {
+        binding.actionButtonsLayout.stopButton.setOnClickListener {
             continueToDelete()
         }
 
-        viewModel.bakerDelegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
-            if (pendingChangeType == CHANGE_REMOVE_POOL) {
-                binding.statusButtonTop.isEnabled = true
-            }
-        }
-
-        binding.actionButtonsLayout.updateBtn.setOnClickListener {
+        binding.actionButtonsLayout.delegationUpdateButton.setOnClickListener {
             continueToUpdate()
         }
 

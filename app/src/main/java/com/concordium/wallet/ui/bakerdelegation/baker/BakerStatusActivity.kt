@@ -39,27 +39,25 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
         if (accountBaker == null) {
             setContentTitle(R.string.baker_status_no_baker_title)
             setEmptyState(getString(R.string.baker_status_no_baker))
-            binding.statusButtonBottom.text = getString(R.string.baker_status_register_baker)
-            binding.statusButtonBottom.setOnClickListener {
-                continueToBakerAmount()
-            }
             return
         }
+
+        binding.actionButtonsLayout.bakerUpdateButton.visibility = View.VISIBLE
 
         if (viewModel.isBakerPrimedForSuspension()) {
             setContentTitle(R.string.baker_status_baker_primed_for_suspension_title)
             setExplanation(getString(R.string.validation_primed_for_suspension_baker_explanation))
-            binding.actionButtonsLayout.suspendLayout.visibility = View.VISIBLE
-            binding.actionButtonsLayout.resumeLayout.visibility = View.GONE
+            binding.actionButtonsLayout.suspendButton.visibility = View.VISIBLE
+            binding.actionButtonsLayout.resumeButton.visibility = View.GONE
         } else if (viewModel.isBakerSuspended()) {
             setContentTitle(R.string.baker_status_baker_suspended_title)
             setExplanation(getString(R.string.validation_suspended_baker_explanation))
-            binding.actionButtonsLayout.suspendLayout.visibility = View.GONE
-            binding.actionButtonsLayout.resumeLayout.visibility = View.VISIBLE
+            binding.actionButtonsLayout.suspendButton.visibility = View.GONE
+            binding.actionButtonsLayout.resumeButton.visibility = View.VISIBLE
         } else {
             binding.statusLayout.visibility = View.GONE
-            binding.actionButtonsLayout.suspendLayout.visibility = View.VISIBLE
-            binding.actionButtonsLayout.resumeLayout.visibility = View.GONE
+            binding.actionButtonsLayout.suspendButton.visibility = View.VISIBLE
+            binding.actionButtonsLayout.resumeButton.visibility = View.GONE
             setContentTitle(R.string.baker_status_baker_registered_title)
         }
 
@@ -113,19 +111,19 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title), Fragmen
     }
 
     private fun initButtons() {
-        binding.actionButtonsLayout.updateBtn.setOnClickListener {
+        binding.actionButtonsLayout.bakerUpdateButton.setOnClickListener {
             openChangeBakerStatusBottomSheet()
         }
 
-        binding.actionButtonsLayout.stopBtn.setOnClickListener {
+        binding.actionButtonsLayout.stopButton.setOnClickListener {
             showBakerRemoveDialog()
         }
 
-        binding.actionButtonsLayout.suspendBtn.setOnClickListener {
+        binding.actionButtonsLayout.suspendButton.setOnClickListener {
             showBakerSuspendDialog()
         }
 
-        binding.actionButtonsLayout.resumeBtn.setOnClickListener {
+        binding.actionButtonsLayout.resumeButton.setOnClickListener {
             gotoBakerResume()
         }
     }

@@ -63,21 +63,14 @@
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <include
-                android:id="@+id/action_buttons_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/size16"
-                layout="@layout/delegation_validation_action_buttons" />
-
             <LinearLayout
                 android:id="@+id/status_list_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
                 android:orientation="vertical"
                 android:background="@drawable/mw24_container_primary_background_default"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="12dp" />
+                android:padding="@dimen/size16" />
 
             <LinearLayout
                 android:id="@+id/cooldown_list_container"
@@ -92,31 +85,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/size16"
-        android:layout_marginVertical="@dimen/size16"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/status_button_top"
-            style="@style/Cryptox_Button_Secondary"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/btn_legal_disclaimer"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:enabled="false"
-            tools:text="Button top"
-            tools:visibility="visible" />
+            android:layout_gravity="center_horizontal"
+            android:text="@string/earn_legal_disclaimer_title"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textColor="@color/mw24_content_secondary"/>
 
-        <Button
-            android:id="@+id/status_button_bottom"
-            style="@style/Cryptox_Button_Secondary"
+        <include
+            android:id="@+id/action_buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:visibility="gone"
-            tools:enabled="false"
-            tools:visibility="visible"
-            tools:text="Button buttom" />
+            android:layout_marginTop="@dimen/size32"
+            android:layout_marginBottom="@dimen/size16"
+            layout="@layout/delegation_validation_action_buttons" />
+
     </LinearLayout>
 
     <include

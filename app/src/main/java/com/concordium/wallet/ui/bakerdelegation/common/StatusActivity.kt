@@ -10,7 +10,7 @@ import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
-import com.concordium.wallet.databinding.DelegationbakerStatusBinding
+import com.concordium.wallet.databinding.DelegationbakerStatusFragmentBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
@@ -18,13 +18,13 @@ import com.concordium.wallet.util.DateTimeUtil.toDate
 abstract class StatusActivity(
     titleId: Int = R.string.app_name,
 ) : BaseActivity(R.layout.delegationbaker_status_fragment, titleId) {
-    protected lateinit var binding: DelegationbakerStatusBinding
+    protected lateinit var binding: DelegationbakerStatusFragmentBinding
     protected lateinit var viewModel: DelegationBakerViewModel
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DelegationbakerStatusBinding.bind(findViewById(R.id.root_layout))
+        binding = DelegationbakerStatusFragmentBinding.bind(findViewById(R.id.root_layout))
         hideActionBarBack(isVisible = true)
 
         initializeViewModel()
@@ -98,8 +98,6 @@ abstract class StatusActivity(
     fun clearState() {
         binding.statusEmptyTextView.text = ""
         binding.statusListContainer.removeAllViews()
-        binding.statusButtonTop.isEnabled = true
-        binding.statusButtonBottom.isEnabled = true
         binding.statusExplanationTextView.isVisible = false
     }
 
@@ -116,7 +114,6 @@ abstract class StatusActivity(
             ""
         )
         if (pendingChange.change == "RemoveStake") {
-            binding.statusButtonTop.isEnabled = false
             addContent(
                 getString(R.string.delegation_status_content_delegation_will_be_stopped),
                 ""
@@ -132,8 +129,6 @@ abstract class StatusActivity(
     }
 
     protected fun addWaitingForTransaction(contentTitleStringId: Int, emptyStateStringId: Int) {
-        binding.statusButtonTop.isEnabled = false
-        binding.statusButtonBottom.isEnabled = false
         binding.statusTextView.setTextColor(getColor(R.color.cryptox_white_main))
         setContentTitle(contentTitleStringId)
         setEmptyState(getString(emptyStateStringId))

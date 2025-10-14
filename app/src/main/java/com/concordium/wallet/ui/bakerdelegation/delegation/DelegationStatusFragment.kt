@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.concordium.wallet.R
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.BakerStakePendingChange.Companion.CHANGE_REMOVE_POOL
@@ -74,10 +73,6 @@ class DelegationStatusFragment : EarnStatusFragment() {
         if (accountDelegation == null) {
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
-            binding.statusButtonBottom.text = getString(R.string.delegation_status_continue)
-            binding.statusButtonBottom.setOnClickListener {
-                continueToCreate()
-            }
             return
         }
 
@@ -87,6 +82,8 @@ class DelegationStatusFragment : EarnStatusFragment() {
         } else {
             binding.statusLayout.visibility = View.GONE
         }
+
+        binding.actionButtonsLayout.delegationUpdateButton.visibility = View.VISIBLE
 
         addContent(
             R.string.delegation_status_content_delegating_account,
@@ -118,23 +115,17 @@ class DelegationStatusFragment : EarnStatusFragment() {
 
         viewModel.bakerDelegationData.account.delegation?.pendingChange?.let { pendingChange ->
             addPendingChange(pendingChange)
-            binding.actionButtonsLayout.stopBtn.isEnabled =
+            binding.actionButtonsLayout.stopButton.isEnabled =
                 pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
         addCooldowns(viewModel.bakerDelegationData.account.cooldowns)
 
-        binding.actionButtonsLayout.stopBtn.setOnClickListener {
+        binding.actionButtonsLayout.stopButton.setOnClickListener {
             continueToDelete()
         }
 
-        viewModel.bakerDelegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
-            if (pendingChangeType == CHANGE_REMOVE_POOL) {
-                binding.statusButtonTop.isEnabled = true
-            }
-        }
-
-        binding.actionButtonsLayout.updateBtn.setOnClickListener {
+        binding.actionButtonsLayout.delegationUpdateButton.setOnClickListener {
             continueToUpdate()
         }
 
@@ -164,13 +155,6 @@ class DelegationStatusFragment : EarnStatusFragment() {
             parentFragmentManager,
             StopDelegationDialog.TAG
         )
-    }
-
-    private fun continueToCreate() {
-        val intent = Intent(requireActivity(), DelegationRegisterAmountActivity::class.java)
-        viewModel.bakerDelegationData.type = REGISTER_DELEGATION
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
-        activity.startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun continueToUpdate() {
