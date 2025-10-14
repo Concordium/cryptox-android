@@ -87,7 +87,6 @@ class DelegationBakerViewModel(
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
-//    private val tokenPriceRepository by inject<TokenPriceRepository>()
 
     companion object {
         const val FILE_NAME_BAKER_KEYS = "validator-credentials.json"
