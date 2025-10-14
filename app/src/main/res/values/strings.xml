@@ -697,11 +697,11 @@
     <string name="earn_subtitle">Below are two options for earning rewards on Concordium Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
-    <string name="earn_delegation_title">Earn up to <font color='#24D4AB'>6%</font></string>
+    <string name="earn_delegation_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
-    <string name="earn_delegation_rewarded_description">Stake your CCD to earn rewards. Rewards can be restaked automatically.</string>
-    <string name="earn_delegation_options_title">Earn your way</string>
-    <string name="earn_delegation_options_description">You can delegate to an open pool of your choice, or stake using passive delegation.</string>
+    <string name="earn_delegation_rewarded_description">Stake your CCD to earn staking rewards. Rewards can be restaked automatically.</string>
+    <string name="earn_delegation_options_title">Control tour stake</string>
+    <string name="earn_delegation_options_description">Choose between passive pool delegation or selecting a validator.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
     <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
     <plurals name="earn_delegation_update_description">
@@ -710,10 +710,16 @@
     </plurals>
 
     <string name="start_earning_button">Start earning</string>
-    <string name="read_more_button">Read more</string>
-    <string name="earn_baker_button">Or become a validator (advanced)</string>
+    <string name="read_more_button">Read More</string>
+    <string name="earn_baker_button">Become a Validator (advanced)</string>
     <string name="earn_notice">Estimated rewards are based on past results. Actual returns may vary.</string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
+    <string name="earn_dialog_close">Close</string>
+    <string name="earn_legal_disclaimer_title">Legal Disclaimer</string>
+    <string name="earn_legal_disclaimer_description">Staking rewards are determined by the network protocol and may change. Rewards are not guaranteed and may be lower than projected. This feature does not constitute an investment product, financial service, or guarantee of returns.
+        \n\n<b>Jurisdictional Restriction:</b> Availability may vary depending on your jurisdiction. Certain users may not be eligible due to local regulations.
+        \n\n<b>User Responsibility Clause:</b> You are responsible for understanding the risks of staking and ensuring compliance with laws applicable to you.
+    </string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>

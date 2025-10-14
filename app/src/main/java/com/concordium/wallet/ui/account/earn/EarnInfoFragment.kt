@@ -13,6 +13,7 @@ import com.concordium.wallet.data.model.AccountCooldown
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentEarnInfoBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.CooldownView
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -58,6 +59,9 @@ class EarnInfoFragment : Fragment() {
         }
         binding.btnReadMore.setOnClickListener {
             gotoReadMore()
+        }
+        binding.btnLegalDisclaimer.setOnClickListener {
+            showLegalDisclaimer()
         }
         addCooldowns(account.cooldowns)
     }
@@ -120,6 +124,13 @@ class EarnInfoFragment : Fragment() {
             BakerDelegationData(account, type = ProxyRepository.REGISTER_BAKER)
         )
         activity.startActivityForResultAndHistoryCheck(intent)
+    }
+
+    private fun showLegalDisclaimer() {
+        EarnLegalDisclaimerDialog().showSingle(
+            requireActivity().supportFragmentManager,
+            EarnLegalDisclaimerDialog.TAG
+        )
     }
 
     companion object {

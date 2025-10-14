@@ -183,12 +183,13 @@
         android:id="@+id/manage_tokens"
         style="@style/MW24_Manage_Token_List_Button"
         android:layout_below="@id/content"
-        android:layout_marginTop="@dimen/size24"
+        android:layout_marginVertical="@dimen/size24"
         android:clickable="true"
         android:text="@string/cis_manage"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
