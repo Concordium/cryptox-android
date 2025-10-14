@@ -35,8 +35,6 @@ import com.concordium.wallet.ui.account.accountsoverview.SeedPhraseBackupNoticeD
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.common.delegates.EarnDelegate
-import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
@@ -48,7 +46,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import java.math.BigInteger
 
-class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl() {
+class AccountDetailsFragment : BaseFragment() {
 
     private lateinit var binding: ActivityAccountDetailsBinding
     private lateinit var mainViewModel: MainViewModel

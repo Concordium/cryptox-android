@@ -16,14 +16,11 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountdetails.AccountReleaseScheduleActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.common.delegates.EarnDelegate
-import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 
-class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details),
-    EarnDelegate by EarnDelegateImpl() {
+class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
     private lateinit var binding: ActivityTokenDetailsBinding
 
     private val viewModel: TokenDetailsViewModel by viewModels()
