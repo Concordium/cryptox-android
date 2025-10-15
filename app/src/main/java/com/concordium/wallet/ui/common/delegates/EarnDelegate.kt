@@ -33,7 +33,11 @@ class EranDelegateImpl : EarnDelegate {
             }
 
             (account.baker != null || hasPendingBakingTransactions) -> {
-                launchFragment(BakerStatusFragment())
+                launchFragment(
+                    BakerStatusFragment.newInstance(
+                        BakerStatusFragment.setBundle(account)
+                    )
+                )
             }
 
             else -> launchFragment(

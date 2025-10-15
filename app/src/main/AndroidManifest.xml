@@ -427,11 +427,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />
         <activity
-            android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
