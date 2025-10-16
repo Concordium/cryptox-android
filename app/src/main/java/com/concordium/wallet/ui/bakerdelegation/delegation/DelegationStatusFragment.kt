@@ -12,7 +12,6 @@ import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.extension.showSingle
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.EarnStatusFragment
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
@@ -145,7 +144,6 @@ class DelegationStatusFragment : EarnStatusFragment() {
                 val intent = Intent(requireActivity(), DelegationRemoveActivity::class.java)
                 intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
                 activity.startActivityForResultAndHistoryCheck(intent)
-                activity.finishUntilClass(MainActivity::class.java.canonicalName)
             }
         }
     }

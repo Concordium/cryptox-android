@@ -139,6 +139,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amount.setText(CurrencyUtil.formatGTU(viewModel.getMaxDelegationBalance()))
         }
 
+        binding.legalDisclaimerButton.setOnClickListener {
+            showLegalDisclaimerDialog()
+        }
+
         binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance())
 
         viewModel.bakerDelegationData.account.let { account ->

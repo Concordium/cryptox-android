@@ -18,8 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@id/pool_registration_continue"
+        android:layout_marginBottom="@dimen/size8"
+        app:layout_constraintBottom_toTopOf="@id/legal_disclaimer_button"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <LinearLayout
@@ -368,6 +368,18 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/legal_disclaimer_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size32"
+        android:text="@string/earn_legal_disclaimer_title"
+        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+        android:textColor="@color/mw24_content_secondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/pool_registration_continue"/>
 
     <Button
         android:id="@+id/pool_registration_continue"

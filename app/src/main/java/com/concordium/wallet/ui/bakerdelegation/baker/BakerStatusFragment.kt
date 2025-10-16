@@ -209,7 +209,6 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
         val intent = Intent(requireActivity(), BakerRegistrationConfirmationActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         activity.startActivityForResultAndHistoryCheck(intent)
-        activity.finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     private fun showBakerRemoveDialog() {

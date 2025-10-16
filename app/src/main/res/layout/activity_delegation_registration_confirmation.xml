@@ -174,7 +174,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -183,19 +183,41 @@
         android:layout_marginVertical="20dp"
         android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/legal_disclaimer_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size32"
+            android:text="@string/earn_legal_disclaimer_title"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textColor="@color/mw24_content_secondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <com.concordium.wallet.uicore.button.SliderButton
             android:id="@+id/submit_delegation_transaction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/delegation_register_delegation_submit_delegation_transaction" />
+            android:layout_marginTop="@dimen/size32"
+            android:text="@string/delegation_register_delegation_submit_delegation_transaction"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/legal_disclaimer_button" />
 
         <Button
             android:id="@+id/submit_delegation_finish"
             style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/size32"
             android:text="@string/delegation_register_delegation_close"
-            android:visibility="gone" />
-    </RelativeLayout>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/legal_disclaimer_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
         android:id="@+id/include_progress"

@@ -54,6 +54,9 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         }
         showWaiting(binding.includeProgress.progressLayout, true)
         viewModel.loadChainParameters()
+        binding.legalDisclaimerButton.setOnClickListener {
+            showLegalDisclaimerDialog()
+        }
     }
 
     private fun updateViews() {

@@ -82,6 +82,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             onContinueClicked()
         }
 
+        binding.legalDisclaimerButton.setOnClickListener {
+            showLegalDisclaimerDialog()
+        }
+
         binding.poolId.setTextChangeListener(
             object : TextWatcher {
                 override fun beforeTextChanged(

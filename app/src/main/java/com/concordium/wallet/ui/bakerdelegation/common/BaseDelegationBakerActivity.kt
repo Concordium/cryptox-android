@@ -8,6 +8,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.account.earn.EarnLegalDisclaimerDialog
 import com.concordium.wallet.ui.bakerdelegation.dialog.NoChangeDialog
 import com.concordium.wallet.ui.bakerdelegation.dialog.NotEnoughFundsForFeeDialog
 import com.concordium.wallet.ui.base.BaseActivity
@@ -96,4 +97,11 @@ abstract class BaseDelegationBakerActivity(
     }
 
     protected open fun initViews() {}
+
+    protected fun showLegalDisclaimerDialog() {
+        EarnLegalDisclaimerDialog().showSingle(
+            supportFragmentManager,
+            EarnLegalDisclaimerDialog.TAG
+        )
+    }
 }
