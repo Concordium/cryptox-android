@@ -27,6 +27,12 @@ class DelegationStatusFragment : EarnStatusFragment() {
     val account: Account by lazy {
         requireArguments().getSerializable(EXTRA_ACCOUNT) as Account
     }
+    val hasPendingDelegationTransactions: Boolean by lazy {
+        requireArguments().getBoolean(
+            EXTRA_HAS_PENDING_DELEGATION_TRANSACTIONS,
+            false
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +57,13 @@ class DelegationStatusFragment : EarnStatusFragment() {
     }
 
     override fun initViewModel() {
-        viewModel.initialize(BakerDelegationData(account = account, type = ""))
+        viewModel.initialize(
+            BakerDelegationData(
+                account = account,
+                isTransactionInProgress = hasPendingDelegationTransactions,
+                type = UPDATE_DELEGATION
+            )
+        )
     }
 
     override fun initView() {
@@ -65,7 +77,7 @@ class DelegationStatusFragment : EarnStatusFragment() {
                 R.string.delegation_status_waiting_to_finalize_title,
                 R.string.delegation_status_waiting_to_finalize
             )
-            binding.actionButtonsLayout.root.visibility = View.GONE
+            binding.buttonLayout.visibility = View.GONE
             return
         }
 
@@ -165,13 +177,20 @@ class DelegationStatusFragment : EarnStatusFragment() {
     companion object {
         const val TAG = "DelegationStatusFragment"
         private const val EXTRA_ACCOUNT = "extra_account"
+        private const val EXTRA_HAS_PENDING_DELEGATION_TRANSACTIONS =
+            "extra_has_pending_delegation_transactions"
 
         fun newInstance(bundle: Bundle) = DelegationStatusFragment().apply {
             arguments = bundle
         }
 
-        fun setBundle(account: Account) = Bundle().apply {
-            putSerializable(EXTRA_ACCOUNT, account)
-        }
+        fun setBundle(account: Account, hasPendingDelegationTransactions: Boolean) =
+            Bundle().apply {
+                putSerializable(EXTRA_ACCOUNT, account)
+                putBoolean(
+                    EXTRA_HAS_PENDING_DELEGATION_TRANSACTIONS,
+                    hasPendingDelegationTransactions
+                )
+            }
     }
 }

@@ -27,7 +27,10 @@ class EranDelegateImpl : EarnDelegate {
             (account.delegation != null || hasPendingDelegationTransactions) -> {
                 launchFragment(
                     DelegationStatusFragment.newInstance(
-                        DelegationStatusFragment.setBundle(account)
+                        DelegationStatusFragment.setBundle(
+                            account,
+                            hasPendingDelegationTransactions
+                        )
                     )
                 )
             }
@@ -35,7 +38,10 @@ class EranDelegateImpl : EarnDelegate {
             (account.baker != null || hasPendingBakingTransactions) -> {
                 launchFragment(
                     BakerStatusFragment.newInstance(
-                        BakerStatusFragment.setBundle(account)
+                        BakerStatusFragment.setBundle(
+                            account,
+                            hasPendingBakingTransactions
+                        )
                     )
                 )
             }

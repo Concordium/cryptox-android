@@ -27,8 +27,21 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
         requireArguments().getSerializable(EXTRA_ACCOUNT) as Account
     }
 
+    val hasPendingBakingTransactions by lazy {
+        requireArguments().getBoolean(
+            EXTRA_HAS_PENDING_BAKING_TRANSACTIONS,
+            false
+        )
+    }
+
     override fun initViewModel() {
-        viewModel.initialize(BakerDelegationData(account = account, type = ""))
+        viewModel.initialize(
+            BakerDelegationData(
+                account = account,
+                isTransactionInProgress = hasPendingBakingTransactions,
+                type = ProxyRepository.REGISTER_BAKER
+            )
+        )
     }
 
     override fun initView() {
@@ -42,7 +55,7 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
                 R.string.baker_status_baker_waiting_title,
                 R.string.baker_status_baker_waiting
             )
-            binding.actionButtonsLayout.root.visibility = View.GONE
+            binding.buttonLayout.visibility = View.GONE
             return
         }
 
@@ -206,7 +219,10 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
         viewModel.bakerDelegationData.metadataUrl = null
 
         val intent = Intent(requireActivity(), BakerRegistrationConfirmationActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData
+        )
         activity.startActivityForResultAndHistoryCheck(intent)
     }
 
@@ -251,13 +267,19 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
     companion object {
         const val TAG = "BakerStatusFragment"
         private const val EXTRA_ACCOUNT = "extra_account"
+        private const val EXTRA_HAS_PENDING_BAKING_TRANSACTIONS =
+            "extra_has_pending_baking_transactions"
 
         fun newInstance(bundle: Bundle) = BakerStatusFragment().apply {
             arguments = bundle
         }
 
-        fun setBundle(account: Account) = Bundle().apply {
+        fun setBundle(account: Account, hasPendingBakingTransactions: Boolean) = Bundle().apply {
             putSerializable(EXTRA_ACCOUNT, account)
+            putBoolean(
+                EXTRA_HAS_PENDING_BAKING_TRANSACTIONS,
+                hasPendingBakingTransactions
+            )
         }
     }
 }
