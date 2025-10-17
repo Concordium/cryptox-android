@@ -11,7 +11,6 @@ import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.extension.showSingle
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.EarnStatusFragment
@@ -228,7 +227,6 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
             }
         )
         activity.startActivityForResultAndHistoryCheck(intent)
-        activity.finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     private fun showBakerSuspendDialog() {
@@ -248,7 +246,6 @@ class BakerStatusFragment : EarnStatusFragment(), FragmentResultListener {
             }
         )
         activity.startActivityForResultAndHistoryCheck(intent)
-        activity.finishUntilClass(MainActivity::class.java.canonicalName)
     }
 
     companion object {

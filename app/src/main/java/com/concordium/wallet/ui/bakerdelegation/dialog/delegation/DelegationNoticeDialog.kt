@@ -12,8 +12,10 @@ import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
 class DelegationNoticeDialog : BaseGradientDialogFragment() {
 
     private lateinit var binding: DialogDelegationNoticeBinding
-    private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE)?: "" }
-    private val showReviewDialog: Boolean by lazy { arguments?.getBoolean(SHOW_REVIEW_DIALOG)?: false }
+    private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE) ?: "" }
+    private val showReviewDialog: Boolean by lazy {
+        arguments?.getBoolean(SHOW_REVIEW_DIALOG) ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,17 +31,15 @@ class DelegationNoticeDialog : BaseGradientDialogFragment() {
 
         binding.detailsTextView.text = noticeMessage
 
-        listOf(binding.closeButton, binding.okButton).forEach {
-            it.setOnClickListener {
-                dismiss()
-                val intent = Intent(requireContext(), MainActivity::class.java).apply {
-                    if (showReviewDialog) {
-                        putExtra(MainActivity.EXTRA_SHOW_REVIEW_POPUP, true)
-                    }
+        binding.okButton.setOnClickListener {
+            dismiss()
+            val intent = Intent(requireContext(), MainActivity::class.java).apply {
+                if (showReviewDialog) {
+                    putExtra(MainActivity.EXTRA_SHOW_REVIEW_POPUP, true)
                 }
-                startActivity(intent)
-                requireActivity().finishAffinity()
             }
+            startActivity(intent)
+            requireActivity().finishAffinity()
         }
     }
 
