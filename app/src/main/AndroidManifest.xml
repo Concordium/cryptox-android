@@ -463,11 +463,6 @@
             android:theme="@style/MW24_Screen"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".ui.bakerdelegation.baker.BakerStatusActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
             android:name=".ui.bakerdelegation.baker.BakerRegisterAmountActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

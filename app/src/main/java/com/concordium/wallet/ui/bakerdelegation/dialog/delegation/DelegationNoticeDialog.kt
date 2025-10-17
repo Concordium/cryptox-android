@@ -37,6 +37,7 @@ class DelegationNoticeDialog : BaseGradientDialogFragment() {
                 if (showReviewDialog) {
                     putExtra(MainActivity.EXTRA_SHOW_REVIEW_POPUP, true)
                 }
+                putExtra(MainActivity.EXTRA_GOTO_EARN, true)
             }
             startActivity(intent)
             requireActivity().finishAffinity()
