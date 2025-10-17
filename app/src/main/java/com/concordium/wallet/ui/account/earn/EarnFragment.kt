@@ -7,15 +7,16 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentEarnBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.common.delegates.EarnDelegate
-import com.concordium.wallet.ui.common.delegates.EranDelegateImpl
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusFragment
+import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class EarnFragment : Fragment(), EarnDelegate by EranDelegateImpl() {
+class EarnFragment : Fragment() {
 
     private lateinit var binding: FragmentEarnBinding
 
@@ -52,5 +53,40 @@ class EarnFragment : Fragment(), EarnDelegate by EranDelegateImpl() {
         childFragmentManager.beginTransaction()
             .replace(binding.earnContainer.id, fragment)
             .commit()
+    }
+
+    private fun launchEarn(
+        account: Account,
+        hasPendingDelegationTransactions: Boolean,
+        hasPendingBakingTransactions: Boolean,
+        launchFragment: (Fragment) -> Unit
+    ) {
+        when {
+            (account.delegation != null || hasPendingDelegationTransactions) -> {
+                launchFragment(
+                    DelegationStatusFragment.newInstance(
+                        DelegationStatusFragment.setBundle(
+                            account,
+                            hasPendingDelegationTransactions
+                        )
+                    )
+                )
+            }
+
+            (account.baker != null || hasPendingBakingTransactions) -> {
+                launchFragment(
+                    BakerStatusFragment.newInstance(
+                        BakerStatusFragment.setBundle(
+                            account,
+                            hasPendingBakingTransactions
+                        )
+                    )
+                )
+            }
+
+            else -> launchFragment(
+                EarnInfoFragment.newInstance(EarnInfoFragment.setBundle(account))
+            )
+        }
     }
 }
