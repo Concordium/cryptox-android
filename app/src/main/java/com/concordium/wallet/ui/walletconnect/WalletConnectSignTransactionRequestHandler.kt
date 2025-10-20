@@ -173,6 +173,7 @@ class WalletConnectSignTransactionRequestHandler(
                 ->
                     CCDToken(
                         account = account,
+                        withTotalBalance = true,
                     )
             }
         } catch (error: Exception) {

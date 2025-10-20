@@ -10,7 +10,10 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.AccountInfoRowBinding
 
-class ChooseAccountListAdapter(private val context: Context, var arrayList: List<Account>) : BaseAdapter() {
+class ChooseAccountListAdapter(
+    private val context: Context,
+    private var arrayList: List<Account>,
+) : BaseAdapter() {
     private var chooseAccountClickListener: ChooseAccountClickListener? = null
 
     fun interface ChooseAccountClickListener {
@@ -47,7 +50,7 @@ class ChooseAccountListAdapter(private val context: Context, var arrayList: List
         val atDisposalBalance = account.balanceAtDisposal
         holder.binding.accBalance.text = context.getString(
             R.string.acc_balance_placeholder,
-            CurrencyUtil.formatGTU(atDisposalBalance)
+            "${CurrencyUtil.formatGTU(atDisposalBalance)} CCD",
         )
 
         holder.binding.root.setOnClickListener {

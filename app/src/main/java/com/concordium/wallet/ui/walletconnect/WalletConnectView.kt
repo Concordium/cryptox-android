@@ -371,9 +371,7 @@ class WalletConnectView(
             accAddress.text = account.getAccountName()
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    account.balance
-                )
+                "${CurrencyUtil.formatGTU(token.balance, token)} ${token.symbol}"
             )
             accBalanceAtDisposal.isVisible = true
             accBalanceAtDisposal.text = root.context.getString(

@@ -445,7 +445,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="network_comission">Network commission</string>
     <string name="acc_address_placeholder">%1$s (%2$s)</string>
-    <string name="acc_balance_placeholder">Balance: %1$s CCD</string>
+    <string name="acc_balance_placeholder">Balance: %1$s</string>
     <string name="acc_balance_at_disposal_placeholder">At Disposal: %1$s CCD</string>
     <string name="amount">%1$s CCD</string>
     <string name="amount_max">up to %1$s CCD</string>
