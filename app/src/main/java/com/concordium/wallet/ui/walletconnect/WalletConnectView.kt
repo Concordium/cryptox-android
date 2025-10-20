@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.View
@@ -19,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
@@ -63,7 +65,8 @@ class WalletConnectView(
         viewModel.stateFlow.collect(this) { state ->
             when (state) {
                 is WalletConnectViewModel.State.SessionProposalReview,
-                is WalletConnectViewModel.State.SessionRequestReview -> {
+                is WalletConnectViewModel.State.SessionRequestReview,
+                -> {
                     val lifecycleState = lifecycle.currentState
                     if (lifecycleState >= Lifecycle.State.CREATED
                         && lifecycleState < Lifecycle.State.STARTED
@@ -118,6 +121,7 @@ class WalletConnectView(
                     method = state.method,
                     receiver = state.receiver,
                     amount = state.amount,
+                    token = state.token,
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
@@ -206,7 +210,8 @@ class WalletConnectView(
 
                 val duration = when (event.error) {
                     WalletConnectViewModel.Error.ConnectionFailed,
-                    WalletConnectViewModel.Error.AccountNotFound->
+                    WalletConnectViewModel.Error.AccountNotFound,
+                    ->
                         Toast.LENGTH_LONG
 
                     else ->
@@ -233,6 +238,7 @@ class WalletConnectView(
                         }
                     }
             }
+
             else -> {}
         }
     }
@@ -312,6 +318,7 @@ class WalletConnectView(
         method: String,
         receiver: String,
         amount: BigInteger,
+        token: Token,
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
@@ -325,6 +332,7 @@ class WalletConnectView(
                 method = method,
                 receiver = receiver,
                 amount = amount,
+                token = token,
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
@@ -334,12 +342,14 @@ class WalletConnectView(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initTransactionRequestReviewView(
         view: FragmentWalletConnectTransactionRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
         method: String,
         receiver: String,
         amount: BigInteger,
+        token: Token,
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
@@ -377,7 +387,7 @@ class WalletConnectView(
         }
 
         amountTextView.text =
-            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(amount))
+            "${CurrencyUtil.formatGTU(amount, token)} ${token.symbol}"
         feeTextView.text =
             root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
 
@@ -516,7 +526,7 @@ class WalletConnectView(
         accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
         currentStatement: Int,
-        provableState: WalletConnectViewModel.ProofProvableState
+        provableState: WalletConnectViewModel.ProofProvableState,
     ) {
         getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
             initIdentityProofRequestReview(
@@ -538,7 +548,7 @@ class WalletConnectView(
         appMetadata: WalletConnectViewModel.AppMetadata,
         statements: List<RequestStatement>,
         currentStatement: Int,
-        provableState: WalletConnectViewModel.ProofProvableState
+        provableState: WalletConnectViewModel.ProofProvableState,
     ) = with(view) {
         Glide.with(appIconImageView.context)
             .load(appMetadata.iconUrl)
