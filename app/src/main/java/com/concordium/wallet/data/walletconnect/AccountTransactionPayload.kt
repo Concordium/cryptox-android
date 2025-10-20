@@ -1,10 +1,12 @@
 package com.concordium.wallet.data.walletconnect
 
+import com.concordium.sdk.transactions.tokens.TransferTokenOperation
 import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.google.gson.annotations.SerializedName
 import java.math.BigInteger
 
 sealed interface AccountTransactionPayload {
+
     data class Update(
         val address: ContractAddress,
         val amount: BigInteger,
@@ -28,5 +30,10 @@ sealed interface AccountTransactionPayload {
         val toAddress: String
     ): AccountTransactionPayload
 
-    // The remaining type, InitContract, is not needed for now.
+    data class PltTransfer(
+        val tokenId: String,
+        val transfer: TransferTokenOperation,
+    ): AccountTransactionPayload
+
+    // InitContract is not needed for now.
 }

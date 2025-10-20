@@ -15,6 +15,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -1159,6 +1160,7 @@ private constructor(
                 val method: String,
                 val receiver: String,
                 val amount: BigInteger,
+                val token: Token,
                 val estimatedFee: BigInteger,
                 val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,

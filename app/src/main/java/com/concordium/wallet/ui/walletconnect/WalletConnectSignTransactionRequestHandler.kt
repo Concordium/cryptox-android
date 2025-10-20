@@ -1,6 +1,9 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.content.Context
+import com.concordium.sdk.transactions.TokenUpdate
+import com.concordium.sdk.transactions.tokens.TokenOperation
+import com.concordium.sdk.types.AccountAddress
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
@@ -10,6 +13,7 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
@@ -25,6 +29,7 @@ import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.google.gson.Gson
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.math.BigInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -174,6 +179,9 @@ class WalletConnectSignTransactionRequestHandler(
                     method = method,
                     receiver = transactionPayload.toAddress,
                     amount = transactionPayload.amount,
+                    token = CCDToken(
+                        account = account,
+                    ),
                     estimatedFee = transactionCost.cost,
                     account = account,
                     canShowDetails = false,
@@ -186,53 +194,105 @@ class WalletConnectSignTransactionRequestHandler(
                     method = method,
                     receiver = transactionPayload.address.run { "$index, $subIndex" },
                     amount = transactionPayload.amount,
+                    token = CCDToken(
+                        account = account,
+                    ),
                     estimatedFee = transactionCost.cost,
                     account = account,
                     canShowDetails = true,
                     isEnoughFunds = transactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
                     appMetadata = appMetadata,
                 )
+
+            is AccountTransactionPayload.PltTransfer -> {
+                // TODO fetch the token and consider it when checking if there is enough funds.
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = method,
+                    receiver = AccountAddress
+                        .from(transactionPayload.transfer.recipient.data)
+                        .encoded(),
+                    amount = BigInteger(1, transactionPayload.transfer.amount.value.bytes),
+                    token = CCDToken(
+                        account = account,
+                    ),
+                    estimatedFee = transactionCost.cost,
+                    account = account,
+                    canShowDetails = false,
+                    isEnoughFunds = transactionCost.cost <= accountAtDisposalBalance,
+                    appMetadata = appMetadata,
+                )
+            }
         }
 
         emitState(reviewState)
     }
 
-    @Suppress("IfThenToElvis")
     private suspend fun getTransactionCost(): TransactionCost =
         when (val transactionPayload = this.transactionPayload) {
             is AccountTransactionPayload.Transfer ->
                 getSimpleTransferCost()
 
-            is AccountTransactionPayload.Update -> {
-                val chainParameters = proxyRepository.getChainParameters()
-
-                val maxEnergy: Long =
-                    if (transactionPayload.maxEnergy != null) {
-                        // Use the legacy total value if provided.
-                        transactionPayload.maxEnergy
-                    } else if (transactionPayload.maxContractExecutionEnergy != null) {
-                        // Calculate the total value locally if only the execution energy provided.
-                        TransactionEnergyCostCalculator.getContractTransactionMaxEnergy(
-                            receiveName = transactionPayload.receiveName,
-                            messageHex = transactionPayload.message,
-                            maxContractExecutionEnergy = transactionPayload.maxContractExecutionEnergy,
-                        )
-                    } else {
-                        error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
-                    }
-
-                TransactionCost(
-                    energy = maxEnergy,
-                    euroPerEnergy = chainParameters.euroPerEnergy,
-                    microGTUPerEuro = chainParameters.microGtuPerEuro,
+            is AccountTransactionPayload.Update ->
+                getContractUpdateCost(
+                    updatePayload = transactionPayload,
                 )
-            }
+
+            is AccountTransactionPayload.PltTransfer -> getProtocolLevelTokenTransferCost(
+                tokenUpdatePayload = getProtocolLevelTokenTransferPayload(
+                    transactionPayload = transactionPayload,
+                )
+            )
         }
 
     private suspend fun getSimpleTransferCost(
     ): TransactionCost = suspendCancellableCoroutine { continuation ->
         val backendRequest = proxyRepository.getTransferCost(
             type = ProxyRepository.SIMPLE_TRANSFER,
+            success = continuation::resume,
+            failure = continuation::resumeWithException,
+        )
+        continuation.invokeOnCancellation { backendRequest.dispose() }
+    }
+
+    @Suppress("IfThenToElvis")
+    private suspend fun getContractUpdateCost(
+        updatePayload: AccountTransactionPayload.Update,
+    ): TransactionCost {
+        val chainParameters = proxyRepository.getChainParameters()
+
+        val maxEnergy: Long =
+            if (updatePayload.maxEnergy != null) {
+                // Use the legacy total value if provided.
+                updatePayload.maxEnergy
+            } else if (updatePayload.maxContractExecutionEnergy != null) {
+                // Calculate the total value locally if only the execution energy provided.
+                TransactionEnergyCostCalculator.getContractTransactionMaxEnergy(
+                    receiveName = updatePayload.receiveName,
+                    messageHex = updatePayload.message,
+                    maxContractExecutionEnergy = updatePayload.maxContractExecutionEnergy,
+                )
+            } else {
+                error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
+            }
+
+        return TransactionCost(
+            energy = maxEnergy,
+            euroPerEnergy = chainParameters.euroPerEnergy,
+            microGTUPerEuro = chainParameters.microGtuPerEuro,
+        )
+    }
+
+    private suspend fun getProtocolLevelTokenTransferCost(
+        tokenUpdatePayload: TokenUpdate,
+    ): TransactionCost = suspendCancellableCoroutine { continuation ->
+        val backendRequest = proxyRepository.getTransferCost(
+            type = ProxyRepository.TOKEN_UPDATE,
+            sender = account.address,
+            tokenId = tokenUpdatePayload.tokenSymbol,
+            listOperationsSize = tokenUpdatePayload.operationsSerialized.size,
+            tokenOperationTypeCount = tokenUpdatePayload.operations
+                .groupBy(TokenOperation::getType)
+                .mapValues { it.value.size },
             success = continuation::resume,
             failure = continuation::resumeWithException,
         )
@@ -249,6 +309,14 @@ class WalletConnectSignTransactionRequestHandler(
         )
         continuation.invokeOnCancellation { backendRequest.dispose() }
     }
+
+    private fun getProtocolLevelTokenTransferPayload(
+        transactionPayload: AccountTransactionPayload.PltTransfer,
+    ): TokenUpdate =
+        TokenUpdate.builder()
+            .tokenSymbol(transactionPayload.tokenId)
+            .operation(transactionPayload.transfer)
+            .build()
 
     suspend fun onAuthorizedForApproval(
         accountKeys: AccountData,
@@ -267,6 +335,9 @@ class WalletConnectSignTransactionRequestHandler(
 
                 is AccountTransactionPayload.Update ->
                     "Update"
+
+                is AccountTransactionPayload.PltTransfer ->
+                    TODO("Implement submitting token update")
             },
         )
 
@@ -384,7 +455,9 @@ class WalletConnectSignTransactionRequestHandler(
 
     private fun getTransactionMethodName(transactionPayload: AccountTransactionPayload) =
         when (transactionPayload) {
-            is AccountTransactionPayload.Transfer ->
+            is AccountTransactionPayload.Transfer,
+            is AccountTransactionPayload.PltTransfer,
+            ->
                 context.getString(R.string.transaction_type_transfer)
 
             is AccountTransactionPayload.Update ->
