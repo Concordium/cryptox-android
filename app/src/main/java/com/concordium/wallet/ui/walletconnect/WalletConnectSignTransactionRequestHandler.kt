@@ -3,10 +3,10 @@ package com.concordium.wallet.ui.walletconnect
 import android.content.Context
 import com.concordium.sdk.transactions.TokenUpdate
 import com.concordium.sdk.transactions.tokens.TokenOperation
-import com.concordium.sdk.types.AccountAddress
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
@@ -14,6 +14,8 @@ import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ProtocolLevelToken
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionCost
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
@@ -42,6 +44,7 @@ class WalletConnectSignTransactionRequestHandler(
     private val onFinish: () -> Unit,
     private val setIsSubmittingTransaction: (isSubmitting: Boolean) -> Unit,
     private val proxyRepository: ProxyRepository,
+    private val tokensInteractor: TokensInteractor,
     private val context: Context,
 ) {
     private lateinit var account: Account
@@ -131,6 +134,7 @@ class WalletConnectSignTransactionRequestHandler(
     ) {
         val accountNonce: AccountNonce
         val transactionCost: TransactionCost
+        val token: Token
 
         Log.d("loading_data")
 
@@ -147,6 +151,29 @@ class WalletConnectSignTransactionRequestHandler(
             } catch (error: Exception) {
                 Log.e("failed_loading_transaction_cost", error)
                 throw error
+            }
+
+            token = when (val transactionPayload = this.transactionPayload) {
+                is AccountTransactionPayload.PltTransfer ->
+                    tokensInteractor
+                        .loadTokens(
+                            accountAddress = account.address,
+                            loadBalances = false,
+                            onlyTransferable = true,
+                            addCCDToken = false,
+                        )
+                        .getOrThrow()
+                        .first {
+                            it is ProtocolLevelToken
+                                    && it.tokenId == transactionPayload.tokenId
+                        }
+
+                is AccountTransactionPayload.Transfer,
+                is AccountTransactionPayload.Update,
+                ->
+                    CCDToken(
+                        account = account,
+                    )
             }
         } catch (error: Exception) {
             respondError("Failed loading transaction data: $error")
@@ -179,9 +206,7 @@ class WalletConnectSignTransactionRequestHandler(
                     method = method,
                     receiver = transactionPayload.toAddress,
                     amount = transactionPayload.amount,
-                    token = CCDToken(
-                        account = account,
-                    ),
+                    token = token,
                     estimatedFee = transactionCost.cost,
                     account = account,
                     canShowDetails = false,
@@ -194,9 +219,7 @@ class WalletConnectSignTransactionRequestHandler(
                     method = method,
                     receiver = transactionPayload.address.run { "$index, $subIndex" },
                     amount = transactionPayload.amount,
-                    token = CCDToken(
-                        account = account,
-                    ),
+                    token = token,
                     estimatedFee = transactionCost.cost,
                     account = account,
                     canShowDetails = true,
@@ -205,20 +228,19 @@ class WalletConnectSignTransactionRequestHandler(
                 )
 
             is AccountTransactionPayload.PltTransfer -> {
-                // TODO fetch the token and consider it when checking if there is enough funds.
+                val tokenAmount =
+                    BigInteger(1, transactionPayload.transfer.amount.value.bytes)
+
                 State.SessionRequestReview.TransactionRequestReview(
                     method = method,
-                    receiver = AccountAddress
-                        .from(transactionPayload.transfer.recipient.data)
-                        .encoded(),
-                    amount = BigInteger(1, transactionPayload.transfer.amount.value.bytes),
-                    token = CCDToken(
-                        account = account,
-                    ),
+                    receiver = transactionPayload.transfer.recipient.address.encoded(),
+                    amount = tokenAmount,
+                    token = token,
                     estimatedFee = transactionCost.cost,
                     account = account,
                     canShowDetails = false,
-                    isEnoughFunds = transactionCost.cost <= accountAtDisposalBalance,
+                    isEnoughFunds = transactionCost.cost <= accountAtDisposalBalance
+                            && tokenAmount <= token.balance,
                     appMetadata = appMetadata,
                 )
             }

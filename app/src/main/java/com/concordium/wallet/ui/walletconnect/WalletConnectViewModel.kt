@@ -11,6 +11,7 @@ import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
@@ -39,6 +40,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.math.BigInteger
 
 /**
@@ -71,7 +74,8 @@ private constructor(
     private val defaultWalletDelegate: SignClient.WalletDelegate,
 ) : AndroidViewModel(application),
     CoreClient.CoreDelegate by defaultCoreDelegate,
-    SignClient.WalletDelegate by defaultWalletDelegate {
+    SignClient.WalletDelegate by defaultWalletDelegate,
+    KoinComponent {
 
     /**
      * A constructor for Android.
@@ -110,6 +114,7 @@ private constructor(
     private val identityRepository: IdentityRepository by lazy {
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     }
+    private val tokensInteractor: TokensInteractor by inject()
 
     private lateinit var sessionProposalPublicKey: String
     private lateinit var sessionProposalNamespaceKey: String
@@ -155,6 +160,7 @@ private constructor(
             onFinish = ::onSessionRequestHandlingFinished,
             setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
             proxyRepository = proxyRepository,
+            tokensInteractor = tokensInteractor,
             context = application,
         )
     }
