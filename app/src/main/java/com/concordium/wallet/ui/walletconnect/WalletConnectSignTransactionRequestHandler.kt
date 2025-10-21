@@ -17,7 +17,6 @@ import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionCost
-import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.TransactionEnergyCostCalculator
 import com.concordium.wallet.data.walletconnect.AccountTransactionParams
@@ -37,7 +36,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.jvm.optionals.getOrNull
 
 class WalletConnectSignTransactionRequestHandler(
-    private val allowedAccountTransactionTypes: Set<TransactionType>,
     private val respondSuccess: (result: String) -> Unit,
     private val respondError: (message: String) -> Unit,
     private val emitEvent: (event: Event) -> Unit,
@@ -60,11 +58,7 @@ class WalletConnectSignTransactionRequestHandler(
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
         val transactionParams: AccountTransactionParams = try {
-            AccountTransactionParams.fromSessionRequestParams(params).also { parsedParams ->
-                check(parsedParams.type in allowedAccountTransactionTypes) {
-                    "Transaction type '${parsedParams.type}' is not supported"
-                }
-            }
+            AccountTransactionParams.fromSessionRequestParams(params)
         } catch (error: Exception) {
             Log.e(
                 "failed_parsing_session_request_params:" +

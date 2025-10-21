@@ -97,10 +97,6 @@ private constructor(
         WC_URI_PREFIX,
         "${application.getString(R.string.wc_scheme)}:",
     )
-    private val allowedAccountTransactionTypes = setOf(
-        TransactionType.UPDATE,
-        TransactionType.TRANSFER,
-    )
     private val allowedRequestMethods = setOf(
         REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
         REQUEST_METHOD_SIGN_MESSAGE,
@@ -152,7 +148,6 @@ private constructor(
 
     private val signTransactionRequestHandler: WalletConnectSignTransactionRequestHandler by lazy {
         WalletConnectSignTransactionRequestHandler(
-            allowedAccountTransactionTypes = allowedAccountTransactionTypes,
             respondSuccess = ::respondSuccess,
             respondError = ::respondError,
             emitEvent = mutableEventsFlow::tryEmit,
