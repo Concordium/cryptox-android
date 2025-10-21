@@ -37,15 +37,16 @@ class EarnFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.uiState.collectWhenStarted(viewLifecycleOwner) { state ->
-            state.account?.let {
+            binding.loading.progressBar.isVisible = state.loading
+
+            if (!state.loading && state.account != null) {
                 launchEarn(
-                    account = it,
+                    account = state.account,
                     hasPendingDelegationTransactions = state.hasPendingDelegationTransactions,
                     hasPendingBakingTransactions = state.hasPendingBakingTransactions,
                     launchFragment = ::replaceFragment
                 )
             }
-            binding.loading.progressBar.isVisible = state.loading
         }
     }
 
