@@ -577,7 +577,7 @@
     <string name="cis_select_token_title">Choose token</string>
     <string name="cis_loading_metadata_progress">Loading metadata…</string>
     <string name="cis_search">Search for token ID</string>
-    <string name="cis_send_continue">Continue</string>
+    <string name="cis_send_continue">Preview Transaction</string>
     <string name="cis_send_funds">Send funds</string>
     <string name="cis_send_funds_confirmation">Confirmation</string>
     <string name="cis_send_funds_preview">Preview</string>
@@ -586,7 +586,9 @@
     <string name="cis_token_quantity">Quantity</string>
     <string name="cis_at_disposal">At disposal</string>
     <string name="cis_recipient_placeholder">Select a recipient</string>
-    <string name="cis_max"><u>Max</u></string>
+    <string name="cis_recipient_label">Recipient</string>
+    <string name="cis_recipient_address_with_name">%1$s / %2$s</string>
+    <string name="cis_max">Max</string>
     <string name="cis_send_token">Token:</string>
     <string name="cis_send_address">Address</string>
     <string name="cis_send_paste_recipient_address">Paste recipient address</string>

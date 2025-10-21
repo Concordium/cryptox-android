@@ -71,8 +71,7 @@ class ReceiveFragment : Fragment() {
         if (qrImage != null) {
             binding.addressQrImageview.setImageBitmap(qrImage)
         }
-        binding.accountTitleTextview.text =
-            getString(R.string.account_qr_code_to_account, account.getAccountName())
+        binding.accountTitleTextview.text = account.getAccountName()
         binding.addressQrTextview.text = account.address
     }
 

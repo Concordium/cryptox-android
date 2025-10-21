@@ -19,20 +19,20 @@
         android:id="@+id/title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="@dimen/size32"
+        android:layout_marginTop="@dimen/size48"
         android:gravity="center"
         android:text="@string/transaction_memo_warning_title"
         android:textAppearance="@style/MW24_Typography_Text_Main"
         android:textColor="@color/ccx_neutral_tint_7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/close_button" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/details_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/size32"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/transaction_memo_warning_text"
@@ -42,26 +42,29 @@
         app:layout_constraintTop_toBottomOf="@id/title_text_view" />
 
     <Button
-        android:id="@+id/show_button"
-        style="@style/CCX_Button_Primary.Modal"
-        android:layout_marginTop="30dp"
-        android:text="@string/transaction_memo_warning_ok"
-        android:gravity="center"
+        android:id="@+id/hide_button"
+        style="@style/MW24_Button_Secondary_Inverse"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="@dimen/size32"
+        android:layout_marginTop="@dimen/size32"
+        android:text="@string/transaction_memo_warning_dont_show"
+        android:textColor="@color/ccx_neutral_tint_7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/details_text_view" />
 
     <Button
-        android:id="@+id/hide_button"
-        style="@style/CCX_Button_Primary.Modal"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="24dp"
-        android:background="@null"
-        android:text="@string/transaction_memo_warning_dont_show"
-        android:textColor="@color/ccx_neutral_tint_7"
+        android:id="@+id/show_button"
+        style="@style/MW24_Button_Primary_Inverse"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="@dimen/size32"
+        android:layout_marginTop="@dimen/size8"
+        android:layout_marginBottom="@dimen/size32"
+        android:gravity="center"
+        android:text="@string/transaction_memo_warning_ok"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/show_button" />
+        app:layout_constraintTop_toBottomOf="@id/hide_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

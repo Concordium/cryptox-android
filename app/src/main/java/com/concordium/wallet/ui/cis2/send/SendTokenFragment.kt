@@ -179,7 +179,7 @@ class SendTokenFragment : Fragment() {
     }
 
     private fun initializeMemo() {
-        binding.addMemo.setOnClickListener {
+        binding.memoLayout.setOnClickListener {
             if (viewModel.showMemoWarning()) {
                 MemoNoticeDialog().showSingle(
                     parentFragmentManager,
@@ -215,13 +215,17 @@ class SendTokenFragment : Fragment() {
                 )?.let { recipient ->
                     viewModel.onReceiverEntered(recipient.address)
                     binding.recipientPlaceholder.visibility = View.GONE
-                    binding.recipientNameLayout.visibility = View.VISIBLE
-                    binding.recipientAddress.text = recipient.address
+                    binding.recipientAddress.visibility = View.VISIBLE
 
                     if (recipient.name.isNotEmpty()) {
-                        onReceiverNameFound(recipient.name)
+                        viewModel.onReceiverNameFound(recipient.name)
+                        binding.recipientAddress.text = getString(
+                            R.string.cis_recipient_address_with_name,
+                            recipient.name,
+                            recipient.address
+                        )
                     } else {
-                        binding.recipientName.visibility = View.GONE
+                        binding.recipientAddress.text = recipient.address
                     }
                 }
             }
@@ -250,16 +254,17 @@ class SendTokenFragment : Fragment() {
 
     private fun setMemoText(memoText: String) {
         if (memoText.isNotEmpty()) {
-            binding.addMemo.text = memoText
+            binding.apply {
+                addMemoPlaceholder.visibility = View.GONE
+                memo.visibility = View.VISIBLE
+                memo.text = memoText
+            }
         } else {
-            binding.addMemo.text = getString(R.string.cis_add_memo)
+            binding.apply {
+                addMemoPlaceholder.visibility = View.VISIBLE
+                memo.visibility = View.GONE
+            }
         }
-    }
-
-    private fun onReceiverNameFound(name: String) {
-        viewModel.onReceiverNameFound(name)
-        binding.recipientName.visibility = View.VISIBLE
-        binding.recipientName.text = name
     }
 
     @SuppressLint("SetTextI18n")
@@ -295,7 +300,7 @@ class SendTokenFragment : Fragment() {
             binding.sendAllButton.isEnabled = token !is CCDToken
             binding.balanceSymbol.text = token.symbol
 
-            binding.addMemo.isVisible = token !is ContractToken
+            binding.memoLayout.isVisible = token !is ContractToken
             binding.atDisposalTitle.isVisible = token is CCDToken
         }
 
