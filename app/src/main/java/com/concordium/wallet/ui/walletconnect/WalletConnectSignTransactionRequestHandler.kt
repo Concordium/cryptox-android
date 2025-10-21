@@ -1,15 +1,24 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.content.Context
+import com.concordium.sdk.transactions.CCDAmount
+import com.concordium.sdk.transactions.Expiry
+import com.concordium.sdk.transactions.Parameter
+import com.concordium.sdk.transactions.ReceiveName
+import com.concordium.sdk.transactions.SignerEntry
 import com.concordium.sdk.transactions.TokenUpdate
+import com.concordium.sdk.transactions.TransactionFactory
+import com.concordium.sdk.transactions.TransactionSigner
+import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.transactions.tokens.TokenOperation
+import com.concordium.sdk.types.AccountAddress
+import com.concordium.sdk.types.ContractAddress
+import com.concordium.sdk.types.Nonce
+import com.concordium.sdk.types.UInt64
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
-import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
@@ -28,7 +37,7 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
-import com.google.gson.Gson
+import com.reown.util.hexToBytes
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.math.BigInteger
 import kotlin.coroutines.resume
@@ -249,7 +258,7 @@ class WalletConnectSignTransactionRequestHandler(
     private suspend fun getTransactionCost(): TransactionCost =
         when (val transactionPayload = this.transactionPayload) {
             is AccountTransactionPayload.Transfer ->
-                getSimpleTransferCost()
+                getTransferCost()
 
             is AccountTransactionPayload.Update ->
                 getContractUpdateCost(
@@ -257,13 +266,11 @@ class WalletConnectSignTransactionRequestHandler(
                 )
 
             is AccountTransactionPayload.PltTransfer -> getProtocolLevelTokenTransferCost(
-                tokenUpdatePayload = getProtocolLevelTokenTransferPayload(
-                    transactionPayload = transactionPayload,
-                )
+                pltTransferPayload = transactionPayload,
             )
         }
 
-    private suspend fun getSimpleTransferCost(
+    private suspend fun getTransferCost(
     ): TransactionCost = suspendCancellableCoroutine { continuation ->
         val backendRequest = proxyRepository.getTransferCost(
             type = ProxyRepository.SIMPLE_TRANSFER,
@@ -302,8 +309,9 @@ class WalletConnectSignTransactionRequestHandler(
     }
 
     private suspend fun getProtocolLevelTokenTransferCost(
-        tokenUpdatePayload: TokenUpdate,
+        pltTransferPayload: AccountTransactionPayload.PltTransfer,
     ): TransactionCost = suspendCancellableCoroutine { continuation ->
+        val tokenUpdatePayload = getProtocolLevelTokenTransferPayload(pltTransferPayload)
         val backendRequest = proxyRepository.getTransferCost(
             type = ProxyRepository.TOKEN_UPDATE,
             sender = account.address,
@@ -337,86 +345,117 @@ class WalletConnectSignTransactionRequestHandler(
             .operation(transactionPayload.transfer)
             .build()
 
+    private fun getTransactionExpiry(): Expiry =
+        Expiry.from(DateTimeUtil.nowPlusMinutes(10))
+
     suspend fun onAuthorizedForApproval(
         accountKeys: AccountData,
     ) {
-        val accountTransactionPayload = this.transactionPayload
+        setIsSubmittingTransaction(true)
 
-        val accountTransactionInput = CreateAccountTransactionInput(
-            expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000,
-            from = account.address,
-            keys = accountKeys,
-            nonce = transactionNonce.nonce,
-            payload = accountTransactionPayload,
-            type = when (accountTransactionPayload) {
+        try {
+            val submissionId = when (val transactionPayload = this.transactionPayload) {
                 is AccountTransactionPayload.Transfer ->
-                    "Transfer"
+                    submitTransferTransaction(
+                        transferPayload = transactionPayload,
+                        signer = accountKeys.getSignerEntry(),
+                    )
 
                 is AccountTransactionPayload.Update ->
-                    "Update"
+                    submitContractUpdateTransaction(
+                        updatePayload = transactionPayload,
+                        signer = accountKeys.getSignerEntry(),
+                    )
 
                 is AccountTransactionPayload.PltTransfer ->
-                    TODO("Implement submitting token update")
-            },
-        )
+                    submitProtocolLevelTokenTransferTransaction(
+                        pltTransferPayload = transactionPayload,
+                        signer = accountKeys.getSignerEntry(),
+                    )
+            }
 
-        val accountTransactionOutput =
-            App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
-        if (accountTransactionOutput == null) {
-            Log.e("failed_creating_transaction")
+            respondSuccess(App.appCore.gson.toJson(TransactionSuccess(submissionId)))
 
-            respondError("Failed creating transaction: crypto library internal error")
+            emitState(
+                State.TransactionSubmitted(
+                    submissionId = submissionId,
+                    estimatedFee = transactionCost.cost,
+                )
+            )
+        } catch (error :Exception){
+            Log.e("failed_submitting_transaction", error)
+
+            respondError("Failed submitting transaction: $error")
+
+            setIsSubmittingTransaction(false)
 
             emitEvent(
                 Event.ShowFloatingError(
-                    Error.CryptographyFailed
+                    Error.TransactionSubmitFailed
                 )
             )
-        } else {
-            val createTransferOutput = CreateTransferOutput(
-                transaction = accountTransactionOutput.transaction,
-                signatures = accountTransactionOutput.signatures,
-            )
-            submitTransaction(createTransferOutput)
+        } finally {
+            setIsSubmittingTransaction(false)
         }
     }
 
-    private var submitTransactionRequest: BackendRequest<*>? = null
-    private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
-        setIsSubmittingTransaction(true)
-
-        submitTransactionRequest?.dispose()
-        submitTransactionRequest = proxyRepository.submitTransfer(createTransferOutput,
-            { submissionData ->
-                Log.d(
-                    "transaction_submitted:" +
-                            "\nsubmissionId=${submissionData.submissionId}"
-                )
-                respondSuccess(Gson().toJson(TransactionSuccess(submissionData.submissionId)))
-
-                setIsSubmittingTransaction(false)
-
-                emitState(
-                    State.TransactionSubmitted(
-                        submissionId = submissionData.submissionId,
-                        estimatedFee = transactionCost.cost,
-                    )
-                )
-            },
-            { error ->
-                Log.e("failed_submitting_transaction", error)
-
-                respondError("Failed submitting transaction: $error")
-
-                setIsSubmittingTransaction(false)
-
-                emitEvent(
-                    Event.ShowFloatingError(
-                        Error.TransactionSubmitFailed
-                    )
-                )
-            }
+    private suspend fun submitTransferTransaction(
+        transferPayload: AccountTransactionPayload.Transfer,
+        signer: SignerEntry,
+    ): String =
+        submitTransaction(
+            TransactionFactory.newTransfer()
+                .expiry(getTransactionExpiry())
+                .sender(AccountAddress.from(account.address))
+                .nonce(Nonce.from(transactionNonce.nonce.toLong()))
+                .signer(TransactionSigner.from(signer))
+                .amount(CCDAmount.fromMicro(transferPayload.amount.toString()))
+                .receiver(AccountAddress.from(transferPayload.toAddress))
+                .build()
         )
+
+    private suspend fun submitContractUpdateTransaction(
+        updatePayload: AccountTransactionPayload.Update,
+        signer: SignerEntry,
+    ): String =
+        submitTransaction(
+            TransactionFactory.newUpdateContract()
+                .expiry(getTransactionExpiry())
+                .sender(AccountAddress.from(account.address))
+                .nonce(Nonce.from(transactionNonce.nonce.toLong()))
+                .signer(TransactionSigner.from(signer))
+                .maxEnergyCost(UInt64.from(transactionCost.energy))
+                .payload(
+                    UpdateContract.from(
+                        CCDAmount.from(0L),
+                        ContractAddress(0L, 0L),
+                        ReceiveName.parse(updatePayload.receiveName),
+                        Parameter.from(updatePayload.message.hexToBytes())
+                    )
+                )
+                .build()
+        )
+
+    private suspend fun submitProtocolLevelTokenTransferTransaction(
+        pltTransferPayload: AccountTransactionPayload.PltTransfer,
+        signer: SignerEntry,
+    ): String =
+        submitTransaction(
+            TransactionFactory.newTokenUpdate()
+                .expiry(getTransactionExpiry())
+                .sender(AccountAddress.from(account.address))
+                .nonce(Nonce.from(transactionNonce.nonce.toLong()))
+                .signer(TransactionSigner.from(signer))
+                .payload(getProtocolLevelTokenTransferPayload(pltTransferPayload))
+                .build()
+        )
+
+    private suspend fun submitTransaction(
+        transaction: com.concordium.sdk.transactions.Transaction,
+    ): String {
+        return proxyRepository
+            .submitSdkTransaction(transaction)
+            .submissionId
     }
 
     suspend fun onShowDetailsClicked() {
