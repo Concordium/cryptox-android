@@ -34,6 +34,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.math.BigInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.jvm.optionals.getOrNull
 
 class WalletConnectSignTransactionRequestHandler(
     private val allowedAccountTransactionTypes: Set<TransactionType>,
@@ -240,7 +241,7 @@ class WalletConnectSignTransactionRequestHandler(
                     token = token,
                     estimatedFee = transactionCost.cost,
                     account = account,
-                    canShowDetails = false,
+                    canShowDetails = transactionPayload.transfer.memo.isPresent,
                     isEnoughFunds = transactionCost.cost <= accountAtDisposalBalance
                             && tokenAmount <= token.balance,
                     appMetadata = appMetadata,
@@ -425,47 +426,62 @@ class WalletConnectSignTransactionRequestHandler(
     }
 
     suspend fun onShowDetailsClicked() {
-        val accountTransactionPayload = this.transactionPayload
-        val accountTransactionParamsSchema = this.transactionParams.schema
 
-        if (accountTransactionPayload is AccountTransactionPayload.Update) {
-            val prettyPrintParams =
-                if (accountTransactionParamsSchema != null)
-                    App.appCore.cryptoLibrary
-                        .parameterToJson(
-                            ParameterToJsonInput(
-                                parameter = accountTransactionPayload.message,
-                                receiveName = accountTransactionPayload.receiveName,
-                                schema = accountTransactionParamsSchema,
-                                schemaVersion = accountTransactionParamsSchema.version,
+        when (val transactionPayload = this.transactionPayload) {
+            is AccountTransactionPayload.Update -> {
+                val transactionParamsSchema = this.transactionParams.schema
+                val prettyPrintParams =
+                    if (transactionParamsSchema != null)
+                        App.appCore.cryptoLibrary
+                            .parameterToJson(
+                                ParameterToJsonInput(
+                                    parameter = transactionPayload.message,
+                                    receiveName = transactionPayload.receiveName,
+                                    schema = transactionParamsSchema,
+                                    schemaVersion = transactionParamsSchema.version,
+                                )
                             )
-                        )
-                        ?.prettyPrint()
-                        ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
-                else if (accountTransactionPayload.message == "")
-                    context.getString(R.string.wallet_connect_transaction_request_no_parameters)
-                else
-                    context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
+                            ?.prettyPrint()
+                            ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
+                    else if (transactionPayload.message == "")
+                        context.getString(R.string.wallet_connect_transaction_request_no_parameters)
+                    else
+                        context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
 
-            emitEvent(
-                Event.ShowDetailsDialog(
-                    title = getTransactionMethodName(transactionPayload),
-                    prettyPrintDetails = context.getString(
-                        R.string.wallet_connect_template_transaction_request_details,
-                        transactionCost.energy.toString(),
-                        prettyPrintParams,
-                    ),
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = getTransactionMethodName(transactionPayload),
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_transaction_request_details,
+                            transactionCost.energy.toString(),
+                            prettyPrintParams,
+                        ),
+                    )
                 )
-            )
-        } else {
-            Log.w("Nothing to show as details for ${accountTransactionPayload::class.simpleName}")
+            }
 
-            emitEvent(
-                Event.ShowDetailsDialog(
-                    title = getTransactionMethodName(transactionPayload),
-                    prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
+            is AccountTransactionPayload.PltTransfer -> {
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = getTransactionMethodName(transactionPayload),
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_plt_transfer_request_details,
+                            transactionPayload.transfer.memo.getOrNull().toString(),
+                        ),
+                    )
                 )
-            )
+            }
+
+            is AccountTransactionPayload.Transfer -> {
+                Log.w("Nothing to show as details for ${transactionPayload::class.simpleName}")
+
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = getTransactionMethodName(transactionPayload),
+                        prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
+                    )
+                )
+            }
         }
     }
 
