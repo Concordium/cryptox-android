@@ -158,28 +158,34 @@ class WalletConnectSignTransactionRequestHandler(
                 throw error
             }
 
-            token = when (val transactionPayload = this.transactionPayload) {
-                is AccountTransactionPayload.PltTransfer ->
-                    tokensInteractor
-                        .loadTokens(
-                            accountAddress = account.address,
-                            loadBalances = false,
-                            onlyTransferable = true,
-                            addCCDToken = false,
+            token = try {
+                when (val transactionPayload = this.transactionPayload) {
+                    is AccountTransactionPayload.Transfer,
+                    is AccountTransactionPayload.Update,
+                    ->
+                        CCDToken(
+                            account = account,
+                            withTotalBalance = true,
                         )
-                        .getOrThrow()
-                        .first {
-                            it is ProtocolLevelToken
-                                    && it.tokenId == transactionPayload.tokenId
-                        }
 
-                is AccountTransactionPayload.Transfer,
-                is AccountTransactionPayload.Update,
-                ->
-                    CCDToken(
-                        account = account,
-                        withTotalBalance = true,
-                    )
+                    is AccountTransactionPayload.PltTransfer ->
+                        tokensInteractor
+                            .loadTokens(
+                                accountAddress = account.address,
+                                loadBalances = false,
+                                onlyTransferable = true,
+                                addCCDToken = false,
+                            )
+                            .getOrThrow()
+                            .firstOrNull {
+                                it is ProtocolLevelToken
+                                        && it.tokenId == transactionPayload.tokenId
+                            }
+                            ?: error("Missing the requested token ${transactionPayload.tokenId}")
+                }
+            } catch (error: Exception) {
+                Log.e("failed_loading_token", error)
+                throw error
             }
         } catch (error: Exception) {
             respondError("Failed loading transaction data: $error")
