@@ -6,7 +6,6 @@ import com.concordium.sdk.transactions.tokens.TransferTokenOperation
 import com.concordium.wallet.App
 import com.concordium.wallet.core.gson.NullableTypeAdapterFactory
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.util.Log
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import com.reown.util.hexToBytes
@@ -18,12 +17,12 @@ data class AccountTransactionParams(
     var payload: String?,
     var schema: Schema?,
 ) : Serializable {
-    fun parsePayload(): AccountTransactionPayload? = try {
+    fun parsePayload(): AccountTransactionPayload {
         val gson = App.appCore.gson.newBuilder()
             .registerTypeAdapterFactory(NullableTypeAdapterFactory())
             .create()
 
-        when (type) {
+        return when (type) {
             TransactionType.TRANSFER ->
                 gson.fromJson(payload, AccountTransactionPayload.Transfer::class.java)
 
@@ -51,9 +50,6 @@ data class AccountTransactionParams(
             else ->
                 error("Can't parse payload for unsupported type: $type")
         }
-    } catch (ex: Throwable) {
-        Log.e(ex.toString())
-        null
     }
 
     companion object {

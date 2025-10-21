@@ -84,15 +84,16 @@ class WalletConnectSignTransactionRequestHandler(
             return
         }
 
-        val transactionPayload: AccountTransactionPayload? =
+        val transactionPayload: AccountTransactionPayload = try {
             transactionParams.parsePayload()
-        if (transactionPayload == null) {
+        } catch (error: Exception) {
             Log.e(
                 "failed_parsing_session_request_params_payload:" +
-                        "\npayload=${transactionParams.payload}"
+                        "\npayload=${transactionParams.payload}",
+                error
             )
 
-            respondError("Failed parsing the request params payload")
+            respondError("Failed parsing the request params payload: $error")
 
             emitEvent(
                 Event.ShowFloatingError(
