@@ -359,11 +359,12 @@ private constructor(
 
         // Find a single allowed namespace and chain.
         val singleNamespaceEntry =
-            sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
-                namespace.chains?.any { chain ->
-                    allowedChains.contains(chain)
-                } == true
-            }
+            (sessionProposal.requiredNamespaces.entries + sessionProposal.optionalNamespaces.entries)
+                .find { (_, namespace) ->
+                    namespace.chains?.any { chain ->
+                        allowedChains.contains(chain)
+                    } == true
+                }
         val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
             allowedChains.contains(chain)
         }
