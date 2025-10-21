@@ -15,7 +15,7 @@
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/navigation_divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -226,10 +226,10 @@
             app:lottie_rawRes="@raw/confetti" />
 
         <View
-            android:id="@+id/bottom_empty_view"
+            android:id="@+id/navigation_divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:visibility="gone"
+            android:background="@color/mw24_plain_white_10"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
