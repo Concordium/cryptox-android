@@ -270,6 +270,8 @@
     <string name="account_qr_code_copy">Copy</string>
     <string name="account_qr_code_copied">Address copied</string>
     <string name="account_qr_code_to_account">to %1$s</string>
+    <string name="account_qr_code_show_qr">Show this QR code to another Concordium user to receive funds. Alternatively share your account address.</string>
+    <string name="account_qr_code_or">or</string>
     <!-- ***** Transaction / Send funds ***** -->
     <!-- Send funds -->
     <string name="send_funds_title">Send Funds</string>
