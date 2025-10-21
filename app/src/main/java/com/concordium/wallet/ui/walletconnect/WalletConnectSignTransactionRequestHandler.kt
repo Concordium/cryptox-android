@@ -382,7 +382,7 @@ class WalletConnectSignTransactionRequestHandler(
                     estimatedFee = transactionCost.cost,
                 )
             )
-        } catch (error :Exception){
+        } catch (error: Exception) {
             Log.e("failed_submitting_transaction", error)
 
             respondError("Failed submitting transaction: $error")
@@ -427,8 +427,11 @@ class WalletConnectSignTransactionRequestHandler(
                 .maxEnergyCost(UInt64.from(transactionCost.energy))
                 .payload(
                     UpdateContract.from(
-                        CCDAmount.from(0L),
-                        ContractAddress(0L, 0L),
+                        CCDAmount.fromMicro(updatePayload.amount.toString()),
+                        ContractAddress(
+                            updatePayload.address.subIndex.toLong(),
+                            updatePayload.address.index.toLong()
+                        ),
                         ReceiveName.parse(updatePayload.receiveName),
                         Parameter.from(updatePayload.message.hexToBytes())
                     )
