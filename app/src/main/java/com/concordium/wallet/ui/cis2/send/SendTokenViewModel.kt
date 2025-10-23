@@ -19,11 +19,13 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.backend.price.TokenPriceRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.model.AccountBalanceInfo
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.SimpleFraction
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenAccountStateList
 import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.ui.MainViewModel
@@ -32,8 +34,11 @@ import com.concordium.wallet.util.Log
 import com.reown.util.bytesToHex
 import com.reown.util.hexToBytes
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okio.IOException
 import org.koin.core.component.KoinComponent
@@ -62,6 +67,8 @@ class SendTokenViewModel(
     val tokenEurRate: MutableLiveData<SimpleFraction?> = MutableLiveData()
     private val _accountUpdated = MutableSharedFlow<Boolean>(replay = 1)
     val accountUpdated = _accountUpdated.asSharedFlow()
+    private val _recipientError = MutableStateFlow(-1)
+    val recipientError = _recipientError.asStateFlow()
 
     val canSend: Boolean
         get() = with(sendTokenData) {
@@ -69,7 +76,7 @@ class SendTokenViewModel(
                     && amount.signum() > 0
                     && fee != null
                     && hasEnoughFunds()
-        }
+        } && recipientError.value == -1
 
     init {
         viewModelScope.launch {
@@ -83,6 +90,7 @@ class SendTokenViewModel(
             sendTokenData.maxAmount = if (token is CCDToken) null else token.balance
 
             loadEurRate(token)
+            checkRecipientState()
         }
 
         if (sendTokenData.fee == null) {
@@ -143,6 +151,7 @@ class SendTokenViewModel(
         } else {
             sendTokenData.receiverAddress = null
         }
+        checkRecipientState()
     }
 
     fun onReceiverNameFound(name: String) {
@@ -335,5 +344,53 @@ class SendTokenViewModel(
 
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
+    }
+
+    private fun checkRecipientState() = viewModelScope.launch {
+        val token = sendTokenData.token
+        _recipientError.value = -1
+
+        if (sendTokenData.receiverAddress == null)
+            return@launch
+
+        val recipientBalanceInfo: AccountBalanceInfo? = try {
+            proxyRepository
+                .getAccountBalanceSuspended(
+                    accountAddress = sendTokenData.receiverAddress!!,
+                )
+                .finalizedBalance
+        } catch (e: Exception) {
+            ensureActive()
+            handleBackendError(e)
+            return@launch
+        }
+
+        // Check if the recipient even exists.
+        // Sending to non-existing accounts burns the fee.
+        if (recipientBalanceInfo == null) {
+            _recipientError.value = R.string.app_error_backend_account_does_not_exist
+            return@launch
+        }
+
+        // Check if the recipient can receive the protocol level token.
+        // Sending to banned or not allowed accounts burns the fee.
+        if (token is ProtocolLevelToken) {
+            val recipientTokenAccountState: TokenAccountStateList? =
+                recipientBalanceInfo
+                    .accountTokens
+                    ?.find { it.token.tokenId == token.tokenId }
+                    ?.tokenAccountState
+                    ?.state
+
+            if (recipientTokenAccountState?.denyList == true) {
+                _recipientError.value = R.string.cis_error_recipient_in_deny_list
+                return@launch
+            } else if (token.isInAllowList == true
+                && recipientTokenAccountState?.allowList != true
+            ) {
+                _recipientError.value = R.string.cis_error_recipient_not_in_allow_list
+                return@launch
+            }
+        }
     }
 }

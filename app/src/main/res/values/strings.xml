@@ -556,7 +556,7 @@
     <string name="sign">Sign</string>
     <string name="finish">Finish</string>
     <string name="transaction_hash">Transaction hash</string>
-    <string name="insufficient_funds">Insufficient funds</string>
+    <string name="insufficient_funds">Insufficient funds available on account</string>
     <string name="transaction_submitted">Transaction submitted!</string>
 
     <string name="cis_tab_tokens">Tokens</string>

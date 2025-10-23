@@ -167,6 +167,7 @@ class SendTokenFragment : Fragment() {
     }
 
     private fun initializeAddressBook() {
+        resetAddressBook()
         binding.recipientLayout.setOnClickListener {
             val intent = Intent(requireActivity(), RecipientListActivity::class.java)
             intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.sendTokenData.account)
@@ -179,6 +180,7 @@ class SendTokenFragment : Fragment() {
     }
 
     private fun initializeMemo() {
+        handleMemo("")
         binding.memoLayout.setOnClickListener {
             if (viewModel.showMemoWarning()) {
                 MemoNoticeDialog().showSingle(
@@ -267,6 +269,14 @@ class SendTokenFragment : Fragment() {
         }
     }
 
+    private fun resetAddressBook() {
+        with(binding) {
+            recipientAddress.text = ""
+            recipientAddress.visibility = View.GONE
+            recipientPlaceholder.visibility = View.VISIBLE
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun initObservers() {
         viewModel.accountUpdated.collectWhenStarted(viewLifecycleOwner) {
@@ -327,6 +337,13 @@ class SendTokenFragment : Fragment() {
 
         viewModel.tokenEurRate.observe(viewLifecycleOwner) {
             setEstimatedAmountInEur()
+        }
+
+        viewModel.recipientError.collectWhenStarted(viewLifecycleOwner) {
+            binding.recipientError.apply {
+                isVisible = it != -1
+                if (isVisible) text = getString(it)
+            }
         }
     }
 

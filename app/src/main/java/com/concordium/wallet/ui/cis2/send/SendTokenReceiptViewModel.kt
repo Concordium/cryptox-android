@@ -28,11 +28,9 @@ import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.AccountBalanceInfo
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
-import com.concordium.wallet.data.model.TokenAccountStateList
 import com.concordium.wallet.data.model.TokenAmount
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -136,55 +134,7 @@ class SendTokenReceiptViewModel(
     private fun checkRecipientAndSubmitTransaction(
         signer: SignerEntry,
     ) = viewModelScope.launch {
-
-        val recipientAddress = sendTokenData.receiverAddress!!
-
-        val recipientBalanceInfo: AccountBalanceInfo? = try {
-            proxyRepository
-                .getAccountBalanceSuspended(
-                    accountAddress = recipientAddress,
-                )
-                .finalizedBalance
-        } catch (e: Exception) {
-            ensureActive()
-            Log.e("Error checking the recipient", e)
-            transactionWaiting.postValue(false)
-            handleBackendError(e)
-            return@launch
-        }
-
-        // Check if the recipient even exists.
-        // Sending to non-existing accounts burns the fee.
-        if (recipientBalanceInfo == null) {
-            transactionWaiting.postValue(false)
-            errorInt.postValue(R.string.app_error_backend_account_does_not_exist)
-            return@launch
-        }
-
         val token = sendTokenData.token
-
-        // Check if the recipient can receive the protocol level token.
-        // Sending to banned or not allowed accounts burns the fee.
-        if (token is ProtocolLevelToken) {
-            val recipientTokenAccountState: TokenAccountStateList? =
-                recipientBalanceInfo
-                    .accountTokens
-                    ?.find { it.token.tokenId == token.tokenId }
-                    ?.tokenAccountState
-                    ?.state
-
-            if (recipientTokenAccountState?.denyList == true) {
-                transactionWaiting.postValue(false)
-                errorInt.postValue(R.string.cis_error_recipient_in_deny_list)
-                return@launch
-            } else if (token.isInAllowList == true
-                && recipientTokenAccountState?.allowList != true
-            ) {
-                transactionWaiting.postValue(false)
-                errorInt.postValue(R.string.cis_error_recipient_not_in_allow_list)
-                return@launch
-            }
-        }
 
         sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 

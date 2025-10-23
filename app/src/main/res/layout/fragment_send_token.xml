@@ -100,19 +100,6 @@
                     tools:text="@string/cis_estimated_fee" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/amount_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:drawablePadding="12dp"
-                android:text="@string/delegation_register_delegation_amount_insufficient_error"
-                android:textAppearance="@style/MW24_Typography_Label_Main"
-                android:textColor="@color/mw24_blue_3"
-                android:visibility="gone"
-                app:drawableStartCompat="@drawable/cryptox_ico_info_pinky"
-                tools:visibility="visible" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content"
                 android:layout_width="match_parent"
@@ -198,6 +185,20 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/amount_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:drawablePadding="@dimen/size8"
+                android:text="@string/delegation_register_delegation_amount_insufficient_error"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:visibility="visible" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/recipient_layout"
                 android:layout_width="match_parent"
@@ -274,6 +275,20 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/mw24_plain_white_40" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/recipient_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:drawablePadding="@dimen/size8"
+                android:text="@string/cis_error_recipient_not_in_allow_list"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/memo_layout"
