@@ -445,7 +445,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="network_comission">Network commission</string>
     <string name="acc_address_placeholder">%1$s (%2$s)</string>
-    <string name="acc_balance_placeholder">Balance: %1$s CCD</string>
+    <string name="acc_balance_placeholder">Balance: %1$s</string>
     <string name="acc_balance_at_disposal_placeholder">At Disposal: %1$s CCD</string>
     <string name="amount">%1$s CCD</string>
     <string name="amount_max">up to %1$s CCD</string>
@@ -509,12 +509,13 @@
     <string name="wallet_connect_session_proposal_decline">@string/decline</string>
     <string name="wallet_connect_session_request_sign">@string/sign</string>
     <string name="wallet_connect_session_request_decline">@string/decline</string>
-    <string name="wallet_connect_transaction_request_ccd_amount">CCD amount</string>
+    <string name="wallet_connect_transaction_request_amount">Amount</string>
     <string name="wallet_connect_transaction_request_approximate_fee">@string/approximate_fee</string>
     <string name="wallet_connect_transaction_request_show_details">Show details</string>
     <string name="wallet_connect_error_transaction_request_stringify_params_no_schema">Can\'t stringify the parameters as there is no schema</string>
     <string name="wallet_connect_error_transaction_request_stringify_params_failed">Failed to stringify the parameters</string>
     <string name="wallet_connect_template_transaction_request_details">Max energy allowed:\n%1$s\n\nParameters:\n%2$s</string>
+    <string name="wallet_connect_template_plt_transfer_request_details">Memo:\n%1$s</string>
     <string name="wallet_connect_transaction_request_no_parameters">The call has no parameters</string>
     <string name="wallet_connect_transaction_request_no_details">There are no extra details</string>
     <string name="wallet_connect_transaction_request_insufficient_funds">Insufficient funds to sign the transaction</string>

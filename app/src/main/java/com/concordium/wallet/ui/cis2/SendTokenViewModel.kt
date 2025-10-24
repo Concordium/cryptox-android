@@ -319,7 +319,7 @@ class SendTokenViewModel(
             type = ProxyRepository.TOKEN_UPDATE,
             sender = token.accountAddress,
             tokenId = token.tokenId,
-            listOperationsSize = CborMapper.INSTANCE.writeValueAsBytes(payload.operations).size,
+            listOperationsSize = payload.operationsSerialized.size,
             tokenOperationTypeCount = payload.operations
                 .groupBy(TokenOperation::getType)
                 .mapValues { it.value.size },

@@ -297,7 +297,6 @@ abstract class BaseActivity(
                             SendTokenActivity.TOKEN,
                             CCDToken(
                                 account = activeAccount,
-                                eurPerMicroCcd = null,
                             )
                         )
                         .putExtra(
