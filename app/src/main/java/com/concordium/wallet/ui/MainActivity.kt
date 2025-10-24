@@ -18,9 +18,10 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
-import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
+import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
 import com.concordium.wallet.ui.account.earn.EarnFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -195,7 +196,7 @@ class MainActivity : BaseActivity(R.layout.activity_main),
                     isVisible = true,
                     text = it.getAccountName(),
                     icon = ImageUtil.getIconById(this, it.iconId),
-                    onClickListener = { gotoAccountsList() },
+                    onClickListener = { showAccountsList() },
                     onTouchListener = { v, event ->
                         val handled = accountGestureDetector.onTouchEvent(event)
                         if (!handled && event.action == MotionEvent.ACTION_UP) {
@@ -226,7 +227,7 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         }
         walletConnectViewModel.eventsFlow.collectWhenStarted(this) {
             if (it == WalletConnectViewModel.Event.GoBack) {
-               moveTaskToBack(true)
+                moveTaskToBack(true)
             }
         }
     }
@@ -451,8 +452,10 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         startActivity(intent)
     }
 
-    private fun gotoAccountsList() {
-        val intent = Intent(this, AccountsListActivity::class.java)
-        startActivity(intent)
+    private fun showAccountsList() {
+        AccountsListFragment().showSingle(
+            supportFragmentManager,
+            AccountsListFragment.TAG
+        )
     }
 }

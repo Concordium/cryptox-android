@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import okio.IOException
 import org.koin.core.component.KoinComponent
@@ -80,9 +81,11 @@ class SendTokenViewModel(
 
     init {
         viewModelScope.launch {
-            mainViewModel.activeAccount.collect {
-                it?.let(::updateAccount)
-            }
+            mainViewModel.activeAccount
+                .distinctUntilChangedBy { it?.address }
+                .collect {
+                    it?.let(::updateAccount)
+                }
         }
 
         chooseToken.observeForever { token ->

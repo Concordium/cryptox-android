@@ -1,34 +1,26 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.App
+import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
-import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.uicore.popup.Popup
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class AccountsOverviewFragment : BaseFragment() {
+class AccountsListFragment : BottomSheetDialogFragment() {
 
-    private var eventListener: Preferences.Listener? = null
     private lateinit var binding: FragmentAccountsOverviewBinding
     private lateinit var viewModel: AccountsOverviewViewModel
-    private lateinit var mainViewModel: MainViewModel
 
-    //region Lifecycle
-    // ************************************************************
+    override fun getTheme() = R.style.CCX_BottomSheetDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +34,7 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
         initializeViewModel()
         initializeViews()
     }
@@ -52,31 +45,16 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.initiateUpdater()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        eventListener?.let {
-            App.appCore.session.removeAccountsBackedUpListener(it)
-        }
-    }
-
     override fun onPause() {
         super.onPause()
         viewModel.stopUpdater()
     }
-    //endregion
-
-    //region Initialize
-    // ************************************************************
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountsOverviewViewModel::class.java]
-        mainViewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[MainViewModel::class.java]
 
         viewModel.waitingLiveData.observe(viewLifecycleOwner) { waiting ->
             waiting?.let {
@@ -94,29 +72,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun initializeViews() {
         binding.progress.progressLayout.visibility = View.VISIBLE
-
-        binding.missingBackup.setOnClickListener {
-            gotoExport()
-        }
-
-        eventListener = Preferences.Listener {
-            updateMissingBackup()
-        }
-
-        updateMissingBackup()
-
-        eventListener?.let {
-            App.appCore.session.addAccountsBackedUpListener(it)
-        }
-
         initializeList()
-        updateMissingBackup()
-    }
-
-    private fun updateMissingBackup() = viewModel.viewModelScope.launch(Dispatchers.Main) {
-        binding.missingBackup.isVisible = App.appCore.session.run {
-            isAccountsBackupPossible() && !areAccountsBackedUp()
-        }
     }
 
     private fun initializeList() {
@@ -130,19 +86,10 @@ class AccountsOverviewFragment : BaseFragment() {
         binding.accountRecyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
     }
-    //endregion
-
-    //region Control/UI
-    // ************************************************************
-
-    private fun gotoExport() {
-        val intent = Intent(activity, ExportActivity::class.java)
-        startActivity(intent)
-    }
 
     private fun selectAccount(item: Account) {
         viewModel.activateAccount(item.address)
-        requireActivity().finish()
+        dialog?.dismiss()
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -154,6 +101,10 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(binding.root, stringRes)
+        Popup().showSnackbar(binding.root, stringRes)
+    }
+
+    companion object Companion {
+        const val TAG = "AccountsListFragment"
     }
 }

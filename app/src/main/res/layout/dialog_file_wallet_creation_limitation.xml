@@ -31,7 +31,7 @@
                 android:id="@+id/title_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="@dimen/size32"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:text="@string/file_wallet_creation_limitation"
@@ -44,7 +44,7 @@
                 android:id="@+id/details_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
+                android:layout_marginHorizontal="@dimen/size32"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/file_wallet_creation_limitation_explanation"
@@ -55,7 +55,9 @@
 
             <Button
                 android:id="@+id/got_it_button"
-                style="@style/CCX_Button_Primary.Modal"
+                style="@style/MW24_Button_Primary_Inverse"
+                android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/size32"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
                 android:gravity="center"

@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
+            android:layout_marginHorizontal="@dimen/size16"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,7 +104,7 @@
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/size16"
                 android:background="@drawable/mw24_container_primary_background"
                 android:padding="12dp"
                 android:visibility="visible"
@@ -346,7 +346,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/size16"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="@dimen/size16"
         android:enabled="false"
         android:text="@string/cis_send_continue"
         app:layout_constraintBottom_toBottomOf="parent"
