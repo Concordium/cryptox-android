@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
+import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.uicore.popup.Popup
 import com.concordium.wallet.util.Log
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -19,6 +21,9 @@ class AccountsListFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentAccountsOverviewBinding
     private lateinit var viewModel: AccountsOverviewViewModel
+
+    private val bottomSheetDialog
+        get() = (dialog as? BottomSheetDialog)
 
     override fun getTheme() = R.style.CCX_BottomSheetDialog
 
@@ -34,7 +39,8 @@ class AccountsListFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheetDialog?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheetDialog?.behavior?.skipCollapsed = true
         initializeViewModel()
         initializeViews()
     }
@@ -73,6 +79,9 @@ class AccountsListFragment : BottomSheetDialogFragment() {
     private fun initializeViews() {
         binding.progress.progressLayout.visibility = View.VISIBLE
         initializeList()
+        binding.createAccountButton.setOnClickListener {
+            gotoCreateAccount()
+        }
     }
 
     private fun initializeList() {
@@ -102,6 +111,11 @@ class AccountsListFragment : BottomSheetDialogFragment() {
 
     private fun showError(stringRes: Int) {
         Popup().showSnackbar(binding.root, stringRes)
+    }
+
+    private fun gotoCreateAccount() {
+        val intent = Intent(requireActivity(), NewAccountNameActivity::class.java)
+        startActivity(intent)
     }
 
     companion object Companion {

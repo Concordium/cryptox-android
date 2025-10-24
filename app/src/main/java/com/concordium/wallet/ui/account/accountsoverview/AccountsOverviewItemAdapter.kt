@@ -19,8 +19,7 @@ class AccountsOverviewItemAdapter(
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int =
-        data.size
+    override fun getItemCount(): Int = data.size
 
     override fun getItemViewType(position: Int): Int = when (data[position]) {
         is AccountsOverviewListItem.Account ->

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/mw24_bottom_sheet_background"
-    android:paddingVertical="@dimen/size16">
+    android:padding="@dimen/size16">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:id="@+id/drag_view"
@@ -30,21 +30,31 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/account_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size24"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="@dimen/size64"
         android:clipToPadding="false"
-        android:paddingHorizontal="@dimen/size16"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/accounts_title"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/list_item_accounts_overview_account" />
 
     <include
         android:id="@+id/progress"
         layout="@layout/progress"
         tools:visibility="gone" />
+
+    <com.concordium.wallet.uicore.button.IconButton
+        android:id="@+id/create_account_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:buttonText="@string/accounts_list_create_new_account"
+        app:iconStart="@drawable/mw24_ic_plus_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:priority="tertiary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

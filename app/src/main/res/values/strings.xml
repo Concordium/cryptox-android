@@ -179,7 +179,7 @@
     <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
     <string name="unshielding_notice_unshield">Unshield assets</string>
     <string name="accounts_list_title">Accounts</string>
-    <string name="accounts_list_create_new_account">Create new account</string>
+    <string name="accounts_list_create_new_account">Create New Account</string>
     <!-- New account name -->
     <string name="new_account_name_title">Create new account</string>
     <string name="new_account_set_name">Set account name</string>
