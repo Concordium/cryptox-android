@@ -48,7 +48,7 @@ class AccountsOverviewItemAdapter(
                     R.drawable.mw24_item_account_background_active
                 ) else ContextCompat.getDrawable(
                     holder.accountView.context,
-                    R.drawable.mw24_container_primary_background
+                    R.drawable.mw24_item_account_background_default
                 )
             }
         }

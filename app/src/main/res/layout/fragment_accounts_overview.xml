@@ -48,8 +48,9 @@
 
     <com.concordium.wallet.uicore.button.IconButton
         android:id="@+id/create_account_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
+        android:paddingHorizontal="@dimen/size24"
         app:buttonText="@string/accounts_list_create_new_account"
         app:iconStart="@drawable/mw24_ic_plus_add"
         app:layout_constraintBottom_toBottomOf="parent"

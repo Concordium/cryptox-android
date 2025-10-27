@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -39,17 +38,14 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         this.accountWithIdentity = accountWithIdentity
 
         binding.totalTextview.text =
-            CurrencyUtil.formatAndRoundGTU(accountWithIdentity.account.balance, roundDecimals = 2)
-
-        if (accountWithIdentity.account.balanceAtDisposal != accountWithIdentity.account.balance) {
-            binding.balanceAtDisposalTextview.visibility = View.VISIBLE
-            binding.balanceAtDisposalTextview.text = CurrencyUtil.formatAndRoundGTU(
-                accountWithIdentity.account.balanceAtDisposal,
-                roundDecimals = 2
+            binding.root.context.getString(
+                R.string.amount,
+                CurrencyUtil.formatAndRoundGTU(
+                    accountWithIdentity.account.balance,
+                    roundDecimals = 2
+                )
             )
-        } else {
-            binding.balanceAtDisposalTextview.visibility = View.GONE
-        }
+        binding.address.text = accountWithIdentity.account.address
 
         binding.notice.isVisible = accountWithIdentity.account.isBakerSuspended
                 || accountWithIdentity.account.isBakerPrimedForSuspension
@@ -79,18 +75,29 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         when (accountWithIdentity.account.transactionStatus) {
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED -> {
-                binding.balanceLayout.visibility = View.GONE
-                binding.accountStatusLayout.visibility = View.VISIBLE
+                binding.balanceLayout.visibility = GONE
+                binding.accountStatusLayout.visibility = VISIBLE
                 animateStatusIcon()
             }
 
             TransactionStatus.ABSENT -> {}
             else -> {
-                binding.balanceLayout.visibility = View.VISIBLE
-                binding.accountStatusLayout.visibility = View.GONE
+                binding.balanceLayout.visibility = VISIBLE
+                binding.accountStatusLayout.visibility = GONE
                 pulsateAnimator.end()
             }
         }
+
+        binding.totalTextview.setTextColor(
+            if (accountWithIdentity.account.isActive)
+                context.getColor(R.color.mw24_content_accent_secondary)
+            else
+                context.getColor(R.color.mw24_plain_white_60)
+        )
+
+        binding.identityName.setTextColor(getColorStateList(accountWithIdentity.account.isActive))
+        binding.settingsButton.imageTintList =
+            getColorStateList(accountWithIdentity.account.isActive)
 
     }
 
@@ -115,5 +122,11 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
     interface OnItemClickListener {
         fun onCardClicked(account: Account)
+    }
+
+    private fun getColorStateList(isActive: Boolean) = if (isActive) {
+        context.getColorStateList(R.color.cryptox_white_main)
+    } else {
+        context.getColorStateList(R.color.mw24_plain_white_60)
     }
 }
