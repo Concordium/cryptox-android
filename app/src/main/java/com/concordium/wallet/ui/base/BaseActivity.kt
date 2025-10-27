@@ -35,6 +35,7 @@ import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.cis2.send.SendTokenActivity
@@ -535,6 +536,13 @@ abstract class BaseActivity(
         UnlockFeatureDialog().showSingle(
             supportFragmentManager,
             UnlockFeatureDialog.TAG
+        )
+    }
+
+    fun showAccountsList() {
+        AccountsListFragment().showSingle(
+            supportFragmentManager,
+            AccountsListFragment.TAG
         )
     }
 }

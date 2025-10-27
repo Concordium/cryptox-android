@@ -107,6 +107,9 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             binding.root.setOnClickListener {
                 onItemClickListener.onCardClicked(account)
             }
+            binding.settingsButton.setOnClickListener {
+                onItemClickListener.onSettingsClicked(account)
+            }
         }
     }
 
@@ -122,6 +125,7 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
 
     interface OnItemClickListener {
         fun onCardClicked(account: Account)
+        fun onSettingsClicked(account: Account)
     }
 
     private fun getColorStateList(isActive: Boolean) = if (isActive) {

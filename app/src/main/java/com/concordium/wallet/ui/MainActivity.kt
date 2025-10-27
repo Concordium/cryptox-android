@@ -18,10 +18,8 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
 import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
-import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
 import com.concordium.wallet.ui.account.earn.EarnFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -450,12 +448,5 @@ class MainActivity : BaseActivity(R.layout.activity_main),
             )
         )
         startActivity(intent)
-    }
-
-    private fun showAccountsList() {
-        AccountsListFragment().showSingle(
-            supportFragmentManager,
-            AccountsListFragment.TAG
-        )
     }
 }

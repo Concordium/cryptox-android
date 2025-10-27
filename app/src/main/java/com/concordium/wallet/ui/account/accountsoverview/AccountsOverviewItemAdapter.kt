@@ -22,18 +22,15 @@ class AccountsOverviewItemAdapter(
     override fun getItemCount(): Int = data.size
 
     override fun getItemViewType(position: Int): Int = when (data[position]) {
-        is AccountsOverviewListItem.Account ->
-            R.layout.list_item_accounts_overview_account
+        is AccountsOverviewListItem.Account -> R.layout.list_item_accounts_overview_account
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
-            R.layout.list_item_accounts_overview_account ->
-                ViewHolder.Account(view)
+            R.layout.list_item_accounts_overview_account -> ViewHolder.Account(view)
 
-            else ->
-                error("Unknown view type $viewType")
+            else -> error("Unknown view type $viewType")
         }
     }
 

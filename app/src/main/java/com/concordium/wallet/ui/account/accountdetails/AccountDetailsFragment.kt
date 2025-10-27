@@ -30,7 +30,6 @@ import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.account.accountsoverview.SeedPhraseBackupNoticeDialog
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
@@ -280,7 +279,7 @@ class AccountDetailsFragment : BaseFragment() {
         initContainer()
         initBanners()
         binding.accountRetryButton.setOnClickListener {
-            gotoAccountsList()
+            (activity as BaseActivity).showAccountsList()
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
@@ -519,11 +518,6 @@ class AccountDetailsFragment : BaseFragment() {
 
     private fun gotoSeedPhraseReveal() {
         val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoAccountsList() {
-        val intent = Intent(activity, AccountsListActivity::class.java)
         startActivity(intent)
     }
 }

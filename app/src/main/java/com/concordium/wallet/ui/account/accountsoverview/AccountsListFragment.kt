@@ -10,6 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
+import com.concordium.wallet.ui.account.accountdetails.AccountSettingsActivity
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.uicore.popup.Popup
 import com.concordium.wallet.util.Log
@@ -90,8 +91,11 @@ class AccountsListFragment : BottomSheetDialogFragment() {
                 override fun onCardClicked(account: Account) {
                     selectAccount(account)
                 }
-            },
-        )
+
+                override fun onSettingsClicked(account: Account) {
+                    gotoAccountSettings(account)
+                }
+            })
         binding.accountRecyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
     }
@@ -115,6 +119,12 @@ class AccountsListFragment : BottomSheetDialogFragment() {
 
     private fun gotoCreateAccount() {
         val intent = Intent(requireActivity(), NewAccountNameActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun gotoAccountSettings(account: Account) {
+        val intent = Intent(requireActivity(), AccountSettingsActivity::class.java)
+        intent.putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, account)
         startActivity(intent)
     }
 
