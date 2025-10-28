@@ -75,14 +75,15 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
         when (accountWithIdentity.account.transactionStatus) {
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED -> {
-                binding.balanceLayout.visibility = GONE
+                binding.address.visibility = GONE
+                binding.isEarning.visibility = GONE
                 binding.accountStatusLayout.visibility = VISIBLE
                 animateStatusIcon()
             }
 
             TransactionStatus.ABSENT -> {}
             else -> {
-                binding.balanceLayout.visibility = VISIBLE
+                binding.address.visibility = VISIBLE
                 binding.accountStatusLayout.visibility = GONE
                 pulsateAnimator.end()
             }
@@ -110,6 +111,10 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             binding.settingsButton.setOnClickListener {
                 onItemClickListener.onSettingsClicked(account)
             }
+            binding.root.setOnLongClickListener {
+                onItemClickListener.onLongClick(account.address)
+                true
+            }
         }
     }
 
@@ -126,6 +131,7 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
     interface OnItemClickListener {
         fun onCardClicked(account: Account)
         fun onSettingsClicked(account: Account)
+        fun onLongClick(address: String)
     }
 
     private fun getColorStateList(isActive: Boolean) = if (isActive) {
