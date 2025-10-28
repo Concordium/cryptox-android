@@ -22,10 +22,10 @@ android {
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
-    def versionMinor = 14
+    def versionMinor = 15
     def versionPatch = 0
     def versionMeta = ""
-    def versionCodeIncremental = 1472
+    def versionCodeIncremental = 1474
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
@@ -244,7 +244,7 @@ allprojects {
 
 dependencies {
 
-    implementation("com.concordium.sdk:concordium-android-sdk:11.0.1") {
+    implementation("com.concordium.sdk:concordium-android-sdk:11.1.0") {
         exclude group: "org.bouncycastle"
         exclude group: "net.jcip"
     }

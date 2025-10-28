@@ -11,10 +11,12 @@ import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -38,6 +40,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.math.BigInteger
 
 /**
@@ -70,7 +74,8 @@ private constructor(
     private val defaultWalletDelegate: SignClient.WalletDelegate,
 ) : AndroidViewModel(application),
     CoreClient.CoreDelegate by defaultCoreDelegate,
-    SignClient.WalletDelegate by defaultWalletDelegate {
+    SignClient.WalletDelegate by defaultWalletDelegate,
+    KoinComponent {
 
     /**
      * A constructor for Android.
@@ -92,10 +97,6 @@ private constructor(
         WC_URI_PREFIX,
         "${application.getString(R.string.wc_scheme)}:",
     )
-    private val allowedAccountTransactionTypes = setOf(
-        TransactionType.UPDATE,
-        TransactionType.TRANSFER,
-    )
     private val allowedRequestMethods = setOf(
         REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
         REQUEST_METHOD_SIGN_MESSAGE,
@@ -109,6 +110,7 @@ private constructor(
     private val identityRepository: IdentityRepository by lazy {
         IdentityRepository(App.appCore.session.walletStorage.database.identityDao())
     }
+    private val tokensInteractor: TokensInteractor by inject()
 
     private lateinit var sessionProposalPublicKey: String
     private lateinit var sessionProposalNamespaceKey: String
@@ -146,7 +148,6 @@ private constructor(
 
     private val signTransactionRequestHandler: WalletConnectSignTransactionRequestHandler by lazy {
         WalletConnectSignTransactionRequestHandler(
-            allowedAccountTransactionTypes = allowedAccountTransactionTypes,
             respondSuccess = ::respondSuccess,
             respondError = ::respondError,
             emitEvent = mutableEventsFlow::tryEmit,
@@ -154,6 +155,7 @@ private constructor(
             onFinish = ::onSessionRequestHandlingFinished,
             setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
             proxyRepository = proxyRepository,
+            tokensInteractor = tokensInteractor,
             context = application,
         )
     }
@@ -352,11 +354,12 @@ private constructor(
 
         // Find a single allowed namespace and chain.
         val singleNamespaceEntry =
-            sessionProposal.requiredNamespaces.entries.find { (_, namespace) ->
-                namespace.chains?.any { chain ->
-                    allowedChains.contains(chain)
-                } == true
-            }
+            (sessionProposal.requiredNamespaces.entries + sessionProposal.optionalNamespaces.entries)
+                .find { (_, namespace) ->
+                    namespace.chains?.any { chain ->
+                        allowedChains.contains(chain)
+                    } == true
+                }
         val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
             allowedChains.contains(chain)
         }
@@ -1159,6 +1162,7 @@ private constructor(
                 val method: String,
                 val receiver: String,
                 val amount: BigInteger,
+                val token: Token,
                 val estimatedFee: BigInteger,
                 val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,

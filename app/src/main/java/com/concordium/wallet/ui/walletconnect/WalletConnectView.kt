@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.View
@@ -19,9 +20,9 @@ import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.databinding.AccountInfoRowBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectProgressBinding
@@ -34,7 +35,6 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
-import com.concordium.wallet.util.ImageUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
@@ -66,7 +66,7 @@ class WalletConnectView(
             when (state) {
                 is WalletConnectViewModel.State.SessionProposalReview,
                 is WalletConnectViewModel.State.SessionRequestReview,
-                    -> {
+                -> {
                     val lifecycleState = lifecycle.currentState
                     if (lifecycleState >= Lifecycle.State.CREATED
                         && lifecycleState < Lifecycle.State.STARTED
@@ -121,6 +121,7 @@ class WalletConnectView(
                     method = state.method,
                     receiver = state.receiver,
                     amount = state.amount,
+                    token = state.token,
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
@@ -210,7 +211,7 @@ class WalletConnectView(
                 val duration = when (event.error) {
                     WalletConnectViewModel.Error.ConnectionFailed,
                     WalletConnectViewModel.Error.AccountNotFound,
-                        ->
+                    ->
                         Toast.LENGTH_LONG
 
                     else ->
@@ -317,6 +318,7 @@ class WalletConnectView(
         method: String,
         receiver: String,
         amount: BigInteger,
+        token: Token,
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
@@ -330,6 +332,7 @@ class WalletConnectView(
                 method = method,
                 receiver = receiver,
                 amount = amount,
+                token = token,
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
@@ -339,12 +342,14 @@ class WalletConnectView(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initTransactionRequestReviewView(
         view: FragmentWalletConnectTransactionRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
         method: String,
         receiver: String,
         amount: BigInteger,
+        token: Token,
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
@@ -366,9 +371,7 @@ class WalletConnectView(
             accAddress.text = account.getAccountName()
             accBalance.text = root.context.getString(
                 R.string.acc_balance_placeholder,
-                CurrencyUtil.formatGTU(
-                    account.balance
-                )
+                "${CurrencyUtil.formatGTU(token.balance, token)} ${token.symbol}"
             )
             accBalanceAtDisposal.isVisible = true
             accBalanceAtDisposal.text = root.context.getString(
@@ -382,7 +385,7 @@ class WalletConnectView(
         }
 
         amountTextView.text =
-            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(amount))
+            "${CurrencyUtil.formatGTU(amount, token)} ${token.symbol}"
         feeTextView.text =
             root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
 
