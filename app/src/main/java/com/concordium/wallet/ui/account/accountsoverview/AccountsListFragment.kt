@@ -1,5 +1,8 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +16,7 @@ import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountSettingsActivity
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.uicore.popup.Popup
+import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.Log
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -95,6 +99,10 @@ class AccountsListFragment : BottomSheetDialogFragment() {
                 override fun onSettingsClicked(account: Account) {
                     gotoAccountSettings(account)
                 }
+
+                override fun onLongClick(address: String) {
+                    copyAddress(address)
+                }
             })
         binding.accountRecyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
@@ -115,6 +123,15 @@ class AccountsListFragment : BottomSheetDialogFragment() {
 
     private fun showError(stringRes: Int) {
         Popup().showSnackbar(binding.root, stringRes)
+    }
+
+    private fun copyAddress(address: String) {
+        val clipboardManager: ClipboardManager =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("txt", address)
+        clipboardManager.setPrimaryClip(clipData)
+
+        requireActivity().showCustomToast(title = getString(R.string.account_qr_code_copied))
     }
 
     private fun gotoCreateAccount() {
