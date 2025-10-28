@@ -35,15 +35,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
 
-    <com.concordium.wallet.uicore.view.NoBoldBottomNavigationView
+    <com.concordium.wallet.uicore.view.MW24BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/mw24_black_60"
         android:paddingVertical="@dimen/size12"
         app:itemBackground="@drawable/mw24_navigation_item_background"
-        app:itemTextAppearanceActive="@style/CCX_Typography_TabTitle"
-        app:itemTextAppearanceInactive="@style/CCX_Typography_TabTitle"
+        app:itemIconSize="20dp"
+        app:itemTextAppearanceActive="@style/MW24_Typography_Label_S_Medium"
+        app:itemTextAppearanceInactive="@style/MW24_Typography_Label_S"
         app:itemTextColor="@color/ccx_bottom_navigation_bar_item_color"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
