@@ -240,7 +240,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     SelectTokenActivity.EXTRA_SELECTED_TOKEN,
                     Token::class.java,
                 )
-                ?.let(viewModel.chooseToken::postValue)
+                ?.also(viewModel::onTokenSelected)
         }
 
     private fun handleMemo(memoText: String) {
@@ -271,7 +271,7 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
     private fun initObservers() {
         viewModel.waiting.observe(this, ::showWaiting)
 
-        viewModel.chooseToken.observe(this) { token ->
+        viewModel.token.observe(this) { token ->
             setTokenIcon(token)
 
             val decimals = token.decimals

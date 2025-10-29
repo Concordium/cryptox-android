@@ -50,7 +50,7 @@ class SendTokenFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSendTokenBinding.inflate(inflater, container, false)
         return binding.root
@@ -186,7 +186,7 @@ class SendTokenFragment : Fragment() {
             if (viewModel.showMemoWarning()) {
                 MemoNoticeDialog().showSingle(
                     parentFragmentManager,
-                    MemoNoticeDialog.Companion.TAG
+                    MemoNoticeDialog.TAG
                 )
             } else {
                 goToEnterMemo()
@@ -201,21 +201,23 @@ class SendTokenFragment : Fragment() {
     }
 
     private val getResultMemo =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
-                    handleMemo(memo)
-                }
-            }
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            result
+                .data
+                ?.takeIf { result.resultCode == Activity.RESULT_OK }
+                ?.getStringExtra(AddMemoActivity.EXTRA_MEMO)
+                ?.also(::handleMemo)
         }
 
     private val getResultRecipient =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getSerializable(
+            result
+                .data
+                ?.takeIf { result.resultCode == Activity.RESULT_OK }
+                ?.getSerializable(
                     RecipientListActivity.EXTRA_RECIPIENT,
                     Recipient::class.java
-                )?.let { recipient ->
+                )?.also { recipient ->
                     viewModel.onReceiverEntered(recipient.address)
                     binding.recipientPlaceholder.visibility = View.GONE
                     binding.recipientAddress.visibility = View.VISIBLE
@@ -231,7 +233,6 @@ class SendTokenFragment : Fragment() {
                         binding.recipientAddress.text = recipient.address
                     }
                 }
-            }
         }
 
     private val getResultToken =
@@ -242,7 +243,7 @@ class SendTokenFragment : Fragment() {
                     SelectTokenActivity.EXTRA_SELECTED_TOKEN,
                     Token::class.java,
                 )
-                ?.let(viewModel.chooseToken::postValue)
+                ?.also(viewModel::onTokenSelected)
         }
 
     private fun handleMemo(memoText: String) {
@@ -286,7 +287,7 @@ class SendTokenFragment : Fragment() {
 
         viewModel.waiting.observe(viewLifecycleOwner, ::showWaiting)
 
-        viewModel.chooseToken.observe(viewLifecycleOwner) { token ->
+        viewModel.token.observe(viewLifecycleOwner) { token ->
             setTokenIcon(token)
 
             val decimals = token.decimals
