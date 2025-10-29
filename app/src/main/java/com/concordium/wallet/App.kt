@@ -12,6 +12,7 @@ import com.concordium.wallet.ui.account.accountqrcode.receiveModule
 import com.concordium.wallet.ui.account.earn.earnModule
 import com.concordium.wallet.ui.cis2.send.sendTokenModule
 import com.concordium.wallet.ui.cis2.tokensListModule
+import com.concordium.wallet.ui.onramp.onrampModule
 import com.concordium.wallet.util.Log
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
@@ -57,7 +58,8 @@ class App : Application() {
                 sendTokenModule,
                 transfersModule,
                 receiveModule,
-                earnModule
+                earnModule,
+                onrampModule
             )
         }
 

@@ -1,32 +1,35 @@
 package com.concordium.wallet.ui.onramp
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.concordium.wallet.App
 import com.concordium.wallet.databinding.FragmentCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class CcdOnrampSitesFragment : BaseFragment() {
 
     private lateinit var binding: FragmentCcdOnrampSitesBinding
     private lateinit var adapter: CcdOnrampItemAdapter
 
-    private val viewModel: CcdOnrampSitesViewModel by lazy {
-        ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        ).get()
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
+
+    private val viewModel: CcdOnrampSitesViewModel by viewModel {
+        parametersOf(mainViewModel)
     }
 
     override fun onCreateView(
@@ -41,9 +44,6 @@ class CcdOnrampSitesFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.initialize(
-            accountAddress = requireActivity().intent.getStringExtra(ACCOUNT_ADDRESS_EXTRA) ?: "",
-        )
         initList()
         initObservers()
         initToolbar()
@@ -115,7 +115,7 @@ class CcdOnrampSitesFragment : BaseFragment() {
     }
 
     private fun openSite(launchSite: CcdOnrampSite) {
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(launchSite.url))
+        val browserIntent = Intent(Intent.ACTION_VIEW, launchSite.url.toUri())
         startActivity(Intent.createChooser(browserIntent, launchSite.name))
     }
 
@@ -126,13 +126,5 @@ class CcdOnrampSitesFragment : BaseFragment() {
                 showSiteIcon = showSiteIcon
             )
         ).showSingle(parentFragmentManager, CcdOnrampDisclaimerDialog.TAG)
-    }
-
-    companion object {
-        private const val ACCOUNT_ADDRESS_EXTRA = "account_address"
-
-        fun getBundle(accountAddress: String?) = Bundle().apply {
-            putString(ACCOUNT_ADDRESS_EXTRA, accountAddress)
-        }
     }
 }

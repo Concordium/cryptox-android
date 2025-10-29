@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.backend.wert.WertRepository
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.onramp.banxa.BanxaWidgetHelper
 import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
@@ -18,7 +19,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(application) {
+class CcdOnrampSitesViewModel(
+    mainViewModel: MainViewModel,
+    application: Application
+) : AndroidViewModel(application) {
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository by lazy(::CcdOnrampSiteRepository)
     private val wertRepository: WertRepository by lazy(::WertRepository)
 
@@ -34,17 +38,17 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
     private val _error = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     val error = _error.asSharedFlow()
 
-    lateinit var accountAddress: String
-        private set
+    private val accountAddress = MutableStateFlow("")
 
     var launchSite: CcdOnrampSite? = null
 
     init {
         postItems()
-    }
-
-    fun initialize(accountAddress: String) {
-        this.accountAddress = accountAddress
+        viewModelScope.launch {
+            mainViewModel.activeAccount.collect {
+                accountAddress.emit(it?.address ?: "")
+            }
+        }
     }
 
     private fun openWert(
@@ -66,17 +70,17 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
 
     fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
         when {
-            site.name == "Wert" -> openWert(accountAddress, site)
+            site.name == "Wert" -> openWert(accountAddress.value, site)
 
             site.name == "Swipelux" -> _siteToOpen.emit(
-                site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress))
+                site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress.value))
             )
 
             site.name.startsWith("Banxa") -> _siteToOpen.emit(
                 site.copy(
                     url = BanxaWidgetHelper.getWidgetLink(
                         baseUrl = site.url,
-                        accountAddress = accountAddress,
+                        accountAddress = accountAddress.value,
                     )
                 )
             )
