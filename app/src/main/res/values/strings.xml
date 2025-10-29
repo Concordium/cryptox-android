@@ -271,7 +271,7 @@
     <string name="account_settings_scheduled">Scheduled</string>
     <string name="account_settings_address_copied">Account address copied to clipboard</string>
     <!--  Account release schedule and filters -->
-    <string name="account_transaction_filters_title">%1$s Transfer filters</string>
+    <string name="account_transaction_filters_title">Activity Settings</string>
     <!-- Account QR -->
     <string name="account_qr_code_title">Receive funds</string>
     <string name="account_qr_code_share">Share</string>
@@ -462,6 +462,7 @@
     <string name="title_create_nft">Mint NFT</string>
     <string name="title_transfer_nft">Transfer NFT</string>
     <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
+    <string name="transactions_filters_label">Transfer Filters</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
     <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
     <string name="change_password_initial_error">Data could not be decrypted</string>
