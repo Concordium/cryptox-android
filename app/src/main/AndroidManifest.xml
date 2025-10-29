@@ -17,7 +17,6 @@
 
     <application
         android:name=".App"
-        tools:ignore="DiscouragedApi,LockedOrientationActivity"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,7 +24,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MW24_NoActionBar">
+        android:theme="@style/MW24_NoActionBar"
+        tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -293,7 +293,7 @@
             android:parentActivityName=".ui.cis2.send.SendTokenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
             android:launchMode="singleTop"

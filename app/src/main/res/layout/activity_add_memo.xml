@@ -38,7 +38,7 @@
         android:gravity="start|center_vertical"
         android:hint="@string/add_memo_hint"
         android:imeOptions="actionGo"
-        android:inputType="textMultiLine"
+        android:inputType="textMultiLine|textCapSentences"
         android:maxLines="6"
         android:padding="16dp"
         android:singleLine="false"
@@ -49,7 +49,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/info_textview"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintVertical_bias="0">
+
+        <requestFocus />
+    </EditText>
 
     <LinearLayout
         android:id="@+id/recipient_and_button_layout"
