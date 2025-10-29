@@ -28,6 +28,7 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.MemoNoticeDialog
+import com.concordium.wallet.ui.cis2.TokenIconView
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
@@ -288,7 +289,7 @@ class SendTokenFragment : Fragment() {
         viewModel.waiting.observe(viewLifecycleOwner, ::showWaiting)
 
         viewModel.token.observe(viewLifecycleOwner) { token ->
-            setTokenIcon(token)
+            TokenIconView(binding.tokenIcon).showTokenIcon(token)
 
             val decimals = token.decimals
             binding.balance.text = CurrencyUtil.formatGTU(token.balance, decimals)
