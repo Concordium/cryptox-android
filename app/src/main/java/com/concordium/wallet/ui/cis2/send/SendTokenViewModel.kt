@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.cis2.send
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.sdk.serializing.CborMapper
@@ -35,13 +34,13 @@ import com.concordium.wallet.util.Log
 import com.reown.util.bytesToHex
 import com.reown.util.hexToBytes
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import okio.IOException
 import org.koin.core.component.KoinComponent
@@ -63,23 +62,27 @@ class SendTokenViewModel(
     private var feeRequest: BackendRequest<*>? = null
     lateinit var sendTokenData: SendTokenData
 
-    private val _token: MutableLiveData<Token> = MutableLiveData<Token>()
-    val token: LiveData<Token> = _token
+    val token: MutableLiveData<Token> = MutableLiveData<Token>()
     val waiting: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     val feeReady: MutableLiveData<BigInteger?> = MutableLiveData<BigInteger?>(null)
     val errorInt: MutableLiveData<Int> = MutableLiveData<Int>()
     val tokenEurRate: MutableLiveData<SimpleFraction?> = MutableLiveData()
-    private val _accountUpdated = MutableSharedFlow<Boolean>(replay = 1)
+    private val _accountUpdated = MutableSharedFlow<Boolean>(
+        extraBufferCapacity = 10,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
     val accountUpdated = _accountUpdated.asSharedFlow()
     private val _recipientError = MutableStateFlow(-1)
     val recipientError = _recipientError.asStateFlow()
+    private val _hasEnoughFunds = MutableStateFlow(true)
+    val hasEnoughFunds = _hasEnoughFunds.asStateFlow()
 
     val canSend: Boolean
         get() = with(sendTokenData) {
             receiverAddress != null
                     && amount.signum() > 0
                     && fee != null
-                    && hasEnoughFunds()
+                    && hasEnoughFunds.value
         } && recipientError.value == -1
 
     init {
@@ -89,6 +92,10 @@ class SendTokenViewModel(
                 .collect {
                     it?.let(::updateAccount)
                 }
+        }
+
+        feeReady.observeForever {
+            checkIfEnoughFunds()
         }
 
         if (sendTokenData.fee == null) {
@@ -104,11 +111,13 @@ class SendTokenViewModel(
             account = account,
             token = ccdToken
         )
-        _token.value = ccdToken
+        checkIfEnoughFunds()
+        this.token.value = ccdToken
         _accountUpdated.tryEmit(true)
     }
 
-    fun dispose() {
+    override fun onCleared() {
+        super.onCleared()
         accountNonceRequest?.dispose()
         submitTransaction?.dispose()
         feeRequest?.dispose()
@@ -158,11 +167,15 @@ class SendTokenViewModel(
     fun onTokenSelected(token: Token) {
         sendTokenData.token = token
         sendTokenData.maxAmount = if (token is CCDToken) null else token.balance
-        _token.value = token
+        if (token is ContractToken) {
+            sendTokenData.memoHex = null
+        }
+        this.token.value = token
 
         // Fee loading is triggered by the amount change.
         loadEurRate(token)
         checkRecipientState()
+        checkIfEnoughFunds()
     }
 
     private var loadEurRateJob: Job? = null
@@ -199,15 +212,17 @@ class SendTokenViewModel(
         }
     }
 
-    fun hasEnoughFunds(): Boolean {
+    private fun checkIfEnoughFunds() {
         val ccdAtDisposal = sendTokenData.account.balanceAtDisposal
 
-        return if (sendTokenData.token is CCDToken) {
-            ccdAtDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
-        } else {
-            ccdAtDisposal >= (sendTokenData.fee ?: BigInteger.ZERO)
-                    && sendTokenData.token.balance >= sendTokenData.amount
-        }
+        _hasEnoughFunds.tryEmit(
+            if (sendTokenData.token is CCDToken) {
+                ccdAtDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
+            } else {
+                ccdAtDisposal >= (sendTokenData.fee ?: BigInteger.ZERO)
+                        && sendTokenData.token.balance >= sendTokenData.amount
+            }
+        )
     }
 
     private fun loadCcdTransferFee() {

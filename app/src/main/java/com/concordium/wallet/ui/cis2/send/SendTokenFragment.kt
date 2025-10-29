@@ -14,11 +14,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -31,7 +29,6 @@ import com.concordium.wallet.ui.cis2.MemoNoticeDialog
 import com.concordium.wallet.ui.cis2.TokenIconView
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
@@ -60,6 +57,7 @@ class SendTokenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
         initObservers()
         initFragmentListener()
     }
@@ -67,11 +65,6 @@ class SendTokenFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         enableSend()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.dispose()
     }
 
     private fun initViews() {
@@ -182,7 +175,7 @@ class SendTokenFragment : Fragment() {
     }
 
     private fun initializeMemo() {
-        handleMemo("")
+        setMemoText("")
         binding.memoLayout.setOnClickListener {
             if (viewModel.showMemoWarning()) {
                 MemoNoticeDialog().showSingle(
@@ -257,18 +250,14 @@ class SendTokenFragment : Fragment() {
         }
     }
 
-    private fun setMemoText(memoText: String) {
+    private fun setMemoText(memoText: String) = with(binding) {
         if (memoText.isNotEmpty()) {
-            binding.apply {
-                addMemoPlaceholder.visibility = View.GONE
-                memo.visibility = View.VISIBLE
-                memo.text = memoText
-            }
+            addMemoPlaceholder.visibility = View.GONE
+            memo.visibility = View.VISIBLE
+            memo.text = memoText
         } else {
-            binding.apply {
-                addMemoPlaceholder.visibility = View.VISIBLE
-                memo.visibility = View.GONE
-            }
+            addMemoPlaceholder.visibility = View.VISIBLE
+            memo.visibility = View.GONE
         }
     }
 
@@ -283,7 +272,9 @@ class SendTokenFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun initObservers() {
         viewModel.accountUpdated.collectWhenStarted(viewLifecycleOwner) {
-            initViews()
+            setMemoText("")
+            binding.recipientPlaceholder.isVisible = true
+            binding.recipientAddress.isVisible = false
         }
 
         viewModel.waiting.observe(viewLifecycleOwner, ::showWaiting)
@@ -309,11 +300,14 @@ class SendTokenFragment : Fragment() {
                 binding.balanceSymbol.visibility = View.VISIBLE
             }
             binding.amount.decimals = decimals
+
             // For non-CCD tokens Max is always available.
             binding.sendAllButton.isEnabled = token !is CCDToken
             binding.balanceSymbol.text = token.symbol
 
             binding.memoLayout.isVisible = token !is ContractToken
+            setMemoText(viewModel.getMemoText() ?: "")
+
             binding.atDisposalTitle.isVisible = token is CCDToken
         }
 
@@ -329,7 +323,6 @@ class SendTokenFragment : Fragment() {
                     ""
             binding.sendAllButton.isEnabled =
                 viewModel.sendTokenData.token !is CCDToken || fee != null
-            binding.amountError.isVisible = !viewModel.hasEnoughFunds()
 
             enableSend()
         }
@@ -347,6 +340,10 @@ class SendTokenFragment : Fragment() {
                 isVisible = it != -1
                 if (isVisible) text = getString(it)
             }
+        }
+
+        viewModel.hasEnoughFunds.collectWhenStarted(viewLifecycleOwner) { hasEnoughFunds ->
+            binding.amountError.isVisible = !hasEnoughFunds
         }
     }
 
@@ -368,44 +365,12 @@ class SendTokenFragment : Fragment() {
         }
     }
 
-    private fun setTokenIcon(token: Token) = when (token) {
-
-        is CCDToken -> {
-            Glide.with(this)
-                .load(R.drawable.mw24_ic_ccd)
-                .into(binding.tokenIcon)
-        }
-
-        is ProtocolLevelToken -> {
-            Glide.with(this)
-                .load(R.drawable.mw24_ic_token_placeholder)
-                .into(binding.tokenIcon)
-        }
-
-        is ContractToken -> {
-            val thumbnailUrl =
-                token
-                    .metadata
-                    ?.thumbnail
-                    ?.url
-                    ?.takeIf(String::isNotBlank)
-
-            Glide.with(this)
-                .load(thumbnailUrl)
-                .override(resources.getDimensionPixelSize(R.dimen.cis_token_icon_size))
-                .placeholder(ThemedCircularProgressDrawable(requireActivity()))
-                .error(R.drawable.mw24_ic_token_placeholder)
-                .fitCenter()
-                .into(binding.tokenIcon)
-        }
-    }
-
     private fun initFragmentListener() {
         parentFragmentManager.setFragmentResultListener(
-            MemoNoticeDialog.Companion.ACTION_REQUEST,
+            MemoNoticeDialog.ACTION_REQUEST,
             viewLifecycleOwner
         ) { _, bundle ->
-            val showAgain = MemoNoticeDialog.Companion.getResult(bundle)
+            val showAgain = MemoNoticeDialog.getResult(bundle)
             if (!showAgain) {
                 viewModel.dontShowMemoWarning()
             }
