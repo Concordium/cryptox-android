@@ -73,16 +73,7 @@ class AccountDetailsFragment : BaseFragment() {
         initializeViewModels()
         initViews()
         initTooltipBanner()
-
-        val baseActivity = (activity as BaseActivity)
-
-        baseActivity.hideQrScan(isVisible = true) {
-            if (mainViewModel.hasCompletedOnboarding()) {
-                baseActivity.startQrScanner()
-            } else {
-                baseActivity.showUnlockFeatureDialog()
-            }
-        }
+        initToolbar()
     }
 
     override fun onResume() {
@@ -93,6 +84,19 @@ class AccountDetailsFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         resetWhenPaused()
+    }
+
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+
+        baseActivity.hideQrScan(isVisible = true) {
+            if (mainViewModel.hasCompletedOnboarding()) {
+                baseActivity.startQrScanner()
+            } else {
+                baseActivity.showUnlockFeatureDialog()
+            }
+        }
+        baseActivity.hideSettings(isVisible = false)
     }
 
     private fun initTooltipBanner() {

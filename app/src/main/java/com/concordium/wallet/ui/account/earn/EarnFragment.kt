@@ -13,6 +13,7 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusFragment
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusFragment
+import com.concordium.wallet.ui.base.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -36,6 +37,7 @@ class EarnFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initToolbar()
         viewModel.uiState.collectWhenStarted(viewLifecycleOwner) { state ->
             binding.loading.progressBar.isVisible = state.loading
 
@@ -48,6 +50,12 @@ class EarnFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+        baseActivity.hideQrScan(isVisible = false)
+        baseActivity.hideSettings(isVisible = false)
     }
 
     private fun replaceFragment(fragment: Fragment) {

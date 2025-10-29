@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentTransferContainerBinding
 import com.concordium.wallet.ui.account.accountqrcode.ReceiveFragment
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.send.SendTokenFragment
 import com.concordium.wallet.uicore.view.GradientTabsView
 
@@ -29,6 +30,7 @@ class TransferFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initToolbar()
         binding.transferTabs.clearAll()
         binding.transferTabs.addControl(
             label = getString(R.string.account_details_send),
@@ -56,5 +58,11 @@ class TransferFragment: Fragment() {
         childFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
+    }
+
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+        baseActivity.hideQrScan(isVisible = true)
+        baseActivity.hideSettings(isVisible = false)
     }
 }

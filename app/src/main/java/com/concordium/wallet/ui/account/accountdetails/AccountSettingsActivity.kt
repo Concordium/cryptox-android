@@ -85,9 +85,6 @@ class AccountSettingsActivity : BaseActivity(
     }
 
     private fun initViews() {
-        binding.transferFilter.setOnClickListener {
-            gotoTransferFilters(viewModel.account)
-        }
         binding.releaseSchedule.setOnClickListener {
             gotoAccountReleaseSchedule(viewModel.account)
         }
@@ -103,12 +100,6 @@ class AccountSettingsActivity : BaseActivity(
         binding.copyAddressButton.setOnClickListener {
             copyAddress(viewModel.account.address)
         }
-    }
-
-    private fun gotoTransferFilters(account: Account) {
-        val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
-        intent.putExtra(AccountTransactionsFiltersActivity.EXTRA_ACCOUNT, account)
-        startActivity(intent)
     }
 
     private fun gotoAccountReleaseSchedule(account: Account) {

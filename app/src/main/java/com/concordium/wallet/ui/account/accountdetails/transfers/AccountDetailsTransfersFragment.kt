@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.account.accountdetails.AccountTransactionsFiltersActivity
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,6 +48,7 @@ class AccountDetailsTransfersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeViewModel()
         initializeViews()
+        initToolbar()
     }
 
     override fun onDestroyView() {
@@ -60,6 +64,14 @@ class AccountDetailsTransfersFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         transfersViewModel.stopFrequentUpdater()
+    }
+
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+        baseActivity.hideQrScan(isVisible = false)
+        baseActivity.hideSettings(isVisible = true) {
+            gotoTransferFilters(account = transfersViewModel.getAccount())
+        }
     }
 
     private fun initializeViewModel() {
@@ -201,5 +213,11 @@ class AccountDetailsTransfersFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun gotoTransferFilters(account: Account) {
+        val intent = Intent(requireActivity(), AccountTransactionsFiltersActivity::class.java)
+        intent.putExtra(AccountTransactionsFiltersActivity.EXTRA_ACCOUNT, account)
+        startActivity(intent)
     }
 }

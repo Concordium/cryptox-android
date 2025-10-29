@@ -14,6 +14,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.databinding.FragmentCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 
 class CcdOnrampSitesFragment : BaseFragment() {
@@ -45,11 +46,18 @@ class CcdOnrampSitesFragment : BaseFragment() {
         )
         initList()
         initObservers()
+        initToolbar()
     }
 
     override fun onResume() {
         super.onResume()
         App.appCore.tracker.homeOnrampScreen()
+    }
+
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+        baseActivity.hideQrScan(isVisible = false)
+        baseActivity.hideSettings(isVisible = false)
     }
 
     private fun initList() {

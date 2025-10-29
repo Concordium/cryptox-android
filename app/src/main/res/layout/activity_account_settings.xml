@@ -466,16 +466,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/mw24_plain_white_20" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <LinearLayout
-                android:id="@+id/transfer_filter"
-                style="@style/AccountSettingsItem">
-
-                <TextView
-                    style="@style/MW24_AccountSettingsItemTextView"
-                    android:text="@string/account_details_menu_transfer_filter" />
-
-            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
