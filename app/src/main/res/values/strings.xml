@@ -260,8 +260,15 @@
     <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
     <string name="account_details_cis2_token_type_label">CIS-2 Token</string>
     <!--  Account settings  -->
-    <string name="account_settings_title">Account settings</string>
+    <string name="account_settings_title">Account Settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
+    <string name="account_settings_account_name">Account Name</string>
+    <string name="account_settings_account_address">Account Address</string>
+    <string name="account_settings_identity">Identity</string>
+    <string name="account_settings_total_value">Total Value</string>
+    <string name="account_settings_at_disposal">At Disposal</string>
+    <string name="account_settings_earning">Earning</string>
+    <string name="account_settings_scheduled">Scheduled</string>
     <!--  Account release schedule and filters -->
     <string name="account_transaction_filters_title">%1$s Transfer filters</string>
     <!-- Account QR -->
@@ -441,8 +448,8 @@
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_menu_export_key">Export private key</string>
-    <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
-    <string name="account_release_schedule_title">Release schedule</string>
+    <string name="account_details_menu_export_transaction_log">Export Transaction Logs</string>
+    <string name="account_release_schedule_title">Release Schedule</string>
     <string name="account_release_schedule_account_name">Account name</string>
     <string name="account_release_schedule_locked_amount">Locked Amount</string>
     <string name="account_release_schedule_copied">Transaction hash copied</string>

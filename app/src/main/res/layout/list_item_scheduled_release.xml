@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
+    android:layout_marginBottom="@dimen/size4"
     android:background="@drawable/mw24_release_schedule_background"
     android:padding="16dp">
 

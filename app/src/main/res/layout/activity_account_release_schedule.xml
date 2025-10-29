@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/mw24_release_schedule_account_card_background"
+        android:background="@drawable/mw24_account_settings_card_background"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/size24"
         android:layout_weight="1"
         android:fadingEdge="vertical"
         android:requiresFadingEdge="vertical"
