@@ -152,8 +152,9 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         binding.sendAllButton.setOnClickListener {
             binding.amount.setText(
                 CurrencyUtil.formatGTU(
-                    viewModel.sendTokenData.maxAmount ?: BigInteger.ZERO,
-                    viewModel.sendTokenData.token
+                    value = viewModel.sendTokenData.maxAmount ?: BigInteger.ZERO,
+                    token = viewModel.sendTokenData.token,
+                    withCommas = false,
                 )
             )
             enableSend()
