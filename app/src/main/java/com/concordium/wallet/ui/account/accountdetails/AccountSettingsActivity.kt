@@ -13,6 +13,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.export.ExportAccountKeysActivity
 import com.concordium.wallet.ui.more.export.ExportTransactionLogActivity
 import com.concordium.wallet.uicore.toast.showCustomToast
+import com.concordium.wallet.util.ClipboardUtil
 import com.concordium.wallet.util.getSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
@@ -99,6 +100,9 @@ class AccountSettingsActivity : BaseActivity(
         binding.changeName.setOnClickListener {
             showChangeNameDialog()
         }
+        binding.copyAddressButton.setOnClickListener {
+            copyAddress(viewModel.account.address)
+        }
     }
 
     private fun gotoTransferFilters(account: Account) {
@@ -143,5 +147,13 @@ class AccountSettingsActivity : BaseActivity(
         }
         builder.show()
         input.requestFocus()
+    }
+
+    private fun copyAddress(address: String) {
+        ClipboardUtil.copyToClipboard(
+            context = this,
+            text = address
+        )
+        showCustomToast(title = getString(R.string.account_settings_address_copied))
     }
 }

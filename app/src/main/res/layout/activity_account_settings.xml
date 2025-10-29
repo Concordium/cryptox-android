@@ -95,13 +95,13 @@
                     android:ellipsize="middle"
                     android:textAppearance="@style/MW24_Typography_Title"
                     android:textColor="@color/mw24_content_primary"
-                    app:layout_constraintEnd_toStartOf="@id/address_copy_button"
+                    app:layout_constraintEnd_toStartOf="@id/copy_address_button"
                     app:layout_constraintStart_toStartOf="@id/account_name_label"
                     app:layout_constraintTop_toBottomOf="@id/account_address_label"
                     tools:text="48s19hfXXWV17pCvdaMNr...Rx5" />
 
                 <ImageView
-                    android:id="@+id/address_copy_button"
+                    android:id="@+id/copy_address_button"
                     android:layout_width="@dimen/size32"
                     android:layout_height="@dimen/size32"
                     android:layout_marginEnd="@dimen/size16"

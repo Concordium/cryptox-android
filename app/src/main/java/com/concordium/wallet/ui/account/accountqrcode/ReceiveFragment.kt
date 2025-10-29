@@ -1,8 +1,5 @@
 package com.concordium.wallet.ui.account.accountqrcode
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -19,6 +16,7 @@ import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.uicore.toast.showCustomToast
+import com.concordium.wallet.util.ClipboardUtil
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
@@ -84,10 +82,10 @@ class ReceiveFragment : Fragment() {
     }
 
     private fun copyAddress() {
-        val clipboardManager: ClipboardManager =
-            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("txt", viewModel.getAccount()?.address)
-        clipboardManager.setPrimaryClip(clipData)
+        ClipboardUtil.copyToClipboard(
+            context = requireContext(),
+            text = viewModel.getAccount()?.address ?: ""
+        )
 
         requireActivity().showCustomToast(title = getString(R.string.account_qr_code_copied))
     }

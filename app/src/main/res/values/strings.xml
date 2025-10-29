@@ -269,6 +269,7 @@
     <string name="account_settings_at_disposal">At Disposal</string>
     <string name="account_settings_earning">Earning</string>
     <string name="account_settings_scheduled">Scheduled</string>
+    <string name="account_settings_address_copied">Account address copied to clipboard</string>
     <!--  Account release schedule and filters -->
     <string name="account_transaction_filters_title">%1$s Transfer filters</string>
     <!-- Account QR -->
