@@ -8,7 +8,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -232,9 +231,6 @@ class MainActivity : BaseActivity(R.layout.activity_main),
 
     @Suppress("DEPRECATION")
     private fun initializeViews() {
-        window.navigationBarColor =
-            ContextCompat.getColor(this, R.color.mw24_black_60)
-
         binding.bottomNavigationView.apply {
             itemIconTintList = null
             setOnItemSelectedListener(::onNavigationItemSelected)
