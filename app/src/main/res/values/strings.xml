@@ -568,6 +568,7 @@
     <string name="transaction_hash">Transaction hash</string>
     <string name="insufficient_funds">Insufficient funds available on account</string>
     <string name="transaction_submitted">Transaction submitted!</string>
+    <string name="transaction_empty_label">There’s no transaction activity yet</string>
 
     <string name="cis_tab_tokens">Tokens</string>
     <string name="cis_manage">Manage Tokens</string>

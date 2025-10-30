@@ -104,9 +104,11 @@ class AccountDetailsTransfersFragment : Fragment() {
                 }
 
                 if (filteredList.isEmpty()) {
+                    binding.recyclerview.visibility = View.GONE
                     binding.noTransfersTextview.visibility = View.VISIBLE
                 } else {
                     binding.noTransfersTextview.visibility = View.GONE
+                    binding.recyclerview.visibility = View.VISIBLE
                 }
 
                 transfersViewModel.allowScrollToLoadMore = true
@@ -117,8 +119,15 @@ class AccountDetailsTransfersFragment : Fragment() {
             if (show) {
                 binding.gtuDropLayout.visibility = View.VISIBLE
                 binding.gtuDropButton.isEnabled = true
+                binding.noTransfersTextview.visibility = View.GONE
             } else {
                 binding.gtuDropLayout.visibility = View.GONE
+            }
+        }
+
+        transfersViewModel.errorFlow.collectWhenStarted(this) { event ->
+            event.contentIfNotHandled?.let {
+                (activity as BaseActivity).showError(it)
             }
         }
     }
