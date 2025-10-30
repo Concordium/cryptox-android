@@ -156,6 +156,12 @@ class SendTokenFragment : Fragment() {
         }
     }
 
+    private fun enableSendAll() {
+        binding.sendAllButton.isEnabled =
+            viewModel.sendTokenData.token !is CCDToken
+                    || viewModel.sendTokenData.fee != null
+    }
+
     private fun enableSend(): Boolean {
         binding.continueBtn.isEnabled = viewModel.canSend
         return binding.continueBtn.isEnabled
@@ -301,14 +307,14 @@ class SendTokenFragment : Fragment() {
             }
             binding.amount.decimals = decimals
 
-            // For non-CCD tokens Max is always available.
-            binding.sendAllButton.isEnabled = token !is CCDToken
             binding.balanceSymbol.text = token.symbol
 
             binding.memoLayout.isVisible = token !is ContractToken
             setMemoText(viewModel.getMemoText() ?: "")
 
             binding.atDisposalTitle.isVisible = token is CCDToken
+
+            enableSendAll()
         }
 
         viewModel.feeReady.observe(viewLifecycleOwner) { fee ->
@@ -321,9 +327,8 @@ class SendTokenFragment : Fragment() {
                     )
                 else
                     ""
-            binding.sendAllButton.isEnabled =
-                viewModel.sendTokenData.token !is CCDToken || fee != null
 
+            enableSendAll()
             enableSend()
         }
 

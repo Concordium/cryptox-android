@@ -111,8 +111,7 @@ class SendTokenViewModel(
             account = account,
             token = ccdToken
         )
-        checkIfEnoughFunds()
-        this.token.value = ccdToken
+        onTokenSelected(ccdToken)
         _accountUpdated.tryEmit(true)
     }
 
@@ -172,7 +171,7 @@ class SendTokenViewModel(
         }
         this.token.value = token
 
-        // Fee loading is triggered by the amount change.
+        loadFee()
         loadEurRate(token)
         checkRecipientState()
         checkIfEnoughFunds()
