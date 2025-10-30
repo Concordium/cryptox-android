@@ -26,7 +26,6 @@ object TransactionViewHelper {
         costTextView: TextView,
         memoLayout: LinearLayout,
         memoTextView: TextView,
-        alertImageView: ImageView,
         statusImageView: ImageView,
         showDate: Boolean = false,
         titleFromReceipt: String = "",
@@ -34,10 +33,15 @@ object TransactionViewHelper {
         // Title
         titleTextView.text = titleFromReceipt.ifEmpty { ta.title }
         titleTextView.setTextColor(
-            if (ta.isBakerSuspension() || ta.isBakerPrimingForSuspension()) {
-                ContextCompat.getColor(titleTextView.context, R.color.mw24_attention_red)
-            } else {
-                ContextCompat.getColor(titleTextView.context, R.color.cryptox_white_main)
+            when {
+                ta.isBakerSuspension() ||
+                        ta.isBakerPrimingForSuspension() ||
+                        ta.status == TransactionStatus.ABSENT ||
+                        (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
+                        (ta.status == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
+                    -> ContextCompat.getColor(titleTextView.context, R.color.mw24_attention_red)
+
+                else -> ContextCompat.getColor(titleTextView.context, R.color.cryptox_white_main)
             }
         )
 
@@ -112,22 +116,13 @@ object TransactionViewHelper {
                 prefix = "~"
             }
 
-            costTextView.text = costTextView.context.getString(R.string.account_details_fee) +
-                    " $prefix" +
-                    CurrencyUtil.formatGTU(ta.cost) +
-                    " ${CCDToken.SYMBOL}"
+            costTextView.text =
+                costTextView.context.getString(R.string.account_details_fee) +
+                        " $prefix" +
+                        CurrencyUtil.formatGTU(ta.cost) +
+                        " ${CCDToken.SYMBOL}"
         } else {
             costTextView.visibility = View.GONE
-        }
-
-        // Alert image
-        if (ta.status == TransactionStatus.ABSENT ||
-            (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
-            (ta.status == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
-        ) {
-            alertImageView.visibility = View.VISIBLE
-        } else {
-            alertImageView.visibility = View.GONE
         }
 
         // Status image

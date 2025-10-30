@@ -7,35 +7,17 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
     android:layout_marginHorizontal="@dimen/size16"
-    android:background="@drawable/mw24_container_primary_background"
-    android:paddingStart="12dp"
-    android:paddingEnd="8dp">
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/alert_imageview"
-        style="@style/Image"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ccx_ico_information_circle_contained"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/main_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/cryptox_pinky_main"
-        tools:visibility="visible" />
+    android:background="@drawable/mw24_container_primary_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/size12"
-        android:layout_marginEnd="@dimen/size12"
+        android:padding="@dimen/size12"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/alert_imageview"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -141,6 +123,4 @@
                 tools:visibility="visible" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

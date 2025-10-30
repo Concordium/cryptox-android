@@ -9,7 +9,6 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
-import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.RemoteTransaction
@@ -41,12 +40,10 @@ class TransfersViewModel(
     private val session: Session = App.appCore.session
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val proxyRepository = ProxyRepository()
-    private val recipientRepository =
-        RecipientRepository(session.walletStorage.database.recipientDao())
     private val transferRepository =
         TransferRepository(session.walletStorage.database.transferDao())
 
-    private lateinit var transactionMappingHelper: TransactionMappingHelper
+    private val transactionMappingHelper = TransactionMappingHelper()
     private val accountUpdater = AccountUpdater(application, viewModelScope)
 
     private var isLoadingTransactions = false
@@ -117,14 +114,11 @@ class TransfersViewModel(
     }
 
     private fun getLocalTransfers() = viewModelScope.launch {
-        val recipientList = recipientRepository.getAll()
-        transactionMappingHelper = TransactionMappingHelper(recipientList)
         val transferList = transferRepository.getAllByAccountId(account.id)
         for (transfer in transferList) {
             val transaction = transfer.toTransaction()
             transactionMappingHelper.addTitlesToTransaction(
                 transaction,
-                transfer,
                 getApplication()
             )
             nonMergedLocalTransactions.add(transaction)
@@ -175,6 +169,7 @@ class TransfersViewModel(
             transactionMappingHelper.addTitleToTransaction(
                 transaction,
                 remoteTransaction,
+                getApplication()
             )
             newTransactions.add(transaction)
         }

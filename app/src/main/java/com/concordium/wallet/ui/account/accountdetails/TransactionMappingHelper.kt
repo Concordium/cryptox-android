@@ -4,24 +4,10 @@ import android.content.Context
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.RemoteTransaction
 import com.concordium.wallet.data.model.Transaction
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.Transfer
 
-class TransactionMappingHelper(
-    private val recipientList: List<Recipient>,
-) {
+class TransactionMappingHelper() {
 
-    private fun getCounterpartyName(address: String): String {
-        for (recipient in recipientList) {
-            if (recipient.address == address) {
-                return recipient.name
-            }
-        }
-        return Account.getDefaultName(address)
-    }
-
-    fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer, ctx: Context) {
+    fun addTitlesToTransaction(transaction: Transaction, ctx: Context) {
         if (transaction.isDelegationTransfer()) {
             transaction.title = ctx.getString(R.string.account_delegation_pending)
         } else if (transaction.isBakerTransfer()) {
@@ -29,25 +15,21 @@ class TransactionMappingHelper(
         } else if (transaction.isSmartContractUpdate()) {
             transaction.title = ctx.getString(R.string.account_smart_contract_update_pending)
         } else {
-            transaction.title = getCounterpartyName(transfer.toAddress)
+            transaction.title = ctx.getString(R.string.transaction_type_transfer)
         }
     }
 
     fun addTitleToTransaction(
         transaction: Transaction,
         remoteTransaction: RemoteTransaction,
+        ctx: Context
     ) {
         transaction.title = when {
-            transaction.isOriginSelf()
-                    && transaction.toAddress != null ->
-                getCounterpartyName(transaction.toAddress)
+            transaction.isOriginSelf() && transaction.toAddress != null ||
+                    !transaction.isOriginSelf() && transaction.fromAddress != null ->
+                ctx.getString(R.string.transaction_type_transfer)
 
-            !transaction.isOriginSelf()
-                    && transaction.fromAddress != null ->
-                getCounterpartyName(transaction.fromAddress)
-
-            else ->
-                remoteTransaction.details.description
+            else -> remoteTransaction.details.description
         }
     }
 }

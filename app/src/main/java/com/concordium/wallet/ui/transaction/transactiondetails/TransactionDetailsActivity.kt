@@ -144,7 +144,6 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.costTextview,
             transactionItem.layoutMemo,
             transactionItem.memoTextview,
-            transactionItem.alertImageview,
             transactionItem.statusImageview,
             titleFromReceipt = receiptTitle
         )
