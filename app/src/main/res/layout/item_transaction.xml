@@ -30,17 +30,17 @@
         android:id="@+id/main_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="12dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginVertical="@dimen/size12"
+        android:layout_marginEnd="@dimen/size12"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/arrow_imageview"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/alert_imageview"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/title_textview"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
@@ -55,7 +55,7 @@
 
         <TextView
             android:id="@+id/total_textview"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -142,15 +142,5 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/arrow_imageview"
-        style="@style/Image"
-        android:layout_width="24dp"
-        android:layout_height="20dp"
-        android:src="@drawable/cryptox_ico_chevron_right"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/mw24_grey_4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

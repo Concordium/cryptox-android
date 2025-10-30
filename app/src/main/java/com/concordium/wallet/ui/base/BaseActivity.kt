@@ -74,6 +74,7 @@ abstract class BaseActivity(
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
     private var menuDrawerBtn: ImageView? = null
+    private var explorerBtn: ImageView? = null
     protected var searchView: SearchView? = null
 
     private var toastLayoutTopError: ViewGroup? = null
@@ -109,6 +110,7 @@ abstract class BaseActivity(
         accountBtnText = toolbar?.findViewById(R.id.toolbar_account_label)
         accountBtnImage = toolbar?.findViewById(R.id.toolbar_account_btn_image)
         menuDrawerBtn = toolbar?.findViewById(R.id.toolbar_menu_drawer_btn)
+        explorerBtn = toolbar?.findViewById(R.id.toolbar_explorer_btn)
 
         setupActionBar(this, titleId)
 
@@ -270,6 +272,12 @@ abstract class BaseActivity(
         menuDrawerBtn?.isVisible = isVisible
         menuDrawerBtn?.setOnClickListener(listener)
     }
+
+    fun hideExplorer(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        explorerBtn?.isVisible = isVisible
+        explorerBtn?.setOnClickListener(listener)
+    }
+
 //    fun hideClose(isVisible: Boolean) {
 //        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE
 //    }

@@ -30,57 +30,12 @@
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp">
 
-                <ImageButton
-                    android:id="@+id/view_on_explorer_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/mw24_account_receive_funds_button_background"
-                    android:contentDescription="@string/transaction_details_view_on_explorer"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:src="@drawable/mw24_ic_explorer"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cryptox_white_main" />
-
-                <ImageButton
-                    android:id="@+id/copy_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:background="@drawable/mw24_account_receive_funds_button_background"
-                    android:contentDescription="@string/transaction_details_view_on_explorer"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:src="@drawable/mw24_ic_address_copy"
-                    app:layout_constraintEnd_toStartOf="@id/view_on_explorer_button"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cryptox_white_main" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/message_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                android:textColor="@color/mw24_content_error_primary"
-                tools:text="Transaction failed to send" />
 
             <LinearLayout
                 style="@style/CryptoX_Container_TextCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
                 <View
@@ -101,6 +56,11 @@
                     android:id="@+id/transaction_date_layout"
                     style="@style/Layout"
                     app:entry_title="@string/transaction_details_date" />
+
+                <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
+                    android:id="@+id/reject_reason_layout"
+                    style="@style/Layout"
+                    app:entry_title="@string/transaction_details_reject_reason" />
 
                 <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                     android:id="@+id/from_address_layout"

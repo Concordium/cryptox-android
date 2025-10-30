@@ -2,12 +2,12 @@ package com.concordium.wallet.ui.onramp
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
@@ -155,7 +155,7 @@ class CcdOnrampItemAdapter(
         class ExchangesNotice(itemView: View) : ViewHolder(itemView) {
             init {
                 (itemView as TextView).handleUrlClicks { url ->
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
                     ContextCompat.startActivity(itemView.context, browserIntent, null)
                 }
             }

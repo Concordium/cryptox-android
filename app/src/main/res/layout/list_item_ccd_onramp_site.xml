@@ -43,6 +43,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/mw24_ic_external_link"
-        app:tint="@color/ccx_neutral_tint_3" />
+        app:tint="@color/mw24_plain_white_40" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

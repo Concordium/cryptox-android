@@ -291,6 +291,7 @@
     <string name="transaction_details_title">Transaction details</string>
     <string name="transaction_details_date">Date</string>
     <string name="transaction_details_memo">Memo</string>
+    <string name="transaction_details_reject_reason">Reject Reason</string>
     <string name="transaction_details_from_address">From address</string>
     <string name="transaction_details_to_address">To address</string>
     <string name="transaction_details_transaction_hash">@string/transaction_hash</string>
