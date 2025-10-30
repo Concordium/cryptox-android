@@ -67,11 +67,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
         enableSend()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.dispose()
-    }
-
     private fun initViews() {
         binding.amount.hint = BigInteger.ZERO.toString()
         initializeAmount()
@@ -312,7 +307,6 @@ class SendTokenActivity : BaseActivity(R.layout.activity_send_token, R.string.ci
                     ""
             binding.sendAllButton.isEnabled =
                 viewModel.sendTokenData.token !is CCDToken || fee != null
-            binding.amountError.isVisible = !viewModel.hasEnoughFunds()
 
             enableSend()
         }

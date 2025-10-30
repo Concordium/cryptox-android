@@ -12,7 +12,6 @@ import com.concordium.sdk.serializing.CborMapper
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAddMemoBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_memo_title) {
 
@@ -21,7 +20,7 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
         const val MAX_MEMO_SIZE_BYTES = 256
     }
 
-    private val binding by  lazy {
+    private val binding by lazy {
         ActivityAddMemoBinding.bind(findViewById(R.id.root_layout))
     }
     private var dialog: Dialog? = null
@@ -35,6 +34,7 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
         val memo = intent.getStringExtra(EXTRA_MEMO) ?: ""
         if (memo.isNotEmpty()) {
             binding.memoEdittext.setText(memo)
+            binding.memoEdittext.setSelection(memo.length)
             binding.confirmButton.isEnabled = true
             handleDeleteBtn(isVisible = true)
             previousText = memo
@@ -53,7 +53,12 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
                     if (previousText.isNotEmpty()) {
                         editable.replace(0, editable.length, previousText)
                     }
-                    binding.memoEdittext.startAnimation(AnimationUtils.loadAnimation(this@AddMemoActivity, R.anim.anim_shake))
+                    binding.memoEdittext.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            this@AddMemoActivity,
+                            R.anim.anim_shake
+                        )
+                    )
                 } else {
                     previousText = str
                 }
@@ -74,23 +79,7 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
 
         binding.confirmButton.setOnClickListener {
             val memoText = binding.memoEdittext.text.toString().trim()
-            binding.memoEdittext.setText(memoText)
-            if (memoText.isEmpty()) {
-                val builder = MaterialAlertDialogBuilder(this)
-                builder.setTitle(getString(R.string.transaction_memo_warning_title))
-                builder.setMessage(getString(R.string.transaction_memo_empty_warning_text))
-                builder.setNegativeButton(getString(R.string.dialog_cancel)) { _, _ ->
-                    dialog?.dismiss()
-                }
-                builder.setPositiveButton(getString(R.string.transaction_memo_warning_continue)) { _, _ ->
-                    goBackWithMemo(memoText)
-                }
-                builder.setCancelable(true)
-                dialog = builder.create()
-                dialog?.show()
-            } else {
-                goBackWithMemo(memoText)
-            }
+            goBackWithMemo(memoText)
         }
 
         hideActionBarBack(isVisible = true)
@@ -98,7 +87,6 @@ class AddMemoActivity : BaseActivity(R.layout.activity_add_memo, R.string.add_me
 
     private fun handleDeleteBtn(isVisible: Boolean) {
         hideActionBarDelete(isVisible = isVisible) {
-            binding.memoEdittext.setText("")
             goBackWithMemo("")
         }
     }

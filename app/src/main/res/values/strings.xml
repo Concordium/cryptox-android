@@ -491,7 +491,6 @@
     <string name="send_funds_optional_add_memo">Add memo</string>
 
     <string name="transaction_memo_warning_title">Transaction memos</string>
-    <string name="transaction_memo_empty_warning_text">You did not provide any memoId. Continue without it?</string>
     <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction is permanent, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_continue">Continue</string>
