@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
+import com.concordium.wallet.databinding.FragmentReceiveBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.uicore.toast.showCustomToast
@@ -26,7 +26,7 @@ import org.koin.core.parameter.parametersOf
 
 class ReceiveFragment : Fragment() {
 
-    private lateinit var binding: ActivityAccountQrCodeBinding
+    private lateinit var binding: FragmentReceiveBinding
 
     private val mainViewModel: MainViewModel by lazy {
         ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -40,7 +40,7 @@ class ReceiveFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ActivityAccountQrCodeBinding.inflate(inflater, container, false)
+        binding = FragmentReceiveBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -113,6 +113,4 @@ class ReceiveFragment : Fragment() {
             return null
         }
     }
-
-
 }
