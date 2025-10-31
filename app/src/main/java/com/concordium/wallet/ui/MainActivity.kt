@@ -197,7 +197,7 @@ class MainActivity : BaseActivity(R.layout.activity_main),
                     onTouchListener = { v, event ->
                         val handled = accountGestureDetector.onTouchEvent(event)
                         if (!handled && event.action == MotionEvent.ACTION_UP) {
-                            v.performClick()
+                            showAccountsList()
                         }
                         handled
                     }
