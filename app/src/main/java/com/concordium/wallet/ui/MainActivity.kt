@@ -312,6 +312,11 @@ class MainActivity : BaseActivity(R.layout.activity_main),
     // ************************************************************
 
     private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        if (!viewModel.hasCompletedOnboarding()) {
+            showUnlockFeatureDialog()
+            return false
+        }
+
         menuItem.isChecked = true
 
         val state = getState(menuItem) ?: return false
