@@ -43,17 +43,24 @@ import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.math.BigInteger
 
 class AccountDetailsFragment : BaseFragment() {
 
     private lateinit var binding: ActivityAccountDetailsBinding
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var viewModelAccountDetails: AccountDetailsViewModel
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
     private lateinit var reviewHelper: ReviewHelper
+
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
+    private val viewModelAccountDetails: AccountDetailsViewModel by viewModel {
+        parametersOf(mainViewModel)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -111,16 +118,6 @@ class AccountDetailsFragment : BaseFragment() {
     }
 
     private fun initializeViewModels() {
-        mainViewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[MainViewModel::class.java]
-
-        viewModelAccountDetails = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[AccountDetailsViewModel::class.java]
-
         onboardingViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)

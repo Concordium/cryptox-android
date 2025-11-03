@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentTokensListBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
@@ -22,8 +23,12 @@ import java.io.Serializable
 class TokensListFragment : Fragment() {
     private var _binding: FragmentTokensListBinding? = null
     private val binding get() = _binding!!
-    private val accountDetailsViewModel: AccountDetailsViewModel by lazy {
-        ViewModelProvider(requireActivity())[AccountDetailsViewModel::class.java]
+
+private val mainViewModel: MainViewModel by lazy {
+    ViewModelProvider(requireActivity())[MainViewModel::class.java]
+}
+    private val accountDetailsViewModel: AccountDetailsViewModel by viewModel {
+        parametersOf(mainViewModel)
     }
     private val viewModel: TokensListViewModel by viewModel {
         parametersOf(

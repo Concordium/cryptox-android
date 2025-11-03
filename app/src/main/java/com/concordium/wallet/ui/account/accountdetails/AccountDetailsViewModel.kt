@@ -18,6 +18,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onboarding.OnboardingState
@@ -36,7 +37,8 @@ import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
-class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
+class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Application) :
+    AndroidViewModel(application) {
     private val session: Session = App.appCore.session
 
     enum class DialogToShow {
@@ -135,6 +137,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _fileWalletMigrationVisible.tryEmit(
             App.appCore.session.activeWallet.type == AppWallet.Type.FILE
         )
+        viewModelScope.launch {
+            mainViewModel.activeAccount.collect {
+                it?.let(::updateAccount)
+            }
+        }
     }
 
     val isSeedPhraseBackupBannerVisible: Boolean
@@ -171,19 +178,21 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
             ?: return@launch
-        account = acc
-        _activeAccount.emit(acc)
-        _totalBalanceLiveData.postValue(acc.balance)
+
+        updateAccount(acc)
+    }
+
+    fun updateAccount(account: Account) = viewModelScope.launch {
+        this@AccountDetailsViewModel.account = account
+        _activeAccount.emit(account)
+        _totalBalanceLiveData.postValue(account.balance)
+        _accountUpdatedFlow.emit(account)
 
         if (account.transactionStatus == TransactionStatus.COMMITTED ||
             account.transactionStatus == TransactionStatus.RECEIVED
         ) {
             restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
         }
-    }
-
-    fun updateAccount() {
-        getActiveAccount()
     }
 
     override fun onCleared() {

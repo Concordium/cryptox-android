@@ -7,6 +7,7 @@ import com.concordium.wallet.core.notifications.AnnouncementNotificationManager
 import com.concordium.wallet.core.tokens.tokensInteractorModule
 import com.concordium.wallet.data.backend.price.tokenPriceModule
 import com.concordium.wallet.data.backend.ws.WsCreds
+import com.concordium.wallet.ui.account.accountdetails.accountDetailsModule
 import com.concordium.wallet.ui.account.accountdetails.transfers.transfersModule
 import com.concordium.wallet.ui.account.accountqrcode.receiveModule
 import com.concordium.wallet.ui.account.earn.earnModule
@@ -59,7 +60,8 @@ class App : Application() {
                 transfersModule,
                 receiveModule,
                 earnModule,
-                onrampModule
+                onrampModule,
+                accountDetailsModule
             )
         }
 
