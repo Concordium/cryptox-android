@@ -285,7 +285,6 @@
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.cis2.send.SendTokenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
