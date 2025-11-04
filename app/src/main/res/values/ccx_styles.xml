@@ -189,26 +189,8 @@
         <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
-    <style name="CCX_WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowBackground">@color/mw24_main_background</item>
-        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
-        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
-        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
-        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
-    </style>
-
-    <style name="CCX_MainScreen" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="CCX_MainScreen" parent="CCX_Screen">
         <item name="android:navigationBarColor">@color/mw24_black_60</item>
-        <item name="android:windowBackground">@color/mw24_main_background</item>
-        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
-        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>
-        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
-        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <!-- endregion -->

@@ -2,11 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- region Screens -->
-    <style name="MW24_NoActionBar" parent="AppTheme.NoActionBar" />
-
     <style name="MW24_Screen" parent="CCX_Screen" />
-
-    <style name="MW24_WelcomeScreen" parent="CCX_WelcomeScreen" />
 
     <style name="MW24_MainScreen" parent="CCX_MainScreen" />
     <!-- end region -->
