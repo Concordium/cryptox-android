@@ -38,7 +38,7 @@
         android:layout_marginTop="6dp"
         android:text="@string/account_details_earn_banner_description"
         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        android:textColor="@color/cryptox_white_main"
+        android:textColor="@color/mw24_content_secondary"
         app:layout_constraintEnd_toEndOf="@id/title_text_view"
         app:layout_constraintStart_toStartOf="@id/title_text_view"
         app:layout_constraintTop_toBottomOf="@id/title_text_view" />
