@@ -157,6 +157,13 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         viewModel.stopIdentityUpdate()
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun onBackPressed() {
+        if (!hideDrawer()) {
+            super.onBackPressed()
+        }
+    }
+
     override fun onNewIntent(newIntent: Intent) {
         super.onNewIntent(newIntent)
 
@@ -375,27 +382,29 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         }
     }
 
-    private fun hideDrawer() {
+    private fun hideDrawer(): Boolean {
         val fragment = supportFragmentManager.findFragmentByTag(DRAWER_TAG)
-        if (fragment != null) {
-            val anim = AnimationUtils.loadAnimation(this, R.anim.slide_out_left)
-            val animDuration = anim.duration
+            ?: return false
 
-            supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    0,
-                    R.anim.slide_out_left
-                )
-                .remove(fragment)
-                .commit()
+        val anim = AnimationUtils.loadAnimation(this, R.anim.slide_out_left)
+        val animDuration = anim.duration
 
-            binding.drawerContainer.postDelayed({
-                binding.drawerContainer.apply {
-                    visibility = View.GONE
-                    isClickable = false
-                }
-            }, animDuration)
-        }
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                0,
+                R.anim.slide_out_left
+            )
+            .remove(fragment)
+            .commit()
+
+        binding.drawerContainer.postDelayed({
+            binding.drawerContainer.apply {
+                visibility = View.GONE
+                isClickable = false
+            }
+        }, animDuration)
+
+        return true
     }
 
     //endregion
