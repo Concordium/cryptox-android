@@ -8,7 +8,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.RemoteTransaction
@@ -38,7 +37,6 @@ class TransfersViewModel(
 ) : AndroidViewModel(application) {
 
     private val session: Session = App.appCore.session
-    private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val proxyRepository = ProxyRepository()
     private val transferRepository =
         TransferRepository(session.walletStorage.database.transferDao())
@@ -97,10 +95,6 @@ class TransfersViewModel(
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _totalBalanceFlow.value = account.balance
-                getLocalTransfers()
-                viewModelScope.launch {
-                    updateAccountFromRepository()
-                }
             }
 
             override fun onNewAccountFinalized(accountName: String) {
@@ -248,17 +242,10 @@ class TransfersViewModel(
                 _waitingFlow.value = true
             }
             viewModelScope.launch {
-                updateAccountFromRepository()
                 accountUpdater.updateForAccount(account)
             }
         } else {
             _totalBalanceFlow.value = BigInteger.ZERO
-        }
-    }
-
-    private suspend fun updateAccountFromRepository() {
-        accountRepository.findById(account.id)?.let { accountCandidate ->
-            account = accountCandidate
         }
     }
 
@@ -268,7 +255,6 @@ class TransfersViewModel(
             account.address,
             {
                 _waitingFlow.value = false
-                //populateTransferList()
                 createGTUDropTransfer(it.submissionId)
             },
             {
