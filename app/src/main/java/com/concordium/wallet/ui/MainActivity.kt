@@ -236,7 +236,6 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun initializeViews() {
         binding.bottomNavigationView.apply {
             itemIconTintList = null
