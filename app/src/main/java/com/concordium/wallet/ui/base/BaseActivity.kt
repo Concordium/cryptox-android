@@ -38,7 +38,6 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
-import com.concordium.wallet.ui.cis2.send.SendTokenActivity
 import com.concordium.wallet.ui.connect.ConnectActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
@@ -51,7 +50,7 @@ import javax.crypto.Cipher
 
 abstract class BaseActivity(
     private val layout: Int? = null,
-    private val titleId: Int = R.string.app_name
+    private val titleId: Int = R.string.app_name,
 ) : AppCompatActivity() {
 
     private var titleView: TextView? = null
@@ -257,7 +256,7 @@ abstract class BaseActivity(
         text: String,
         icon: Drawable?,
         onClickListener: View.OnClickListener? = null,
-        onTouchListener: View.OnTouchListener? = null
+        onTouchListener: View.OnTouchListener? = null,
     ) {
         accountBtn?.isVisible = isVisible
         accountBtnImage?.isVisible = isVisible
@@ -278,11 +277,6 @@ abstract class BaseActivity(
         explorerBtn?.setOnClickListener(listener)
     }
 
-//    fun hideClose(isVisible: Boolean) {
-//        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE
-//    }
-    // authentication region
-
     private val scanQrResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -302,33 +296,18 @@ abstract class BaseActivity(
                         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
                             .getActive()
                     } ?: error("The scanner must not be called if there are no accounts")
+                    val token = CCDToken(
+                        account = activeAccount,
+                    )
                     val knownRecipient: Recipient? = runBlocking {
                         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
                             .getRecipientByAddress(qrData)
                     }
-                    val intent = Intent(this, SendTokenActivity::class.java)
-                        .putExtra(
-                            SendTokenActivity.ACCOUNT,
-                            activeAccount
+                    val recipient = knownRecipient
+                        ?: Recipient(
+                            address = qrData,
                         )
-                        .putExtra(
-                            SendTokenActivity.TOKEN,
-                            CCDToken(
-                                account = activeAccount,
-                            )
-                        )
-                        .putExtra(
-                            SendTokenActivity.RECIPIENT,
-                            knownRecipient
-                                ?: Recipient(
-                                    address = qrData,
-                                )
-                        )
-                        .putExtra(
-                            SendTokenActivity.PARENT_ACTIVITY,
-                            this::class.java.canonicalName
-                        )
-                    startActivityForResultAndHistoryCheck(intent)
+                    TODO("Open the Transfer Send screen")
                 } else {
                     Intent(applicationContext, ConnectActivity::class.java).also {
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK

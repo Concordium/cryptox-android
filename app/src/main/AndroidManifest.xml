@@ -354,11 +354,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/MW24_Screen" />
         <activity
-            android:name=".ui.cis2.send.SendTokenActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
             android:name=".ui.cis2.send.SendTokenReceiptActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
