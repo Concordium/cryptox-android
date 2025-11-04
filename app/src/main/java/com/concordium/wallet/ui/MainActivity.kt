@@ -201,12 +201,8 @@ class MainActivity : BaseActivity(R.layout.activity_main),
                     text = it.getAccountName(),
                     icon = ImageUtil.getIconById(this, it.iconId),
                     onClickListener = { showAccountsList() },
-                    onTouchListener = { v, event ->
-                        val handled = accountGestureDetector.onTouchEvent(event)
-                        if (!handled && event.action == MotionEvent.ACTION_UP) {
-                            showAccountsList()
-                        }
-                        handled
+                    onTouchListener = { _, event ->
+                        accountGestureDetector.onTouchEvent(event)
                     }
                 )
             }

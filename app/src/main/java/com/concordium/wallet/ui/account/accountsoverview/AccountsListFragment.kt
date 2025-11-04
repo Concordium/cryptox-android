@@ -80,7 +80,6 @@ class AccountsListFragment : BottomSheetDialogFragment() {
     }
 
     private fun initializeViews() {
-        binding.progress.progressLayout.visibility = View.VISIBLE
         initializeList()
         binding.createAccountButton.setOnClickListener {
             gotoCreateAccount()
@@ -143,7 +142,7 @@ class AccountsListFragment : BottomSheetDialogFragment() {
         startActivity(intent)
     }
 
-    companion object Companion {
+    companion object {
         const val TAG = "AccountsListFragment"
     }
 }
