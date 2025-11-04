@@ -396,9 +396,8 @@ class AccountDetailsFragment : BaseFragment() {
 
     private fun initContainer() {
         var lastSetHeight = -1
-        binding.scrollViewLayout.viewTreeObserver.addOnGlobalLayoutListener {
-            val heightToSet = binding.scrollView.measuredHeight -
-                    binding.tokensFragmentContainer.top
+        binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
+            val heightToSet = binding.scrollView.measuredHeight
 
             if (lastSetHeight != heightToSet) {
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
