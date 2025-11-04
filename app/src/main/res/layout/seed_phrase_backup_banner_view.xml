@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="40dp"
     android:background="@drawable/mw24_container_primary_background"
-    android:padding="16dp"
+    android:padding="@dimen/size12"
     android:visibility="gone"
     tools:visibility="visible">
 
@@ -27,7 +27,7 @@
         android:id="@+id/title_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="@dimen/size8"
         android:text="@string/account_details_seed_phrase_backup_banner_title"
         android:textAppearance="@style/MW24_Typography_Label_Main"
         android:textColor="@color/cryptox_white_main"
@@ -41,7 +41,7 @@
         android:layout_marginTop="6dp"
         android:text="@string/account_details_seed_phrase_backup_banner_description"
         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        android:textColor="@color/cryptox_white_main"
+        android:textColor="@color/mw24_content_secondary"
         app:layout_constraintEnd_toEndOf="@id/title_text_view"
         app:layout_constraintStart_toStartOf="@id/title_text_view"
         app:layout_constraintTop_toBottomOf="@id/title_text_view" />
@@ -50,9 +50,12 @@
         android:id="@+id/close_image_view"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_marginEnd="@dimen/size4"
         android:contentDescription="@string/ccd_onramp_close_banner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mw24_ic_onramp_close" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/mw24_ic_onramp_close"
+        app:tint="@color/mw24_plain_white_40"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
