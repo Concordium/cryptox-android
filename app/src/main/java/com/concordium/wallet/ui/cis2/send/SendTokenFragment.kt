@@ -13,8 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
@@ -22,6 +22,7 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentSendTokenBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.observe
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -32,6 +33,7 @@ import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getSerializable
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.math.BigInteger
@@ -39,10 +41,9 @@ import java.math.BigInteger
 class SendTokenFragment : Fragment() {
 
     private lateinit var binding: FragmentSendTokenBinding
+    private val mainViewModel: MainViewModel by activityViewModel()
     private val viewModel: SendTokenViewModel by viewModel {
-        parametersOf(
-            ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        )
+        parametersOf(mainViewModel)
     }
 
     override fun onCreateView(
@@ -217,22 +218,7 @@ class SendTokenFragment : Fragment() {
                 ?.getSerializable(
                     RecipientListActivity.EXTRA_RECIPIENT,
                     Recipient::class.java
-                )?.also { recipient ->
-                    viewModel.onReceiverEntered(recipient.address)
-                    binding.recipientPlaceholder.visibility = View.GONE
-                    binding.recipientAddress.visibility = View.VISIBLE
-
-                    if (recipient.name.isNotEmpty()) {
-                        viewModel.onReceiverNameFound(recipient.name)
-                        binding.recipientAddress.text = getString(
-                            R.string.cis_recipient_address_with_name,
-                            recipient.name,
-                            recipient.address
-                        )
-                    } else {
-                        binding.recipientAddress.text = recipient.address
-                    }
-                }
+                )?.also(::handleRecipient)
         }
 
     private val getResultToken =
@@ -267,6 +253,24 @@ class SendTokenFragment : Fragment() {
         }
     }
 
+    private fun handleRecipient(recipient: Recipient) {
+        println("OOLEG handleRecipient: $recipient")
+        viewModel.onReceiverEntered(recipient.address)
+        binding.recipientPlaceholder.visibility = View.GONE
+        binding.recipientAddress.visibility = View.VISIBLE
+
+        if (recipient.name.isNotEmpty()) {
+            viewModel.onReceiverNameFound(recipient.name)
+            binding.recipientAddress.text = getString(
+                R.string.cis_recipient_address_with_name,
+                recipient.name,
+                recipient.address
+            )
+        } else {
+            binding.recipientAddress.text = recipient.address
+        }
+    }
+
     private fun resetAddressBook() {
         with(binding) {
             recipientAddress.text = ""
@@ -279,8 +283,7 @@ class SendTokenFragment : Fragment() {
     private fun initObservers() {
         viewModel.accountUpdated.collectWhenStarted(viewLifecycleOwner) {
             setMemoText("")
-            binding.recipientPlaceholder.isVisible = true
-            binding.recipientAddress.isVisible = false
+            resetAddressBook()
         }
 
         viewModel.waiting.observe(viewLifecycleOwner, ::showWaiting)
@@ -350,6 +353,14 @@ class SendTokenFragment : Fragment() {
         viewModel.hasEnoughFunds.collectWhenStarted(viewLifecycleOwner) { hasEnoughFunds ->
             binding.amountError.isVisible = !hasEnoughFunds
         }
+
+        mainViewModel.setTransferSendRecipient.observe(
+            viewLifecycleOwner,
+            object : EventObserver<Recipient>() {
+                override fun onUnhandledEvent(value: Recipient) =
+                    handleRecipient(value)
+            }
+        )
     }
 
     @SuppressLint("SetTextI18n")

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentTransferContainerBinding
 import com.concordium.wallet.ui.account.accountqrcode.ReceiveFragment
@@ -13,14 +14,14 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.send.SendTokenFragment
 import com.concordium.wallet.uicore.view.GradientTabsView
 
-class TransferFragment: Fragment() {
+class TransferFragment : Fragment() {
 
     private lateinit var binding: FragmentTransferContainerBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentTransferContainerBinding.inflate(inflater, container, false)
         return binding.root
@@ -52,11 +53,20 @@ class TransferFragment: Fragment() {
             },
             initiallySelected = false,
         )
+
+        replaceFragment(SendTokenFragment())
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        val tag = fragment::class.simpleName
+
+        if (childFragmentManager.findFragmentByTag(tag) != null) {
+            return
+        }
+
         childFragmentManager.beginTransaction()
-            .replace(binding.fragmentContainer.id, fragment)
+            .replace(binding.fragmentContainer.id, fragment, tag)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()
     }
 

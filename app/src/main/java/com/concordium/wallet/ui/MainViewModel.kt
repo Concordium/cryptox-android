@@ -11,12 +11,11 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -51,14 +50,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _activeAccount = MutableStateFlow<Account?>(null)
     val activeAccount = _activeAccount.asStateFlow()
 
-    private val _launchEarn = MutableSharedFlow<Unit>(replay = 0)
-    val launchEarn = _launchEarn.asSharedFlow()
-
-    private val _launchOnRamp = MutableSharedFlow<Unit>(replay = 0)
-    val launchOnRamp = _launchOnRamp.asSharedFlow()
-
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
+
+    private val _setTransferSendRecipient = MutableLiveData<Event<Recipient>>()
+    val setTransferSendRecipient: LiveData<Event<Recipient>> = _setTransferSendRecipient
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
@@ -73,6 +69,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         try {
+            @Suppress("UNUSED_VARIABLE")
             val dbVersion =
                 App.appCore.session.walletStorage.database.openHelper.readableDatabase.version.toString()
         } catch (e: Exception) {
@@ -87,7 +84,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         identityUpdater.stop()
     }
 
-    fun setState(state: State) = viewModelScope.launch {
+    private fun setState(state: State) = viewModelScope.launch {
         _navigationState.emit(state)
     }
 
@@ -125,14 +122,35 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _showReviewDialog.postValue(Event(true))
     }
 
-    fun onEarnClicked() = viewModelScope.launch {
-        _launchEarn.emit(Unit)
+    fun onHomeClicked() {
+        setState(State.Home)
+    }
+
+    fun onTransferClicked() {
+        setState(State.Transfer)
+    }
+
+    fun onTransferRequested(
+        recipient: Recipient,
+    ) {
+        setState(State.Transfer)
+        _setTransferSendRecipient.value = Event(recipient)
+    }
+
+    fun onOnrampClicked() {
+        setState(State.Buy)
+    }
+
+    fun onEarnClicked() {
         setState(State.Earn)
     }
 
-    fun onOnrampClicked() = viewModelScope.launch {
-        _launchOnRamp.emit(Unit)
-        setState(State.Buy)
+    fun onEarnRequested() {
+        setState(State.Earn)
+    }
+
+    fun onActivityClicked() = viewModelScope.launch {
+        setState(State.Activity)
     }
 
     fun activateNextAccount() = viewModelScope.launch {

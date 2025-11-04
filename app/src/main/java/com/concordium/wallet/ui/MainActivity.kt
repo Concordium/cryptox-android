@@ -9,12 +9,14 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.view.GestureDetectorCompat
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsFragment
@@ -39,6 +41,7 @@ import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
 import com.concordium.wallet.util.GestureDetectorUtil
 import com.concordium.wallet.util.ImageUtil
 import com.concordium.wallet.util.getOptionalSerializable
+import com.concordium.wallet.util.getSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
@@ -55,6 +58,8 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         const val EXTRA_NOTIFICATION_TOKEN = "EXTRA_NOTIFICATION_TOKEN"
         const val EXTRA_SHOW_REVIEW_POPUP = "EXTRA_SHOW_REVIEW_POPUP"
         const val EXTRA_GOTO_EARN = "EXTRA_GOTO_EARN"
+        const val EXTRA_GOTO_TRANSFER = "EXTRA_GOTO_TRANSFER"
+        const val EXTRA_TRANSFER_RECIPIENT = "EXTRA_TRANSFER_RECIPIENT"
         const val DRAWER_TAG = "DRAWER_TAG"
     }
 
@@ -178,6 +183,7 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         handlePossibleWalletConnectUri(newIntent)
         handleReviewPopup(newIntent)
         handleEarnIntent(newIntent)
+        handleTransferIntent(newIntent)
     }
 
     //endregion
@@ -193,7 +199,19 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         )
 
         viewModel = viewModelProvider.get()
-        viewModel.navigationState.collectWhenStarted(this, ::replaceFragment)
+        viewModel.navigationState.collectWhenStarted(this) { state ->
+            binding.bottomNavigationView.menu.findItem(
+                when (state) {
+                    MainViewModel.State.Home -> R.id.menuitem_accounts
+                    MainViewModel.State.Buy -> R.id.menuitem_buy
+                    MainViewModel.State.Earn -> R.id.menuitem_earn
+                    MainViewModel.State.Activity -> R.id.menuitem_activity
+                    MainViewModel.State.Transfer -> R.id.menuitem_transfer
+                }
+            ).isChecked = true
+
+            replaceFragment(state)
+        }
         viewModel.activeAccount.collectWhenStarted(this) { account ->
             account?.let {
                 hideAccountSelector(
@@ -206,14 +224,6 @@ class MainActivity : BaseActivity(R.layout.activity_main),
                     }
                 )
             }
-        }
-
-        viewModel.launchEarn.collectWhenStarted(this) {
-            binding.bottomNavigationView.selectedItemId = R.id.menuitem_earn
-        }
-
-        viewModel.launchOnRamp.collectWhenStarted(this) {
-            binding.bottomNavigationView.selectedItemId = R.id.menuitem_buy
         }
 
         walletConnectViewModel = viewModelProvider.get()
@@ -304,7 +314,18 @@ class MainActivity : BaseActivity(R.layout.activity_main),
 
     private fun handleEarnIntent(intent: Intent) {
         if (intent.getBooleanExtra(EXTRA_GOTO_EARN, false)) {
-            binding.bottomNavigationView.selectedItemId = R.id.menuitem_earn
+            viewModel.onEarnRequested()
+        }
+    }
+
+    private fun handleTransferIntent(intent: Intent) {
+        if (intent.getBooleanExtra(EXTRA_GOTO_TRANSFER, false)) {
+            viewModel.onTransferRequested(
+                recipient = intent.getSerializable(
+                    EXTRA_TRANSFER_RECIPIENT,
+                    Recipient::class.java,
+                ),
+            )
         }
     }
 
@@ -316,33 +337,25 @@ class MainActivity : BaseActivity(R.layout.activity_main),
     private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         if (!viewModel.hasCompletedOnboarding()) {
             showUnlockFeatureDialog()
-            return false
+        } else {
+            when (menuItem.itemId) {
+                R.id.menuitem_accounts -> viewModel.onHomeClicked()
+                R.id.menuitem_transfer -> viewModel.onTransferClicked()
+                R.id.menuitem_buy -> viewModel.onOnrampClicked()
+                R.id.menuitem_earn -> viewModel.onEarnClicked()
+                R.id.menuitem_activity -> viewModel.onActivityClicked()
+            }
         }
 
-        menuItem.isChecked = true
-
-        val state = getState(menuItem) ?: return false
-
-        if (viewModel.navigationState.value == state) return false
-        viewModel.setState(state)
-        return true
-    }
-
-    private fun getState(menuItem: MenuItem): MainViewModel.State? {
-        return when (menuItem.itemId) {
-            R.id.menuitem_accounts -> MainViewModel.State.Home
-            R.id.menuitem_transfer -> MainViewModel.State.Transfer
-            R.id.menuitem_buy -> MainViewModel.State.Buy
-            R.id.menuitem_earn -> MainViewModel.State.Earn
-            R.id.menuitem_activity -> MainViewModel.State.Activity
-            else -> null
-        }
+        return false
     }
 
     private fun replaceFragment(state: MainViewModel.State) {
-        val existingFragment = supportFragmentManager.findFragmentByTag(state.name)
+        if (supportFragmentManager.findFragmentByTag(state.name) != null) {
+            return
+        }
 
-        val fragment = existingFragment ?: when (state) {
+        val fragment = when (state) {
             MainViewModel.State.Home -> AccountDetailsFragment()
             MainViewModel.State.Transfer -> TransferFragment()
             MainViewModel.State.Buy -> CcdOnrampSitesFragment()
@@ -350,11 +363,10 @@ class MainActivity : BaseActivity(R.layout.activity_main),
             MainViewModel.State.Earn -> EarnFragment()
         }
 
-        if (existingFragment == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment, state.name)
-                .commit()
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment, state.name)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .commit()
     }
 
     private fun showDrawer() {

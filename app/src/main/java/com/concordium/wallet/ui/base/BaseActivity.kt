@@ -30,11 +30,10 @@ import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.Constants.Extras.EXTRA_QR_CONNECT
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.RecipientRepository
-import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
@@ -292,22 +291,24 @@ abstract class BaseActivity(
                         startActivity(it)
                     }
                 } else if (App.appCore.cryptoLibrary.checkAccountAddress(qrData)) {
-                    val activeAccount = runBlocking {
-                        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-                            .getActive()
-                    } ?: error("The scanner must not be called if there are no accounts")
-                    val token = CCDToken(
-                        account = activeAccount,
-                    )
                     val knownRecipient: Recipient? = runBlocking {
                         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
                             .getRecipientByAddress(qrData)
                     }
-                    val recipient = knownRecipient
-                        ?: Recipient(
-                            address = qrData,
+                    val intent = Intent(this, MainActivity::class.java)
+                        .putExtra(
+                            MainActivity.EXTRA_GOTO_TRANSFER,
+                            true
                         )
-                    TODO("Open the Transfer Send screen")
+                        .putExtra(
+                            MainActivity.EXTRA_TRANSFER_RECIPIENT,
+                            knownRecipient
+                                ?: Recipient(
+                                    address = qrData,
+                                )
+                        )
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
                 } else {
                     Intent(applicationContext, ConnectActivity::class.java).also {
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
