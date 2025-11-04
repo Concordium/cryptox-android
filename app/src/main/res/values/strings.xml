@@ -718,7 +718,7 @@
     <string name="earn_delegation_options_title">Control tour stake</string>
     <string name="earn_delegation_options_description">Choose between passive pool delegation or selecting a validator.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
-    <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
+    <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period applies.</string>
     <plurals name="earn_delegation_update_description">
         <item quantity="one">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d day applies</item>
         <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
