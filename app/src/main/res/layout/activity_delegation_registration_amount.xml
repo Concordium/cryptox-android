@@ -345,12 +345,13 @@
 
                 <TextView
                     android:id="@+id/pool_desc"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:gravity="start"
                     android:text="@string/delegation_register_delegation_amount_do_you_want"
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                    android:textColor="@color/mw24_blue_2"
+                    android:textColor="@color/mw24_content_accent_secondary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -366,6 +367,14 @@
                     app:trackTint="@color/ccx_switch_track_color" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:text="@string/delegation_register_delegation_label"
+                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textColor="@color/mw24_plain_white_40" />
         </LinearLayout>
     </ScrollView>
 

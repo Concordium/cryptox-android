@@ -86,7 +86,7 @@ class TokensAccountDetailsAdapter(
             else -> {
                 holder.binding.manageTokens.visibility = View.GONE
                 holder.binding.content.visibility = View.VISIBLE
-                holder.binding.concordiumNetworkLabel.isVisible = position == 1
+                holder.binding.concordiumNetworkLabel.isVisible = (position == 1 && showManageButton)
             }
         }
 

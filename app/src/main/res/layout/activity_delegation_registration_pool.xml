@@ -34,7 +34,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 android:text="@string/delegation_register_delegation_intro"
                 android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                 android:textColor="@color/mw24_blue_2" />

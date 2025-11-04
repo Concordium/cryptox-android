@@ -575,9 +575,9 @@
     <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
     <string name="cis_manage_token_list">Manage Tokens</string>
     <string name="cis_concordium_network">Concordium Network</string>
-    <string name="cis_add_token_title">Add Tokens</string>
+    <string name="cis_add_token_title">Search Tokens</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
-    <string name="cis_token_details_balance">Balance</string>
+    <string name="cis_token_details_balance">Token Details</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens">Add</string>
@@ -585,7 +585,7 @@
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">No search results</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
-    <string name="cis_select_token_title">Choose token</string>
+    <string name="cis_select_token_title">Choose a Token</string>
     <string name="cis_loading_metadata_progress">Loading metadata…</string>
     <string name="cis_search">Search for token ID</string>
     <string name="cis_send_continue">Preview Transaction</string>
@@ -648,7 +648,7 @@
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_delete_token">Don’t show token in wallet</string>
     <string name="cis_hide_token">Hide Token From Account</string>
-    <string name="cis_hide_token_item">Hide token</string>
+    <string name="cis_hide_token_item">Hide Token</string>
     <string name="cis_hide_token_title">Hiding a Token</string>
     <string name="cis_hide_token_body">Are you sure you want to hide %1$s from your wallet?</string>
     <string name="cis_hide_token_confirm">Yes, hide it</string>
@@ -724,7 +724,7 @@
         <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
     </plurals>
 
-    <string name="start_earning_button">Start earning</string>
+    <string name="start_earning_button">Start Staking</string>
     <string name="read_more_button">Read More</string>
     <string name="earn_baker_button">Become a Validator (advanced)</string>
     <string name="earn_notice">Estimated rewards are based on past results. Actual returns may vary.</string>
@@ -830,8 +830,9 @@
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_restake_rewards">Restake rewards</string>
-    <string name="delegation_register_delegation_amount_do_you_want">Automatically reinvest rewards to compound your staking returns over time.</string>
+    <string name="delegation_register_delegation_restake_rewards">Restake rewards*</string>
+    <string name="delegation_register_delegation_amount_do_you_want">Choose to restake your rewards to potentially increase future returns.</string>
+    <string name="delegation_register_delegation_label">* Network fluctuations may affect compounded outcomes.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>

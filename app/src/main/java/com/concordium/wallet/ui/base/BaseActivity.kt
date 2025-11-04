@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.base
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -21,6 +20,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants
@@ -285,7 +285,7 @@ abstract class BaseActivity(
 
     private val scanQrResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val data = result.data?.extras
                 val isAddContact = data?.let(ScanQRActivity.Companion::isAddContact)
                 val qrData = data?.let(ScanQRActivity.Companion::getScannedQrContent)
@@ -479,7 +479,7 @@ abstract class BaseActivity(
                     intent.putExtra("WITH_DATA", withData)
                 }
             }
-            setResult(Activity.RESULT_OK, intent)
+            setResult(RESULT_OK, intent)
             finish()
         }
     }
@@ -488,7 +488,7 @@ abstract class BaseActivity(
     @Suppress("DEPRECATION")
     private val getResultGeneric =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
+            if (it.resultCode == RESULT_OK) {
                 it.data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
                     if (this.javaClass.asSubclass(this.javaClass).canonicalName != className) {
                         finishUntilClass(
@@ -530,7 +530,7 @@ abstract class BaseActivity(
             var scheme = uriRoot.toString()
             scheme = scheme.replace("/root/", "/document/")
             scheme += "%3A$startDir"
-            uriRoot = Uri.parse(scheme)
+            uriRoot = scheme.toUri()
             intent.putExtra("android.provider.extra.INITIAL_URI", uriRoot)
         } else {
             intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
