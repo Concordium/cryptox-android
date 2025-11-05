@@ -54,6 +54,7 @@ class SegmentedControlView : LinearLayout {
 
     fun addControl(
         title: String,
+        description: String = "",
         clickListener: OnItemClickListener?,
         earningPercent: String = "",
         isButtonControl: Boolean = false,
@@ -74,6 +75,7 @@ class SegmentedControlView : LinearLayout {
         }
         view.setLayout(
             title = title,
+            description = description,
             earningPercent = earningPercent,
             selected = initiallySelected
         )

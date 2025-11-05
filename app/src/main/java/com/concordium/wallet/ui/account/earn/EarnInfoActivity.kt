@@ -17,6 +17,8 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.handleUrlClicks
+import com.concordium.wallet.util.IntentUtil
 import com.concordium.wallet.util.UnitConvertUtil
 
 class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn_title) {
@@ -49,6 +51,9 @@ class EarnInfoActivity : BaseActivity(R.layout.activity_earn_info, R.string.earn
         }
         binding.btnReadMore.setOnClickListener {
             gotoReadMore()
+        }
+        binding.stakeNotice.handleUrlClicks { url ->
+            IntentUtil.openUrl(this, url)
         }
         addCooldowns(account.cooldowns)
     }

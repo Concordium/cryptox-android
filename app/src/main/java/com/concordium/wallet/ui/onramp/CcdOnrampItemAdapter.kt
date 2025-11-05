@@ -1,21 +1,20 @@
 package com.concordium.wallet.ui.onramp
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ListItemCcdOnrampDisclaimerBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampHeaderBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSectionBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSiteBinding
 import com.concordium.wallet.uicore.handleUrlClicks
+import com.concordium.wallet.util.IntentUtil
 
 class CcdOnrampItemAdapter(
     private val onReadDisclaimerClicked: () -> Unit,
@@ -108,10 +107,15 @@ class CcdOnrampItemAdapter(
                 }
             }
 
+            is ViewHolder.Disclaimer -> {
+                holder.binding.disclaimerText.handleUrlClicks { url ->
+                    IntentUtil.openUrl(context = holder.binding.root.context, url = url)
+                }
+            }
+
             is ViewHolder.NoneAvailable,
             is ViewHolder.ExchangesNotice,
-            is ViewHolder.Disclaimer,
-            -> {
+                -> {
             }
         }
     }
@@ -140,12 +144,13 @@ class CcdOnrampItemAdapter(
         class ExchangesNotice(itemView: View) : ViewHolder(itemView) {
             init {
                 (itemView as TextView).handleUrlClicks { url ->
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    ContextCompat.startActivity(itemView.context, browserIntent, null)
+                    IntentUtil.openUrl(context = itemView.context, url = url)
                 }
             }
         }
 
-        class Disclaimer(itemView: View) : ViewHolder(itemView)
+        class Disclaimer(itemView: View) : ViewHolder(itemView) {
+            val binding = ListItemCcdOnrampDisclaimerBinding.bind(itemView)
+        }
     }
 }

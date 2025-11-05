@@ -206,9 +206,9 @@
     <string name="account_details_send">Send</string>
     <string name="account_details_receive">Receive</string>
     <string name="account_details_address">Address</string>
-    <string name="account_details_earn">Earn</string>
+    <string name="account_details_stake">Stake</string>
     <string name="account_details_activity">Activity</string>
-    <string name="account_details_earn_rewards">Earn rewards</string>
+    <string name="account_details_earn_rewards">Stake</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
     <string name="account_details_fee">with fee</string>
@@ -678,14 +678,14 @@
     <string name="seed_phrase_recover_process_finished_no_accounts">No accounts</string>
     <string name="seed_phrase_recover_process_finished_accounts_count">ACCOUNTS: %1$d</string>
 
-    <string name="earn_title">Earn</string>
+    <string name="earn_title">Staking</string>
     <string name="earn_subtitle">Below are two options for earning rewards on Concordium Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
-    <string name="earn_delegation_title">Earn up to <font color='#24D4AB'>6%</font></string>
+    <string name="earn_delegation_title">Stake your CCD</string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
     <string name="earn_delegation_rewarded_description">Stake your CCD to earn rewards. Rewards can be restaked automatically.</string>
-    <string name="earn_delegation_options_title">Earn your way</string>
+    <string name="stake_delegation_options_title">Stake your way</string>
     <string name="earn_delegation_options_description">You can delegate to an open pool of your choice, or stake using passive delegation.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
     <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
@@ -694,10 +694,10 @@
         <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
     </plurals>
 
-    <string name="start_earning_button">Start earning</string>
+    <string name="start_staking_button">Start staking</string>
     <string name="read_more_button">Read more</string>
     <string name="earn_baker_button">Or become a validator (advanced)</string>
-    <string name="earn_notice">Estimated rewards are based on past results. Actual returns may vary.</string>
+    <string name="staking_notice">Estimated rewards are based on past results. Actual returns may vary. Don’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk</a></string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
 
     <!-- Delegation intro -->
@@ -726,7 +726,7 @@
     <string name="delegation_validation_go_back_button">Go back</string>
     <string name="delegation_validation_continue_button">Continue</string>
 
-    <string name="delegation_status_title">Earn</string>
+    <string name="delegation_status_title">Staking</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
     <string name="delegation_status_content_empty_desc">This account has no delegation registered. You can register a delegation with the button below.</string>
     <string name="delegation_status_continue">Continue</string>
@@ -740,12 +740,12 @@
     <string name="delegation_status_effective_time">%1$s at %2$s</string>
     <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validating on</string>
 
-    <string name="delegation_register_delegation_title">Earn</string>
+    <string name="delegation_register_delegation_title">Staking</string>
     <string name="delegation_register_staking_mode">Staking mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_update_delegation_button">Update delegation</string>
     <string name="delegation_update_delegation_success">Your delegation is updated</string>
-    <string name="delegation_remove_delegation_title">Earn</string>
+    <string name="delegation_remove_delegation_title">Staking</string>
     <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered</string>
@@ -771,11 +771,15 @@
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
     <string name="delegation_register_delegation_pool_baker">Validator pool</string>
+    <string name="delegation_register_delegation_pool_description">Manually delegate to a validator of your choice.</string>
     <string name="delegation_register_delegation_pool_targeted">Targeted delegation</string>
     <string name="delegation_register_delegation_passive">Passive delegation</string>
+    <string name="delegation_register_delegation_passive_description">Distribute stake among all staking pools. No validator selection required.</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
     <string name="delegation_register_delegation_error">Staking mode must be confirmed</string>
+    <string name="delegation_register_delegation_checkbox">I confirm I am not a resident of a restricted jurisdiction and that I am eligible to use staking services under applicable law. I agree to the Staking Terms of Use.</string>
+    <string name="delegation_register_delegation_checkbox_disclaimer">Don’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk.</a> Projected rewards are estimates only. Actual returns may vary and are not guaranteed. Staking is not available to users located in, or residents of any jurisdiction where staking services are prohibited by law. By continuing, you confirm that you are not located in or a resident of a restricted country.</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
@@ -1297,7 +1301,7 @@
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
     <string name="ccd_onramp_title">Buy CCD</string>
-    <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
+    <string name="ccd_onramp_subtitle">The services below are offered by third-party providers. Concordium does not sell or promote crypto-assets and is not responsible for any crypto-asset transaction.</string>
     <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
     <string name="ccd_onramp_exchanges_notice">
@@ -1314,6 +1318,7 @@
         These services are offered by third parties and the use of such services are subject to terms of conditions
         defined by such third parties and Concordium is not responsible for and does not assume any liabilities
         in relation to the use of such services.
+        \n\nDon’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
     </string>
     <string name="ccd_onramp_none_available">No sites available for this network</string>
     <string name="ccd_onramp_site_accepts_credit_card">Accepts credit card</string>
@@ -1480,7 +1485,7 @@
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
 
-    <string name="account_details_earn_banner_title">Earn up to <font color='#24D4AB'>6%</font></string>
+    <string name="account_details_earn_banner_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
     <string name="account_details_seed_phrase_backup_banner_title">Backup Your Wallet</string>
     <string name="account_details_seed_phrase_backup_banner_description">Keep your account safe by making a copy of your wallet seed phrase</string>

@@ -104,7 +104,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="@string/earn_delegation_options_title"
+                        android:text="@string/stake_delegation_options_title"
                         android:textAppearance="@style/MW24_Typography_Text_Main"
                         android:textColor="@color/cryptox_white_main"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -166,13 +166,14 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/earn_notice"
+                android:id="@+id/stake_notice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/earn_notice"
+                android:text="@string/staking_notice"
                 android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                android:textColor="@color/mw24_blue_3_50"/>
+                android:textColor="@color/mw24_blue_3_50"
+                android:textColorLink="@color/mw24_blue_3_50"/>
 
             <TextView
                 android:id="@+id/btnBaker"
@@ -222,7 +223,7 @@
             android:id="@+id/btn_start_earning"
             style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
-            android:text="@string/start_earning_button" />
+            android:text="@string/start_staking_button" />
 
         <Button
             android:id="@+id/btn_read_more"
