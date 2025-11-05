@@ -25,7 +25,6 @@ import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,8 +58,6 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         class DelegatorsBakerSuspended(isCurrentAccountAffected: Boolean) :
             SuspensionNotice(isCurrentAccountAffected)
     }
-
-    lateinit var account: Account
 
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val transferRepository =
@@ -97,12 +94,9 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
     val showDialogLiveData: LiveData<Event<DialogToShow>>
         get() = _showDialogLiveData
 
-    private val _activeAccount = MutableSharedFlow<Account>(
-        replay = 1,
-        extraBufferCapacity = Int.MAX_VALUE,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
-    val activeAccount = _activeAccount.asSharedFlow()
+    val activeAccount = mainViewModel.activeAccount
+    lateinit var account: Account
+        private set
 
     private val _stateFlow = MutableSharedFlow<OnboardingState>()
     val stateFlow = _stateFlow.asSharedFlow()
@@ -138,7 +132,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
             App.appCore.session.activeWallet.type == AppWallet.Type.FILE
         )
         viewModelScope.launch {
-            mainViewModel.activeAccount.collect {
+            activeAccount.collect {
                 it?.let(::updateAccount)
             }
         }
@@ -182,9 +176,8 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         updateAccount(acc)
     }
 
-    fun updateAccount(account: Account) = viewModelScope.launch {
+    private fun updateAccount(account: Account) = viewModelScope.launch {
         this@AccountDetailsViewModel.account = account
-        _activeAccount.emit(account)
         _totalBalanceLiveData.postValue(account.balance)
         _accountUpdatedFlow.emit(account)
 
@@ -233,7 +226,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
                     if (::account.isInitialized) {
                         _totalBalanceLiveData.value = account.balance
                     }
-                    _accountUpdatedFlow.emit(activeAccount.first())
+                    _accountUpdatedFlow.emit(account)
                     if (totalBalances.totalBalanceForAllAccounts > BigInteger.ZERO &&
                         App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
                     ) {
@@ -270,7 +263,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         hasPendingBakingTransactions = false
         hasPendingDelegationTransactions = false
 
-        val currentAccount = activeAccount.first()
+        val currentAccount = account
         val transferList = transferRepository.getAllByAccountId(currentAccount.id)
 
         for (transfer in transferList) {

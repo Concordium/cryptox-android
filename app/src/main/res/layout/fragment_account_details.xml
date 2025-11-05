@@ -163,7 +163,7 @@
 
                 <include
                     android:id="@+id/pending_fragment_container"
-                    layout="@layout/fragment_account_details_pending"
+                    layout="@layout/include_account_details_pending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="@id/account_retry_button"

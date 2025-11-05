@@ -34,7 +34,7 @@ class TokensListViewModel(
     init {
         accountDetailsViewModel
             .activeAccount
-            .map { it.id }
+            .map { it?.id }
             .distinctUntilChanged()
             .collect(viewModelScope) {
                 reset()

@@ -22,7 +22,6 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentSendTokenBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.extension.observe
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
@@ -254,7 +253,6 @@ class SendTokenFragment : Fragment() {
     }
 
     private fun handleRecipient(recipient: Recipient) {
-        println("OOLEG handleRecipient: $recipient")
         viewModel.onReceiverEntered(recipient.address)
         binding.recipientPlaceholder.visibility = View.GONE
         binding.recipientAddress.visibility = View.VISIBLE

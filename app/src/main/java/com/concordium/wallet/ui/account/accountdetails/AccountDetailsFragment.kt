@@ -23,9 +23,8 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.databinding.FragmentAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
@@ -40,16 +39,18 @@ import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.math.BigInteger
 
 class AccountDetailsFragment : BaseFragment() {
 
-    private lateinit var binding: ActivityAccountDetailsBinding
+    private lateinit var binding: FragmentAccountDetailsBinding
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
@@ -67,7 +68,7 @@ class AccountDetailsFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = ActivityAccountDetailsBinding.inflate(inflater, container, false)
+        binding = FragmentAccountDetailsBinding.inflate(inflater, container, false)
         onboardingBinding = FragmentOnboardingBinding.inflate(layoutInflater)
         onboardingStatusCard = binding.onboardingLayout
 
@@ -123,22 +124,29 @@ class AccountDetailsFragment : BaseFragment() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[OnboardingSharedViewModel::class.java]
 
-        viewModelAccountDetails.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
-            when (state) {
-                OnboardingState.DONE -> {
-                    viewModelAccountDetails.initiateFrequentUpdater()
-                    updateViews(viewModelAccountDetails.activeAccount.first())
+        combine(
+            viewModelAccountDetails
+                .stateFlow,
+            viewModelAccountDetails
+                .activeAccount
+                .map { it?.transactionStatus }
+                .distinctUntilChanged(),
+            transform = ::Pair,
+        ).collectWhenStarted(viewLifecycleOwner) { (onboardingState, accountFinalizationStatus) ->
 
-                    if (!viewModelAccountDetails.hasShownInitialAnimation()) {
-                        binding.confettiAnimation.visibility = View.VISIBLE
-                        binding.confettiAnimation.playAnimation()
-                    }
-                }
+            if (onboardingState == OnboardingState.DONE) {
+                viewModelAccountDetails.initiateFrequentUpdater()
+                updateViews(accountFinalizationStatus)
 
-                else -> {
-                    onboardingStatusCard.updateViewsByState(state)
-                    showStateOnboarding()
+                if (!viewModelAccountDetails.hasShownInitialAnimation()) {
+                    binding.confettiAnimation.visibility = View.VISIBLE
+                    binding.confettiAnimation.playAnimation()
+                    // Do not collect state updates while confetti is flying.
+                    delay(binding.confettiAnimation.duration)
                 }
+            } else {
+                onboardingStatusCard.updateViewsByState(onboardingState)
+                showStateOnboarding()
             }
         }
 
@@ -171,10 +179,6 @@ class AccountDetailsFragment : BaseFragment() {
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
             updateBannersVisibility()
-        }
-
-        viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
-            updateViews(account)
         }
 
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
@@ -256,7 +260,7 @@ class AccountDetailsFragment : BaseFragment() {
             mainViewModel.notificationToken,
             viewModelAccountDetails.activeAccount
         ) { notificationAddress, token, currentAccount ->
-            if (notificationAddress == currentAccount.address && token != null) {
+            if (notificationAddress == currentAccount?.address && token != null) {
                 viewModelAccountDetails.updateNotificationToken(token)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -294,17 +298,23 @@ class AccountDetailsFragment : BaseFragment() {
         reviewHelper = ReviewHelper(requireActivity())
     }
 
-    private fun updateViews(account: Account) {
+    private fun updateViews(accountFinalizationStatus: TransactionStatus?) {
         showWaiting(false)
 
-        when (account.transactionStatus) {
-            TransactionStatus.ABSENT -> setErrorMode()
-            TransactionStatus.FINALIZED -> setFinalizedMode()
+        when (accountFinalizationStatus) {
+            null,
+            TransactionStatus.UNKNOWN,
+            TransactionStatus.ABSENT,
+            ->
+                setErrorMode()
+
+            TransactionStatus.FINALIZED ->
+                setFinalizedMode()
+
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED,
-                -> setPendingMode()
-
-            else -> showStateDefault()
+            ->
+                setPendingMode()
         }
     }
 
@@ -340,15 +350,6 @@ class AccountDetailsFragment : BaseFragment() {
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
             onboardingLayout.visibility = View.VISIBLE
-        }
-    }
-
-    private fun showStateDefault() {
-        binding.apply {
-            onboardingLayout.visibility = View.GONE
-            tokensFragmentContainer.visibility = View.VISIBLE
-            pendingFragmentContainer.pendingLayout.visibility = View.GONE
-            pendingFragmentContainer.errorLayout.visibility = View.GONE
         }
     }
 
