@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The Send screen Max button not working properly with large balances
 
+### Changed
+
+- Updated staking flow texts
+
 ## [1.15.0] - 2025-10-27
 
 ### Added
