@@ -22,7 +22,7 @@ class DelegationCreateIntroFlowActivity :
         )
     }
 
-    override fun getButtonText(): String = getString(R.string.start_earning_button)
+    override fun getButtonText(): String = getString(R.string.start_staking_button)
 
     override fun isButtonEnabled(): Boolean = true
 

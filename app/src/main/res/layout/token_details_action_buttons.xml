@@ -130,7 +130,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="2dp"
-            android:text="@string/account_details_earn"
+            android:text="@string/account_details_stake"
             android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
             android:textColor="@color/mw24_blue_2" />
 
