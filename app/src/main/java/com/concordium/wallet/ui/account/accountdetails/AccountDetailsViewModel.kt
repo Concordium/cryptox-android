@@ -13,7 +13,7 @@ import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.TransferRepository
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
@@ -94,6 +94,8 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         get() = _showDialogLiveData
 
     val activeAccount = mainViewModel.activeAccount
+    val notificationToken = mainViewModel.notificationToken
+    val notificationAddress = mainViewModel.activeAccountAddress
     lateinit var account: Account
         private set
 
@@ -109,9 +111,6 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
 
-    private val _notificationToken = MutableStateFlow<Token?>(null)
-    val notificationToken = _notificationToken.asStateFlow()
-
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
@@ -121,9 +120,6 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         private set
 
     private var updaterJob: Job? = null
-
-    val isCreationLimitedForFileWallet: Boolean
-        get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
 
     init {
         initializeAccountUpdater()
@@ -176,9 +172,21 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
     }
 
     private fun updateAccount(account: Account) = viewModelScope.launch {
-        this@AccountDetailsViewModel.account = account
-        _totalBalanceLiveData.postValue(account.balance)
-        _accountUpdatedFlow.emit(account)
+        when (notificationToken.value) {
+            is ProtocolLevelToken -> {
+                if (notificationAddress.value == account.address) {
+                    accountUpdater.updateForAccount(account)
+                    this@AccountDetailsViewModel.account = account
+                    return@launch
+                }
+            }
+
+            else -> {
+                this@AccountDetailsViewModel.account = account
+                _totalBalanceLiveData.postValue(account.balance)
+                _accountUpdatedFlow.emit(account)
+            }
+        }
 
         if (account.transactionStatus == TransactionStatus.COMMITTED ||
             account.transactionStatus == TransactionStatus.RECEIVED
@@ -210,10 +218,6 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
                 _totalBalanceLiveData.postValue(BigInteger.ZERO)
             }
         }
-    }
-
-    fun updateNotificationToken(token: Token?) = viewModelScope.launch {
-        _notificationToken.emit(token)
     }
 
     private fun initializeAccountUpdater() {
@@ -376,7 +380,6 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
 
         if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
-            getActiveAccount()
             postState(OnboardingState.DONE)
             showSingleDialogIfNeeded()
         } else {

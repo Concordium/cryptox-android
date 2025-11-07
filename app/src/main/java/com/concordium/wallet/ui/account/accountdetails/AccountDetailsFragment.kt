@@ -17,7 +17,6 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -42,7 +41,6 @@ import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.core.parameter.parametersOf
@@ -254,16 +252,6 @@ class AccountDetailsFragment : BaseFragment() {
         }
         viewModelAccountDetails.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
         mainViewModel.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
-
-        combine(
-            mainViewModel.activeAccountAddress,
-            mainViewModel.notificationToken,
-            viewModelAccountDetails.activeAccount
-        ) { notificationAddress, token, currentAccount ->
-            if (notificationAddress == currentAccount?.address && token != null) {
-                viewModelAccountDetails.updateNotificationToken(token)
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)

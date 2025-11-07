@@ -48,7 +48,6 @@ class TokensListViewModel(
     }
 
     fun resetSelectedToken() = viewModelScope.launch {
-        accountDetailsViewModel.updateNotificationToken(null)
         _uiState.update { it.copy(selectedToken = null) }
     }
 
