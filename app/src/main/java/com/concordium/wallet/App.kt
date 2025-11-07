@@ -55,13 +55,13 @@ class App : Application() {
             modules(
                 tokenPriceModule,
                 tokensInteractorModule,
+                accountDetailsModule,
                 tokensListModule,
                 sendTokenModule,
                 transfersModule,
                 receiveModule,
                 earnModule,
                 onrampModule,
-                accountDetailsModule
             )
         }
 

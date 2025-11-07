@@ -1,15 +1,14 @@
 package com.concordium.wallet.ui.account.accountdetails
 
+import com.concordium.wallet.ui.MainViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val accountDetailsModule = module {
-    viewModel {
+    viewModel { (mainViewModel: MainViewModel) ->
         AccountDetailsViewModel(
-            mainViewModel =requireNotNull(getOrNull()) {
-                "MainViewModel must be provided in parameters"
-            },
+            mainViewModel = mainViewModel,
             application = androidApplication()
         )
     }

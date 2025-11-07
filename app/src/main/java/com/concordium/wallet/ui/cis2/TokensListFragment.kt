@@ -16,6 +16,7 @@ import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.manage.ManageTokenListActivity
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.io.Serializable
@@ -27,7 +28,7 @@ class TokensListFragment : Fragment() {
 private val mainViewModel: MainViewModel by lazy {
     ViewModelProvider(requireActivity())[MainViewModel::class.java]
 }
-    private val accountDetailsViewModel: AccountDetailsViewModel by viewModel {
+    private val accountDetailsViewModel: AccountDetailsViewModel by activityViewModel {
         parametersOf(mainViewModel)
     }
     private val viewModel: TokensListViewModel by viewModel {
