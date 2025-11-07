@@ -6,7 +6,6 @@
     <string name="app_menu_item_buy">Buy</string>
     <string name="app_menu_item_tokens">NFT</string>
     <string name="app_menu_item_earn">Earn</string>
-    <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_activity">Activity</string>
     <string name="app_menu_item_transfer">Transfer</string>
     <string name="app_error_general">Unexpected error</string>
@@ -64,8 +63,6 @@
     <string name="auth_confirm">Continue</string>
     <string name="auth_error_password_setup">Failed to setup password</string>
     <string name="auth_error_password_not_valid">Password is not valid - minimum length is 6.</string>
-    <string name="auth_error_passcode_not_valid">Passcode is not valid</string>
-    <string name="auth_error_passcodes_different">Passcodes do not match. Please try again</string>
     <string name="auth_error_passwords_different">Passwords do not match. Please try again</string>
     <string name="auth_dialog_password_title">Authentication</string>
     <string name="auth_dialog_passcode_description">Enter app passcode to continue</string>
@@ -85,11 +82,6 @@
     <string name="auth_login_biometrics_dialog_cancel_password">Use password</string>
     <string name="auth_login_seed_error">Error 101: Encryption failed</string>
     <!-- Auth Setup-->
-    <string name="auth_setup_title">Select Passcode</string>
-    <string name="auth_setup_repeat_title">Repeat Passcode</string>
-    <string name="auth_setup_info">Set a 6-digit passcode to secure your wallet.</string>
-    <string name="auth_setup_repeat_info">Repeat a 6-digit passcode to secure your wallet.</string>
-    <string name="auth_setup_full_password">Use full password instead</string>
     <!-- Auth Setup Password-->
     <string name="auth_setup_password_title">Select Password</string>
     <string name="auth_setup_password_repeat_title">Repeat Password</string>
@@ -97,10 +89,6 @@
     <string name="auth_setup_password_repeat_info">Repeat your password to secure your wallet.</string>
     <string name="auth_setup_password_use_passcode">Use digit passcode instead</string>
     <!-- Auth Setup Biometrics-->
-    <string name="auth_setup_biometrics_title">Enable Biometrics</string>
-    <string name="auth_setup_biometrics_info">Enable biometrics for more convenient login.</string>
-    <string name="auth_setup_biometrics_confirm">Enable Biometrics</string>
-    <string name="auth_setup_biometrics_cancel">Continue without</string>
     <string name="auth_setup_biometrics_dialog_title">Enable biometrics</string>
     <string name="auth_setup_biometrics_dialog_subtitle">Use biometrics to enable it for this app</string>
     <string name="auth_setup_biometrics_dialog_cancel">Cancel</string>
@@ -172,8 +160,6 @@
     <string name="accounts_overview_title">Accounts</string>
     <string name="accounts_overview_create_identity">Verify identity</string>
     <string name="accounts_overview_create_account">Create account</string>
-    <string name="accounts_overview_wallet_total">Wallet total</string>
-    <string name="accounts_overview_balance_at_disposal">at disposal</string>
     <string name="total_amount">Total amount</string>
     <string name="unshielding_notice_title">Transaction Shielding is going away</string>
     <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
@@ -193,25 +179,15 @@
     <string name="new_account_setup_confirm_submit">Create account</string>
     <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
     <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
-    <string name="new_account_identity_attributes_error_max_accounts_alt">You already have the maximum number of accounts for this identity.</string>
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
-    <string name="new_account_confirmed_confirm">Done</string>
     <string name="new_account_confirmed_failed">Account creation failed</string>
-    <string name="new_account_confirmed_info">Account submitted. Once it\'s finalized, you can use the account from the account overview.</string>
     <!--  Account details  -->
     <string name="account_details_error_msg">Account creation failed in the process of creation.</string>
     <string name="account_details_pending_msg">Account creation in progress.\n\nYou can start using this account once it’s been finalized on the chain.</string>
-    <string name="account_details_title">Account details</string>
-    <string name="account_details_transfers_title">Activity</string>
-    <string name="account_details_identity_data_title">Identity Data</string>
-    <string name="account_details_buy">Buy</string>
     <string name="account_details_send">Send</string>
     <string name="account_details_receive">Receive</string>
     <string name="account_details_address">Address</string>
-    <string name="account_details_earn">Earn</string>
-    <string name="account_details_activity">Activity</string>
-    <string name="account_details_earn_rewards">Earn rewards</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
     <string name="account_details_fee">with fee</string>
@@ -224,8 +200,6 @@
     <string name="account_delegation_pending">Configure delegation</string>
     <string name="account_baking_pending">Configure validator</string>
     <string name="account_smart_contract_update_pending">Invoke smart contract</string>
-    <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
-    <string name="account_details_title_regular_balance">%1$s balance</string>
     <string name="account_details_total_balance">%1$s CCD</string>
     <string name="account_details_balance_at_disposal">%1$s CCD available</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
@@ -277,7 +251,6 @@
     <string name="account_qr_code_share">Share</string>
     <string name="account_qr_code_copy">Copy</string>
     <string name="account_qr_code_copied">Address copied</string>
-    <string name="account_qr_code_to_account">to %1$s</string>
     <string name="account_qr_code_show_qr">Show this QR code to another Concordium user to receive funds. Alternatively share your account address.</string>
     <string name="account_qr_code_or">or</string>
     <!-- ***** Transaction / Send funds ***** -->
@@ -308,7 +281,6 @@
     <!-- More overview -->
     <string name="settings_overview_close_menu_description">Close menu</string>
     <string name="settings_overview_menu">Menu</string>
-    <string name="settings_overview_title">Wallet Settings</string>
     <string name="settings_overview_item_unshielding">Funds to Unshield</string>
     <string name="settings_overview_item_identities">Identities</string>
     <string name="settings_overview_item_address_book">Address Book</string>
@@ -316,7 +288,6 @@
     <string name="settings_overview_item_import">Import</string>
     <string name="settings_overview_item_about">About</string>
     <string name="settings_overview_item_analytics">Analytics</string>
-    <string name="settings_overview_item_nft">NFT</string>
     <string name="settings_overview_item_notifications">Notifications</string>
     <string name="settings_overview_item_alter_password"><![CDATA[App Passcode & Biometrics]]></string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
@@ -414,7 +385,6 @@
     <!-- ***** Recipient ***** -->
     <!-- Select recipient -->
     <string name="recipient_list_default_title">Address Book</string>
-    <string name="recipient_list_select_title">Choose recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
     <string name="recipient_list_search_label">Recipient Address</string>
     <string name="recipient_list_continue">Continue</string>
@@ -435,7 +405,6 @@
     <string name="error_database">You need to uninstall the app, and reinstall it, in order to continue</string>
     <string name="error_database_close">Close</string>
     <string name="accounts_overview_total_details_disposal">At disposal:</string>
-    <string name="accounts_overview_total_details_disposal_amount">at disposal</string>
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="accounts_overview_total_details_delegating">Earning:</string>
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
@@ -446,10 +415,7 @@
     <string name="accounts_overview_staked_mode">Mode</string>
     <string name="accounts_overview_staked_mode_passive">Passive</string>
     <string name="accounts_overview_staked_mode_pool">Pool</string>
-    <string name="account_details_menu_release_schedule">Release schedule</string>
-    <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_change_name">Change account name</string>
-    <string name="account_details_menu_export_key">Export private key</string>
     <string name="account_details_menu_export_transaction_log">Export Transaction Logs</string>
     <string name="account_release_schedule_title">Release Schedule</string>
     <string name="account_release_schedule_account_name">Account name</string>
@@ -494,11 +460,9 @@
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction is permanent, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
-    <string name="transaction_memo_warning_continue">Continue</string>
     <string name="transaction_memo_warning_ok">Okay</string>
     <string name="dialog_backup_title">Back-up is important</string>
     <string name="dialog_backup_line2">It is necessary to restore your data. Please, make backup.</string>
-    <string name="backup_suggestion">Please make a back-up of your wallet</string>
     <string name="approximate_fee">Approximate fee</string>
     <string name="your_owned_nft">Your NFTs</string>
     <string name="discover_your_nft">Discover your NFTs</string>
@@ -570,51 +534,30 @@
     <string name="transaction_submitted">Transaction submitted!</string>
     <string name="transaction_empty_label">There’s no transaction activity yet</string>
 
-    <string name="cis_tab_tokens">Tokens</string>
     <string name="cis_manage">Manage Tokens</string>
     <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
     <string name="cis_manage_token_list">Manage Tokens</string>
     <string name="cis_concordium_network">Concordium Network</string>
     <string name="cis_add_token_title">Search Tokens</string>
-    <string name="cis_token_details_title">%1$s balance on %2$s</string>
     <string name="cis_token_details_balance">Token Details</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
-    <string name="cis_add_tokens">Add</string>
     <string name="cis_add_tokens_continue">Update Token List</string>
-    <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">No search results</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
     <string name="cis_select_token_title">Choose a Token</string>
-    <string name="cis_loading_metadata_progress">Loading metadata…</string>
-    <string name="cis_search">Search for token ID</string>
     <string name="cis_send_continue">Preview Transaction</string>
-    <string name="cis_send_funds">Send funds</string>
     <string name="cis_send_funds_confirmation">Confirmation</string>
-    <string name="cis_send_funds_preview">Preview</string>
-    <string name="cis_currently_available_amounts">Currently available amounts</string>
-    <string name="cis_token_balance">%1$s balance</string>
     <string name="cis_token_quantity">Quantity</string>
     <string name="cis_at_disposal">At disposal</string>
     <string name="cis_recipient_placeholder">Select a recipient</string>
     <string name="cis_recipient_label">Recipient</string>
     <string name="cis_recipient_address_with_name">%1$s / %2$s</string>
     <string name="cis_max">Max</string>
-    <string name="cis_send_token">Token:</string>
-    <string name="cis_send_address">Address</string>
-    <string name="cis_send_paste_recipient_address">Paste recipient address</string>
-    <string name="cis_send_or">or</string>
-    <string name="cis_address_book">Address book</string>
-    <string name="cis_scan_qr">Scan QR</string>
     <string name="cis_add_memo">Add a memo</string>
     <string name="cis_memo">Memo</string>
-    <string name="cis_transaction_send_funds">Transaction: Send funds</string>
-    <string name="cis_transaction_send_tokens">Transaction: Send tokens</string>
-    <string name="cis_sender">Sender</string>
     <string name="cis_amount">Amount (%1$s):</string>
-    <string name="cis_token">Token</string>
     <string name="cis_token_id">Token ID</string>
-    <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Close</string>
     <string name="cis_error_recipient_in_deny_list">Recipient is on the deny list</string>
     <string name="cis_error_recipient_not_in_allow_list">Recipient is not on the allow list</string>
@@ -625,14 +568,9 @@
     <string name="cis_transaction_details">Transaction details</string>
     <string name="cis_submit_transaction">Submit transaction</string>
     <string name="cis_slider_thumb">Slider thumb</string>
-    <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Transaction fee ≈ %1$s CCD</string>
     <string name="cis_estimated_eur_rate">≈ %1$s EUR</string>
     <string name="cis_eur_rate">€%1$s</string>
-    <string name="cis_back_to_list">Back to list</string>
-    <string name="cis_about_token">About the token</string>
-    <string name="cis_name_and_icon">Name and icon</string>
-    <string name="cis_image">Image</string>
     <string name="cis_description">Description</string>
     <string name="cis_contract_index">Token name or contract index</string>
     <string name="cis_contract_index_subindex">Contract index, subindex</string>
@@ -644,20 +582,12 @@
     <string name="cis_no_tokens_found">No search results</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens</string>
     <string name="cis_tokens_updated">Token list updated</string>
-    <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
-    <string name="cis_tokens_not_updated">No updates made to token list</string>
-    <string name="cis_delete_token">Don’t show token in wallet</string>
     <string name="cis_hide_token">Hide Token From Account</string>
     <string name="cis_hide_token_item">Hide Token</string>
     <string name="cis_hide_token_title">Hiding a Token</string>
     <string name="cis_hide_token_body">Are you sure you want to hide %1$s from your wallet?</string>
     <string name="cis_hide_token_confirm">Yes, hide it</string>
     <string name="cis_hide_token_cancel">Go back</string>
-    <string name="cis_delete_dialog_title">Confirm removal</string>
-    <string name="cis_delete_dialog_content">Delete this from wallet?</string>
-    <string name="cis_delete_dialog_confirm">Delete</string>
-    <string name="cis_delete_dialog_cancel">Cancel</string>
-    <string name="cis_search_balance">Your balance: %1$s</string>
     <string name="cis_newly_received_notice_title">You received a new token</string>
     <string name="cis_percent_earning">% Earning</string>
     <string name="cis_percent">%</string>
@@ -708,10 +638,6 @@
     <string name="seed_phrase_recover_process_finished_no_accounts">No accounts</string>
     <string name="seed_phrase_recover_process_finished_accounts_count">ACCOUNTS: %1$d</string>
 
-    <string name="earn_title">Earn</string>
-    <string name="earn_subtitle">Below are two options for earning rewards on Concordium Wallet:</string>
-    <string name="earn_baker_title">Validating</string>
-    <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
     <string name="earn_delegation_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
     <string name="earn_delegation_rewarded_description">Stake your CCD to earn staking rewards. Rewards can be restaked automatically.</string>
@@ -727,8 +653,6 @@
     <string name="start_earning_button">Start Staking</string>
     <string name="read_more_button">Read More</string>
     <string name="earn_baker_button">Become a Validator (advanced)</string>
-    <string name="earn_notice">Estimated rewards are based on past results. Actual returns may vary.</string>
-    <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
     <string name="earn_dialog_close">Close</string>
     <string name="earn_legal_disclaimer_title">Legal Disclaimer</string>
     <string name="earn_legal_disclaimer_description">Staking rewards are determined by the network protocol and may change. Rewards are not guaranteed and may be lower than projected. This feature does not constitute an investment product, financial service, or guarantee of returns.
@@ -737,7 +661,6 @@
     </string>
 
     <!-- Delegation intro -->
-    <string name="delegation_intro_flow_title">Delegation</string>
     <string name="delegation_intro_flow_learn_about">Learn about earning</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
     <string name="delegation_intro_subtitle2">Delegation models</string>
@@ -762,12 +685,8 @@
     <string name="delegation_validation_go_back_button">Go back</string>
     <string name="delegation_validation_continue_button">Continue</string>
 
-    <string name="delegation_status_title">Earn</string>
     <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
     <string name="delegation_status_content_empty_desc">This account has no delegation registered. You can register a delegation with the button below.</string>
-    <string name="delegation_status_continue">Continue</string>
-    <string name="delegation_status_update">Update current delegation</string>
-    <string name="delegation_status_stop">Stop delegation</string>
     <string name="delegation_status_added_to_delegation_amount">Added to delegation amount</string>
     <string name="delegation_status_at_disposal">At disposal</string>
     <string name="delegation_status_waiting_to_finalize_title">Waiting for transaction to finalize.</string>
@@ -782,9 +701,7 @@
     <string name="delegation_update_delegation_button">Update delegation</string>
     <string name="delegation_update_delegation_success">Your delegation is updated</string>
     <string name="delegation_remove_delegation_title">Earn</string>
-    <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
 
-    <string name="delegation_status_content_registered_title">Your delegation is registered</string>
     <string name="delegation_status_content_registered_button">Submit delegation</string>
     <string name="delegation_status_content_registered_success">You are delegating</string>
     <string name="delegation_status_content_delegating_account">Delegating account</string>
@@ -800,7 +717,6 @@
     <string name="delegation_register_delegation_intro">Delegate to an open pool of your choice, or stake your CCD using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
     <string name="delegation_register_delegation_desc_testnet">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://testnet.ccdscan.io/staking">testnet.ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit <a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Validator id %1$s</string>
@@ -816,20 +732,12 @@
     <string name="delegation_register_delegation_pool_id_error">Invalid target validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
 
-    <string name="delegation_register_delegation_yes_add">Yes, add</string>
-    <string name="delegation_register_delegation_no_add">No, don\'t add</string>
-
-    <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
-    <string name="delegation_register_delegation_amount_balance">Balance</string>
     <string name="delegation_register_delegation_amount_available_label">Available for staking</string>
     <string name="delegation_register_delegation_amount_delegation">Current delegation</string>
-    <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
-    <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
     <string name="delegation_register_delegation_amount_insufficient_error">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
-    <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
     <string name="delegation_register_delegation_restake_rewards">Restake rewards*</string>
     <string name="delegation_register_delegation_amount_do_you_want">Choose to restake your rewards to potentially increase future returns.</string>
     <string name="delegation_register_delegation_label">* Network fluctuations may affect compounded outcomes.</string>
@@ -839,18 +747,7 @@
     <string name="delegation_register_delegation_not_enough_funds">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_not_enough_funds_for_fee">Insufficient funds at disposal to pay the fee</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
-    <plurals name="delegation_register_delegation_confirmation_desc">
-        <item quantity="one">This will lock your delegation amount. Amount is released after %d day from the time you remove or decrease your delegation.</item>
-        <item quantity="other">This will lock your delegation amount. Amount is released after %d days from the time you remove or decrease your delegation.</item>
-    </plurals>
-    <plurals name="delegation_register_delegation_confirmation_desc_update">
-        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day.</item>
-        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days.</item>
-    </plurals>
-    <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
-    <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
     <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Amount (CCD):</string>
-    <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
     <string name="delegation_register_delegation_reduce_warning_content">Reducing your stake is subject to a cooldown period, in which the stake cannot be spent or transferred</string>
@@ -871,11 +768,6 @@
     <string name="delegation_more_than_95_continue">Continue</string>
     <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
 
-    <string name="delegation_select_delegation_title">Warning</string>
-    <string name="delegation_select_delegation_message">Staking mode not selected</string>
-    <string name="delegation_select_delegation_continue">Select staking mode</string>
-    <string name="delegation_select_delegation_later">Later</string>
-
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
     <string name="delegation_register_delegation_close">Close</string>
     <string name="delegation_register_delegation_failed_title">Transaction failed</string>
@@ -883,10 +775,8 @@
     <string name="delegation_register_delegation_failed_try_again">Try again</string>
     <string name="delegation_register_delegation_failed_later">Later</string>
 
-    <string name="delegation_remove_text">Are you sure you want to remove your delegation?</string>
     <string name="delegation_remove_confirm_title">Stop staking</string>
     <string name="delegation_remove_confirm_success">You submitted a transaction to stop you staking.</string>
-    <string name="delegation_remove_account">Account to stop delegating</string>
     <string name="delegation_remove_not_enough_funds_title">Warning</string>
     <string name="delegation_remove_not_enough_funds_message">You don\'t have any funds on your balance to pay for the fee.</string>
     <string name="delegation_remove_not_enough_funds_ok">Okay</string>
@@ -919,7 +809,6 @@
     <string name="baker_intro_subtitle4">Suspension</string>
     <string name="baker_intro_notice">NOTE: A single account cannot both be a validator and delegator, but it is possible to stop one and change to the other.</string>
 
-    <string name="baker_registration_title">Register validator</string>
     <string name="baker_registration_metadata_title">Metadata</string>
     <string name="baker_registration_validator_keys_title">Validator keys</string>
     <string name="baker_registration_pool_title">Commissions</string>
@@ -935,31 +824,22 @@
     <string name="baker_pool_settings_baking_explain">Block reward commission</string>
     <string name="baking_commission_rate_error_transaction_not_in_range">Transaction fee is out of specified range</string>
     <string name="baking_commission_rate_error_baking_not_in_range">Validator reward is out of specified range</string>
-    <string name="baking_pool_range_min">Min:\n%1$s%%</string>
-    <string name="baking_pool_range_max">Max:\n%1$s%%</string>
     <string name="baker_registration_pool_options_title">Open for delegation</string>
     <string name="baker_registration_open">Open</string>
     <string name="baker_registration_close">Closed for new</string>
     <string name="baker_registration_continue">Continue</string>
-    <string name="baker_registration_export">Export validator keys</string>
     <string name="baker_registration_export_explain">Your new validator keys have been generated. Before you can continue, you must export and save them. The keys will have to be added to the validator node.</string>
     <string name="baker_registration_export_election_verify_key">Election verify key</string>
     <string name="baker_registration_export_signature_verify_key">Signature verify key</string>
     <string name="baker_registration_export_aggregation_verify_key">Aggregation verify key</string>
-    <string name="baker_registration_export_notice_title">Notice</string>
     <string name="baker_registration_export_notice_message">This is your only chance to export and save the keys.\n\nThey cannot be recreated, so you will have to generate new keys and register them with a transaction, if you lose these.</string>
-    <string name="baker_registration_export_notice_ok">Okay</string>
     <string name="baker_registration_commission_percent">%</string>
 
-    <string name="baker_registration_open_title">Add validator</string>
     <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your validator. Leave it blank if you don’t have any.</string>
-    <string name="baker_registration_open_read_more">You can read more about the metadata URL on <a href="https://docs.concordium.com/en/mainnet/docs/mobile-wallet/add-baker-mw.html">docs.concordium.com</a></string>
     <string name="baker_registration_open_continue">Continue</string>
     <string name="baker_registration_open_url_hint">Enter metadata URL</string>
     <string name="baker_registration_open_url_invalid">Please enter a valid HTTP or HTTPS URL</string>
 
-    <string name="baker_status_title">Validation</string>
-    <string name="baker_status_register_baker">Register validator</string>
     <string name="baker_status_no_baker_title">This account has no validator registered.</string>
     <string name="baker_status_no_baker">This account has no validator registered. You can register a validator with the button below.</string>
     <string name="baker_status_change_baking_status">Change validating status</string>
@@ -980,22 +860,16 @@
 
     <string name="baker_registration_amount_title">Register validator</string>
     <string name="baker_registration_amount_explain">I want to automatically add my stake rewards to my stake amount.</string>
-    <string name="baker_registration_amount_current_stake_title">Validator stake</string>
-    <string name="baker_registration_amount_enter_stake_title">Type the amount you want to stake</string>
 
     <string name="baker_registration_update_amount_title">Update validator stake</string>
     <string name="baker_more_than_95_title">Warning</string>
     <string name="baker_more_than_95_message">You are about to lock more than 95% of your total balance in a validator stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
     <string name="baker_more_than_95_continue">Continue</string>
     <string name="baker_more_than_95_new_stake">Enter new validator stake</string>
-    <string name="baker_registration_update_amount_estimated_transaction_fee_range">Estimated transaction fee:\nϾ%1$s - Ͼ%2$s</string>
-    <string name="baker_registration_update_amount_estimated_transaction_fee_single">Estimated transaction fee:\nϾ%1$s</string>
-    <string name="baker_update_enter_new_stake">Enter your new total validator stake</string>
 
     <string name="baker_registration_confirmation_title">Register validator</string>
     <string name="baker_registration_confirmation_button">Submit</string>
     <string name="baker_registration_confirmation_explain">You are about to submit a register validator transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>
-    <string name="baker_register_confirmation_receipt_title">Transaction: Register validator</string>
     <string name="baker_register_confirmation_receipt_account_to_bake_from">Sender account</string>
     <string name="baker_register_confirmation_receipt_amount_to_bake">Validator stake</string>
     <string name="baker_register_confirmation_receipt_rewards_will_be">Rewards will be</string>
@@ -1005,7 +879,6 @@
     <string name="baker_register_confirmation_receipt_election_verify_key">Election verify key</string>
     <string name="baker_register_confirmation_receipt_signature_verify_key">Signature verify key</string>
     <string name="baker_register_confirmation_receipt_aggregation_verify_key">Aggregation verify key</string>
-    <string name="baker_register_confirmation_receipt_submit_transaction">Submit delegation transaction</string>
     <string name="baker_register_confirmation_receipt_submit_transaction_fee">Estimated transaction fee</string>
     <string name="baker_register_confirmation_receipt_success">Your validation is registered</string>
     <string name="baker_register_confirmation_receipt_close">Close</string>
@@ -1017,10 +890,6 @@
     <string name="baker_registration_confirmation_remove_label">Stop validation</string>
     <string name="baker_registration_confirmation_remove_button">Stop validation</string>
     <string name="baker_registration_confirmation_remove_success">You submitted a transaction to stop your validator</string>
-    <string name="baker_registration_confirmation_remove_are_you_sure">Are you sure you want to make the following transaction to stop validating?</string>
-    <string name="baker_registration_confirmation_remove_transaction">Transaction: Stop validating</string>
-    <string name="baker_registration_confirmation_remove_account_to_stop">Account to stop validating</string>
-    <string name="baker_registration_confirmation_submit">Submit validator transaction</string>
     <string name="baker_registration_confirmation_update_keys_title">Update validator keys</string>
     <string name="baker_registration_confirmation_update_keys_button">Update keys</string>
     <string name="baker_registration_confirmation_update_keys_success">Validator keys updated</string>
@@ -1030,14 +899,9 @@
     <string name="baker_registration_confirmation_update_stake_title">Update validator stake</string>
     <string name="baker_registration_confirmation_update_stake_button">Update stake</string>
     <string name="baker_registration_confirmation_update_stake_success">Validator stake is updated</string>
-    <string name="baker_registration_confirmation_update_keys_transaction_title">Transaction: Update validator keys</string>
-    <string name="baker_registration_confirmation_update_pool_transaction_title">Transaction: Update pool settings</string>
-    <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update validator stake</string>
     <string name="baker_registration_confirmation_update_affected_account">Affected validator account</string>
     <string name="baker_registration_confirmation_update_stake_update">Account to make validator update</string>
-    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Reducing your stake is subject to a cooldown period, in which the stake cannot be spent or transferred</string>
 
-    <string name="baker_update_intro_flow_title">Validating</string>
     <string name="baker_update_title">Update validation</string>
     <string name="baker_update_button">Update validation</string>
     <string name="baker_update_intro_subtitle1">Updating validator settings</string>
@@ -1046,7 +910,6 @@
     <string name="baker_update_intro_subtitle4">Update pool settings (2/2)</string>
     <string name="baker_update_intro_subtitle5">Update validator keys</string>
 
-    <string name="baker_remove_intro_flow_title">Validating</string>
     <string name="baker_remove_intro_subtitle1">Stop validation</string>
     <string name="baker_remove_intro_description">
         If you stop validating there is a cooldown period, after which the full stake amount will be unlocked on your public balance.
@@ -1068,7 +931,6 @@
     <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>
     <string name="update_baker_settings_menu_update_pool_settings">Update pool settings</string>
     <string name="update_baker_settings_menu_update_baker_keys">Update validator keys</string>
-    <string name="update_baker_settings_menu_stop_baking">Stop validating</string>
 
     <string name="baker_update_pool_settings_title">Update pool settings</string>
     <string name="baker_update_pool_settings_explain">
@@ -1106,10 +968,7 @@
     <string name="baker_keys_saved_local">Your backup has been saved to local storage.</string>
 
     <!-- Intro flow -->
-    <string name="intro_skip">Skip</string>
-    <string name="intro_back">Back</string>
     <string name="intro_next">Next</string>
-    <string name="intro_continue">Continue</string>
 
     <!-- Account keys export-->
     <string name="export_account_keys_title">Account Private Key</string>
@@ -1133,7 +992,6 @@
         and manually generate your transaction logs from a desktop browser.
     </string>
     <string name="export_transaction_log_save">Export Transaction Logs</string>
-    <string name="export_transaction_log_done">Done</string>
     <string name="export_transaction_log_cancel">Cancel</string>
     <string name="export_transaction_log_saved">The transaction logs have been saved</string>
     <string name="export_transaction_log_failed">Failed to download transaction logs</string>
@@ -1170,7 +1028,6 @@
         <a href="#terms">Terms and Conditions</a>
         and <a href="https://www.concordium.com/legal/privacy-policy">Privacy policy</a></string>
     <string name="welcome_terms_title">Terms and Conditions</string>
-    <string name="welcome_activity_tracking">I consent to activity tracking inside the app</string>
     <string name="notifications_permission_title">Keep up with everything that\'s happening here</string>
     <string name="notifications_permission_details">Find out when you get or receive payment requests.
         Get updates on new features, discount and promo</string>
@@ -1194,14 +1051,6 @@
     <string name="import_wallet_seed_phrase_description">• Consists of 24 words \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet</string>
     <string name="import_wallet_seed">Wallet private key</string>
     <string name="import_wallet_seed_description">• Consists of 128 characters long hexadecimal string \n• Grants access to all connected accounts \n• Can be used to recover a seed phrase wallet \n• Used in older Concordium wallets</string>
-    <string name="welcome_activate_bottom_sheet_title">Set up your wallet</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_title">CREATE A NEW WALLET</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_step_1">Create 6-digit passcode</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_step_2">Save seed phrase</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_step_3">Verify identity</string>
-    <string name="welcome_activate_bottom_sheet_create_wallet_button">Continue</string>
-    <string name="welcome_activate_bottom_sheet_import_wallet_details">You can import your wallet with a secret seed phrase, wallet private key or a backup file.</string>
-    <string name="welcome_activate_bottom_sheet_import_wallet_button"><u>Import a wallet</u></string>
     <string name="passcode_create_title">Create Passcode</string>
     <string name="template_passcode_create_details">%1$d-digit passcode to secure your wallet. Remember it to enter the wallet again</string>
     <string name="passcode_repeat_title">Repeat Passcode</string>
@@ -1332,7 +1181,6 @@
     <string name="tracking_permission_message">@string/tracking_motivation</string>
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
-    <string name="ccd_onramp_title">Buy CCD</string>
     <string name="ccd_onramp_subtitle">CCD is listed in the following external exchanges and services. Some of these venues will guide you through their onboarding process and wallet choices.</string>
     <string name="ccd_onramp_read_disclaimer">IMPORTANT DISCLAIMER</string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateways</string>
@@ -1355,10 +1203,7 @@
     <string name="ccd_onramp_disclaimer_cancel">Cancel</string>
     <string name="ccd_onramp_disclaimer_understand">I Understand</string>
     <string name="ccd_onramp_none_available">No sites available for this network</string>
-    <string name="ccd_onramp_site_accepts_credit_card">Accepts credit card</string>
     <string name="template_ccd_onramp_opening_site">Account address copied. Opening %1$s…</string>
-    <string name="ccd_onramp_accounts_title">Select Account</string>
-    <string name="ccd_onramp_accounts_subtitle">Which account do you want to use with the external service?</string>
     <string name="ccd_onramp_banner_title">Get your CCD</string>
     <string name="ccd_onramp_banner_content">And be part of a safer digital future</string>
     <string name="ccd_onramp_close_banner">Close the banner</string>
@@ -1370,7 +1215,6 @@
     <string name="announcements_notification_channel_name">Announcements</string>
     <string name="template_transaction_received_notification_title">You received %1$s</string>
     <string name="transaction_received_notification_text">See the transaction details in your wallet</string>
-    <string name="news_overview_title">Discover</string>
     <string name="reload_data">Reload</string>
     <string name="news_loading_failed">Failed loading news</string>
     <plurals name="days_left">
@@ -1481,20 +1325,14 @@
     <string name="your_validation_is_primed_for_suspension">Your validation is primed for suspension</string>
     <string name="baker_status_baker_primed_for_suspension_title">@string/your_validation_is_primed_for_suspension</string>
     <string name="baker_status_baker_suspended_title">@string/your_validation_has_been_suspended</string>
-    <string name="update_baker_settings_menu_suspend_baking">Suspend validation</string>
-    <string name="update_baker_settings_menu_resume_baking">Resume validation</string>
     <string name="baker_registration_confirmation_resume_title">Validation</string>
     <string name="baker_registration_confirmation_resume_label">Resume validation</string>
     <string name="baker_registration_confirmation_resume_button">Resume</string>
-    <string name="baker_registration_confirmation_resume_transaction">Transaction: Resume validation</string>
     <string name="baker_registration_confirmation_resume_success">You resumed you validation</string>
-    <string name="baker_registration_confirmation_resume_account_to_stop">Account to resume validation</string>
     <string name="baker_registration_confirmation_suspend_title">Validation</string>
     <string name="baker_registration_confirmation_suspend_label">Suspend validation</string>
     <string name="baker_registration_confirmation_suspend_button">Suspend</string>
-    <string name="baker_registration_confirmation_suspend_transaction">Transaction: Suspend validation</string>
     <string name="baker_registration_confirmation_suspend_success">You suspended you validation</string>
-    <string name="baker_registration_confirmation_suspend_account_to_stop">Account to suspend validation</string>
     <string name="baker_registration_confirmation_suspend_resume_description">Effective from next payday</string>
     <string name="delegation_status_content_suspended_title">@string/your_validator_has_been_suspended</string>
     <string name="account_details_suspension_notice_baker_suspended">@string/your_validation_has_been_suspended</string>

@@ -1,17 +1,13 @@
 <resources>
     <!-- Default screen margins -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_horizontal_margin_half">8dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_margin_half">8dp</dimen>
-    <dimen name="activity_horizontal_margin_double">32dp</dimen>
-    <dimen name="activity_vertical_margin_extended">36dp</dimen>
     <dimen name="compact_layout_width">300dp</dimen>
 
     <!-- List items -->
 
     <!-- Bottom navigation override to have more space between icon and text -->
-    <dimen name="design_bottom_navigation_height" override="true">62dp</dimen>
 
 
     <!-- Specific screens ********************-->
@@ -24,12 +20,10 @@
 
     <!-- Text sizes  -->
 
-    <dimen name="activity_receipt_item_vertical_margin">10dp</dimen>
     <dimen name="cis_token_icon_size">40dp</dimen>
     <dimen name="ccx_modal_corner_radius">20dp</dimen>
     <dimen name="ccx_passcode_dot_size">8dp</dimen>
 
-    <dimen name="size2">2dp</dimen>
     <dimen name="size4">4dp</dimen>
     <dimen name="size6">6dp</dimen>
     <dimen name="size8">8dp</dimen>
@@ -38,7 +32,6 @@
     <dimen name="size24">24dp</dimen>
     <dimen name="size28">28dp</dimen>
     <dimen name="size32">32dp</dimen>
-    <dimen name="size40">40dp</dimen>
     <dimen name="size48">48dp</dimen>
     <dimen name="size64">64dp</dimen>
 

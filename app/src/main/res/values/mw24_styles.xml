@@ -123,28 +123,6 @@
     <!-- end region -->
 
 
-    <style name="MW24_AccountSettingsItemTextView" parent="MW24_Typography_Headline_Large">
-        <item name="android:layout_marginVertical">20dp</item>
-        <item name="drawableEndCompat">@null</item>
-    </style>
-
-    <style name="MW24_Container_Primary">
-        <item name="android:background">@drawable/mw24_container_primary_background</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="MW24_Receive_Funds_Action_Button">
-        <item name="android:background">@drawable/mw24_account_receive_funds_button_background</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingVertical">8dp</item>
-        <item name="android:paddingHorizontal">16dp</item>
-        <item name="android:drawablePadding">8dp</item>
-        <item name="android:textColor">@color/cryptox_white_main</item>
-        <item name="drawableTint">@color/cryptox_white_main</item>
-    </style>
-
     <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Text_Mid_Alternative">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -172,12 +150,6 @@
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
 
-    <style name="MW24_CompoundButton_Checkbox" parent="CryptoX_CompoundButton_Checkbox">
-        <item name="android:button">@drawable/mw24_checkbox_button</item>
-        <item name="android:textAppearance">@style/CryptoX_Typography_Body_Medium</item>
-        <item name="android:textColor">@color/cryptox_white_main</item>
-    </style>
-
 
     <!-- region Buttons -->
     <style name="MW24_Button_Primary">
@@ -194,12 +166,6 @@
         <item name="android:paddingVertical">@dimen/size12</item>
         <item name="android:drawablePadding">@dimen/size8</item>
         <item name="priority">primary</item>
-    </style>
-
-    <style name="MW24_Button_Primary_Medium" parent="MW24_Button_Primary">
-        <item name="android:layout_height">32dp</item>
-        <item name="android:paddingHorizontal">@dimen/size12</item>
-        <item name="android:paddingVertical">@dimen/size8</item>
     </style>
 
     <style name="MW24_Button_Primary_Small" parent="MW24_Button_Primary">
@@ -220,20 +186,6 @@
         <item name="android:background">@drawable/mw24_button_secondary_background</item>
         <item name="android:textColor">@color/mw24_button_secondary_text_color</item>
         <item name="drawableTint">@color/mw24_button_secondary_text_color</item>
-    </style>
-
-    <style name="MW24_Button_Secondary_Medium" parent="MW24_Button_Secondary">
-        <item name="android:layout_height">32dp</item>
-        <item name="android:paddingHorizontal">@dimen/size12</item>
-        <item name="android:paddingVertical">@dimen/size8</item>
-    </style>
-
-    <style name="MW24_Button_Secondary_Small" parent="MW24_Button_Secondary">
-        <item name="android:layout_height">@dimen/size28</item>
-        <item name="android:textAppearance">@style/MW24_Typography_Additional_Capture_Small</item>
-        <item name="android:drawablePadding">@dimen/size6</item>
-        <item name="android:paddingHorizontal">@dimen/size8</item>
-        <item name="android:paddingVertical">@dimen/size6</item>
     </style>
 
     <style name="MW24_Button_Secondary_Inverse" parent="MW24_Button_Secondary">
@@ -262,13 +214,6 @@
         <item name="android:paddingVertical">@dimen/size6</item>
         <item name="android:drawablePadding">@dimen/size6</item>
         <item name="android:textAppearance">@style/MW24_Typography_Main_Capture_Small</item>
-    </style>
-
-    <style name="MW24_Action_Button">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:background">@drawable/mw24_account_action_button_background</item>
-        <item name="android:padding">10dp</item>
     </style>
 
     <!-- end region -->
