@@ -1000,6 +1000,7 @@
     <string name="export_transaction_log_downloading">Downloading transaction logs…</string>
 
     <string name="transaction_type_transfer">Transfer</string>
+    <string name="transaction_expand_memo">Expand memo</string>
 
     <!-- NFT -->
     <string name="nft_add_provider_next">Next</string>

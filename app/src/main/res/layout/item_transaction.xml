@@ -5,8 +5,8 @@
     android:id="@+id/item_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp"
     android:layout_marginHorizontal="@dimen/size16"
+    android:layout_marginBottom="4dp"
     android:background="@drawable/mw24_container_primary_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -92,26 +92,29 @@
             tools:text="with fee 0.059 CCD"
             tools:visibility="visible" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_memo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/subheader_textview">
 
             <View
                 android:id="@+id/divider"
-                style="@style/CryptoX_Divider_Horizontal" />
+                style="@style/CryptoX_Divider_Horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/memo_textview"
                 style="@style/MW24_Typography_Main_Capture_Small"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/size8"
                 android:drawablePadding="6dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
@@ -119,8 +122,22 @@
                 android:textColor="@color/mw24_blue_2"
                 android:textSize="14sp"
                 app:drawableStartCompat="@drawable/mw24_ic_memo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/memo_expand_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
                 tools:text="Memotext dsf ds fdsfdsf ds fds f dsf dsf ds fds f dsf  sdf ds f dsf"
                 tools:visibility="visible" />
-        </LinearLayout>
+
+            <ImageView
+                android:id="@+id/memo_expand_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:contentDescription="@string/transaction_expand_memo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                tools:src="@drawable/mw24_ic_transaction_expand" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
