@@ -86,9 +86,9 @@
             android:layout_marginTop="4dp"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/mw24_blue_3_50"
-            app:layout_constraintBottom_toTopOf="@id/layout_memo"
+            app:layout_constraintBottom_toBottomOf="@id/subheader_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/total_textview"
+            app:layout_constraintTop_toTopOf="@id/subheader_textview"
             tools:text="with fee 0.059 CCD"
             tools:visibility="visible" />
 
@@ -97,6 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:animateLayoutChanges="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/subheader_textview">
@@ -108,11 +109,23 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/memo_icon"
+                android:layout_width="@dimen/size12"
+                android:layout_height="@dimen/size12"
+                android:layout_marginTop="@dimen/size12"
+                android:importantForAccessibility="no"
+                android:src="@drawable/mw24_ic_memo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:tint="@color/mw24_content_accent_secondary" />
+
             <TextView
                 android:id="@+id/memo_textview"
                 style="@style/MW24_Typography_Main_Capture_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size12"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="@dimen/size8"
                 android:drawablePadding="6dp"
@@ -121,10 +134,9 @@
                 android:maxLines="1"
                 android:textColor="@color/mw24_blue_2"
                 android:textSize="14sp"
-                app:drawableStartCompat="@drawable/mw24_ic_memo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/memo_expand_icon"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/memo_icon"
                 app:layout_constraintTop_toBottomOf="@id/divider"
                 tools:text="Memotext dsf ds fdsfdsf ds fds f dsf dsf ds fds f dsf  sdf ds f dsf"
                 tools:visibility="visible" />

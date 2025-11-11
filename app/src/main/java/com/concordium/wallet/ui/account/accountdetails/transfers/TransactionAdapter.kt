@@ -21,7 +21,9 @@ class TransactionAdapter :
 
     private var onItemClickListener: OnItemClickListener? = null
 
-    inner class ItemViewHolder(val binding: ItemTransactionBinding) :
+    private val memoExpandedPositions = mutableSetOf<Int>()
+
+    class ItemViewHolder(val binding: ItemTransactionBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -34,6 +36,8 @@ class TransactionAdapter :
         with(holder as ItemViewHolder) {
             val transactionItem = items[position] as TransactionItem
             val transaction = transactionItem.transaction as Transaction
+            val isMemoExpanded = memoExpandedPositions.contains(position)
+
             TransactionViewHelper.show(
                 transaction,
                 binding.titleTextview,
@@ -43,7 +47,15 @@ class TransactionAdapter :
                 binding.layoutMemo,
                 binding.memoTextview,
                 binding.statusImageview,
+                memoExpandButton = binding.memoExpandIcon,
+                isMemoExpanded = isMemoExpanded
             )
+
+            binding.memoExpandIcon.setOnClickListener {
+                if (isMemoExpanded) memoExpandedPositions.remove(position)
+                else memoExpandedPositions.add(position)
+                notifyItemChanged(position)
+            }
 
             if (onItemClickListener != null) {
                 binding.itemRootLayout.setOnClickListener {

@@ -1,10 +1,11 @@
 package com.concordium.wallet.ui.common
 
 import android.annotation.SuppressLint
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
@@ -24,11 +25,13 @@ object TransactionViewHelper {
         subHeaderTextView: TextView,
         totalTextView: TextView,
         costTextView: TextView,
-        memoLayout: LinearLayout,
+        memoLayout: ConstraintLayout,
         memoTextView: TextView,
         statusImageView: ImageView,
         showDate: Boolean = false,
         titleFromReceipt: String = "",
+        memoExpandButton: ImageView? = null,
+        isMemoExpanded: Boolean = false
     ) {
         // Title
         titleTextView.text = titleFromReceipt.ifEmpty { ta.title }
@@ -45,7 +48,15 @@ object TransactionViewHelper {
             }
         )
 
+        // Memo
         memoTextView.text = ta.memoText
+        memoTextView.maxLines = if (isMemoExpanded) Int.MAX_VALUE else 1
+        memoTextView.ellipsize = if (isMemoExpanded) null else TextUtils.TruncateAt.END
+        memoExpandButton?.setImageResource(
+            if (isMemoExpanded) R.drawable.mw24_ic_transaction_collapse
+            else R.drawable.mw24_ic_transaction_expand
+        )
+
         memoLayout.isVisible = ta.memoText != null
 
         // Time
