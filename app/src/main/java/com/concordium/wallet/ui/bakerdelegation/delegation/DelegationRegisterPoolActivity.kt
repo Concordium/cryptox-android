@@ -2,12 +2,10 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -20,6 +18,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.uicore.view.SegmentedControlView
+import com.concordium.wallet.util.IntentUtil
 import com.concordium.wallet.util.KeyboardUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -75,7 +74,9 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         binding.poolId.setText(viewModel.getPoolId())
         binding.poolId.setOnSearchDoneListener {
             KeyboardUtil.hideKeyboard(this)
-            onContinueClicked()
+            if (binding.checkbox.isChecked) {
+                onContinueClicked()
+            }
         }
 
         binding.poolRegistrationContinue.setOnClickListener {
@@ -106,6 +107,13 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                 }
             }
         )
+
+        binding.checkbox.isChecked = isModeValid()
+        binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
+            binding.poolRegistrationContinue.isEnabled = isChecked &&
+                    (viewModel.isInitialSetup() || isModeValid())
+        }
+
         updateContent()
         updateVisibilities()
 
@@ -125,6 +133,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             showDetailedPage()
         }
     }
+
+    private fun isModeValid(): Boolean = getExistingPoolIdText().isNotEmpty() ||
+            viewModel.bakerDelegationData.isLPool ||
+            binding.poolId.getText().isNotEmpty()
 
     override fun errorLiveData(value: Int) {
         when (value) {
@@ -166,6 +178,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         binding.poolOptions.clearAll()
         binding.poolOptions.addControl(
             title = getString(R.string.delegation_register_delegation_passive),
+            description = getString(R.string.delegation_register_delegation_passive_description),
             clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectLPool()
@@ -177,6 +190,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         )
         binding.poolOptions.addControl(
             title = getString(R.string.delegation_register_delegation_pool_baker),
+            description = getString(R.string.delegation_register_delegation_pool_description),
             clickListener = object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     binding.poolId.setText("")
@@ -208,12 +222,11 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             )
 
         binding.poolDesc.handleUrlClicks { url ->
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            ContextCompat.startActivity(this, browserIntent, null)
+            IntentUtil.openUrl(this, url)
         }
-        binding.poolRegistrationContinue.isEnabled = viewModel.isInitialSetup() ||
-                getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool ||
-                binding.poolId.getText().isNotEmpty()
+        binding.poolRegistrationContinue.isEnabled = binding.checkbox.isChecked &&
+                (viewModel.isInitialSetup() || isModeValid())
+
         hideError()
     }
 

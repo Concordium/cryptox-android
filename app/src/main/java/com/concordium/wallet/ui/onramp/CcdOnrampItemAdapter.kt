@@ -68,7 +68,6 @@ class CcdOnrampItemAdapter(
 
     override fun getItemCount(): Int = data.size
 
-    @SuppressLint("UseCompatTextViewDrawableApis")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder.Header -> {

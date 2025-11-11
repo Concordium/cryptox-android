@@ -20,8 +20,14 @@ class SegmentedLayoutView @JvmOverloads constructor(
         binding = SegmentedLayoutItemBinding.bind(this)
     }
 
-    override fun setLayout(title: String, earningPercent: String, selected: Boolean) {
+    override fun setLayout(
+        title: String,
+        description: String,
+        earningPercent: String,
+        selected: Boolean
+    ) {
         binding.title.text = title
+        binding.description.text = description
         binding.earningPercent.apply {
             text = earningPercent
             isVisible = earningPercent.isNotEmpty()

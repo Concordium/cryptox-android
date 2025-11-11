@@ -19,7 +19,12 @@ class SegmentedButtonView @JvmOverloads constructor(
         binding = SegmentedTextItemBinding.bind(this)
     }
 
-    override fun setLayout(title: String, earningPercent: String, selected: Boolean) {
+    override fun setLayout(
+        title: String,
+        description: String,
+        earningPercent: String,
+        selected: Boolean
+    ) {
         binding.button.text = title
         binding.button.isSelected = selected
     }

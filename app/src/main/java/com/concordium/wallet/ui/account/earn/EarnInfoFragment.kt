@@ -20,6 +20,8 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.handleUrlClicks
+import com.concordium.wallet.util.IntentUtil
 import com.concordium.wallet.util.UnitConvertUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -49,7 +51,6 @@ class EarnInfoFragment : Fragment() {
         initObservers()
     }
 
-
     private fun initViews() {
         binding.btnBaker.setOnClickListener {
             gotoStartValidating()
@@ -72,7 +73,7 @@ class EarnInfoFragment : Fragment() {
                 activity.showError(value)
             }
         })
-        viewModel.chainParameters.observe(viewLifecycleOwner) { chainParameters ->
+        viewModel.chainParameters.observe(this) { chainParameters ->
             chainParameters?.delegatorCooldown?.let {
                 val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(it)
                 binding.updateDescription.text =

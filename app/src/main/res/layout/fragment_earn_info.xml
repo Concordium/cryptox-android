@@ -216,6 +216,6 @@
             style="@style/MW24_Button_Primary"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/size8"
-            android:text="@string/start_earning_button" />
+            android:text="@string/start_staking_button" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
