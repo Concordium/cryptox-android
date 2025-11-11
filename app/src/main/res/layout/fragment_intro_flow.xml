@@ -3,19 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="40dp"
-    android:paddingHorizontal="18dp">
+    android:layout_marginBottom="@dimen/size24" >
 
     <LinearLayout
         style="@style/CryptoX_Container_TextCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="@dimen/size16">
 
         <TextView
             android:id="@+id/title"
-            android:textAppearance="@style/MW24_Typography_Text_Main"
+            android:textAppearance="@style/MW24_Typography_H4"
             android:textColor="@color/cryptox_white_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,9 +24,9 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-            android:textColor="@color/mw24_blue_2"
+            android:layout_marginTop="@dimen/size12"
+            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+            android:textColor="@color/mw24_content_accent_secondary"
             android:textColorLink="@color/cryptox_white_main"
             tools:text="A staking pool is managed by an individual validator. Running a pool allows a validator to attract more stake and thus increate chances of being selected to produce a block. Validators earn a commission from the delegators upon producing a block. Delegating to a staking pool is usually more profitable than passive delegation, but there is also a risk of losing out on rewards if the validator is not running properly. It is therefore a good idea to keep an eye on the validator's performance. You can read more about how to investigate a validator's performance on our documentation website."/>
     </LinearLayout>

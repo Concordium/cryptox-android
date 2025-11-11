@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.databinding.DialogEarnLegalDisclaimerBinding
 import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.uicore.handleUrlClicks
+import com.concordium.wallet.util.IntentUtil
 
 class EarnLegalDisclaimerDialog : BaseGradientDialogFragment() {
 
@@ -24,6 +26,9 @@ class EarnLegalDisclaimerDialog : BaseGradientDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.okButton.setOnClickListener { dismiss() }
+        binding.detailsTextView.handleUrlClicks { url ->
+            IntentUtil.openUrl(requireActivity(), url)
+        }
     }
 
     companion object {

@@ -216,6 +216,12 @@
         <item name="android:textAppearance">@style/MW24_Typography_Main_Capture_Small</item>
     </style>
 
-    <!-- end region -->
-
+    <style name="MW24_CompoundButton_Checkbox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/cryptox_checkbox_button</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Main_Capture_Small</item>
+        <item name="android:textColor">@color/mw24_content_primary</item>
+        <item name="android:paddingStart">12sp</item>
+    </style>
 </resources>

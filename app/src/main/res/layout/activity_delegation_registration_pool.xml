@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/size8"
-        android:paddingVertical="20dp"
+        android:paddingVertical="@dimen/size8"
         app:layout_constraintBottom_toTopOf="@id/legal_disclaimer_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +28,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
+            android:layout_marginHorizontal="@dimen/size16"
             android:orientation="vertical">
 
             <TextView
@@ -84,9 +84,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                android:textColor="@color/mw24_blue_2"
-                android:textColorLink="@color/mw24_blue_2"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/mw24_content_accent_secondary"
+                android:textColorLink="@color/mw24_content_accent_secondary"
                 tools:text="@string/delegation_register_delegation_desc" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -107,10 +107,9 @@
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginBottom="16dp"
+        style="@style/MW24_CompoundButton_Checkbox"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginBottom="@dimen/size16"
         android:textSize="14sp"
         android:text="@string/delegation_register_delegation_checkbox"
         app:layout_constraintBottom_toTopOf="@id/pool_registration_continue"
@@ -122,8 +121,8 @@
         android:id="@+id/pool_registration_continue"
         style="@style/MW24_Button_Primary"
         android:layout_width="0dp"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginBottom="@dimen/size16"
         android:text="@string/delegation_register_delegation_continue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

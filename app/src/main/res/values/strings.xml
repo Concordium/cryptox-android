@@ -688,7 +688,7 @@
     <string name="earn_delegation_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
     <string name="earn_delegation_rewarded_description">Stake your CCD to earn staking rewards. Rewards can be restaked automatically.</string>
-    <string name="earn_delegation_options_title">Control tour stake</string>
+    <string name="earn_delegation_options_title">Control your stake</string>
     <string name="earn_delegation_options_description">Choose between passive pool delegation or selecting a validator.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
     <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period applies.</string>
@@ -697,7 +697,7 @@
         <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
     </plurals>
 
-    <string name="start_staking_button">Start staking</string>
+    <string name="start_staking_button">Start Staking</string>
     <string name="staking_notice">Estimated rewards are based on past results. Actual returns may vary. Don’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk</a></string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
     <string name="read_more_button">Read More</string>
@@ -705,19 +705,20 @@
     <string name="earn_dialog_close">Close</string>
     <string name="earn_legal_disclaimer_title">Legal Disclaimer</string>
     <string name="earn_legal_disclaimer_description">Staking rewards are determined by the network protocol and may change. Rewards are not guaranteed and may be lower than projected. This feature does not constitute an investment product, financial service, or guarantee of returns.
+        \n\nLearn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
         \n\n<b>Jurisdictional Restriction:</b> Availability may vary depending on your jurisdiction. Certain users may not be eligible due to local regulations.
         \n\n<b>User Responsibility Clause:</b> You are responsible for understanding the risks of staking and ensuring compliance with laws applicable to you.
     </string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
-    <string name="delegation_intro_flow_learn_about">Learn about earning</string>
+    <string name="delegation_intro_flow_learn_about">Learn About Staking</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
     <string name="delegation_intro_subtitle2">Delegation models</string>
-    <string name="delegation_intro_subtitle3">Validator pools</string>
+    <string name="delegation_intro_subtitle3">Staking pools</string>
     <string name="delegation_intro_subtitle4">Passive delegation</string>
     <string name="delegation_intro_subtitle5">Pay days</string>
-    <string name="delegation_intro_subtitle6">Lock-in and cooldowns</string>
+    <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
     <string name="delegation_intro_subtitle7">The status page</string>
 
     <string name="delegation_update_subtitle1">Updating your delegation</string>
@@ -749,13 +750,14 @@
     <string name="delegation_status_effective_time">%1$s at %2$s</string>
     <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validating on</string>
 
-    <string name="delegation_register_delegation_title">Staking</string>
-    <string name="delegation_register_staking_mode">Staking mode</string>
+    <string name="delegation_register_delegation_title">Stake</string>
+    <string name="delegation_register_staking_mode">Staking Mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_update_delegation_button">Update delegation</string>
     <string name="delegation_update_delegation_success">Your delegation is updated</string>
     <string name="delegation_remove_delegation_title">Staking</string>
     <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
+    <string name="delegation_register_max"><u>Max</u></string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered</string>
     <string name="delegation_status_content_registered_button">Submit delegation</string>
@@ -809,7 +811,7 @@
     <string name="delegation_register_delegation_restake_rewards">Restake rewards*</string>
     <string name="delegation_register_delegation_amount_do_you_want">Choose to restake your rewards to potentially increase future returns.</string>
     <string name="delegation_register_delegation_label">* Network fluctuations may affect compounded outcomes.</string>
-    <string name="delegation_register_delegation_amount_continue">Continue</string>
+    <string name="delegation_register_delegation_amount_continue">Preview Delegation</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
     <string name="delegation_register_delegation_not_enough_funds">@string/insufficient_funds</string>
