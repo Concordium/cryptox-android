@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="@dimen/size8"
         android:gravity="center"
         android:text="@string/ccd_onramp_subtitle"
         android:textAppearance="@style/CCX_Typography_Body"
@@ -18,7 +18,7 @@
         android:id="@+id/read_disclaimer_button"
         style="@style/MW24_Button_Primary_Small"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/size16"
         android:text="@string/ccd_onramp_read_disclaimer" />
 
 </LinearLayout>

@@ -1,26 +1,26 @@
 package com.concordium.wallet.ui.onramp
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.net.toUri
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentCcdOnrampSitesBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.uicore.toast.showCustomToast
+import com.concordium.wallet.util.ClipboardUtil
+import com.concordium.wallet.util.IntentUtil
+import com.concordium.wallet.util.getOptionalSerializable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -69,14 +69,14 @@ class CcdOnrampSitesFragment : BaseFragment() {
             onSiteClicked = { item: CcdOnrampListItem.Site ->
                 item.source?.also(::onSiteClicked)
             },
-            onReadDisclaimerClicked = { showDisclaimerDialog() },
+            onReadDisclaimerClicked = { gotoDisclaimer() },
             isDisclaimerAccepted = viewModel.isHasAcceptedOnRampDisclaimer()
         )
         binding.recyclerview.adapter = adapter
         viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
         viewModel.siteToOpen.collectWhenStarted(this) { (site, copyAddress) ->
             if (viewModel.isHasAcceptedOnRampDisclaimer().not()) {
-                showDisclaimerDialog(
+                gotoDisclaimer(
                     siteToOpen = site,
                     copyAddress = copyAddress,
                 )
@@ -97,6 +97,31 @@ class CcdOnrampSitesFragment : BaseFragment() {
         }
     }
 
+    private val getResultDisclaimer =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    val isDisclaimerAccepted = data.getBooleanExtra(
+                        CcdOnrampDisclaimerActivity.DISCLAIMER_ACCEPTED,
+                        false
+                    )
+                    val siteToOpen = data.getOptionalSerializable(
+                        CcdOnrampDisclaimerActivity.SITE_TO_OPEN,
+                        CcdOnrampSite::class.java
+                    )
+                    val copyAddress = data.getBooleanExtra(
+                        CcdOnrampDisclaimerActivity.COPY_ADDRESS,
+                        false
+                    )
+                    handleDisclaimerAccepted(
+                        isDisclaimerAccepted,
+                        siteToOpen,
+                        copyAddress
+                    )
+                }
+            }
+        }
+
     private fun onSiteClicked(site: CcdOnrampSite) {
         App.appCore.tracker.homeOnrampSiteClicked(siteName = site.name)
         viewModel.onSiteClicked(site)
@@ -111,12 +136,6 @@ class CcdOnrampSitesFragment : BaseFragment() {
         copyAddress: Boolean,
     ) {
         if (copyAddress) {
-            val clipboardManager: ClipboardManager =
-                requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clipData = ClipData.newPlainText(
-                getString(R.string.account_details_address),
-                viewModel.accountAddress.value,
-            )
             requireContext().showCustomToast(
                 iconResId = R.drawable.mw24_ic_address_copy_check,
                 title = getString(
@@ -124,38 +143,56 @@ class CcdOnrampSitesFragment : BaseFragment() {
                     site.name
                 )
             )
-            clipboardManager.setPrimaryClip(clipData)
+            ClipboardUtil.copyToClipboard(
+                context = requireContext(),
+                label = getString(R.string.account_details_address),
+                text = viewModel.accountAddress.value
+            )
         }
-
-        val browserIntent = Intent(Intent.ACTION_VIEW, site.url.toUri())
-        startActivity(Intent.createChooser(browserIntent, site.name))
+        IntentUtil.openUrl(requireActivity(), site.url)
     }
 
-    private fun showDisclaimerDialog(
+    private fun handleDisclaimerAccepted(
+        isAccepted: Boolean,
         siteToOpen: CcdOnrampSite? = null,
-        copyAddress: Boolean = false,
+        copyAddress: Boolean = false
     ) {
-        parentFragmentManager.setFragmentResultListener(
-            CcdOnrampDisclaimerDialog.ACTION_REQUEST,
-            viewLifecycleOwner
-        ) { _, bundle ->
-            if (CcdOnrampDisclaimerDialog.getResult(bundle)) {
-                viewModel.setHasAcceptedOnRampDisclaimer(true)
-                adapter.updateHeaderDisclaimerButton(viewModel.isHasAcceptedOnRampDisclaimer())
-                if (siteToOpen != null) {
-                    openSite(
-                        site = siteToOpen,
-                        copyAddress = copyAddress,
-                    )
-                }
+        if (isAccepted) {
+            viewModel.setHasAcceptedOnRampDisclaimer(true)
+            adapter.updateHeaderDisclaimerButton(viewModel.isHasAcceptedOnRampDisclaimer())
+            siteToOpen?.let {
+                openSite(
+                    site = siteToOpen,
+                    copyAddress = copyAddress
+                )
             }
         }
+    }
 
-        CcdOnrampDisclaimerDialog.newInstance(
-            CcdOnrampDisclaimerDialog.setBundle(
-                isDisclaimerAccepted = viewModel.isHasAcceptedOnRampDisclaimer(),
-                showSiteIcon = siteToOpen != null,
+    private fun gotoDisclaimer(
+        siteToOpen: CcdOnrampSite? = null,
+        copyAddress: Boolean = false
+    ) {
+        val intent = Intent(requireActivity(), CcdOnrampDisclaimerActivity::class.java).apply {
+            putExtra(
+                CcdOnrampDisclaimerActivity.IS_DISCLAIMER_ACCEPTED,
+                viewModel.isHasAcceptedOnRampDisclaimer()
             )
-        ).showSingle(parentFragmentManager, CcdOnrampDisclaimerDialog.TAG)
+            putExtra(
+                CcdOnrampDisclaimerActivity.SHOW_SITE_ICON,
+                siteToOpen != null
+            )
+            putExtra(
+                CcdOnrampDisclaimerActivity.COPY_ADDRESS,
+                copyAddress
+            )
+            siteToOpen?.let { site ->
+                putExtra(
+                    CcdOnrampDisclaimerActivity.SITE_TO_OPEN,
+                    site
+                )
+            }
+        }
+        getResultDisclaimer.launch(intent)
     }
 }

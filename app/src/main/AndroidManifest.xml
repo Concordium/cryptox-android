@@ -496,6 +496,9 @@
             android:name=".ui.cis2.send.SelectTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.onramp.CcdOnrampDisclaimerActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

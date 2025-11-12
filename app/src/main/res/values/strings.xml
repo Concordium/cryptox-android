@@ -5,7 +5,7 @@
     <string name="app_menu_item_home">Home</string>
     <string name="app_menu_item_buy">Buy</string>
     <string name="app_menu_item_tokens">NFT</string>
-    <string name="app_menu_item_earn">Earn</string>
+    <string name="app_menu_item_earn">Stake</string>
     <string name="app_menu_item_activity">Activity</string>
     <string name="app_menu_item_transfer">Transfer</string>
     <string name="app_error_general">Unexpected error</string>
@@ -1311,8 +1311,8 @@
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
     <string name="ccd_onramp_title">Buy CCD</string>
-    <string name="ccd_onramp_subtitle">The services below are offered by third-party providers. Concordium does not sell or promote crypto-assets and is not responsible for any crypto-asset transaction.</string>
-    <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
+    <string name="ccd_onramp_subtitle">The services below are offered by third-party providers. Concordium does not sell or promote crypto-assets and is not responsible for any crypto-asset transaction. Read our disclaimer for more.</string>
+    <string name="ccd_onramp_read_disclaimer">IMPORTANT DISCLAIMER</string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
     <string name="ccd_onramp_exchanges_notice">
         List of supported exchanges can be found at <a href="https://concordium.com/ccd-wallet">concordium.com/ccd-wallet</a>
@@ -1329,10 +1329,11 @@
         defined by such third parties and Concordium is not responsible for and does not assume any liabilities
         in relation to the use of such services.
         \n\nConcordium does not provide, arrange, or promote any investment or staking services.
-        \n\nDon’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
+        \n\nDon’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong.
+        \n\nLearn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
     </string>
     <string name="ccd_onramp_disclaimer_close">Close</string>
-    <string name="ccd_onramp_disclaimer_cancel">Cancel</string>
+    <string name="ccd_onramp_disclaimer_cancel">Go Back</string>
     <string name="ccd_onramp_disclaimer_understand">I Understand</string>
     <string name="ccd_onramp_none_available">No sites available for this network</string>
     <string name="ccd_onramp_site_accepts_credit_card">Accepts credit card</string>
