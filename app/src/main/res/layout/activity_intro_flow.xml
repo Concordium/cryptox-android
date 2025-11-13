@@ -25,6 +25,9 @@
             android:id="@+id/intro_flow_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size16"
+            android:layout_marginTop="@dimen/size8"
+            android:layout_marginBottom="@dimen/size16"
             android:orientation="vertical" />
 
     </androidx.core.widget.NestedScrollView>

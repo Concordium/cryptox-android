@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:context=".ui.account.accountdetails.AccountDetailsActivity">
+    android:orientation="vertical">
 
     <include
         android:id="@+id/toolbar_layout"
@@ -13,32 +12,126 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/options_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size16"
+        android:text="@string/account_details_options"
+        android:textAppearance="@style/MW24_Typography_Title_Light"
+        android:textColor="@color/mw24_content_secondary" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/export_transaction_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size16"
+        android:background="@drawable/mw24_container_primary_background"
+        android:padding="@dimen/size16">
+
+        <ImageView
+            android:id="@+id/transaction_log_start_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/mw24_ic_account_settings_export_log"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_content_secondary" />
+
+        <TextView
+            android:id="@+id/export_transaction_log_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size12"
+            android:text="@string/account_details_menu_export_transaction_log"
+            android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+            android:textColor="@color/mw24_content_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/transaction_log_end_icon"
+            app:layout_constraintStart_toEndOf="@id/transaction_log_start_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/transaction_log_end_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size4"
+            android:importantForAccessibility="no"
+            android:src="@drawable/cryptox_ico_chevron_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/mw24_plain_white_20" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/transfer_filters_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size24"
+        android:text="@string/transactions_filters_label"
+        android:textAppearance="@style/MW24_Typography_Title_Light"
+        android:textColor="@color/mw24_content_secondary" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size16"
+        android:background="@drawable/mw24_export_transaction_log_card_background"
         android:orientation="vertical"
-        android:background="@drawable/mw24_container_stroked_background"
-        android:padding="20dp">
+        android:padding="@dimen/size16">
 
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/filter_show_rewards"
-            style="@style/MW24_CompoundButton_Checkbox"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/transactions_filters_show_rewards"
-            tools:checked="false" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/filter_show_finalizations_rewards"
-            style="@style/MW24_CompoundButton_Checkbox"
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/filter_show_rewards_switch"
+                style="@style/CCX_CompoundButton_Switch"
+                android:layout_gravity="end" />
+
+            <TextView
+                android:id="@+id/filter_show_rewards_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size12"
+                android:layout_weight="1"
+                android:text="@string/transactions_filters_show_rewards"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_1" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/transactions_filters_show_finalizations_rewards"
-            tools:checked="false" />
+            android:layout_marginTop="@dimen/size24"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/filter_show_finalizations_rewards_switch"
+                style="@style/CCX_CompoundButton_Switch"
+                android:layout_gravity="end" />
+
+            <TextView
+                android:id="@+id/filter_show_finalizations_rewards_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size12"
+                android:layout_weight="1"
+                android:text="@string/transactions_filters_show_finalizations_rewards"
+                android:textAppearance="@style/CCX_Typography_H3"
+                android:textColor="@color/ccx_neutral_tint_1" />
+
+        </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

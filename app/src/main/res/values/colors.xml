@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Theme - Primary -->
-    <color name="theme_primary">#FFFFFF</color>
-    <color name="theme_primary_dark">#000000</color>
-    <color name="theme_accent">#ffffff</color>
 
     <color name="theme_white">#ffffff</color>
     <color name="theme_black">#000000</color>
@@ -16,12 +13,10 @@
     <color name="text_pink">#FF8A8A</color>
 
     <!-- Backgrounds -->
-    <color name="bottom_navigation_bar_background">@color/ccx_neutral_tint_6</color>
     <!-- Other -->
 
     <color name="yellow">#FFBC11</color>
     <color name="attention_red">#CD2E4A</color>
     <color name="nft_card_background">#292929</color>
 
-    <color name="bottom_navigation_bar_divider">#20262E</color>
 </resources>

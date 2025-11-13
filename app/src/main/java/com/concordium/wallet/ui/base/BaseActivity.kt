@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.base
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -21,6 +20,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants
@@ -30,14 +30,13 @@ import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.Constants.Extras.EXTRA_QR_CONNECT
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.RecipientRepository
-import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
 import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
-import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.connect.ConnectActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
@@ -72,6 +71,8 @@ abstract class BaseActivity(
     protected var closeBtn: ImageView? = null
     protected var deleteBtn: ImageView? = null
     private var settingsBtn: ImageView? = null
+    private var menuDrawerBtn: ImageView? = null
+    private var explorerBtn: ImageView? = null
     protected var searchView: SearchView? = null
 
     private var toastLayoutTopError: ViewGroup? = null
@@ -106,6 +107,8 @@ abstract class BaseActivity(
         accountBtn = toolbar?.findViewById(R.id.toolbar_account_btn)
         accountBtnText = toolbar?.findViewById(R.id.toolbar_account_label)
         accountBtnImage = toolbar?.findViewById(R.id.toolbar_account_btn_image)
+        menuDrawerBtn = toolbar?.findViewById(R.id.toolbar_menu_drawer_btn)
+        explorerBtn = toolbar?.findViewById(R.id.toolbar_explorer_btn)
 
         setupActionBar(this, titleId)
 
@@ -251,23 +254,31 @@ abstract class BaseActivity(
         isVisible: Boolean = false,
         text: String,
         icon: Drawable?,
-        listener: View.OnClickListener? = null,
+        onClickListener: View.OnClickListener? = null,
+        onTouchListener: View.OnTouchListener? = null,
     ) {
         accountBtn?.isVisible = isVisible
         accountBtnImage?.isVisible = isVisible
         accountBtnText?.isVisible = isVisible
         accountBtnText?.text = text
         accountBtnText?.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
-        accountBtn?.setOnClickListener(listener)
+        accountBtn?.setOnClickListener(onClickListener)
+        accountBtn?.setOnTouchListener(onTouchListener)
     }
-//    fun hideClose(isVisible: Boolean) {
-//        closeBtn?.visibility = if (isVisible) View.VISIBLE else View.GONE
-//    }
-    // authentication region
+
+    fun hideMenuDrawer(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        menuDrawerBtn?.isVisible = isVisible
+        menuDrawerBtn?.setOnClickListener(listener)
+    }
+
+    fun hideExplorer(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        explorerBtn?.isVisible = isVisible
+        explorerBtn?.setOnClickListener(listener)
+    }
 
     private val scanQrResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val data = result.data?.extras
                 val isAddContact = data?.let(ScanQRActivity.Companion::isAddContact)
                 val qrData = data?.let(ScanQRActivity.Companion::getScannedQrContent)
@@ -280,37 +291,24 @@ abstract class BaseActivity(
                         startActivity(it)
                     }
                 } else if (App.appCore.cryptoLibrary.checkAccountAddress(qrData)) {
-                    val activeAccount = runBlocking {
-                        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
-                            .getActive()
-                    } ?: error("The scanner must not be called if there are no accounts")
                     val knownRecipient: Recipient? = runBlocking {
                         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
                             .getRecipientByAddress(qrData)
                     }
-                    val intent = Intent(this, SendTokenActivity::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                         .putExtra(
-                            SendTokenActivity.ACCOUNT,
-                            activeAccount
+                            MainActivity.EXTRA_GOTO_TRANSFER,
+                            true
                         )
                         .putExtra(
-                            SendTokenActivity.TOKEN,
-                            CCDToken(
-                                account = activeAccount,
-                            )
-                        )
-                        .putExtra(
-                            SendTokenActivity.RECIPIENT,
+                            MainActivity.EXTRA_TRANSFER_RECIPIENT,
                             knownRecipient
                                 ?: Recipient(
                                     address = qrData,
                                 )
                         )
-                        .putExtra(
-                            SendTokenActivity.PARENT_ACTIVITY,
-                            this::class.java.canonicalName
-                        )
-                    startActivityForResultAndHistoryCheck(intent)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
                 } else {
                     Intent(applicationContext, ConnectActivity::class.java).also {
                         it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -461,7 +459,7 @@ abstract class BaseActivity(
                     intent.putExtra("WITH_DATA", withData)
                 }
             }
-            setResult(Activity.RESULT_OK, intent)
+            setResult(RESULT_OK, intent)
             finish()
         }
     }
@@ -470,7 +468,7 @@ abstract class BaseActivity(
     @Suppress("DEPRECATION")
     private val getResultGeneric =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
+            if (it.resultCode == RESULT_OK) {
                 it.data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
                     if (this.javaClass.asSubclass(this.javaClass).canonicalName != className) {
                         finishUntilClass(
@@ -512,7 +510,7 @@ abstract class BaseActivity(
             var scheme = uriRoot.toString()
             scheme = scheme.replace("/root/", "/document/")
             scheme += "%3A$startDir"
-            uriRoot = Uri.parse(scheme)
+            uriRoot = scheme.toUri()
             intent.putExtra("android.provider.extra.INITIAL_URI", uriRoot)
         } else {
             intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -525,6 +523,13 @@ abstract class BaseActivity(
         UnlockFeatureDialog().showSingle(
             supportFragmentManager,
             UnlockFeatureDialog.TAG
+        )
+    }
+
+    fun showAccountsList() {
+        AccountsListFragment().showSingle(
+            supportFragmentManager,
+            AccountsListFragment.TAG
         )
     }
 }

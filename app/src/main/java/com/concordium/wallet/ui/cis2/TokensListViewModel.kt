@@ -34,7 +34,7 @@ class TokensListViewModel(
     init {
         accountDetailsViewModel
             .activeAccount
-            .map { it.id }
+            .map { it?.id }
             .distinctUntilChanged()
             .collect(viewModelScope) {
                 reset()
@@ -48,7 +48,6 @@ class TokensListViewModel(
     }
 
     fun resetSelectedToken() = viewModelScope.launch {
-        accountDetailsViewModel.updateNotificationToken(null)
         _uiState.update { it.copy(selectedToken = null) }
     }
 

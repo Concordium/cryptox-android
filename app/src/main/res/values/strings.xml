@@ -2,10 +2,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App -->
     <string name="app_name">Concordium Wallet</string>
-    <string name="app_menu_item_accounts">Accounts</string>
-    <string name="app_menu_item_news">News</string>
+    <string name="app_menu_item_home">Home</string>
+    <string name="app_menu_item_buy">Buy</string>
     <string name="app_menu_item_tokens">NFT</string>
-    <string name="app_menu_item_more">More</string>
+    <string name="app_menu_item_earn">Stake</string>
+    <string name="app_menu_item_activity">Activity</string>
+    <string name="app_menu_item_transfer">Transfer</string>
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected cryptography error</string>
@@ -61,8 +63,6 @@
     <string name="auth_confirm">Continue</string>
     <string name="auth_error_password_setup">Failed to setup password</string>
     <string name="auth_error_password_not_valid">Password is not valid - minimum length is 6.</string>
-    <string name="auth_error_passcode_not_valid">Passcode is not valid</string>
-    <string name="auth_error_passcodes_different">Passcodes do not match. Please try again</string>
     <string name="auth_error_passwords_different">Passwords do not match. Please try again</string>
     <string name="auth_dialog_password_title">Authentication</string>
     <string name="auth_dialog_passcode_description">Enter app passcode to continue</string>
@@ -94,10 +94,6 @@
     <string name="auth_setup_password_repeat_info">Repeat your password to secure your wallet.</string>
     <string name="auth_setup_password_use_passcode">Use digit passcode instead</string>
     <!-- Auth Setup Biometrics-->
-    <string name="auth_setup_biometrics_title">Enable Biometrics</string>
-    <string name="auth_setup_biometrics_info">Enable biometrics for more convenient login.</string>
-    <string name="auth_setup_biometrics_confirm">Enable Biometrics</string>
-    <string name="auth_setup_biometrics_cancel">Continue without</string>
     <string name="auth_setup_biometrics_dialog_title">Enable biometrics</string>
     <string name="auth_setup_biometrics_dialog_subtitle">Use biometrics to enable it for this app</string>
     <string name="auth_setup_biometrics_dialog_cancel">Cancel</string>
@@ -175,8 +171,8 @@
     <string name="unshielding_notice_title">Transaction Shielding is going away</string>
     <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
     <string name="unshielding_notice_unshield">Unshield assets</string>
-    <string name="accounts_list_title">Your Accounts</string>
-    <string name="accounts_list_create_new_account">Create new account</string>
+    <string name="accounts_list_title">Accounts</string>
+    <string name="accounts_list_create_new_account">Create New Account</string>
     <!-- New account name -->
     <string name="new_account_name_title">Create new account</string>
     <string name="new_account_set_name">Set account name</string>
@@ -224,13 +220,15 @@
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
     <string name="account_details_total_balance">%1$s CCD</string>
-    <string name="account_details_balance_at_disposal">%1$s CCD at disposal</string>
+    <string name="account_details_balance_at_disposal">%1$s CCD available</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
     <string name="account_details_change_name_popup_cancel">Cancel</string>
     <string name="account_details_change_name_popup_save">Save</string>
     <string name="account_details_change_name_hint">Enter name</string>
-    <string name="account_details_raw_metadata">Show raw metadata</string>
+    <string name="account_details_options">Options</string>
+    <string name="account_details_raw_metadata">Show Raw Metadata</string>
+    <string name="account_details_release_schedule">Release Schedule</string>
     <string name="account_details_ccd_token">CCD token</string>
     <string name="account_details_tooltip_title">Total CCD balance</string>
     <string name="account_details_tooltip_description">This balance shows your total CCD in this account. It does not include any other tokens.</string>
@@ -255,16 +253,25 @@
     <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
     <string name="account_details_cis2_token_type_label">CIS-2 Token</string>
     <!--  Account settings  -->
-    <string name="account_settings_title">Account settings</string>
+    <string name="account_settings_title">Account Settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
+    <string name="account_settings_account_name">Account Name</string>
+    <string name="account_settings_account_address">Account Address</string>
+    <string name="account_settings_identity">Identity</string>
+    <string name="account_settings_total_value">Total Value</string>
+    <string name="account_settings_at_disposal">At Disposal</string>
+    <string name="account_settings_earning">Earning</string>
+    <string name="account_settings_scheduled">Scheduled</string>
+    <string name="account_settings_address_copied">Account address copied to clipboard</string>
     <!--  Account release schedule and filters -->
-    <string name="account_transaction_filters_title">%1$s Transfer filters</string>
+    <string name="account_transaction_filters_title">Activity Settings</string>
     <!-- Account QR -->
     <string name="account_qr_code_title">Receive funds</string>
     <string name="account_qr_code_share">Share</string>
     <string name="account_qr_code_copy">Copy</string>
     <string name="account_qr_code_copied">Address copied</string>
-    <string name="account_qr_code_to_account">to %1$s</string>
+    <string name="account_qr_code_show_qr">Show this QR code to another Concordium user to receive funds. Alternatively share your account address.</string>
+    <string name="account_qr_code_or">or</string>
     <!-- ***** Transaction / Send funds ***** -->
     <!-- Send funds -->
     <string name="send_funds_title">Send Funds</string>
@@ -276,6 +283,7 @@
     <string name="transaction_details_title">Transaction details</string>
     <string name="transaction_details_date">Date</string>
     <string name="transaction_details_memo">Memo</string>
+    <string name="transaction_details_reject_reason">Reject Reason</string>
     <string name="transaction_details_from_address">From address</string>
     <string name="transaction_details_to_address">To address</string>
     <string name="transaction_details_transaction_hash">@string/transaction_hash</string>
@@ -290,7 +298,8 @@
     <string name="transaction_details_view_on_explorer">View transaction on block explorer</string>
     <!-- ***** More ***** -->
     <!-- More overview -->
-    <string name="settings_overview_title">Wallet Settings</string>
+    <string name="settings_overview_close_menu_description">Close menu</string>
+    <string name="settings_overview_menu">Menu</string>
     <string name="settings_overview_item_unshielding">Funds to Unshield</string>
     <string name="settings_overview_item_identities">Identities</string>
     <string name="settings_overview_item_address_book">Address Book</string>
@@ -298,9 +307,8 @@
     <string name="settings_overview_item_import">Import</string>
     <string name="settings_overview_item_about">About</string>
     <string name="settings_overview_item_analytics">Analytics</string>
-    <string name="settings_overview_item_nft">NFT</string>
     <string name="settings_overview_item_notifications">Notifications</string>
-    <string name="settings_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
+    <string name="settings_overview_item_alter_password"><![CDATA[App Passcode & Biometrics]]></string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
     <string name="settings_overview_erase_data">Erase Data</string>
@@ -312,8 +320,11 @@
     </string>
     <string name="settings_overview_erase_data_continue">@string/dialog_yes</string>
     <string name="settings_overview_erase_data_erased">All the data has been successfully erased</string>
-    <string name="settings_overview_reveal_seed_phrase">Seed Phrase</string>
+    <string name="settings_overview_reveal_seed_phrase"><![CDATA[Seed Phrase & Backup]]></string>
     <string name="settings_overview_reveal_seed">Wallet Private Key</string>
+    <string name="settings_overview_block_options">Options</string>
+    <string name="settings_overview_block_security">Security</string>
+    <string name="settings_overview_block_other">Miscellaneous</string>
     <!-- Export -->
     <string name="export_title">Export</string>
     <string name="export_confirm">Export</string>
@@ -420,23 +431,26 @@
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
-    <string name="account_details_menu_release_schedule">Release schedule</string>
-    <string name="account_details_menu_transfer_filter">Transfer filters</string>
+    <string name="accounts_overview_earning_label">Earning</string>
+    <string name="accounts_overview_staked_balance">Staked Balance</string>
+    <string name="accounts_overview_staked_mode">Mode</string>
+    <string name="accounts_overview_staked_mode_passive">Passive</string>
+    <string name="accounts_overview_staked_mode_pool">Pool</string>
     <string name="account_details_menu_change_name">Change account name</string>
-    <string name="account_details_menu_export_key">Export private key</string>
-    <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
-    <string name="account_release_schedule_title">%1$s Release schedule</string>
-    <string name="account_release_schedule_locked_amount">Locked amount:</string>
-    <string name="account_release_schedule_release_date">Release date</string>
-    <string name="account_release_schedule_amount">Amount</string>
+    <string name="account_details_menu_export_transaction_log">Export Transaction Logs</string>
+    <string name="account_release_schedule_title">Release Schedule</string>
+    <string name="account_release_schedule_account_name">Account name</string>
+    <string name="account_release_schedule_locked_amount">Locked Amount</string>
     <string name="account_release_schedule_copied">Transaction hash copied</string>
     <string name="account_release_schedule_copy_title">Transaction hash</string>
-    <string name="account_release_schedule_no_data">No data</string>
+    <string name="account_release_schedule_no_data">There are no active release schedules</string>
+    <string name="account_release_schedule_time_at_date">%1$s at %2$s</string>
     <string name="account_details_baker_id">Validator ID:</string>
     <string name="account_read_only">Read only account</string>
     <string name="title_create_nft">Mint NFT</string>
     <string name="title_transfer_nft">Transfer NFT</string>
     <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
+    <string name="transactions_filters_label">Transfer Filters</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
     <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
     <string name="change_password_initial_error">Data could not be decrypted</string>
@@ -540,28 +554,24 @@
     <string name="sign">Sign</string>
     <string name="finish">Finish</string>
     <string name="transaction_hash">Transaction hash</string>
-    <string name="insufficient_funds">Insufficient funds</string>
+    <string name="insufficient_funds">Insufficient funds available on account</string>
     <string name="transaction_submitted">Transaction submitted!</string>
+    <string name="transaction_empty_label">There’s no transaction activity yet</string>
 
-    <string name="cis_tab_tokens">Tokens</string>
-    <string name="cis_manage">Manage token list</string>
+    <string name="cis_manage">Manage Tokens</string>
     <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
-    <string name="cis_manage_token_list">Manage token list</string>
-    <string name="cis_add_token_title">Add Tokens</string>
-    <string name="cis_token_details_title">%1$s balance on %2$s</string>
-    <string name="cis_token_details_balance">Balance</string>
+    <string name="cis_manage_token_list">Manage Tokens</string>
+    <string name="cis_concordium_network">Concordium Network</string>
+    <string name="cis_add_token_title">Search Tokens</string>
+    <string name="cis_token_details_balance">Token Details</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
-    <string name="cis_add_tokens">Add</string>
     <string name="cis_add_tokens_continue">Update Token List</string>
     <string name="cis_update_tokens">Apply</string>
     <string name="cis_find_tokens_none">No search results</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
-    <string name="cis_select_token_title">Choose token</string>
-    <string name="cis_loading_metadata_progress">Loading metadata…</string>
-    <string name="cis_search">Search for token ID</string>
-    <string name="cis_send_continue">Continue</string>
-    <string name="cis_send_funds">Send funds</string>
+    <string name="cis_select_token_title">Choose a Token</string>
+    <string name="cis_send_continue">Preview Transaction</string>
     <string name="cis_send_funds_confirmation">Confirmation</string>
     <string name="cis_send_funds_preview">Preview</string>
     <string name="cis_currently_available_amounts">Currently available amounts</string>
@@ -569,13 +579,9 @@
     <string name="cis_token_quantity">Quantity</string>
     <string name="cis_at_disposal">At disposal</string>
     <string name="cis_recipient_placeholder">Select a recipient</string>
-    <string name="cis_max"><u>Max</u></string>
-    <string name="cis_send_token">Token:</string>
-    <string name="cis_send_address">Address</string>
-    <string name="cis_send_paste_recipient_address">Paste recipient address</string>
-    <string name="cis_send_or">or</string>
-    <string name="cis_address_book">Address book</string>
-    <string name="cis_scan_qr">Scan QR</string>
+    <string name="cis_recipient_label">Recipient</string>
+    <string name="cis_recipient_address_with_name">%1$s / %2$s</string>
+    <string name="cis_max">Max</string>
     <string name="cis_add_memo">Add a memo</string>
     <string name="cis_memo">Memo</string>
     <string name="cis_transaction_send_funds">Transaction: Send funds</string>
@@ -614,13 +620,10 @@
     <string name="cis_no_tokens_found">No search results</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens</string>
     <string name="cis_tokens_updated">Token list updated</string>
-    <string name="cis_tokens_updated_details">%1$s hidden from your wallet</string>
-    <string name="cis_tokens_not_updated">No updates made to token list</string>
-    <string name="cis_delete_token">Don’t show token in wallet</string>
-    <string name="cis_hide_token">Hide token from account</string>
-    <string name="cis_hide_token_item">Hide token</string>
-    <string name="cis_hide_token_title">Hiding a token</string>
-    <string name="cis_hide_token_body">Are you sure you want to hide %1$s token from your wallet?</string>
+    <string name="cis_hide_token">Hide Token From Account</string>
+    <string name="cis_hide_token_item">Hide Token</string>
+    <string name="cis_hide_token_title">Hiding a Token</string>
+    <string name="cis_hide_token_body">Are you sure you want to hide %1$s from your wallet?</string>
     <string name="cis_hide_token_confirm">Yes, hide it</string>
     <string name="cis_hide_token_cancel">Go back</string>
     <string name="cis_delete_dialog_title">Confirm removal</string>
@@ -682,33 +685,40 @@
     <string name="earn_subtitle">Below are two options for earning rewards on Concordium Wallet:</string>
     <string name="earn_baker_title">Validating</string>
     <string name="earn_baker_description">As a validator you participate in the network by validating blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
-    <string name="earn_delegation_title">Stake your CCD</string>
+    <string name="earn_delegation_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="earn_delegation_rewarded_title">Get rewarded for staking</string>
-    <string name="earn_delegation_rewarded_description">Stake your CCD to earn rewards. Rewards can be restaked automatically.</string>
-    <string name="stake_delegation_options_title">Stake your way</string>
-    <string name="earn_delegation_options_description">You can delegate to an open pool of your choice, or stake using passive delegation.</string>
+    <string name="earn_delegation_rewarded_description">Stake your CCD to earn staking rewards. Rewards can be restaked automatically.</string>
+    <string name="earn_delegation_options_title">Control your stake</string>
+    <string name="earn_delegation_options_description">Choose between passive pool delegation or selecting a validator.</string>
     <string name="earn_delegation_update_title">Update with ease</string>
-    <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of [ X] days applies.</string>
+    <string name="earn_delegation_update_description">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period applies.</string>
     <plurals name="earn_delegation_update_description">
         <item quantity="one">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d day applies</item>
         <item quantity="other">Your stake can be modified at any time. If you decrease the amount or stop the delegation a cool-down period of %d days applies</item>
     </plurals>
 
-    <string name="start_staking_button">Start staking</string>
-    <string name="read_more_button">Read more</string>
-    <string name="earn_baker_button">Or become a validator (advanced)</string>
+    <string name="start_staking_button">Start Staking</string>
     <string name="staking_notice">Estimated rewards are based on past results. Actual returns may vary. Don’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk</a></string>
     <string name="earn_single_account_notice">Please note, a single account cannot both be a validator and delegator but it is possible to stop one and change to the other.</string>
+    <string name="read_more_button">Read More</string>
+    <string name="earn_baker_button">Become a Validator (advanced)</string>
+    <string name="earn_dialog_close">Close</string>
+    <string name="earn_legal_disclaimer_title">Legal Disclaimer</string>
+    <string name="earn_legal_disclaimer_description">Staking rewards are determined by the network protocol and may change. Rewards are not guaranteed and may be lower than projected. This feature does not constitute an investment product, financial service, or guarantee of returns.
+        \n\nLearn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
+        \n\n<b>Jurisdictional Restriction:</b> Availability may vary depending on your jurisdiction. Certain users may not be eligible due to local regulations.
+        \n\n<b>User Responsibility Clause:</b> You are responsible for understanding the risks of staking and ensuring compliance with laws applicable to you.
+    </string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
-    <string name="delegation_intro_flow_learn_about">Learn about earning</string>
+    <string name="delegation_intro_flow_learn_about">Learn About Staking</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
     <string name="delegation_intro_subtitle2">Delegation models</string>
-    <string name="delegation_intro_subtitle3">Validator pools</string>
+    <string name="delegation_intro_subtitle3">Staking pools</string>
     <string name="delegation_intro_subtitle4">Passive delegation</string>
     <string name="delegation_intro_subtitle5">Pay days</string>
-    <string name="delegation_intro_subtitle6">Lock-in and cooldowns</string>
+    <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
     <string name="delegation_intro_subtitle7">The status page</string>
 
     <string name="delegation_update_subtitle1">Updating your delegation</string>
@@ -740,13 +750,14 @@
     <string name="delegation_status_effective_time">%1$s at %2$s</string>
     <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validating on</string>
 
-    <string name="delegation_register_delegation_title">Staking</string>
-    <string name="delegation_register_staking_mode">Staking mode</string>
+    <string name="delegation_register_delegation_title">Stake</string>
+    <string name="delegation_register_staking_mode">Staking Mode</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_update_delegation_button">Update delegation</string>
     <string name="delegation_update_delegation_success">Your delegation is updated</string>
     <string name="delegation_remove_delegation_title">Staking</string>
     <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
+    <string name="delegation_register_max"><u>Max</u></string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered</string>
     <string name="delegation_status_content_registered_button">Submit delegation</string>
@@ -797,10 +808,10 @@
     <string name="delegation_register_delegation_amount_insufficient_error">@string/insufficient_funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit</string>
-    <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_restake_rewards">Restake rewards</string>
-    <string name="delegation_register_delegation_amount_do_you_want">Automatically reinvest rewards to compound your staking returns over time.</string>
-    <string name="delegation_register_delegation_amount_continue">Continue</string>
+    <string name="delegation_register_delegation_restake_rewards">Restake rewards*</string>
+    <string name="delegation_register_delegation_amount_do_you_want">Choose to restake your rewards to potentially increase future returns.</string>
+    <string name="delegation_register_delegation_label">* Network fluctuations may affect compounded outcomes.</string>
+    <string name="delegation_register_delegation_amount_continue">Preview Delegation</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
     <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
     <string name="delegation_register_delegation_not_enough_funds">@string/insufficient_funds</string>
@@ -1079,29 +1090,27 @@
     <string name="intro_continue">Continue</string>
 
     <!-- Account keys export-->
-    <string name="export_account_keys_title">Export Account Keys</string>
-    <string name="export_account_keys_reveal_explain">Make sure to keep the keys safe, because they can be used to access your accounts.</string>
-    <string name="export_account_keys_reveal_message">Click the button below to reveal your private key for %1$s</string>
-    <string name="export_account_keys_done">Done</string>
-    <string name="export_account_keys_copy">Copy key</string>
-    <string name="export_account_keys_to_file">Export to file</string>
+    <string name="export_account_keys_title">Account Private Key</string>
+    <string name="export_account_keys_reveal_explain">Make sure to keep your private key safe! It can be used to access your account.</string>
+    <string name="export_account_keys_reveal_message">Tap to reveal the private key for</string>
+    <string name="export_account_keys_copy">Copy Key</string>
+    <string name="export_account_keys_export_file">Export File</string>
     <string name="export_account_keys_file_exported">File exported</string>
-    <string name="export_account_keys_reveal">Reveal</string>
+    <string name="export_account_keys_key_copied">Private Key copied to clipboard</string>
 
     <!-- TX log export -->
-    <string name="export_transaction_log_title">Export transaction logs</string>
+    <string name="export_transaction_log_title">Export Transaction Logs</string>
     <string name="export_transaction_log_notice">
-        If your account contains a lot of transactions,
-        it may take a moment for CCDScan to prepare the file. Once the logs are ready,
-        they will be downloaded to your device as a CSV file. Please note
-        that if the account has a lot of transactions, the file size can be quite large.
+        Transaction logs of an account can be generated and saved
+        via <a href="#ccdscan">CCDScan.io</a>.\n\nIf
+        your account contains a lot of transactions, it may take a moment for CCDScan to prepare the file.
+        Once the logs are ready, they will be downloaded to your device as a CSV file.
+        Please note that if the account has a lot of transaction,
+        the file size can be quite large.\n\nYou
+        can also visit <a href="#ccdscan">CCDScan.io</a>
+        and manually generate your transaction logs from a desktop browser.
     </string>
-    <string name="export_transaction_log_description">
-        Transaction logs of an account can be generated and saved via %1$s\n\nYou can also
-        visit %1$s and manually generate your transaction logs from a desktop browser.
-    </string>
-    <string name="export_transaction_log_save">Save transaction logs</string>
-    <string name="export_transaction_log_done">Done</string>
+    <string name="export_transaction_log_save">Export Transaction Logs</string>
     <string name="export_transaction_log_cancel">Cancel</string>
     <string name="export_transaction_log_saved">The transaction logs have been saved</string>
     <string name="export_transaction_log_failed">Failed to download transaction logs</string>
@@ -1110,6 +1119,7 @@
     <string name="export_transaction_log_downloading">Downloading transaction logs…</string>
 
     <string name="transaction_type_transfer">Transfer</string>
+    <string name="transaction_expand_memo">Expand memo</string>
 
     <!-- NFT -->
     <string name="nft_add_provider_next">Next</string>
@@ -1301,8 +1311,8 @@
     <string name="tracking_permission_allow">Allow activity tracking</string>
     <string name="tracking_permission_deny">Ask not to track</string>
     <string name="ccd_onramp_title">Buy CCD</string>
-    <string name="ccd_onramp_subtitle">The services below are offered by third-party providers. Concordium does not sell or promote crypto-assets and is not responsible for any crypto-asset transaction.</string>
-    <string name="ccd_onramp_read_disclaimer"><u>Read our disclaimer for more.</u></string>
+    <string name="ccd_onramp_subtitle">The services below are offered by third-party providers. Concordium does not sell or promote crypto-assets and is not responsible for any crypto-asset transaction. Read our disclaimer for more.</string>
+    <string name="ccd_onramp_read_disclaimer">IMPORTANT DISCLAIMER</string>
     <string name="ccd_onramp_site_type_payment_gateway">Payment Gateway</string>
     <string name="ccd_onramp_exchanges_notice">
         List of supported exchanges can be found at <a href="https://concordium.com/ccd-wallet">concordium.com/ccd-wallet</a>
@@ -1319,8 +1329,12 @@
         defined by such third parties and Concordium is not responsible for and does not assume any liabilities
         in relation to the use of such services.
         \n\nConcordium does not provide, arrange, or promote any investment or staking services.
-        \n\nDon’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong. Learn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
+        \n\nDon’t stake any funds unless you’re prepared to lose all the funds you staked with your crypto assets. This is a high-risk transaction and you are unlikely to be protected if something goes wrong.
+        \n\nLearn more at <a href="https://www.fca.org.uk">fca.org.uk</a>
     </string>
+    <string name="ccd_onramp_disclaimer_close">Close</string>
+    <string name="ccd_onramp_disclaimer_cancel">Go Back</string>
+    <string name="ccd_onramp_disclaimer_understand">I Understand</string>
     <string name="ccd_onramp_none_available">No sites available for this network</string>
     <string name="ccd_onramp_site_accepts_credit_card">Accepts credit card</string>
     <string name="template_ccd_onramp_opening_site">Account address copied. Opening %1$s…</string>

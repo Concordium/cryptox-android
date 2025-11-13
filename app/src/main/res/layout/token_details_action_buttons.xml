@@ -14,7 +14,8 @@
 
         <ImageView
             android:id="@+id/onramp_btn"
-            style="@style/MW24_Action_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/account_details_buy"
             android:tooltipText="@string/account_details_buy"
             app:srcCompat="@drawable/mw24_ic_buy_btn"
@@ -43,7 +44,8 @@
 
         <ImageView
             android:id="@+id/send_funds_btn"
-            style="@style/MW24_Action_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/account_details_send"
             android:tooltipText="@string/account_details_send"
             app:srcCompat="@drawable/mw24_ic_send_btn"
@@ -72,7 +74,8 @@
 
         <ImageView
             android:id="@+id/receive_btn"
-            style="@style/MW24_Action_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/account_details_address"
             android:tooltipText="@string/account_details_address"
             app:srcCompat="@drawable/mw24_ic_receive_btn"
@@ -104,7 +107,8 @@
 
         <ImageView
             android:id="@+id/earn_btn"
-            style="@style/MW24_Action_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/account_details_earn_rewards"
             android:tooltipText="@string/account_details_earn_rewards"
             app:srcCompat="@drawable/mw24_ic_earn_btn"
@@ -149,7 +153,8 @@
 
         <ImageView
             android:id="@+id/activity_btn"
-            style="@style/MW24_Action_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/account_details_activity"
             android:tooltipText="@string/account_details_activity"
             app:srcCompat="@drawable/mw24_ic_activity_btn"

@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.concordium.wallet.App
-import com.concordium.wallet.R
 import com.concordium.wallet.data.model.NewsfeedEntry
 import com.concordium.wallet.databinding.FragmentNewsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
@@ -70,8 +69,6 @@ class NewsOverviewFragment : BaseFragment() {
     }
 
     private fun initializeViews() {
-        mainViewModel.setTitle(getString(R.string.news_overview_title))
-
         val adapter = NewsfeedArticleItemAdapter(
             onItemClicked = { item: NewsfeedArticleListItem ->
                 item.source?.also(::onArticleClicked)

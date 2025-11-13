@@ -21,7 +21,6 @@ import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
-import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.newaccountsetup.NewAccountSetupViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
@@ -30,7 +29,6 @@ import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.seed.setup.OneStepSetupWalletActivity
-import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -277,13 +275,6 @@ class OnboardingFragment @JvmOverloads constructor(
             playTogether(fadeOutProgressBar, fadeInButton)
             start()
         }
-    }
-
-    private fun showUnlockFeatureDialog() {
-        UnlockFeatureDialog().showSingle(
-            activity.supportFragmentManager,
-            UnlockFeatureDialog.TAG
-        )
     }
 
     private fun goToCreateWallet() {

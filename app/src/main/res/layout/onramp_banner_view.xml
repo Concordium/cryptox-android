@@ -5,9 +5,9 @@
     android:id="@+id/onramp_banner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="40dp"
-    android:background="@drawable/mw24_container_primary_background"
-    android:padding="16dp"
+    android:layout_marginTop="@dimen/size32"
+    android:background="@drawable/mw24_container_stroked_background_selector"
+    android:padding="@dimen/size12"
     android:visibility="gone"
     tools:visibility="visible">
 
@@ -15,21 +15,24 @@
         android:id="@+id/logo_image_view"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:padding="@dimen/size8"
+        android:background="@drawable/simple_circle_bg"
+        android:backgroundTint="@color/mw24_plain_white_10"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mw24_ic_onramp_ccd" />
+        app:srcCompat="@drawable/mw24_ic_ccd" />
 
     <TextView
         android:id="@+id/title_text_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="@dimen/size8"
         android:text="@string/ccd_onramp_banner_title"
-        android:textAppearance="@style/MW24_Typography_Label_Main"
+        android:textAppearance="@style/MW24_Typography_Label_L_Medium"
         android:textColor="@color/cryptox_white_main"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/close_image_view"
         app:layout_constraintStart_toEndOf="@id/logo_image_view"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,7 +42,7 @@
         android:layout_marginTop="6dp"
         android:text="@string/ccd_onramp_banner_content"
         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        android:textColor="@color/cryptox_white_main"
+        android:textColor="@color/mw24_content_secondary"
         app:layout_constraintEnd_toEndOf="@id/title_text_view"
         app:layout_constraintStart_toStartOf="@id/title_text_view"
         app:layout_constraintTop_toBottomOf="@id/title_text_view" />
@@ -48,9 +51,12 @@
         android:id="@+id/close_image_view"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_marginEnd="@dimen/size4"
         android:contentDescription="@string/ccd_onramp_close_banner"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mw24_ic_onramp_close" />
+        app:srcCompat="@drawable/mw24_ic_onramp_close"
+        app:tint="@color/mw24_plain_white_40" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

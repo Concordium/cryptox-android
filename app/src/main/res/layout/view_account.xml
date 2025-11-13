@@ -9,7 +9,7 @@
         android:id="@+id/notice"
         android:layout_width="8dp"
         android:layout_height="8dp"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/size6"
         android:background="@drawable/simple_circle_bg"
         android:backgroundTint="@color/cryptox_pinky_main"
         android:visibility="gone"
@@ -19,11 +19,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/account_name_area"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="18dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/size12"
+        android:layout_marginTop="@dimen/size12"
+        app:layout_constraintEnd_toStartOf="@id/settings_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -45,7 +45,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
             android:textColor="@color/cryptox_white_main"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/identity_name"
@@ -66,7 +66,7 @@
             android:maxLength="16"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
             android:textColor="@color/mw24_blue_3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/status_read_only"
@@ -87,108 +87,118 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/cryptox_grey_main" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/settings_button"
+        android:layout_width="@dimen/size32"
+        android:layout_height="38dp"
+        android:layout_margin="@dimen/size12"
+        android:background="@drawable/mw24_item_account_settings_background"
+        android:contentDescription="@string/account_settings_title"
+        android:padding="@dimen/size8"
+        android:src="@drawable/mw24_ic_menu_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/balance_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/size12"
+        android:layout_marginTop="@dimen/size6"
+        app:layout_constraintEnd_toEndOf="@id/account_name_area"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_name_area">
 
         <TextView
-            android:id="@+id/total_textview"
+            android:id="@+id/address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size24"
             android:drawablePadding="4dp"
-            android:ellipsize="end"
+            android:ellipsize="middle"
+            android:gravity="start"
             android:maxLines="1"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
-            android:textColor="@color/mw24_blue_3"
-            app:drawableEndCompat="@drawable/mw24_ic_ccd_light_resized"
-            app:layout_constraintEnd_toStartOf="@id/balance_at_disposal_textview"
+            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+            android:textColor="@color/mw24_plain_white_60"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/is_earning"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="wrap"
-            tools:text="2,734,5474" />
-
-        <TextView
-            android:id="@+id/balance_at_disposal_textview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:drawablePadding="4dp"
-            android:ellipsize="end"
-            android:gravity="end"
-            android:maxLines="1"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
-            android:textColor="@color/mw24_blue_3"
-            app:drawableEndCompat="@drawable/mw24_ic_ccd_light_resized"
-            app:layout_constraintBottom_toBottomOf="@id/total_textview"
-            app:layout_constraintEnd_toStartOf="@id/is_earning"
-            app:layout_constraintStart_toEndOf="@id/total_textview"
-            app:layout_constraintTop_toTopOf="@id/total_textview"
-            app:layout_constraintWidth_default="wrap"
-            tools:text="0.234346" />
+            tools:text="8b7sdalk3i80...fg0" />
 
         <TextView
             android:id="@+id/is_earning"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:gravity="end"
             android:maxLines="1"
             android:text="@string/cis_percent_earning"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
-            android:textColor="@color/mw24_blue_3"
+            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+            android:textColor="@color/mw24_plain_white_60"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/total_textview"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="wrap"
             tools:visibility="visible" />
 
+        <LinearLayout
+            android:id="@+id/account_status_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/is_earning"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap"
+            tools:ignore="UseCompoundDrawables">
+
+            <TextView
+                android:id="@+id/account_status_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/onboarding_finalizing_account"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/cryptox_green_main" />
+
+            <ImageView
+                android:id="@+id/account_verification_status_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="1dp"
+                android:contentDescription="@string/onboarding_finalizing_account"
+                android:src="@drawable/ccx_finalizing_account" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/account_status_layout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/total_textview"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:visibility="gone"
+        android:layout_margin="@dimen/size12"
+        android:paddingHorizontal="@dimen/size8"
+        android:paddingVertical="@dimen/size6"
+        android:background="@drawable/mw24_item_account_balance_background"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="1"
+        android:textAppearance="@style/MW24_Typography_Text_Mid"
+        android:textColor="@color/mw24_blue_3"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/account_name_area"
-        tools:ignore="UseCompoundDrawables">
-
-        <TextView
-            android:id="@+id/account_status_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="@string/onboarding_finalizing_account"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
-            android:textColor="@color/cryptox_green_main" />
-
-        <ImageView
-            android:id="@+id/account_verification_status_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="1dp"
-            android:contentDescription="@string/onboarding_finalizing_account"
-            android:src="@drawable/ccx_finalizing_account" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/balance_layout"
+        tools:text="2,734,5474 CCD" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

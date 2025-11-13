@@ -37,7 +37,11 @@ class BakerNoticeDialog : AppCompatDialogFragment() {
         binding.okButton.setOnClickListener {
             dismiss()
             if (redirectToMainActivity) {
-                startActivity(Intent(requireContext(), MainActivity::class.java))
+                startActivity(
+                    Intent(requireContext(), MainActivity::class.java).apply {
+                        putExtra(MainActivity.EXTRA_GOTO_EARN, true)
+                    }
+                )
                 requireActivity().finishAffinity()
             }
         }

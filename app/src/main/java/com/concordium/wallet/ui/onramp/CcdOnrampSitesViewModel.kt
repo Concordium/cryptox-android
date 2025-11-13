@@ -5,7 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.data.backend.wert.WertRepository
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.onramp.banxa.BanxaWidgetHelper
 import com.concordium.wallet.ui.onramp.swipelux.SwipeluxSettingsHelper
@@ -13,18 +15,25 @@ import com.concordium.wallet.ui.onramp.wert.WertWidgetHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(application) {
+class CcdOnrampSitesViewModel(
+    mainViewModel: MainViewModel,
+    application: Application,
+) : AndroidViewModel(application) {
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository by lazy(::CcdOnrampSiteRepository)
     private val wertRepository: WertRepository by lazy(::WertRepository)
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
 
-    private val _siteToOpen = MutableSharedFlow<Pair<CcdOnrampSite, Boolean>?>()
+    private val _siteToOpen =
+        MutableSharedFlow<Pair<CcdOnrampSite, Boolean>>(extraBufferCapacity = 1)
     val siteToOpen = _siteToOpen.asSharedFlow()
 
     private val _sessionLoading = MutableStateFlow(false)
@@ -33,15 +42,13 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
     private val _error = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     val error = _error.asSharedFlow()
 
-    lateinit var accountAddress: String
-        private set
+    val accountAddress = mainViewModel
+        .activeAccount
+        .map { it?.address ?: "" }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = "")
 
     init {
         postItems()
-    }
-
-    fun initialize(accountAddress: String) {
-        this.accountAddress = accountAddress
     }
 
     private fun openWert(
@@ -52,10 +59,11 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
         try {
             val sessionDetails = wertRepository.getWertSessionDetails(accountAddress)
             _siteToOpen.emit(
-                Pair(
-                    site.copy(url = WertWidgetHelper.getWidgetLink(sessionDetails.sessionId)),
-                    false
-                )
+                site.copy(
+                    url = WertWidgetHelper.getWidgetLink(
+                        sessionId = sessionDetails.sessionId,
+                    )
+                ) to false,
             )
         } catch (e: Exception) {
             _error.emit(BackendErrorHandler.getExceptionStringRes(e))
@@ -66,29 +74,33 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
 
     fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
         when {
-            site.name == "Wert" -> openWert(accountAddress, site)
+            site.name == "Wert" -> openWert(accountAddress.value, site)
 
             site.name == "Swipelux" -> _siteToOpen.emit(
-                Pair(
-                    site.copy(url = SwipeluxSettingsHelper.getWidgetSettings(accountAddress)),
-                    false
-                )
+                site.copy(
+                    url = SwipeluxSettingsHelper.getWidgetSettings(
+                        walletAddress = accountAddress.value,
+                    )
+                ) to false
             )
 
             site.name.startsWith("Banxa") -> _siteToOpen.emit(
-                Pair(
-                    site.copy(
-                        url = BanxaWidgetHelper.getWidgetLink(
-                            baseUrl = site.url,
-                            accountAddress = accountAddress,
-                        )
-                    ),
-                    false
-                )
+                site.copy(
+                    url = BanxaWidgetHelper.getWidgetLink(
+                        baseUrl = site.url,
+                        accountAddress = accountAddress.value,
+                    )
+                ) to false
             )
 
-            else -> _siteToOpen.emit(Pair(site, true))
+            else -> _siteToOpen.emit(site to true)
         }
+    }
+
+    fun isHasAcceptedOnRampDisclaimer() = App.appCore.setup.isHasAcceptedOnRampDisclaimer
+
+    fun setHasAcceptedOnRampDisclaimer(isAccepted: Boolean) {
+        App.appCore.setup.setHasAcceptedOnRampDisclaimer(isAccepted)
     }
 
     private fun postItems() {
@@ -102,20 +114,13 @@ class CcdOnrampSitesViewModel(application: Application) : AndroidViewModel(appli
                 .groupBy(CcdOnrampSite::type)
                 .forEach { (type, sites) ->
                     items.add(CcdOnrampListItem.Section(type))
-                    items.addAll(
-                        sites.map { site ->
-                            CcdOnrampListItem.Site(
-                                source = site,
-                                isDividerVisible = false,
-                            )
-                        })
+                    items.addAll(sites.map(CcdOnrampListItem::Site))
                 }
         } else {
             items.add(CcdOnrampListItem.NoneAvailable)
         }
 
         items.add(CcdOnrampListItem.ExchangesNotice)
-        items.add(CcdOnrampListItem.Disclaimer)
 
         _listItemsLiveData.postValue(items)
     }

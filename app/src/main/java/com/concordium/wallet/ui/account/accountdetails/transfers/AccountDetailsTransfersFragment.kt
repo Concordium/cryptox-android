@@ -12,16 +12,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.account.accountdetails.AccountTransactionsFiltersActivity
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AccountDetailsTransfersFragment : Fragment() {
     private var _binding: FragmentAccountDetailsTransfersBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var transfersViewModel: AccountDetailsTransfersViewModel
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
+    private val transfersViewModel: TransfersViewModel by viewModel {
+        parametersOf(mainViewModel)
+    }
+
     private lateinit var transactionAdapter: TransactionAdapter
 
     override fun onCreateView(
@@ -36,6 +48,7 @@ class AccountDetailsTransfersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeViewModel()
         initializeViews()
+        initToolbar()
     }
 
     override fun onDestroyView() {
@@ -45,7 +58,6 @@ class AccountDetailsTransfersFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        transfersViewModel.populateTransferList()
         transfersViewModel.initiateFrequentUpdater()
     }
 
@@ -54,12 +66,15 @@ class AccountDetailsTransfersFragment : Fragment() {
         transfersViewModel.stopFrequentUpdater()
     }
 
-    private fun initializeViewModel() {
-        transfersViewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[AccountDetailsTransfersViewModel::class.java]
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+        baseActivity.hideQrScan(isVisible = false)
+        baseActivity.hideSettings(isVisible = true) {
+            gotoTransferFilters(account = transfersViewModel.getAccount())
+        }
+    }
 
+    private fun initializeViewModel() {
         transfersViewModel.totalBalanceFlow.collectWhenStarted(viewLifecycleOwner) {
             transactionAdapter.onDataSetChanged()
         }
@@ -89,9 +104,11 @@ class AccountDetailsTransfersFragment : Fragment() {
                 }
 
                 if (filteredList.isEmpty()) {
+                    binding.recyclerview.visibility = View.GONE
                     binding.noTransfersTextview.visibility = View.VISIBLE
                 } else {
                     binding.noTransfersTextview.visibility = View.GONE
+                    binding.recyclerview.visibility = View.VISIBLE
                 }
 
                 transfersViewModel.allowScrollToLoadMore = true
@@ -102,8 +119,15 @@ class AccountDetailsTransfersFragment : Fragment() {
             if (show) {
                 binding.gtuDropLayout.visibility = View.VISIBLE
                 binding.gtuDropButton.isEnabled = true
+                binding.noTransfersTextview.visibility = View.GONE
             } else {
                 binding.gtuDropLayout.visibility = View.GONE
+            }
+        }
+
+        transfersViewModel.errorFlow.collectWhenStarted(this) { event ->
+            event.contentIfNotHandled?.let {
+                (activity as BaseActivity).showError(it)
             }
         }
     }
@@ -140,7 +164,7 @@ class AccountDetailsTransfersFragment : Fragment() {
                     if (transaction.origin.type != TransactionOriginType.Self &&
                         (transaction.knownType == TransactionType.ENCRYPTEDAMOUNTTRANSFER ||
                                 transaction.knownType == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)
-                        ) {
+                    ) {
                         result = false
                     }
                 }
@@ -198,5 +222,11 @@ class AccountDetailsTransfersFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun gotoTransferFilters(account: Account) {
+        val intent = Intent(requireActivity(), AccountTransactionsFiltersActivity::class.java)
+        intent.putExtra(AccountTransactionsFiltersActivity.EXTRA_ACCOUNT, account)
+        startActivity(intent)
     }
 }

@@ -4,9 +4,10 @@
     style="@style/MW24_Typography_Additional_Capture_Small"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/cryptox_black_main"
+    android:background="@color/mw24_main_background"
     android:gravity="start"
     android:paddingTop="16dp"
+    android:paddingHorizontal="@dimen/size16"
     android:paddingBottom="8dp"
     android:textColor="@color/mw24_blue_3"
     tools:text="Today" />

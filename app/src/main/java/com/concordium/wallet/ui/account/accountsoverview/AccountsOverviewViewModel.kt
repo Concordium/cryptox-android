@@ -65,7 +65,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             postListItems(accountsWithIdentity)
         }
         accountRepository.allAccountsWithIdentity.observeForever(accountsObserver)
-        updateNotificationSubscription()
     }
 
     override fun onCleared() {
@@ -133,12 +132,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         val items = mutableListOf<AccountsOverviewListItem>()
         items.addAll(accountsWithIdentity.map(AccountsOverviewListItem::Account))
         _listItemsLiveData.value = items
-    }
-
-    private fun updateNotificationSubscription() {
-        viewModelScope.launch(Dispatchers.IO) {
-            updateNotificationsSubscriptionUseCase()
-        }
     }
 
     fun activateAccount(address: String) = viewModelScope.launch {

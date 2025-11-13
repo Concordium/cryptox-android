@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
@@ -15,7 +14,6 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.plt.PLTInfoDialog
 import com.concordium.wallet.ui.plt.PLTListInfoDialog
 import com.concordium.wallet.ui.plt.PLTPausedInfoDialog
-import com.concordium.wallet.uicore.view.ThemedCircularProgressDrawable
 import com.google.gson.GsonBuilder
 import java.math.BigInteger
 
@@ -31,6 +29,7 @@ class TokenDetailsView(
         token: Token,
         isHideVisible: Boolean,
         onHideClicked: (() -> Unit)? = null,
+        onReleaseScheduleClicked: (() -> Unit)? = null
     ) {
         setNameAndIcon(token)
         setTokenTypeLabel(token)
@@ -39,7 +38,6 @@ class TokenDetailsView(
         setRawMetadataButton(token)
 
         if (token is ContractToken) {
-            setDisplay(token)
             setContractIndexAndSubIndex(token)
             setTokenId(token)
             setOwnership(token)
@@ -51,6 +49,11 @@ class TokenDetailsView(
                 onClick = onHideClicked,
             )
         }
+
+        setReleaseScheduleButton(
+            token = token,
+            onClick = onReleaseScheduleClicked
+        )
     }
 
     private fun setRawMetadataButton(token: Token) {
@@ -71,6 +74,7 @@ class TokenDetailsView(
         }
 
         if (rawMetadata != null) {
+            binding.optionsLabel.isVisible = true
             binding.rawMetadataBtn.isVisible = true
             binding.rawMetadataBtn.setOnClickListener {
                 RawMetadataDialog.newInstance(
@@ -125,23 +129,6 @@ class TokenDetailsView(
         }
     }
 
-    private fun setDisplay(token: ContractToken) {
-        val displayUrl =
-            token
-                .metadata
-                ?.display
-                ?.url
-                ?.takeIf(String::isNotBlank)
-                ?: return
-
-        binding.display.isVisible = true
-        Glide.with(context)
-            .load(displayUrl)
-            .placeholder(ThemedCircularProgressDrawable(context))
-            .fitCenter()
-            .into(binding.display)
-    }
-
     private fun setNameAndIcon(token: Token) {
         binding.nameAndIconHolder.visibility = View.VISIBLE
 
@@ -189,6 +176,7 @@ class TokenDetailsView(
         token: Token,
         onClick: (() -> Unit)?,
     ) {
+        binding.optionsLabel.isVisible = true
         binding.hideToken.isVisible = token !is CCDToken
         binding.hideToken.setOnClickListener {
             onClick?.invoke()
@@ -233,5 +221,13 @@ class TokenDetailsView(
                 binding.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
             }
         }
+    }
+
+    private fun setReleaseScheduleButton(
+        token: Token,
+        onClick: (() -> Unit)?
+    ) {
+        binding.releaseScheduleBtn.isVisible = token is CCDToken
+        binding.releaseScheduleBtn.setOnClickListener { onClick?.invoke() }
     }
 }

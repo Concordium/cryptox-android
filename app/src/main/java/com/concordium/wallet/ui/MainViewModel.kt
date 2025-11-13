@@ -11,32 +11,35 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class State {
-        AccountOverview,
-        NewsOverview,
-        More,
+        Home,
+        Transfer,
+        Buy,
+        Activity,
+        Earn,
         ;
     }
 
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
 
+    private val accountRepository =
+        AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+
     var databaseVersionAllowed = true
 
-    private val _titleLiveData = MutableLiveData<String>()
-    val titleLiveData: LiveData<String>
-        get() = _titleLiveData
-
-    private val _stateLiveData = MutableLiveData<State>()
-    val stateLiveData: LiveData<State>
-        get() = _stateLiveData
+    private val _navigationState = MutableStateFlow(State.Home)
+    val navigationState = _navigationState.asStateFlow()
 
     private val _notificationToken = MutableStateFlow<Token?>(null)
     val notificationToken = _notificationToken.asStateFlow()
@@ -44,15 +47,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _activeAccountAddress = MutableStateFlow("")
     val activeAccountAddress = _activeAccountAddress.asStateFlow()
 
+    private val _activeAccount = MutableStateFlow<Account?>(null)
+    val activeAccount = _activeAccount.asStateFlow()
+
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
+
+    private val _setTransferSendRecipient = MutableLiveData<Event<Recipient>>()
+    val setTransferSendRecipient: LiveData<Event<Recipient>> = _setTransferSendRecipient
 
     val canAcceptImportFiles: Boolean
         get() = App.appCore.session.isAccountsBackupPossible()
 
-    @Suppress("UNUSED_VARIABLE")
-    fun initialize() {
+    init {
+        viewModelScope.launch {
+            accountRepository.getActiveAccountFlow()
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    _activeAccount.emit(it)
+                }
+        }
+
         try {
+            @Suppress("UNUSED_VARIABLE")
             val dbVersion =
                 App.appCore.session.walletStorage.database.openHelper.readableDatabase.version.toString()
         } catch (e: Exception) {
@@ -67,22 +84,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         identityUpdater.stop()
     }
 
-    fun setTitle(title: String) {
-        _titleLiveData.postValue(title)
-    }
-
-    fun setState(state: State) {
-        _stateLiveData.postValue(state)
-    }
-
-    fun setInitialStateIfNotSet() {
-        if (_stateLiveData.value == null) {
-            _stateLiveData.postValue(State.AccountOverview)
-        }
+    private fun setState(state: State) = viewModelScope.launch {
+        _navigationState.emit(state)
     }
 
     fun shouldShowAuthentication(): Boolean {
-        App.appCore.session.isLoggedIn.value.let { return it == null || it == false }
+        App.appCore.session.isLoggedIn.value.let { return it == null || !it }
     }
 
     fun shouldShowPasswordSetup(): Boolean {
@@ -113,6 +120,45 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun showReviewDialog() {
         _showReviewDialog.postValue(Event(true))
+    }
+
+    fun onHomeClicked() {
+        setState(State.Home)
+    }
+
+    fun onTransferClicked() {
+        setState(State.Transfer)
+    }
+
+    fun onTransferRequested(
+        recipient: Recipient,
+    ) {
+        setState(State.Transfer)
+        _setTransferSendRecipient.value = Event(recipient)
+    }
+
+    fun onOnrampClicked() {
+        setState(State.Buy)
+    }
+
+    fun onEarnClicked() {
+        setState(State.Earn)
+    }
+
+    fun onEarnRequested() {
+        setState(State.Earn)
+    }
+
+    fun onActivityClicked() = viewModelScope.launch {
+        setState(State.Activity)
+    }
+
+    fun activateNextAccount() = viewModelScope.launch {
+        accountRepository.activateNext()
+    }
+
+    fun activatePreviousAccount() = viewModelScope.launch {
+        accountRepository.activatePrevious()
     }
 
     fun startIdentityUpdate() {

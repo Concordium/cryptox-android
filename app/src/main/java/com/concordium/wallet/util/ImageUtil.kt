@@ -18,37 +18,17 @@ object ImageUtil {
     }
 
     fun getIconById(context: Context, id: Int): Drawable? {
-        return when(id) {
-            1 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_1)
-            }
-            2 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_2)
-            }
-            3 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_3)
-            }
-            4 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_4)
-            }
-            5 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_5)
-            }
-            6 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_6)
-            }
-            7 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_7)
-            }
-            8 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_8)
-            }
-            9 -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_9)
-            }
-            else -> {
-                ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_1)
-            }
+        return when (id) {
+            1 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_1)
+            2 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_2)
+            3 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_3)
+            4 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_4)
+            5 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_5)
+            6 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_6)
+            7 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_7)
+            8 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_8)
+            9 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_9)
+            else -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_1)
         }
     }
 }

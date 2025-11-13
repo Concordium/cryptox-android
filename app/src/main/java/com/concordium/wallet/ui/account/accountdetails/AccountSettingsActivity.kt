@@ -6,14 +6,17 @@ import android.view.LayoutInflater
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountSettingsBinding
 import com.concordium.wallet.databinding.DialogEdittextBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.export.ExportAccountKeysActivity
 import com.concordium.wallet.ui.more.export.ExportTransactionLogActivity
-import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.uicore.toast.showCustomToast
+import com.concordium.wallet.util.ClipboardUtil
 import com.concordium.wallet.util.getSerializable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.math.BigInteger
 
 class AccountSettingsActivity : BaseActivity(
     R.layout.activity_account_settings,
@@ -24,7 +27,6 @@ class AccountSettingsActivity : BaseActivity(
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
-        const val EXTRA_CONTINUE_TO_SHIELD_INTRO = "EXTRA_CONTINUE_TO_SHIELD_INTRO"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +39,6 @@ class AccountSettingsActivity : BaseActivity(
         hideActionBarBack(isVisible = true)
         initViews()
         initObservers()
-        val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
-        if (continueToShieldIntro) {
-            startShieldedIntroFlow()
-        }
     }
 
     private fun initializeViewModel() {
@@ -51,15 +49,42 @@ class AccountSettingsActivity : BaseActivity(
     }
 
     private fun initObservers() {
-        viewModel.accountUpdated.observe(this) {
-
+        viewModel.accountUpdated.observe(this) { updated ->
+            if (updated == true) {
+                binding.apply {
+                    accountName.text = viewModel.account.getAccountName()
+                    accountAddress.text = viewModel.account.address
+                    accountIdentity.text = viewModel.identityName
+                    totalBalance.text = getString(
+                        R.string.amount,
+                        CurrencyUtil.formatGTU(
+                            value = viewModel.account.balance
+                        )
+                    )
+                    atDisposalBalance.text = getString(
+                        R.string.amount,
+                        CurrencyUtil.formatGTU(
+                            value = viewModel.account.balanceAtDisposal
+                        )
+                    )
+                    earningBalance.text = getString(
+                        R.string.amount,
+                        CurrencyUtil.formatGTU(
+                            value = viewModel.account.delegation?.stakedAmount ?: BigInteger.ZERO
+                        )
+                    )
+                    scheduledBalance.text = getString(
+                        R.string.amount,
+                        CurrencyUtil.formatGTU(
+                            value = viewModel.account.releaseSchedule?.total ?: BigInteger.ZERO
+                        )
+                    )
+                }
+            }
         }
     }
 
     private fun initViews() {
-        binding.transferFilter.setOnClickListener {
-            gotoTransferFilters(viewModel.account)
-        }
         binding.releaseSchedule.setOnClickListener {
             gotoAccountReleaseSchedule(viewModel.account)
         }
@@ -72,12 +97,9 @@ class AccountSettingsActivity : BaseActivity(
         binding.changeName.setOnClickListener {
             showChangeNameDialog()
         }
-    }
-
-    private fun gotoTransferFilters(account: Account) {
-        val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
-        intent.putExtra(AccountTransactionsFiltersActivity.EXTRA_ACCOUNT, account)
-        startActivity(intent)
+        binding.copyAddressButton.setOnClickListener {
+            copyAddress(viewModel.account.address)
+        }
     }
 
     private fun gotoAccountReleaseSchedule(account: Account) {
@@ -109,10 +131,7 @@ class AccountSettingsActivity : BaseActivity(
         builder.setView(view.root)
         builder.setPositiveButton(getString(R.string.account_details_change_name_popup_save)) { _, _ ->
             viewModel.changeAccountName(input.text.toString())
-            showGradientToast(
-                R.drawable.mw24_ic_address_copy_check,
-                getString(R.string.account_settings_name_changed)
-            )
+            showCustomToast(title = getString(R.string.account_settings_name_changed))
         }
         builder.setNegativeButton(getString(R.string.account_details_change_name_popup_cancel)) { dialog, _ ->
             dialog.cancel()
@@ -121,6 +140,11 @@ class AccountSettingsActivity : BaseActivity(
         input.requestFocus()
     }
 
-    private fun startShieldedIntroFlow() {
+    private fun copyAddress(address: String) {
+        ClipboardUtil.copyToClipboard(
+            context = this,
+            text = address
+        )
+        showCustomToast(title = getString(R.string.account_settings_address_copied))
     }
 }

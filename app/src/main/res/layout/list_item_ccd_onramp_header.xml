@@ -8,19 +8,17 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="@dimen/size8"
         android:gravity="center"
         android:text="@string/ccd_onramp_subtitle"
         android:textAppearance="@style/CCX_Typography_Body"
-        android:textColor="@color/ccx_neutral_tint_2" />
+        android:textColor="@color/mw24_content_accent_secondary" />
 
-    <TextView
+    <Button
         android:id="@+id/read_disclaimer_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/ccd_onramp_read_disclaimer"
-        android:textAppearance="@style/CCX_Typography_Body"
-        android:textColor="@color/ccx_neutral_tint_2" />
+        style="@style/MW24_Button_Primary_Small"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/size16"
+        android:text="@string/ccd_onramp_read_disclaimer" />
 
 </LinearLayout>

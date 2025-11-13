@@ -19,9 +19,9 @@
         android:id="@+id/title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:textAppearance="@style/MW24_Typography_H2"
         android:textColor="@color/cryptox_white_main"
-        android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_icon_image_view"
         tools:text="Connect to Concordex app?" />

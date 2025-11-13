@@ -21,18 +21,13 @@ sealed interface CcdOnrampListItem {
     class Site(
         val name: String,
         val logoUrl: String,
-        val isDividerVisible: Boolean,
-        val isCreditCardVisible: Boolean,
         val source: CcdOnrampSite?,
     ) : CcdOnrampListItem {
         constructor(
-            source: CcdOnrampSite,
-            isDividerVisible: Boolean,
+            source: CcdOnrampSite
         ) : this(
             name = source.name,
             logoUrl = source.logoUrl,
-            isCreditCardVisible = source.acceptsCreditCard,
-            isDividerVisible = isDividerVisible,
             source = source,
         )
     }
@@ -40,6 +35,4 @@ sealed interface CcdOnrampListItem {
     object NoneAvailable : CcdOnrampListItem
 
     object ExchangesNotice: CcdOnrampListItem
-
-    object Disclaimer : CcdOnrampListItem
 }

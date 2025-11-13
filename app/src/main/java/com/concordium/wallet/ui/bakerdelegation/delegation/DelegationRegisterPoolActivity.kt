@@ -83,6 +83,10 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             onContinueClicked()
         }
 
+        binding.legalDisclaimerButton.setOnClickListener {
+            showLegalDisclaimerDialog()
+        }
+
         binding.poolId.setTextChangeListener(
             object : TextWatcher {
                 override fun beforeTextChanged(
@@ -218,9 +222,6 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             )
 
         binding.poolDesc.handleUrlClicks { url ->
-            IntentUtil.openUrl(this, url)
-        }
-        binding.checkboxDisclaimer.handleUrlClicks { url ->
             IntentUtil.openUrl(this, url)
         }
         binding.poolRegistrationContinue.isEnabled = binding.checkbox.isChecked &&

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/size4"
+    android:background="@drawable/mw24_release_schedule_background"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/date_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+        android:textColor="@color/mw24_content_accent_secondary"
+        app:layout_constraintEnd_toStartOf="@id/amount_text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="16.05.2026 at 10:00" />
+
+    <TextView
+        android:id="@+id/amount_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:maxLines="1"
+        android:textAppearance="@style/MW24_Typography_Label_M_Medium"
+        android:textColor="@color/mw24_content_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/date_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="123 CCD" />
+
+    <LinearLayout
+        android:id="@+id/transactions_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view">
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

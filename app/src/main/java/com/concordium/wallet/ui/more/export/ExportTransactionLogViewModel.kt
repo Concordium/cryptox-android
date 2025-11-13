@@ -8,12 +8,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -24,33 +26,35 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.GET
+import retrofit2.http.Query
 import retrofit2.http.Streaming
-import retrofit2.http.Url
+import java.net.HttpURLConnection
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 
-interface FileDownloadApi {
+private interface CcdScanRestApi {
     @Streaming
-    @GET
-    suspend fun downloadFile(@Url url: String?): Response<ResponseBody>
+    @GET("export/statement")
+    suspend fun getStatement(
+        @Query("accountAddress")
+        accountAddress: String,
+    ): Response<ResponseBody>
 }
 
 sealed class FileDownloadScreenState {
     object Idle : FileDownloadScreenState()
     data class Downloading(val progress: Int) : FileDownloadScreenState()
-    object Failed : FileDownloadScreenState()
-    object Downloaded : FileDownloadScreenState()
-    object NoContent : FileDownloadScreenState()
+}
+
+sealed interface Event {
+    object FinishWithSuccess : Event
+    object FinishWithNoContent : Event
+    class ShowError(val resId: Int) : Event
 }
 
 class ExportTransactionLogViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var account: Account
-    private lateinit var api: FileDownloadApi
-
-    val HTTP_OK = 200
-    val HTTP_NO_CONTENT = 204
-
-    val textResourceInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    private lateinit var api: CcdScanRestApi
 
     private sealed class DownloadState {
         data class Downloading(val progress: Int, val bytesProgress: Long, val bytesTotal: Long) :
@@ -60,7 +64,8 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
         data class Failed(val error: Throwable? = null) : DownloadState()
     }
 
-    val downloadState: MutableLiveData<FileDownloadScreenState> by lazy { MutableLiveData<FileDownloadScreenState>() }
+    val downloadState = MutableLiveData<FileDownloadScreenState>()
+    val events = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     private var downloadJob: Job? = null
 
     init {
@@ -73,7 +78,7 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
     }
 
     fun downloadFile(destinationFolder: Uri) {
-        val downloadFile = "statement?accountAddress=${account.address}"
+        downloadJob?.cancel()
         downloadJob = viewModelScope.launch(Dispatchers.IO) {
             try {
                 // Emit 0 progress at the start, before making a connection.
@@ -83,13 +88,19 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
                     )
                 )
 
-                val response = api.downloadFile(downloadFile)
+                val response = api.getStatement(
+                    accountAddress = account.address,
+                )
+
                 val statusCode = response.code()
-                if (statusCode == HTTP_NO_CONTENT) {
-                    this@ExportTransactionLogViewModel.downloadState.postValue(FileDownloadScreenState.NoContent)
+                if (statusCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                    events.tryEmit(Event.FinishWithNoContent)
                     return@launch
-                } else if (statusCode != HTTP_OK || response.body() == null) {
-                    this@ExportTransactionLogViewModel.downloadState.postValue(FileDownloadScreenState.Failed)
+                } else if (statusCode != HttpURLConnection.HTTP_OK || response.body() == null) {
+                    events.tryEmit(Event.ShowError(R.string.export_transaction_log_failed))
+                    this@ExportTransactionLogViewModel.downloadState.postValue(
+                        FileDownloadScreenState.Idle
+                    )
                     return@launch
                 }
 
@@ -98,26 +109,32 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
                         // Add visual delay and ensure the coroutine is active.
                         delay(300)
 
-                        this@ExportTransactionLogViewModel.downloadState.postValue(
-                            when (downloadState) {
-                                is DownloadState.Downloading -> {
+                        when (downloadState) {
+                            is DownloadState.Downloading -> {
+                                this@ExportTransactionLogViewModel.downloadState.postValue(
                                     FileDownloadScreenState.Downloading(
                                         progress = downloadState.progress,
                                     )
-                                }
-
-                                is DownloadState.Failed -> {
-                                    FileDownloadScreenState.Failed
-                                }
-
-                                DownloadState.Finished -> {
-                                    FileDownloadScreenState.Downloaded
-                                }
+                                )
                             }
-                        )
+
+                            is DownloadState.Failed -> {
+                                events.tryEmit(Event.ShowError(R.string.export_transaction_log_failed))
+                                this@ExportTransactionLogViewModel.downloadState.postValue(
+                                    FileDownloadScreenState.Idle
+                                )
+                            }
+
+                            DownloadState.Finished -> {
+                                events.tryEmit(Event.FinishWithSuccess)
+                            }
+                        }
                     }
             } catch (ex: Exception) {
-                FileDownloadScreenState.Failed
+                events.tryEmit(Event.ShowError(R.string.export_transaction_log_failed))
+                this@ExportTransactionLogViewModel.downloadState.postValue(
+                    FileDownloadScreenState.Idle
+                )
             }
         }
     }
@@ -168,13 +185,13 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
         .flowOn(Dispatchers.IO)
         .distinctUntilChanged()
 
+    @Suppress("KotlinConstantConditions")
     private fun createRetrofitApi() {
-        @Suppress("KotlinConstantConditions")
         val baseUrl =
             if (BuildConfig.ENV_NAME == "production")
-                "https://api-ccdscan.mainnet.concordium.software/rest/export/"
+                "https://api-ccdscan.mainnet.concordium.software/rest/"
             else
-                "https://api-ccdscan.testnet.concordium.com/rest/export/"
+                "https://api-ccdscan.testnet.concordium.com/rest/"
 
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
@@ -188,7 +205,7 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
             )
             .baseUrl(baseUrl)
             .build()
-            .create(FileDownloadApi::class.java)
+            .create(CcdScanRestApi::class.java)
     }
 
     fun getExplorerUrl(): String =

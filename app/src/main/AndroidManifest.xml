@@ -17,7 +17,6 @@
 
     <application
         android:name=".App"
-        tools:ignore="DiscouragedApi,LockedOrientationActivity"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,7 +24,9 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MW24_NoActionBar">
+        android:theme="@style/MW24_Screen"
+
+        tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
@@ -73,7 +74,6 @@
             android:name=".ui.tokens.add_provider.AddProviderActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.connect.ConnectActivity"
@@ -128,7 +128,7 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Launcher">
+            android:theme="@style/MW24_MainScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -204,33 +204,31 @@
         <activity
             android:name=".ui.welcome.WelcomeRecoverWalletActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <!-- Auth -->
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.auth.setup.password.AuthSetupPasswordActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.auth.setup.AuthSetupPasscodeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.auth.setup.password.AuthSetupPasswordRepeatActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
             android:exported="true"
@@ -251,8 +249,7 @@
             android:name=".ui.identity.identityconfirmed.IdentityConfirmedActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identitydetails.IdentityDetailsActivity"
             android:launchMode="singleTop"
@@ -263,14 +260,13 @@
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.account.newaccountidentity.NewAccountIdentityActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.newaccountname.NewAccountNameActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.newaccountsetup.NewAccountSetupActivity"
             android:launchMode="singleTop"
@@ -280,38 +276,27 @@
             android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.account.accountqrcode.AccountQRCodeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" /> <!-- Transaction / Send funds -->
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.cis2.SendTokenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
-            android:windowSoftInputMode="adjustResize" />
+
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.accountdetails.transfers.AccountDetailsTransfersActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" /> <!-- More -->
+            android:screenOrientation="portrait" /> <!-- More -->
         <activity
             android:name=".ui.more.export.ExportActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.import.ImportActivity"
             android:launchMode="singleTop"
@@ -322,171 +307,126 @@
             android:name=".ui.more.about.AboutActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.alterpassword.AlterPasswordActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.recipient.recipientlist.RecipientListActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.recipient.recipient.RecipientActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.recipient.recipientlist.RecipientListActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.scanqr.ScanQRActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.cis2.TokenDetailsActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.cis2.SendTokenActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.cis2.SendTokenReceiptActivity"
+            android:name=".ui.cis2.send.SendTokenReceiptActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.seed.recover.RecoverSeedPhraseWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.seed.recover.seed.RecoverSeedWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity
             android:name=".ui.seed.recoverprocess.RecoverProcessActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.export.ExportAccountKeysActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.export.ExportTransactionLogActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.accountdetails.AccountSettingsActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.accountslist.AccountsListActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.account.earn.EarnInfoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterPoolActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterAmountActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRemoveActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationCloseActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationOpenActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerPoolSettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen"
+
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
-            android:name=".ui.bakerdelegation.baker.BakerStatusActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegisterAmountActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationConfirmationActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerUpdatePoolSettingsActivity"
             android:launchMode="singleTop"
@@ -494,99 +434,71 @@
         <activity
             android:name=".ui.welcome.WelcomeActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_WelcomeScreen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.welcome.WelcomeTermsActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.setup.AuthSetupPasscodeActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.seed.setup.OneStepSetupWalletActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.seed.reveal.SavedSeedPhraseRevealActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.seed.reveal.SavedSeedRevealActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.unshielding.UnshieldingAccountsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.unshielding.UnshieldingActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.tracking.TrackingPreferencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.onramp.CcdOnrampSitesActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.notifications.NotificationsPreferencesActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.tokens.provider.NFTActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.account.accountslist.AccountsListActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.cis2.manage.ManageTokenListActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.cis2.manage.AddTokenActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.cis2.manage.AddTokenDetailsActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
-        <activity
-            android:name=".ui.account.accountdetails.transfers.AccountDetailsTransfersActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.multiwallet.WalletsActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.cis2.SelectTokenActivity"
+            android:name=".ui.cis2.send.SelectTokenActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/MW24_Screen" />
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.onramp.CcdOnrampDisclaimerActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

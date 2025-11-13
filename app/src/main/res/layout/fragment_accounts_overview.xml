@@ -4,49 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/mw24_bottom_sheet_background"
+    android:padding="@dimen/size16">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_view"
+        style="@style/CryptoX_BottomSheetHandle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/accounts_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size8"
+        android:text="@string/accounts_list_title"
+        android:textAppearance="@style/MW24_Typography_H4"
+        android:textColor="@color/cryptox_white_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/drag_view" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/account_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="@dimen/size64"
         android:clipToPadding="false"
-        android:paddingTop="20dp"
-        android:paddingHorizontal="18dp"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/list_item_accounts_overview_account">
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:listitem="@layout/list_item_accounts_overview_account" />
 
     <include
         android:id="@+id/progress"
         layout="@layout/progress"
         tools:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/missing_backup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFBC11"
-        android:gravity="center"
-        android:padding="16dp"
-        android:visibility="gone"
+    <com.concordium.wallet.uicore.button.IconButton
+        android:id="@+id/create_account_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:paddingHorizontal="@dimen/size24"
+        app:buttonText="@string/accounts_list_create_new_account"
+        app:iconStart="@drawable/mw24_ic_plus_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible">
+        app:priority="tertiary" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/backup_suggestion"
-            android:textAppearance="@style/CCX_Typography_H3"
-            android:textColor="@color/text_white"
-            android:textSize="14sp" />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

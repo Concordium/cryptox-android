@@ -109,6 +109,11 @@ object DateTimeUtil {
         return dateFormat.format(date)
     }
 
+    fun formatDateAsLocalShort(date: Date): String {
+        val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "ddMMyy")
+        return DateFormat.format(pattern, date).toString()
+    }
+
     fun formatDateAsLocalMedium(date: Date?): String {
         // 15. jun. 2018    Jun 15, 2018
         if (date == null) {

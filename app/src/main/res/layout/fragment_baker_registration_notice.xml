@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="18dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginBottom="40dp">
+    android:layout_marginTop="@dimen/size16"
+    android:layout_marginBottom="@dimen/size24">
 
     <ImageView
         android:id="@+id/notice_icon"

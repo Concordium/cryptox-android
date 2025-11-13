@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@id/continue_btn"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size16"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <com.concordium.wallet.uicore.view.AmountEditText
+                    android:id="@+id/amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:imeOptions="actionDone"
+                    android:lineHeight="36sp"
+                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
+                    android:textColorHint="@color/cryptox_black_secondary"
+                    android:textSize="36sp"
+                    app:layout_constraintEnd_toStartOf="@id/balance_symbol"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:targetApi="p"
+                    tools:text="12,455.00" />
+
+                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                    android:id="@+id/balance_symbol"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.5"
+                    android:lineHeight="36sp"
+                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
+                    android:textSize="36sp"
+                    app:layout_constraintBottom_toBottomOf="@id/amount"
+                    app:layout_constraintEnd_toStartOf="@id/send_all_button"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toEndOf="@id/amount"
+                    app:layout_constraintTop_toTopOf="@id/amount"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:targetApi="p"
+                    tools:text="CCD" />
+
+                <Button
+                    android:id="@+id/send_all_button"
+                    style="@style/MW24_Button_Tertiary_Small"
+                    android:layout_width="40dp"
+                    android:enabled="false"
+                    android:text="@string/cis_max"
+                    app:layout_constraintBottom_toBottomOf="@id/amount"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/amount" />
+
+                <TextView
+                    android:id="@+id/eur_rate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintEnd_toStartOf="@id/fee"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount"
+                    app:layout_constraintWidth_default="wrap"
+                    tools:text="@string/cis_estimated_eur_rate" />
+
+                <TextView
+                    android:id="@+id/fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/amount"
+                    tools:text="@string/cis_estimated_fee" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:background="@drawable/mw24_container_primary_background"
+                android:padding="12dp"
+                android:visibility="visible"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/token_icon"
+                    android:layout_width="@dimen/cis_token_icon_size"
+                    android:layout_height="@dimen/cis_token_icon_size"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/ic_logo_placeholder" />
+
+                <TextView
+                    android:id="@+id/token"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textColor="@color/cryptox_white_main"
+                    app:layout_constraintBottom_toBottomOf="@id/token_icon"
+                    app:layout_constraintEnd_toStartOf="@id/balance_layout"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/token_icon"
+                    app:layout_constraintTop_toTopOf="@id/token_icon"
+                    app:layout_constraintWidth_default="wrap"
+                    app:layout_goneMarginEnd="12dp"
+                    tools:text="wBTC" />
+
+                <ImageView
+                    android:id="@+id/token_arrow"
+                    android:layout_width="@dimen/size16"
+                    android:layout_height="@dimen/size16"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mw24_ic_account_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_plain_white_40" />
+
+                <LinearLayout
+                    android:id="@+id/balance_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/token_arrow"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/balance"
+                        style="@style/MW24_Typography_Label_Main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/cryptox_white_main"
+                        tools:text="12334.365" />
+
+                    <TextView
+                        android:id="@+id/at_disposal_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/cis_at_disposal"
+                        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                        android:textColor="@color/mw24_blue_3_50" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/amount_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:drawablePadding="@dimen/size8"
+                android:text="@string/delegation_register_delegation_amount_insufficient_error"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/recipient_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:background="@drawable/mw24_container_primary_background"
+                android:minHeight="64dp">
+
+                <TextView
+                    android:id="@+id/recipient_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/size12"
+                    android:layout_marginTop="@dimen/size8"
+                    android:text="@string/cis_recipient_label"
+                    android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                    android:textColor="@color/mw24_content_secondary"
+                    app:layout_constraintEnd_toStartOf="@id/recipient_arrow"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="wrap"
+                    app:layout_goneMarginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/recipient_placeholder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/size12"
+                    android:layout_marginBottom="@dimen/size8"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/cis_recipient_placeholder"
+                    android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/recipient_arrow"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recipient_label"
+                    app:layout_constraintWidth_default="wrap"
+                    app:layout_goneMarginEnd="12dp" />
+
+                <TextView
+                    android:id="@+id/recipient_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/size12"
+                    android:layout_marginBottom="@dimen/size8"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/cis_recipient_placeholder"
+                    android:textAppearance="@style/MW24_Typography_Text_Mid"
+                    android:textColor="@color/cryptox_white_main"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/recipient_arrow"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recipient_label"
+                    app:layout_constraintWidth_default="wrap"
+                    app:layout_goneMarginEnd="12dp"
+                    tools:text="6gk...k7o / Recipient Name 1" />
+
+                <ImageView
+                    android:id="@+id/recipient_arrow"
+                    android:layout_width="@dimen/size16"
+                    android:layout_height="@dimen/size16"
+                    android:layout_marginEnd="12dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mw24_ic_account_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_plain_white_40" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/recipient_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:drawablePadding="@dimen/size8"
+                android:text="@string/cis_error_recipient_not_in_allow_list"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/memo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:background="@drawable/mw24_container_primary_background"
+                android:minHeight="64dp"
+                android:paddingHorizontal="@dimen/size12">
+
+                <TextView
+                    android:id="@+id/memo_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size8"
+                    android:text="@string/cis_memo"
+                    android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
+                    android:textColor="@color/mw24_content_secondary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/add_memo_placeholder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size4"
+                    android:layout_marginBottom="@dimen/size8"
+                    android:text="@string/cis_add_memo"
+                    android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/memo_label" />
+
+                <TextView
+                    android:id="@+id/memo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size4"
+                    android:layout_marginBottom="@dimen/size8"
+                    android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                    android:textColor="@color/cryptox_white_main"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/memo_label" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/continue_btn"
+        style="@style/MW24_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginBottom="@dimen/size16"
+        android:enabled="false"
+        android:text="@string/cis_send_continue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

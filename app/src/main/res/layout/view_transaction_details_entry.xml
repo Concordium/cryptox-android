@@ -3,47 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:layout_height="wrap_content"
-    tools:paddingHorizontal="20dp"
+    tools:paddingHorizontal="@dimen/size16"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <View
         android:id="@+id/divider"
         style="@style/CryptoX_Divider_Horizontal"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/size12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/copy_imageview"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="@dimen/size8"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/transaction_details_copy_value"
         android:scaleType="centerInside"
-        android:src="@drawable/cryptox_ico_copy"
+        android:src="@drawable/mw24_ic_receive_address_copy"
         android:tooltipText="@string/transaction_details_copy_value"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/title_textview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/cryptox_grey_secondary" />
+        app:layout_constraintTop_toTopOf="@id/title_textview"
+        app:tint="@color/mw24_content_secondary" />
 
     <TextView
         android:id="@+id/title_textview"
-        style="@style/MW24_Typography_Main_Capture_Small"
+        style="@style/MW24_Typography_Text_Mid_Alternative"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/mw24_blue_3_50"
+        android:layout_marginTop="@dimen/size12"
+        android:textColor="@color/mw24_content_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         tools:text="@string/transaction_details_details" />
 
     <TextView
         android:id="@+id/value_textview"
-        style="@style/MW24_Typography_Main_Capture_Small"
+        style="@style/MW24_Typography_Text_Mid_Alternative"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="@dimen/size8"
         android:layout_marginEnd="8dp"
         android:textColor="@color/cryptox_white_main"
         app:layout_constraintEnd_toStartOf="@id/copy_imageview"

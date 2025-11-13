@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.account.accountdetails.AccountDetailsActivity">
+    android:orientation="vertical"
+    tools:context=".ui.account.accountdetails.AccountReleaseScheduleActivity">
 
     <include
         android:id="@+id/toolbar_layout"
@@ -13,88 +15,69 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true" />
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar_layout">
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/mw24_account_settings_card_background"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            style="@style/CCX_GradientCard_16"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar_layout"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:paddingVertical="20dp">
+            android:text="@string/account_release_schedule_account_name"
+            android:textAppearance="@style/MW24_Typography_Body_S_Medium"
+            android:textColor="@color/mw24_content_accent_secondary" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="20dp">
+        <TextView
+            android:id="@+id/account_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+            android:textColor="@color/mw24_content_primary"
+            tools:text="My account" />
 
-                <TextView
-                    style="@style/CryptoX_Typography_Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_release_schedule_locked_amount"
-                    android:textColor="@color/cryptox_deep_blue" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/account_release_schedule_locked_amount"
+            android:textAppearance="@style/MW24_Typography_Body_S_Medium"
+            android:textColor="@color/mw24_content_accent_secondary" />
 
-                <TextView
-                    android:id="@+id/account_release_schedule_locked_amount"
-                    style="@style/CryptoX_Typography_Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:gravity="end"
-                    android:textColor="@color/cryptox_deep_blue"
-                    tools:text="G23.333" />
-            </LinearLayout>
+        <TextView
+            android:id="@+id/locked_amount_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+            android:textColor="@color/mw24_content_primary"
+            tools:text="0 CCD" />
+    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@color/cryptox_black_additional_20"
-                android:orientation="horizontal"
-                android:paddingHorizontal="20dp">
+    <TextView
+        android:id="@+id/no_data_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/account_release_schedule_no_data"
+        android:textAppearance="@style/MW24_Typography_Body_L_Medium"
+        android:textColor="@color/mw24_content_secondary" />
 
-                <TextView
-                    style="@style/CryptoX_Typography_Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_release_schedule_release_date" />
-
-                <TextView
-                    style="@style/CryptoX_Typography_Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:gravity="end"
-                    android:text="@string/account_release_schedule_amount" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/account_release_schedule_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:orientation="vertical" />
-
-            <TextView
-                android:id="@+id/no_data_text_view"
-                style="@style/CryptoX_Typography_Caption"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="@string/account_release_schedule_no_data" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <include
-        android:id="@+id/progress"
-        layout="@layout/progress" />
-
-</RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/schedule_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="@dimen/size24"
+        android:layout_weight="1"
+        android:fadingEdge="vertical"
+        android:requiresFadingEdge="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/list_item_scheduled_release" />
+</LinearLayout>

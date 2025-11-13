@@ -1,26 +1,28 @@
 package com.concordium.wallet.ui.onramp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ListItemCcdOnrampDisclaimerBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampHeaderBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSectionBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSiteBinding
 import com.concordium.wallet.uicore.handleUrlClicks
-import com.concordium.wallet.util.IntentUtil
 
 class CcdOnrampItemAdapter(
     private val onReadDisclaimerClicked: () -> Unit,
     private val onSiteClicked: (item: CcdOnrampListItem.Site) -> Unit,
+    isDisclaimerAccepted: Boolean
 ) : RecyclerView.Adapter<CcdOnrampItemAdapter.ViewHolder>() {
     private var data: List<CcdOnrampListItem> = listOf()
+    private var hasAcceptedDisclaimer: Boolean = isDisclaimerAccepted
 
     override fun getItemViewType(position: Int): Int = when (data[position]) {
         CcdOnrampListItem.Header ->
@@ -37,9 +39,6 @@ class CcdOnrampItemAdapter(
 
         CcdOnrampListItem.ExchangesNotice ->
             R.layout.list_item_ccd_onramp_exchanges_notice
-
-        CcdOnrampListItem.Disclaimer ->
-            R.layout.list_item_ccd_onramp_disclaimer
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -62,22 +61,34 @@ class CcdOnrampItemAdapter(
             R.layout.list_item_ccd_onramp_exchanges_notice ->
                 ViewHolder.ExchangesNotice(view)
 
-            R.layout.list_item_ccd_onramp_disclaimer ->
-                ViewHolder.Disclaimer(view)
-
             else ->
                 error("Unknown view type $viewType")
         }
     }
 
-    override fun getItemCount(): Int =
-        data.size
+    override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder.Header -> {
-                holder.binding.readDisclaimerButton.setOnClickListener {
-                    onReadDisclaimerClicked()
+                with(holder.binding.readDisclaimerButton) {
+                    setOnClickListener { onReadDisclaimerClicked() }
+                    if (hasAcceptedDisclaimer) {
+                        setBackgroundResource(R.drawable.mw24_button_tertiary_background)
+                        setTextColor(
+                            ContextCompat.getColorStateList(
+                                context,
+                                R.color.mw24_button_tertiary_text_color
+                            )
+                        )
+                        setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            0, 0, R.drawable.mw24_ic_circled_check_done, 0
+                        )
+                        compoundDrawableTintList = ContextCompat.getColorStateList(
+                            context,
+                            R.color.mw24_button_tertiary_text_color
+                        )
+                    }
                 }
             }
 
@@ -98,24 +109,15 @@ class CcdOnrampItemAdapter(
                         .circleCrop()
                         .into(logoImageView)
 
-                    creditCardImageView.isVisible = item.isCreditCardVisible
-                    divider.isVisible = item.isDividerVisible
-
                     root.setOnClickListener {
                         onSiteClicked(item)
                     }
                 }
             }
 
-            is ViewHolder.Disclaimer -> {
-                holder.binding.disclaimerText.handleUrlClicks { url ->
-                    IntentUtil.openUrl(context = holder.binding.root.context, url = url)
-                }
-            }
-
             is ViewHolder.NoneAvailable,
             is ViewHolder.ExchangesNotice,
-                -> {
+            -> {
             }
         }
     }
@@ -124,6 +126,14 @@ class CcdOnrampItemAdapter(
     fun setData(items: List<CcdOnrampListItem>) {
         this.data = items
         notifyDataSetChanged()
+    }
+
+    fun updateHeaderDisclaimerButton(isDisclaimerAccepted: Boolean) {
+        this.hasAcceptedDisclaimer = isDisclaimerAccepted
+        val headerIndex = data.indexOfFirst { it is CcdOnrampListItem.Header }
+        if (headerIndex != -1) {
+            notifyItemChanged(headerIndex, DISCLAIMER_PAYLOAD)
+        }
     }
 
     sealed class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -144,13 +154,14 @@ class CcdOnrampItemAdapter(
         class ExchangesNotice(itemView: View) : ViewHolder(itemView) {
             init {
                 (itemView as TextView).handleUrlClicks { url ->
-                    IntentUtil.openUrl(context = itemView.context, url = url)
+                    val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    ContextCompat.startActivity(itemView.context, browserIntent, null)
                 }
             }
         }
+    }
 
-        class Disclaimer(itemView: View) : ViewHolder(itemView) {
-            val binding = ListItemCcdOnrampDisclaimerBinding.bind(itemView)
-        }
+    companion object {
+        private const val DISCLAIMER_PAYLOAD = "disclaimer_accepted"
     }
 }

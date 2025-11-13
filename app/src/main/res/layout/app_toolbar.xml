@@ -20,9 +20,22 @@
             android:layout_height="match_parent">
 
             <ImageView
+                android:id="@+id/toolbar_menu_drawer_btn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@drawable/mw24_ic_home_menu_drawer"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/cryptox_white_main"
+                tools:visibility="visible" />
+
+            <ImageView
                 android:id="@+id/toolbar_close_btn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@drawable/ic_ico_close_new"
                 android:visibility="gone"
@@ -34,10 +47,10 @@
 
             <ImageView
                 android:id="@+id/toolbar_back_btn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_ico_back_new"
+                android:src="@drawable/mw24_ic_arrow_left"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -47,8 +60,8 @@
 
             <FrameLayout
                 android:id="@+id/toolbar_plus_btn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -77,16 +90,19 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/toolbar_account_btn"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="60dp"
-                android:maxWidth="300dp"
+                android:paddingVertical="8dp"
+                android:paddingHorizontal="@dimen/size12"
+                android:layout_marginHorizontal="72dp"
+                android:background="@drawable/mw24_toolbar_account_button_background"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UseCompoundDrawables">
+                tools:ignore="UseCompoundDrawables"
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/toolbar_account_label"
@@ -95,7 +111,6 @@
                     android:drawablePadding="6dp"
                     android:ellipsize="middle"
                     android:maxLines="1"
-                    android:paddingVertical="4dp"
                     android:textAppearance="@style/MW24_Typography_Label_Main"
                     android:textColor="@color/cryptox_grey_additional"
                     android:visibility="gone"
@@ -112,10 +127,10 @@
 
                 <ImageView
                     android:id="@+id/toolbar_account_btn_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/size8"
+                    android:layout_height="@dimen/size12"
+                    android:layout_marginStart="@dimen/size8"
                     android:importantForAccessibility="no"
-                    android:padding="8dp"
                     android:src="@drawable/mw24_ic_account_selector"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -123,7 +138,7 @@
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/toolbar_account_label"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cryptox_grey_additional"
+                    app:tint="@color/mw24_plain_white_40"
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -155,8 +170,8 @@
 
                 <ImageView
                     android:id="@+id/toolbar_qr_btn"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:padding="8dp"
                     android:src="@drawable/ic_qr_scanner"
                     android:visibility="gone"
@@ -175,8 +190,8 @@
 
                 <FrameLayout
                     android:id="@+id/toolbar_plus_btn_add_contact"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="8dp"
                     android:visibility="gone"
                     tools:visibility="visible">
@@ -203,8 +218,8 @@
 
                 <ImageView
                     android:id="@+id/toolbar_delete_btn"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="8dp"
                     android:contentDescription="@string/delete"
                     android:padding="8dp"
@@ -220,17 +235,25 @@
                     android:layout_marginStart="8dp"
                     android:contentDescription="@string/account_settings_title"
                     android:padding="8dp"
-                    android:src="@drawable/ic_settings"
+                    android:src="@drawable/mw24_ic_menu_settings"
                     android:visibility="gone"
                     app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />
 
+                <ImageView
+                    android:id="@+id/toolbar_explorer_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/transaction_details_view_on_explorer"
+                    android:padding="8dp"
+                    android:src="@drawable/mw24_ic_external_link"
+                    android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
+                    tools:visibility="visible" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.appcompat.widget.Toolbar>
-
 </LinearLayout>
 
 

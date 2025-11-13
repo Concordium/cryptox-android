@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/icon_start"
+            android:layout_width="@dimen/size16"
+            android:layout_height="@dimen/size16"
+            android:layout_marginEnd="@dimen/size8"
+            android:importantForAccessibility="no"
+            app:tint="@color/mw24_button_primary_text_color"
+            tools:src="@drawable/mw24_ic_menu_buy" />
+
+        <TextView
+            android:id="@+id/button_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/MW24_Typography_Text_Mid"
+            android:textColor="@color/mw24_button_primary_text_color"
+            tools:text="Placeholder" />
+
+        <ImageView
+            android:id="@+id/icon_end"
+            android:layout_width="@dimen/size16"
+            android:layout_height="@dimen/size16"
+            android:layout_marginStart="@dimen/size8"
+            android:importantForAccessibility="no"
+            app:tint="@color/mw24_button_primary_text_color"
+            tools:src="@drawable/mw24_ic_menu_buy" />
+
+    </LinearLayout>
+</merge>

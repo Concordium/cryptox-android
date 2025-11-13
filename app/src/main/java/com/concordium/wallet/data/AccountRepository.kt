@@ -5,6 +5,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountDao
 import com.concordium.wallet.data.room.AccountWithIdentity
+import kotlinx.coroutines.flow.Flow
 
 class AccountRepository(private val accountDao: AccountDao) {
     val allAccountsWithIdentity: LiveData<List<AccountWithIdentity>> =
@@ -54,8 +55,20 @@ class AccountRepository(private val accountDao: AccountDao) {
         return accountDao.getActive()
     }
 
+    fun getActiveAccountFlow(): Flow<Account?> {
+        return accountDao.getActiveFlow()
+    }
+
     suspend fun activate(address: String) {
         accountDao.activate(address)
+    }
+
+    suspend fun activateNext() {
+        accountDao.activateNext()
+    }
+
+    suspend fun activatePrevious() {
+        accountDao.activatePrevious()
     }
 
     suspend fun insert(account: Account): Long {

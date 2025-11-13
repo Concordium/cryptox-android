@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        app:layout_constraintBottom_toTopOf="@id/button_layout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/status_layout"
+                style="@style/CryptoX_Container_TextCard"
+                android:layout_marginTop="@dimen/size8"
+                android:padding="@dimen/size16">
+
+                <TextView
+                    android:id="@+id/status_text_view"
+                    android:textAppearance="@style/MW24_Typography_Text_Main"
+                    android:textColor="@color/attention_red"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Delegation registered" />
+
+                <TextView
+                    android:id="@+id/status_empty_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    app:layout_constraintEnd_toEndOf="@id/status_text_view"
+                    app:layout_constraintStart_toStartOf="@id/status_text_view"
+                    app:layout_constraintTop_toBottomOf="@id/status_text_view"
+                    tools:text="Empty" />
+
+                <TextView
+                    android:id="@+id/status_explanation_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_blue_3_50"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/status_text_view"
+                    app:layout_constraintStart_toStartOf="@id/status_text_view"
+                    app:layout_constraintTop_toBottomOf="@id/status_empty_text_view"
+                    tools:text="@string/validation_primed_for_suspension_baker_explanation"
+                    tools:visibility="visible" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/status_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:orientation="vertical"
+                android:background="@drawable/mw24_container_primary_background_default"
+                android:padding="@dimen/size16" />
+
+            <LinearLayout
+                android:id="@+id/cooldown_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/btn_legal_disclaimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/earn_legal_disclaimer_title"
+            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textColor="@color/mw24_content_secondary"/>
+
+        <include
+            android:id="@+id/action_buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size32"
+            android:layout_marginBottom="@dimen/size16"
+            layout="@layout/delegation_validation_action_buttons" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

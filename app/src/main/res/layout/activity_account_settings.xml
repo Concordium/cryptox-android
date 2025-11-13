@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,69 +25,447 @@
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
+            android:layout_marginHorizontal="@dimen/size16"
+            android:layout_marginTop="@dimen/size8"
             android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
 
-            <LinearLayout
-                android:id="@+id/transfer_filter"
-                style="@style/AccountSettingsItem">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mw24_account_settings_card_background">
 
                 <TextView
-                    style="@style/MW24_AccountSettingsItemTextView"
-                    android:text="@string/account_details_menu_transfer_filter" />
+                    android:id="@+id/account_name_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size16"
+                    android:text="@string/account_settings_account_name"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_content_accent_secondary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/account_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size4"
+                    android:layout_marginEnd="@dimen/size16"
+                    android:textAppearance="@style/MW24_Typography_Title"
+                    android:textColor="@color/mw24_content_primary"
+                    app:layout_constraintEnd_toStartOf="@id/change_name"
+                    app:layout_constraintStart_toStartOf="@id/account_name_label"
+                    app:layout_constraintTop_toBottomOf="@id/account_name_label"
+                    tools:text="Account 1" />
 
-            <LinearLayout
+                <ImageView
+                    android:id="@+id/change_name"
+                    android:layout_width="@dimen/size32"
+                    android:layout_height="@dimen/size32"
+                    android:layout_marginEnd="@dimen/size16"
+                    android:background="@drawable/mw24_item_account_settings_background"
+                    android:contentDescription="@string/account_details_menu_change_name"
+                    android:padding="@dimen/size8"
+                    android:src="@drawable/mw24_ic_account_settings_edit"
+                    app:layout_constraintBottom_toBottomOf="@id/account_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/account_name_label"
+                    app:tint="@color/mw24_content_primary" />
+
+                <TextView
+                    android:id="@+id/account_address_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size12"
+                    android:text="@string/account_settings_account_address"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_content_accent_secondary"
+                    app:layout_constraintStart_toStartOf="@id/account_name_label"
+                    app:layout_constraintTop_toBottomOf="@id/account_name" />
+
+                <TextView
+                    android:id="@+id/account_address"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size4"
+                    android:layout_marginEnd="@dimen/size16"
+                    android:ellipsize="middle"
+                    android:textAppearance="@style/MW24_Typography_Title"
+                    android:textColor="@color/mw24_content_primary"
+                    app:layout_constraintEnd_toStartOf="@id/copy_address_button"
+                    app:layout_constraintStart_toStartOf="@id/account_name_label"
+                    app:layout_constraintTop_toBottomOf="@id/account_address_label"
+                    tools:text="48s19hfXXWV17pCvdaMNr...Rx5" />
+
+                <ImageView
+                    android:id="@+id/copy_address_button"
+                    android:layout_width="@dimen/size32"
+                    android:layout_height="@dimen/size32"
+                    android:layout_marginEnd="@dimen/size16"
+                    android:background="@drawable/mw24_item_account_settings_background"
+                    android:contentDescription="@string/account_details_menu_change_name"
+                    android:padding="@dimen/size8"
+                    android:src="@drawable/mw24_ic_receive_address_copy"
+                    app:layout_constraintBottom_toBottomOf="@id/account_address"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/account_address_label"
+                    app:tint="@color/mw24_content_primary" />
+
+                <TextView
+                    android:id="@+id/account_identity_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size12"
+                    android:text="@string/account_settings_identity"
+                    android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                    android:textColor="@color/mw24_content_accent_secondary"
+                    app:layout_constraintStart_toStartOf="@id/account_name_label"
+                    app:layout_constraintTop_toBottomOf="@id/account_address" />
+
+                <TextView
+                    android:id="@+id/account_identity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size4"
+                    android:textAppearance="@style/MW24_Typography_Title"
+                    android:textColor="@color/mw24_content_primary"
+                    app:layout_constraintStart_toStartOf="@id/account_name_label"
+                    app:layout_constraintTop_toBottomOf="@id/account_identity_label"
+                    tools:text="Identity 1" />
+
+                <LinearLayout
+                    android:id="@+id/balance_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/size6"
+                    android:layout_marginTop="@dimen/size16"
+                    android:layout_marginBottom="@dimen/size6"
+                    android:background="@drawable/mw24_export_transaction_log_card_background"
+                    android:orientation="vertical"
+                    android:padding="@dimen/size16"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/account_identity">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/total_value_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/total_balance_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/account_settings_total_value"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                            android:textColor="@color/mw24_content_accent_secondary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/total_balance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size16"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid"
+                            android:textColor="@color/mw24_content_primary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toEndOf="@id/total_balance_label"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="wrap"
+                            tools:text="123,947.25687 CCD" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/at_disposal_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size12">
+
+                        <View
+                            android:id="@+id/at_disposal_divider"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/mw24_plain_white_10"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/at_disposal_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size12"
+                            android:text="@string/account_settings_at_disposal"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                            android:textColor="@color/mw24_content_accent_secondary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/at_disposal_divider" />
+
+                        <TextView
+                            android:id="@+id/at_disposal_balance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size16"
+                            android:layout_marginTop="@dimen/size12"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid"
+                            android:textColor="@color/mw24_content_primary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toEndOf="@id/at_disposal_label"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="wrap"
+                            tools:text="92,128.957 CCD" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/earning_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size12">
+
+                        <View
+                            android:id="@+id/earning_divider"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/mw24_plain_white_10"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/earning_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size12"
+                            android:text="@string/account_settings_earning"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                            android:textColor="@color/mw24_content_accent_secondary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/earning_divider" />
+
+                        <TextView
+                            android:id="@+id/earning_balance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size16"
+                            android:layout_marginTop="@dimen/size12"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid"
+                            android:textColor="@color/mw24_content_primary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toEndOf="@id/earning_label"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="wrap"
+                            tools:text="128.00 CCD" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/scheduled_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/size12">
+
+                        <View
+                            android:id="@+id/scheduled_divider"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/mw24_plain_white_10"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/scheduled_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size12"
+                            android:text="@string/account_settings_scheduled"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                            android:textColor="@color/mw24_content_accent_secondary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/scheduled_divider" />
+
+                        <TextView
+                            android:id="@+id/scheduled_balance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/size16"
+                            android:layout_marginTop="@dimen/size12"
+                            android:textAppearance="@style/MW24_Typography_Text_Mid"
+                            android:textColor="@color/mw24_content_primary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintStart_toEndOf="@id/scheduled_label"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="wrap"
+                            tools:text="120.00 CCD" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/options_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size24"
+                android:layout_marginBottom="@dimen/size12"
+                android:text="@string/account_details_options"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/mw24_content_secondary" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/release_schedule"
-                style="@style/AccountSettingsItem">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size4"
+                android:background="@drawable/mw24_container_primary_background"
+                android:padding="@dimen/size16">
 
-                <View style="@style/CryptoX_Divider_Horizontal" />
+                <ImageView
+                    android:id="@+id/release_schedule_start_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mw24_ic_release_schedule"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_content_secondary" />
 
                 <TextView
-                    style="@style/MW24_AccountSettingsItemTextView"
-                    android:text="@string/account_details_menu_release_schedule" />
+                    android:id="@+id/release_schedule_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size12"
+                    android:text="@string/account_details_release_schedule"
+                    android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+                    android:textColor="@color/mw24_content_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/release_schedule_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/release_schedule_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/release_schedule_end_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/size4"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/cryptox_ico_chevron_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_plain_white_20" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <LinearLayout
-                android:id="@+id/export_key"
-                style="@style/AccountSettingsItem">
-
-                <View style="@style/CryptoX_Divider_Horizontal" />
-
-                <TextView
-                    style="@style/MW24_AccountSettingsItemTextView"
-                    android:text="@string/account_details_menu_export_key" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/export_transaction_log"
-                style="@style/AccountSettingsItem">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size4"
+                android:background="@drawable/mw24_container_primary_background"
+                android:padding="@dimen/size16">
 
-                <View style="@style/CryptoX_Divider_Horizontal" />
+                <ImageView
+                    android:id="@+id/transaction_log_start_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mw24_ic_account_settings_export_log"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_content_secondary" />
 
                 <TextView
-                    style="@style/MW24_AccountSettingsItemTextView"
-                    android:text="@string/account_details_menu_export_transaction_log" />
+                    android:id="@+id/export_transaction_log_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size12"
+                    android:text="@string/account_details_menu_export_transaction_log"
+                    android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+                    android:textColor="@color/mw24_content_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/transaction_log_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/transaction_log_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/transaction_log_end_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/size4"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/cryptox_ico_chevron_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_plain_white_20" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <LinearLayout
-                android:id="@+id/change_name"
-                style="@style/AccountSettingsItem">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/export_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size4"
+                android:background="@drawable/mw24_container_primary_background"
+                android:padding="@dimen/size16">
 
-                <View style="@style/CryptoX_Divider_Horizontal" />
+                <ImageView
+                    android:id="@+id/export_key_start_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mw24_ic_account_settings_private_key"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_content_secondary" />
 
                 <TextView
-                    style="@style/MW24_AccountSettingsItemTextView"
-                    android:text="@string/account_details_menu_change_name" />
+                    android:id="@+id/export_key_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/size12"
+                    android:text="@string/export_account_keys_title"
+                    android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+                    android:textColor="@color/mw24_content_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/export_key_end_icon"
+                    app:layout_constraintStart_toEndOf="@id/export_key_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/export_key_end_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/size4"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/cryptox_ico_chevron_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_plain_white_20" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

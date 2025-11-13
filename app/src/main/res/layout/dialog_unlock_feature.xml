@@ -8,7 +8,6 @@
     <ImageButton
         android:id="@+id/close_button"
         style="@style/CryptoX_ImageButton"
-        android:layout_margin="8dp"
         android:contentDescription="@string/notifications_permission_deny"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,7 +30,7 @@
         android:id="@+id/title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/size32"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/unlock_feature_title"
@@ -44,7 +43,7 @@
         android:id="@+id/details_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/size32"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/unlock_feature_details"
@@ -55,9 +54,9 @@
 
     <Button
         android:id="@+id/go_back_button"
-        style="@style/CCX_Button_Primary.Modal"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp"
+        style="@style/MW24_Button_Primary_Inverse"
+        android:layout_width="0dp"
+        android:layout_margin="@dimen/size32"
         android:text="@string/unlock_feature_go_back_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

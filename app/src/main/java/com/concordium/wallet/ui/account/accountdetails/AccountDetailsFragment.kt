@@ -17,59 +17,56 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
-import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.databinding.FragmentAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersActivity
-import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.account.accountslist.AccountsListActivity
 import com.concordium.wallet.ui.account.accountsoverview.SeedPhraseBackupNoticeDialog
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.cis2.SendTokenActivity
-import com.concordium.wallet.ui.common.delegates.EarnDelegate
-import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
 import com.concordium.wallet.ui.onboarding.OnboardingSharedViewModel
 import com.concordium.wallet.ui.onboarding.OnboardingState
-import com.concordium.wallet.ui.onramp.CcdOnrampSitesActivity
 import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
-import com.concordium.wallet.util.ImageUtil
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.core.parameter.parametersOf
 import java.math.BigInteger
 
-class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl() {
+class AccountDetailsFragment : BaseFragment() {
 
-    private lateinit var binding: ActivityAccountDetailsBinding
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var viewModelAccountDetails: AccountDetailsViewModel
+    private lateinit var binding: FragmentAccountDetailsBinding
     private lateinit var onboardingViewModel: OnboardingSharedViewModel
     private lateinit var onboardingStatusCard: OnboardingFragment
     private lateinit var onboardingBinding: FragmentOnboardingBinding
     private lateinit var reviewHelper: ReviewHelper
+
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
+    private val viewModelAccountDetails: AccountDetailsViewModel by activityViewModel {
+        parametersOf(mainViewModel)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = ActivityAccountDetailsBinding.inflate(inflater, container, false)
+        binding = FragmentAccountDetailsBinding.inflate(inflater, container, false)
         onboardingBinding = FragmentOnboardingBinding.inflate(layoutInflater)
         onboardingStatusCard = binding.onboardingLayout
 
@@ -82,16 +79,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         initializeViewModels()
         initViews()
         initTooltipBanner()
-
-        val baseActivity = (activity as BaseActivity)
-
-        baseActivity.hideQrScan(isVisible = true) {
-            if (mainViewModel.hasCompletedOnboarding()) {
-                baseActivity.startQrScanner()
-            } else {
-                baseActivity.showUnlockFeatureDialog()
-            }
-        }
+        initToolbar()
     }
 
     override fun onResume() {
@@ -102,6 +90,19 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     override fun onPause() {
         super.onPause()
         resetWhenPaused()
+    }
+
+    private fun initToolbar() {
+        val baseActivity = (activity as BaseActivity)
+
+        baseActivity.hideQrScan(isVisible = true) {
+            if (mainViewModel.hasCompletedOnboarding()) {
+                baseActivity.startQrScanner()
+            } else {
+                baseActivity.showUnlockFeatureDialog()
+            }
+        }
+        baseActivity.hideSettings(isVisible = false)
     }
 
     private fun initTooltipBanner() {
@@ -116,39 +117,34 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initializeViewModels() {
-        mainViewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[MainViewModel::class.java]
-
-        mainViewModel.setTitle("")
-
-        viewModelAccountDetails = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[AccountDetailsViewModel::class.java]
-
         onboardingViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[OnboardingSharedViewModel::class.java]
 
-        viewModelAccountDetails.stateFlow.collectWhenStarted(viewLifecycleOwner) { state ->
-            when (state) {
-                OnboardingState.DONE -> {
-                    viewModelAccountDetails.initiateFrequentUpdater()
-                    updateViews(viewModelAccountDetails.activeAccount.first())
+        combine(
+            viewModelAccountDetails
+                .stateFlow,
+            viewModelAccountDetails
+                .activeAccount
+                .map { it?.transactionStatus }
+                .distinctUntilChanged(),
+            transform = ::Pair,
+        ).collectWhenStarted(viewLifecycleOwner) { (onboardingState, accountFinalizationStatus) ->
 
-                    if (!viewModelAccountDetails.hasShownInitialAnimation()) {
-                        binding.confettiAnimation.visibility = View.VISIBLE
-                        binding.confettiAnimation.playAnimation()
-                    }
-                }
+            if (onboardingState == OnboardingState.DONE) {
+                viewModelAccountDetails.initiateFrequentUpdater()
+                updateViews(accountFinalizationStatus)
 
-                else -> {
-                    onboardingStatusCard.updateViewsByState(state)
-                    showStateOnboarding()
+                if (!viewModelAccountDetails.hasShownInitialAnimation()) {
+                    binding.confettiAnimation.visibility = View.VISIBLE
+                    binding.confettiAnimation.playAnimation()
+                    // Do not collect state updates while confetti is flying.
+                    delay(binding.confettiAnimation.duration)
                 }
+            } else {
+                onboardingStatusCard.updateViewsByState(onboardingState)
+                showStateOnboarding()
             }
         }
 
@@ -175,32 +171,12 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
                     requireActivity().finish()
                 }
             })
-        viewModelAccountDetails.goToEarnLiveData.observe(
-            viewLifecycleOwner,
-            object : EventObserver<AccountDetailsViewModel.GoToEarnPayload>() {
-                override fun onUnhandledEvent(value: AccountDetailsViewModel.GoToEarnPayload) {
-                    gotoEarn(
-                        activity = requireActivity() as BaseActivity,
-                        account = value.account,
-                        hasPendingDelegationTransactions = value.hasPendingDelegationTransactions,
-                        hasPendingBakingTransactions = value.hasPendingBakingTransactions,
-                    )
-                }
-            })
+        viewModelAccountDetails.goToEarn.collectWhenStarted(viewLifecycleOwner) {
+            mainViewModel.onEarnClicked()
+        }
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
             showTotalBalance(it)
             updateBannersVisibility()
-        }
-
-        viewModelAccountDetails.activeAccount.collectWhenStarted(viewLifecycleOwner) { account ->
-            updateViews(account)
-            (requireActivity() as BaseActivity).hideAccountSelector(
-                isVisible = true,
-                text = account.getAccountName(),
-                icon = ImageUtil.getIconById(requireContext(), account.iconId)
-            ) {
-                gotoAccountsList()
-            }
         }
 
         viewModelAccountDetails.fileWalletMigrationVisible.collectWhenStarted(viewLifecycleOwner) {
@@ -208,7 +184,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelAccountDetails.suspensionNotice.collectWhenStarted(viewLifecycleOwner) { notice ->
-            binding.earnBtnNotice.isVisible = notice != null && notice.isCurrentAccountAffected
             binding.suspensionNotice.isVisible = notice != null
 
             if (notice == null) {
@@ -278,16 +253,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         viewModelAccountDetails.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
         mainViewModel.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
 
-        combine(
-            mainViewModel.activeAccountAddress,
-            mainViewModel.notificationToken,
-            viewModelAccountDetails.activeAccount
-        ) { notificationAddress, token, currentAccount ->
-            if (notificationAddress == currentAccount.address && token != null) {
-                viewModelAccountDetails.updateNotificationToken(token)
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
         }
@@ -307,7 +272,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         initContainer()
         initBanners()
         binding.accountRetryButton.setOnClickListener {
-            gotoAccountsList()
+            (activity as BaseActivity).showAccountsList()
         }
         binding.accountRemoveButton.setOnClickListener {
             viewModelAccountDetails.deleteAccountAndFinish()
@@ -321,17 +286,23 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         reviewHelper = ReviewHelper(requireActivity())
     }
 
-    private fun updateViews(account: Account) {
+    private fun updateViews(accountFinalizationStatus: TransactionStatus?) {
         showWaiting(false)
 
-        when (account.transactionStatus) {
-            TransactionStatus.ABSENT -> setErrorMode()
-            TransactionStatus.FINALIZED -> setFinalizedMode(account)
+        when (accountFinalizationStatus) {
+            null,
+            TransactionStatus.UNKNOWN,
+            TransactionStatus.ABSENT,
+            ->
+                setErrorMode()
+
+            TransactionStatus.FINALIZED ->
+                setFinalizedMode()
+
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED,
-            -> setPendingMode()
-
-            else -> showStateDefault()
+            ->
+                setPendingMode()
         }
     }
 
@@ -352,38 +323,21 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    private fun setFinalizedMode(account: Account) {
-        setActiveButtons()
+    private fun setFinalizedMode() {
         binding.apply {
             tokensFragmentContainer.visibility = View.VISIBLE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
-            onrampBtn.isEnabled = true
-            sendFundsBtn.isEnabled = !account.readOnly
-            receiveBtn.isEnabled = true
-            earnBtn.isEnabled = !account.readOnly
-            activityBtn.isEnabled = true
         }
     }
 
     private fun showStateOnboarding() {
-        setPendingButtons()
         binding.apply {
             tokensFragmentContainer.visibility = View.GONE
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
             onboardingLayout.visibility = View.VISIBLE
-        }
-    }
-
-    private fun showStateDefault() {
-        setActiveButtons()
-        binding.apply {
-            onboardingLayout.visibility = View.GONE
-            tokensFragmentContainer.visibility = View.VISIBLE
-            pendingFragmentContainer.pendingLayout.visibility = View.GONE
-            pendingFragmentContainer.errorLayout.visibility = View.GONE
         }
     }
 
@@ -398,49 +352,10 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setPendingMode() {
-        setPendingButtons()
         binding.apply {
             pendingFragmentContainer.pendingLayout.visibility = View.VISIBLE
             tokensFragmentContainer.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
-        }
-    }
-
-    private fun setPendingButtons() {
-        binding.apply {
-            listOf(
-                onrampBtn,
-                sendFundsBtn,
-                receiveBtn,
-                earnBtn,
-                activityBtn
-            ).forEach {
-                it.setOnClickListener {
-                    (activity as BaseActivity).showUnlockFeatureDialog()
-                }
-            }
-        }
-    }
-
-    private fun setActiveButtons() {
-        binding.onrampBtn.setOnClickListener {
-            onOnrampClicked()
-        }
-
-        binding.sendFundsBtn.setOnClickListener {
-            onSendFundsClicked()
-        }
-
-        binding.receiveBtn.setOnClickListener {
-            onReceiveClicked()
-        }
-
-        binding.earnBtn.setOnClickListener {
-            viewModelAccountDetails.onEarnClicked()
-        }
-
-        binding.activityBtn.setOnClickListener {
-            onActivityClicked()
         }
     }
 
@@ -470,10 +385,8 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun initContainer() {
         var lastSetHeight = -1
-        binding.scrollViewLayout.viewTreeObserver.addOnGlobalLayoutListener {
-            val heightToSet = binding.scrollView.measuredHeight -
-                    binding.tokensFragmentContainer.top +
-                    binding.buttonsBlock.top
+        binding.scrollView.viewTreeObserver.addOnGlobalLayoutListener {
+            val heightToSet = binding.scrollView.measuredHeight
 
             if (lastSetHeight != heightToSet) {
                 binding.tokensFragmentContainer.updateLayoutParams<ViewGroup.LayoutParams> {
@@ -551,51 +464,9 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
     }
 
-    private fun onOnrampClicked() {
-        val intent = Intent(requireActivity(), CcdOnrampSitesActivity::class.java)
-        intent.putExtras(
-            CcdOnrampSitesActivity.getBundle(
-                accountAddress = viewModelAccountDetails.account.address,
-            )
-        )
-        startActivity(intent)
-    }
-
-    private fun onSendFundsClicked() {
-        val intent = Intent(requireActivity(), SendTokenActivity::class.java)
-        intent.putExtra(
-            SendTokenActivity.ACCOUNT,
-            viewModelAccountDetails.account
-        )
-        intent.putExtra(
-            SendTokenActivity.TOKEN,
-            CCDToken(
-                account = viewModelAccountDetails.account,
-            )
-        )
-        intent.putExtra(SendTokenActivity.PARENT_ACTIVITY, this::class.java.canonicalName)
-
-        (requireActivity() as BaseActivity).startActivityForResultAndHistoryCheck(intent)
-    }
-
-    private fun onReceiveClicked() {
-        val intent = Intent(requireActivity(), AccountQRCodeActivity::class.java)
-        intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        startActivity(intent)
-    }
-
-    private fun onActivityClicked() {
-        val intent = Intent(requireActivity(), AccountDetailsTransfersActivity::class.java)
-        intent.putExtra(
-            AccountDetailsTransfersActivity.EXTRA_ACCOUNT,
-            viewModelAccountDetails.account
-        )
-        startActivity(intent)
-    }
-
     private fun initBanners() {
         binding.includeOnrampBanner.root.setOnClickListener {
-            onOnrampClicked()
+            mainViewModel.onOnrampClicked()
         }
 
         binding.includeOnrampBanner.closeImageView.setOnClickListener {
@@ -604,7 +475,7 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
         }
 
         binding.includeEarnBanner.root.setOnClickListener {
-            viewModelAccountDetails.onEarnClicked()
+            mainViewModel.onEarnClicked()
         }
 
         binding.includeEarnBanner.closeImageView.setOnClickListener {
@@ -636,11 +507,6 @@ class AccountDetailsFragment : BaseFragment(), EarnDelegate by EarnDelegateImpl(
 
     private fun gotoSeedPhraseReveal() {
         val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoAccountsList() {
-        val intent = Intent(activity, AccountsListActivity::class.java)
         startActivity(intent)
     }
 }

@@ -5,41 +5,24 @@
     android:id="@+id/item_root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/size16"
     android:layout_marginBottom="4dp"
-    android:background="@drawable/mw24_container_primary_background"
-    android:paddingStart="12dp"
-    android:paddingEnd="8dp">
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/alert_imageview"
-        style="@style/Image"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ccx_ico_information_circle_contained"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/main_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/cryptox_pinky_main"
-        tools:visibility="visible" />
+    android:background="@drawable/mw24_container_primary_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="12dp"
-        android:layout_marginEnd="8dp"
+        android:padding="@dimen/size12"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/arrow_imageview"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/alert_imageview"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/title_textview"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
@@ -54,7 +37,7 @@
 
         <TextView
             android:id="@+id/total_textview"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -103,53 +86,70 @@
             android:layout_marginTop="4dp"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/mw24_blue_3_50"
-            app:layout_constraintBottom_toTopOf="@id/layout_memo"
+            app:layout_constraintBottom_toBottomOf="@id/subheader_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/total_textview"
+            app:layout_constraintTop_toTopOf="@id/subheader_textview"
             tools:text="with fee 0.059 CCD"
             tools:visibility="visible" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_memo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:orientation="vertical"
+            android:animateLayoutChanges="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/subheader_textview">
 
             <View
                 android:id="@+id/divider"
-                style="@style/CryptoX_Divider_Horizontal" />
+                style="@style/CryptoX_Divider_Horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/memo_icon"
+                android:layout_width="@dimen/size12"
+                android:layout_height="@dimen/size12"
+                android:layout_marginTop="@dimen/size12"
+                android:importantForAccessibility="no"
+                android:src="@drawable/mw24_ic_memo"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:tint="@color/mw24_content_accent_secondary" />
 
             <TextView
                 android:id="@+id/memo_textview"
                 style="@style/MW24_Typography_Main_Capture_Small"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size12"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/size8"
                 android:drawablePadding="6dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:textColor="@color/mw24_blue_2"
                 android:textSize="14sp"
-                app:drawableStartCompat="@drawable/mw24_ic_memo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/memo_expand_icon"
+                app:layout_constraintStart_toEndOf="@id/memo_icon"
+                app:layout_constraintTop_toBottomOf="@id/divider"
                 tools:text="Memotext dsf ds fdsfdsf ds fds f dsf dsf ds fds f dsf  sdf ds f dsf"
                 tools:visibility="visible" />
-        </LinearLayout>
+
+            <ImageView
+                android:id="@+id/memo_expand_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                android:contentDescription="@string/transaction_expand_memo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                tools:src="@drawable/mw24_ic_transaction_expand" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/arrow_imageview"
-        style="@style/Image"
-        android:layout_width="24dp"
-        android:layout_height="20dp"
-        android:src="@drawable/cryptox_ico_chevron_right"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/mw24_grey_4" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

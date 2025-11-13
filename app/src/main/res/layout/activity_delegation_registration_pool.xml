@@ -18,8 +18,9 @@
         android:id="@+id/scroll_container"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:paddingVertical="20dp"
-        app:layout_constraintBottom_toTopOf="@id/checkbox_disclaimer"
+        android:layout_marginBottom="@dimen/size8"
+        android:paddingVertical="@dimen/size8"
+        app:layout_constraintBottom_toTopOf="@id/legal_disclaimer_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
@@ -27,7 +28,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
+            android:layout_marginHorizontal="@dimen/size16"
             android:orientation="vertical">
 
             <TextView
@@ -83,49 +84,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                android:textColor="@color/mw24_blue_2"
-                android:textColorLink="@color/mw24_blue_2"
+                android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+                android:textColor="@color/mw24_content_accent_secondary"
+                android:textColorLink="@color/mw24_content_accent_secondary"
                 tools:text="@string/delegation_register_delegation_desc" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <TextView
-        android:id="@+id/checkbox_disclaimer"
-        android:layout_width="match_parent"
+        android:id="@+id/legal_disclaimer_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginHorizontal="18dp"
-        android:text="@string/delegation_register_delegation_checkbox_disclaimer"
+        android:layout_marginBottom="@dimen/size32"
+        android:text="@string/earn_legal_disclaimer_title"
         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        android:textColor="@color/mw24_blue_3_50"
-        android:textColorLink="@color/mw24_blue_3_50"
-        app:layout_constraintBottom_toTopOf="@id/checkbox"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/mw24_content_secondary"
+        app:layout_constraintVertical_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scroll_container" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scroll_container"
+        app:layout_constraintBottom_toTopOf="@id/checkbox"/>
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
         style="@style/MW24_CompoundButton_Checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginBottom="@dimen/size16"
         android:textSize="14sp"
         android:text="@string/delegation_register_delegation_checkbox"
         app:layout_constraintBottom_toTopOf="@id/pool_registration_continue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/checkbox_disclaimer"
         tools:checked="false" />
 
     <Button
         android:id="@+id/pool_registration_continue"
         style="@style/MW24_Button_Primary"
         android:layout_width="0dp"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginBottom="@dimen/size16"
         android:text="@string/delegation_register_delegation_continue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

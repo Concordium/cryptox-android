@@ -21,7 +21,6 @@
             android:adjustViewBounds="true"
             android:cropToPadding="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/image_512_round"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintTop_toTopOf="parent" />
 

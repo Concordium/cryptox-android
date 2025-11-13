@@ -27,6 +27,8 @@ class AppSetup(
         get() = appSetupPreferences.getHasShowReviewDialogAfterHalfYear()
     val showReviewDialogTime: Long
         get() = appSetupPreferences.getShowReviewDialogTime()
+    val isHasAcceptedOnRampDisclaimer: Boolean
+        get() = appSetupPreferences.getHasAcceptedOnRampDisclaimer()
 
     fun finishInitialSetup() {
         appSetupPreferences.setHasCompletedInitialSetup(true)
@@ -92,5 +94,9 @@ class AppSetup(
 
     fun setShowReviewDialogSnapshotTime() {
         appSetupPreferences.setShowReviewDialogSnapshotTime()
+    }
+
+    fun setHasAcceptedOnRampDisclaimer(value: Boolean) {
+        appSetupPreferences.setHasAcceptedOnRampDisclaimer(value)
     }
 }

@@ -1,14 +1,12 @@
 package com.concordium.wallet.ui.transaction.transactiondetails
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -21,7 +19,8 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityTransactionDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.TransactionViewHelper
-import com.concordium.wallet.uicore.toast.showGradientToast
+import com.concordium.wallet.uicore.toast.showCustomToast
+import com.concordium.wallet.util.ClipboardUtil
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.getSerializable
 
@@ -42,9 +41,6 @@ class TransactionDetailsActivity : BaseActivity(
     }
     private var receiptTitle = "" //always show "Transfer" title if show send receipt
 
-    //region Lifecycle
-    // ************************************************************
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,11 +55,6 @@ class TransactionDetailsActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
     }
-
-    //endregion
-
-    //region Initialize
-    // ************************************************************
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
@@ -90,7 +81,7 @@ class TransactionDetailsActivity : BaseActivity(
 
     private fun initViews() {
         binding.contentLayout.visibility = View.GONE
-        binding.messageTextview.visibility = View.GONE
+        binding.rejectReasonLayout.visibility = View.GONE
         binding.fromAddressLayout.visibility = View.GONE
         binding.toAddressLayout.visibility = View.GONE
         binding.transactionHashLayout.visibility = View.GONE
@@ -99,27 +90,28 @@ class TransactionDetailsActivity : BaseActivity(
         binding.memoLayout.visibility = View.GONE
         binding.transactionDateLayout.visibility = View.GONE
 
-        binding.viewOnExplorerButton.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.getExplorerUrl()))
-            ContextCompat.startActivity(this, browserIntent, null)
+        val onClickListener = object : TransactionDetailsEntryView.OnCopyClickListener {
+            override fun onCopyClicked(title: String, value: String) {
+                ClipboardUtil.copyToClipboard(
+                    context = this@TransactionDetailsActivity,
+                    label = title,
+                    text = value
+                )
+                showCustomToast(
+                    title = getString(
+                        R.string.transaction_details_value_copied,
+                        title.trim(':')
+                    )
+                )
+            }
         }
-    }
-
-    //endregion
-
-    //region Control/UI
-    // ************************************************************
-
-    private fun onCopyClicked(title: String, value: String) {
-        val clipboard: ClipboardManager =
-            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(title, value)
-        clipboard.setPrimaryClip(clip)
-
-        showGradientToast(
-            iconResId = R.drawable.mw24_ic_address_copy_check,
-            title = getString(R.string.transaction_details_value_copied, title.trim(':'))
-        )
+        binding.fromAddressLayout.enableCopy(onClickListener)
+        binding.toAddressLayout.enableCopy(onClickListener)
+        binding.transactionHashLayout.enableCopy(onClickListener)
+        binding.blockHashLayout.enableCopy(onClickListener)
+        binding.memoLayout.enableCopy(onClickListener)
+        binding.detailsLayout.enableCopy(onClickListener)
+        binding.rejectReasonLayout.enableCopy(onClickListener)
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -152,14 +144,12 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.costTextview,
             transactionItem.layoutMemo,
             transactionItem.memoTextview,
-            transactionItem.alertImageview,
             transactionItem.statusImageview,
             titleFromReceipt = receiptTitle
         )
         // Do not show the memo in the item,
         // it is shown below with ability to copy the value.
         transactionItem.layoutMemo.isVisible = false
-        transactionItem.arrowImageview.isVisible = false
 
         showDate(transaction)
         showRejectReason(transaction)
@@ -170,44 +160,12 @@ class TransactionDetailsActivity : BaseActivity(
         showEvents(transaction)
         showMemo(transaction)
         showExplorerButton(transaction)
-
-        enableCopy(transaction)
-    }
-
-    private fun enableCopy(ta: Transaction) {
-        if (ta.hash != null) {
-            binding.copyButton.setOnClickListener {
-                onCopyClicked(
-                    getString(R.string.transaction_details_transaction_hash),
-                    ta.hash
-                )
-            }
-        } else {
-            ta.blockHashes?.let {
-                val blockHashesString = StringBuilder("")
-                var isFirst = true
-                for (blockHash in it) {
-                    if (!isFirst) {
-                        blockHashesString.append("\n\n")
-                    }
-                    blockHashesString.append(blockHash)
-                    isFirst = false
-                }
-                binding.copyButton.setOnClickListener {
-                    onCopyClicked(
-                        getString(R.string.transaction_details_block_hash),
-                        blockHashesString.toString()
-                    )
-                }
-            }
-        }
     }
 
     private fun showDate(ta: Transaction) {
         val time = DateTimeUtil.formatDateAsLocalMediumWithTime(ta.timeStamp)
         binding.transactionDateLayout.visibility = View.VISIBLE
         binding.transactionDateLayout.setValue(time)
-        binding.transactionDateLayout.setDivider(false)
     }
 
     private fun showMemo(ta: Transaction) {
@@ -221,10 +179,10 @@ class TransactionDetailsActivity : BaseActivity(
 
     private fun showRejectReason(ta: Transaction) {
         if (ta.rejectReason != null) {
-            binding.messageTextview.visibility = View.VISIBLE
-            binding.messageTextview.text = ta.rejectReason
+            binding.rejectReasonLayout.visibility = View.VISIBLE
+            binding.rejectReasonLayout.setValue(ta.rejectReason!!)
         } else {
-            binding.messageTextview.visibility = View.GONE
+            binding.rejectReasonLayout.visibility = View.GONE
         }
     }
 
@@ -324,8 +282,9 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showExplorerButton(ta: Transaction) {
-        binding.viewOnExplorerButton.isVisible = ta.hash != null
+        hideExplorer(isVisible = ta.hash != null) {
+            val browserIntent = Intent(Intent.ACTION_VIEW, viewModel.getExplorerUrl().toUri())
+            ContextCompat.startActivity(this, browserIntent, null)
+        }
     }
-
-    //endregion
 }

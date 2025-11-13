@@ -70,12 +70,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import java.math.BigInteger
 import java.util.Date
 import kotlin.math.roundToInt
 
-class DelegationBakerViewModel(application: Application) : AndroidViewModel(application),
+class DelegationBakerViewModel(
+    private val tokenPriceRepository: TokenPriceRepository,
+    application: Application
+) : AndroidViewModel(application),
     KoinComponent {
 
     lateinit var bakerDelegationData: BakerDelegationData
@@ -85,7 +87,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
-    private val tokenPriceRepository by inject<TokenPriceRepository>()
 
     companion object {
         const val FILE_NAME_BAKER_KEYS = "validator-credentials.json"

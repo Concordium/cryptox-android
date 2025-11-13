@@ -13,30 +13,30 @@ import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.TransferRepository
-import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.onboarding.OnboardingState
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
-class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
+class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Application) :
+    AndroidViewModel(application) {
     private val session: Session = App.appCore.session
 
     enum class DialogToShow {
@@ -57,14 +57,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         class DelegatorsBakerSuspended(isCurrentAccountAffected: Boolean) :
             SuspensionNotice(isCurrentAccountAffected)
     }
-
-    class GoToEarnPayload(
-        val account: Account,
-        val hasPendingDelegationTransactions: Boolean,
-        val hasPendingBakingTransactions: Boolean,
-    )
-
-    lateinit var account: Account
 
     private val accountRepository = AccountRepository(session.walletStorage.database.accountDao())
     private val transferRepository =
@@ -87,9 +79,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val finishLiveData: LiveData<Event<Boolean>>
         get() = _finishLiveData
 
-    private val _goToEarnLiveData = MutableLiveData<Event<GoToEarnPayload>>()
-    val goToEarnLiveData: LiveData<Event<GoToEarnPayload>>
-        get() = _goToEarnLiveData
+    private val _goToEarn = MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val goToEarn = _goToEarn.asSharedFlow()
 
     private var _totalBalanceLiveData = MutableLiveData<BigInteger>()
     val totalBalanceLiveData: LiveData<BigInteger>
@@ -102,12 +93,11 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val showDialogLiveData: LiveData<Event<DialogToShow>>
         get() = _showDialogLiveData
 
-    private val _activeAccount = MutableSharedFlow<Account>(
-        replay = 1,
-        extraBufferCapacity = Int.MAX_VALUE,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
-    val activeAccount = _activeAccount.asSharedFlow()
+    val activeAccount = mainViewModel.activeAccount
+    val notificationToken = mainViewModel.notificationToken
+    val notificationAddress = mainViewModel.activeAccountAddress
+    lateinit var account: Account
+        private set
 
     private val _stateFlow = MutableSharedFlow<OnboardingState>()
     val stateFlow = _stateFlow.asSharedFlow()
@@ -121,9 +111,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private val _suspensionNotice = MutableStateFlow<SuspensionNotice?>(null)
     val suspensionNotice = _suspensionNotice.asStateFlow()
 
-    private val _notificationToken = MutableStateFlow<Token?>(null)
-    val notificationToken = _notificationToken.asStateFlow()
-
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
@@ -134,14 +121,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private var updaterJob: Job? = null
 
-    val isCreationLimitedForFileWallet: Boolean
-        get() = App.appCore.session.activeWallet.type == AppWallet.Type.FILE
-
     init {
         initializeAccountUpdater()
         _fileWalletMigrationVisible.tryEmit(
             App.appCore.session.activeWallet.type == AppWallet.Type.FILE
         )
+        viewModelScope.launch {
+            activeAccount.collect {
+                it?.let(::updateAccount)
+            }
+        }
     }
 
     val isSeedPhraseBackupBannerVisible: Boolean
@@ -178,19 +167,32 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun getActiveAccount() = viewModelScope.launch {
         val acc = accountRepository.getActive()
             ?: return@launch
-        account = acc
-        _activeAccount.emit(acc)
-        _totalBalanceLiveData.postValue(acc.balance)
+
+        updateAccount(acc)
+    }
+
+    private fun updateAccount(account: Account) = viewModelScope.launch {
+        when (notificationToken.value) {
+            is ProtocolLevelToken -> {
+                if (notificationAddress.value == account.address) {
+                    accountUpdater.updateForAccount(account)
+                    this@AccountDetailsViewModel.account = account
+                    return@launch
+                }
+            }
+
+            else -> {
+                this@AccountDetailsViewModel.account = account
+                _totalBalanceLiveData.postValue(account.balance)
+                _accountUpdatedFlow.emit(account)
+            }
+        }
 
         if (account.transactionStatus == TransactionStatus.COMMITTED ||
             account.transactionStatus == TransactionStatus.RECEIVED
         ) {
             restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
         }
-    }
-
-    fun updateAccount() {
-        getActiveAccount()
     }
 
     override fun onCleared() {
@@ -218,10 +220,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun updateNotificationToken(token: Token?) = viewModelScope.launch {
-        _notificationToken.emit(token)
-    }
-
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
@@ -231,7 +229,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                     if (::account.isInitialized) {
                         _totalBalanceLiveData.value = account.balance
                     }
-                    _accountUpdatedFlow.emit(activeAccount.first())
+                    _accountUpdatedFlow.emit(account)
                     if (totalBalances.totalBalanceForAllAccounts > BigInteger.ZERO &&
                         App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
                     ) {
@@ -268,7 +266,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         hasPendingBakingTransactions = false
         hasPendingDelegationTransactions = false
 
-        val currentAccount = activeAccount.first()
+        val currentAccount = account
         val transferList = transferRepository.getAllByAccountId(currentAccount.id)
 
         for (transfer in transferList) {
@@ -382,7 +380,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
         if (allAccounts.any { it.transactionStatus == TransactionStatus.FINALIZED }) {
             App.appCore.session.walletStorage.setupPreferences.setHasCompletedOnboarding(true)
-            getActiveAccount()
             postState(OnboardingState.DONE)
             showSingleDialogIfNeeded()
         } else {
@@ -439,17 +436,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-
     fun hasShownInitialAnimation(): Boolean {
         return App.appCore.session.walletStorage.setupPreferences.getHasShownInitialAnimation()
     }
 
     fun setHasShownInitialAnimation() {
         return App.appCore.session.walletStorage.setupPreferences.setHasShownInitialAnimation(true)
-    }
-
-    fun onEarnClicked() {
-        goToEarnIfPossible()
     }
 
     fun onSuspensionNoticeClicked() = viewModelScope.launch {
@@ -472,24 +464,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             getActiveAccount().join()
         }
 
-        goToEarnIfPossible()
-    }
-
-    private fun goToEarnIfPossible() {
         if (account.readOnly) {
             Log.d("Not going to earn for a read-only account")
-            return
+            return@launch
         }
 
-        _goToEarnLiveData.postValue(
-            Event(
-                GoToEarnPayload(
-                    account = account,
-                    hasPendingBakingTransactions = hasPendingBakingTransactions,
-                    hasPendingDelegationTransactions = hasPendingDelegationTransactions,
-                )
-            )
-        )
+        _goToEarn.emit(Unit)
     }
 
     private fun showReviewDialog() = viewModelScope.launch {
