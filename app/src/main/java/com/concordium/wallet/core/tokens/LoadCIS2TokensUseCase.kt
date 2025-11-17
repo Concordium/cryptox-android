@@ -39,7 +39,7 @@ class LoadCIS2TokensUseCase {
             tokenPageCursor = pageTokens.lastOrNull()?.uid
 
             loadCIS2TokensMetadataUseCase(proxyRepository, pageTokens)
-            fullyLoadedTokens.addAll(pageTokens.filter { it.metadata != null })
+            fullyLoadedTokens.addAll(pageTokens)
         }
 
         return fullyLoadedTokens.map { it as ContractToken }

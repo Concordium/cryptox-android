@@ -68,7 +68,7 @@ class ManageTokensSelectionFragment : Fragment() {
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (viewModel.tokens.size > 0 &&
+                if (viewModel.tokens.isNotEmpty() &&
                     visibleItemCount + firstVisibleItemPosition >= totalItemCount &&
                     firstVisibleItemPosition >= 0 &&
                     totalItemCount > 3
@@ -171,9 +171,13 @@ class ManageTokensSelectionFragment : Fragment() {
     private fun onSearch() {
         selectionAdapter.dataSet = emptyArray()
         selectionAdapter.notifyDataSetChanged()
+        val tokenId = binding.searchLayout.getText()
+            .trim()
+            .takeUnless(String::isNullOrBlank)
+            ?: return
         showWaiting(true)
         viewModel.lookForExactToken(
-            apparentTokenId = binding.searchLayout.getText().trim(),
+            apparentTokenId = tokenId,
             accountAddress = viewModel.tokenData.account!!.address,
         )
     }
