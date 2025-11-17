@@ -158,10 +158,12 @@ object CurrencyUtil {
         val denominatorBigDecimal = BigDecimal(eurPerUnit.denominator)
         val numeratorBigDecimal = BigDecimal(eurPerUnit.numerator)
 
-        return amountBigDecimal
-            .multiply(numeratorBigDecimal)
-            .divide(denominatorBigDecimal, 2, RoundingMode.HALF_UP)
-            .toString()
+        return formatGTUWithCommas(
+            amountBigDecimal
+                .multiply(numeratorBigDecimal)
+                .divide(denominatorBigDecimal, 2, RoundingMode.HALF_UP)
+                .toString()
+        )
     }
 
     private fun checkGTUString(stringValue: String): Boolean {
