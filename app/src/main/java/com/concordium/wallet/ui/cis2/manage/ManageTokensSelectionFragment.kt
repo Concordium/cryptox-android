@@ -169,12 +169,13 @@ class ManageTokensSelectionFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onSearch() {
-        selectionAdapter.dataSet = emptyArray()
-        selectionAdapter.notifyDataSetChanged()
         val tokenId = binding.searchLayout.getText()
             .trim()
             .takeUnless(String::isNullOrBlank)
             ?: return
+
+        selectionAdapter.dataSet = emptyArray()
+        selectionAdapter.notifyDataSetChanged()
         showWaiting(true)
         viewModel.lookForExactToken(
             apparentTokenId = tokenId,
