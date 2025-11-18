@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Revamped UI across the entire app with improved visuals and usability
 - Redesigned Main Screen with better navigation
+- Do not filter CIS-2 tokens with corrupted metadata or balance
 
 ## [1.15.2] - 2025-11-11
 
