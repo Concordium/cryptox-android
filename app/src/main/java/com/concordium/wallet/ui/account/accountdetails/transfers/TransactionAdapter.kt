@@ -46,7 +46,6 @@ class TransactionAdapter :
                 binding.costTextview,
                 binding.layoutMemo,
                 binding.memoTextview,
-                binding.statusImageview,
                 memoExpandButton = binding.memoExpandIcon,
                 isMemoExpanded = isMemoExpanded
             )

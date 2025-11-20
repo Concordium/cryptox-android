@@ -453,6 +453,7 @@
     <string name="transactions_filters_label">Transfer Filters</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
     <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
+    <string name="transactions_from_address">from %1$s</string>
     <string name="change_password_initial_error">Data could not be decrypted</string>
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
