@@ -14,9 +14,10 @@
         android:textAppearance="@style/CCX_Typography_Body"
         android:textColor="@color/mw24_content_accent_secondary" />
 
-    <Button
+    <TextView
         android:id="@+id/read_disclaimer_button"
         style="@style/MW24_Button_Primary_Small"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/size16"
         android:text="@string/ccd_onramp_read_disclaimer" />
