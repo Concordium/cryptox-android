@@ -64,6 +64,23 @@
         tools:text="@string/cis_not_owned" />
 
     <TextView
+        android:id="@+id/subtitle_error"
+        style="@style/MW24_Typography_Label_Main"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size8"
+        android:gravity="end"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/mw24_content_error_primary"
+        app:layout_constraintBottom_toBottomOf="@id/token_type"
+        app:layout_constraintEnd_toStartOf="@id/subtitle"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@id/title"
+        app:layout_constraintStart_toEndOf="@id/plt_in_allow_list_icon"
+        tools:text="Error! Alarm!" />
+
+    <TextView
         android:id="@+id/token_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

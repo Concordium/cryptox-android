@@ -16,23 +16,22 @@ class LoadCIS2TokensMetadataUseCase {
     suspend operator fun invoke(
         proxyRepository: ProxyRepository,
         tokensToUpdate: List<ContractToken>,
-    ) = runCatching {
-        coroutineScope {
-            val tokensByContract: Map<String, List<ContractToken>> = tokensToUpdate
-                .groupBy(ContractToken::contractIndex)
+    ) = coroutineScope {
+        val tokensByContract: Map<String, List<ContractToken>> = tokensToUpdate
+            .groupBy(ContractToken::contractIndex)
 
-            tokensByContract.forEach { (contractIndex, contractTokens) ->
-                val contractSubIndex = contractTokens.firstOrNull()?.subIndex
-                    ?: return@forEach
+        tokensByContract.forEach { (contractIndex, contractTokens) ->
+            val contractSubIndex = contractTokens.firstOrNull()?.subIndex
+                ?: return@forEach
 
-                contractTokens
-                    .chunked(ProxyRepository.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS)
-                    .forEach { contractTokensChunk ->
-                        val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
-                            separator = ",",
-                            transform = ContractToken::token,
-                        )
-
+            contractTokens
+                .chunked(ProxyRepository.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS)
+                .forEach { contractTokensChunk ->
+                    val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
+                        separator = ",",
+                        transform = ContractToken::token,
+                    )
+                    try {
                         val ciS2TokensMetadata = proxyRepository.getCIS2TokenMetadataV1(
                             index = contractIndex,
                             subIndex = contractSubIndex,
@@ -43,16 +42,15 @@ class LoadCIS2TokensMetadataUseCase {
                             // Request the actual metadata in parallel.
                             .map { metadataItem ->
                                 async(Dispatchers.IO) {
+                                    val correspondingToken = contractTokens.first {
+                                        it.token == metadataItem.tokenId
+                                    }
                                     try {
                                         val verifiedMetadata = TokenMetadataBackendInstance
                                             .getContractTokenMetadata(
                                                 url = metadataItem.metadataURL,
                                                 sha256HashHex = metadataItem.metadataChecksum,
                                             ).getOrThrow()
-                                        val correspondingToken = contractTokens.first {
-                                            it.token == metadataItem.tokenId
-                                        }
-
                                         correspondingToken.metadata = verifiedMetadata
                                         correspondingToken.contractName =
                                             ciS2TokensMetadata.contractName
@@ -61,6 +59,7 @@ class LoadCIS2TokensMetadataUseCase {
                                             "Metadata hash mismatch:\n" +
                                                     "metadataItem=$metadataItem"
                                         )
+                                        correspondingToken.metadataError = HASH_ERROR
                                     } catch (e: Throwable) {
                                         ensureActive()
                                         Log.e(
@@ -68,11 +67,25 @@ class LoadCIS2TokensMetadataUseCase {
                                                     "metadataItem=$metadataItem" +
                                                     e
                                         )
+                                        correspondingToken.metadataError = METADATA_FAILED
                                     }
                                 }
                             }.awaitAll()
+                    } catch (e: Throwable) {
+                        ensureActive()
+                        Log.e(
+                            "Failed to load metadata chunk:\n" +
+                                    "contract=$contractIndex:$contractSubIndex,\n" +
+                                    "chunkTokenIds=$commaSeparatedChunkTokenIds",
+                            e
+                        )
                     }
-            }
+                }
         }
+    }
+
+    companion object {
+        private const val HASH_ERROR = "Metadata hash mismatch"
+        private const val METADATA_FAILED = "Failed to load metadata"
     }
 }

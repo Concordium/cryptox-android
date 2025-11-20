@@ -212,18 +212,29 @@ class ManageTokensViewModel(
                 isSelected = apparentTokenId in selectedTokenIds,
             )
 
-            val results = awaitAll(
-                async { tokensInteractor.loadCIS2TokensMetadata(listOf(apparentToken)) },
-                async { tokensInteractor.loadTokensBalances(accountAddress, listOf(apparentToken)) }
-            )
+            try {
+                awaitAll(
+                    async {
+                        tokensInteractor.loadCIS2TokensMetadata(listOf(apparentToken))
+                    },
+                    async {
+                        tokensInteractor.loadTokensBalances(
+                            accountAddress = accountAddress,
+                            tokens = listOf(apparentToken),
+                        )
+                    },
+                )
 
-            if (results.all { it.isSuccess }) {
-                everFoundExactTokens.add(apparentToken)
-                exactToken = apparentToken
-                lookForExactToken.postValue(TOKENS_OK)
-            } else {
-                val error = results.first { it.isFailure }.exceptionOrNull()
-                handleBackendError(error!!)
+                if (apparentToken.metadata != null || apparentToken.metadataError.isNotEmpty()) {
+                    everFoundExactTokens.add(apparentToken)
+                    exactToken = apparentToken
+                    lookForExactToken.postValue(TOKENS_OK)
+                } else {
+                    exactToken = null
+                    lookForExactToken.postValue(TOKENS_EMPTY)
+                }
+            } catch (e: Throwable) {
+                handleBackendError(e)
                 exactToken = null
                 lookForExactToken.postValue(TOKENS_EMPTY)
             }

@@ -20,6 +20,7 @@ data class ContractToken(
      */
     val token: String = "",
     var metadata: ContractTokenMetadata? = null,
+    var metadataError: String = "",
 ) : Token, WithThumbnail {
 
     override val symbol: String

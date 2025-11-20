@@ -52,10 +52,15 @@ class ManageTokensSelectionAdapter(
         val token = dataSet[position]
 
         holder.binding.title.text =
-            if (token is ContractToken && token.isUnique)
-                token.metadata?.name ?: ""
-            else
-                token.symbol
+            when {
+                (token is ContractToken && token.isUnique) ->
+                    token.metadata?.name ?: ""
+
+                (token is ContractToken && token.symbol.isEmpty()) ->
+                    token.token
+
+                else -> token.symbol
+            }
 
         if (token is ContractToken && token.isUnique) {
             holder.binding.subtitle.text =
@@ -68,6 +73,13 @@ class ManageTokensSelectionAdapter(
                 value = token.balance,
                 decimals = token.decimals
             )
+        }
+
+        if (token is ContractToken && token.metadataError.isNotEmpty()) {
+            holder.binding.subtitleError.isVisible = true
+            holder.binding.subtitleError.text = token.metadataError
+        } else {
+            holder.binding.subtitleError.isVisible = false
         }
 
         holder.iconView.showTokenIcon(token)
