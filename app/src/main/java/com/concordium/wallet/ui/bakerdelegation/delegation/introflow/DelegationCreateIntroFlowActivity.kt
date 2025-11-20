@@ -18,7 +18,6 @@ class DelegationCreateIntroFlowActivity :
             R.string.delegation_intro_subtitle4,
             R.string.delegation_intro_subtitle5,
             R.string.delegation_intro_subtitle6,
-            R.string.delegation_intro_subtitle7
         )
     }
 

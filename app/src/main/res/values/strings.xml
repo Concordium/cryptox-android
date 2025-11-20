@@ -269,7 +269,7 @@
     <string name="account_qr_code_title">Receive funds</string>
     <string name="account_qr_code_share">Share</string>
     <string name="account_qr_code_copy">Copy</string>
-    <string name="account_qr_code_copied">Address copied</string>
+    <string name="account_qr_code_copied">Account address copied to clipboard</string>
     <string name="account_qr_code_show_qr">Show this QR code to another Concordium user to receive funds. Alternatively share your account address.</string>
     <string name="account_qr_code_or">or</string>
     <!-- ***** Transaction / Send funds ***** -->
@@ -562,13 +562,13 @@
     <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
     <string name="cis_manage_token_list">Manage Tokens</string>
     <string name="cis_concordium_network">Concordium Network</string>
-    <string name="cis_add_token_title">Search Tokens</string>
+    <string name="cis_add_token_title">Token Details</string>
     <string name="cis_token_details_balance">Token Details</string>
     <string name="cis_find_tokens_hint">Search tokens by contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_add_tokens_continue">Update Token List</string>
     <string name="cis_update_tokens">Apply</string>
-    <string name="cis_find_tokens_none">No search results</string>
+    <string name="cis_find_tokens_none">No results match your search</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
     <string name="cis_select_token_title">Choose a Token</string>
     <string name="cis_send_continue">Preview Transaction</string>
@@ -617,9 +617,9 @@
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
-    <string name="cis_no_tokens_found">No search results</string>
+    <string name="cis_no_tokens_found">No results match your search</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens</string>
-    <string name="cis_tokens_updated">Token list updated</string>
+    <string name="cis_tokens_updated">Token List Updated</string>
     <string name="cis_hide_token">Hide Token From Account</string>
     <string name="cis_hide_token_item">Hide Token</string>
     <string name="cis_hide_token_title">Hiding a Token</string>
@@ -713,13 +713,12 @@
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
     <string name="delegation_intro_flow_learn_about">Learn About Staking</string>
-    <string name="delegation_intro_subtitle1">Delegation</string>
-    <string name="delegation_intro_subtitle2">Delegation models</string>
-    <string name="delegation_intro_subtitle3">Staking pools</string>
-    <string name="delegation_intro_subtitle4">Passive delegation</string>
-    <string name="delegation_intro_subtitle5">Pay days</string>
-    <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
-    <string name="delegation_intro_subtitle7">The status page</string>
+    <string name="delegation_intro_subtitle1">Description</string>
+    <string name="delegation_intro_subtitle2">Staking pools</string>
+    <string name="delegation_intro_subtitle3">Passive delegation</string>
+    <string name="delegation_intro_subtitle4">Pay days</string>
+    <string name="delegation_intro_subtitle5">Lock-in and cool-downs</string>
+    <string name="delegation_intro_subtitle6">The status page</string>
 
     <string name="delegation_update_subtitle1">Updating your delegation</string>
     <string name="delegation_update_subtitle2">Pay day updates</string>
