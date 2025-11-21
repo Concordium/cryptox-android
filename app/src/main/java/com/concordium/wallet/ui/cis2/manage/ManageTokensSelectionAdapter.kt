@@ -75,12 +75,8 @@ class ManageTokensSelectionAdapter(
             )
         }
 
-        if (token is ContractToken && token.metadataError.isNotEmpty()) {
-            holder.binding.subtitleError.isVisible = true
-            holder.binding.subtitleError.text = token.metadataError
-        } else {
-            holder.binding.subtitleError.isVisible = false
-        }
+        holder.binding.subtitleError.isVisible =
+            token is ContractToken && token.metadataError.isNotEmpty()
 
         holder.iconView.showTokenIcon(token)
 
