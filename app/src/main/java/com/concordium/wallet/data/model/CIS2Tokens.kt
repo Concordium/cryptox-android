@@ -10,10 +10,12 @@ data class CIS2Tokens(
 // Additional entity for correct id mapping
 data class DataToken(
     val id: Int = 0,
-    val token: String = ""
+    val token: String = "",
+    val totalSupply: String = ""
 )
 
 fun DataToken.toContractToken() = ContractToken(
     uid = id.toString(),
-    token = token
+    token = token,
+    totalSupply = totalSupply.toBigInteger()
 )

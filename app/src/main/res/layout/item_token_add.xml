@@ -43,7 +43,7 @@
         android:importantForAccessibility="no"
         android:src="@drawable/mw24_ic_circled_block_deny"
         app:layout_constraintBottom_toBottomOf="@id/title"
-        app:layout_constraintEnd_toStartOf="@id/subtitle"
+        app:layout_constraintEnd_toStartOf="@id/subtitle_error"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/title"
         app:layout_constraintTop_toTopOf="@id/title"
@@ -62,6 +62,20 @@
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintTop_toTopOf="@id/selection"
         tools:text="@string/cis_not_owned" />
+
+    <ImageView
+        android:id="@+id/subtitle_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size8"
+        android:gravity="end"
+        android:importantForAccessibility="no"
+        android:src="@drawable/mw24_ic_circled_warning_exclamation"
+        app:tint="@color/mw24_content_error_primary"
+        app:layout_constraintBottom_toBottomOf="@id/subtitle"
+        app:layout_constraintEnd_toStartOf="@id/subtitle"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@id/subtitle" />
 
     <TextView
         android:id="@+id/token_type"

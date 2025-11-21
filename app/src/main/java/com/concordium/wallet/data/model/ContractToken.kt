@@ -20,6 +20,8 @@ data class ContractToken(
      */
     val token: String = "",
     var metadata: ContractTokenMetadata? = null,
+    var metadataError: String = "",
+    var totalSupply: BigInteger = BigInteger.ZERO
 ) : Token, WithThumbnail {
 
     override val symbol: String

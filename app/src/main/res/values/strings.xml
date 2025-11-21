@@ -618,6 +618,7 @@
     <string name="cis_total_supply">Total Supply</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_ownership">Ownership</string>
+    <string name="cis_metadata">Metadata</string>
     <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
     <string name="cis_no_tokens_found">No results match your search</string>
