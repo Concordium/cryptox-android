@@ -563,7 +563,8 @@
     <string name="cis_manage_tokens">Enter the token name or contract index to search for tokens.</string>
     <string name="cis_manage_token_list">Manage Tokens</string>
     <string name="cis_concordium_network">Concordium Network</string>
-    <string name="cis_add_token_title">Token Details</string>
+    <string name="cis_add_token_title">Search Tokens</string>
+    <string name="cis_add_token_details_title">Token Details</string>
     <string name="cis_add_tokens">Add Tokens</string>
     <string name="cis_token_details_title">Token Details</string>
     <string name="cis_token_details_balance">Token Details</string>
