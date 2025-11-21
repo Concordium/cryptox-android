@@ -41,6 +41,7 @@ class TokenDetailsView(
             setContractIndexAndSubIndex(token)
             setTokenId(token)
             setOwnership(token)
+            setTokenError(token)
         }
 
         if (isHideVisible) {
@@ -221,6 +222,11 @@ class TokenDetailsView(
                 binding.cis2TokenTypeHolder.rootLayout.visibility = View.GONE
             }
         }
+    }
+
+    private fun setTokenError(token: ContractToken) {
+        binding.metadataErrorHolder.isVisible = token.metadataError.isNotEmpty()
+        binding.metadataError.text = token.metadataError
     }
 
     private fun setReleaseScheduleButton(

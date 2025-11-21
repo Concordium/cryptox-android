@@ -94,6 +94,38 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/metadata_error_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size12"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mw24_plain_white_10" />
+
+            <TextView
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size12"
+                android:text="@string/cis_metadata"
+                android:textColor="@color/mw24_blue_3_50" />
+
+            <TextView
+                android:id="@+id/metadata_error"
+                style="@style/MW24_Typography_Main_Capture_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/mw24_content_error_primary"
+                tools:text="Metadata error!"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/ownership_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

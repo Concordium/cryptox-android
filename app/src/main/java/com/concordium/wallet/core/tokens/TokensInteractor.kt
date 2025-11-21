@@ -102,12 +102,11 @@ class TokensInteractor(
         tokens
     }
 
-    suspend fun loadCIS2TokensMetadata(tokens: List<ContractToken>) {
+    suspend fun loadCIS2TokensMetadata(tokens: List<ContractToken>) =
         loadCIS2TokensMetadataUseCase(
             proxyRepository = proxyRepository,
             tokensToUpdate = tokens
         )
-    }
 
     suspend fun loadProtocolLevelTokenWithMetadata(
         accountAddress: String,

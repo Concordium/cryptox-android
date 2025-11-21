@@ -4,7 +4,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataBackendInstance
 import com.concordium.wallet.data.backend.tokenmetadata.TokenMetadataHashException
 import com.concordium.wallet.data.model.ContractToken
-import com.concordium.wallet.data.model.ContractTokenMetadata
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,7 +31,6 @@ class LoadCIS2TokensMetadataUseCase {
                         separator = ",",
                         transform = ContractToken::token,
                     )
-
                     try {
                         val ciS2TokensMetadata = proxyRepository.getCIS2TokenMetadataV1(
                             index = contractIndex,
@@ -44,19 +42,16 @@ class LoadCIS2TokensMetadataUseCase {
                             // Request the actual metadata in parallel.
                             .map { metadataItem ->
                                 async(Dispatchers.IO) {
+                                    val correspondingToken = contractTokens.first {
+                                        it.token == metadataItem.tokenId
+                                    }
                                     try {
-                                        val verifiedMetadata: ContractTokenMetadata =
-                                            TokenMetadataBackendInstance
-                                                .getContractTokenMetadata(
-                                                    url = metadataItem.metadataURL,
-                                                    sha256HashHex = metadataItem.metadataChecksum,
-                                                )
-                                                .getOrThrow()
-                                        val correspondingToken = contractTokens.first {
-                                            it.token == metadataItem.tokenId
-                                        }
-                                        correspondingToken.metadata =
-                                            verifiedMetadata
+                                        val verifiedMetadata = TokenMetadataBackendInstance
+                                            .getContractTokenMetadata(
+                                                url = metadataItem.metadataURL,
+                                                sha256HashHex = metadataItem.metadataChecksum,
+                                            ).getOrThrow()
+                                        correspondingToken.metadata = verifiedMetadata
                                         correspondingToken.contractName =
                                             ciS2TokensMetadata.contractName
                                     } catch (e: TokenMetadataHashException) {
@@ -64,6 +59,7 @@ class LoadCIS2TokensMetadataUseCase {
                                             "Metadata hash mismatch:\n" +
                                                     "metadataItem=$metadataItem"
                                         )
+                                        correspondingToken.metadataError = HASH_ERROR
                                     } catch (e: Throwable) {
                                         ensureActive()
                                         Log.e(
@@ -71,6 +67,7 @@ class LoadCIS2TokensMetadataUseCase {
                                                     "metadataItem=$metadataItem" +
                                                     e
                                         )
+                                        correspondingToken.metadataError = METADATA_FAILED
                                     }
                                 }
                             }.awaitAll()
@@ -85,5 +82,10 @@ class LoadCIS2TokensMetadataUseCase {
                     }
                 }
         }
+    }
+
+    companion object {
+        private const val HASH_ERROR = "Metadata hash mismatch"
+        private const val METADATA_FAILED = "Failed to load metadata"
     }
 }
