@@ -12,6 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientListBinding
+import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
@@ -34,9 +35,6 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         ActivityRecipientListBinding.bind(findViewById(R.id.root_layout))
     }
     private lateinit var recipientAdapter: RecipientAdapter
-
-    //region Lifecycle
-    // ************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +79,8 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
             }
         }
 
-        viewModel.recipientListLiveData.observe(this) {
-            it.let {
+        viewModel.recipientsList.collectWhenStarted(this) {
+            if (it.isNotEmpty()) {
                 recipientAdapter.setData(it)
                 showWaiting(false)
             }
@@ -145,7 +143,7 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
     private fun initializeList(isSelectMode: Boolean) {
         recipientAdapter = RecipientAdapter(
             callback = object : IListCallback {
-                override fun delete(item: Recipient) {
+                override fun delete(item: RecipientListItem.RecipientItem) {
                     Log.d("Delete")
                     confirmationBottomSheet?.setData(
                         description = "Do you really want to delete ${item.name} contact?",
@@ -153,11 +151,11 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
                     )
                 }
 
-                override fun handleRowClick(item: Recipient) {
+                override fun handleRowClick(item: RecipientListItem.RecipientItem) {
                     if (viewModel.canGoBackWithRecipientAddress(item.address)) {
-                        goBackWithRecipient(item)
+                        goBackWithRecipient(Recipient(item.address))
                     } else {
-                        gotoEditRecipient(item)
+                        gotoEditRecipient(item.toRecipient())
                     }
                 }
             },

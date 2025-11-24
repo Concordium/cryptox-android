@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.Button
 import android.widget.TextView
 import com.concordium.wallet.R
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 interface INotification {
@@ -12,7 +11,8 @@ interface INotification {
     fun cancelDeleteContact()
 }
 
-class ConfirmationBottomSheet(context: Context, callback: INotification) : BottomSheetDialog(context, R.style.AppBottomSheetDialogTheme) {
+class ConfirmationBottomSheet(context: Context, callback: INotification) :
+    BottomSheetDialog(context, R.style.AppBottomSheetDialogTheme) {
 
     enum class Type {
         INFO, ERROR, WARNING
@@ -26,7 +26,6 @@ class ConfirmationBottomSheet(context: Context, callback: INotification) : Botto
 
     init {
         setContentView(R.layout.confirmation_bottomsheet)
-        behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         behavior.skipCollapsed = true
         behavior.isFitToContents = false
         behavior.isDraggable = false

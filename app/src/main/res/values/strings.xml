@@ -408,6 +408,7 @@
     <string name="recipient_list_search_hint">Search recipients</string>
     <string name="recipient_list_search_label">Recipient Address</string>
     <string name="recipient_list_continue">Continue</string>
+    <string name="recipient_list_recents">Recents</string>
     <!-- New recipient -->
     <string name="recipient_edit_title">Edit Address</string>
     <string name="recipient_new_title">New Recipient</string>
