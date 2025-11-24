@@ -52,7 +52,8 @@
                 android:src="@drawable/mw24_ic_scan_qr"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/search_icon"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/mw24_content_secondary" />
 
             <ImageView
                 android:id="@+id/search_icon"
@@ -61,10 +62,11 @@
                 android:layout_marginEnd="12dp"
                 android:contentDescription="@string/recipient_list_search_hint"
                 android:padding="4dp"
-                android:src="@drawable/cryptox_ico_search"
+                android:src="@drawable/mw24_ic_recipient_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/mw24_content_secondary" />
 
             <SearchView
                 android:id="@+id/recipient_searchview"
@@ -86,10 +88,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/size24"
             android:text="@string/recipient_list_default_title"
-            android:textAppearance="@style/MW24_Typography_Label_Main"
-            android:textColor="@color/cryptox_white_main"
+            android:textAppearance="@style/MW24_Typography_Label_M_Medium"
+            android:textColor="@color/mw24_content_secondary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_layout" />
 
