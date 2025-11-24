@@ -172,6 +172,8 @@ object CurrencyUtil {
 
     private fun formatGTUWithCommas(value: String): String {
         val bigDecimalValue = value.replace(separator, '.').toBigDecimal()
+        if (bigDecimalValue.compareTo(BigDecimal.ZERO) == 0)
+            return ZERO_AMOUNT
         return formatter.format(bigDecimalValue)
     }
 }
