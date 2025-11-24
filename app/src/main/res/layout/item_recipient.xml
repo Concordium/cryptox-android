@@ -11,7 +11,7 @@
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/size4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,26 +27,26 @@
                 android:id="@+id/foreground_root"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingStart="@dimen/size12"
-                android:paddingVertical="@dimen/size16"
                 android:background="@drawable/mw24_container_primary_background"
                 android:elevation="444dp"
+                android:padding="@dimen/size16"
                 tools:ignore="RtlSymmetry">
 
                 <TextView
                     android:id="@+id/recipient_name_textview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginHorizontal="@dimen/size12"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:gravity="end"
+                    android:maxLines="1"
                     android:textAppearance="@style/MW24_Typography_Text_Mid"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/arrow"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@id/recipient_address_textview"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginEnd="0dp"
                     tools:text="Carrie Riley" />
 
                 <TextView
@@ -59,16 +59,15 @@
                     android:textAppearance="@style/MW24_Typography_Text_Mid"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/recipient_name_textview"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="3GyDcDZZAvrFt3axX2MwYYeBjQo8EGfeN8NTQ9tbWkMEKSmTaW" />
 
                 <ImageView
                     android:id="@+id/arrow"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:layout_marginEnd="@dimen/size16"
                     android:importantForAccessibility="no"
                     android:src="@drawable/cryptox_ico_chevron_right"
                     app:layout_constraintBottom_toBottomOf="parent"

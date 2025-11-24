@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.recipient.recipientlist
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -20,8 +19,7 @@ import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getOptionalSerializable
 
-class RecipientListActivity :
-    BaseActivity(R.layout.activity_recipient_list, R.string.recipient_list_default_title),
+class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
     INotification {
 
     companion object {
@@ -44,25 +42,29 @@ class RecipientListActivity :
         super.onCreate(savedInstanceState)
 
         initializeViewModel()
+        val senderAccount = intent.getOptionalSerializable(
+            EXTRA_SENDER_ACCOUNT,
+            Account::class.java
+        )
         viewModel.initialize(
             isShielded = intent.getBooleanExtra(EXTRA_SHIELDED, false),
-            senderAccount = intent.getOptionalSerializable(
-                EXTRA_SENDER_ACCOUNT,
-                Account::class.java
-            )
+            senderAccount = senderAccount
         )
-        initializeViews()
-
-        hideAddContact(isVisible = true) {
-            val intent = Intent(this, RecipientActivity::class.java)
-            intent.putExtra(RecipientActivity.EXTRA_GOTO_SCAN_QR, false)
-            startActivity(intent)
+        if (senderAccount != null) {
+            setActionBarTitle(R.string.recipient_list_select_title)
+            hideAddContact(isVisible = false)
+            hideQrScan(isVisible = true) {
+                gotoScanBarCode()
+            }
+        } else {
+            setActionBarTitle(R.string.recipient_list_default_title)
+            hideAddContact(isVisible = true) {
+                gotoNewRecipient()
+            }
+            hideQrScan(isVisible = false)
         }
-
+        initializeViews(senderAccount != null)
         hideActionBarBack(isVisible = true)
-        hideLeftPlus(isVisible = false) {
-            gotoNewRecipient()
-        }
 
         confirmationBottomSheet = ConfirmationBottomSheet(this, this)
     }
@@ -87,11 +89,8 @@ class RecipientListActivity :
         }
     }
 
-    private fun initializeViews() {
+    private fun initializeViews(isSelectMode: Boolean) {
         showWaiting(true)
-        binding.scanQrIcon.setOnClickListener {
-            gotoScanBarCode()
-        }
 
         binding.recipientSearchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(txt: String?): Boolean {
@@ -111,12 +110,12 @@ class RecipientListActivity :
             }
         }
 
-        initializeList()
+        initializeList(isSelectMode)
     }
 
     private val gerResultQRScan =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 result?.data?.getStringExtra(Constants.Extras.EXTRA_SCANNED_QR_CONTENT)
                     ?.let { address ->
                         binding.recipientSearchview.setQuery(address, true)
@@ -143,24 +142,27 @@ class RecipientListActivity :
         recipientAdapter.filter(text)
     }
 
-    private fun initializeList() {
-        recipientAdapter = RecipientAdapter(object : IListCallback {
-            override fun delete(item: Recipient) {
-                Log.d("Delete")
-                confirmationBottomSheet?.setData(
-                    description = "Do you really want to delete ${item.name} contact?",
-                    data = item
-                )
-            }
-
-            override fun handleRowClick(item: Recipient) {
-                if (viewModel.canGoBackWithRecipientAddress(item.address)) {
-                    goBackWithRecipient(item)
-                } else {
-                    gotoEditRecipient(item)
+    private fun initializeList(isSelectMode: Boolean) {
+        recipientAdapter = RecipientAdapter(
+            callback = object : IListCallback {
+                override fun delete(item: Recipient) {
+                    Log.d("Delete")
+                    confirmationBottomSheet?.setData(
+                        description = "Do you really want to delete ${item.name} contact?",
+                        data = item
+                    )
                 }
-            }
-        })
+
+                override fun handleRowClick(item: Recipient) {
+                    if (viewModel.canGoBackWithRecipientAddress(item.address)) {
+                        goBackWithRecipient(item)
+                    } else {
+                        gotoEditRecipient(item)
+                    }
+                }
+            },
+            isSelectMode = isSelectMode
+        )
         binding.recyclerview.setHasFixedSize(true)
         binding.recyclerview.adapter = recipientAdapter
     }
@@ -170,7 +172,6 @@ class RecipientListActivity :
         binding.apply {
             searchLabel.isVisible = visible
             searchIcon.isVisible = visible
-            scanQrIcon.isVisible = visible
         }
     }
 
@@ -189,6 +190,7 @@ class RecipientListActivity :
 
     private fun gotoNewRecipient() {
         val intent = Intent(this, RecipientActivity::class.java)
+        intent.putExtra(RecipientActivity.EXTRA_GOTO_SCAN_QR, false)
         startActivity(intent)
     }
 
@@ -201,7 +203,7 @@ class RecipientListActivity :
     private fun goBackWithRecipient(recipient: Recipient) {
         val intent = Intent()
         intent.putExtra(EXTRA_RECIPIENT, recipient)
-        setResult(Activity.RESULT_OK, intent)
+        setResult(RESULT_OK, intent)
         finish()
     }
 

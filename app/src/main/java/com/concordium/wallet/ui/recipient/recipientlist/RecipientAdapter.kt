@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ItemRecipientBinding
@@ -19,8 +20,10 @@ interface IListCallback {
 }
 
 @SuppressLint("NotifyDataSetChanged")
-class RecipientAdapter(private val callback: IListCallback) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecipientAdapter(
+    private val callback: IListCallback,
+    private val isSelectMode: Boolean
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var data: List<Recipient> = emptyList()
     private var allData: List<Recipient> = emptyList()
@@ -49,10 +52,12 @@ class RecipientAdapter(private val callback: IListCallback) :
         private val nameTextView: TextView = view.recipientNameTextview
         private val addressTextView: TextView = view.recipientAddressTextview
         private val deleteBtn: ImageView = view.deleteContact
+        private val arrowIcon: ImageView = view.arrow
 
         fun bind(item: Recipient) {
             nameTextView.text = item.name
             addressTextView.text = item.address
+            arrowIcon.isVisible = !isSelectMode
 
             deleteBtn.setOnClickListener {
                 callback.delete(item)

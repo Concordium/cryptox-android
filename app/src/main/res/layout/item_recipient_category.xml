@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/size24"
+    android:layout_marginBottom="@dimen/size16"
+    android:text="@string/recipient_list_default_title"
+    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
+    android:textColor="@color/mw24_content_secondary"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/search_layout" />

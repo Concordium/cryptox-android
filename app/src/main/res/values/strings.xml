@@ -404,7 +404,7 @@
     <!-- ***** Recipient ***** -->
     <!-- Select recipient -->
     <string name="recipient_list_default_title">Address Book</string>
-    <string name="recipient_list_select_title">Choose recipient</string>
+    <string name="recipient_list_select_title">Choose a Recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
     <string name="recipient_list_search_label">Recipient Address</string>
     <string name="recipient_list_continue">Continue</string>

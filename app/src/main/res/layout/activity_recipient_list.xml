@@ -23,7 +23,7 @@
             android:id="@+id/search_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
+            android:layout_marginHorizontal="@dimen/size16"
             android:layout_marginTop="20dp"
             android:background="@drawable/mw24_container_stroked_background"
             android:paddingVertical="8dp"
@@ -41,19 +41,6 @@
                 android:textColor="@color/mw24_blue_3_50"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/scan_qr_icon"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/recipient_list_search_hint"
-                android:padding="2dp"
-                android:src="@drawable/mw24_ic_scan_qr"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/search_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/mw24_content_secondary" />
 
             <ImageView
                 android:id="@+id/search_icon"
@@ -77,34 +64,21 @@
                 android:queryBackground="@android:color/transparent"
                 android:searchIcon="@null"
                 android:theme="@style/MW24_Typography_Text_Mid"
-                app:layout_constraintEnd_toStartOf="@id/scan_qr_icon"
+                app:layout_constraintEnd_toStartOf="@id/search_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/search_label" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/category_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="@dimen/size24"
-            android:text="@string/recipient_list_default_title"
-            android:textAppearance="@style/MW24_Typography_Label_M_Medium"
-            android:textColor="@color/mw24_content_secondary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_layout" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="@dimen/size16"
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_label"
+            app:layout_constraintTop_toBottomOf="@+id/search_layout"
             tools:listitem="@layout/item_recipient"
             tools:visibility="visible" />
 
@@ -113,7 +87,7 @@
             style="@style/MW24_Button_Primary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp"
+            android:layout_marginHorizontal="@dimen/size16"
             android:layout_marginBottom="20dp"
             android:text="@string/recipient_list_continue"
             android:visibility="gone"
