@@ -24,6 +24,7 @@ import com.concordium.sdk.types.UInt64
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.RecentRecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
@@ -36,6 +37,8 @@ import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.RecentRecipientEntity
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -60,6 +63,8 @@ class SendTokenReceiptViewModel(
 
     private val transferRepository =
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
+    private val recentRecipientRepository =
+        RecentRecipientRepository(App.appCore.session.walletStorage.database.recentRecipientDao())
 
     private var accountNonceRequest: BackendRequest<*>? = null
     private var submitTransactionJob: Job? = null
@@ -366,12 +371,26 @@ class SendTokenReceiptViewModel(
         )
         transactionWaiting.postValue(false)
         saveNewTransfer(transfer)
+        saveRecipientToRecent(sendTokenData.receiverAddress!!)
         transaction.postValue(transfer.toTransaction())
         transactionReady.postValue(submissionId)
     }
 
     private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
         transferRepository.insert(transfer)
+    }
+
+    private fun saveRecipientToRecent(recipientAddress: String) = viewModelScope.launch {
+        val recentRecipient = recentRecipientRepository.getByAddress(recipientAddress)
+        recentRecipientRepository.insert(
+            recentRecipient?.copy(addedAt = System.currentTimeMillis())
+                ?: RecentRecipientEntity(
+                    id = 0,
+                    name = Account.getDefaultName(recipientAddress),
+                    address = recipientAddress,
+                    addedAt = System.currentTimeMillis()
+                )
+        )
     }
 
     private fun handleBackendError(throwable: Throwable) {

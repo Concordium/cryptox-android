@@ -7,12 +7,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.data.RecentRecipientRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class RecipientListViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,8 +23,11 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
     private var isShielded: Boolean = false
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
+    private val recentRecipientRepository =
+        RecentRecipientRepository(App.appCore.session.walletStorage.database.recentRecipientDao())
 
-    private val allRecipientsLiveData = recipientRepository.allRecipients
+    private val allRecipientsFlow = recipientRepository.allRecipients
+    private val allRecentRecipientsFlow = recentRecipientRepository.allRecentRecipients
 
     private val _recipientsList = MutableStateFlow<List<RecipientListItem>>(listOf())
     val recipientsList = _recipientsList.asStateFlow()
@@ -41,20 +46,7 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
         this.isShielded = isShielded
         this.senderAccount = senderAccount
 
-        allRecipientsLiveData.observeForever { allRecipients ->
-            val filtered = if (senderAccount != null) {
-                allRecipients.filter { it.address != senderAccount.address }
-            } else {
-                allRecipients
-            }
-            val items = filtered
-                .map { it.toRecipientItem() }
-                .groupBy { it.recipientType }
-                .flatMap { (recipientType, recipients) ->
-                    listOf(RecipientListItem.Category(recipientType)) + recipients
-                }
-            _recipientsList.value = items
-        }
+        initRecipientsList(senderAccount)
     }
 
     fun deleteRecipient(recipient: Recipient) = viewModelScope.launch(Dispatchers.IO) {
@@ -63,5 +55,35 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
 
     fun canGoBackWithRecipientAddress(address: String): Boolean {
         return senderAccount != null && cryptoLibrary.checkAccountAddress(address)
+    }
+
+    private fun initRecipientsList(senderAccount: Account?) = viewModelScope.launch {
+        combine(
+            allRecipientsFlow,
+            allRecentRecipientsFlow
+        ) { allRecipients, allRecentRecipients ->
+            val filteredRecentRecipients =
+                if (senderAccount != null) {
+                    allRecentRecipients
+                        .filter { it.address != senderAccount.address }
+                        .take(2)
+                } else emptyList()
+
+            val filteredRecipients = if (senderAccount != null) {
+                allRecipients.filter { it.address != senderAccount.address }
+            } else allRecipients
+
+            val items = (
+                    filteredRecentRecipients.map { it.toRecipientItem() } +
+                            filteredRecipients.map { it.toRecipientItem() }
+                    )
+                .groupBy { it.recipientType }
+                .flatMap { (recipientType, recipients) ->
+                    listOf(RecipientListItem.Category(recipientType)) + recipients
+                }
+            items
+        }.collect { items ->
+            _recipientsList.value = items
+        }
     }
 }

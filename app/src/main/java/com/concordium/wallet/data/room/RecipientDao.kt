@@ -1,14 +1,20 @@
 package com.concordium.wallet.data.room
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface RecipientDao {
 
     @Query("SELECT * FROM recipient_table ORDER BY name ASC")
-    fun getAllAsLiveData(): LiveData<List<Recipient>>
+    fun getAllAsFlow(): Flow<List<Recipient>>
 
     @Query("SELECT * FROM recipient_table ORDER BY name ASC")
     suspend fun getAll(): List<Recipient>

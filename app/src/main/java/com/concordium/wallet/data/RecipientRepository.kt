@@ -1,12 +1,11 @@
 package com.concordium.wallet.data
 
-import androidx.lifecycle.LiveData
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.RecipientDao
 
 class RecipientRepository(private val recipientDao: RecipientDao) {
 
-    val allRecipients: LiveData<List<Recipient>> = recipientDao.getAllAsLiveData()
+    val allRecipients = recipientDao.getAllAsFlow()
 
     suspend fun getAll(): List<Recipient> {
         return recipientDao.getAll()
