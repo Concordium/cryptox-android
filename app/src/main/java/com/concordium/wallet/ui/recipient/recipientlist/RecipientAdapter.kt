@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.recipient.recipientlist
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,12 +48,10 @@ class RecipientAdapter(
         }
     }
 
-
     override fun getItemViewType(position: Int): Int = when (data[position]) {
         is RecipientListItem.Category -> R.layout.item_recipient_category
         is RecipientListItem.RecipientItem -> R.layout.item_recipient
     }
-
 
     sealed class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         class Category(itemView: View) : ItemViewHolder(itemView) {
@@ -163,31 +160,9 @@ class RecipientAdapter(
 
         // Update internal lists with the new data
         this.allData = data
-        if (!TextUtils.isEmpty(currentFilter)) {
-//            this.data = getFilteredList(data, currentFilter)
-        } else {
-            this.data = data
-        }
 
         // Perform change animations
         // diffResult.dispatchUpdatesTo(this)
         notifyDataSetChanged()
     }
-
-//    fun filter(filterString: String?) {
-//        currentFilter = filterString ?: ""
-//        data = getFilteredList(allData, currentFilter)
-//        notifyDataSetChanged()
-//    }
-//
-//    private fun getFilteredList(
-//        allData: List<RecipientListItem>, filterString: String
-//    ): List<RecipientListItem> {
-//        return allData.filter { it is RecipientListItem.RecipientItem }.filter { recipient ->
-//            recipient as RecipientListItem.RecipientItem
-//            recipient.name.lowercase()
-//                .contains(filterString.lowercase()) || recipient.address.lowercase()
-//                .contains(filterString.lowercase())
-//        }
-//    }
 }
