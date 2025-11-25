@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.recipient.recipientlist
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.SearchView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -73,17 +72,13 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[RecipientListViewModel::class.java]
 
-        viewModel.waitingLiveData.observe(this) { waiting ->
-            waiting?.let {
-                showWaiting(waiting)
-            }
+        viewModel.waiting.collectWhenStarted(this) {
+            showWaiting(it)
         }
 
-        viewModel.recipientsList.collectWhenStarted(this) {
-            if (it.isNotEmpty()) {
-                recipientAdapter.setData(it)
-                showWaiting(false)
-            }
+        viewModel.filteredList.collectWhenStarted(this) { list ->
+            recipientAdapter.setData(list)
+            showWaiting(false)
         }
     }
 
@@ -126,18 +121,14 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
             if (viewModel.canGoBackWithRecipientAddress(text)) {
                 binding.continueBtn.isVisible = true
                 binding.continueBtn.setOnClickListener {
-                    goBackWithRecipient(
-                        Recipient(
-                            address = text,
-                        )
-                    )
+                    goBackWithRecipient(Recipient(address = text))
                 }
             } else {
                 binding.continueBtn.isVisible = false
             }
         }
-        showSearchIcons(text)
-        recipientAdapter.filter(text)
+        viewModel.filter(text)
+        showSearchViews(text)
     }
 
     private fun initializeList(isSelectMode: Boolean) {
@@ -165,20 +156,18 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         binding.recyclerview.adapter = recipientAdapter
     }
 
-    private fun showSearchIcons(text: String?) {
+    private fun showSearchViews(text: String?) {
         val visible = text.isNullOrEmpty()
         binding.apply {
             searchLabel.isVisible = visible
             searchIcon.isVisible = visible
+            searchResultsLabel.isVisible = !visible && viewModel.filteredList.value.isNotEmpty()
+            searchNoResults.isVisible = !visible && viewModel.filteredList.value.isEmpty()
         }
     }
 
     private fun showWaiting(waiting: Boolean) {
-        if (waiting) {
-            binding.progress.progressLayout.visibility = View.VISIBLE
-        } else {
-            binding.progress.progressLayout.visibility = View.GONE
-        }
+        binding.progress.progressLayout.isVisible = waiting
     }
 
     private fun gotoScanBarCode() {

@@ -3,8 +3,6 @@ package com.concordium.wallet.ui.recipient.recipientlist
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.data.RecentRecipientRepository
@@ -30,13 +28,14 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
     private val allRecentRecipientsFlow = recentRecipientRepository.allRecentRecipients
 
     private val _recipientsList = MutableStateFlow<List<RecipientListItem>>(listOf())
-    val recipientsList = _recipientsList.asStateFlow()
+
+    private val _filteredList = MutableStateFlow<List<RecipientListItem>>(listOf())
+    val filteredList = _filteredList.asStateFlow()
+
+    private val _waiting = MutableStateFlow(true)
+    val waiting = _waiting.asStateFlow()
 
     private val cryptoLibrary = App.appCore.cryptoLibrary
-
-    private val _waitingLiveData = MutableLiveData<Boolean>()
-    val waitingLiveData: LiveData<Boolean>
-        get() = _waitingLiveData
 
     @SuppressLint("CheckResult")
     fun initialize(
@@ -84,6 +83,34 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
             items
         }.collect { items ->
             _recipientsList.value = items
+            _filteredList.value = items
+            _waiting.value = false
         }
+    }
+
+    fun filter(filterString: String?) {
+        val currentFilter = filterString ?: ""
+        val allItems = _recipientsList.value
+        if (currentFilter.isEmpty()) {
+            _filteredList.value = allItems
+        } else {
+            _filteredList.value = getFilteredList(
+                _recipientsList.value,
+                currentFilter
+            )
+        }
+    }
+
+    private fun getFilteredList(
+        allData: List<RecipientListItem>,
+        filterString: String
+    ): List<RecipientListItem> {
+        return allData
+            .filterIsInstance<RecipientListItem.RecipientItem>()
+            .filter { recipient ->
+                recipient.name.lowercase().contains(filterString.lowercase()) ||
+                        recipient.address.lowercase().contains(filterString.lowercase())
+            }
+            .distinctBy { it.address }
     }
 }

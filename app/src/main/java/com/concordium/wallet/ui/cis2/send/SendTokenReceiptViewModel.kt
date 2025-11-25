@@ -382,15 +382,20 @@ class SendTokenReceiptViewModel(
 
     private fun saveRecipientToRecent(recipientAddress: String) = viewModelScope.launch {
         val recentRecipient = recentRecipientRepository.getByAddress(recipientAddress)
-        recentRecipientRepository.insert(
-            recentRecipient?.copy(addedAt = System.currentTimeMillis())
-                ?: RecentRecipientEntity(
+        recentRecipient?.let {
+            recentRecipientRepository.update(
+                it.copy(addedAt = System.currentTimeMillis())
+            )
+        } ?: run {
+            recentRecipientRepository.insert(
+                RecentRecipientEntity(
                     id = 0,
                     name = Account.getDefaultName(recipientAddress),
                     address = recipientAddress,
                     addedAt = System.currentTimeMillis()
                 )
-        )
+            )
+        }
     }
 
     private fun handleBackendError(throwable: Throwable) {

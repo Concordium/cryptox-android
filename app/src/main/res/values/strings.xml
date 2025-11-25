@@ -407,6 +407,8 @@
     <string name="recipient_list_select_title">Choose a Recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
     <string name="recipient_list_search_label">Recipient Address</string>
+    <string name="recipient_list_search_results_title">Search Results</string>
+    <string name="recipient_list_search_no_results">No results match your search</string>
     <string name="recipient_list_continue">Continue</string>
     <string name="recipient_list_recents">Recents</string>
     <!-- New recipient -->

@@ -97,34 +97,42 @@ class RecipientAdapter(
                     callback.handleRowClick(item)
                 }
 
-                holder.binding.swipe.setOnSwipeListener(object : SwipeLayout.OnSwipeListener {
-                    override fun onBeginSwipe(swipeLayout: SwipeLayout?, moveToRight: Boolean) {
-                        if (lastSwipeLayout != null && lastSwipeLayout != swipeLayout) {
-                            lastSwipeLayout?.animateReset()
-                        }
-                        lastSwipeLayout = swipeLayout
-                    }
-
-                    override fun onSwipeClampReached(
-                        swipeLayout: SwipeLayout?, moveToRight: Boolean
-                    ) {
-                        swipedPos = position
-                    }
-
-                    override fun onLeftStickyEdge(swipeLayout: SwipeLayout?, moveToRight: Boolean) {
-                    }
-
-                    override fun onRightStickyEdge(
-                        swipeLayout: SwipeLayout?, moveToRight: Boolean
-                    ) {
-                    }
-                })
-                if (position == swipedPos) {
-                    holder.binding.rightDrag.post {
-                        shift(-holder.binding.rightDrag.width, holder.binding.swipe)
-                    }
+                if (isSelectMode) {
+                    holder.binding.swipe.isSwipeEnabled = false
                 } else {
-                    holder.binding.swipe.reset()
+                    holder.binding.swipe.isSwipeEnabled = true
+                        holder.binding.swipe.setOnSwipeListener(object : SwipeLayout.OnSwipeListener {
+                        override fun onBeginSwipe(swipeLayout: SwipeLayout?, moveToRight: Boolean) {
+                            if (lastSwipeLayout != null && lastSwipeLayout != swipeLayout) {
+                                lastSwipeLayout?.animateReset()
+                            }
+                            lastSwipeLayout = swipeLayout
+                        }
+
+                        override fun onSwipeClampReached(
+                            swipeLayout: SwipeLayout?, moveToRight: Boolean
+                        ) {
+                            swipedPos = position
+                        }
+
+                        override fun onLeftStickyEdge(
+                            swipeLayout: SwipeLayout?,
+                            moveToRight: Boolean
+                        ) {
+                        }
+
+                        override fun onRightStickyEdge(
+                            swipeLayout: SwipeLayout?, moveToRight: Boolean
+                        ) {
+                        }
+                    })
+                    if (position == swipedPos) {
+                        holder.binding.rightDrag.post {
+                            shift(-holder.binding.rightDrag.width, holder.binding.swipe)
+                        }
+                    } else {
+                        holder.binding.swipe.reset()
+                    }
                 }
             }
 
@@ -156,7 +164,7 @@ class RecipientAdapter(
         // Update internal lists with the new data
         this.allData = data
         if (!TextUtils.isEmpty(currentFilter)) {
-            this.data = getFilteredList(data, currentFilter)
+//            this.data = getFilteredList(data, currentFilter)
         } else {
             this.data = data
         }
@@ -166,20 +174,20 @@ class RecipientAdapter(
         notifyDataSetChanged()
     }
 
-    fun filter(filterString: String?) {
-        currentFilter = filterString ?: ""
-        data = getFilteredList(allData, currentFilter)
-        notifyDataSetChanged()
-    }
-
-    private fun getFilteredList(
-        allData: List<RecipientListItem>, filterString: String
-    ): List<RecipientListItem> {
-        return allData.filter { it is RecipientListItem.RecipientItem }.filter { recipient ->
-            recipient as RecipientListItem.RecipientItem
-            recipient.name.lowercase()
-                .contains(filterString.lowercase()) || recipient.address.lowercase()
-                .contains(filterString.lowercase())
-        }
-    }
+//    fun filter(filterString: String?) {
+//        currentFilter = filterString ?: ""
+//        data = getFilteredList(allData, currentFilter)
+//        notifyDataSetChanged()
+//    }
+//
+//    private fun getFilteredList(
+//        allData: List<RecipientListItem>, filterString: String
+//    ): List<RecipientListItem> {
+//        return allData.filter { it is RecipientListItem.RecipientItem }.filter { recipient ->
+//            recipient as RecipientListItem.RecipientItem
+//            recipient.name.lowercase()
+//                .contains(filterString.lowercase()) || recipient.address.lowercase()
+//                .contains(filterString.lowercase())
+//        }
+//    }
 }
