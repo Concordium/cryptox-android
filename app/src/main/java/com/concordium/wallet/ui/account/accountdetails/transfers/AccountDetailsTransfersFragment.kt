@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -84,35 +85,33 @@ class AccountDetailsTransfersFragment : Fragment() {
         }
 
         transfersViewModel.transferListFlow.collectWhenStarted(viewLifecycleOwner) { transferList ->
-            transferList?.let {
-                val filteredList = transferList.filterIndexed { index, currentItem ->
-                    var result = true
-                    if (currentItem.getItemType() == AdapterItem.ItemType.Header)
-                        result = showHeader(transferList, index)
-                    else if (currentItem.getItemType() == AdapterItem.ItemType.Item)
-                        result = showItem(currentItem)
-                    result
-                }
-
-                if (filteredList.isNotEmpty()) {
-                    transactionAdapter.setData(filteredList)
-                    transactionAdapter.removeFooter()
-                    if (transfersViewModel.hasMoreRemoteTransactionsToLoad) {
-                        transactionAdapter.addFooter()
-                    }
-                    transactionAdapter.onDataSetChanged()
-                }
-
-                if (filteredList.isEmpty()) {
-                    binding.recyclerview.visibility = View.GONE
-                    binding.noTransfersTextview.visibility = View.VISIBLE
-                } else {
-                    binding.noTransfersTextview.visibility = View.GONE
-                    binding.recyclerview.visibility = View.VISIBLE
-                }
-
-                transfersViewModel.allowScrollToLoadMore = true
+            val filteredList = transferList.filterIndexed { index, currentItem ->
+                var result = true
+                if (currentItem.getItemType() == AdapterItem.ItemType.Header)
+                    result = showHeader(transferList, index)
+                else if (currentItem.getItemType() == AdapterItem.ItemType.Item)
+                    result = showItem(currentItem)
+                result
             }
+
+            if (filteredList.isNotEmpty()) {
+                transactionAdapter.setData(filteredList)
+                transactionAdapter.removeFooter()
+                if (transfersViewModel.hasMoreRemoteTransactionsToLoad) {
+                    transactionAdapter.addFooter()
+                }
+                transactionAdapter.onDataSetChanged()
+            }
+
+            if (filteredList.isEmpty()) {
+                binding.recyclerview.visibility = View.GONE
+                binding.noTransfersTextview.visibility = View.VISIBLE
+            } else {
+                binding.noTransfersTextview.visibility = View.GONE
+                binding.recyclerview.visibility = View.VISIBLE
+            }
+
+            transfersViewModel.allowScrollToLoadMore = true
         }
 
         transfersViewModel.showGTUDropFlow.collectWhenStarted(viewLifecycleOwner) { show ->
@@ -133,11 +132,7 @@ class AccountDetailsTransfersFragment : Fragment() {
     }
 
     private fun showWaiting(waiting: Boolean) {
-        if (waiting) {
-            binding.progress.progressLayout.visibility = View.VISIBLE
-        } else {
-            binding.progress.progressLayout.visibility = View.GONE
-        }
+        binding.progress.progressLayout.isVisible = waiting
     }
 
     private fun showHeader(transferList: List<AdapterItem>, currentIndex: Int): Boolean {

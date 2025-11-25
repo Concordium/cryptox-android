@@ -70,6 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:gravity="end"
             android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
             android:textColor="@color/mw24_blue_3_50"
             app:layout_constraintBottom_toBottomOf="@id/subheader_textview"
