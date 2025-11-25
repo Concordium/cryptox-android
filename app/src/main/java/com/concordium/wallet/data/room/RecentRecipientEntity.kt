@@ -20,6 +20,7 @@ data class RecentRecipientEntity(
 ) : Serializable {
 
     fun toRecipientItem() = RecipientListItem.RecipientItem(
+        id = id,
         name = name,
         address = address,
         addedAt = addedAt,

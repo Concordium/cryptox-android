@@ -23,9 +23,6 @@ class RecipientAdapter(
 ) : RecyclerView.Adapter<RecipientAdapter.ItemViewHolder>() {
 
     private var data: List<RecipientListItem> = emptyList()
-    private var allData: List<RecipientListItem> = emptyList()
-    private var currentFilter = ""
-
     private var swipedPos = -1
     private var lastSwipeLayout: SwipeLayout? = null
 
@@ -98,7 +95,7 @@ class RecipientAdapter(
                     holder.binding.swipe.isSwipeEnabled = false
                 } else {
                     holder.binding.swipe.isSwipeEnabled = true
-                        holder.binding.swipe.setOnSwipeListener(object : SwipeLayout.OnSwipeListener {
+                    holder.binding.swipe.setOnSwipeListener(object : SwipeLayout.OnSwipeListener {
                         override fun onBeginSwipe(swipeLayout: SwipeLayout?, moveToRight: Boolean) {
                             if (lastSwipeLayout != null && lastSwipeLayout != swipeLayout) {
                                 lastSwipeLayout?.animateReset()
@@ -151,18 +148,7 @@ class RecipientAdapter(
     }
 
     fun setData(data: List<RecipientListItem>) {
-        if (allData.isEmpty()) {
-            this.data = data
-            this.allData = data
-            notifyDataSetChanged()
-            return
-        }
-
-        // Update internal lists with the new data
-        this.allData = data
-
-        // Perform change animations
-        // diffResult.dispatchUpdatesTo(this)
+        this.data = data
         notifyDataSetChanged()
     }
 }

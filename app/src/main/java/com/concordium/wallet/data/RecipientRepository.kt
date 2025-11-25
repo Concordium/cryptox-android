@@ -23,8 +23,8 @@ class RecipientRepository(private val recipientDao: RecipientDao) {
         recipientDao.update(recipient)
     }
 
-    suspend fun delete(recipient: Recipient) {
-        recipientDao.delete(recipient)
+    suspend fun delete(address: String) {
+        recipientDao.delete(address)
     }
 
     suspend fun deleteAll() {

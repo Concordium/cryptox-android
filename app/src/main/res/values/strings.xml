@@ -1506,6 +1506,8 @@
     <string name="delegation_status_resume_button">Resume</string>
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
+    <string name="confirmation_bottom_sheet_title">Delete Recipient</string>
+    <string name="confirmation_bottom_sheet_description">Do you really want to delete %1$s contact?</string>
 
     <string name="account_details_earn_banner_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>

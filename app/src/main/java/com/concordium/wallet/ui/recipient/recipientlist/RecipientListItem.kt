@@ -18,6 +18,7 @@ sealed interface RecipientListItem {
     }
 
     data class RecipientItem(
+        val id: Int = 0,
         val name: String,
         val address: String,
         val recipientType: RecipientType,
@@ -25,7 +26,7 @@ sealed interface RecipientListItem {
     ) : RecipientListItem {
 
         fun toRecipient() = Recipient(
-            id = 0,
+            id = id,
             name = name,
             address = address,
         )

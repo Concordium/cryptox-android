@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.room
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -42,8 +41,8 @@ interface RecipientDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg recipient: Recipient)
 
-    @Delete
-    suspend fun delete(recipient: Recipient)
+    @Query("DELETE FROM recipient_table WHERE address = :address")
+    suspend fun delete(address: String)
 
     @Query("DELETE FROM recipient_table")
     suspend fun deleteAll()

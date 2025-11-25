@@ -25,6 +25,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.RecentRecipientRepository
+import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
@@ -63,6 +64,8 @@ class SendTokenReceiptViewModel(
 
     private val transferRepository =
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
     private val recentRecipientRepository =
         RecentRecipientRepository(App.appCore.session.walletStorage.database.recentRecipientDao())
 
@@ -381,20 +384,42 @@ class SendTokenReceiptViewModel(
     }
 
     private fun saveRecipientToRecent(recipientAddress: String) = viewModelScope.launch {
+        val recipient = recipientRepository.getRecipientByAddress(recipientAddress)
         val recentRecipient = recentRecipientRepository.getByAddress(recipientAddress)
-        recentRecipient?.let {
-            recentRecipientRepository.update(
-                it.copy(addedAt = System.currentTimeMillis())
-            )
-        } ?: run {
-            recentRecipientRepository.insert(
-                RecentRecipientEntity(
-                    id = 0,
-                    name = Account.getDefaultName(recipientAddress),
-                    address = recipientAddress,
-                    addedAt = System.currentTimeMillis()
+
+        when {
+            recipient != null && recentRecipient == null -> {
+                recentRecipientRepository.insert(
+                    recipient
+                        .toRecentRecipient()
+                        .copy(addedAt = System.currentTimeMillis())
                 )
-            )
+            }
+
+            recipient != null && recentRecipient != null -> {
+                recentRecipientRepository.update(
+                    recipient
+                        .toRecentRecipient()
+                        .copy(addedAt = System.currentTimeMillis())
+                )
+            }
+
+            recentRecipient != null -> {
+                recentRecipientRepository.update(
+                    recentRecipient.copy(addedAt = System.currentTimeMillis())
+                )
+            }
+
+            else -> {
+                recentRecipientRepository.insert(
+                    RecentRecipientEntity(
+                        id = 0,
+                        name = Account.getDefaultName(recipientAddress),
+                        address = recipientAddress,
+                        addedAt = System.currentTimeMillis()
+                    )
+                )
+            }
         }
     }
 

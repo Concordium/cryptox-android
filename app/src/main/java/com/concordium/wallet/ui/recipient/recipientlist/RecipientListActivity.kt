@@ -12,15 +12,14 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientListBinding
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.util.KeyboardUtil.showKeyboard
-import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getOptionalSerializable
 
-class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
-    INotification {
+class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list) {
 
     companion object {
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
@@ -28,7 +27,6 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
     }
 
-    private var confirmationBottomSheet: ConfirmationBottomSheet? = null
     private lateinit var viewModel: RecipientListViewModel
     private val binding by lazy {
         ActivityRecipientListBinding.bind(findViewById(R.id.root_layout))
@@ -62,8 +60,7 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         }
         initializeViews(senderAccount != null)
         hideActionBarBack(isVisible = true)
-
-        confirmationBottomSheet = ConfirmationBottomSheet(this, this)
+        initObservers()
     }
 
     private fun initializeViewModel() {
@@ -106,6 +103,19 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         initializeList(isSelectMode)
     }
 
+    private fun initObservers() {
+        supportFragmentManager.setFragmentResultListener(
+            DeleteRecipientBottomSheet.ACTION_DELETE,
+            this
+        ) { _, bundle ->
+            if (DeleteRecipientBottomSheet.getResult(bundle)) {
+                viewModel.deleteRecipient()
+            } else {
+                viewModel.setRecipient(null)
+            }
+        }
+    }
+
     private val gerResultQRScan =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -135,11 +145,12 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         recipientAdapter = RecipientAdapter(
             callback = object : IListCallback {
                 override fun delete(item: RecipientListItem.RecipientItem) {
-                    Log.d("Delete")
-                    confirmationBottomSheet?.setData(
-                        description = "Do you really want to delete ${item.name} contact?",
-                        data = item
-                    )
+                    viewModel.setRecipient(item.toRecipient())
+                    DeleteRecipientBottomSheet.newInstance(
+                        DeleteRecipientBottomSheet.setBundle(
+                            item.name
+                        )
+                    ).showSingle(supportFragmentManager, DeleteRecipientBottomSheet.TAG)
                 }
 
                 override fun handleRowClick(item: RecipientListItem.RecipientItem) {
@@ -162,7 +173,9 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
             searchLabel.isVisible = visible
             searchIcon.isVisible = visible
             searchResultsLabel.isVisible = !visible && viewModel.filteredList.value.isNotEmpty()
-            searchNoResults.isVisible = !visible && viewModel.filteredList.value.isEmpty()
+            searchNoResults.isVisible =
+                !visible && viewModel.filteredList.value.isEmpty() &&
+                        !viewModel.canGoBackWithRecipientAddress(text ?: "")
         }
     }
 
@@ -192,14 +205,5 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list),
         intent.putExtra(EXTRA_RECIPIENT, recipient)
         setResult(RESULT_OK, intent)
         finish()
-    }
-
-    override fun confirmDeleteContact(data: Any?) {
-        (data as? Recipient)?.let {
-            viewModel.deleteRecipient(it)
-        }
-    }
-
-    override fun cancelDeleteContact() {
     }
 }

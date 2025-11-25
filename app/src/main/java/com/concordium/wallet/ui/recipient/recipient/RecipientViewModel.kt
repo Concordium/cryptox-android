@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.data.RecentRecipientRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Recipient
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,8 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private val cryptoLibrary = App.appCore.cryptoLibrary
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
+    private val recentRecipientRepository =
+        RecentRecipientRepository(App.appCore.session.walletStorage.database.recentRecipientDao())
     lateinit var recipient: Recipient
     var editRecipientMode = false
 
@@ -64,7 +67,7 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         // We found an existing entry, in edit mode, but it is not the same id - so we are creating a duplicate
-        if (existingRecipient != null && editRecipientMode && existingRecipient.id != recipient.id) {
+        if (existingRecipient != null && existingRecipient.id != recipient.id) {
             _errorLiveData.value = Event(R.string.error_adding_account_duplicate)
             return false
         }
@@ -82,6 +85,7 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
         } else {
             recipientRepository.insert(recipient)
         }
+        recentRecipientRepository.update(recipient.toRecentRecipient())
 
         _finishScreenLiveData.postValue(Event(true))
     }

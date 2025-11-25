@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.recipient.recipientlist
 
-import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,9 +34,10 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
     private val _waiting = MutableStateFlow(true)
     val waiting = _waiting.asStateFlow()
 
+    private val _selectedRecipient = MutableStateFlow<Recipient?>(null)
+
     private val cryptoLibrary = App.appCore.cryptoLibrary
 
-    @SuppressLint("CheckResult")
     fun initialize(
         isShielded: Boolean,
         senderAccount: Account?,
@@ -48,8 +48,12 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
         initRecipientsList(senderAccount)
     }
 
-    fun deleteRecipient(recipient: Recipient) = viewModelScope.launch(Dispatchers.IO) {
-        recipientRepository.delete(recipient)
+    fun deleteRecipient() = viewModelScope.launch(Dispatchers.IO) {
+        recipientRepository.delete(_selectedRecipient.value?.address ?: "")
+    }
+
+    fun setRecipient(recipient: Recipient?) {
+        _selectedRecipient.tryEmit(recipient)
     }
 
     fun canGoBackWithRecipientAddress(address: String): Boolean {

@@ -33,8 +33,15 @@ data class Recipient(
     )
 
     fun toRecipientItem() = RecipientListItem.RecipientItem(
+        id = id,
         name = name,
         address = address,
         recipientType = RecipientType.ADDRESS_BOOK
+    )
+
+    fun toRecentRecipient() = RecentRecipientEntity(
+        id = 0,
+        name = name,
+        address = address
     )
 }

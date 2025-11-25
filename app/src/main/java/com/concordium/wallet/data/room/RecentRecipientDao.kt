@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,8 +20,14 @@ interface RecentRecipientDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recentRecipient: RecentRecipientEntity)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun update(vararg recentRecipient: RecentRecipientEntity)
+    @Transaction
+    suspend fun update(recentRecipient: RecentRecipientEntity) {
+        val existingRecentRecipient = getByAddress(recentRecipient.address)
+        if (existingRecentRecipient != null) {
+            delete(existingRecentRecipient)
+            insert(recentRecipient)
+        }
+    }
 
     @Delete
     suspend fun delete(recentRecipient: RecentRecipientEntity)

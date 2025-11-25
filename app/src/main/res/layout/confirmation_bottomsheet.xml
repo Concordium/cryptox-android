@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/transaction_details_title"
+            android:text="@string/confirmation_bottom_sheet_title"
             android:textAppearance="@style/MW24_Typography_H3"
             android:textColor="@color/text_white"
             app:layout_constraintEnd_toEndOf="parent"
