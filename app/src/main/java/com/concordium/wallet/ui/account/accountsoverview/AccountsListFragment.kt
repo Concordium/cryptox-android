@@ -13,6 +13,7 @@ import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountSettingsActivity
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.uicore.popup.Popup
+import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.ClipboardUtil
 import com.concordium.wallet.util.Log
@@ -128,7 +129,10 @@ class AccountsListFragment : BottomSheetDialogFragment() {
             text = address
         )
 
-        requireActivity().showCustomToast(title = getString(R.string.account_settings_address_copied))
+        requireActivity().showCustomToast(
+            title = getString(R.string.account_settings_address_copied),
+            toastType = ToastType.INFO
+        )
     }
 
     private fun gotoCreateAccount() {

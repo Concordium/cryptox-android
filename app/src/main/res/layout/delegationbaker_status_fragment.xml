@@ -70,7 +70,8 @@
                 android:layout_marginTop="@dimen/size8"
                 android:orientation="vertical"
                 android:background="@drawable/mw24_container_primary_background_default"
-                android:padding="@dimen/size16" />
+                android:paddingHorizontal="@dimen/size16"
+                android:paddingVertical="@dimen/size8"/>
 
             <LinearLayout
                 android:id="@+id/cooldown_list_container"

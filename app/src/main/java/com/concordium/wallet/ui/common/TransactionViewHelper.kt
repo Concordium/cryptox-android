@@ -13,6 +13,7 @@ import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.util.DateTimeUtil
 import java.math.BigInteger
@@ -27,7 +28,6 @@ object TransactionViewHelper {
         costTextView: TextView,
         memoLayout: ConstraintLayout,
         memoTextView: TextView,
-        statusImageView: ImageView,
         showDate: Boolean = false,
         titleFromReceipt: String = "",
         memoExpandButton: ImageView? = null,
@@ -112,47 +112,42 @@ object TransactionViewHelper {
         }
 
         // Cost
-        if (ta.isEncryptedTransfer() && ta.isOriginSelf()) {
-            costTextView.visibility = View.VISIBLE
-            costTextView.text =
-                costTextView.context.getString(R.string.account_details_shielded_transaction_fee)
-        } else if (ta.cost != null && (ta.tokenTransferAmount != null || ta.subtotal != null)) {
-            costTextView.visibility = View.VISIBLE
-
-            var prefix = ""
-            if (ta.status == TransactionStatus.RECEIVED ||
-                (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
-                || ta.status == TransactionStatus.ABSENT
-            ) {
-                prefix = "~"
+        when {
+            (ta.isEncryptedTransfer() && ta.isOriginSelf()) -> {
+                costTextView.visibility = View.VISIBLE
+                costTextView.text =
+                    costTextView.context.getString(R.string.account_details_shielded_transaction_fee)
             }
 
-            costTextView.text =
-                costTextView.context.getString(R.string.account_details_fee) +
-                        " $prefix" +
-                        CurrencyUtil.formatGTU(ta.cost) +
-                        " ${CCDToken.SYMBOL}"
-        } else {
-            costTextView.visibility = View.GONE
-        }
+            (ta.cost != null && (ta.tokenTransferAmount != null || ta.subtotal != null)) -> {
+                costTextView.visibility = View.VISIBLE
 
-        // Status image
-        if (ta.status == TransactionStatus.RECEIVED ||
-            (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
-        ) {
-            statusImageView.setImageDrawable(
-                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_time)
-            )
-        } else if (ta.status == TransactionStatus.COMMITTED) {
-            statusImageView.setImageDrawable(
-                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok)
-            )
-        } else if (ta.status == TransactionStatus.FINALIZED) {
-            statusImageView.setImageDrawable(
-                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok_x2)
-            )
-        } else {
-            statusImageView.setImageDrawable(null)
+                var prefix = ""
+                if (ta.status == TransactionStatus.RECEIVED ||
+                    (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
+                    || ta.status == TransactionStatus.ABSENT
+                ) {
+                    prefix = "~"
+                }
+
+                costTextView.text =
+                    costTextView.context.getString(R.string.account_details_fee) +
+                            " $prefix" +
+                            CurrencyUtil.formatGTU(ta.cost) +
+                            " ${CCDToken.SYMBOL}"
+            }
+
+            ta.fromAddress != null -> {
+                costTextView.visibility = View.VISIBLE
+                costTextView.text = costTextView.context.getString(
+                    R.string.transactions_from_address,
+                    Account.getDefaultName(ta.fromAddress)
+                )
+            }
+
+            else -> {
+                costTextView.visibility = View.GONE
+            }
         }
     }
 }

@@ -144,7 +144,6 @@ class TransactionDetailsActivity : BaseActivity(
             transactionItem.costTextview,
             transactionItem.layoutMemo,
             transactionItem.memoTextview,
-            transactionItem.statusImageview,
             titleFromReceipt = receiptTitle
         )
         // Do not show the memo in the item,

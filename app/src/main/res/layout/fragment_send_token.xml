@@ -64,11 +64,12 @@
                     tools:targetApi="p"
                     tools:text="CCD" />
 
-                <Button
+                <TextView
                     android:id="@+id/send_all_button"
                     style="@style/MW24_Button_Tertiary_Small"
-                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
                     android:enabled="false"
+                    android:gravity="center"
                     android:text="@string/cis_max"
                     app:layout_constraintBottom_toBottomOf="@id/amount"
                     app:layout_constraintEnd_toEndOf="parent"

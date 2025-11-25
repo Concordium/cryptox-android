@@ -54,7 +54,7 @@ class TransfersViewModel(
 
     private lateinit var account: Account
 
-    private val _transferListFlow = MutableStateFlow<List<AdapterItem>?>(emptyList())
+    private val _transferListFlow = MutableStateFlow<List<AdapterItem>>(emptyList())
     val transferListFlow = _transferListFlow.asStateFlow()
 
     private val _showGTUDropFlow = MutableStateFlow(false)
@@ -68,6 +68,8 @@ class TransfersViewModel(
 
     private val _errorFlow = MutableStateFlow(Event(-1))
     val errorFlow = _errorFlow.asStateFlow()
+
+    private val tempList = mutableListOf<AdapterItem>()
 
     init {
         initializeAccountUpdater()
@@ -196,7 +198,7 @@ class TransfersViewModel(
     }
 
     private fun addToTransactionList(newTransactions: List<Transaction>) {
-        val adapterList = (_transferListFlow.value ?: emptyList()).toMutableList()
+        val adapterList = tempList.toMutableList()
         for (ta in newTransactions) {
             val isAfterHeader = checkToAddHeaderItem(adapterList, ta)
             adapterList.add(
@@ -206,6 +208,9 @@ class TransfersViewModel(
                 )
             )
         }
+        tempList.clear()
+        tempList.addAll(adapterList)
+
         _transferListFlow.value = adapterList
         updateGTUDropState()
     }
@@ -291,7 +296,7 @@ class TransfersViewModel(
         if (!BuildConfig.SHOW_GTU_DROP) {
             _showGTUDropFlow.value = false
         } else {
-            _showGTUDropFlow.value = transferListFlow.value.isNullOrEmpty()
+            _showGTUDropFlow.value = transferListFlow.value.isEmpty()
 
         }
     }
@@ -302,7 +307,7 @@ class TransfersViewModel(
     }
 
     private fun clearTransactionListState() {
-        _transferListFlow.value = emptyList()
+        tempList.clear()
         nonMergedLocalTransactions.clear()
         hasMoreRemoteTransactionsToLoad = true
         lastRemoteTransaction = null
