@@ -10,7 +10,7 @@ import com.concordium.wallet.util.getSerializable
 
 class AddTokenDetailsActivity : BaseActivity(
     R.layout.activity_add_token_details,
-    R.string.cis_add_token_title
+    R.string.cis_add_token_details_title
 ) {
 
     private val binding by lazy {

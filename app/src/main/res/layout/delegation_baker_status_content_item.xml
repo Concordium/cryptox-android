@@ -20,8 +20,8 @@
         android:id="@+id/status_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        android:textColor="@color/mw24_blue_3_50"
+        android:textAppearance="@style/MW24_Typography_Text_Mid"
+        android:textColor="@color/mw24_content_secondary"
         tools:text="12-12-2020 13:40" />
 
     <TextView
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+        android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
         android:textColor="@color/cryptox_white_main"
         tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
 </LinearLayout>

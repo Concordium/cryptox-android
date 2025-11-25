@@ -12,6 +12,7 @@ import com.concordium.wallet.databinding.DialogEdittextBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.export.ExportAccountKeysActivity
 import com.concordium.wallet.ui.more.export.ExportTransactionLogActivity
+import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.ClipboardUtil
 import com.concordium.wallet.util.getSerializable
@@ -145,6 +146,9 @@ class AccountSettingsActivity : BaseActivity(
             context = this,
             text = address
         )
-        showCustomToast(title = getString(R.string.account_settings_address_copied))
+        showCustomToast(
+            title = getString(R.string.account_settings_address_copied),
+            toastType = ToastType.INFO
+        )
     }
 }

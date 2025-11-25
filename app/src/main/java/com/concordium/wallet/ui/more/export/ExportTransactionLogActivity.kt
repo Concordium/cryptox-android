@@ -14,6 +14,7 @@ import com.concordium.wallet.databinding.ActivityExportTransactionLogBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.handleUrlClicks
+import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.getSerializable
 
@@ -87,8 +88,8 @@ class ExportTransactionLogActivity : BaseActivity(
             when (event) {
                 Event.FinishWithNoContent -> {
                     showCustomToast(
-                        iconResId = R.drawable.mw24_ic_circled_warning_exclamation,
-                        title = getString(R.string.export_transaction_log_no_content)
+                        title = getString(R.string.export_transaction_log_no_content),
+                        toastType = ToastType.ERROR
                     )
                     finish()
                 }

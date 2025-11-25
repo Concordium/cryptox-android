@@ -38,7 +38,7 @@
     <com.concordium.wallet.uicore.view.MW24BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="86dp"
         android:background="@color/mw24_black_60"
         android:paddingVertical="@dimen/size12"
         app:itemBackground="@drawable/mw24_navigation_item_background"

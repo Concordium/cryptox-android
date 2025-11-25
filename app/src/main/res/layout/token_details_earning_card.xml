@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size8"
-        android:text="@string/accounts_overview_earning_label"
+        android:text="@string/accounts_overview_staking_label"
         android:textAppearance="@style/MW24_Typography_Label_L_Medium"
         android:textColor="@color/cryptox_white_main"
         app:layout_constraintBottom_toBottomOf="@id/earn_percent_icon"

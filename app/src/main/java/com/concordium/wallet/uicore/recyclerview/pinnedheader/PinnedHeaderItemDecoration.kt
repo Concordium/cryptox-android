@@ -31,7 +31,12 @@ class PinnedHeaderItemDecoration(private val listener: PinnedHeaderListener) :
         val contactPoint = currentHeader.bottom
         val childInContact = getChildInContact(parent, contactPoint)
 
-        if (childInContact != null && listener.isHeader(parent.getChildAdapterPosition(childInContact))) {
+        if (childInContact != null && listener.isHeader(
+                parent.getChildAdapterPosition(
+                    childInContact
+                )
+            )
+        ) {
             moveHeader(c, currentHeader, childInContact)
         } else {
             drawHeader(c, currentHeader)
@@ -40,15 +45,10 @@ class PinnedHeaderItemDecoration(private val listener: PinnedHeaderListener) :
 
     private fun getHeaderViewForItem(itemPosition: Int, parent: RecyclerView): View {
         val headerPosition = listener.getHeaderPositionForItem(itemPosition)
-
-        if (cachedHeaderPosition != headerPosition || cachedHeader == null) {
-            val layoutResId = listener.getHeaderLayout(headerPosition)
-            val header = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
-            listener.bindHeaderData(header, headerPosition)
-            cachedHeader = header
-            cachedHeaderPosition = headerPosition
-        }
-        return cachedHeader!!
+        val layoutResId = listener.getHeaderLayout(headerPosition)
+        val header = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
+        listener.bindHeaderData(header, headerPosition)
+        return header
     }
 
     private fun drawHeader(c: Canvas, header: View) {
