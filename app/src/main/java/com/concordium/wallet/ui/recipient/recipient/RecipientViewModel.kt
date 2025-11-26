@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.data.RecentRecipientRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.room.Recipient
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +20,6 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private val cryptoLibrary = App.appCore.cryptoLibrary
     private val recipientRepository =
         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
-    private val recentRecipientRepository =
-        RecentRecipientRepository(App.appCore.session.walletStorage.database.recentRecipientDao())
     lateinit var recipient: Recipient
     var editRecipientMode = false
 
@@ -85,8 +82,6 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
         } else {
             recipientRepository.insert(recipient)
         }
-        recentRecipientRepository.update(recipient.toRecentRecipient())
-
         _finishScreenLiveData.postValue(Event(true))
     }
 }

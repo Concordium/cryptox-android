@@ -42,6 +42,7 @@ data class Recipient(
     fun toRecentRecipient() = RecentRecipientEntity(
         id = 0,
         name = name,
-        address = address
+        address = address,
+        addedAt = System.currentTimeMillis()
     )
 }

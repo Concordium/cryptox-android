@@ -388,21 +388,11 @@ class SendTokenReceiptViewModel(
         val recentRecipient = recentRecipientRepository.getByAddress(recipientAddress)
 
         when {
-            recipient != null && recentRecipient == null -> {
-                recentRecipientRepository.insert(
-                    recipient
-                        .toRecentRecipient()
-                        .copy(addedAt = System.currentTimeMillis())
-                )
-            }
+            recipient != null && recentRecipient == null ->
+                recentRecipientRepository.insert(recipient.toRecentRecipient())
 
-            recipient != null && recentRecipient != null -> {
-                recentRecipientRepository.update(
-                    recipient
-                        .toRecentRecipient()
-                        .copy(addedAt = System.currentTimeMillis())
-                )
-            }
+            recipient != null && recentRecipient != null ->
+                recentRecipientRepository.update(recipient.toRecentRecipient())
 
             recentRecipient != null -> {
                 recentRecipientRepository.update(

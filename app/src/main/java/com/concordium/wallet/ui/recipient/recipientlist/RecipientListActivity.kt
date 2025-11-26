@@ -155,7 +155,7 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list) {
 
                 override fun handleRowClick(item: RecipientListItem.RecipientItem) {
                     if (viewModel.canGoBackWithRecipientAddress(item.address)) {
-                        goBackWithRecipient(Recipient(item.address))
+                        goBackWithRecipient(item.toRecipient())
                     } else {
                         gotoEditRecipient(item.toRecipient())
                     }

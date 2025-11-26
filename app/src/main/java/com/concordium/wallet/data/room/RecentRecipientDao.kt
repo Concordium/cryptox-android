@@ -11,7 +11,17 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RecentRecipientDao {
 
-    @Query("SELECT * FROM recent_recipient_table ORDER BY added_at DESC LIMIT 3")
+    @Query("""
+        SELECT 
+        rrt.id,
+        COALESCE(rt.name, rrt.name) AS name,
+        rrt.address,
+        rrt.added_at
+    FROM recent_recipient_table AS rrt
+    LEFT JOIN recipient_table AS rt
+        ON rt.address = rrt.address
+    ORDER BY rrt.added_at DESC LIMIT 3
+    """)
     fun getAllAsFlow(): Flow<List<RecentRecipientEntity>>
 
     @Query("SELECT * FROM recent_recipient_table WHERE address = :address")
