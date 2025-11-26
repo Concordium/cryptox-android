@@ -2,7 +2,9 @@ package com.concordium.wallet.ui.recipient.recipientlist
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.SearchView
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +18,6 @@ import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
-import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 import com.concordium.wallet.util.getOptionalSerializable
 
 class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list) {
@@ -82,22 +83,24 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list) {
     private fun initializeViews(isSelectMode: Boolean) {
         showWaiting(true)
 
-        binding.recipientSearchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(txt: String?): Boolean {
-                onSearchTextChanged(txt)
-                return true
-            }
+        binding.recipientSearchview.apply {
+            setInputType(InputType.TYPE_CLASS_TEXT)
+            setSearchListener { }
+            setTextChangeListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
-            override fun onQueryTextChange(txt: String?): Boolean {
-                onSearchTextChanged(txt)
-                return true
-            }
-        })
-
-        listOf(binding.searchLayout, binding.searchIcon).forEach {
-            it.setOnClickListener {
-                showKeyboard(this, binding.recipientSearchview)
-            }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    onSearchTextChanged(s.toString())
+                    updateSearchIconFromText(s.toString())
+                }
+            })
         }
 
         initializeList(isSelectMode)
@@ -121,7 +124,7 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list) {
             if (result.resultCode == RESULT_OK) {
                 result?.data?.getStringExtra(Constants.Extras.EXTRA_SCANNED_QR_CONTENT)
                     ?.let { address ->
-                        binding.recipientSearchview.setQuery(address, true)
+                        binding.recipientSearchview.setText(address)
                     }
             }
         }
@@ -170,8 +173,6 @@ class RecipientListActivity : BaseActivity(R.layout.activity_recipient_list) {
     private fun showSearchViews(text: String?) {
         val visible = text.isNullOrEmpty()
         binding.apply {
-            searchLabel.isVisible = visible
-            searchIcon.isVisible = visible
             searchResultsLabel.isVisible = !visible && viewModel.filteredList.value.isNotEmpty()
             searchNoResults.isVisible =
                 !visible && viewModel.filteredList.value.isEmpty() &&
