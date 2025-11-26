@@ -404,10 +404,13 @@
     <!-- ***** Recipient ***** -->
     <!-- Select recipient -->
     <string name="recipient_list_default_title">Address Book</string>
-    <string name="recipient_list_select_title">Choose recipient</string>
+    <string name="recipient_list_select_title">Choose a Recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
     <string name="recipient_list_search_label">Recipient Address</string>
+    <string name="recipient_list_search_results_title">Search Results</string>
+    <string name="recipient_list_search_no_results">No results match your search</string>
     <string name="recipient_list_continue">Continue</string>
+    <string name="recipient_list_recents">Recents</string>
     <!-- New recipient -->
     <string name="recipient_edit_title">Edit Address</string>
     <string name="recipient_new_title">New Recipient</string>
@@ -1503,6 +1506,8 @@
     <string name="delegation_status_resume_button">Resume</string>
     <string name="confirmation_bottom_sheet_delete_button">Delete</string>
     <string name="confirmation_bottom_sheet_cancel_button">Cancel</string>
+    <string name="confirmation_bottom_sheet_title">Delete Recipient</string>
+    <string name="confirmation_bottom_sheet_description">Do you really want to delete %1$s contact?</string>
 
     <string name="account_details_earn_banner_title">Do <font color='#24D4AB'>more</font> with your CCD</string>
     <string name="account_details_earn_banner_description">Stake your CCD and earn rewards</string>
