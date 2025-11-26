@@ -82,6 +82,11 @@ class InputFieldView @JvmOverloads constructor(
         binding.edittext.setText("")
     }
 
+    fun updateSearchIconFromText(text: CharSequence?) {
+        binding.searchIcon.isVisible = text.isNullOrEmpty()
+
+    }
+
     fun setLabelText(text: String) {
         binding.label.text = text
     }

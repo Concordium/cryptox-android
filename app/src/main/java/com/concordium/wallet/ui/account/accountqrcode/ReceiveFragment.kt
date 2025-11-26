@@ -14,6 +14,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentReceiveBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.ClipboardUtil
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -91,6 +92,9 @@ class ReceiveFragment : Fragment() {
             text = viewModel.getAccount()!!.address
         )
 
-        requireActivity().showCustomToast(title = getString(R.string.account_qr_code_copied))
+        requireActivity().showCustomToast(
+            title = getString(R.string.account_qr_code_copied),
+            toastType = ToastType.INFO
+        )
     }
 }

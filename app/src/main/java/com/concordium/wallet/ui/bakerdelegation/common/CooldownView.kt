@@ -5,7 +5,6 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.set
@@ -28,7 +27,10 @@ class CooldownView @JvmOverloads constructor(
     }
 
     fun setCooldown(cooldown: AccountCooldown) = with(binding) {
-        inactiveStakeAmount.text = CurrencyUtil.formatGTU(cooldown.amount)
+        inactiveStakeAmount.text = context.getString(
+            R.string.amount,
+            CurrencyUtil.formatAndRoundGTU(value = cooldown.amount, roundDecimals = 2)
+        )
 
         val dayLeftCount = (cooldown.timestamp - System.currentTimeMillis())
             .toDuration(DurationUnit.MILLISECONDS)

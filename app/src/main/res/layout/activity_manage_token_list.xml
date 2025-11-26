@@ -58,8 +58,9 @@
         <TextView
             android:id="@+id/empty_view_button"
             style="@style/MW24_Button_Tertiary_Medium"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/cis_add_token_title"
+            android:text="@string/cis_add_tokens"
             app:drawableStartCompat="@drawable/mw24_ic_plus_add"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

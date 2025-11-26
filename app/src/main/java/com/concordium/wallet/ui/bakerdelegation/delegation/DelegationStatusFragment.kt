@@ -97,13 +97,9 @@ class DelegationStatusFragment : EarnStatusFragment() {
         binding.actionButtonsLayout.delegationUpdateButton.visibility = View.VISIBLE
 
         addContent(
-            R.string.delegation_status_content_delegating_account,
-            account.getAccountName() + "\n\n" + account.address,
-            false
-        )
-        addContent(
             R.string.delegation_status_content_delegation_amount,
-            getString(R.string.amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
+            getString(R.string.amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount)),
+            false
         )
 
         if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(

@@ -28,6 +28,13 @@ object TokenMetadataBackendInstance {
                 HttpLoggingInterceptor(Log::i)
                     .setLevel(HttpLoggingInterceptor.Level.BASIC)
             )
+            .addInterceptor { chain ->
+                val request = chain.request()
+                    .newBuilder()
+                    .header("User-Agent", "Mozilla/5.0 (Android)") // required for correct response from ipsf.io URLs
+                    .build()
+                chain.proceed(request)
+            }
             .build()
 
         Retrofit.Builder()

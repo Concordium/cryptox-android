@@ -24,6 +24,8 @@ import com.concordium.sdk.types.UInt64
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.RecentRecipientRepository
+import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
@@ -36,6 +38,7 @@ import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.room.RecentRecipientEntity
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -55,11 +58,15 @@ import java.util.Date
 class SendTokenReceiptViewModel(
     val sendTokenData: SendTokenData,
     private val proxyRepository: ProxyRepository,
-    application: Application
+    application: Application,
 ) : AndroidViewModel(application), KoinComponent {
 
     private val transferRepository =
         TransferRepository(App.appCore.session.walletStorage.database.transferDao())
+    private val recipientRepository =
+        RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
+    private val recentRecipientRepository =
+        RecentRecipientRepository(App.appCore.session.walletStorage.database.recentRecipientDao())
 
     private var accountNonceRequest: BackendRequest<*>? = null
     private var submitTransactionJob: Job? = null
@@ -366,12 +373,22 @@ class SendTokenReceiptViewModel(
         )
         transactionWaiting.postValue(false)
         saveNewTransfer(transfer)
+        saveRecipientToRecent(sendTokenData.receiverAddress!!)
         transaction.postValue(transfer.toTransaction())
         transactionReady.postValue(submissionId)
     }
 
     private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
         transferRepository.insert(transfer)
+    }
+
+    private fun saveRecipientToRecent(recipientAddress: String) = viewModelScope.launch {
+        recentRecipientRepository.insertOrUpdate(
+            RecentRecipientEntity(
+                address = recipientAddress,
+                addedAt = System.currentTimeMillis(),
+            )
+        )
     }
 
     private fun handleBackendError(throwable: Throwable) {

@@ -225,7 +225,7 @@ class ManageTokensViewModel(
                     },
                 )
 
-                if (apparentToken.metadata != null) {
+                if (apparentToken.metadata != null || apparentToken.metadataError.isNotEmpty()) {
                     everFoundExactTokens.add(apparentToken)
                     exactToken = apparentToken
                     lookForExactToken.postValue(TOKENS_OK)

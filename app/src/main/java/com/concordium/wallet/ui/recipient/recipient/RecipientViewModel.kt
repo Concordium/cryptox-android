@@ -64,7 +64,7 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         // We found an existing entry, in edit mode, but it is not the same id - so we are creating a duplicate
-        if (existingRecipient != null && editRecipientMode && existingRecipient.id != recipient.id) {
+        if (existingRecipient != null && existingRecipient.id != recipient.id) {
             _errorLiveData.value = Event(R.string.error_adding_account_duplicate)
             return false
         }
@@ -82,7 +82,6 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
         } else {
             recipientRepository.insert(recipient)
         }
-
         _finishScreenLiveData.postValue(Event(true))
     }
 }

@@ -13,6 +13,7 @@ import com.concordium.wallet.databinding.ActivityExportAccountKeysBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.getSerializable
 
@@ -81,7 +82,8 @@ class ExportAccountKeysActivity : BaseActivity(
         viewModel.toastInt.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showCustomToast(
-                    title = getString(value)
+                    title = getString(value),
+                    toastType = ToastType.INFO
                 )
             }
         })

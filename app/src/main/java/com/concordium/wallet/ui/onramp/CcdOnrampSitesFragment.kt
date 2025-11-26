@@ -137,7 +137,6 @@ class CcdOnrampSitesFragment : BaseFragment() {
     ) {
         if (copyAddress) {
             requireContext().showCustomToast(
-                iconResId = R.drawable.mw24_ic_address_copy_check,
                 title = getString(
                     R.string.template_ccd_onramp_opening_site,
                     site.name

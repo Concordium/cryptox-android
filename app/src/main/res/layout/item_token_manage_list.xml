@@ -84,6 +84,7 @@
     <TextView
         android:id="@+id/hide_btn"
         style="@style/MW24_Button_Tertiary_Small"
+        android:layout_height="wrap_content"
         android:text="@string/cis_hide_token_item"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

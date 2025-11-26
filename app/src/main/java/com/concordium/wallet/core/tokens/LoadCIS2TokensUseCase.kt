@@ -4,6 +4,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.toContractToken
+import java.math.BigInteger
 
 class LoadCIS2TokensUseCase {
     private val loadCIS2TokensMetadataUseCase = LoadCIS2TokensMetadataUseCase()
@@ -30,6 +31,7 @@ class LoadCIS2TokensUseCase {
                 from = tokenPageCursor,
             ).tokens
                 .map { it.toContractToken() }
+                .filterNot { it.totalSupply == BigInteger.ZERO }
                 .onEach {
                     it.contractIndex = contractIndex
                     it.subIndex = subIndex
@@ -39,7 +41,7 @@ class LoadCIS2TokensUseCase {
             tokenPageCursor = pageTokens.lastOrNull()?.uid
 
             loadCIS2TokensMetadataUseCase(proxyRepository, pageTokens)
-            fullyLoadedTokens.addAll(pageTokens.filter { it.metadata != null })
+            fullyLoadedTokens.addAll(pageTokens)
         }
 
         return fullyLoadedTokens.map { it as ContractToken }

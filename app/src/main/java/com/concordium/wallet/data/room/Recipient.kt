@@ -2,6 +2,8 @@ package com.concordium.wallet.data.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.concordium.wallet.ui.recipient.recipientlist.RecipientListItem
+import com.concordium.wallet.ui.recipient.recipientlist.RecipientType
 import java.io.Serializable
 
 
@@ -28,5 +30,12 @@ data class Recipient(
         id = 0,
         name = "",
         address = address,
+    )
+
+    fun toRecipientItem() = RecipientListItem.RecipientItem(
+        id = id,
+        name = name,
+        address = address,
+        recipientType = RecipientType.ADDRESS_BOOK
     )
 }
