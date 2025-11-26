@@ -38,7 +38,6 @@ import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.RecentRecipientEntity
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.toTransaction
@@ -59,7 +58,7 @@ import java.util.Date
 class SendTokenReceiptViewModel(
     val sendTokenData: SendTokenData,
     private val proxyRepository: ProxyRepository,
-    application: Application
+    application: Application,
 ) : AndroidViewModel(application), KoinComponent {
 
     private val transferRepository =
@@ -384,33 +383,12 @@ class SendTokenReceiptViewModel(
     }
 
     private fun saveRecipientToRecent(recipientAddress: String) = viewModelScope.launch {
-        val recipient = recipientRepository.getRecipientByAddress(recipientAddress)
-        val recentRecipient = recentRecipientRepository.getByAddress(recipientAddress)
-
-        when {
-            recipient != null && recentRecipient == null ->
-                recentRecipientRepository.insert(recipient.toRecentRecipient())
-
-            recipient != null && recentRecipient != null ->
-                recentRecipientRepository.update(recipient.toRecentRecipient())
-
-            recentRecipient != null -> {
-                recentRecipientRepository.update(
-                    recentRecipient.copy(addedAt = System.currentTimeMillis())
-                )
-            }
-
-            else -> {
-                recentRecipientRepository.insert(
-                    RecentRecipientEntity(
-                        id = 0,
-                        name = Account.getDefaultName(recipientAddress),
-                        address = recipientAddress,
-                        addedAt = System.currentTimeMillis()
-                    )
-                )
-            }
-        }
+        recentRecipientRepository.insertOrUpdate(
+            RecentRecipientEntity(
+                address = recipientAddress,
+                addedAt = System.currentTimeMillis(),
+            )
+        )
     }
 
     private fun handleBackendError(throwable: Throwable) {

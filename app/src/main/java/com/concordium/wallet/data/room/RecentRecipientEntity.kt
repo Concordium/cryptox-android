@@ -9,19 +9,17 @@ import java.io.Serializable
 
 @Entity(tableName = "recent_recipient_table")
 data class RecentRecipientEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    @ColumnInfo(name = "name")
-    val name: String,
+    @PrimaryKey
     @ColumnInfo(name = "address")
     val address: String,
-    @ColumnInfo(name = "added_at", defaultValue = "0")
-    val addedAt: Long = 0L
+    @ColumnInfo(name = "added_at")
+    val addedAt: Long,
+    @ColumnInfo(name = "name")
+    val name: String? = null,
 ) : Serializable {
 
     fun toRecipientItem() = RecipientListItem.RecipientItem(
-        id = id,
-        name = name,
+        name = name ?: Account.getDefaultName(address),
         address = address,
         addedAt = addedAt,
         recipientType = RecipientType.RECENT

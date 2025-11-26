@@ -17,7 +17,7 @@ import com.concordium.wallet.data.room.migrations.MIGRATION_5_6
 import com.concordium.wallet.data.room.migrations.MIGRATION_7_8
 import com.concordium.wallet.data.room.migrations.MIGRATION_8_9
 import com.concordium.wallet.data.room.migrations.MIGRATION_9_10
-import com.concordium.wallet.data.room.migrations.migration_12_13
+import com.concordium.wallet.data.room.migrations.MIGRATION_12_13
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
@@ -95,7 +95,7 @@ abstract class WalletDatabase : RoomDatabase() {
                         ),
                         MIGRATION_10_11,
                         MIGRATION_11_12,
-                        migration_12_13
+                        MIGRATION_12_13
                     )
                     .build()
                     .also { instances.put(name, it) }
