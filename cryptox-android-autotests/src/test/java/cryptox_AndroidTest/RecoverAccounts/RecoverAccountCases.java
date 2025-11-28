@@ -23,29 +23,19 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 public class RecoverAccountCases {
 
     public static String newsTabButton = "menuitem_news";
-    public static String navigation_bar_item_large_label_view = "menuitem_accounts";
+    public static String navigation_bar_item_large_label_view = "bottom_navigation_view";
     public static String continueButton = "continueButton";
 
 
     @Test(retryAnalyzer = RetryAnalyzer.class)
     public void import_wallets_through_Private_key() throws MalformedURLException, InterruptedException {
-        // Added logging for debugging purposes
         log.info("Starting import_wallets_through_Private_key test");
 
-        // Simulate failure for retry logic (optional for testing)
         boolean isSuccess;
-
-        isSuccess = AcceptNotificationPopUp();
-        log.info("AcceptNotificationPopUp: " + isSuccess);
-        Assert.assertTrue(isSuccess);
-
-        isSuccess = clickConnectButton();
-        log.info("clickConnectButton: " + isSuccess);
-        Assert.assertTrue(isSuccess);
-
         isSuccess = clickGetStarted();
         log.info("clickGetStarted: " + isSuccess);
         Assert.assertTrue(isSuccess);
+        Assert.assertTrue(clickOnElement("terms_check_box", 10));
 
         isSuccess = clickOnImportWalletLink();
         log.info("clickOnImportWalletLink: " + isSuccess);
@@ -89,10 +79,6 @@ public class RecoverAccountCases {
 
         isSuccess = clickOnElement(continueButton, 20);
         log.info("clickOnElement (continueButton): " + isSuccess);
-        Assert.assertTrue(isSuccess);
-
-        isSuccess = clickOnElement(newsTabButton, 10);
-        log.info("clickOnElement (newsTabButton): " + isSuccess);
         Assert.assertTrue(isSuccess);
 
         log.info("Successfully recovered Account, Checking if UI is interactive");

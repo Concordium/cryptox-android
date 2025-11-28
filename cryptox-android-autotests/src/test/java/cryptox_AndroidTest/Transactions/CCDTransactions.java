@@ -13,6 +13,7 @@ import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.newsTabBut
 import static cryptox_AndroidTest.baseClass.*;
 import static pages.Transactions.requestCCDs.clickOnAccountWidget;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
+import static pages.appOperations.commands.performScroll;
 import static pages.appOperations.commands.swipe;
 import static pages.login.loginCryptoX;
 import static pages.verifyPIN.verifyPinAndPressOK;
@@ -29,11 +30,7 @@ public class CCDTransactions {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
-//        Assert.assertTrue(clickOnElement("receive_btn",10));
-//        Assert.assertTrue(clickOnElement("copy_address_layout",10));
-//        Assert.assertTrue(clickOnElement("toolbar_back_btn",10));
-        Assert.assertTrue(clickOnElement("send_funds_btn",10));
+        Assert.assertTrue(clickOnElement("menuitem_transfer",20));
         Assert.assertTrue(SendTextToField("amount","1", 20));
         Assert.assertTrue(clickOnElement("recipient_layout",10));
         Assert.assertTrue(clickOnElement("android:id/search_src_text",10));
@@ -50,13 +47,10 @@ public class CCDTransactions {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
-//        Assert.assertTrue(clickOnElement("receive_btn",10));
-//        Assert.assertTrue(clickOnElement("copy_address_layout",10));
-//        Assert.assertTrue(clickOnElement("toolbar_back_btn",10));
-        Assert.assertTrue(clickOnElement("send_funds_btn",10));
+        Assert.assertTrue(clickOnElement("menuitem_transfer",10));
         Assert.assertTrue(SendTextToField("amount","1", 20));
-        Assert.assertTrue(clickOnElement("add_memo",10));
+        Assert.assertTrue(performScroll());
+        Assert.assertTrue(clickOnElement("memo_layout", 20));
         Assert.assertTrue(clickOnElement("show_button",10));
         Assert.assertTrue(SendTextToField("memo_edittext","This is Test Memo - Triggered through automated tests", 20));
         Assert.assertTrue(clickOnElement("confirm_button",10));
@@ -68,22 +62,16 @@ public class CCDTransactions {
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("finish",10));
-
-
     }
 
     @Test
     public void Verify_if_user_can_add_Payee() throws MalformedURLException, InterruptedException {
-        Assert.assertTrue(clickOnAccountWidget());
-        Assert.assertTrue(clickOnElement("send_funds_btn",10));
+        Assert.assertTrue(clickOnElement("menuitem_transfer",20));
         Assert.assertTrue(clickOnElement("recipient_layout",10));
-        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image",10));
+        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image",20));
         Assert.assertTrue(SendTextToField("recipient_name_edittext","Test", 20));
         Assert.assertTrue(SendTextToField("recipient_address_edittext","4Ek1LdFtdbkSwowStM73fMp6ZZd1RLTvQpRr1ZLJMVgPjUx4JT", 20));
         Assert.assertTrue(clickOnElement("save_button",40));
         Assert.assertTrue(elementShouldNotAvailable("snackbar_text",10));
-
-
+    }
 }
-}
-

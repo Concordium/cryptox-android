@@ -82,28 +82,18 @@ public class commands {
     }
 
     public static boolean performScroll() {
-        boolean canScrollMore = true;
-
-        while (canScrollMore) {
-            try {
-                canScrollMore = (Boolean) ((JavascriptExecutor) driver).executeScript(
-                        "mobile: scrollGesture", ImmutableMap.builder()
-                                .put("left", 100)
-                                .put("top", 100)
-                                .put("width", 800)   // Adjust if needed
-                                .put("height", 1200)
-                                .put("direction", "down")
-                                .put("percent", 0.9)
-                                .build()
-                );
-            } catch (Exception e) {
-                System.out.println("Scroll failed or reached the end: " + e.getMessage());
-                canScrollMore = false;
-            }
+        try {
+            driver.findElement(
+                    MobileBy.AndroidUIAutomator(
+                            "new UiScrollable(new UiSelector().scrollable(true))" +
+                                    ".setAsVerticalList()" +
+                                    ".scrollToEnd(20)"
+                    )
+            );
+            return true;
+        } catch (Exception e) {
+            System.out.println("Could not scroll to the end: " + e.getMessage());
+            return false;
         }
-
-        return true; // Returns true if reached the end
     }
-
-
 }
