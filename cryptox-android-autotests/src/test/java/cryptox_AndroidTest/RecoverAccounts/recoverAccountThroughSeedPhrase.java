@@ -23,11 +23,9 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 public class recoverAccountThroughSeedPhrase {
     @Test
     public void import_wallets_through_Seed_Phrase() throws MalformedURLException, InterruptedException {
-
-        Assert.assertTrue(AcceptNotificationPopUp());
-        Assert.assertTrue(clickConnectButton());
         Assert.assertTrue(clickGetStarted());
-        Assert.assertTrue(clickOnImportWalletLink());
+        Assert.assertTrue(clickOnElement("terms_check_box",10));
+        Assert.assertTrue(clickOnElement("import_wallet_button",10));
         Assert.assertTrue(createPassCodeNow());
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaSeedPhrase());
@@ -37,12 +35,9 @@ public class recoverAccountThroughSeedPhrase {
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(WaitForElement(continueButton,100));
         Assert.assertTrue(clickOnElement(continueButton,20));
-        Assert.assertTrue(clickOnElement(newsTabButton,10));
         log.info("successfully recovered Account, Checking if UI is interactive");
         Assert.assertTrue(clickOnElement(navigation_bar_item_large_label_view,10));
         log.info("All Good Moving to next Test");
 
     }
-
-
 }

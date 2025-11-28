@@ -31,12 +31,11 @@ public class createValidatorWithNoDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
+        Assert.assertTrue(clickOnElement("allow_button",5));
         Assert.assertTrue(clickOnEarnRewards());
         Assert.assertTrue(clickOnElement("btnBaker",20));
         Assert.assertTrue(performScroll());
-        Thread.sleep(2000);
-        Assert.assertTrue(clickOnValidationSetupButton());
-//        Assert.assertTrue(VerifyValidatorPage());
+        Assert.assertTrue(clickOnElement("continue_button",10));
         Assert.assertTrue(enterAmountForPool());
         Assert.assertTrue(clickOnContinueButtonOnRegisterValidatorScreen());
         String environment = "stagenet";
@@ -62,9 +61,8 @@ public class createValidatorWithNoDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("stop_btn",20));
+        Assert.assertTrue(clickOnElement("stop_button",20));
         Assert.assertTrue(clickOnElement("continue_button",20));
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
@@ -73,7 +71,5 @@ public class createValidatorWithNoDelegation {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(elementShouldNotAvailable(baker_id,2));
-
     }
 }
-

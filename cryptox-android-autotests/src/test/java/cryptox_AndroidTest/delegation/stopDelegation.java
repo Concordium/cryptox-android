@@ -20,14 +20,11 @@ public class stopDelegation {
 
     @Test
     public void Verify_if_user_can_stop_a_passive_delegator() throws MalformedURLException, InterruptedException {
-
-
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("stop_btn",20));
+        Assert.assertTrue(clickOnElement("stop_button",20));
         Assert.assertTrue(clickOnElement("continue_button",20));
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
@@ -36,10 +33,7 @@ public class stopDelegation {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnAccountWidget());
-        Assert.assertTrue(elementShouldNotAvailable("accounts_overview_total_details_delegating",20));
-        Assert.assertTrue(elementShouldNotAvailable("delegating_label",20));
-
+        Assert.assertTrue(elementShouldNotAvailable("accounts_overview_total_details_delegating",5));
+        Assert.assertTrue(elementShouldNotAvailable("delegating_label",5));
     }
-
-
 }

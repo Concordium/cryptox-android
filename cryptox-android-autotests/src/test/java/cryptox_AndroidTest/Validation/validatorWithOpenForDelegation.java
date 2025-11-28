@@ -34,8 +34,6 @@ public class validatorWithOpenForDelegation {
         Assert.assertTrue(performScroll());
         Thread.sleep(20000);
         Assert.assertTrue(clickOnValidationSetupButton());
-        Thread.sleep(20000);
-//        Assert.assertTrue(VerifyValidatorPage());
         Assert.assertTrue(enterAmountForPool());
         Assert.assertTrue(clickOnContinueButtonOnRegisterValidatorScreen());
         Assert.assertTrue(clickOnContinueButtonOnDelegationSScreen());
@@ -61,9 +59,8 @@ public class validatorWithOpenForDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("stop_btn",20));
+        Assert.assertTrue(clickOnElement("stop_button",20));
         Assert.assertTrue(clickOnElement("continue_button",20));
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
@@ -72,7 +69,5 @@ public class validatorWithOpenForDelegation {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(elementShouldNotAvailable(baker_id,2));
-
     }
 }
-

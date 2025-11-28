@@ -10,7 +10,7 @@ import static config.systemInfo.getCurrentActivity;
 public class createValidation {
 
     static By acceptPrivacyPolicy = By.id("consent_check_box");
-    static By earnRewards = By.id("earn_btn");
+    static By earnRewards = By.id("menuitem_earn");
     public static By validatorSetup = By.id("continue_button");
     static By becomeAValidatorLabel = By.id(("toolbar_title"));
     static By clickOnValidatorNextButton = By.id(("create_ident_intro_next"));
@@ -26,9 +26,6 @@ public class createValidation {
     static By submit_baker_transactionID = By.id("submit_baker_transaction");
     static By submit_baker_finish = By.id("submit_baker_finish");
     static By validatorID = By.id("accounts_overview_total_details_baker_id");
-
-
-
 
 
     public static boolean login() {
@@ -340,6 +337,7 @@ public class createValidation {
 
 
     }
+
     public static boolean clickOnValidatorRegistrationOpenContinue() {
 
         {
@@ -372,6 +370,7 @@ public class createValidation {
 
 
     }
+
     public static boolean saveValidatorKeys() {
 
         {
@@ -382,8 +381,6 @@ public class createValidation {
                 assert exportKey_Consent != null;
                 if (exportKey_Consent.isDisplayed()) {
                     exportKey_Consent.click();
-
-
 
 
                     return true;
@@ -406,6 +403,7 @@ public class createValidation {
 
 
     }
+
     public static boolean submitBakerTransaction() {
 
         {
@@ -417,7 +415,7 @@ public class createValidation {
                 if (exportKey_Consent.isDisplayed()) {
                     exportKey_Consent.click();
 
-                   return true;
+                    return true;
 
                 } else {
 
@@ -437,6 +435,7 @@ public class createValidation {
 
 
     }
+
     public static boolean ClickOnValidatorFinishButton() {
 
         {
@@ -503,9 +502,6 @@ public class createValidation {
 
 
     }
-
-
-
 
 
 }

@@ -20,7 +20,7 @@ public class settingsCases {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("menuitem_more",10));
+        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn",10));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@text=\"Erase Data\"]\n",10));
         Assert.assertTrue(clickOnElement("confirm_button",10));
         Assert.assertTrue(verifyPinAndPressOK());
