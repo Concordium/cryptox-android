@@ -13,7 +13,6 @@ public class stakingModeScreen {
 
     private static final Logger log = LoggerFactory.getLogger(stakingModeScreen.class);
 
-    // --- Force tap using Appium gestures ---
     private static void forceTap(MobileElement element) {
         int x = element.getCenter().getX();
         int y = element.getCenter().getY();
@@ -26,10 +25,8 @@ public class stakingModeScreen {
         log.info("Force tapped checkbox at coordinates ({}, {})", x, y);
     }
 
-    // --- Main method for clicking checkbox ---
     public static boolean clickCheckbox(String elementId, int timeoutInSeconds) {
         try {
-            // Try normal click first
             recoveryThroughPrivateKey.clickOnElement(elementId, timeoutInSeconds);
 
             MobileElement checkbox =
@@ -38,14 +35,12 @@ public class stakingModeScreen {
             String beforeState = checkbox.getAttribute("checked");
             log.info("Checkbox state BEFORE click: {}", beforeState);
 
-            // If not checked -> force tap
             if (!"true".equals(beforeState)) {
                 log.info("Checkbox not toggled. Applying force tap...");
                 forceTap(checkbox);
                 Thread.sleep(500);
             }
 
-            // Read updated state
             String afterState = checkbox.getAttribute("checked");
             log.info("Checkbox state AFTER tap: {}", afterState);
 
