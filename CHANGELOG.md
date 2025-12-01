@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]  
+## [1.16.0] - 2025-11-28 
 
 ### Changed
 
@@ -342,7 +342,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   attributes
 - CIS-2 tokens with corrupted or missing metadata can no longer be added
 
-[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.15.2...HEAD
+[Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.16.0...HEAD
+
+[1.16.0]: https://github.com/Concordium/cryptox-android/compare/1.15.2...1.16.0
 
 [1.15.2]: https://github.com/Concordium/cryptox-android/compare/1.15.1...1.15.2
 
