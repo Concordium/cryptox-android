@@ -344,7 +344,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/Concordium/cryptox-android/compare/1.16.0...HEAD
 
-[1.15.2]: https://github.com/Concordium/cryptox-android/compare/1.15.2...1.16.0
+[1.16.0]: https://github.com/Concordium/cryptox-android/compare/1.15.2...1.16.0
 
 [1.15.2]: https://github.com/Concordium/cryptox-android/compare/1.15.1...1.15.2
 
