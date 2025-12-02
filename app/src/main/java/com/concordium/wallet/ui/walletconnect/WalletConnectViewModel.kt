@@ -17,13 +17,9 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.extension.collect
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
@@ -55,17 +51,14 @@ import java.math.BigInteger
  * *Session request* – a request from a dApp within an active session that requires performing
  * some action with the account of the session.
  *
- * *go_back* - whether to navigate back after handling the URI
- *
  * Currently supported requests:
- * - [REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION] – create, sign and submit an account transaction
+ * - [WalletConnectSignTransactionRequestHandler.METHOD] – create, sign and submit an account transaction
  * of the requested type. Send back the submission ID;
- * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature;
- * - [REQUEST_METHOD_VERIFIABLE_PRESENTATION] - prove or reveal identity statements.
+ * - [WalletConnectSignMessageRequestHandler.METHOD] – sign the given text message. Send back the signature;
+ * - [WalletConnectVerifiablePresentationRequestHandler.METHOD] - prove or reveal identity statements;
+ * - [WalletConnectVerifiablePresentationV1RequestHandler.METHOD] - prove or reveal identity statements via auditable proofs.
  *
  * @see State
- * @see allowedAccountTransactionTypes
- * @see goBack
  */
 class WalletConnectViewModel
 private constructor(
@@ -98,9 +91,10 @@ private constructor(
         "${application.getString(R.string.wc_scheme)}:",
     )
     private val allowedRequestMethods = setOf(
-        REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
-        REQUEST_METHOD_SIGN_MESSAGE,
-        REQUEST_METHOD_VERIFIABLE_PRESENTATION,
+        WalletConnectSignTransactionRequestHandler.METHOD,
+        WalletConnectSignMessageRequestHandler.METHOD,
+        WalletConnectVerifiablePresentationRequestHandler.METHOD,
+        WalletConnectVerifiablePresentationV1RequestHandler.METHOD,
     )
 
     private val accountRepository: AccountRepository by lazy {
@@ -173,6 +167,19 @@ private constructor(
 
     private val verifiablePresentationRequestHandler: WalletConnectVerifiablePresentationRequestHandler by lazy {
         WalletConnectVerifiablePresentationRequestHandler(
+            respondSuccess = ::respondSuccess,
+            respondError = ::respondError,
+            emitEvent = mutableEventsFlow::tryEmit,
+            emitState = mutableStateFlow::tryEmit,
+            onFinish = ::onSessionRequestHandlingFinished,
+            proxyRepository = proxyRepository,
+            identityRepository = identityRepository,
+            activeWalletType = App.appCore.session.activeWallet.type,
+        )
+    }
+
+    private val verifiablePresentationV1RequestHandler: WalletConnectVerifiablePresentationV1RequestHandler by lazy {
+        WalletConnectVerifiablePresentationV1RequestHandler(
             respondSuccess = ::respondSuccess,
             respondError = ::respondError,
             emitEvent = mutableEventsFlow::tryEmit,
@@ -715,22 +722,31 @@ private constructor(
         // if there is an unexpected error.
         try {
             when (method) {
-                REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
+                WalletConnectSignTransactionRequestHandler.METHOD ->
                     signTransactionRequestHandler.start(
                         params = params,
                         account = sessionRequestAccount,
                         appMetadata = sessionRequestAppMetadata,
                     )
 
-                REQUEST_METHOD_SIGN_MESSAGE ->
+                WalletConnectSignMessageRequestHandler.METHOD ->
                     signMessageRequestHandler.start(
                         params = params,
                         account = sessionRequestAccount,
                         appMetadata = sessionRequestAppMetadata,
                     )
 
-                REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
+                WalletConnectVerifiablePresentationRequestHandler.METHOD -> {
                     verifiablePresentationRequestHandler.start(
+                        params = params,
+                        account = account,
+                        availableAccounts = getAvailableAccounts(),
+                        appMetadata = sessionRequestAppMetadata,
+                    )
+                }
+
+                WalletConnectVerifiablePresentationV1RequestHandler.METHOD -> {
+                    verifiablePresentationV1RequestHandler.start(
                         params = params,
                         account = account,
                         availableAccounts = getAvailableAccounts(),
@@ -1312,12 +1328,7 @@ private constructor(
     private companion object {
         private const val WC_URI_PREFIX = "wc:"
         private const val WC_URI_REQUEST_ID_PARAM = "requestId"
-
         private const val DEFAULT_ERROR_RESPONSE_CODE = 500
-
-        private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
-        private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
-        private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
         private const val WC_GO_BACK_PARAM = "go_back=true"
     }
 }

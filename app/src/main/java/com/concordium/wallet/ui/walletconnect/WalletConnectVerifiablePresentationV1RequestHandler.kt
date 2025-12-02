@@ -33,7 +33,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class WalletConnectVerifiablePresentationRequestHandler(
+class WalletConnectVerifiablePresentationV1RequestHandler(
     private val respondSuccess: (result: String) -> Unit,
     private val respondError: (message: String) -> Unit,
     private val emitEvent: (event: Event) -> Unit,
@@ -373,7 +373,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
     private fun isValidIdentityForStatement(
         identity: Identity,
-        statement: UnqualifiedRequestStatement
+        statement: UnqualifiedRequestStatement,
     ): Boolean =
         statement.idQualifier is IdentityQualifier
                 && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
@@ -411,7 +411,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
      * on the dApp side.
      */
     private class VerifiablePresentationWrapper(
-        val verifiablePresentationJson: String
+        val verifiablePresentationJson: String,
     )
 
     /**
@@ -419,10 +419,10 @@ class WalletConnectVerifiablePresentationRequestHandler(
      * dApp to send bigint values from the Javascript side.
      */
     private class WalletConnectParamsWrapper(
-        val paramsJson: String
+        val paramsJson: String,
     )
 
     companion object {
-        const val METHOD = "request_verifiable_presentation"
+        const val METHOD = "request_verifiable_presentation_v1"
     }
 }

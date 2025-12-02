@@ -545,4 +545,8 @@ class WalletConnectSignTransactionRequestHandler(
             is AccountTransactionPayload.Update ->
                 transactionPayload.receiveName
         }
+
+    companion object{
+        const val METHOD = "sign_and_send_transaction"
+    }
 }
