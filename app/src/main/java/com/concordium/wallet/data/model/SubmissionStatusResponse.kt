@@ -13,5 +13,6 @@ data class SubmissionStatusResponse(
     val blockHashes: List<String>?,
     val rejectReason: String?,
     val encryptedAmount: String?,
-    val aggregatedIndex: Int?
+    val aggregatedIndex: Int?,
+    val registerData: String?,
 )

@@ -1214,6 +1214,8 @@ private constructor(
                 // Check that we can prove the statement with current accounts
                 canApprove = provable == ProofProvableState.Provable
             )
+
+            class IdentityProofRequestV1Review()
         }
 
         /**
