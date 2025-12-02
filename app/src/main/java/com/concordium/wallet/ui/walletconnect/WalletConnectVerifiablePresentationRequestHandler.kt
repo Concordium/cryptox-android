@@ -1,7 +1,5 @@
 package com.concordium.wallet.ui.walletconnect
 
-import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
-import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
@@ -22,7 +20,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
@@ -54,7 +51,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
     private lateinit var identitiesById: Map<Int, Identity>
     private lateinit var accountsPerStatement: MutableList<Account>
-    private lateinit var globalParams: GlobalParams
+    private lateinit var globalContext: CryptographicParameters
 
     suspend fun start(
         params: String,
@@ -160,7 +157,8 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
     private suspend fun loadDataAndPresentReview() {
         try {
-            this.globalParams = getGlobalParams()
+            this.globalContext = getGlobalParams()
+                .toSdkCryptographicParameters()
         } catch (e: Exception) {
             Log.e("Failed loading global params", e)
 
@@ -288,13 +286,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         val proofInput = Web3IdProofInput.builder()
             .request(qualifiedRequest)
             .commitmentInputs(commitmentInputs)
-            .globalContext(
-                CryptographicParameters.builder()
-                    .genesisString(globalParams.genesisString)
-                    .bulletproofGenerators(BulletproofGenerators.from(globalParams.bulletproofGenerators))
-                    .onChainCommitmentKey(PedersenCommitmentKey.from(globalParams.onChainCommitmentKey))
-                    .build()
-            )
+            .globalContext(globalContext)
             .build()
 
         try {
@@ -307,7 +299,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         } catch (e: Exception) {
             Log.e("Failed creating verifiable presentation", e)
 
-            respondError("Unable to create verifiable presentation: internal error")
+            respondError("Unable to create verifiable presentation: $e")
 
             emitEvent(
                 Event.ShowFloatingError(
@@ -373,7 +365,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
     private fun isValidIdentityForStatement(
         identity: Identity,
-        statement: UnqualifiedRequestStatement
+        statement: UnqualifiedRequestStatement,
     ): Boolean =
         statement.idQualifier is IdentityQualifier
                 && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
@@ -411,7 +403,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
      * on the dApp side.
      */
     private class VerifiablePresentationWrapper(
-        val verifiablePresentationJson: String
+        val verifiablePresentationJson: String,
     )
 
     /**
@@ -419,7 +411,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
      * dApp to send bigint values from the Javascript side.
      */
     private class WalletConnectParamsWrapper(
-        val paramsJson: String
+        val paramsJson: String,
     )
 
     companion object {

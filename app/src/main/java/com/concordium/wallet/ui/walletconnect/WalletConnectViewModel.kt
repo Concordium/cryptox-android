@@ -187,7 +187,7 @@ private constructor(
             onFinish = ::onSessionRequestHandlingFinished,
             proxyRepository = proxyRepository,
             identityRepository = identityRepository,
-            activeWalletType = App.appCore.session.activeWallet.type,
+            walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences,
         )
     }
 
@@ -748,8 +748,6 @@ private constructor(
                 WalletConnectVerifiablePresentationV1RequestHandler.METHOD -> {
                     verifiablePresentationV1RequestHandler.start(
                         params = params,
-                        account = account,
-                        availableAccounts = getAvailableAccounts(),
                         appMetadata = sessionRequestAppMetadata,
                     )
                 }
