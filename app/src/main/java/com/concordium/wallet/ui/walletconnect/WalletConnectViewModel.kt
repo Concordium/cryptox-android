@@ -524,7 +524,7 @@ private constructor(
                     selectedAccount = reviewState.selectedAccount,
                     accounts = accounts,
                     appMetadata = reviewState.appMetadata,
-                    identityProofPosition = null
+                    previousState = reviewState,
                 )
             )
         }
@@ -540,32 +540,46 @@ private constructor(
                     "\nnewSelectedAccountId=${selectedAccount.id}"
         )
 
-        if (!selectionState.forIdentityProof) {
-            mutableStateFlow.tryEmit(
-                State.SessionProposalReview(
-                    selectedAccount = selectedAccount,
-                    appMetadata = selectionState.appMetadata
+        when (val previousState = selectionState.previousState) {
+            is State.SessionProposalReview ->
+                mutableStateFlow.tryEmit(
+                    State.SessionProposalReview(
+                        selectedAccount = selectedAccount,
+                        appMetadata = selectionState.appMetadata
+                    )
                 )
-            )
-        } else {
-            verifiablePresentationRequestHandler.onAccountSelected(
-                statementIndex = selectionState.identityProofPosition!!,
-                account = selectedAccount,
-            )
+
+            is State.SessionRequestReview.IdentityProofRequestReview ->
+                if (previousState.isV1) {
+                    TODO()
+                } else {
+                    verifiablePresentationRequestHandler.onAccountSelected(
+                        statementIndex = previousState.currentClaim,
+                        account = selectedAccount,
+                    )
+                }
+
+            else ->
+                error("Nothing to do with the selected account")
         }
     }
 
     fun onChangeIdentityProofAccountClicked(
         statementIndex: Int,
     ) = viewModelScope.launch {
-        check(state is State.SessionRequestReview.IdentityProofRequestReview) {
+        val proofReviewState = state
+        check(proofReviewState is State.SessionRequestReview.IdentityProofRequestReview) {
             "Choose account button can only be clicked in the proof request review state"
         }
 
-        verifiablePresentationRequestHandler.onChangeAccountClicked(
-            statementIndex = statementIndex,
-            availableAccounts = getAvailableAccounts(),
-        )
+        if (proofReviewState.isV1) {
+            TODO()
+        } else {
+            verifiablePresentationRequestHandler.onChangeAccountClicked(
+                statementIndex = statementIndex,
+                availableAccounts = getAvailableAccounts(),
+            )
+        }
     }
 
     override fun onSessionRequest(
@@ -746,6 +760,7 @@ private constructor(
                 WalletConnectVerifiablePresentationV1RequestHandler.METHOD -> {
                     verifiablePresentationV1RequestHandler.start(
                         params = params,
+                        account = account,
                         appMetadata = sessionRequestAppMetadata,
                     )
                 }
@@ -898,7 +913,11 @@ private constructor(
                     signTransactionRequestHandler.onAuthorizedForApproval(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
-                    verifiablePresentationRequestHandler.onAuthorizedForApproval(password)
+                    if (reviewState.isV1) {
+                        verifiablePresentationV1RequestHandler.onAuthorizedForApproval(password)
+                    } else {
+                        verifiablePresentationRequestHandler.onAuthorizedForApproval(password)
+                    }
                 }
             }
         } else {
@@ -949,7 +968,7 @@ private constructor(
             }
 
             is State.AccountSelection -> {
-                if ((state as State.AccountSelection).forIdentityProof) {
+                if ((state as State.AccountSelection).previousState is State.SessionRequestReview) {
                     rejectSessionRequest()
                 } else {
                     rejectSessionProposal()
@@ -984,18 +1003,7 @@ private constructor(
                     "switching_back_from_account_selection"
                 )
 
-                if (state.forIdentityProof) {
-                    verifiablePresentationRequestHandler.onAccountSelectionBackPressed(
-                        statementIndex = state.identityProofPosition!!,
-                    )
-                } else {
-                    mutableStateFlow.tryEmit(
-                        State.SessionProposalReview(
-                            selectedAccount = state.selectedAccount,
-                            appMetadata = state.appMetadata,
-                        )
-                    )
-                }
+                mutableStateFlow.tryEmit(state.previousState)
 
                 true
             }
@@ -1147,11 +1155,9 @@ private constructor(
         class AccountSelection(
             val selectedAccount: Account,
             val accounts: List<Account>,
-            val identityProofPosition: Int?,
             val appMetadata: AppMetadata,
-        ) : State {
-            val forIdentityProof = identityProofPosition != null
-        }
+            val previousState: State,
+        ) : State
 
         /**
          * Explicitly waiting for a session request after receiving a request URI.
@@ -1198,6 +1204,7 @@ private constructor(
                 val claims: List<IdentityProofRequestClaims>,
                 val currentClaim: Int,
                 val provable: ProofProvableState,
+                val isV1: Boolean,
                 connectedAccount: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(

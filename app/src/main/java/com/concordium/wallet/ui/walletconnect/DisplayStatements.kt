@@ -5,8 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import com.concordium.sdk.crypto.wallet.identityobject.AttributeList
-import com.concordium.sdk.crypto.wallet.identityobject.IdentityObject
 import com.concordium.sdk.crypto.wallet.web3Id.CredentialAttribute
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.MembershipStatement
@@ -51,7 +49,10 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
          } else {
              binding.secretStatements.root.visibility = VISIBLE
              secretStatements.forEach {
-                 binding.secretStatements.secretLines.addView(getSecretStatement(it, it.canBeProvedBy((getIdentityObject(identity)))))
+                 binding.secretStatements.secretLines.addView(getSecretStatement(
+                     it,
+                     it.canBeProvedBy(identity.identityObject!!.toSdkIdentityObject())
+                 ))
              }
          }
 
@@ -323,15 +324,4 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         const val MAX_DATE = "99990101"
         val EU_MEMBERS = listOf("AT", "BE", "BG", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "HR")
     }
-}
-
-
-/**
- * Get an IdentityObject compatible with the Concordium SDK methods.
- * N.B. Only the attributeList is populated, the remaining fields are null
-  */
-fun getIdentityObject(identity: Identity): IdentityObject {
-    val identityObject = identity.identityObject!!
-    val attributes = AttributeList.builder().chosenAttributes(identityObject.attributeList.chosenAttributes.mapKeys { AttributeType.fromJSON(it.key) }).build()
-    return IdentityObject.builder().attributeList(attributes).build()
 }

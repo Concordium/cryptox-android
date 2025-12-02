@@ -5,27 +5,22 @@ import com.concordium.sdk.crypto.wallet.ConcordiumHdWallet
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.GivenContext
 import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaims
-import com.concordium.sdk.crypto.wallet.web3Id.Statement.IdentityQualifier
-import com.concordium.sdk.crypto.wallet.web3Id.Statement.UnqualifiedRequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.VerifiablePresentationV1
-import com.concordium.sdk.crypto.wallet.web3Id.VerificationRequestAnchor
 import com.concordium.sdk.crypto.wallet.web3Id.VerificationRequestV1
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
-import com.concordium.sdk.serializing.CborMapper
 import com.concordium.sdk.serializing.JsonMapper
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.PrivateIdObjectData
-import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.Log
-import com.reown.util.hexToBytes
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -46,17 +41,21 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         else
             Network.TESTNET
 
+    // It doesn't really matter,
+    // but every WC request is associated with an account.
+    private lateinit var account: Account
     private lateinit var appMetadata: WalletConnectViewModel.AppMetadata
     private lateinit var verificationRequest: VerificationRequestV1
     private lateinit var identityClaims: List<IdentityClaims>
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
     private lateinit var identitiesById: Map<Int, Identity>
-    private lateinit var identitiesByClaims: Map<IdentityClaims, Identity>
+    private lateinit var credentialsByClaims: Map<IdentityClaims, IdentityProofRequestSelectedCredential>
     private lateinit var globalParams: CryptographicParameters
     private lateinit var anchorBlockHash: String
 
     suspend fun start(
         params: String,
+        account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
         try {
@@ -71,9 +70,29 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                 .takeIf { it.size == verificationRequest.subjectClaims.size }
                 ?: error("Only requests with identity claims are supported")
 
-            identityClaims.forEach { claims->
-                check(IdentityClaims.IDENTITY_CREDENTIAL_SOURCE in claims.source) {
-                    "Only claims accepting identity credentials are supported"
+            check(identityClaims.isNotEmpty()) {
+                "There are no claims"
+            }
+
+            this.identitiesById = identityRepository.getAllDone()
+                .associateBy(Identity::id)
+
+            this.credentialsByClaims = identityClaims.associateWith { claims ->
+                when {
+                    claims.canUseAccount ->
+                        IdentityProofRequestSelectedCredential.Account(
+                            account = account,
+                            identity = getIdentity(account),
+                        )
+
+                    claims.canUseIdentity ->
+                        IdentityProofRequestSelectedCredential.Identity(
+                            identity = getIdentity(account),
+                        )
+
+                    else ->
+                        error("Only identity claims with account or identity source are supported")
+
                 }
             }
         } catch (e: Exception) {
@@ -92,11 +111,10 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             return
         }
 
+        this.account = account
         this.appMetadata = appMetadata
 
-        this.identitiesById = identityRepository.getAllDone()
-            .associateBy(Identity::id)
-
+        // TODO Actually set the state
         this.identityProofProvableState = WalletConnectViewModel.ProofProvableState.Provable
 
         loadDataAndPresentReview()
@@ -123,29 +141,30 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         }
 
         try {
-            val requestAnchorTransaction = proxyRepository
-                .getSubmissionStatus(verificationRequest.transactionRef.asHex())
-
-            check(requestAnchorTransaction.status == TransactionStatus.FINALIZED) {
-                "Anchor transaction is not finalized"
-            }
-
-            val anchorCborHex = requestAnchorTransaction.registerData
-                ?: error("Anchor transaction data is missing")
-
-            val anchor = CborMapper.INSTANCE.readValue(
-                anchorCborHex.hexToBytes(),
-                VerificationRequestAnchor::class.java
-            )
-
-            check(verificationRequest.verifyAnchor(anchor)) {
-                "Anchor doesn't match the request"
-            }
-
-            this.anchorBlockHash = requestAnchorTransaction
-                .blockHashes
-                ?.first()
-                ?: error("Anchor transaction block hash is missing")
+//            val requestAnchorTransaction = proxyRepository
+//                .getSubmissionStatus(verificationRequest.transactionRef.asHex())
+//
+//            check(requestAnchorTransaction.status == TransactionStatus.FINALIZED) {
+//                "Anchor transaction is not finalized"
+//            }
+//
+//            val anchorCborHex = requestAnchorTransaction.registerData
+//                ?: error("Anchor transaction data is missing")
+//
+//            val anchor = CborMapper.INSTANCE.readValue(
+//                anchorCborHex.hexToBytes(),
+//                VerificationRequestAnchor::class.java
+//            )
+//
+//            check(verificationRequest.verifyAnchor(anchor)) {
+//                "Anchor doesn't match the request"
+//            }
+//
+//            this.anchorBlockHash = requestAnchorTransaction
+//                .blockHashes
+//                ?.first()
+//                ?: error("Anchor transaction block hash is missing")
+            this.anchorBlockHash = "later"
         } catch (e: Exception) {
             Log.e("Failed checking the anchor", e)
 
@@ -162,11 +181,11 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             return
         }
 
-//        emitState(
-//            createIdentityProofRequestState(
-//                currentStatementIndex = 0,
-//            )
-//        )
+        emitState(
+            createIdentityProofRequestState(
+                currentClaimIndex = 0,
+            )
+        )
     }
 
     private suspend fun getGlobalParams(
@@ -177,7 +196,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         )
         continuation.invokeOnCancellation { backendRequest.dispose() }
     }
-
 
     suspend fun onAuthorizedForApproval(
         password: String,
@@ -212,8 +230,9 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                         )
                     }
 
-            val proofInputs = identitiesByClaims
-                .map { (identityClaims, identity) ->
+            val proofInputs = credentialsByClaims
+                .map { (identityClaims, credential) ->
+                    val identity = credential.identity
                     val identityProvider = identity.identityProvider
 
                     val idCredSec: BLSSecretKey
@@ -284,9 +303,8 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                             .arsInfos
                             .mapValues { (_, it) -> it.toSdkAnonymityRevokerInfo() },
                         identity
-                            .identityObject
-                            ?.toSdkIdentityObject()
-                            ?: error("Identity must be approved at this point"),
+                            .identityObject!!
+                            .toSdkIdentityObject(),
                         idCredSec,
                         prfKey,
                         signatureBlindingRandomness,
@@ -331,45 +349,40 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                     Error.InternalError
                 )
             )
+
+            onFinish()
         }
     }
 
-    private fun isValidIdentityForStatement(
-        identity: Identity,
-        statement: UnqualifiedRequestStatement,
-    ): Boolean =
-        statement.idQualifier is IdentityQualifier
-                && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
-                && statement.canBeProvedBy(getIdentityObject(identity))
+    private fun createIdentityProofRequestState(
+        currentClaimIndex: Int,
+    ): State.SessionRequestReview =
+        State.SessionRequestReview.IdentityProofRequestReview(
+            connectedAccount = account,
+            appMetadata = appMetadata,
+            claims =
+            identityClaims
+                .map { claims ->
+                    IdentityProofRequestClaims(
+                        statements = claims.statements,
+                        selectedCredential = credentialsByClaims.getValue(claims),
+                        canSelectAccounts = claims.canUseAccount,
+                        canSelectIdentities = claims.canUseIdentity,
+                    )
+                },
+            currentClaim = currentClaimIndex,
+            provable = identityProofProvableState,
+            isV1 = true,
+        )
 
-//    private fun createIdentityProofRequestState(
-//        currentStatementIndex: Int,
-//    ): State.SessionRequestReview =
-//        State.SessionRequestReview.IdentityProofRequestReview(
-//            connectedAccount = identitiesByClaims.first(),
-//            appMetadata = appMetadata,
-//            request = identityProofRequest,
-//            chosenAccounts = identitiesByClaims,
-//            currentStatement = currentStatementIndex,
-//            provable = identityProofProvableState
-//        )
+    private fun getIdentity(account: Account) =
+        identitiesById.getValue(account.identityId)
 
-    /**
-     * Wrapper for sending the verifiable presentation as JSON over WalletConnect. This is
-     * required to prevent WalletConnect from automatically parsing the JSON as an object
-     * on the dApp side.
-     */
-    private class VerifiablePresentationWrapper(
-        val verifiablePresentationJson: String,
-    )
+    private val IdentityClaims.canUseIdentity: Boolean
+        get() = source.contains(IdentityClaims.IDENTITY_CREDENTIAL_SOURCE)
 
-    /**
-     * Wrapper for receiving parameters as JSON over WalletConnect. This is required to allow a
-     * dApp to send bigint values from the Javascript side.
-     */
-    private class WalletConnectParamsWrapper(
-        val paramsJson: String,
-    )
+    private val IdentityClaims.canUseAccount: Boolean
+        get() = source.contains(IdentityClaims.ACCOUNT_CREDENTIAL_SOURCE)
 
     companion object {
         const val METHOD = "request_verifiable_presentation_v1"

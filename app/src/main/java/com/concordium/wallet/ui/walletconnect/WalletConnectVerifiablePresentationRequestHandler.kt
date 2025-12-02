@@ -320,7 +320,6 @@ class WalletConnectVerifiablePresentationRequestHandler(
     ) {
         val statement = identityProofRequest.credentialStatements[statementIndex]
 
-
         val validAccounts = availableAccounts.filter { account ->
             getIdentity(account)
                 ?.let { isValidIdentityForStatement(it, statement) }
@@ -338,7 +337,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                     selectedAccount = accountsPerStatement[statementIndex],
                     accounts = validAccounts,
                     appMetadata = appMetadata,
-                    identityProofPosition = statementIndex,
+                    previousState = createIdentityProofRequestState(statementIndex),
                 )
             )
         } else {
@@ -357,14 +356,6 @@ class WalletConnectVerifiablePresentationRequestHandler(
         )
     }
 
-    fun onAccountSelectionBackPressed(
-        statementIndex: Int,
-    ) {
-        emitState(
-            createIdentityProofRequestState(statementIndex)
-        )
-    }
-
     fun getIdentity(account: Account) =
         identitiesById[account.identityId]
 
@@ -374,7 +365,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
     ): Boolean =
         statement.idQualifier is IdentityQualifier
                 && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
-                && statement.canBeProvedBy(getIdentityObject(identity))
+                && statement.canBeProvedBy(identity.identityObject!!.toSdkIdentityObject())
 
     private fun onInvalidRequest(responseMessage: String, e: Exception? = null) {
         if (e == null) Log.e(responseMessage) else Log.e(responseMessage, e)
@@ -412,7 +403,8 @@ class WalletConnectVerifiablePresentationRequestHandler(
                     )
                 },
             currentClaim = currentStatementIndex,
-            provable = identityProofProvableState
+            provable = identityProofProvableState,
+            isV1 = false,
         )
 
     /**

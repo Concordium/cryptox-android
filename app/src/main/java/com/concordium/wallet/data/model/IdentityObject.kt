@@ -14,9 +14,15 @@ data class IdentityObject(
     val signature: RawJson,
 ) : Serializable {
 
+    @Transient
+    private var memoizedSdkIdentityObject: IdentityObject? = null
     fun toSdkIdentityObject(): IdentityObject =
-        JsonMapper.INSTANCE.readValue(
-            App.appCore.gson.toJson(this),
-            IdentityObject::class.java
-        )
+        memoizedSdkIdentityObject
+            ?: JsonMapper
+                .INSTANCE
+                .readValue(
+                    App.appCore.gson.toJson(this),
+                    IdentityObject::class.java
+                )
+                .also { memoizedSdkIdentityObject = it }
 }

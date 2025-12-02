@@ -34,18 +34,26 @@ class CredentialStatementAdapter(
 
         when (selectedCredential) {
             is IdentityProofRequestSelectedCredential.Account -> {
-                with(holder.containerBinding.selectedAccountInclude) {
+                with(holder.containerBinding.selectedCredentialInclude) {
                     accAddress.text = selectedCredential.account.getAccountName()
                     accBalance.isVisible = false
                     accIdentity.isVisible = true
                     accIdentity.text = identity.name
                 }
-                holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
+                holder.containerBinding.selectedCredentialInclude.root.setOnClickListener {
                     onChangeAccountClicked(position)
                 }
             }
 
-            is IdentityProofRequestSelectedCredential.Identity -> TODO()
+            is IdentityProofRequestSelectedCredential.Identity -> {
+                with(holder.containerBinding.selectedCredentialInclude) {
+                    accAddress.text = identity.name
+                    accBalance.isVisible = false
+                    accIdentity.isVisible = false
+                }
+                // TODO handle identity change.
+                holder.containerBinding.selectedCredentialInclude.root.setOnClickListener(null)
+            }
         }
     }
 }
