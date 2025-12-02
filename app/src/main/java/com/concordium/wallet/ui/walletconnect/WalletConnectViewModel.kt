@@ -7,7 +7,6 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -18,7 +17,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
@@ -914,9 +912,6 @@ private constructor(
         }
     }
 
-    fun getIdentity(account: Account): Identity? =
-        verifiablePresentationRequestHandler.getIdentity(account)
-
     fun getIdentityFromRepository(account: Account) = runBlocking(Dispatchers.IO) {
         identityRepository.getAllDone().firstOrNull { it.id == account.identityId }
     }
@@ -1200,9 +1195,8 @@ private constructor(
             )
 
             class IdentityProofRequestReview(
-                val request: UnqualifiedRequest,
-                val chosenAccounts: List<Account>,
-                val currentStatement: Int,
+                val claims: List<IdentityProofRequestClaims>,
+                val currentClaim: Int,
                 val provable: ProofProvableState,
                 connectedAccount: Account,
                 appMetadata: AppMetadata,
@@ -1212,8 +1206,6 @@ private constructor(
                 // Check that we can prove the statement with current accounts
                 canApprove = provable == ProofProvableState.Provable
             )
-
-            class IdentityProofRequestV1Review()
         }
 
         /**

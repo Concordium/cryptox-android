@@ -12,7 +12,6 @@ import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.MembershipStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.NonMembershipStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RangeStatement
-import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.RevealStatement
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.SetStatement
 import com.concordium.sdk.responses.accountinfo.credential.AttributeType
@@ -39,12 +38,12 @@ class DisplayStatements(context: Context, attrs: AttributeSet): LinearLayout(con
         addView(binding.root)
     }
 
-     fun setStatement(request: RequestStatement, identity: Identity) {
+     fun setStatement(request: IdentityProofRequestClaims, identity: Identity) {
          binding.revealStatements.revealLines.removeAllViews()
          binding.secretStatements.secretLines.removeAllViews()
 
-        val secretStatements = request.statement.filterNot { it is RevealStatement }
-        val revealStatements = request.statement.filterIsInstance<RevealStatement>()
+        val secretStatements = request.statements.filterNot { it is RevealStatement }
+        val revealStatements = request.statements.filterIsInstance<RevealStatement>()
 
          if (secretStatements.isEmpty()) {
              // If there are no reveal statements, then don't show the reveal box

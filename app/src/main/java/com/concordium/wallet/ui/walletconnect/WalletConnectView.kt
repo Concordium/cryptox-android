@@ -18,7 +18,6 @@ import androidx.viewpager2.widget.ViewPager2.INVISIBLE
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import androidx.viewpager2.widget.ViewPager2.VISIBLE
 import com.bumptech.glide.Glide
-import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -141,10 +140,9 @@ class WalletConnectView(
 
             is WalletConnectViewModel.State.SessionRequestReview.IdentityProofRequestReview -> {
                 showIdentityProofRequestReview(
-                    accounts = state.chosenAccounts,
                     appMetadata = state.appMetadata,
-                    statements = state.request.credentialStatements,
-                    currentStatement = state.currentStatement,
+                    claims = state.claims,
+                    currentClaim = state.currentClaim,
                     provableState = state.provable
                 )
             }
@@ -520,20 +518,18 @@ class WalletConnectView(
     }
 
     private fun showIdentityProofRequestReview(
-        statements: List<RequestStatement>,
-        accounts: List<Account>,
+        claims: List<IdentityProofRequestClaims>,
         appMetadata: WalletConnectViewModel.AppMetadata,
-        currentStatement: Int,
+        currentClaim: Int,
         provableState: WalletConnectViewModel.ProofProvableState,
     ) {
         getShownBottomSheet().showIdentityProofRequestReview { (view, lifecycleOwner) ->
             initIdentityProofRequestReview(
                 view = view,
                 lifecycleOwner = lifecycleOwner,
-                accounts = accounts,
                 appMetadata = appMetadata,
-                statements = statements,
-                currentStatement = currentStatement,
+                claims = claims,
+                currentClaim = currentClaim,
                 provableState = provableState
             )
         }
@@ -542,10 +538,9 @@ class WalletConnectView(
     private fun initIdentityProofRequestReview(
         view: FragmentWalletConnectIdentityProofRequestReviewBinding,
         lifecycleOwner: LifecycleOwner,
-        accounts: List<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
-        statements: List<RequestStatement>,
-        currentStatement: Int,
+        claims: List<IdentityProofRequestClaims>,
+        currentClaim: Int,
         provableState: WalletConnectViewModel.ProofProvableState,
     ) = with(view) {
         Glide.with(appIconImageView.context)
@@ -592,19 +587,17 @@ class WalletConnectView(
         }
 
         val adapter = CredentialStatementAdapter(
-            statements = statements,
-            accounts = accounts,
-            getIdentity = viewModel::getIdentity,
+            claims = claims,
             onChangeAccountClicked = viewModel::onChangeIdentityProofAccountClicked,
         )
 
         fun updatePrimaryActionButton() {
             val currentPosition = proofView.currentItem
-            approveButton.isInvisible = currentPosition < statements.size - 1
+            approveButton.isInvisible = currentPosition < claims.size - 1
             nextButton.isVisible = approveButton.isInvisible
         }
         this.proofView.adapter = adapter
-        this.proofView.setCurrentItem(currentStatement, false)
+        this.proofView.setCurrentItem(currentClaim, false)
         this.proofView.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updatePrimaryActionButton()

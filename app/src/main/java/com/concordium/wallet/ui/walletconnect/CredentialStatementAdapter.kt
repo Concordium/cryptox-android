@@ -4,17 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.sdk.crypto.wallet.web3Id.Statement.RequestStatement
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.IdentityProofContainerBinding
-import com.concordium.wallet.util.Log
 
 class CredentialStatementAdapter(
-    private val statements: List<RequestStatement>,
-    private val accounts: List<Account>,
-    private val getIdentity: (account: Account) -> Identity?,
-    private val onChangeAccountClicked: (index: Int) -> Unit
+    private val claims: List<IdentityProofRequestClaims>,
+    private val onChangeAccountClicked: (index: Int) -> Unit,
 ) : RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
     class ViewHolder(val containerBinding: IdentityProofContainerBinding) :
         RecyclerView.ViewHolder(containerBinding.root)
@@ -29,27 +23,29 @@ class CredentialStatementAdapter(
     }
 
     override fun getItemCount(): Int {
-        return statements.size
+        return claims.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val account = accounts[position]
-        val identity = getIdentity(account)
+        val selectedCredential = claims[position].selectedCredential
+        val identity = selectedCredential.identity
 
-        if (identity == null) {
-            Log.e("Identity is not available for account ${account.address}")
-            return
-        }
+        holder.containerBinding.statements.setStatement(claims[position], identity)
 
-        holder.containerBinding.statements.setStatement(statements[position], identity)
-        with(holder.containerBinding.selectedAccountInclude) {
-            accAddress.text = account.getAccountName()
-            accBalance.isVisible = false
-            accIdentity.isVisible = true
-            accIdentity.text = identity.name
-        }
-        holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
-            onChangeAccountClicked(position)
+        when (selectedCredential) {
+            is IdentityProofRequestSelectedCredential.Account -> {
+                with(holder.containerBinding.selectedAccountInclude) {
+                    accAddress.text = selectedCredential.account.getAccountName()
+                    accBalance.isVisible = false
+                    accIdentity.isVisible = true
+                    accIdentity.text = identity.name
+                }
+                holder.containerBinding.selectedAccountIncludeContainer.setOnClickListener {
+                    onChangeAccountClicked(position)
+                }
+            }
+
+            is IdentityProofRequestSelectedCredential.Identity -> TODO()
         }
     }
 }

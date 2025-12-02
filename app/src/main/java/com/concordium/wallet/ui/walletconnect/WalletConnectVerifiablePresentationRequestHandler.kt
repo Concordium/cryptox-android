@@ -291,9 +291,14 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
         try {
             val proof = Web3IdProof.getWeb3IdProof(proofInput)
-            val wrappedProof = VerifiablePresentationWrapper(proof)
 
-            respondSuccess(App.appCore.gson.toJson(wrappedProof))
+            respondSuccess(
+                App.appCore.gson.toJson(
+                    mapOf(
+                        "verifiablePresentationJson" to proof
+                    )
+                )
+            )
 
             onFinish()
         } catch (e: Exception) {
@@ -391,20 +396,24 @@ class WalletConnectVerifiablePresentationRequestHandler(
         State.SessionRequestReview.IdentityProofRequestReview(
             connectedAccount = accountsPerStatement.first(),
             appMetadata = appMetadata,
-            request = identityProofRequest,
-            chosenAccounts = accountsPerStatement,
-            currentStatement = currentStatementIndex,
+            claims =
+            identityProofRequest
+                .credentialStatements
+                .zip(accountsPerStatement)
+                .map { (credentialStatement, account) ->
+                    IdentityProofRequestClaims(
+                        statements = credentialStatement.statement,
+                        selectedCredential = IdentityProofRequestSelectedCredential.Account(
+                            account = account,
+                            identity = getIdentity(account)!!,
+                        ),
+                        canSelectAccounts = true,
+                        canSelectIdentities = false,
+                    )
+                },
+            currentClaim = currentStatementIndex,
             provable = identityProofProvableState
         )
-
-    /**
-     * Wrapper for sending the verifiable presentation as JSON over WalletConnect. This is
-     * required to prevent WalletConnect from automatically parsing the JSON as an object
-     * on the dApp side.
-     */
-    private class VerifiablePresentationWrapper(
-        val verifiablePresentationJson: String,
-    )
 
     /**
      * Wrapper for receiving parameters as JSON over WalletConnect. This is required to allow a
