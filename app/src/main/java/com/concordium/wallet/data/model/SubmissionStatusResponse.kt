@@ -14,5 +14,5 @@ data class SubmissionStatusResponse(
     val rejectReason: String?,
     val encryptedAmount: String?,
     val aggregatedIndex: Int?,
-    val registerData: String?,
+    val registeredData: String?,
 )

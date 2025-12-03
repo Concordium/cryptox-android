@@ -6,14 +6,17 @@ import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.GivenContext
 import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaims
 import com.concordium.sdk.crypto.wallet.web3Id.VerifiablePresentationV1
+import com.concordium.sdk.crypto.wallet.web3Id.VerificationRequestAnchor
 import com.concordium.sdk.crypto.wallet.web3Id.VerificationRequestV1
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
+import com.concordium.sdk.serializing.CborMapper
 import com.concordium.sdk.serializing.JsonMapper
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.PrivateIdObjectData
+import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -21,7 +24,14 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.Log
+import com.reown.util.hexToBytes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -120,14 +130,23 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         loadDataAndPresentReview()
     }
 
-    private suspend fun loadDataAndPresentReview() {
+    private suspend fun loadDataAndPresentReview() = coroutineScope {
         try {
-            this.globalParams = getGlobalParams()
-                .toSdkCryptographicParameters()
+            awaitAll(
+                async {
+                    this@WalletConnectVerifiablePresentationV1RequestHandler.globalParams =
+                        getGlobalParams()
+                            .toSdkCryptographicParameters()
+                },
+                async {
+                    this@WalletConnectVerifiablePresentationV1RequestHandler.anchorBlockHash =
+                        getVerifiedAnchorBlockHash()
+                }
+            )
         } catch (e: Exception) {
-            Log.e("Failed loading global params", e)
+            Log.e("Failed loading necessary data", e)
 
-            respondError("Failed loading global params")
+            respondError("Failed loading necessary data: $e")
 
             emitEvent(
                 Event.ShowFloatingError(
@@ -137,48 +156,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
             onFinish()
 
-            return
-        }
-
-        try {
-//            val requestAnchorTransaction = proxyRepository
-//                .getSubmissionStatus(verificationRequest.transactionRef.asHex())
-//
-//            check(requestAnchorTransaction.status == TransactionStatus.FINALIZED) {
-//                "Anchor transaction is not finalized"
-//            }
-//
-//            val anchorCborHex = requestAnchorTransaction.registerData
-//                ?: error("Anchor transaction data is missing")
-//
-//            val anchor = CborMapper.INSTANCE.readValue(
-//                anchorCborHex.hexToBytes(),
-//                VerificationRequestAnchor::class.java
-//            )
-//
-//            check(verificationRequest.verifyAnchor(anchor)) {
-//                "Anchor doesn't match the request"
-//            }
-//
-//            this.anchorBlockHash = requestAnchorTransaction
-//                .blockHashes
-//                ?.first()
-//                ?: error("Anchor transaction block hash is missing")
-            this.anchorBlockHash = "later"
-        } catch (e: Exception) {
-            Log.e("Failed checking the anchor", e)
-
-            respondError("Failed checking the anchor: $e")
-
-            emitEvent(
-                Event.ShowFloatingError(
-                    Error.LoadingFailed
-                )
-            )
-
-            onFinish()
-
-            return
+            return@coroutineScope
         }
 
         emitState(
@@ -195,6 +173,48 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             failure = continuation::resumeWithException,
         )
         continuation.invokeOnCancellation { backendRequest.dispose() }
+    }
+
+    private suspend fun getVerifiedAnchorBlockHash(
+    ): String = withContext(Dispatchers.IO) {
+        var requestAnchorTransaction: SubmissionStatusResponse? = null
+
+        // For now, the wallet needs to wait for a transaction to be included into a block.
+        // Not necessarily finalized.
+        for (attempt in (1..3)) {
+            Log.d("Attempt #$attempt to get the anchor transaction")
+
+            delay(3000)
+
+            requestAnchorTransaction = runCatching {
+                proxyRepository
+                    .getSubmissionStatus(verificationRequest.transactionRef.asHex())
+                    .takeUnless { it.blockHashes.isNullOrEmpty() }
+            }.getOrNull()
+
+            if (requestAnchorTransaction != null) {
+                break
+            }
+        }
+
+        val blockHash = requestAnchorTransaction
+            ?.blockHashes
+            ?.first()
+            ?: error("Failed getting anchor transaction block hash in time")
+
+        val anchorCborHex = requestAnchorTransaction.registeredData
+            ?: error("Anchor transaction data is missing")
+
+        val anchor = CborMapper.INSTANCE.readValue(
+            anchorCborHex.hexToBytes(),
+            VerificationRequestAnchor::class.java
+        )
+
+        check(verificationRequest.verifyAnchor(anchor)) {
+            "Anchor doesn't match the request"
+        }
+
+        return@withContext blockHash
     }
 
     suspend fun onAuthorizedForApproval(
