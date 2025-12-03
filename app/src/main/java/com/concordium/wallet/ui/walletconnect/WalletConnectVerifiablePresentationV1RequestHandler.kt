@@ -5,17 +5,23 @@ import com.concordium.sdk.crypto.wallet.ConcordiumHdWallet
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.GivenContext
 import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaims
+import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaimsAccountProofInput
+import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaimsIdentityProofInput
 import com.concordium.sdk.crypto.wallet.web3Id.VerifiablePresentationV1
 import com.concordium.sdk.crypto.wallet.web3Id.VerificationRequestAnchor
 import com.concordium.sdk.crypto.wallet.web3Id.VerificationRequestV1
+import com.concordium.sdk.responses.accountinfo.credential.AttributeType
 import com.concordium.sdk.responses.cryptographicparameters.CryptographicParameters
 import com.concordium.sdk.serializing.CborMapper
 import com.concordium.sdk.serializing.JsonMapper
+import com.concordium.sdk.transactions.CredentialRegistrationId
+import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.PrivateIdObjectData
+import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.Account
@@ -219,7 +225,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
     suspend fun onAuthorizedForApproval(
         password: String,
-    ) {
+    ) = withContext(Dispatchers.Default) {
         try {
 
         } catch (e: Exception) {
@@ -233,7 +239,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                 )
             )
 
-            return
+            return@withContext
         }
 
         try {
@@ -252,83 +258,23 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
             val proofInputs = credentialsByClaims
                 .map { (identityClaims, credential) ->
-                    val identity = credential.identity
-                    val identityProvider = identity.identityProvider
-
-                    val idCredSec: BLSSecretKey
-                    val prfKey: BLSSecretKey
-                    val signatureBlindingRandomness: String
-
-                    when {
-                        hdWallet != null -> {
-                            idCredSec = hdWallet.getIdCredSec(
-                                identityProvider.ipInfo.ipIdentity,
-                                identity.identityIndex
+                    when (credential) {
+                        is IdentityProofRequestSelectedCredential.Account ->
+                            getAccountProofInput(
+                                identityClaims = identityClaims,
+                                account = credential.account,
+                                identity = credential.identity,
+                                password = password,
                             )
-                            prfKey = hdWallet.getPrfKey(
-                                identityProvider.ipInfo.ipIdentity,
-                                identity.identityIndex
+
+                        is IdentityProofRequestSelectedCredential.Identity ->
+                            getIdentityProofInput(
+                                identityClaims = identityClaims,
+                                identity = credential.identity,
+                                password = password,
+                                hdWallet = hdWallet,
                             )
-                            signatureBlindingRandomness = hdWallet.getSignatureBlindingRandomness(
-                                identityProvider.ipInfo.ipIdentity,
-                                identity.identityIndex
-                            )
-                        }
-
-                        identity.privateIdObjectDataEncrypted != null -> {
-                            val privateData: PrivateIdObjectData =
-                                App
-                                    .appCore
-                                    .auth
-                                    .decrypt(
-                                        password = password,
-                                        encryptedData = identity.privateIdObjectDataEncrypted!!,
-                                    )
-                                    ?.let { decrytpedBytes ->
-                                        App.appCore.gson.fromJson(
-                                            String(decrytpedBytes),
-                                            PrivateIdObjectData::class.java
-                                        )
-                                    }
-                                    ?: error("Can't decrypt identity private data")
-
-                            signatureBlindingRandomness =
-                                privateData
-                                    .randomness
-                            prfKey =
-                                privateData
-                                    .aci
-                                    .prfKey
-                                    .let(BLSSecretKey::from)
-                            idCredSec =
-                                privateData
-                                    .aci
-                                    .credentialHolderInformation
-                                    .idCredSecret
-                                    .let(BLSSecretKey::from)
-
-                        }
-
-                        else -> {
-                            error("Required keys can't be neither derived nor decrypted")
-                        }
                     }
-
-                    identityClaims.getIdentityProofInput(
-                        network,
-                        identityProvider
-                            .ipInfo
-                            .toSdkIdentityProviderInfo(),
-                        identityProvider
-                            .arsInfos
-                            .mapValues { (_, it) -> it.toSdkAnonymityRevokerInfo() },
-                        identity
-                            .identityObject!!
-                            .toSdkIdentityObject(),
-                        idCredSec,
-                        prfKey,
-                        signatureBlindingRandomness,
-                    )
                 }
 
             val providedContext =
@@ -372,6 +318,154 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
             onFinish()
         }
+    }
+
+    private suspend fun getIdentityProofInput(
+        identityClaims: IdentityClaims,
+        identity: Identity,
+        password: String,
+        hdWallet: ConcordiumHdWallet?,
+    ): IdentityClaimsIdentityProofInput = withContext(Dispatchers.Default) {
+        val identityProvider = identity.identityProvider
+
+        val idCredSec: BLSSecretKey
+        val prfKey: BLSSecretKey
+        val signatureBlindingRandomness: String
+
+        when {
+            hdWallet != null -> {
+                idCredSec = hdWallet.getIdCredSec(
+                    identityProvider.ipInfo.ipIdentity,
+                    identity.identityIndex
+                )
+                prfKey = hdWallet.getPrfKey(
+                    identityProvider.ipInfo.ipIdentity,
+                    identity.identityIndex
+                )
+                signatureBlindingRandomness = hdWallet.getSignatureBlindingRandomness(
+                    identityProvider.ipInfo.ipIdentity,
+                    identity.identityIndex
+                )
+            }
+
+            identity.privateIdObjectDataEncrypted != null -> {
+                val privateData: PrivateIdObjectData =
+                    App
+                        .appCore
+                        .auth
+                        .decrypt(
+                            password = password,
+                            encryptedData = identity.privateIdObjectDataEncrypted!!,
+                        )
+                        ?.let { decrytpedBytes ->
+                            App.appCore.gson.fromJson(
+                                String(decrytpedBytes),
+                                PrivateIdObjectData::class.java
+                            )
+                        }
+                        ?: error("Can't decrypt identity private data")
+
+                signatureBlindingRandomness = privateData.randomness
+                prfKey =
+                    privateData
+                        .aci
+                        .prfKey
+                        .let(BLSSecretKey::from)
+                idCredSec =
+                    privateData
+                        .aci
+                        .credentialHolderInformation
+                        .idCredSecret
+                        .let(BLSSecretKey::from)
+
+            }
+
+            else -> {
+                error("Keys needed for identity proof can't be neither derived nor decrypted")
+            }
+        }
+
+        val ipInfo =
+            identityProvider
+                .ipInfo
+                .toSdkIdentityProviderInfo()
+
+        val arsInfos =
+            identityProvider
+                .arsInfos
+                .mapValues { (_, it) -> it.toSdkAnonymityRevokerInfo() }
+
+        val identityObject =
+            identity
+                .identityObject!!
+                .toSdkIdentityObject()
+
+        return@withContext identityClaims.getIdentityProofInput(
+            network,
+            ipInfo,
+            arsInfos,
+            identityObject,
+            idCredSec,
+            prfKey,
+            signatureBlindingRandomness,
+        )
+    }
+
+    private suspend fun getAccountProofInput(
+        identityClaims: IdentityClaims,
+        account: Account,
+        identity: Identity,
+        password: String,
+    ): IdentityClaimsAccountProofInput = withContext(Dispatchers.Default) {
+
+        val storageAccountDataEncrypted = account.encryptedAccountData
+            ?: error("Account has no encrypted data")
+
+        val decryptedJson = App.appCore.auth
+            .decrypt(
+                password = password,
+                encryptedData = storageAccountDataEncrypted
+            )
+            ?.let(::String)
+            ?: error("Failed to decrypt the account data")
+
+        val ipIdentity =
+            identity
+                .identityProvider
+                .ipInfo
+                .ipIdentity
+                .let(UInt32::from)
+
+        val credId =
+            account
+                .credential!!
+                .getCredId()!!
+                .let(CredentialRegistrationId::from)
+
+        val attributeValues =
+            identity
+                .identityObject!!
+                .toSdkIdentityObject()
+                .attributeList
+                .chosenAttributes
+
+        val attributeRandomness: Map<AttributeType, String> =
+            App.appCore.gson
+                .fromJson(decryptedJson, StorageAccountData::class.java)
+                .getAttributeRandomness()
+                ?.attributesRand
+                ?.mapKeys { (typeString, _) ->
+                    AttributeType.fromJSON(typeString)
+                }
+                ?: error("Attribute randomness is not available for the account")
+
+        return@withContext identityClaims.getAccountProofInput(
+            network,
+            ipIdentity,
+            credId,
+            attributeValues,
+            attributeRandomness,
+        )
     }
 
     private fun createIdentityProofRequestState(
