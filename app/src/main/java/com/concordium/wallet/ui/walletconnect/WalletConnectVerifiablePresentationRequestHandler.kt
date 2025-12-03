@@ -121,7 +121,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 // otherwise find any account that can prove the statement.
                 orderedAccounts.find { account ->
                     isValidIdentityForStatement(
-                        identity = getIdentity(account)!!,
+                        identity = getIdentity(account),
                         statement = statement,
                     )
                 }
@@ -133,7 +133,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 identityProofRequest.credentialStatements.any { statement ->
                     availableAccounts.none { account ->
                         (statement.idQualifier as IdentityQualifier).issuers.contains(
-                            getIdentity(account)!!.identityProviderId.toLong()
+                            getIdentity(account).identityProviderId.toLong()
                         )
                     }
                 }
@@ -233,7 +233,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 val statementAccount = accountIterator.next()
                 val attributeRandomness =
                     attributeRandomnessByAccount.getValue(statementAccount.address)
-                val statementIdentity = getIdentity(statementAccount)!!
+                val statementIdentity = getIdentity(statementAccount)
                 val identityProviderIndex = statementIdentity.identityProviderId
                 val randomness: MutableMap<AttributeType, String> = mutableMapOf()
                 val attributeValues: MutableMap<AttributeType, String> = mutableMapOf()
@@ -321,9 +321,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
         val statement = identityProofRequest.credentialStatements[statementIndex]
 
         val validAccounts = availableAccounts.filter { account ->
-            getIdentity(account)
-                ?.let { isValidIdentityForStatement(it, statement) }
-                ?: false
+            isValidIdentityForStatement(getIdentity(account), statement)
         }
 
         if (validAccounts.size > 1) {
@@ -334,7 +332,6 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
             emitState(
                 State.AccountSelection(
-                    selectedAccount = accountsPerStatement[statementIndex],
                     accounts = validAccounts,
                     appMetadata = appMetadata,
                     previousState = createIdentityProofRequestState(statementIndex),
@@ -356,8 +353,8 @@ class WalletConnectVerifiablePresentationRequestHandler(
         )
     }
 
-    fun getIdentity(account: Account) =
-        identitiesById[account.identityId]
+    private fun getIdentity(account: Account) =
+        identitiesById[account.identityId]!!
 
     private fun isValidIdentityForStatement(
         identity: Identity,
@@ -396,7 +393,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                         statements = credentialStatement.statement,
                         selectedCredential = IdentityProofRequestSelectedCredential.Account(
                             account = account,
-                            identity = getIdentity(account)!!,
+                            identity = getIdentity(account),
                         ),
                         canSelectAccounts = true,
                         canSelectIdentities = false,

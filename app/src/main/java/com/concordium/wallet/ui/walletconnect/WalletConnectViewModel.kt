@@ -522,7 +522,6 @@ private constructor(
 
             mutableStateFlow.emit(
                 State.AccountSelection(
-                    selectedAccount = reviewState.selectedAccount,
                     accounts = accounts,
                     appMetadata = reviewState.appMetadata,
                     previousState = reviewState,
@@ -552,7 +551,10 @@ private constructor(
 
             is State.SessionRequestReview.IdentityProofRequestReview ->
                 if (previousState.isV1) {
-                    TODO()
+                    verifiablePresentationV1RequestHandler.onAccountSelected(
+                        claimIndex = previousState.currentClaim,
+                        account = selectedAccount,
+                    )
                 } else {
                     verifiablePresentationRequestHandler.onAccountSelected(
                         statementIndex = previousState.currentClaim,
@@ -574,7 +576,10 @@ private constructor(
         }
 
         if (proofReviewState.isV1) {
-            TODO()
+            verifiablePresentationV1RequestHandler.onChangeAccountClicked(
+                claimIndex = statementIndex,
+                availableAccounts = getAvailableAccounts(),
+            )
         } else {
             verifiablePresentationRequestHandler.onChangeAccountClicked(
                 statementIndex = statementIndex,
@@ -1155,7 +1160,6 @@ private constructor(
          * in order to continue.
          */
         class AccountSelection(
-            val selectedAccount: Account,
             val accounts: List<Account>,
             val appMetadata: AppMetadata,
             val previousState: State,

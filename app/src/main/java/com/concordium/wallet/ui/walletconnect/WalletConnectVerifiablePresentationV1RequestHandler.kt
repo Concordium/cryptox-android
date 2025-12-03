@@ -68,7 +68,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private lateinit var identityClaims: List<IdentityClaims>
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
     private lateinit var identitiesById: Map<Int, Identity>
-    private lateinit var credentialsByClaims: Map<IdentityClaims, IdentityProofRequestSelectedCredential>
+    private lateinit var credentialsByClaims: MutableMap<IdentityClaims, IdentityProofRequestSelectedCredential>
     private lateinit var globalParams: CryptographicParameters
     private lateinit var anchorBlockHash: String
 
@@ -103,7 +103,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
             // To show the request, all claims must have an associated identity or account.
             // If claims are not provable, use the connected account as a fallback.
-            this.credentialsByClaims = identityClaims.associateWith { claims ->
+            this.credentialsByClaims = identityClaims.associateWithTo(mutableMapOf()) { claims ->
                 when {
                     claims.canUseIdentity -> {
                         val suitableIdentity: Identity? =
@@ -536,6 +536,62 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             credId,
             attributeValues,
             attributeRandomness,
+        )
+    }
+
+    fun onChangeAccountClicked(
+        claimIndex: Int,
+        availableAccounts: Collection<Account>,
+    ) {
+        val claims = identityClaims[claimIndex]
+        val suitableAccounts =
+            availableAccounts
+                .filter { account ->
+                    claims.canBeProvedBy(getIdentity(account))
+                }
+
+        if (suitableAccounts.size > 1) {
+            Log.d(
+                "Switching to account selection:" +
+                        "\nsuitableAccounts=${availableAccounts.size}"
+            )
+
+            emitState(
+                State.AccountSelection(
+                    accounts = suitableAccounts,
+                    appMetadata = appMetadata,
+                    previousState = createIdentityProofRequestState(claimIndex),
+                )
+            )
+        } else {
+            Log.w("No accounts to select from")
+        }
+    }
+
+    fun onAccountSelected(
+        claimIndex: Int,
+        account: Account,
+    ) {
+        credentialsByClaims[identityClaims[claimIndex]] =
+            IdentityProofRequestSelectedCredential.Account(
+                account = account,
+                identity = getIdentity(account)
+            )
+
+        emitState(
+            createIdentityProofRequestState(claimIndex)
+        )
+    }
+
+    fun onIdentitySelected(
+        claimIndex: Int,
+        identity: Identity,
+    ) {
+        credentialsByClaims[identityClaims[claimIndex]] =
+            IdentityProofRequestSelectedCredential.Identity(identity)
+
+        emitState(
+            createIdentityProofRequestState(claimIndex)
         )
     }
 
