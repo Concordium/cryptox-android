@@ -62,7 +62,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     // Every WC request is associated with an account,
     // but this doesn't really matter for proofs.
     // What matters is credentialsByClaims.
-    private lateinit var account: Account
+    private lateinit var connectedAccount: Account
     private lateinit var appMetadata: WalletConnectViewModel.AppMetadata
     private lateinit var verificationRequest: VerificationRequestV1
     private lateinit var identityClaims: List<IdentityClaims>
@@ -74,9 +74,12 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
     suspend fun start(
         params: String,
-        account: Account,
+        connectedAccount: Account,
+        availableAccounts: Collection<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
+        var anyUnprovableClaims = false
+
         try {
             this.verificationRequest = JsonMapper.INSTANCE.readValue(
                 params,
@@ -98,18 +101,41 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                     .getAllDone()
                     .associateBy(Identity::id)
 
+            // To show the request, all claims must have an associated identity or account.
+            // If claims are not provable, use the connected account as a fallback.
             this.credentialsByClaims = identityClaims.associateWith { claims ->
                 when {
-                    claims.canUseIdentity ->
-                        IdentityProofRequestSelectedCredential.Identity(
-                            identity = getIdentity(account),
-                        )
+                    claims.canUseIdentity -> {
+                        val suitableIdentity: Identity? =
+                            identitiesById
+                                .values
+                                .find { claims.canBeProvedBy(it) }
 
-                    claims.canUseAccount ->
-                        IdentityProofRequestSelectedCredential.Account(
-                            account = account,
-                            identity = getIdentity(account),
+                        if (suitableIdentity == null) {
+                            anyUnprovableClaims = true
+                        }
+
+                        IdentityProofRequestSelectedCredential.Identity(
+                            identity = suitableIdentity ?: getIdentity(connectedAccount),
                         )
+                    }
+
+                    claims.canUseAccount -> {
+                        val suitableAccount: Account? =
+                            availableAccounts
+                                .find { account ->
+                                    claims.canBeProvedBy(getIdentity(account))
+                                }
+
+                        if (suitableAccount == null) {
+                            anyUnprovableClaims = true
+                        }
+
+                        IdentityProofRequestSelectedCredential.Account(
+                            account = suitableAccount ?: connectedAccount,
+                            identity = getIdentity(suitableAccount ?: connectedAccount),
+                        )
+                    }
 
                     else ->
                         error("Only claims for account or identity credentials are supported")
@@ -153,11 +179,30 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             return
         }
 
-        this.account = account
+        this.connectedAccount = connectedAccount
         this.appMetadata = appMetadata
 
-        // TODO Actually set the state
-        this.identityProofProvableState = WalletConnectViewModel.ProofProvableState.Provable
+        this.identityProofProvableState = when {
+            anyUnprovableClaims -> {
+                val identityProviderIds =
+                    identitiesById
+                        .values
+                        .mapTo(mutableSetOf(), Identity::identityProviderId)
+                val anyClaimsForMissingIssuers =
+                    identityClaims
+                        .any { claims ->
+                            claims.issuers.none { it.ipIdentity.value in identityProviderIds }
+                        }
+
+                if (anyClaimsForMissingIssuers)
+                    WalletConnectViewModel.ProofProvableState.NoCompatibleIssuer
+                else
+                    WalletConnectViewModel.ProofProvableState.UnProvable
+            }
+
+            else ->
+                WalletConnectViewModel.ProofProvableState.Provable
+        }
 
         loadDataAndPresentReview()
     }
@@ -498,7 +543,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         currentClaimIndex: Int,
     ): State.SessionRequestReview =
         State.SessionRequestReview.IdentityProofRequestReview(
-            connectedAccount = account,
+            connectedAccount = connectedAccount,
             appMetadata = appMetadata,
             claims =
             identityClaims
@@ -523,6 +568,16 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
     private val IdentityClaims.canUseAccount: Boolean
         get() = source.contains(IdentityClaims.ACCOUNT_CREDENTIAL_SOURCE)
+
+    private fun IdentityClaims.canBeProvedBy(identity: Identity): Boolean {
+        if (!issuers.any { it.ipIdentity.value == identity.identityProviderId }) {
+            return false
+        }
+        if (statements.any { !it.canBeProvedBy(identity.identityObject!!.toSdkIdentityObject()) }) {
+            return false
+        }
+        return true
+    }
 
     companion object {
         const val METHOD = "request_verifiable_presentation_v1"

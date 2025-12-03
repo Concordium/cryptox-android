@@ -761,7 +761,8 @@ private constructor(
                 WalletConnectVerifiablePresentationV1RequestHandler.METHOD -> {
                     verifiablePresentationV1RequestHandler.start(
                         params = params,
-                        account = account,
+                        connectedAccount = account,
+                        availableAccounts = getAvailableAccounts(),
                         appMetadata = sessionRequestAppMetadata,
                     )
                 }
