@@ -18,6 +18,7 @@ import com.concordium.sdk.transactions.CredentialRegistrationId
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.PrivateIdObjectData
@@ -50,6 +51,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private val proxyRepository: ProxyRepository,
     private val identityRepository: IdentityRepository,
     private val walletSetupPreferences: WalletSetupPreferences,
+    private val activeWalletType: AppWallet.Type,
 ) {
     private val network =
         if (BuildConfig.ENV_NAME.equals("production", ignoreCase = true))
@@ -57,8 +59,9 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         else
             Network.TESTNET
 
-    // It doesn't really matter,
-    // but every WC request is associated with an account.
+    // Every WC request is associated with an account,
+    // but this doesn't really matter for proofs.
+    // What matters is credentialsByClaims.
     private lateinit var account: Account
     private lateinit var appMetadata: WalletConnectViewModel.AppMetadata
     private lateinit var verificationRequest: VerificationRequestV1
@@ -80,35 +83,36 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                 VerificationRequestV1::class.java
             )
 
-            this.identityClaims = verificationRequest
-                .subjectClaims
-                .filterIsInstance<IdentityClaims>()
-                .takeIf { it.size == verificationRequest.subjectClaims.size }
-                ?: error("Only requests with identity claims are supported")
+            this.identityClaims =
+                verificationRequest
+                    .subjectClaims
+                    .map { claims ->
+                        claims as? IdentityClaims
+                            ?: error("Only identity claims are supported")
+                    }
+                    .takeIf(Collection<*>::isNotEmpty)
+                    ?: error("There are no claims")
 
-            check(identityClaims.isNotEmpty()) {
-                "There are no claims"
-            }
-
-            this.identitiesById = identityRepository.getAllDone()
-                .associateBy(Identity::id)
+            this.identitiesById =
+                identityRepository
+                    .getAllDone()
+                    .associateBy(Identity::id)
 
             this.credentialsByClaims = identityClaims.associateWith { claims ->
                 when {
+                    claims.canUseIdentity ->
+                        IdentityProofRequestSelectedCredential.Identity(
+                            identity = getIdentity(account),
+                        )
+
                     claims.canUseAccount ->
                         IdentityProofRequestSelectedCredential.Account(
                             account = account,
                             identity = getIdentity(account),
                         )
 
-                    claims.canUseIdentity ->
-                        IdentityProofRequestSelectedCredential.Identity(
-                            identity = getIdentity(account),
-                        )
-
                     else ->
-                        error("Only identity claims with account or identity source are supported")
-
+                        error("Only claims for account or identity credentials are supported")
                 }
             }
         } catch (e: Exception) {
@@ -119,6 +123,28 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             emitEvent(
                 Event.ShowFloatingError(
                     Error.InvalidRequest
+                )
+            )
+
+            onFinish()
+
+            return
+        }
+
+        val onlyAccounts =
+            identityClaims
+                .all { claims ->
+                    claims.canUseAccount && !claims.canUseIdentity
+                }
+
+        if (onlyAccounts && activeWalletType != AppWallet.Type.SEED) {
+            Log.d("A non-seed phrase wallet only support claims for identity credentials")
+
+            respondError("A non-seed phrase wallet only support claims for identity credentials")
+
+            emitEvent(
+                Event.ShowFloatingError(
+                    Error.NotSeedPhraseWalletError
                 )
             )
 
@@ -287,7 +313,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                                 anchorBlockHash
 
                             GivenContext.RESOURCE_ID_LABEL ->
-                                "buyer need midnight amateur mix jungle top odor mouse exotic master strong"
+                                "(╬▔皿▔)╯📦 you're welcome"
 
                             else ->
                                 error("Can't provide $requestedInfoLabel")

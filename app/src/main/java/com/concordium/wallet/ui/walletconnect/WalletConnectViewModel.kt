@@ -186,6 +186,7 @@ private constructor(
             proxyRepository = proxyRepository,
             identityRepository = identityRepository,
             walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences,
+            activeWalletType = App.appCore.session.activeWallet.type,
         )
     }
 
