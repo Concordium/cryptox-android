@@ -13,16 +13,12 @@ class OnboardingSharedViewModel(application: Application) : AndroidViewModel(app
     private val _updateState = MutableStateFlow(false)
     val updateState = _updateState.asStateFlow()
 
-    private val _showLoading = MutableStateFlow(false)
-    val showLoading = _showLoading.asStateFlow()
-
     private val _identityFlow = MutableSharedFlow<Identity>()
     val identityFlow = _identityFlow.asSharedFlow()
 
     private val _animatedButtonFlow = MutableStateFlow(false)
     val animatedButtonFlow = _animatedButtonFlow.asStateFlow()
 
-    suspend fun setShowLoading(show: Boolean) = _showLoading.emit(show)
     suspend fun setUpdateState(update: Boolean) = _updateState.emit(update)
     suspend fun setIdentity(identity: Identity) = _identityFlow.emit(identity)
     suspend fun setAnimatedButton(isAnimated: Boolean) = _animatedButtonFlow.emit(isAnimated)

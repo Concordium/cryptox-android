@@ -209,7 +209,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         if (::account.isInitialized) {
             if (account.transactionStatus == TransactionStatus.FINALIZED) {
                 if (notifyWaitingLiveData) {
-                    _waitingLiveData.value = true
+                    _waitingLiveData.postValue(true)
                 }
                 viewModelScope.launch {
                     accountUpdater.updateForAccount(account)
@@ -223,13 +223,13 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
     private fun initializeAccountUpdater() {
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
-                checkBakingDelegationStatus()
                 viewModelScope.launch {
                     updateAccountFromRepository()
                     if (::account.isInitialized) {
+                        checkBakingDelegationStatus()
+                        _accountUpdatedFlow.emit(account)
                         _totalBalanceLiveData.value = account.balance
                     }
-                    _accountUpdatedFlow.emit(account)
                     if (totalBalances.totalBalanceForAllAccounts > BigInteger.ZERO &&
                         App.appCore.setup.isHasShowReviewDialogAfterReceiveFunds.not()
                     ) {
@@ -247,10 +247,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         })
     }
 
-    private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
-        if (notifyWaitingLiveData) {
-            _waitingLiveData.postValue(true)
-        }
+    private fun updateSubmissionStatesAndBalances() {
         accountUpdater.updateForAllAccounts()
     }
 
@@ -322,7 +319,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         if (App.appCore.session.activeWallet.type == AppWallet.Type.FILE) {
             postState(OnboardingState.DONE, notifyWaitingLiveData = notifyWaitingLiveData)
             getActiveAccount()
-            updateSubmissionStatesAndBalances(notifyWaitingLiveData)
+            updateSubmissionStatesAndBalances()
             return@launch
         }
 
@@ -387,7 +384,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
             _waitingLiveData.postValue(false)
             restartUpdater(BuildConfig.FAST_ACCOUNT_UPDATE_FREQUENCY_SEC)
         }
-        updateSubmissionStatesAndBalances(false)
+        updateSubmissionStatesAndBalances()
     }
 
     private fun showSingleDialogIfNeeded() = viewModelScope.launch(Dispatchers.IO) {
