@@ -260,9 +260,6 @@ class AccountDetailsFragment : BaseFragment() {
             if (update)
                 viewModelAccountDetails.updateState()
         }
-        onboardingViewModel.showLoading.collectWhenStarted(viewLifecycleOwner) { show ->
-            showWaiting(show)
-        }
     }
 
     private fun initViews() {
@@ -329,6 +326,8 @@ class AccountDetailsFragment : BaseFragment() {
             pendingFragmentContainer.pendingLayout.visibility = View.GONE
             pendingFragmentContainer.errorLayout.visibility = View.GONE
             onboardingLayout.visibility = View.GONE
+            accountRetryButton.visibility = View.GONE
+            accountRemoveButton.visibility = View.GONE
         }
     }
 
