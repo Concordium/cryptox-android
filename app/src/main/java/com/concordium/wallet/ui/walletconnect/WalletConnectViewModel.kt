@@ -130,8 +130,7 @@ private constructor(
     private val mutableEventsFlow = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
-    private val mutableIsSubmittingTransactionFlow = MutableStateFlow(false)
-    private val isBusyFlow: Flow<Boolean> = mutableIsSubmittingTransactionFlow
+    private val isBusyFlow = MutableStateFlow(false)
     val isSessionRequestApproveButtonEnabledFlow: Flow<Boolean> =
         isBusyFlow.combine(stateFlow) { isBusy, state ->
             !isBusy && state is State.SessionRequestReview && state.canApprove
@@ -145,7 +144,7 @@ private constructor(
             emitEvent = mutableEventsFlow::tryEmit,
             emitState = mutableStateFlow::tryEmit,
             onFinish = ::onSessionRequestHandlingFinished,
-            setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
+            setIsSubmittingTransaction = isBusyFlow::tryEmit,
             proxyRepository = proxyRepository,
             tokensInteractor = tokensInteractor,
             context = application,
@@ -183,6 +182,7 @@ private constructor(
             emitEvent = mutableEventsFlow::tryEmit,
             emitState = mutableStateFlow::tryEmit,
             onFinish = ::onSessionRequestHandlingFinished,
+            setIsLoading = isBusyFlow::tryEmit,
             proxyRepository = proxyRepository,
             identityRepository = identityRepository,
             walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences,
@@ -794,6 +794,7 @@ private constructor(
 
     private fun onSessionRequestHandlingFinished() {
         mutableStateFlow.tryEmit(State.Idle)
+        isBusyFlow.tryEmit(false)
         if (!handleGoBack()) {
             handleNextOldestPendingSessionRequest()
         }

@@ -32,11 +32,18 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.Log
 import com.reown.util.hexToBytes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
@@ -47,7 +54,8 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private val respondError: (message: String) -> Unit,
     private val emitEvent: (event: Event) -> Unit,
     private val emitState: (state: State) -> Unit,
-    private val onFinish: () -> Unit,
+    onFinish: () -> Unit,
+    private val setIsLoading: (isLoading: Boolean) -> Unit,
     private val proxyRepository: ProxyRepository,
     private val identityRepository: IdentityRepository,
     private val walletSetupPreferences: WalletSetupPreferences,
@@ -58,6 +66,14 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             Network.MAINNET
         else
             Network.TESTNET
+    private val isLoadingData: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isCreatingProof: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private var requestCoroutineScope: CoroutineScope? = null
+    private lateinit var deferredDataLoading: Deferred<LoadedData>
+    private val onFinish: () -> Unit = {
+        requestCoroutineScope?.cancel()
+        onFinish()
+    }
 
     // Every WC request is associated with an account,
     // but this doesn't really matter for proofs.
@@ -69,8 +85,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
     private lateinit var identitiesById: Map<Int, Identity>
     private lateinit var credentialsByClaims: MutableMap<IdentityClaims, IdentityProofRequestSelectedCredential>
-    private lateinit var globalParams: CryptographicParameters
-    private lateinit var anchorBlockHash: String
 
     suspend fun start(
         params: String,
@@ -78,6 +92,19 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         availableAccounts: Collection<Account>,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
+        requestCoroutineScope?.cancel()
+        requestCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
+        combine(
+            isLoadingData,
+            isCreatingProof,
+            transform = { one, another ->
+                one || another
+            }
+        )
+            .onEach(setIsLoading)
+            .launchIn(requestCoroutineScope!!)
+
         var anyUnprovableClaims = false
 
         try {
@@ -207,33 +234,30 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         loadDataAndPresentReview()
     }
 
-    private suspend fun loadDataAndPresentReview() = coroutineScope {
-        try {
-            awaitAll(
-                async {
-                    this@WalletConnectVerifiablePresentationV1RequestHandler.globalParams =
-                        getGlobalParams()
-                            .toSdkCryptographicParameters()
-                },
-                async {
-                    this@WalletConnectVerifiablePresentationV1RequestHandler.anchorBlockHash =
-                        getVerifiedAnchorBlockHash()
-                }
-            )
-        } catch (e: Exception) {
-            Log.e("Failed loading necessary data", e)
+    private suspend fun loadDataAndPresentReview() {
+        deferredDataLoading = requestCoroutineScope!!.async {
+            check(identityProofProvableState == WalletConnectViewModel.ProofProvableState.Provable) {
+                "No point in loading the data for unprovable proof"
+            }
 
-            respondError("Failed loading necessary data: $e")
+            isLoadingData.value = true
 
-            emitEvent(
-                Event.ShowFloatingError(
-                    Error.LoadingFailed
-                )
-            )
+            Log.d("Loading necessary data in background")
 
-            onFinish()
+            val globalParams = async {
+                getGlobalParams().toSdkCryptographicParameters()
+            }
+            val verifiedAnchorBlockHash = async {
+                getVerifiedAnchorBlockHash()
+            }
 
-            return@coroutineScope
+            LoadedData(
+                globalParams.await(),
+                verifiedAnchorBlockHash.await(),
+            ).also {
+                isLoadingData.value = false
+                Log.d("Necessary data loaded")
+            }
         }
 
         emitState(
@@ -297,18 +321,24 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     suspend fun onAuthorizedForApproval(
         password: String,
     ) = withContext(Dispatchers.Default) {
-        try {
+        isCreatingProof.value = true
 
+        val (globalParams, anchorBlockHash) = try {
+            deferredDataLoading.await()
         } catch (e: Exception) {
-            Log.e("Failed getting attribute randomness", e)
+            ensureActive()
 
-            respondError("Failed getting attribute randomness: $e")
+            Log.e("Failed loading necessary data", e)
+
+            respondError("Failed loading necessary data: $e")
 
             emitEvent(
                 Event.ShowFloatingError(
-                    Error.InternalError
+                    Error.LoadingFailed
                 )
             )
+
+            onFinish()
 
             return@withContext
         }
@@ -639,3 +669,5 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         const val METHOD = "request_verifiable_presentation_v1"
     }
 }
+
+private typealias LoadedData = Pair<CryptographicParameters, String>
