@@ -37,8 +37,8 @@ public class systemInfo {
     public static String getSeedPhrase(){
 
         List<String> seedPhrase = Arrays.asList(
-                "gravity dirt slow explain goat wage sample stand spirit chimney athlete van dinosaur rely fragile wagon miracle fun firm ensure find stereo try delay",
-                "luxury crouch desk purity medal replace kitten trial work tuition disease poverty icon banana banner tonight salad muscle special eye bleak involve unknown knife",
+//                "gravity dirt slow explain goat wage sample stand spirit chimney athlete van dinosaur rely fragile wagon miracle fun firm ensure find stereo try delay",
+//                "luxury crouch desk purity medal replace kitten trial work tuition disease poverty icon banana banner tonight salad muscle special eye bleak involve unknown knife",
                 "word thumb room input arm enjoy audit dumb echo deputy cherry violin elder promote vivid around below believe awesome word bubble inhale discover benefit");
         // Create a Random object
         Random random = new Random();
