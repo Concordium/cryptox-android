@@ -9,6 +9,7 @@ import com.concordium.wallet.databinding.IdentityProofContainerBinding
 class CredentialStatementAdapter(
     private val claims: List<IdentityProofRequestClaims>,
     private val onChangeAccountClicked: (index: Int) -> Unit,
+    private val onIdentityChangeClicked: (index: Int) -> Unit,
 ) : RecyclerView.Adapter<CredentialStatementAdapter.ViewHolder>() {
     class ViewHolder(val containerBinding: IdentityProofContainerBinding) :
         RecyclerView.ViewHolder(containerBinding.root)
@@ -51,8 +52,9 @@ class CredentialStatementAdapter(
                     accBalance.isVisible = false
                     accIdentity.isVisible = false
                 }
-                // TODO handle identity change.
-                holder.containerBinding.selectedCredentialInclude.root.setOnClickListener(null)
+                holder.containerBinding.selectedCredentialInclude.root.setOnClickListener{
+                    onIdentityChangeClicked(position)
+                }
             }
         }
     }

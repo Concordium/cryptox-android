@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectAccountSelectionBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectIdentityProofRequestReviewBinding
@@ -108,6 +109,12 @@ class WalletConnectView(
             is WalletConnectViewModel.State.AccountSelection -> {
                 showAccountSelection(
                     accounts = state.accounts,
+                )
+            }
+
+            is WalletConnectViewModel.State.IdentitySelection -> {
+                showIdentitySelection(
+                    identities = state.identities,
                 )
             }
 
@@ -309,6 +316,27 @@ class WalletConnectView(
     ) = with(view) {
         val adapter = ChooseAccountListAdapter(root.context, accounts)
         adapter.setChooseAccountClickListener(viewModel::onAccountSelected)
+        accountsListView.adapter = adapter
+    }
+
+    private fun showIdentitySelection(
+        identities: List<Identity>,
+    ) {
+        getShownBottomSheet().showIdentitySelection { (view, _) ->
+            initIdentitySelectionView(
+                view = view,
+                identities = identities,
+            )
+        }
+    }
+
+    private fun initIdentitySelectionView(
+        view: FragmentWalletConnectAccountSelectionBinding,
+        identities: List<Identity>,
+    ) = with(view) {
+        titleTextView.setText(R.string.wallet_connect_choose_another_identity)
+        val adapter = ChooseIdentityListAdapter(root.context, identities)
+        adapter.setOnClickListener(viewModel::onIdentitySelected)
         accountsListView.adapter = adapter
     }
 
@@ -589,6 +617,7 @@ class WalletConnectView(
         val adapter = CredentialStatementAdapter(
             claims = claims,
             onChangeAccountClicked = viewModel::onChangeIdentityProofAccountClicked,
+            onIdentityChangeClicked = viewModel::onChangeIdentityProofIdentityClicked,
         )
 
         fun updatePrimaryActionButton() {

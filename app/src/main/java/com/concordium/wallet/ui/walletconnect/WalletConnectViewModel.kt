@@ -17,6 +17,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
@@ -535,11 +536,6 @@ private constructor(
             "The account can only be selected in the account selection state"
         }
 
-        Log.d(
-            "switching_to_session_proposal_review:" +
-                    "\nnewSelectedAccountId=${selectedAccount.id}"
-        )
-
         when (val previousState = selectionState.previousState) {
             is State.SessionProposalReview ->
                 mutableStateFlow.tryEmit(
@@ -567,6 +563,27 @@ private constructor(
         }
     }
 
+    fun onIdentitySelected(selectedIdentity: Identity) {
+        val selectionState = checkNotNull(state as? State.IdentitySelection) {
+            "The identity can only be selected in the identity selection state"
+        }
+
+        when (val previousState = selectionState.previousState) {
+            is State.SessionRequestReview.IdentityProofRequestReview ->
+                if (previousState.isV1) {
+                    verifiablePresentationV1RequestHandler.onIdentitySelected(
+                        claimIndex = previousState.currentClaim,
+                        identity = selectedIdentity,
+                    )
+                } else {
+                    error("Identity can't be changed for V0 proof request")
+                }
+
+            else ->
+                error("Nothing to do with the selected identity")
+        }
+    }
+
     fun onChangeIdentityProofAccountClicked(
         statementIndex: Int,
     ) = viewModelScope.launch {
@@ -586,6 +603,22 @@ private constructor(
                 availableAccounts = getAvailableAccounts(),
             )
         }
+    }
+
+    fun onChangeIdentityProofIdentityClicked(
+        statementIndex: Int,
+    ) = viewModelScope.launch {
+        val proofReviewState = state
+        check(
+            proofReviewState is State.SessionRequestReview.IdentityProofRequestReview
+                    && proofReviewState.isV1
+        ) {
+            "Choose identity button can only be clicked in the proof request V1 review state"
+        }
+
+        verifiablePresentationV1RequestHandler.onChangeIdentityClicked(
+            claimIndex = statementIndex,
+        )
     }
 
     override fun onSessionRequest(
@@ -983,6 +1016,14 @@ private constructor(
                 }
             }
 
+            is State.IdentitySelection -> {
+                if ((state as State.IdentitySelection).previousState is State.SessionRequestReview) {
+                    rejectSessionRequest()
+                } else {
+                    rejectSessionProposal()
+                }
+            }
+
             is State.SessionProposalReview -> {
                 rejectSessionProposal()
             }
@@ -1127,9 +1168,9 @@ private constructor(
     | |                      |                              |
     | |                      |                              |
     | |                      v                              |
-    | +------------> SessionRequestReview <-----------------+
-    |                        |
-    |                        |
+    | +------------> SessionRequestReview <-----------------+      IdentitySelection
+    |                        | ^                                           ^
+    |                        | +-------------------------------------------+
     |                        v
     +--------------- TransactionSubmitted
     ```
@@ -1163,6 +1204,15 @@ private constructor(
         class AccountSelection(
             val accounts: List<Account>,
             val appMetadata: AppMetadata,
+            val previousState: State,
+        ) : State
+
+        /**
+         * The user must select an identity among the available
+         * in order to continue.
+         */
+        class IdentitySelection(
+            val identities: List<Identity>,
             val previousState: State,
         ) : State
 

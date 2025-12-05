@@ -132,7 +132,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             // If claims are not provable, use the connected account as a fallback.
             this.credentialsByClaims = identityClaims.associateWithTo(mutableMapOf()) { claims ->
                 when {
-                    claims.canUseIdentity -> {
+                    claims.areIdentitiesAccepted() -> {
                         val suitableIdentity: Identity? =
                             identitiesById
                                 .values
@@ -147,7 +147,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                         )
                     }
 
-                    claims.canUseAccount -> {
+                    claims.areAccountsAccepted() -> {
                         val suitableAccount: Account? =
                             availableAccounts
                                 .find { account ->
@@ -184,13 +184,13 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             return
         }
 
-        val onlyAccounts =
+        val anyAccountOnlyClaims =
             identityClaims
-                .all { claims ->
-                    claims.canUseAccount && !claims.canUseIdentity
+                .any { claims ->
+                    claims.areAccountsAccepted() && claims.source.size == 1
                 }
 
-        if (onlyAccounts && activeWalletType != AppWallet.Type.SEED) {
+        if (anyAccountOnlyClaims && activeWalletType != AppWallet.Type.SEED) {
             Log.d("A non-seed phrase wallet only support claims for identity credentials")
 
             respondError("A non-seed phrase wallet only support claims for identity credentials")
@@ -613,6 +613,33 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         )
     }
 
+    fun onChangeIdentityClicked(
+        claimIndex: Int,
+    ) {
+        val claims = identityClaims[claimIndex]
+
+        val suitableIdentities =
+            identitiesById
+                .values
+                .filter { claims.canBeProvedBy(it) }
+
+        if (suitableIdentities.size > 1) {
+            Log.d(
+                "Switching to identity selection:" +
+                        "\nsuitableIdentities=${suitableIdentities.size}"
+            )
+
+            emitState(
+                State.IdentitySelection(
+                    identities = suitableIdentities,
+                    previousState = createIdentityProofRequestState(claimIndex),
+                )
+            )
+        } else {
+            Log.w("No identities to select from")
+        }
+    }
+
     fun onIdentitySelected(
         claimIndex: Int,
         identity: Identity,
@@ -637,8 +664,8 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                     IdentityProofRequestClaims(
                         statements = claims.statements,
                         selectedCredential = credentialsByClaims.getValue(claims),
-                        canSelectAccounts = claims.canUseAccount,
-                        canSelectIdentities = claims.canUseIdentity,
+                        canSelectAccounts = claims.areAccountsAccepted(),
+                        canSelectIdentities = claims.areIdentitiesAccepted(),
                     )
                 },
             currentClaim = currentClaimIndex,
@@ -649,21 +676,11 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private fun getIdentity(account: Account) =
         identitiesById.getValue(account.identityId)
 
-    private val IdentityClaims.canUseIdentity: Boolean
-        get() = source.contains(IdentityClaims.IDENTITY_CREDENTIAL_SOURCE)
-
-    private val IdentityClaims.canUseAccount: Boolean
-        get() = source.contains(IdentityClaims.ACCOUNT_CREDENTIAL_SOURCE)
-
-    private fun IdentityClaims.canBeProvedBy(identity: Identity): Boolean {
-        if (!issuers.any { it.ipIdentity.value == identity.identityProviderId }) {
-            return false
-        }
-        if (statements.any { !it.canBeProvedBy(identity.identityObject!!.toSdkIdentityObject()) }) {
-            return false
-        }
-        return true
-    }
+    private fun IdentityClaims.canBeProvedBy(identity: Identity): Boolean =
+        canBeProvedBy(
+            identity.identityObject!!.toSdkIdentityObject(),
+            UInt32.from(identity.identityProviderId)
+        )
 
     companion object {
         const val METHOD = "request_verifiable_presentation_v1"
