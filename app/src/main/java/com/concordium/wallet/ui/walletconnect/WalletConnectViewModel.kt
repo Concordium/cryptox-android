@@ -107,7 +107,6 @@ private constructor(
 
     private lateinit var sessionProposalPublicKey: String
     private lateinit var sessionProposalNamespaceKey: String
-    private lateinit var sessionProposalNamespaceChain: String
     private lateinit var sessionProposalNamespace: Sign.Model.Namespace.Proposal
 
     private var sessionRequestId: Long = 0L
@@ -359,22 +358,17 @@ private constructor(
     ) = viewModelScope.launch {
         defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
 
-        // Find a single allowed namespace and chain.
+        // Find a single acceptable namespace.
         val singleNamespaceEntry =
             (sessionProposal.requiredNamespaces.entries + sessionProposal.optionalNamespaces.entries)
                 .find { (_, namespace) ->
-                    namespace.chains?.any { chain ->
-                        allowedChains.contains(chain)
-                    } == true
+                    allowedChains.containsAll(namespace.chains.orEmpty())
                 }
-        val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
-            allowedChains.contains(chain)
-        }
 
         val proposerPublicKey = sessionProposal.proposerPublicKey
 
-        if (singleNamespaceEntry == null || singleNamespaceChain == null) {
-            Log.e("cant_find_supported_chain")
+        if (singleNamespaceEntry == null) {
+            Log.e("cant_find_supported_chains")
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.NoSupportedChains
@@ -382,7 +376,8 @@ private constructor(
             )
             rejectSession(
                 proposerPublicKey,
-                "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
+                "The proposal did not contain a namespace where all chains are supported. " +
+                        "Supported chains are: $allowedChains"
             )
             return@launch
         }
@@ -424,7 +419,6 @@ private constructor(
         this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
         this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
         this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
-        this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
 
         // Initially select the account with the biggest balance.
         val initiallySelectedAccount = accounts.maxBy { account ->
@@ -460,8 +454,10 @@ private constructor(
                 proposerPublicKey = sessionProposalPublicKey,
                 namespaces = mapOf(
                     sessionProposalNamespaceKey to Sign.Model.Namespace.Session(
-                        chains = listOf(sessionProposalNamespaceChain),
-                        accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
+                        chains = sessionProposalNamespace.chains,
+                        accounts = sessionProposalNamespace.chains!!.map { chain ->
+                            "$chain:$accountAddress"
+                        },
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,
                     )
