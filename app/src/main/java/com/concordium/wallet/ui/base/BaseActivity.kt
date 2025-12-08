@@ -526,8 +526,10 @@ abstract class BaseActivity(
         )
     }
 
-    fun showAccountsList() {
-        AccountsListFragment().showSingle(
+    fun showAccountsList(isFileWallet: Boolean = false) {
+        AccountsListFragment.newInstance(
+            AccountsListFragment.setBundle(isFileWallet)
+        ).showSingle(
             supportFragmentManager,
             AccountsListFragment.TAG
         )

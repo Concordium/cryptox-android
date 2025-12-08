@@ -10,8 +10,10 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.account.accountdetails.AccountSettingsActivity
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
+import com.concordium.wallet.ui.multiwallet.FileWalletCreationLimitationDialog
 import com.concordium.wallet.uicore.popup.Popup
 import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
@@ -25,6 +27,9 @@ class AccountsListFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentAccountsOverviewBinding
     private lateinit var viewModel: AccountsOverviewViewModel
+    private val isFileWallet: Boolean by lazy {
+        arguments?.getBoolean(IS_FILE_WALLET) ?: false
+    }
 
     private val bottomSheetDialog
         get() = (dialog as? BottomSheetDialog)
@@ -136,8 +141,15 @@ class AccountsListFragment : BottomSheetDialogFragment() {
     }
 
     private fun gotoCreateAccount() {
-        val intent = Intent(requireActivity(), NewAccountNameActivity::class.java)
-        startActivity(intent)
+        if (isFileWallet) {
+            FileWalletCreationLimitationDialog().showSingle(
+                parentFragmentManager,
+                FileWalletCreationLimitationDialog.TAG
+            )
+        } else {
+            val intent = Intent(requireActivity(), NewAccountNameActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun gotoAccountSettings(account: Account) {
@@ -148,5 +160,14 @@ class AccountsListFragment : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "AccountsListFragment"
+        private const val IS_FILE_WALLET = "is_file_wallet"
+
+        fun newInstance(bundle: Bundle) = AccountsListFragment().apply {
+            arguments = bundle
+        }
+
+        fun setBundle(isFileWallet: Boolean = false) = Bundle().apply {
+            putBoolean(IS_FILE_WALLET, isFileWallet)
+        }
     }
 }
