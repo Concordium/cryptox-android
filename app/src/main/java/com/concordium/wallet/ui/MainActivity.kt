@@ -15,6 +15,7 @@ import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityMainBinding
@@ -218,7 +219,12 @@ class MainActivity : BaseActivity(R.layout.activity_main),
                     isVisible = true,
                     text = it.getAccountName(),
                     icon = ImageUtil.getIconById(this, it.iconId),
-                    onClickListener = { showAccountsList() },
+                    onClickListener = {
+                        showAccountsList(
+                            isFileWallet = walletSwitchViewModel.activeWalletTypeLiveData.value ==
+                                    AppWallet.Type.FILE
+                        )
+                    },
                     onTouchListener = { _, event ->
                         accountGestureDetector.onTouchEvent(event)
                     }

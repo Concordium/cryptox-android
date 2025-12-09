@@ -8,7 +8,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:padding="@dimen/size32">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -31,7 +32,6 @@
                 android:id="@+id/title_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:text="@string/wallets_action_adding_seed_wallet"
@@ -44,7 +44,6 @@
                 android:id="@+id/details_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/wallets_action_adding_seed_wallet_explanation"
@@ -54,26 +53,26 @@
                 app:layout_constraintTop_toBottomOf="@id/title_text_view" />
 
             <Button
-                android:id="@+id/ok_button"
-                style="@style/CCX_Button_Primary.Modal"
-                android:layout_marginTop="24dp"
-                android:text="@string/wallets_action_add_wallet"
+                android:id="@+id/cancel_button"
+                style="@style/MW24_Button_Secondary_Inverse"
+                android:layout_width="0dp"
+                android:layout_marginTop="30dp"
+                android:text="@string/wallets_action_go_back"
+                android:textColor="@color/ccx_neutral_tint_7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/details_text_view" />
 
             <Button
-                android:id="@+id/cancel_button"
-                style="@style/CCX_Button_Primary.Modal"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="14dp"
-                android:background="@null"
-                android:text="@string/wallets_action_go_back"
-                android:textColor="@color/ccx_neutral_tint_7"
+                android:id="@+id/ok_button"
+                style="@style/MW24_Button_Primary_Inverse"
+                android:layout_width="0dp"
+                android:layout_marginTop="@dimen/size8"
+                android:text="@string/wallets_action_add_wallet"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ok_button" />
+                app:layout_constraintTop_toBottomOf="@id/cancel_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

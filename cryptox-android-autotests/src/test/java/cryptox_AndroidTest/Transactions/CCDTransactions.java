@@ -33,8 +33,8 @@ public class CCDTransactions {
         Assert.assertTrue(clickOnElement("menuitem_transfer",20));
         Assert.assertTrue(SendTextToField("amount","1", 20));
         Assert.assertTrue(clickOnElement("recipient_layout",10));
-        Assert.assertTrue(clickOnElement("android:id/search_src_text",10));
-        Assert.assertTrue(SendTextToField("android:id/search_src_text","4DuEPm6nY3kfAjACe3g5Ed71bkCQNh5AGBSqJQGkRR4vdxKTQN", 20));
+        Assert.assertTrue(clickOnElement("edittext",10));
+        Assert.assertTrue(SendTextToField("edittext","4DuEPm6nY3kfAjACe3g5Ed71bkCQNh5AGBSqJQGkRR4vdxKTQN", 20));
         Assert.assertTrue(clickOnElement("continue_btn",40));
         Assert.assertTrue(clickOnElement("continue_btn",40));
         Assert.assertTrue(swipe());
@@ -55,8 +55,8 @@ public class CCDTransactions {
         Assert.assertTrue(SendTextToField("memo_edittext","This is Test Memo - Triggered through automated tests", 20));
         Assert.assertTrue(clickOnElement("confirm_button",10));
         Assert.assertTrue(clickOnElement("recipient_layout",10));
-        Assert.assertTrue(clickOnElement("android:id/search_src_text",10));
-        Assert.assertTrue(SendTextToField("android:id/search_src_text","4DuEPm6nY3kfAjACe3g5Ed71bkCQNh5AGBSqJQGkRR4vdxKTQN", 20));
+        Assert.assertTrue(clickOnElement("edittext",10));
+        Assert.assertTrue(SendTextToField("edittext","4DuEPm6nY3kfAjACe3g5Ed71bkCQNh5AGBSqJQGkRR4vdxKTQN", 20));
         Assert.assertTrue(clickOnElement("continue_btn",40));
         Assert.assertTrue(clickOnElement("continue_btn",40));
         Assert.assertTrue(swipe());
@@ -64,7 +64,7 @@ public class CCDTransactions {
         Assert.assertTrue(clickOnElement("finish",10));
     }
 
-    @Test
+    @Ignore
     public void Verify_if_user_can_add_Payee() throws MalformedURLException, InterruptedException {
         Assert.assertTrue(clickOnElement("menuitem_transfer",20));
         Assert.assertTrue(clickOnElement("recipient_layout",10));

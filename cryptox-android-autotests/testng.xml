@@ -11,6 +11,7 @@
             <class name="cryptox_AndroidTest.Validation.validatorWithOpenForDelegation"/>
             <class name="cryptox_AndroidTest.delegation.createDelegation"/>
             <class name="cryptox_AndroidTest.delegation.stopDelegation"/>
+            <class name="cryptox_AndroidTest.Transactions.PLTTransactions"/>
             <class name="cryptox_AndroidTest.Transactions.CCDTransactions"/>
             <class name="cryptox_AndroidTest.Settings.settingsCases"/>
             <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases"/>
