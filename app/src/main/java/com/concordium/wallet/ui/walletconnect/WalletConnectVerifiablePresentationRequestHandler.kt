@@ -395,8 +395,6 @@ class WalletConnectVerifiablePresentationRequestHandler(
                             account = account,
                             identity = getIdentity(account),
                         ),
-                        canSelectAccounts = true,
-                        canSelectIdentities = false,
                     )
                 },
             currentClaim = currentStatementIndex,

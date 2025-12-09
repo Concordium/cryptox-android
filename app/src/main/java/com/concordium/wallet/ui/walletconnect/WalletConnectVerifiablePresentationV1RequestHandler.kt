@@ -458,9 +458,9 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                             password = password,
                             encryptedData = identity.privateIdObjectDataEncrypted!!,
                         )
-                        ?.let { decrytpedBytes ->
+                        ?.let { decryptedBytes ->
                             App.appCore.gson.fromJson(
-                                String(decrytpedBytes),
+                                String(decryptedBytes),
                                 PrivateIdObjectData::class.java
                             )
                         }
@@ -478,7 +478,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                         .credentialHolderInformation
                         .idCredSecret
                         .let(BLSSecretKey::from)
-
             }
 
             else -> {
@@ -664,8 +663,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                     IdentityProofRequestClaims(
                         statements = claims.statements,
                         selectedCredential = credentialsByClaims.getValue(claims),
-                        canSelectAccounts = claims.areAccountsAccepted(),
-                        canSelectIdentities = claims.areIdentitiesAccepted(),
                     )
                 },
             currentClaim = currentClaimIndex,

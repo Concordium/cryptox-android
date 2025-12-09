@@ -9,6 +9,4 @@ import com.concordium.sdk.crypto.wallet.web3Id.Statement.AtomicStatement
 data class IdentityProofRequestClaims(
     val statements: List<AtomicStatement>,
     val selectedCredential: IdentityProofRequestSelectedCredential,
-    val canSelectAccounts: Boolean,
-    val canSelectIdentities: Boolean,
 )
