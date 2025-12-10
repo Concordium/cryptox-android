@@ -10,6 +10,8 @@ import static cryptox_AndroidTest.baseClass.PackageName;
 import static pages.Transactions.requestCCDs.clickOnAccountWidget;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.appOperations.commands.swipe;
+import static pages.generalMethods.clickOnElement;
+import static pages.generalMethods.clickOnElementByXpath;
 import static pages.login.loginCryptoX;
 import static pages.verifyPIN.verifyPinAndPressOK;
 

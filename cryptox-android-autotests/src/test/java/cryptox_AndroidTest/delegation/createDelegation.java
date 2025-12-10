@@ -3,19 +3,15 @@ package cryptox_AndroidTest.delegation;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
-import pages.stakingModeScreen;
 
 import java.net.MalformedURLException;
 
 import static config.appiumconnection.driver;
 import static cryptox_AndroidTest.baseClass.PackageName;
-import static pages.Transactions.requestCCDs.clickOnAccountWidget;
 import static pages.Transactions.validation.createValidation.clickOnEarnRewards;
-import static pages.accountRecovery.recoveryThroughPrivateKey.*;
-import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnElement;
+import static pages.generalMethods.*;
 import static pages.login.loginCryptoX;
 import static pages.operations.verifyText;
-import static pages.popUps.clickOnAndroidDefaultPopUP;
 import static pages.verifyPIN.verifyPinAndPressOK;
 import static pages.appOperations.commands.swipe;
 

@@ -7,9 +7,7 @@ public class StartAppiumServer {
 
 
     public static void startAppium(String AppiumPort) {
-        ProcessBuilder processBuilder = new ProcessBuilder("node", "\\npm\\node_modules\\appium\\build\\lib\\main.js","--port",AppiumPort);
-        processBuilder.redirectErrorStream(true);
-        processBuilder.redirectOutput(new File("")); // Redirect output to a log file
+        ProcessBuilder processBuilder = new ProcessBuilder("node", "\\npm\\node_modules\\appium\\build\\lib\\main.js","--port",AppiumPort);        processBuilder.redirectOutput(new File("")); // Redirect output to a log file
 
         try {
             Thread.sleep(5000); // Adjust the sleep time if necessary

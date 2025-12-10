@@ -10,10 +10,9 @@ import static config.appiumconnection.driver;
 import static cryptox_AndroidTest.baseClass.PackageName;
 import static pages.Transactions.requestCCDs.clickOnAccountWidget;
 import static pages.Transactions.validation.createValidation.clickOnEarnRewards;
-import static pages.accountRecovery.recoveryThroughPrivateKey.*;
-import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnElement;
+import static pages.generalMethods.clickOnElement;
+import static pages.generalMethods.elementShouldNotAvailable;
 import static pages.login.loginCryptoX;
-import static pages.popUps.clickOnAndroidDefaultPopUP;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class stopDelegation {

@@ -5,16 +5,11 @@ import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
-
-import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.navigation_bar_item_large_label_view;
-import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.newsTabButton;
 import static pages.Transactions.requestCCDs.clickOnAccountWidget;
-import static pages.Transactions.requestCCDs.clickOnRequestCCDs;
-import static pages.accountRecovery.recoveryThroughPrivateKey.SendTextToField;
-import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnElement;
 import static pages.appOperations.commands.swipe;
+import static pages.generalMethods.SendTextToField;
+import static pages.generalMethods.clickOnElement;
 import static pages.login.loginCryptoX;
-import static pages.popUps.AcceptNotificationPopUp;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class RequestForCCDs {
