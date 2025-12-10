@@ -20,6 +20,7 @@ import static pages.Transactions.validation.stopValidation.clickOnValidationStat
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.appOperations.commands.performScroll;
 import static pages.appOperations.commands.swipe;
+import static pages.generalMethods.*;
 import static pages.login.loginCryptoX;
 import static pages.popUps.clickOnAndroidDefaultPopUP;
 import static pages.verifyPIN.verifyPinAndPressOK;

@@ -7,6 +7,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriverException;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.ITestContext;
@@ -43,23 +44,17 @@ public class CustomTestListener implements ITestListener {
         testResults.add(result);
         failedTests.add(result);
 
-        // Get WebDriver from the test instance (BaseTest must have getDriver())
-        Object testClass = result.getInstance();
-
-        // Ensure the screenshots directory exists
         File screenshotsDir = new File("screenshots");
-        if (!screenshotsDir.exists()) {
-            screenshotsDir.mkdirs();
-        }
-
-        // Take the screenshot and save it
-        File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        String fileName = "screenshots/" + result.getName() + "_" + System.currentTimeMillis() + ".png";
-        File destFile = new File(fileName);
+        if (!screenshotsDir.exists()) screenshotsDir.mkdirs();
 
         try {
+            File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            String fileName = "screenshots/" + result.getName() + "_" + System.currentTimeMillis() + ".png";
+            File destFile = new File(fileName);
             FileUtils.copyFile(srcFile, destFile);
             System.out.println("Screenshot saved: " + destFile.getAbsolutePath());
+        } catch (WebDriverException e) {
+            System.err.println("Could not take screenshot. UiAutomator2 may have crashed: " + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }
