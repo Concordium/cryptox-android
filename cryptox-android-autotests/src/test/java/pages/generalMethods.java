@@ -118,10 +118,10 @@ public class generalMethods {
         return clickOnElementByXpath(xpath, timeout);
     }
 
-    public static boolean clickOnToken(String accountName, int timeoutInSeconds) {
+    public static boolean clickOnToken(String tokenName, int timeoutInSeconds) {
         String xpath = String.format(
                 "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/title' and @text='%s']",
-                accountName
+                tokenName
         );
         return clickOnElementByXpath(xpath, timeoutInSeconds);
     }
