@@ -13,7 +13,7 @@
         android:layout_marginTop="@dimen/size24"
         android:paddingBottom="@dimen/size16"
         android:text="@string/cis_concordium_network"
-        android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+        android:textAppearance="@style/MW24_Typography_Text_Mid"
         android:textColor="@color/mw24_content_secondary"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,10 +47,10 @@
 
         <TextView
             android:id="@+id/title"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="@dimen/size8"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/cryptox_white_main"
@@ -129,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="4dp"
-                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
                 android:textColor="@color/mw24_plain_white_40"
                 app:drawableStartCompat="@drawable/mw24_ic_cis2_token"
                 app:drawableTint="@color/mw24_plain_white_40"
@@ -137,7 +137,7 @@
 
             <TextView
                 android:id="@+id/subtitle"
-                style="@style/MW24_Typography_Text_Mid_Alternative"
+                style="@style/MW24_Typography_Label_Main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -150,9 +150,10 @@
 
         <TextView
             android:id="@+id/balance"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size4"
             android:gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="1"
@@ -170,7 +171,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/mw24_content_accent_secondary"
+            android:textColor="@color/mw24_content_secondary"
             app:layout_constraintEnd_toEndOf="@id/balance"
             app:layout_constraintTop_toBottomOf="@id/balance"
             app:layout_constraintBottom_toBottomOf="parent"

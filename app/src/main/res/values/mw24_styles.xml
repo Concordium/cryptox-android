@@ -141,7 +141,7 @@
         <item name="android:drawablePadding">8dp</item>
         <item name="drawableStartCompat">@drawable/mw24_ic_manage_token_list</item>
         <item name="drawableTint">@color/mw24_button_tertiary_text_color</item>
-        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_M_Medium</item>
     </style>
 
     <style name="MW24_Receive_Funds_Account" parent="MW24_Typography_Label_M_Medium">

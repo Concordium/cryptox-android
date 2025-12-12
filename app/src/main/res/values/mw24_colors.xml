@@ -34,7 +34,7 @@
     <color name="mw24_surface_warning_tertiary">#282418</color>
     <color name="mw24_surface_error_tertiary">#2B171B</color>
     <color name="mw24_surface_tertiary">#24282D</color>
-    <color name="mw24_surface_tertiary_pressed">#212426</color>
+    <color name="mw24_surface_tertiary_pressed">#24282D</color>
     <color name="mw24_surface_primary_pressed">#D0D4D6</color>
     <color name="mw24_surface_secondary">#4B5357</color>
     <color name="mw24_surface_secondary_pressed">#4B5357</color>
@@ -55,7 +55,7 @@
     <color name="mw24_border_error_secondary">#830E30</color>
     <color name="mw24_border_primary_disabled">#4B5357</color>
     <color name="mw24_border_tertiary">#4B535D</color>
-    <color name="mw24_border_tertiary_pressed">#2F3437</color>
+    <color name="mw24_border_tertiary_pressed">#363D44</color>
     <color name="mw24_border_inverse_tertiary">#D0D4D6</color>
     <color name="mw24_border_inverse_tertiary_pressed">#D0D4D6</color>
     <color name="mw24_border_inverse_disabled">#D0D4D6</color>
@@ -64,7 +64,7 @@
 
    <!-- Content colors -->
     <color name="mw24_content_primary">#FFFFFF</color>
-    <color name="mw24_content_primary_disabled">#4B5357</color>
+    <color name="mw24_content_primary_disabled">#545D68</color>
     <color name="mw24_content_accent_primary">#69A4FF</color>
     <color name="mw24_content_accent_secondary">#CCE0FF</color>
     <color name="mw24_content_accent_tertiary">#D7E3EF</color>
