@@ -12,82 +12,82 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">19sp</item>
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
 
     <style name="MW24_Typography_H2">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">28sp</item>
     </style>
 
     <style name="MW24_Typography_H3">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">24sp</item>
     </style>
 
     <style name="MW24_Typography_H3_Bold">
-        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:fontFamily">@font/inter_w700</item>
         <item name="android:textSize">24sp</item>
     </style>
 
     <style name="MW24_Typography_H4">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">19sp</item>
     </style>
 
     <style name="MW24_Typography_Text_Main">
-        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:fontFamily">@font/inter_w700</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Label_Main">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">15sp</item>
     </style>
 
     <style name="MW24_Typography_Label_Secondary">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">15sp</item>
     </style>
 
     <style name="MW24_Typography_Label_S">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Label_S_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Label_M_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Label_L_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Text_Mid">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Text_Mid_Alternative">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Additional_Capture_Small">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Main_Capture_Small">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">12sp</item>
     </style>
 
@@ -97,27 +97,27 @@
     </style>
 
     <style name="MW24_Typography_Title">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Title_Light">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Body_S_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Body_M_Regular">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Body_L_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
     <!-- end region -->
