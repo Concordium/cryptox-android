@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 import static config.appiumconnection.*;
 
 public class generalMethods {
@@ -19,7 +21,7 @@ public class generalMethods {
             if (elementToLookFor.isDisplayed()) {
 
                 elementToLookFor.click();
-                log.info("clicked on Element successfully{}", elementID);
+                log.info("Successfully clicked on Element {}", elementID);
                 return true;
             } else {
 
@@ -118,10 +120,10 @@ public class generalMethods {
         return clickOnElementByXpath(xpath, timeout);
     }
 
-    public static boolean clickOnToken(String accountName, int timeoutInSeconds) {
+    public static boolean clickOnToken(String tokenName, int timeoutInSeconds) {
         String xpath = String.format(
                 "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/title' and @text='%s']",
-                accountName
+                tokenName
         );
         return clickOnElementByXpath(xpath, timeoutInSeconds);
     }
@@ -245,5 +247,30 @@ public class generalMethods {
         }
 
         return false;
+    }
+
+    public static boolean verifyTextById(String id, String expectedText, int timeoutInSeconds) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.id(id)));
+
+            List<MobileElement> elements = driver.findElements(By.id(id));
+
+            for (MobileElement el : elements) {
+                String actualText = el.getText().trim();
+                if (actualText.equals(expectedText)) {
+                    log.info("Matched text: " + actualText);
+                    return true;
+                }
+            }
+
+            log.error("Expected text not found: " + expectedText);
+            return false;
+
+        } catch (Exception e) {
+            log.error("Exception in verifyTextById: " + e.getMessage());
+            return false;
+        }
     }
 }
