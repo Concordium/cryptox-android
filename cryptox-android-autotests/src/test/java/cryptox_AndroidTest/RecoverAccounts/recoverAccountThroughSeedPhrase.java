@@ -33,9 +33,6 @@ public class recoverAccountThroughSeedPhrase {
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(WaitForElement(continueButton,100));
         Assert.assertTrue(clickOnElement(continueButton,20));
-        log.info("successfully recovered Account, Checking if UI is interactive");
-      //  Assert.assertTrue(clickOnElement(navigation_bar_item_large_label_view,10));
-        log.info("All Good Moving to next Test");
-
+        log.info("successfully recovered Account");
     }
 }
