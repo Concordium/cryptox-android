@@ -67,9 +67,25 @@ public class appiumconnection {
         cap.setCapability("appPackage", packageName);
         cap.setCapability("appActivity", activityName);
         cap.setCapability("automationName", "UiAutomator2");
+        cap.setCapability("autoGrantPermissions", true);
+        cap.setCapability("autoAcceptAlerts", true);
+        cap.setCapability("autoDismissAlerts", true);
+        cap.setCapability("fullReset", false);
+        grantNotificationPermission("emulator-5554", packageName);
+        cap.setCapability("unicodeKeyboard", true);
         return cap;
     }
 
+    public static void  grantNotificationPermission(String emulatorId, String appPackage) {
+        try {
+            String command = "adb -s " + emulatorId + " shell pm grant " + appPackage + " android.permission.POST_NOTIFICATIONS";
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            System.out.println("Notification permission granted via ADB.");
+        } catch (Exception e) {
+            System.out.println("Failed to grant notification permission: " + e.getMessage());
+        }
+    }
 
     public static boolean openDeviceFarmAppiumSession() throws MalformedURLException {
         try {
@@ -97,13 +113,13 @@ public class appiumconnection {
         try {
             startAppium(portNumber);
             DesiredCapabilities cap = new DesiredCapabilities();
-            cap.setCapability("deviceName", "Pixel6");
+            cap.setCapability("deviceName", "Galaxy A51");
             cap.setCapability("udid",deviceName );
             cap.setCapability("platformName", "Android");
-            cap.setCapability("platformVersion", "14");
+            cap.setCapability("platformVersion", "12");
             cap.setCapability("appPackage", packageName);
             cap.setCapability("appActivity", activityName);
-
+            cap.setCapability("autoGrantPermissions", true);
 //
 
             cap.setCapability("automationName", "UiAutomator2");

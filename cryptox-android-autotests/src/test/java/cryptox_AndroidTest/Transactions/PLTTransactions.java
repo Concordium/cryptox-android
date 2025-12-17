@@ -177,7 +177,7 @@ public class PLTTransactions {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 10));
-        Assert.assertTrue(clickOnAccount(PLT_DENY_ACCOUNT, 10));
+        Assert.assertTrue(clickOnAccount(PLT_DENY_ACCOUNT, 20));
         Assert.assertTrue(clickOnToken(PLT_IN_DENY_TOKEN, 10));
         Assert.assertTrue(clickOnElement("keep_button", 10));
         Assert.assertTrue(verifyTextById("list_status_title", TEXT_DENY_LIST_MEMBER, 10));
