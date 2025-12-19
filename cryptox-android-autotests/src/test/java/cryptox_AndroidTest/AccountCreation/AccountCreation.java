@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.AccountCreation;
 
+import config.RetryAnalyzer;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -30,7 +31,7 @@ public class AccountCreation {
         Assert.assertTrue(repeatPassCodeNow());
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Z_verify_if_a_user_can_create_an_account() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -45,7 +46,7 @@ public class AccountCreation {
         Assert.assertTrue(verifyTextById("account_name", "AutomationAccount", 20));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void A_verify_if_user_can_rename_an_account() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);

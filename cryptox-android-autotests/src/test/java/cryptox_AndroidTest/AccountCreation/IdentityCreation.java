@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.AccountCreation;
 
+import config.RetryAnalyzer;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -15,7 +16,7 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class IdentityCreation {
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Z_verify_if_a_user_can_create_new_identity() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -35,7 +36,7 @@ public class IdentityCreation {
         log.info("Successfully created new identity");
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void A_verify_if_user_can_rename_identity() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
