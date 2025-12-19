@@ -1,13 +1,24 @@
 package pages;
 
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.awt.event.KeyEvent;
+import java.time.Duration;
 import java.util.List;
 
 import static config.appiumconnection.*;
+import static pages.accountManagement.performScrollDown;
 
 public class generalMethods {
 
@@ -112,12 +123,59 @@ public class generalMethods {
         return false;
     }
 
-    public static boolean clickOnAccount(String accountName, int timeout) {
-        String xpath = String.format(
-                "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/account_name' and @text='%s']",
-                accountName
-        );
-        return clickOnElementByXpath(xpath, timeout);
+    public static boolean clickOnAccount(String expectedAccount, int timeout) {
+
+        int maxScrolls = 5;
+
+        try {
+            log.info("Trying to click account: {}", expectedAccount);
+
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+
+            for (int i = 0; i < maxScrolls; i++) {
+
+                log.info("Fetching account list. Scroll attempt: {}", i + 1);
+
+                wait.until(ExpectedConditions.presenceOfElementLocated(
+                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
+                ));
+
+                List<MobileElement> accounts = driver.findElements(
+                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
+                );
+
+                log.info("Number of accounts found on screen: {}", accounts.size());
+
+                for (MobileElement account : accounts) {
+                    String actualName = account.getText();
+                    log.info("Found account name: {}", actualName);
+
+                    if (actualName.equalsIgnoreCase(expectedAccount)) {
+                        account.click();
+                        log.info("Successfully clicked account: {}", actualName);
+                        return true;
+                    }
+                }
+
+                log.warn("Account '{}' not found in current view. Scrolling down...", expectedAccount);
+
+                if (!performScrollDown()) {
+                    log.warn("Scroll not possible further. Stopping search.");
+                    break;
+                }
+            }
+
+            log.error("Account '{}' not found after {} scroll attempts", expectedAccount, maxScrolls);
+            return false;
+
+        } catch (TimeoutException te) {
+            log.error("Timed out waiting for account list to load", te);
+            return false;
+
+        } catch (Exception e) {
+            log.error("Exception while clicking account '{}'", expectedAccount, e);
+            return false;
+        }
     }
 
     public static boolean clickOnToken(String tokenName, int timeoutInSeconds) {
@@ -155,27 +213,21 @@ public class generalMethods {
         return false;
     }
 
-    public static boolean SendTextToField(String elementID, String Text, Integer timeout)
-
-    {
-        try
-        {
+    public static boolean SendTextToField(String elementID, String Text, Integer timeout) {
+        try {
             By elementIDs = By.id(elementID);
 
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
+            MobileElement elementToLookFor = waitForElement(elementIDs, timeout);
 
             assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
+            if (elementToLookFor.isDisplayed()) {
                 elementToLookFor.clear();
                 elementToLookFor.click();
                 elementToLookFor.sendKeys(Text);
                 return true;
-            }
+            } else {
 
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
+                System.out.println("unable to find Element" + elementID);
 
                 return false;
             }
@@ -189,27 +241,21 @@ public class generalMethods {
         return false;
     }
 
-    public static boolean SendTextToFieldByClassName(String elementID, String Text, Integer timeout)
-
-    {
-        try
-        {
+    public static boolean SendTextToFieldByClassName(String elementID, String Text, Integer timeout) {
+        try {
             By elementIDs = By.className(elementID);
 
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
+            MobileElement elementToLookFor = waitForElement(elementIDs, timeout);
 
             assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
+            if (elementToLookFor.isDisplayed()) {
                 elementToLookFor.clear();
                 elementToLookFor.click();
                 elementToLookFor.sendKeys(Text);
                 return true;
-            }
+            } else {
 
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
+                System.out.println("unable to find Element" + elementID);
 
                 return false;
             }
@@ -236,7 +282,7 @@ public class generalMethods {
                 return true;
             } else {
 
-                log.error("unable to find Element{}", elementID , "While waiting for element");
+                log.error("unable to find Element{}", elementID, "While waiting for element");
                 return false;
             }
 

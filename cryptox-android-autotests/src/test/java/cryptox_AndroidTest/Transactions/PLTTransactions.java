@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.Transactions;
 
+import config.RetryAnalyzer;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -36,7 +37,7 @@ public class PLTTransactions {
     public static final String DETAILS_TOKEN_PAUSED = "A paused token refers to a protocol-level token (PLT) whose balance-affecting operations, such as transfers, minting, and burning, are temporarily disabled by the token’s governance account. When a token is paused, any attempt to perform these actions will fail until the token is unpaused.";
     public String MEMO = "//android.widget.TextView[@text='This is Test Memo - Triggered through automated tests']";
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_if_user_transfer_PLT_to_specific_account_with_memo() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -64,7 +65,7 @@ public class PLTTransactions {
         Assert.assertTrue(verifyElementByXpath(MEMO, 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_if_user_transfer_PLT_to_specific_account_without_memo() throws MalformedURLException, InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -88,7 +89,7 @@ public class PLTTransactions {
         Assert.assertTrue(elementShouldNotAvailable(MEMO, 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_screen_with_metadata() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -103,7 +104,7 @@ public class PLTTransactions {
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"Description\"]", 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_screen_without_metadata() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -117,7 +118,7 @@ public class PLTTransactions {
         Assert.assertTrue(elementShouldNotAvailable("//android.widget.TextView[@text=\"Description\"]", 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_when_sender_is_not_in_allow_list() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -143,7 +144,7 @@ public class PLTTransactions {
         Assert.assertTrue(elementShouldNotAvailable(PLT_FOR_ANDROID_TOKEN, 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_when_sender_is_in_allow_list() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -171,7 +172,7 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("finish", 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_when_sender_is_in_deny_list() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -187,7 +188,7 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("done_button", 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_when_sender_is_not_in_deny_list() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -199,7 +200,7 @@ public class PLTTransactions {
         Assert.assertFalse(verifyTextById("list_status_title", TEXT_DENY_LIST_MEMBER, 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_paused() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -215,7 +216,7 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("done_button", 10));
     }
 
-    @Test
+   @Test(retryAnalyzer = RetryAnalyzer.class)
     public void Verify_PLT_token_un_paused() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
