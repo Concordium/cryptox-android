@@ -406,7 +406,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                 globalParams
             )
 
-            respondSuccess(proof)
+            respondSuccess("""{ "verifiablePresentationJson": $proof }""")
 
             onFinish()
         } catch (e: Exception) {
