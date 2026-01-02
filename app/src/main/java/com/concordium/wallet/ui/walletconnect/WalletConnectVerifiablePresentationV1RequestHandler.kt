@@ -95,6 +95,9 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         requestCoroutineScope?.cancel()
         requestCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
+        isLoadingData.value = false
+        isCreatingProof.value = false
+
         combine(
             isLoadingData,
             isCreatingProof,
