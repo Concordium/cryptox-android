@@ -71,6 +71,11 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="MW24_Typography_Label_XL_Medium">
+        <item name="android:fontFamily">@font/inter_w500</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <style name="MW24_Typography_Text_Mid">
         <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
@@ -94,6 +99,16 @@
     <style name="MW24_Typography_IBM_Balance">
         <item name="android:fontFamily">@font/ibm_w500</item>
         <item name="android:textSize">55sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_Balance">
+        <item name="android:fontFamily">@font/jakarta_w700</item>
+        <item name="android:textSize">48sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_Symbol">
+        <item name="android:fontFamily">@font/jakarta_w500</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="MW24_Typography_Title">

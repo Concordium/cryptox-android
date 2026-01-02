@@ -45,6 +45,8 @@
     <color name="mw24_surface_inverse_secondary">#B2B9BC</color>
     <color name="mw24_surface_inverse_secondary_pressed">#78858B</color>
     <color name="mw24_surface_inverse_tertiary_pressed">#D0D4D6</color>
+    <color name="mw24_surface_highlight_primary">#384557</color>
+    <color name="mw24_surface_highlight_secondary">#1B2735</color>
 
    <!-- Border colors -->
     <color name="mw24_border_accent_secondary">#CCE0FF</color>
