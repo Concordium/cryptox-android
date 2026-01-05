@@ -522,6 +522,7 @@
     <string name="wallet_connect_error_internal_error">An internal error occurred</string>
     <string name="wallet_connect_error_not_seed_phrase_wallet">Only seed phrase wallets support this feature</string>
     <string name="wallet_connect_choose_another_account">Choose another account</string>
+    <string name="wallet_connect_choose_another_identity">Choose another identity</string>
     <string name="wallet_connect_template_session_proposal_review_title">Connect to %1$s?</string>
     <string name="wallet_connect_session_proposal_allow">@string/allow</string>
     <string name="wallet_connect_session_proposal_decline">@string/decline</string>

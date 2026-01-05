@@ -6,13 +6,13 @@
     android:layout_height="0dp"
     android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/proof_container"
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="wrap_content">
 
         <FrameLayout
-            android:id="@+id/selected_account_include_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <include
-                android:id="@+id/selected_account_include"
+                android:id="@+id/selected_credential_include"
                 layout="@layout/account_info_row" />
 
         </FrameLayout>
@@ -30,8 +30,7 @@
             android:id="@+id/statements"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/selected_account_include_container" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
