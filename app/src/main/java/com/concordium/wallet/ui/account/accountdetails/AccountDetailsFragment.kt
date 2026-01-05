@@ -452,7 +452,7 @@ class AccountDetailsFragment : BaseFragment() {
         if (viewModelAccountDetails.account.balanceAtDisposal != totalBalance) {
             binding.atDisposalLabel.visibility = View.VISIBLE
             binding.atDisposalLabel.text = getString(
-                R.string.account_details_balance_at_disposal,
+                R.string.account_details_balance_ccd_at_disposal,
                 CurrencyUtil.formatAndRoundGTU(
                     value = viewModelAccountDetails.account.balanceAtDisposal,
                     roundDecimals = 2

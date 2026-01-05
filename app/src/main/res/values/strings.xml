@@ -220,7 +220,8 @@
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
     <string name="account_details_total_balance">%1$s CCD</string>
-    <string name="account_details_balance_at_disposal">%1$s CCD available</string>
+    <string name="account_details_balance_ccd_at_disposal">%1$s CCD available</string>
+    <string name="account_details_balance_eur_at_disposal">%1$s € available</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
     <string name="account_details_change_name_popup_cancel">Cancel</string>
@@ -253,6 +254,7 @@
     <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
     <string name="account_details_cis2_token_type_label">CIS-2 Token</string>
     <string name="account_details_account_card_show_in_eur">Show in EUR</string>
+    <string name="account_details_account_card_show_in_ccd">Show in CCD</string>
     <string name="account_details_token_details_button">Token Details</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account Settings</string>

@@ -7,7 +7,7 @@
     android:background="@drawable/account_with_balance_card_secondary_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/balance_layout"
+        android:id="@+id/main_card_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/account_with_balance_card_primary_background"
@@ -88,10 +88,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/balance_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size24"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ccd_layout">
@@ -101,9 +101,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/size12"
+                android:gravity="bottom"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:gravity="bottom"
                 android:textAppearance="@style/MW24_Typography_Jakarta_Balance"
                 android:textColor="@color/mw24_content_primary"
                 app:autoSizeMaxTextSize="48sp"
@@ -113,7 +113,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/symbol"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="1,422.63" />
+                tools:text="530,100.00" />
 
             <TextView
                 android:id="@+id/symbol"
@@ -130,6 +130,20 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/balance_at_disposal"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/size8"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/MW24_Typography_Jakarta_At_Disposal"
+            android:textColor="@color/mw24_plain_white_40"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/balance_layout"
+            tools:text="30,100.00 CCD available"
+            tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -142,7 +156,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/buttons_separator"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/balance_layout"
+        app:layout_constraintTop_toBottomOf="@id/main_card_layout"
         tools:ignore="UseCompoundDrawables">
 
         <TextView
@@ -169,7 +183,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/token_details_button"
         app:layout_constraintStart_toEndOf="@id/change_rate_button"
-        app:layout_constraintTop_toBottomOf="@id/balance_layout" />
+        app:layout_constraintTop_toBottomOf="@id/main_card_layout" />
 
     <LinearLayout
         android:id="@+id/token_details_button"
@@ -181,7 +195,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/buttons_separator"
-        app:layout_constraintTop_toBottomOf="@id/balance_layout"
+        app:layout_constraintTop_toBottomOf="@id/main_card_layout"
         tools:ignore="UseCompoundDrawables">
 
         <TextView

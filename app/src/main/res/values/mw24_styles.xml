@@ -111,6 +111,11 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="MW24_Typography_Jakarta_At_Disposal">
+        <item name="android:fontFamily">@font/jakarta_w400</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="MW24_Typography_Title">
         <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
