@@ -147,4 +147,8 @@ class WalletConnectSignMessageRequestHandler(
             Log.w("Nothing to show as details for ${signMessageParams::class.simpleName}")
         }
     }
+
+    companion object {
+        const val METHOD = "sign_message"
+    }
 }

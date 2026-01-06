@@ -1,7 +1,5 @@
 package com.concordium.wallet.ui.walletconnect
 
-import com.concordium.sdk.crypto.bulletproof.BulletproofGenerators
-import com.concordium.sdk.crypto.pedersencommitment.PedersenCommitmentKey
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
@@ -22,7 +20,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.AttributeRandomness
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
@@ -54,7 +51,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
     private lateinit var identitiesById: Map<Int, Identity>
     private lateinit var accountsPerStatement: MutableList<Account>
-    private lateinit var globalParams: GlobalParams
+    private lateinit var globalContext: CryptographicParameters
 
     suspend fun start(
         params: String,
@@ -124,7 +121,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 // otherwise find any account that can prove the statement.
                 orderedAccounts.find { account ->
                     isValidIdentityForStatement(
-                        identity = getIdentity(account)!!,
+                        identity = getIdentity(account),
                         statement = statement,
                     )
                 }
@@ -136,7 +133,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 identityProofRequest.credentialStatements.any { statement ->
                     availableAccounts.none { account ->
                         (statement.idQualifier as IdentityQualifier).issuers.contains(
-                            getIdentity(account)!!.identityProviderId.toLong()
+                            getIdentity(account).identityProviderId.toLong()
                         )
                     }
                 }
@@ -160,7 +157,8 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
     private suspend fun loadDataAndPresentReview() {
         try {
-            this.globalParams = getGlobalParams()
+            this.globalContext = getGlobalParams()
+                .toSdkCryptographicParameters()
         } catch (e: Exception) {
             Log.e("Failed loading global params", e)
 
@@ -235,7 +233,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
                 val statementAccount = accountIterator.next()
                 val attributeRandomness =
                     attributeRandomnessByAccount.getValue(statementAccount.address)
-                val statementIdentity = getIdentity(statementAccount)!!
+                val statementIdentity = getIdentity(statementAccount)
                 val identityProviderIndex = statementIdentity.identityProviderId
                 val randomness: MutableMap<AttributeType, String> = mutableMapOf()
                 val attributeValues: MutableMap<AttributeType, String> = mutableMapOf()
@@ -288,26 +286,25 @@ class WalletConnectVerifiablePresentationRequestHandler(
         val proofInput = Web3IdProofInput.builder()
             .request(qualifiedRequest)
             .commitmentInputs(commitmentInputs)
-            .globalContext(
-                CryptographicParameters.builder()
-                    .genesisString(globalParams.genesisString)
-                    .bulletproofGenerators(BulletproofGenerators.from(globalParams.bulletproofGenerators))
-                    .onChainCommitmentKey(PedersenCommitmentKey.from(globalParams.onChainCommitmentKey))
-                    .build()
-            )
+            .globalContext(globalContext)
             .build()
 
         try {
             val proof = Web3IdProof.getWeb3IdProof(proofInput)
-            val wrappedProof = VerifiablePresentationWrapper(proof)
 
-            respondSuccess(App.appCore.gson.toJson(wrappedProof))
+            respondSuccess(
+                App.appCore.gson.toJson(
+                    mapOf(
+                        "verifiablePresentationJson" to proof
+                    )
+                )
+            )
 
             onFinish()
         } catch (e: Exception) {
             Log.e("Failed creating verifiable presentation", e)
 
-            respondError("Unable to create verifiable presentation: internal error")
+            respondError("Unable to create verifiable presentation: $e")
 
             emitEvent(
                 Event.ShowFloatingError(
@@ -323,11 +320,8 @@ class WalletConnectVerifiablePresentationRequestHandler(
     ) {
         val statement = identityProofRequest.credentialStatements[statementIndex]
 
-
         val validAccounts = availableAccounts.filter { account ->
-            getIdentity(account)
-                ?.let { isValidIdentityForStatement(it, statement) }
-                ?: false
+            isValidIdentityForStatement(getIdentity(account), statement)
         }
 
         if (validAccounts.size > 1) {
@@ -338,10 +332,9 @@ class WalletConnectVerifiablePresentationRequestHandler(
 
             emitState(
                 State.AccountSelection(
-                    selectedAccount = accountsPerStatement[statementIndex],
                     accounts = validAccounts,
                     appMetadata = appMetadata,
-                    identityProofPosition = statementIndex,
+                    previousState = createIdentityProofRequestState(statementIndex),
                 )
             )
         } else {
@@ -360,24 +353,16 @@ class WalletConnectVerifiablePresentationRequestHandler(
         )
     }
 
-    fun onAccountSelectionBackPressed(
-        statementIndex: Int,
-    ) {
-        emitState(
-            createIdentityProofRequestState(statementIndex)
-        )
-    }
-
-    fun getIdentity(account: Account) =
-        identitiesById[account.identityId]
+    private fun getIdentity(account: Account) =
+        identitiesById[account.identityId]!!
 
     private fun isValidIdentityForStatement(
         identity: Identity,
-        statement: UnqualifiedRequestStatement
+        statement: UnqualifiedRequestStatement,
     ): Boolean =
         statement.idQualifier is IdentityQualifier
                 && (statement.idQualifier as IdentityQualifier).issuers.contains(identity.identityProviderId.toLong())
-                && statement.canBeProvedBy(getIdentityObject(identity))
+                && statement.canBeProvedBy(identity.identityObject!!.toSdkIdentityObject())
 
     private fun onInvalidRequest(responseMessage: String, e: Exception? = null) {
         if (e == null) Log.e(responseMessage) else Log.e(responseMessage, e)
@@ -399,26 +384,33 @@ class WalletConnectVerifiablePresentationRequestHandler(
         State.SessionRequestReview.IdentityProofRequestReview(
             connectedAccount = accountsPerStatement.first(),
             appMetadata = appMetadata,
-            request = identityProofRequest,
-            chosenAccounts = accountsPerStatement,
-            currentStatement = currentStatementIndex,
-            provable = identityProofProvableState
+            claims =
+            identityProofRequest
+                .credentialStatements
+                .zip(accountsPerStatement)
+                .map { (credentialStatement, account) ->
+                    IdentityProofRequestClaims(
+                        statements = credentialStatement.statement,
+                        selectedCredential = IdentityProofRequestSelectedCredential.Account(
+                            account = account,
+                            identity = getIdentity(account),
+                        ),
+                    )
+                },
+            currentClaim = currentStatementIndex,
+            provable = identityProofProvableState,
+            isV1 = false,
         )
-
-    /**
-     * Wrapper for sending the verifiable presentation as JSON over WalletConnect. This is
-     * required to prevent WalletConnect from automatically parsing the JSON as an object
-     * on the dApp side.
-     */
-    private class VerifiablePresentationWrapper(
-        val verifiablePresentationJson: String
-    )
 
     /**
      * Wrapper for receiving parameters as JSON over WalletConnect. This is required to allow a
      * dApp to send bigint values from the Javascript side.
      */
     private class WalletConnectParamsWrapper(
-        val paramsJson: String
+        val paramsJson: String,
     )
+
+    companion object {
+        const val METHOD = "request_verifiable_presentation"
+    }
 }

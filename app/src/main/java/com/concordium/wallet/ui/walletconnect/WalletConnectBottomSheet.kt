@@ -57,6 +57,19 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
         }
     }
 
+    fun showIdentitySelection(
+        onShown: (createdView: WalletConnectAccountSelectionFragment.CreatedView) -> Unit
+    ) {
+        // For now, without design, the account selection fragment is re-used.
+        val fragment: WalletConnectAccountSelectionFragment =
+            getShownFragment(IDENTITY_SELECTION_TAG)
+
+        fragment.createdView.observe(this) { createdView ->
+            onShown(createdView)
+            fragment.createdView.removeObservers(this)
+        }
+    }
+
     fun showTransactionRequestReview(
         onShown: (createdView: WalletConnectTransactionRequestReviewFragment.CreatedView) -> Unit
     ) {
@@ -129,6 +142,7 @@ class WalletConnectBottomSheet : BottomSheetDialogFragment(
     private companion object {
         private const val SESSION_PROPOSAL_REVIEW_TAG = "wc_spr"
         private const val ACCOUNT_SELECTION_TAG = "wc_acc"
+        private const val IDENTITY_SELECTION_TAG = "wc_identity"
         private const val TRANSACTION_REQUEST_REVIEW_TAG = "wc_trr"
         private const val SIGN_REQUEST_REVIEW_TAG = "wc_srr"
         private const val IDENTITY_PROOF_REQUEST_REVIEW_TAG = "wc_id"

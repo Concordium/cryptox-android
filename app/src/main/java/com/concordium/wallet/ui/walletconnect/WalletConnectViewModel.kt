@@ -7,7 +7,6 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.concordium.sdk.crypto.wallet.web3Id.UnqualifiedRequest
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -17,13 +16,9 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.extension.collect
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_SIGN_MESSAGE
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.REQUEST_METHOD_VERIFIABLE_PRESENTATION
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
@@ -55,17 +50,14 @@ import java.math.BigInteger
  * *Session request* – a request from a dApp within an active session that requires performing
  * some action with the account of the session.
  *
- * *go_back* - whether to navigate back after handling the URI
- *
  * Currently supported requests:
- * - [REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION] – create, sign and submit an account transaction
+ * - [WalletConnectSignTransactionRequestHandler.METHOD] – create, sign and submit an account transaction
  * of the requested type. Send back the submission ID;
- * - [REQUEST_METHOD_SIGN_MESSAGE] – sign the given text message. Send back the signature;
- * - [REQUEST_METHOD_VERIFIABLE_PRESENTATION] - prove or reveal identity statements.
+ * - [WalletConnectSignMessageRequestHandler.METHOD] – sign the given text message. Send back the signature;
+ * - [WalletConnectVerifiablePresentationRequestHandler.METHOD] - prove or reveal identity statements;
+ * - [WalletConnectVerifiablePresentationV1RequestHandler.METHOD] - prove or reveal identity statements via auditable proofs.
  *
  * @see State
- * @see allowedAccountTransactionTypes
- * @see goBack
  */
 class WalletConnectViewModel
 private constructor(
@@ -98,9 +90,10 @@ private constructor(
         "${application.getString(R.string.wc_scheme)}:",
     )
     private val allowedRequestMethods = setOf(
-        REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION,
-        REQUEST_METHOD_SIGN_MESSAGE,
-        REQUEST_METHOD_VERIFIABLE_PRESENTATION,
+        WalletConnectSignTransactionRequestHandler.METHOD,
+        WalletConnectSignMessageRequestHandler.METHOD,
+        WalletConnectVerifiablePresentationRequestHandler.METHOD,
+        WalletConnectVerifiablePresentationV1RequestHandler.METHOD,
     )
 
     private val accountRepository: AccountRepository by lazy {
@@ -114,7 +107,6 @@ private constructor(
 
     private lateinit var sessionProposalPublicKey: String
     private lateinit var sessionProposalNamespaceKey: String
-    private lateinit var sessionProposalNamespaceChain: String
     private lateinit var sessionProposalNamespace: Sign.Model.Namespace.Proposal
 
     private var sessionRequestId: Long = 0L
@@ -138,8 +130,7 @@ private constructor(
     private val mutableEventsFlow = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
 
-    private val mutableIsSubmittingTransactionFlow = MutableStateFlow(false)
-    private val isBusyFlow: Flow<Boolean> = mutableIsSubmittingTransactionFlow
+    private val isBusyFlow = MutableStateFlow(false)
     val isSessionRequestApproveButtonEnabledFlow: Flow<Boolean> =
         isBusyFlow.combine(stateFlow) { isBusy, state ->
             !isBusy && state is State.SessionRequestReview && state.canApprove
@@ -153,7 +144,7 @@ private constructor(
             emitEvent = mutableEventsFlow::tryEmit,
             emitState = mutableStateFlow::tryEmit,
             onFinish = ::onSessionRequestHandlingFinished,
-            setIsSubmittingTransaction = mutableIsSubmittingTransactionFlow::tryEmit,
+            setIsSubmittingTransaction = isBusyFlow::tryEmit,
             proxyRepository = proxyRepository,
             tokensInteractor = tokensInteractor,
             context = application,
@@ -180,6 +171,21 @@ private constructor(
             onFinish = ::onSessionRequestHandlingFinished,
             proxyRepository = proxyRepository,
             identityRepository = identityRepository,
+            activeWalletType = App.appCore.session.activeWallet.type,
+        )
+    }
+
+    private val verifiablePresentationV1RequestHandler: WalletConnectVerifiablePresentationV1RequestHandler by lazy {
+        WalletConnectVerifiablePresentationV1RequestHandler(
+            respondSuccess = ::respondSuccess,
+            respondError = ::respondError,
+            emitEvent = mutableEventsFlow::tryEmit,
+            emitState = mutableStateFlow::tryEmit,
+            onFinish = ::onSessionRequestHandlingFinished,
+            setIsLoading = isBusyFlow::tryEmit,
+            proxyRepository = proxyRepository,
+            identityRepository = identityRepository,
+            walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences,
             activeWalletType = App.appCore.session.activeWallet.type,
         )
     }
@@ -352,22 +358,17 @@ private constructor(
     ) = viewModelScope.launch {
         defaultWalletDelegate.onSessionProposal(sessionProposal, verifyContext)
 
-        // Find a single allowed namespace and chain.
+        // Find a single acceptable namespace.
         val singleNamespaceEntry =
             (sessionProposal.requiredNamespaces.entries + sessionProposal.optionalNamespaces.entries)
                 .find { (_, namespace) ->
-                    namespace.chains?.any { chain ->
-                        allowedChains.contains(chain)
-                    } == true
+                    allowedChains.containsAll(namespace.chains.orEmpty())
                 }
-        val singleNamespaceChain = singleNamespaceEntry?.value?.chains?.find { chain ->
-            allowedChains.contains(chain)
-        }
 
         val proposerPublicKey = sessionProposal.proposerPublicKey
 
-        if (singleNamespaceEntry == null || singleNamespaceChain == null) {
-            Log.e("cant_find_supported_chain")
+        if (singleNamespaceEntry == null) {
+            Log.e("cant_find_supported_chains")
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
                     Error.NoSupportedChains
@@ -375,7 +376,8 @@ private constructor(
             )
             rejectSession(
                 proposerPublicKey,
-                "The session proposal did not contain a valid namespace. Allowed namespaces are: $allowedChains"
+                "The proposal did not contain a namespace where all chains are supported. " +
+                        "Supported chains are: $allowedChains"
             )
             return@launch
         }
@@ -417,7 +419,6 @@ private constructor(
         this@WalletConnectViewModel.sessionProposalPublicKey = proposerPublicKey
         this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
         this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
-        this@WalletConnectViewModel.sessionProposalNamespaceChain = singleNamespaceChain
 
         // Initially select the account with the biggest balance.
         val initiallySelectedAccount = accounts.maxBy { account ->
@@ -453,8 +454,10 @@ private constructor(
                 proposerPublicKey = sessionProposalPublicKey,
                 namespaces = mapOf(
                     sessionProposalNamespaceKey to Sign.Model.Namespace.Session(
-                        chains = listOf(sessionProposalNamespaceChain),
-                        accounts = listOf("$sessionProposalNamespaceChain:$accountAddress"),
+                        chains = sessionProposalNamespace.chains,
+                        accounts = sessionProposalNamespace.chains!!.map { chain ->
+                            "$chain:$accountAddress"
+                        },
                         methods = sessionProposalNamespace.methods,
                         events = sessionProposalNamespace.events,
                     )
@@ -516,10 +519,9 @@ private constructor(
 
             mutableStateFlow.emit(
                 State.AccountSelection(
-                    selectedAccount = reviewState.selectedAccount,
                     accounts = accounts,
                     appMetadata = reviewState.appMetadata,
-                    identityProofPosition = null
+                    previousState = reviewState,
                 )
             )
         }
@@ -530,36 +532,88 @@ private constructor(
             "The account can only be selected in the account selection state"
         }
 
-        Log.d(
-            "switching_to_session_proposal_review:" +
-                    "\nnewSelectedAccountId=${selectedAccount.id}"
-        )
-
-        if (!selectionState.forIdentityProof) {
-            mutableStateFlow.tryEmit(
-                State.SessionProposalReview(
-                    selectedAccount = selectedAccount,
-                    appMetadata = selectionState.appMetadata
+        when (val previousState = selectionState.previousState) {
+            is State.SessionProposalReview ->
+                mutableStateFlow.tryEmit(
+                    State.SessionProposalReview(
+                        selectedAccount = selectedAccount,
+                        appMetadata = selectionState.appMetadata
+                    )
                 )
-            )
-        } else {
-            verifiablePresentationRequestHandler.onAccountSelected(
-                statementIndex = selectionState.identityProofPosition!!,
-                account = selectedAccount,
-            )
+
+            is State.SessionRequestReview.IdentityProofRequestReview ->
+                if (previousState.isV1) {
+                    verifiablePresentationV1RequestHandler.onAccountSelected(
+                        claimIndex = previousState.currentClaim,
+                        account = selectedAccount,
+                    )
+                } else {
+                    verifiablePresentationRequestHandler.onAccountSelected(
+                        statementIndex = previousState.currentClaim,
+                        account = selectedAccount,
+                    )
+                }
+
+            else ->
+                error("Nothing to do with the selected account")
+        }
+    }
+
+    fun onIdentitySelected(selectedIdentity: Identity) {
+        val selectionState = checkNotNull(state as? State.IdentitySelection) {
+            "The identity can only be selected in the identity selection state"
+        }
+
+        when (val previousState = selectionState.previousState) {
+            is State.SessionRequestReview.IdentityProofRequestReview ->
+                if (previousState.isV1) {
+                    verifiablePresentationV1RequestHandler.onIdentitySelected(
+                        claimIndex = previousState.currentClaim,
+                        identity = selectedIdentity,
+                    )
+                } else {
+                    error("Identity can't be changed for V0 proof request")
+                }
+
+            else ->
+                error("Nothing to do with the selected identity")
         }
     }
 
     fun onChangeIdentityProofAccountClicked(
         statementIndex: Int,
     ) = viewModelScope.launch {
-        check(state is State.SessionRequestReview.IdentityProofRequestReview) {
+        val proofReviewState = state
+        check(proofReviewState is State.SessionRequestReview.IdentityProofRequestReview) {
             "Choose account button can only be clicked in the proof request review state"
         }
 
-        verifiablePresentationRequestHandler.onChangeAccountClicked(
-            statementIndex = statementIndex,
-            availableAccounts = getAvailableAccounts(),
+        if (proofReviewState.isV1) {
+            verifiablePresentationV1RequestHandler.onChangeAccountClicked(
+                claimIndex = statementIndex,
+                availableAccounts = getAvailableAccounts(),
+            )
+        } else {
+            verifiablePresentationRequestHandler.onChangeAccountClicked(
+                statementIndex = statementIndex,
+                availableAccounts = getAvailableAccounts(),
+            )
+        }
+    }
+
+    fun onChangeIdentityProofIdentityClicked(
+        statementIndex: Int,
+    ) = viewModelScope.launch {
+        val proofReviewState = state
+        check(
+            proofReviewState is State.SessionRequestReview.IdentityProofRequestReview
+                    && proofReviewState.isV1
+        ) {
+            "Choose identity button can only be clicked in the proof request V1 review state"
+        }
+
+        verifiablePresentationV1RequestHandler.onChangeIdentityClicked(
+            claimIndex = statementIndex,
         )
     }
 
@@ -715,24 +769,33 @@ private constructor(
         // if there is an unexpected error.
         try {
             when (method) {
-                REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION ->
+                WalletConnectSignTransactionRequestHandler.METHOD ->
                     signTransactionRequestHandler.start(
                         params = params,
                         account = sessionRequestAccount,
                         appMetadata = sessionRequestAppMetadata,
                     )
 
-                REQUEST_METHOD_SIGN_MESSAGE ->
+                WalletConnectSignMessageRequestHandler.METHOD ->
                     signMessageRequestHandler.start(
                         params = params,
                         account = sessionRequestAccount,
                         appMetadata = sessionRequestAppMetadata,
                     )
 
-                REQUEST_METHOD_VERIFIABLE_PRESENTATION -> {
+                WalletConnectVerifiablePresentationRequestHandler.METHOD -> {
                     verifiablePresentationRequestHandler.start(
                         params = params,
                         account = account,
+                        availableAccounts = getAvailableAccounts(),
+                        appMetadata = sessionRequestAppMetadata,
+                    )
+                }
+
+                WalletConnectVerifiablePresentationV1RequestHandler.METHOD -> {
+                    verifiablePresentationV1RequestHandler.start(
+                        params = params,
+                        connectedAccount = account,
                         availableAccounts = getAvailableAccounts(),
                         appMetadata = sessionRequestAppMetadata,
                     )
@@ -760,6 +823,7 @@ private constructor(
 
     private fun onSessionRequestHandlingFinished() {
         mutableStateFlow.tryEmit(State.Idle)
+        isBusyFlow.tryEmit(false)
         if (!handleGoBack()) {
             handleNextOldestPendingSessionRequest()
         }
@@ -886,7 +950,11 @@ private constructor(
                     signTransactionRequestHandler.onAuthorizedForApproval(accountKeys)
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
-                    verifiablePresentationRequestHandler.onAuthorizedForApproval(password)
+                    if (reviewState.isV1) {
+                        verifiablePresentationV1RequestHandler.onAuthorizedForApproval(password)
+                    } else {
+                        verifiablePresentationRequestHandler.onAuthorizedForApproval(password)
+                    }
                 }
             }
         } else {
@@ -899,9 +967,6 @@ private constructor(
             )
         }
     }
-
-    fun getIdentity(account: Account): Identity? =
-        verifiablePresentationRequestHandler.getIdentity(account)
 
     fun getIdentityFromRepository(account: Account) = runBlocking(Dispatchers.IO) {
         identityRepository.getAllDone().firstOrNull { it.id == account.identityId }
@@ -940,7 +1005,15 @@ private constructor(
             }
 
             is State.AccountSelection -> {
-                if ((state as State.AccountSelection).forIdentityProof) {
+                if ((state as State.AccountSelection).previousState is State.SessionRequestReview) {
+                    rejectSessionRequest()
+                } else {
+                    rejectSessionProposal()
+                }
+            }
+
+            is State.IdentitySelection -> {
+                if ((state as State.IdentitySelection).previousState is State.SessionRequestReview) {
                     rejectSessionRequest()
                 } else {
                     rejectSessionProposal()
@@ -975,18 +1048,7 @@ private constructor(
                     "switching_back_from_account_selection"
                 )
 
-                if (state.forIdentityProof) {
-                    verifiablePresentationRequestHandler.onAccountSelectionBackPressed(
-                        statementIndex = state.identityProofPosition!!,
-                    )
-                } else {
-                    mutableStateFlow.tryEmit(
-                        State.SessionProposalReview(
-                            selectedAccount = state.selectedAccount,
-                            appMetadata = state.appMetadata,
-                        )
-                    )
-                }
+                mutableStateFlow.tryEmit(state.previousState)
 
                 true
             }
@@ -1102,9 +1164,9 @@ private constructor(
     | |                      |                              |
     | |                      |                              |
     | |                      v                              |
-    | +------------> SessionRequestReview <-----------------+
-    |                        |
-    |                        |
+    | +------------> SessionRequestReview <-----------------+      IdentitySelection
+    |                        | ^                                           ^
+    |                        | +-------------------------------------------+
     |                        v
     +--------------- TransactionSubmitted
     ```
@@ -1136,13 +1198,19 @@ private constructor(
          * in order to continue.
          */
         class AccountSelection(
-            val selectedAccount: Account,
             val accounts: List<Account>,
-            val identityProofPosition: Int?,
             val appMetadata: AppMetadata,
-        ) : State {
-            val forIdentityProof = identityProofPosition != null
-        }
+            val previousState: State,
+        ) : State
+
+        /**
+         * The user must select an identity among the available
+         * in order to continue.
+         */
+        class IdentitySelection(
+            val identities: List<Identity>,
+            val previousState: State,
+        ) : State
 
         /**
          * Explicitly waiting for a session request after receiving a request URI.
@@ -1186,10 +1254,10 @@ private constructor(
             )
 
             class IdentityProofRequestReview(
-                val request: UnqualifiedRequest,
-                val chosenAccounts: List<Account>,
-                val currentStatement: Int,
+                val claims: List<IdentityProofRequestClaims>,
+                val currentClaim: Int,
                 val provable: ProofProvableState,
+                val isV1: Boolean,
                 connectedAccount: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
@@ -1312,12 +1380,7 @@ private constructor(
     private companion object {
         private const val WC_URI_PREFIX = "wc:"
         private const val WC_URI_REQUEST_ID_PARAM = "requestId"
-
         private const val DEFAULT_ERROR_RESPONSE_CODE = 500
-
-        private const val REQUEST_METHOD_SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
-        private const val REQUEST_METHOD_SIGN_MESSAGE = "sign_message"
-        private const val REQUEST_METHOD_VERIFIABLE_PRESENTATION = "request_verifiable_presentation"
         private const val WC_GO_BACK_PARAM = "go_back=true"
     }
 }
