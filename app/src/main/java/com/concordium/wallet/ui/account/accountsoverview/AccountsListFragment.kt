@@ -108,7 +108,20 @@ class AccountsListFragment : BottomSheetDialogFragment() {
                 }
             })
         binding.accountRecyclerview.adapter = adapter
-        viewModel.listItemsLiveData.observe(viewLifecycleOwner, adapter::setData)
+        viewModel.listItemsLiveData.observe(viewLifecycleOwner) { items ->
+            adapter.setData(items)
+            scrollToActiveAccount(items)
+        }
+    }
+
+    private fun scrollToActiveAccount(items: List<AccountsOverviewListItem>) {
+        val activeIndex = items.indexOfFirst {
+            it is AccountsOverviewListItem.Account &&
+                    it.accountWithIdentity.account.isActive
+        }
+
+        if (activeIndex == -1) return
+        binding.accountRecyclerview.scrollToPosition(activeIndex)
     }
 
     private fun selectAccount(item: Account) {
