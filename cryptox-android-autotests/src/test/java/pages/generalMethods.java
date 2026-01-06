@@ -7,15 +7,15 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.awt.event.KeyEvent;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static config.appiumconnection.*;
 import static pages.accountManagement.performScrollDown;
@@ -125,55 +125,67 @@ public class generalMethods {
 
     public static boolean clickOnAccount(String expectedAccount, int timeout) {
 
-        int maxScrolls = 5;
+        int maxScrolls = 6;
+        Set<String> visitedAccounts = new HashSet<>();
 
         try {
             log.info("Trying to click account: {}", expectedAccount);
 
             WebDriverWait wait = new WebDriverWait(driver, timeout);
 
-            for (int i = 0; i < maxScrolls; i++) {
+            for (int scrollCount = 1; scrollCount <= maxScrolls; scrollCount++) {
 
-                log.info("Fetching account list. Scroll attempt: {}", i + 1);
+                log.info("Fetching visible accounts. Scroll attempt: {}", scrollCount);
 
-                wait.until(ExpectedConditions.presenceOfElementLocated(
-                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
-                ));
+                List<WebElement> accounts = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")));
 
-                List<MobileElement> accounts = driver.findElements(
-                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
-                );
+                log.info("Accounts visible on screen: {}", accounts.size());
 
-                log.info("Number of accounts found on screen: {}", accounts.size());
+                for (WebElement account : accounts) {
 
-                for (MobileElement account : accounts) {
-                    String actualName = account.getText();
+                    String actualName;
+                    try {
+                        actualName = account.getText();
+                    } catch (StaleElementReferenceException e) {
+                        log.warn("Stale element detected. Skipping.");
+                        continue;
+                    }
+
+                    if (visitedAccounts.contains(actualName)) {
+                        continue;
+                    }
+
+                    visitedAccounts.add(actualName);
                     log.info("Found account name: {}", actualName);
 
                     if (actualName.equalsIgnoreCase(expectedAccount)) {
-                        account.click();
+
+                        wait.until(ExpectedConditions.elementToBeClickable(account)).click();
                         log.info("Successfully clicked account: {}", actualName);
                         return true;
                     }
                 }
 
-                log.warn("Account '{}' not found in current view. Scrolling down...", expectedAccount);
+                log.warn("Account '{}' not found. Scrolling down...", expectedAccount);
 
-                if (!performScrollDown()) {
-                    log.warn("Scroll not possible further. Stopping search.");
+                boolean scrolled = performScrollDown();
+                Thread.sleep(800);
+
+                if (!scrolled) {
+                    log.warn("Reached end of list. No more scrolling possible.");
                     break;
                 }
             }
 
-            log.error("Account '{}' not found after {} scroll attempts", expectedAccount, maxScrolls);
+            log.error("Account '{}' not found after {} scrolls", expectedAccount, maxScrolls);
             return false;
 
-        } catch (TimeoutException te) {
-            log.error("Timed out waiting for account list to load", te);
+        } catch (TimeoutException e) {
+            log.error("Timed out waiting for account list", e);
             return false;
 
         } catch (Exception e) {
-            log.error("Exception while clicking account '{}'", expectedAccount, e);
+            log.error("Unexpected exception while clicking account '{}'", expectedAccount, e);
             return false;
         }
     }
