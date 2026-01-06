@@ -211,15 +211,17 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
         )
         binding.poolId.isVisible = checkIsPassiveMode().not()
 
-        if (checkIsPassiveMode())
+        if (checkIsPassiveMode()) {
             binding.poolDesc.text = ""
-        else
+        } else {
             binding.poolDesc.setText(
                 if (BuildConfig.ENV_NAME == "production")
                     R.string.delegation_register_delegation_desc
                 else
                     R.string.delegation_register_delegation_desc_testnet
             )
+            viewModel.selectBakerPool()
+        }
 
         binding.poolDesc.handleUrlClicks { url ->
             IntentUtil.openUrl(this, url)
