@@ -23,7 +23,8 @@ import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity(
-    R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title
+    R.layout.activity_delegation_registration_amount,
+    R.string.delegation_register_delegation_title
 ) {
     private lateinit var binding: ActivityDelegationRegistrationAmountBinding
 

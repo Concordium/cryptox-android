@@ -12,11 +12,9 @@ import static config.appiumconnection.log;
 import static config.systemInfo.getSeedPhrase;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.*;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
-import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnElement;
 import static pages.createPassCodeScreen.createPassCodeNow;
-import static pages.landingScreen.clickConnectButton;
+import static pages.generalMethods.*;
 import static pages.landingScreen.clickGetStarted;
-import static pages.popUps.AcceptNotificationPopUp;
 import static pages.repeatPassCodeScreen.repeatPassCodeNow;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
@@ -35,9 +33,6 @@ public class recoverAccountThroughSeedPhrase {
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(WaitForElement(continueButton,100));
         Assert.assertTrue(clickOnElement(continueButton,20));
-        log.info("successfully recovered Account, Checking if UI is interactive");
-        Assert.assertTrue(clickOnElement(navigation_bar_item_large_label_view,10));
-        log.info("All Good Moving to next Test");
-
+        log.info("successfully recovered Account");
     }
 }

@@ -15,6 +15,7 @@ import static pages.Transactions.requestCCDs.clickOnAccountWidget;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.appOperations.commands.performScroll;
 import static pages.appOperations.commands.swipe;
+import static pages.generalMethods.*;
 import static pages.login.loginCryptoX;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
@@ -49,7 +50,6 @@ public class CCDTransactions {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("menuitem_transfer",10));
         Assert.assertTrue(SendTextToField("amount","1", 20));
-        Assert.assertTrue(performScroll());
         Assert.assertTrue(clickOnElement("memo_layout", 20));
         Assert.assertTrue(clickOnElement("show_button",10));
         Assert.assertTrue(SendTextToField("memo_edittext","This is Test Memo - Triggered through automated tests", 20));

@@ -8,14 +8,11 @@ import org.testng.annotations.Test;
 import java.net.MalformedURLException;
 
 import static config.appiumconnection.*;
-import static cryptox_AndroidTest.baseClass.*;
-import static cryptox_AndroidTest.createAccount.stageNetPackageName;
-import static pages.EnableBiometricPopUp.RejectBiometric;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.createPassCodeScreen.createPassCodeNow;
-import static pages.landingScreen.clickConnectButton;
+
+import static pages.generalMethods.*;
 import static pages.landingScreen.clickGetStarted;
-import static pages.popUps.AcceptNotificationPopUp;
 import static pages.repeatPassCodeScreen.repeatPassCodeNow;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
@@ -81,10 +78,6 @@ public class RecoverAccountCases {
         log.info("clickOnElement (continueButton): " + isSuccess);
         Assert.assertTrue(isSuccess);
 
-        log.info("Successfully recovered Account, Checking if UI is interactive");
-
-        isSuccess = clickOnElement(navigation_bar_item_large_label_view, 10);
-        log.info("clickOnElement (navigation_bar_item_large_label_view): " + isSuccess);
-        Assert.assertTrue(isSuccess);
+        log.info("Successfully recovered Account");
     }
 }

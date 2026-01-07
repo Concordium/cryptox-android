@@ -1,6 +1,5 @@
 package pages.accountRecovery;
 
-import config.configLoader;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 
@@ -18,14 +17,9 @@ public class recoveryThroughPrivateKey {
     static By walletPrivateKeyTextBox = By.id("etTitle");
     public static By importSeedPhraseButton = By.id("import_seed_phrase_button");
 
-
-
-
-
     public static boolean clickOnImportWalletLink()
 
     {
-
         try
         {
             MobileElement import_WalletButton = waitForElement(importWalletButton,30);
@@ -35,29 +29,23 @@ public class recoveryThroughPrivateKey {
                 return true;
             }
 
-
             else {
 
                 System.out.println("unable to find import_WalletButton Element");
 
                 return false;
             }
-
         } catch (Exception exp) {
             log.error(String.valueOf(exp.getCause()));
             System.out.println(exp.getMessage());
             log.error(String.valueOf(exp.fillInStackTrace()));
         }
-
         return false;
     }
     public static boolean clickOnImportViaPrivateKey()
-
     {
         try
         {
-
-
             MobileElement importPrivateKeyButton = waitForElement(import_privateKey_button,30);
 
             assert importPrivateKeyButton != null;
@@ -66,31 +54,23 @@ public class recoveryThroughPrivateKey {
                 importPrivateKeyButton.click();
                 return true;
             }
-
-
             else {
 
                 System.out.println("unable to find import_WalletButton Element");
-
                 return false;
             }
-
         } catch (Exception exp) {
             log.error(String.valueOf(exp.getCause()));
             System.out.println(exp.getMessage());
             log.error(String.valueOf(exp.fillInStackTrace()));
         }
-
         return false;
     }
 
     public static boolean clickOnImportViaSeedPhrase()
-
     {
         try
         {
-
-
             MobileElement importSeedPhrase = waitForElement(importSeedPhraseButton,30);
 
             assert importSeedPhrase != null;
@@ -99,26 +79,21 @@ public class recoveryThroughPrivateKey {
                 importSeedPhrase.click();
                 return true;
             }
-
-
             else {
 
                 System.out.println("unable to find import_WalletButton Element");
 
                 return false;
             }
-
         } catch (Exception exp) {
             log.error(String.valueOf(exp.getCause()));
             System.out.println(exp.getMessage());
             log.error(String.valueOf(exp.fillInStackTrace()));
         }
-
         return false;
     }
 
     public static boolean AddPrivateKey()
-
     {
         try
         {
@@ -143,14 +118,12 @@ public class recoveryThroughPrivateKey {
                 wallet_PrivateKeyTextBox.sendKeys(accountPrivateKey);
             return true;
             }
-
             else {
 
                 System.out.println("unable to find import_WalletButton Element");
 
                 return false;
             }
-
         } catch (Exception exp) {
             log.error(String.valueOf(exp.getCause()));
             System.out.println(exp.getMessage());
@@ -159,199 +132,5 @@ public class recoveryThroughPrivateKey {
 
         return false;
     }
-
-    public static boolean clickOnElement(String elementID, Integer timeout)
-
-    {
-        try
-        {
-            By elementIDs = By.id(elementID);
-
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
-
-            assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
-
-                elementToLookFor.click();
-                log.info("clicked on Element successfully{}", elementID);
-                return true;
-            }
-
-
-            else {
-
-                log.error("unable to find Element{}", elementID);
-
-                return false;
-            }
-
-        } catch (Exception exp) {
-            log.error(String.valueOf(exp.getCause()));
-            System.out.println(exp.getMessage());
-            log.error(String.valueOf(exp.fillInStackTrace()));
-        }
-
-        return false;
-    }
-
-
-
-    public static boolean WaitForElement(String elementID, Integer Timeout) {
-        try {
-            By elementIDs = By.id(elementID);
-
-            MobileElement elementToLookFor = waitForElement(elementIDs, Timeout);
-
-            assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()) {
-
-
-                return true;
-            } else {
-
-                log.error("unable to find Element{}", elementID , "While waiting for element");
-                return false;
-            }
-
-        } catch (Exception exp) {
-            log.error(String.valueOf(exp.getCause()));
-            System.out.println(exp.getMessage());
-            log.error(String.valueOf(exp.fillInStackTrace()));
-        }
-
-        return false;
-
-
-    }
-
-    public static boolean elementShouldNotAvailable(String elementID, Integer Timeout) {
-        try {
-            By elementIDs = By.id(elementID);
-
-            MobileElement elementToLookFor = waitForElement(elementIDs, Timeout);
-
-            assert elementToLookFor == null;
-            return true;
-
-        } catch (Exception exp) {
-            log.error(String.valueOf(exp.getCause()));
-            System.out.println(exp.getMessage());
-            log.error(String.valueOf(exp.fillInStackTrace()));
-        }
-
-        return false;
-
-
-    }
-
-    public static boolean clickOnElementByXpath(String elementID, Integer timeout)
-
-    {
-        try
-        {
-            By elementIDs = By.xpath(elementID);
-
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
-
-            assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
-
-                elementToLookFor.click();
-                return true;
-            }
-
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
-
-                return false;
-            }
-
-        } catch (Exception exp) {
-            log.error(String.valueOf(exp.getCause()));
-            System.out.println(exp.getMessage());
-            log.error(String.valueOf(exp.fillInStackTrace()));
-        }
-
-        return false;
-    }
-
-    public static boolean SendTextToField(String elementID, String Text, Integer timeout)
-
-    {
-        try
-        {
-            By elementIDs = By.id(elementID);
-
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
-
-            assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
-                elementToLookFor.clear();
-                elementToLookFor.click();
-                elementToLookFor.sendKeys(Text);
-                return true;
-            }
-
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
-
-                return false;
-            }
-
-        } catch (Exception exp) {
-            log.error(String.valueOf(exp.getCause()));
-            System.out.println(exp.getMessage());
-            log.error(String.valueOf(exp.fillInStackTrace()));
-        }
-
-        return false;
-    }
-
-    public static boolean SendTextToFieldByClassName(String elementID, String Text, Integer timeout)
-
-    {
-        try
-        {
-            By elementIDs = By.className(elementID);
-
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
-
-            assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
-                elementToLookFor.clear();
-                elementToLookFor.click();
-                elementToLookFor.sendKeys(Text);
-                return true;
-            }
-
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
-
-                return false;
-            }
-
-        } catch (Exception exp) {
-            log.error(String.valueOf(exp.getCause()));
-            System.out.println(exp.getMessage());
-            log.error(String.valueOf(exp.fillInStackTrace()));
-        }
-
-        return false;
-    }
-
-
-
-
-
-
-
-
-
 }
 
