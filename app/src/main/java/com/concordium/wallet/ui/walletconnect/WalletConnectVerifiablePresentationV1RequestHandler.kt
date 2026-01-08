@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.walletconnect
 
-import com.concordium.sdk.crypto.bls.BLSSecretKey
 import com.concordium.sdk.crypto.wallet.ConcordiumHdWallet
 import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.GivenContext
@@ -21,7 +20,6 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.PrivateIdObjectData
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
@@ -108,6 +106,22 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             .onEach(setIsLoading)
             .launchIn(requestCoroutineScope!!)
 
+        if (activeWalletType != AppWallet.Type.SEED) {
+            Log.d("A non-seed phrase wallet does not support identity proofs")
+
+            respondError("A non-seed phrase wallet does not support identity proofs")
+
+            emitEvent(
+                Event.ShowFloatingError(
+                    Error.NotSeedPhraseWalletError
+                )
+            )
+
+            onFinish()
+
+            return
+        }
+
         var anyUnprovableClaims = false
 
         try {
@@ -179,28 +193,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             emitEvent(
                 Event.ShowFloatingError(
                     Error.InvalidRequest
-                )
-            )
-
-            onFinish()
-
-            return
-        }
-
-        val anyAccountOnlyClaims =
-            identityClaims
-                .any { claims ->
-                    claims.areAccountsAccepted() && claims.source.size == 1
-                }
-
-        if (anyAccountOnlyClaims && activeWalletType != AppWallet.Type.SEED) {
-            Log.d("A non-seed phrase wallet only support claims for identity credentials")
-
-            respondError("A non-seed phrase wallet only support claims for identity credentials")
-
-            emitEvent(
-                Event.ShowFloatingError(
-                    Error.NotSeedPhraseWalletError
                 )
             )
 
@@ -347,17 +339,11 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         }
 
         try {
-            // Both file- and seed-based IDs can do V1 proofs,
-            // the keys are either derived or decrypted.
-
-            val hdWallet: ConcordiumHdWallet? =
+            val hdWallet: ConcordiumHdWallet =
                 walletSetupPreferences
-                    .takeIf(WalletSetupPreferences::hasEncryptedSeed)
-                    ?.let { walletSetupPreferences ->
-                        ConcordiumHdWallet.fromHex(
-                            walletSetupPreferences.getSeedHex(password),
-                            network
-                        )
+                    .getSeedHex(password)
+                    .let { seedHex ->
+                        ConcordiumHdWallet.fromHex(seedHex, network)
                     }
 
             val proofInputs = credentialsByClaims
@@ -375,7 +361,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                             getIdentityProofInput(
                                 identityClaims = identityClaims,
                                 identity = credential.identity,
-                                password = password,
                                 hdWallet = hdWallet,
                             )
                     }
@@ -427,66 +412,24 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private suspend fun getIdentityProofInput(
         identityClaims: IdentityClaims,
         identity: Identity,
-        password: String,
-        hdWallet: ConcordiumHdWallet?,
+        hdWallet: ConcordiumHdWallet,
     ): IdentityClaimsIdentityProofInput = withContext(Dispatchers.Default) {
         val identityProvider = identity.identityProvider
 
-        val idCredSec: BLSSecretKey
-        val prfKey: BLSSecretKey
-        val signatureBlindingRandomness: String
+        val idCredSec = hdWallet.getIdCredSec(
+            identityProvider.ipInfo.ipIdentity,
+            identity.identityIndex
+        )
 
-        when {
-            hdWallet != null -> {
-                idCredSec = hdWallet.getIdCredSec(
-                    identityProvider.ipInfo.ipIdentity,
-                    identity.identityIndex
-                )
-                prfKey = hdWallet.getPrfKey(
-                    identityProvider.ipInfo.ipIdentity,
-                    identity.identityIndex
-                )
-                signatureBlindingRandomness = hdWallet.getSignatureBlindingRandomness(
-                    identityProvider.ipInfo.ipIdentity,
-                    identity.identityIndex
-                )
-            }
+        val prfKey = hdWallet.getPrfKey(
+            identityProvider.ipInfo.ipIdentity,
+            identity.identityIndex
+        )
 
-            identity.privateIdObjectDataEncrypted != null -> {
-                val privateData: PrivateIdObjectData =
-                    App
-                        .appCore
-                        .auth
-                        .decrypt(
-                            password = password,
-                            encryptedData = identity.privateIdObjectDataEncrypted!!,
-                        )
-                        ?.let { decryptedBytes ->
-                            App.appCore.gson.fromJson(
-                                String(decryptedBytes),
-                                PrivateIdObjectData::class.java
-                            )
-                        }
-                        ?: error("Can't decrypt identity private data")
-
-                signatureBlindingRandomness = privateData.randomness
-                prfKey =
-                    privateData
-                        .aci
-                        .prfKey
-                        .let(BLSSecretKey::from)
-                idCredSec =
-                    privateData
-                        .aci
-                        .credentialHolderInformation
-                        .idCredSecret
-                        .let(BLSSecretKey::from)
-            }
-
-            else -> {
-                error("Keys needed for identity proof can't be neither derived nor decrypted")
-            }
-        }
+        val signatureBlindingRandomness = hdWallet.getSignatureBlindingRandomness(
+            identityProvider.ipInfo.ipIdentity,
+            identity.identityIndex
+        )
 
         val ipInfo =
             identityProvider
