@@ -181,7 +181,7 @@
     </style>
 
     <style name="CCX_MainScreen" parent="CCX_Screen">
-        <item name="android:navigationBarColor">@null</item>
+        <item name="android:navigationBarColor">@color/mw24_main_background</item>
     </style>
 
     <!-- endregion -->
