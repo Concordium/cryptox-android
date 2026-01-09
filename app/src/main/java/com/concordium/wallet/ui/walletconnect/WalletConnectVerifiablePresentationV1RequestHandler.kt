@@ -277,7 +277,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
         // For now, the wallet needs to wait for a transaction to be included into a block.
         // Not necessarily finalized.
-        for (attempt in (1..5)) {
+        for (attempt in (1..10)) {
             Log.d("Attempt #$attempt to get the anchor transaction")
 
             delay(1000)
