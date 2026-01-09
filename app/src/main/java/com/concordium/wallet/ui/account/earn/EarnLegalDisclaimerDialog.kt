@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.databinding.DialogEarnLegalDisclaimerBinding
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.IntentUtil
 
-class EarnLegalDisclaimerDialog : BaseGradientDialogFragment() {
+class EarnLegalDisclaimerDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogEarnLegalDisclaimerBinding
 

@@ -118,13 +118,11 @@
         <item name="android:drawablePadding">8sp</item>
     </style>
 
-    <style name="CryptoX_ImageButton">
-        <item name="android:background">@drawable/mw24_dialog_close_background</item>
+    <style name="CryptoX_Close_ImageButton">
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
         <item name="android:layout_margin">16dp</item>
-        <item name="android:padding">8dp</item>
-        <item name="tint">@color/mw24_content_inverse_primary</item>
+        <item name="tint">@color/mw24_black_60</item>
     </style>
 
     <!-- endregion Buttons -->

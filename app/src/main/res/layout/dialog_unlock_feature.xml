@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/mw24_dialog_gradient_background">
+    android:background="@drawable/mw24_dialog_background">
 
     <ImageButton
         android:id="@+id/close_button"
-        style="@style/CryptoX_ImageButton"
+        style="@style/CryptoX_Close_ImageButton"
         android:contentDescription="@string/notifications_permission_deny"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"

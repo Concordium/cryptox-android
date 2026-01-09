@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.databinding.DialogSuspendValidationBinding
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class SuspendValidationDialog : BaseGradientDialogFragment() {
+class SuspendValidationDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogSuspendValidationBinding
 

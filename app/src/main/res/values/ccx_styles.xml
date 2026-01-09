@@ -84,6 +84,9 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <!-- The background @drawable/ccx_dialog_background must be set
         as the background of the content layout -->
+        <item name="android:layout_marginHorizontal">@dimen/size6</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 

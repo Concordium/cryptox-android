@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.databinding.DialogValidationErrorBinding
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class DelegationErrorDialog : BaseGradientDialogFragment() {
+class DelegationErrorDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogValidationErrorBinding
     private val errorMessage: String by lazy { arguments?.getString(ERROR_MESSAGE)?: "" }

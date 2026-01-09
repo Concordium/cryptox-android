@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogHidingTokenBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class HidingTokenDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int = R.style.CCX_Dialog
+class HidingTokenDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogHidingTokenBinding
 

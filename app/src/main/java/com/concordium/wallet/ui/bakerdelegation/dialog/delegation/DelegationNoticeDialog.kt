@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.databinding.DialogDelegationNoticeBinding
 import com.concordium.wallet.ui.MainActivity
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class DelegationNoticeDialog : BaseGradientDialogFragment() {
+class DelegationNoticeDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogDelegationNoticeBinding
     private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE) ?: "" }

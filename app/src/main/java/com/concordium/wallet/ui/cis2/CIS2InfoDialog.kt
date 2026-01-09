@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.databinding.DialogCis2InfoBinding
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class CIS2InfoDialog : BaseGradientDialogFragment() {
+class CIS2InfoDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogCis2InfoBinding
 

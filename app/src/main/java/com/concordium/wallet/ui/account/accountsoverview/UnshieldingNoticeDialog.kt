@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.App
-import com.concordium.wallet.R
 import com.concordium.wallet.databinding.DialogUnshieldingNoticeBinding
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class UnshieldingNoticeDialog : AppCompatDialogFragment() {
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
+class UnshieldingNoticeDialog : BaseDialogFragment() {
 
     private lateinit var binding: DialogUnshieldingNoticeBinding
 
