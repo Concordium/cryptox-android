@@ -2,34 +2,28 @@ package com.concordium.wallet.ui.bakerdelegation.dialog.delegation
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import com.concordium.wallet.databinding.DialogDelegationNoticeBinding
+import com.concordium.wallet.R
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
 class DelegationNoticeDialog : BaseDialogFragment() {
 
-    private lateinit var binding: DialogDelegationNoticeBinding
     private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE) ?: "" }
     private val showReviewDialog: Boolean by lazy {
         arguments?.getBoolean(SHOW_REVIEW_DIALOG) ?: false
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogDelegationNoticeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.detailsTextView.text = noticeMessage
+        setViews(
+            title = getString(R.string.delegation_notice_title),
+            description = noticeMessage,
+            okButtonText = getString(R.string.delegation_notice_ok)
+        )
+        binding.detailsTextView.gravity = Gravity.START
 
         binding.okButton.setOnClickListener {
             dismiss()

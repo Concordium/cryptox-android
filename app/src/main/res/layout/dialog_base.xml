@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/mw24_dialog_background">
+
+    <ImageView
+        android:id="@+id/close_button"
+        style="@style/CryptoX_Close_ImageButton"
+        android:contentDescription="@string/dialog_ok"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mw24_ic_dialog_close" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size24"
+        android:layout_marginTop="@dimen/size40"
+        android:layout_marginBottom="@dimen/size24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/dialog_icon_view"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="200dp"
+            app:layout_constraintWidth_percent="0.45"
+            app:srcCompat="@drawable/mw24_shielding"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/title_text_view"
+            style="@style/MW24_Dialog_Title_Text"
+            android:layout_marginTop="@dimen/size32"
+            android:text="@string/unshielding_notice_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_icon_view"
+            app:layout_goneMarginTop="0dp" />
+
+        <TextView
+            android:id="@+id/details_text_view"
+            style="@style/MW24_Dialog_Description_Text"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
+            tools:text="@string/unshielding_notice_message" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="@style/MW24_Button_Secondary_Inverse"
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/size32"
+            android:gravity="center"
+            android:text="@string/unshielding_notice_unshield"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/details_text_view"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/MW24_Button_Primary_Inverse"
+            android:layout_width="0dp"
+            android:layout_marginTop="@dimen/size8"
+            android:gravity="center"
+            android:text="@string/unshielding_notice_unshield"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cancel_button"
+            app:layout_goneMarginTop="@dimen/size32" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

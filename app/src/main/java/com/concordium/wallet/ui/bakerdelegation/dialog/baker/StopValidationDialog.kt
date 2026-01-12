@@ -1,30 +1,26 @@
 package com.concordium.wallet.ui.bakerdelegation.dialog.baker
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
-import com.concordium.wallet.databinding.DialogStopValidationBinding
+import com.concordium.wallet.R
 import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
 class StopValidationDialog : BaseDialogFragment() {
 
-    private lateinit var binding: DialogStopValidationBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogStopValidationBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listOf(binding.closeButton, binding.goBackButton).forEach {
+        setViews(
+            title = getString(R.string.baker_remove_intro_subtitle1),
+            description = getString(R.string.baker_remove_intro_description),
+            okButtonText = getString(R.string.delegation_validation_continue_button),
+            cancelButtonText = getString(R.string.delegation_validation_go_back_button),
+        )
+        binding.detailsTextView.gravity = Gravity.START
+
+        listOf(binding.closeButton, binding.cancelButton).forEach {
             it.setOnClickListener {
                 setFragmentResult(
                     ACTION_CONTINUE,
@@ -34,7 +30,7 @@ class StopValidationDialog : BaseDialogFragment() {
             }
         }
 
-        binding.continueButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_CONTINUE,
                 setResultBundle(isContinue = true)

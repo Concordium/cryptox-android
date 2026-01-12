@@ -148,6 +148,20 @@
 
     <!-- end region -->
 
+    <style name="MW24_Dialog_Title_Text" parent="MW24_Typography_Jakarta_Heading_M">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/mw24_content_inverse_primary</item>
+    </style>
+
+    <style name="MW24_Dialog_Description_Text" parent="MW24_Typography_Body_M_Regular">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/mw24_content_inverse_primary</item>
+        <item name="android:textColorLink">@color/mw24_content_accent_primary</item>
+    </style>
 
     <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Text_Mid_Alternative">
         <item name="android:layout_width">wrap_content</item>

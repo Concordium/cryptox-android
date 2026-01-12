@@ -1,31 +1,23 @@
 package com.concordium.wallet.ui.plt
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import com.concordium.wallet.databinding.DialogPltPausedInfoBinding
+import com.concordium.wallet.R
 import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
 class PLTPausedInfoDialog: BaseDialogFragment() {
 
-    private lateinit var binding: DialogPltPausedInfoBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogPltPausedInfoBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.doneButton.setOnClickListener {
-            dismiss()
-        }
+        setViews(
+            title = getString(R.string.account_details_dialog_plt_paused_title),
+            description = getString(R.string.account_details_dialog_plt_paused_description),
+            okButtonText = getString(R.string.account_details_dialog_done)
+        )
+
+        binding.detailsTextView.gravity = Gravity.START
     }
 
     companion object {

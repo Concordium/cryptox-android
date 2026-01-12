@@ -248,7 +248,7 @@
     </string>
     <string name="account_details_dialog_done">Done</string>
     <string name="account_details_dialog_plt_list_title"><![CDATA[Allow & Deny Lists]]></string>
-    <string name="account_details_dialog_plt_list_description">Protocol-level tokens can optionally support allow and deny lists to control the ability of Concordium accounts to hold/transfer that PLT. Allow and deny lists are managed by the PLT issuer. </string>
+    <string name="account_details_dialog_plt_list_description">Protocol-level tokens can optionally support allow and deny lists to control the ability of Concordium accounts to hold/transfer that PLT. Allow and deny lists are managed by the token’s governance account.</string>
     <string name="token_type_plt">PLT</string>
     <string name="account_details_dialog_cis2_title">CIS-2 Tokens</string>
     <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
@@ -1049,9 +1049,9 @@
     <string name="baker_suspend_validation_dialog_title">Important</string>
     <string name="baker_suspend_validation_dialog_description">
         You are about to self-suspend your validation.\n\nPlease be aware that:\n\n
-        • Suspended nodes don’t earn rewards\n\n
-        • Your delegators will stop earning rewards\n\n
-        • Your delegators will be notified about the suspension\n\n
+        \t\t• Suspended nodes don’t earn rewards\n\n
+        \t\t• Your delegators will stop earning rewards\n\n
+        \t\t• Your delegators will be notified about the suspension
     </string>
     <string name="baker_suspend_validation_dialog_go_back_button">Go back</string>
     <string name="baker_suspend_validation_dialog_button">Continue</string>
