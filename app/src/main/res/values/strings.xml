@@ -1373,9 +1373,9 @@
     </plurals>
     <string name="learn_more_icon">Learn more</string>
 
-    <string name="unlock_feature_title">Unlock this feature</string>
+    <string name="unlock_feature_title">Unlock This Feature</string>
     <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
-    <string name="unlock_feature_go_back_button">Go back</string>
+    <string name="unlock_feature_go_back_button">Continue</string>
 
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>

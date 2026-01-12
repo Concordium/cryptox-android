@@ -3,20 +3,17 @@ package com.concordium.wallet.ui.more.notifications
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
-import com.concordium.wallet.databinding.DialogNotificationsPermissionBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -24,11 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
-class NotificationsPermissionDialog : AppCompatDialogFragment() {
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
-
-    private lateinit var binding: DialogNotificationsPermissionBinding
+class NotificationsPermissionDialog : BaseDialogFragment() {
 
     private val walletNotificationsPreferences =
         App.appCore.session.walletStorage.notificationsPreferences
@@ -43,23 +36,22 @@ class NotificationsPermissionDialog : AppCompatDialogFragment() {
             this::onNotificationPermissionResult
         )
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogNotificationsPermissionBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        listOf(binding.denyButton, binding.closeButton).forEach {
+        setViews(
+            title = getString(R.string.notifications_permission_title),
+            description = getString(R.string.notifications_permission_details),
+            okButtonText = getString(R.string.notifications_permission_allow),
+            cancelButtonText = getString(R.string.notifications_permission_deny),
+            iconResId = R.drawable.mw24_ic_notifications
+        )
+
+        listOf(binding.cancelButton, binding.closeButton).forEach {
             it.setOnClickListener {
                 onNotificationPermissionResult(isGranted = false)
             }
         }
 
-        binding.allowButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Log.d(
                     "launching_system_request"

@@ -1,18 +1,13 @@
 package com.concordium.wallet.ui.cis2
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogRawMetadataBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class RawMetadataDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogRawMetadataBinding
+class RawMetadataDialog : BaseDialogFragment() {
 
     private val metaDataString: String by lazy {
         requireNotNull(arguments?.getString(RAW_METADATA)) {
@@ -20,21 +15,17 @@ class RawMetadataDialog : AppCompatDialogFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogRawMetadataBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.detailsTextView.text = metaDataString
+        super.onViewCreated(view, savedInstanceState)
 
-        listOf(binding.denyButton, binding.closeButton).forEach {
-            it.setOnClickListener { dismiss() }
-        }
+        binding.titleTextView.isVisible = false
+
+        setViews(
+            title = "",
+            description = metaDataString,
+            okButtonText = getString(R.string.cis_hide_token_cancel)
+        )
+        binding.detailsTextView.gravity = Gravity.START
     }
 
     companion object {
