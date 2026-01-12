@@ -93,7 +93,7 @@ class AccountView(context: Context, attrs: AttributeSet?) : ConstraintLayout(con
             if (accountWithIdentity.account.isActive)
                 context.getColor(R.color.mw24_content_accent_secondary)
             else
-                context.getColor(R.color.mw24_plain_white_60)
+                context.getColor(R.color.mw24_content_secondary)
         )
 
         binding.identityName.setTextColor(getColorStateList(accountWithIdentity.account.isActive))
