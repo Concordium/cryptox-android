@@ -1415,14 +1415,14 @@
         After adding it you will be able to switch between your seed phrase wallet and your file wallet.
         \n
     </string>
-    <string name="wallets_action_adding_file_wallet">Adding a file wallet</string>
+    <string name="wallets_action_adding_file_wallet">Adding a File Wallet</string>
     <string name="wallets_action_adding_file_wallet_explanation">
         You can add an existing Concordium file wallet.
         After adding it you will be able to switch between your seed phrase wallet and your file wallet.
         \n\n
         Be aware that you can not create new accounts or identities in your file wallet.
     </string>
-    <string name="wallets_action_importing_file_wallet">Importing a file wallet</string>
+    <string name="wallets_action_importing_file_wallet">Importing a File Wallet</string>
     <string name="wallets_action_importing_file_wallet_explanation">
         Be aware that you can not create new accounts or identities in your file wallet.
         \n\n
@@ -1430,7 +1430,7 @@
         which has full functionality. After connecting you will be able to switch
         between your seed phrase wallet and your file wallet.
     </string>
-    <string name="wallets_action_removing_wallet">Removing a wallet</string>
+    <string name="wallets_action_removing_wallet">Removing a Wallet</string>
     <string name="wallets_action_removing_wallet_explanation">
         After removing a wallet you will not be able to access it in Concordium Wallet.
         But you can restore it whenever you like.
@@ -1444,7 +1444,7 @@
     <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
     <string name="wallets_remove_seed_wallet">Remove your seed phrase wallet</string>
     <string name="wallets_remove_file_wallet">Remove your file wallet</string>
-    <string name="file_wallet_creation_limitation">File wallet limitations</string>
+    <string name="file_wallet_creation_limitation">File Wallet Limitations</string>
     <string name="file_wallet_creation_limitation_explanation">
         Be aware that you can not create new accounts or identities in your file wallet.
         \n\n

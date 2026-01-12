@@ -2,37 +2,26 @@ package com.concordium.wallet.ui.bakerdelegation.dialog.baker
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogBakerNoticeDialogBinding
 import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class BakerNoticeDialog : AppCompatDialogFragment() {
+class BakerNoticeDialog : BaseDialogFragment() {
 
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogBakerNoticeDialogBinding
     private val noticeMessage: String by lazy { arguments?.getString(NOTICE_MESSAGE) ?: "" }
     private val redirectToMainActivity: Boolean by lazy {
         arguments?.getBoolean(REDIRECT_TO_MAIN) ?: true
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogBakerNoticeDialogBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.detailsTextView.text = noticeMessage
+        setViews(
+            title = getString(R.string.baker_notice_title),
+            description = noticeMessage,
+            okButtonText = getString(R.string.baker_notice_ok)
+        )
 
         binding.okButton.setOnClickListener {
             dismiss()

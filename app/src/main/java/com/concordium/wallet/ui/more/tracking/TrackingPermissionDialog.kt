@@ -1,42 +1,32 @@
 package com.concordium.wallet.ui.more.tracking
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogTrackingPermissionBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class TrackingPermissionDialog : AppCompatDialogFragment() {
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
+class TrackingPermissionDialog : BaseDialogFragment() {
 
-    private lateinit var binding: DialogTrackingPermissionBinding
     private val appTrackingPreferences = App.appCore.appTrackingPreferences
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogTrackingPermissionBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.closeButton.setOnClickListener {
-            dismiss()
-        }
+        super.onViewCreated(view, savedInstanceState)
 
-        binding.denyButton.setOnClickListener {
+        setViews(
+            title = getString(R.string.tracking_permission_title),
+            description = getString(R.string.tracking_permission_message),
+            okButtonText = getString(R.string.tracking_permission_allow),
+            cancelButtonText = getString(R.string.tracking_permission_deny)
+        )
+
+        binding.cancelButton.setOnClickListener {
             appTrackingPreferences.isTrackingEnabled = false
             appTrackingPreferences.hasDecidedOnPermission = true
             dismiss()
         }
 
-        binding.allowButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             appTrackingPreferences.isTrackingEnabled = true
             appTrackingPreferences.hasDecidedOnPermission = true
             dismiss()

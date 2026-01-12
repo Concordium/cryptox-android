@@ -1,33 +1,24 @@
 package com.concordium.wallet.ui.cis2
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogMemoNoticeBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class MemoNoticeDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogMemoNoticeBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogMemoNoticeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+class MemoNoticeDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listOf(binding.showButton, binding.closeButton).forEach {
+        setViews(
+            title = getString(R.string.transaction_memo_warning_title),
+            description = getString(R.string.transaction_memo_warning_text),
+            okButtonText = getString(R.string.transaction_memo_warning_ok),
+            cancelButtonText = getString(R.string.transaction_memo_warning_dont_show),
+        )
+
+        listOf(binding.okButton, binding.closeButton).forEach {
             it.setOnClickListener {
                 setFragmentResult(
                     ACTION_REQUEST,
@@ -37,7 +28,7 @@ class MemoNoticeDialog : AppCompatDialogFragment() {
             }
         }
 
-        binding.hideButton.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(showAgain = false)
