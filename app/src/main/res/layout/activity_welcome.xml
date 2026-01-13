@@ -17,7 +17,7 @@
         android:layout_height="64dp"
         android:layout_marginTop="52dp"
         android:importantForAccessibility="no"
-        app:srcCompat="@drawable/mw24_app_icon" />
+        app:srcCompat="@drawable/mw24_app_logo" />
 
     <TextView
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/welcome_greeting"
-        android:textAppearance="@style/CCX_Typography_H1"
+        android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
         android:textColor="@color/cryptox_white_main" />
 
     <androidx.fragment.app.FragmentContainerView

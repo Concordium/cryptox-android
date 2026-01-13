@@ -1146,7 +1146,7 @@
     <string name="welcome_your_data_description">Verify your access, without exposing your identity.</string>
     <string name="welcome_speed_title">Speed Matters</string>
     <string name="welcome_speed_description">Make payments faster and cheaper using Stablecoins.</string>
-    <string name="welcome_greeting">Smart Money starts here</string>
+    <string name="welcome_greeting">Smart Money Starts Here</string>
     <string name="welcome_point_1">Create Passcode</string>
     <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
     <string name="welcome_point_2">Get Concordium ID</string>
@@ -1201,10 +1201,10 @@
     <string name="passcode_backspace_button">Delete</string>
     <string name="passcode_biometrics_button">Use biometrics</string>
     <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.com</string>
-    <string name="passcode_create_setup_biometrics_title">Enable biometrics for next time?</string>
+    <string name="passcode_create_setup_biometrics_title">Enable biometrics for easier log in</string>
     <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sign in faster when you come back</string>
-    <string name="passcode_create_setup_biometrics_allow">Enable biometrics</string>
-    <string name="passcode_create_setup_biometrics_deny">Set up later in Settings</string>
+    <string name="passcode_create_setup_biometrics_allow">Enable Biometrics</string>
+    <string name="passcode_create_setup_biometrics_deny">Set up Later in Settings</string>
     <string name="setup_wallet_continue">Continue</string>
     <string name="setup_wallet_seed_phrase_consent">I have securely backed up my seed phrase</string>
     <string name="setup_wallet_seed_phrase_copy">Copy to clipboard</string>

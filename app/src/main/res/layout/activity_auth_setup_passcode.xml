@@ -6,38 +6,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/title_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="bottom|center_horizontal"
-        android:textAppearance="@style/CCX_Typography_H1"
-        android:textColor="@color/ccx_neutral_tint_1"
-        app:layout_constraintBottom_toTopOf="@id/details_text_view"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size8"
+        android:gravity="center"
+        android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
+        android:textColor="@color/mw24_content_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         tools:text="@string/passcode_create_title" />
 
     <TextView
         android:id="@+id/details_text_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size8"
         android:gravity="center"
         android:textAppearance="@style/CCX_Typography_Body"
-        android:textColor="@color/ccx_neutral_tint_2"
-        app:layout_constraintBottom_toTopOf="@id/passcode_input_view"
+        android:textColor="@color/mw24_content_accent_tertiary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_text_view"
         tools:text="@string/template_passcode_create_details" />
 
-    <com.concordium.wallet.ui.auth.setup.CcxPasscodeInputView
+    <com.concordium.wallet.ui.auth.setup.PasscodeInputView
         android:id="@+id/passcode_input_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/size24"
         app:layout_constraintBottom_toTopOf="@id/use_password_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_text_view" />
 
     <TextView
         android:id="@+id/use_password_button"

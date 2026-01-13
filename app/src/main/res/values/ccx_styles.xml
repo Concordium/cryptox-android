@@ -47,7 +47,7 @@
         <item name="android:layout_width">68dp</item>
         <item name="android:layout_height">68dp</item>
         <item name="android:background">@drawable/ccx_passcode_extra_button_background</item>
-        <item name="fontFamily">@font/inter_w500</item>
+        <item name="fontFamily">@font/jakarta_w500</item>
         <item name="android:gravity">center</item>
         <item name="android:drawableTint">#DEE7E7</item>
         <item name="android:layout_marginStart">12dp</item>

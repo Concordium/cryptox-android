@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:gravity="center_horizontal"
-    tools:orientation="vertical"
-    tools:parentTag="android.widget.LinearLayout">
+    tools:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/dots_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
+        android:layout_height="@dimen/size24"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/buttons_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:background="@color/ccx_neutral_tint_1"
         tools:layout_height="@dimen/ccx_passcode_dot_size">
         <!-- Dots are created programmatically -->
@@ -25,13 +25,15 @@
         android:id="@+id/buttons_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginVertical="@dimen/size24"
+        android:layout_weight="1"
         android:columnCount="3"
         android:orientation="horizontal"
         android:rowCount="4"
-        app:layout_constraintBottom_toTopOf="@id/use_password_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dots_layout">
 
         <Button
             style="@style/CCX_Button_Passcode_Digit"
@@ -82,14 +84,14 @@
             style="@style/CCX_Button_Passcode_Digit"
             android:tag="0" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <ImageView
             android:id="@+id/backspace_button"
             style="@style/CCX_Button_Passcode_Extra"
             android:contentDescription="@string/passcode_backspace_button"
-            android:padding="18dp"
+            android:padding="20dp"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ccx_ico_backspace" />
+            app:srcCompat="@drawable/mw24_ic_backspace" />
 
     </GridLayout>
 
-</merge>
+</androidx.constraintlayout.widget.ConstraintLayout>

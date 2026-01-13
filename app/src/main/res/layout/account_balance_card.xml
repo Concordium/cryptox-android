@@ -122,7 +122,7 @@
                 android:alpha="0.3"
                 android:includeFontPadding="false"
                 android:letterSpacing="0.03"
-                android:textAppearance="@style/MW24_Typography_Jakarta_Symbol"
+                android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
                 android:textColor="@color/mw24_content_accent_tertiary"
                 app:layout_constraintBaseline_toBaselineOf="@id/balance"
                 app:layout_constraintEnd_toEndOf="parent"
