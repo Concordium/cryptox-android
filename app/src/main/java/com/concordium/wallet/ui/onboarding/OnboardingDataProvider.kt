@@ -18,9 +18,7 @@ class OnboardingDataProvider(val context: Context) {
             progressPrevious = 0,
             progressCurrent = 33,
             showActionButton = true,
-            actionButtonTitle = context.getString(R.string.onboarding_action_button_save_seed),
-            showInnerActionButton = false,
-            innerActionButtonTitle = ""
+            actionButtonTitle = context.getString(R.string.onboarding_action_button_save_seed)
         ),
         OnboardingStateModel(
             state = OnboardingState.VERIFY_IDENTITY,
@@ -32,9 +30,7 @@ class OnboardingDataProvider(val context: Context) {
             progressPrevious = 33,
             progressCurrent = 66,
             showActionButton = true,
-            actionButtonTitle = context.getString(R.string.accounts_overview_create_identity),
-            showInnerActionButton = false,
-            innerActionButtonTitle = ""
+            actionButtonTitle = context.getString(R.string.accounts_overview_create_identity)
         ),
         OnboardingStateModel(
             state = OnboardingState.IDENTITY_IN_PROGRESS,
@@ -47,10 +43,8 @@ class OnboardingDataProvider(val context: Context) {
             animateStatusIcon = true,
             progressPrevious = 66,
             progressCurrent = 100,
-            showActionButton = false,
-            actionButtonTitle = "",
-            showInnerActionButton = false,
-            innerActionButtonTitle = ""
+            showActionButton = true,
+            actionButtonTitle = context.getString(R.string.accounts_overview_create_identity)
         ),
         OnboardingStateModel(
             state = OnboardingState.IDENTITY_UNSUCCESSFUL,
@@ -62,10 +56,8 @@ class OnboardingDataProvider(val context: Context) {
             identityVerificationStatus = IdentityStatus.ERROR,
             animateStatusIcon = false,
             showProgressBar = false,
-            showActionButton = false,
-            actionButtonTitle = "",
-            showInnerActionButton = true,
-            innerActionButtonTitle = context.getString(R.string.accounts_overview_create_identity)
+            showActionButton = true,
+            actionButtonTitle = context.getString(R.string.accounts_overview_create_identity)
         ),
         OnboardingStateModel(
             state = OnboardingState.CREATE_ACCOUNT,
@@ -78,10 +70,7 @@ class OnboardingDataProvider(val context: Context) {
             animateStatusIcon = false,
             showProgressBar = false,
             showActionButton = false,
-            actionButtonTitle = "",
-            showInnerActionButton = true,
-            innerActionButtonTitle = context.getString(R.string.accounts_overview_create_account),
-            innerActionButtonBackground = R.drawable.ccx_button_primary_green_background
+            actionButtonTitle = context.getString(R.string.accounts_overview_create_account)
         ),
         OnboardingStateModel(
             state = OnboardingState.FINALIZING_ACCOUNT,
@@ -94,10 +83,7 @@ class OnboardingDataProvider(val context: Context) {
             animateStatusIcon = true,
             showProgressBar = false,
             showActionButton = false,
-            actionButtonTitle = "",
-            showInnerActionButton = true,
-            innerActionButtonTitle = context.getString(R.string.accounts_overview_create_account),
-            innerActionButtonBackground = R.drawable.ccx_button_primary_green_inactive_background
+            actionButtonTitle = context.getString(R.string.accounts_overview_create_account)
         )
     )
 
@@ -112,9 +98,7 @@ class OnboardingDataProvider(val context: Context) {
             progressPrevious = 0,
             progressCurrent = 33,
             showActionButton = true,
-            actionButtonTitle = context.getString(R.string.onboarding_action_button_save_seed),
-            showInnerActionButton = false,
-            innerActionButtonTitle = ""
+            actionButtonTitle = context.getString(R.string.onboarding_action_button_save_seed)
         )
 
     fun getViewDataByIdentityVerificationStatus(status: String) =
@@ -127,11 +111,10 @@ class OnboardingDataProvider(val context: Context) {
             showVerificationStatusIcon = true,
             identityVerificationStatus = IdentityStatus.PENDING,
             animateStatusIcon = true,
+            showProgressBar = true,
             progressPrevious = 66,
             progressCurrent = 100,
             showActionButton = false,
-            actionButtonTitle = "",
-            showInnerActionButton = false,
-            innerActionButtonTitle = ""
+            actionButtonTitle = ""
         )
 }

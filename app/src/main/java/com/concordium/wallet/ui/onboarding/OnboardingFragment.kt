@@ -67,7 +67,7 @@ class OnboardingFragment @JvmOverloads constructor(
     init {
         activity.lifecycleScope.launch {
             onboardingViewModel.identityFlow.collect { identity ->
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
@@ -136,14 +136,15 @@ class OnboardingFragment @JvmOverloads constructor(
             }
 
             OnboardingState.IDENTITY_UNSUCCESSFUL -> {
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
 
             OnboardingState.FINALIZING_ACCOUNT -> {
-                binding.onboardingInnerActionButton.setOnClickListener(null)
+                binding.onboardingActionButton.setOnClickListener(null)
+                binding.onboardingActionButton.isEnabled = false
             }
 
             else -> {}
@@ -157,14 +158,14 @@ class OnboardingFragment @JvmOverloads constructor(
 
         when (identity.status) {
             IdentityStatus.DONE -> {
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
             }
 
             IdentityStatus.ERROR -> {
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
@@ -177,7 +178,6 @@ class OnboardingFragment @JvmOverloads constructor(
         binding.onboardingStatusTitle.text = currentViewState.statusTitle
         binding.onboardingStatusTitle.setTextColor(currentViewState.statusTextColor)
         binding.onboardingActionButton.text = currentViewState.actionButtonTitle
-        binding.onboardingInnerActionButton.text = currentViewState.innerActionButtonTitle
         binding.identityVerificationStatusIcon.setImageDrawable(currentViewState.verificationStatusIcon)
 
         if (currentViewState.statusDescription.isNotEmpty()) {
@@ -189,20 +189,14 @@ class OnboardingFragment @JvmOverloads constructor(
 
         if (currentViewState.showProgressBar) {
             binding.onboardingStatusProgressBar.visibility = VISIBLE
-            binding.onboardingInnerActionButton.visibility = GONE
             animateProgressBar(currentViewState.progressPrevious, currentViewState.progressCurrent)
         } else {
-            currentViewState.innerActionButtonBackground?.let {
-                binding.onboardingInnerActionButton.setBackgroundResource(it)
-            }
-
             activity.lifecycleScope.launch {
                 if (onboardingViewModel.animatedButtonFlow.value.not()) {
-                    animateProgressBarToButton()
                     onboardingViewModel.setAnimatedButton(true)
                 } else {
                     binding.onboardingStatusProgressBar.visibility = GONE
-                    binding.onboardingInnerActionButton.visibility = VISIBLE
+                    binding.onboardingActionButton.visibility = VISIBLE
                 }
             }
         }
@@ -212,8 +206,10 @@ class OnboardingFragment @JvmOverloads constructor(
 
             if (currentViewState.animateStatusIcon) {
                 animateStatusIcon()
+                binding.onboardingActionButton.isEnabled = false
             } else {
                 pulsateAnimator.end()
+                binding.onboardingActionButton.isEnabled = true
             }
         } else {
             binding.identityVerificationStatusIcon.visibility = GONE
@@ -258,7 +254,7 @@ class OnboardingFragment @JvmOverloads constructor(
         }
 
         val fadeInButton = ObjectAnimator.ofFloat(
-            binding.onboardingInnerActionButton, "alpha", 0f, 1f
+            binding.onboardingActionButton, "alpha", 0f, 1f
         ).apply {
             duration = 500
         }
@@ -268,7 +264,7 @@ class OnboardingFragment @JvmOverloads constructor(
         }
 
         fadeInButton.doOnStart {
-            binding.onboardingInnerActionButton.visibility = View.VISIBLE
+            binding.onboardingActionButton.visibility = View.VISIBLE
         }
 
         AnimatorSet().apply {
