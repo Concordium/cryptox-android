@@ -1,66 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="4dp"
-    android:orientation="vertical"
-    android:paddingHorizontal="20dp"
+    android:layout_marginHorizontal="@dimen/size16"
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/mw24_container_primary_background"
+    android:padding="@dimen/size12"
     tools:ignore="UseCompoundDrawables">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/logo_imageview"
+        android:layout_width="@dimen/size40"
+        android:layout_height="@dimen/size40"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/simple_circle_bg" />
 
-        <ImageView
-            android:id="@+id/logo_imageview"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:importantForAccessibility="no"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/simple_circle_bg" />
+    <TextView
+        android:id="@+id/header_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size8"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:lines="2"
+        android:maxLines="2"
+        android:textAppearance="@style/MW24_Typography_Label_L_Medium"
+        android:textColor="@color/mw24_content_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/arrow_image_view"
+        app:layout_constraintStart_toEndOf="@id/logo_imageview"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Concordium Beta Concordium Beta xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
 
-        <TextView
-            android:id="@+id/header_textview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:ellipsize="end"
-            android:gravity="start|center_vertical"
-            android:lines="2"
-            android:maxLines="2"
-            android:textAppearance="@style/CCX_Typography_H3"
-            android:textColor="@color/ccx_neutral_tint_1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/arrow_image_view"
-            app:layout_constraintStart_toEndOf="@id/logo_imageview"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Concordium Beta Concordium Beta xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+    <ImageView
+        android:id="@+id/arrow_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size6"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mw24_ic_external_link"
+        app:tint="@color/mw24_plain_white_40" />
 
-        <ImageView
-            android:id="@+id/arrow_image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:importantForAccessibility="no"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/cryptox_ico_chevron_right"
-            app:tint="@color/cryptox_black_additional" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/item_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="6dp"
-        android:alpha="0.2"
-        android:background="@color/cryptox_grey_additional" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

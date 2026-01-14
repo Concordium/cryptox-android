@@ -118,7 +118,8 @@
     <string name="identity_create_default_name_prefix">Identity</string>
     <!-- Identity provider list -->
     <string name="identity_provider_list_title">Identity verification</string>
-    <string name="identity_provider_list_details">Select a provider to verify your identity</string>
+    <string name="identity_provider_list_details">Create your secure identification through one of our trusted external providers.</string>
+    <string name="identity_provider_list_description">You will be redirected after choosing an identity provider.</string>
     <!-- Identity Provider Webview -->
     <string name="identity_provider_webview_title">Identity verification</string>
     <!-- Identity confirmed -->

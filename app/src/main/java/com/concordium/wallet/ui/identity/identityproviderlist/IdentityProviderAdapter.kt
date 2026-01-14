@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
@@ -18,7 +17,7 @@ class IdentityProviderAdapter(
 
     private var onItemClickListener: OnItemClickListener? = null
 
-    inner class ItemViewHolder(val binding: ItemIdentityProviderBinding) :
+    class ItemViewHolder(val binding: ItemIdentityProviderBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = data.size
@@ -49,7 +48,6 @@ class IdentityProviderAdapter(
             .into(binding.logoImageview)
 
         binding.headerTextview.text = identityProvider.displayName
-        binding.itemDivider.isVisible = position != data.size - 1
 
         // Click
         if (onItemClickListener != null) {
