@@ -168,12 +168,12 @@
         <item name="android:textColorLink">@color/mw24_content_accent_primary</item>
     </style>
 
-    <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Text_Mid_Alternative">
+    <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Label_M_Medium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginHorizontal">@dimen/size16</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/mw24_content_accent_secondary</item>
+        <item name="android:textColor">@color/mw24_content_secondary</item>
     </style>
 
     <style name="MW24_Manage_Token_List_Button">

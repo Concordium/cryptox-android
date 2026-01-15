@@ -6,18 +6,18 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.ItemGradientToggleTabBinding
+import com.concordium.wallet.databinding.ItemSegmentedTabBinding
 
-class GradientTabItemView @JvmOverloads constructor(
+class ToggleTabItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : ConstraintLayout(context, attrs) {
 
-    private val binding: ItemGradientToggleTabBinding
+    private val binding: ItemSegmentedTabBinding
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.item_gradient_toggle_tab, this, true)
-        binding = ItemGradientToggleTabBinding.bind(this)
+        LayoutInflater.from(context).inflate(R.layout.item_segmented_tab, this, true)
+        binding = ItemSegmentedTabBinding.bind(this)
     }
 
     fun setTab(label: String, icon: Drawable?, selected: Boolean) {

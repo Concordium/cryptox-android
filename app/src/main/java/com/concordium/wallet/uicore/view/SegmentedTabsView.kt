@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.core.view.forEach
 import com.concordium.wallet.R
 
-class GradientTabsView : LinearLayout {
+class SegmentedTabsView : LinearLayout {
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         initialize(context)
@@ -43,21 +43,21 @@ class GradientTabsView : LinearLayout {
         clickListener: OnItemClickListener?,
         initiallySelected: Boolean
     ): View {
-        val view = GradientTabItemView(context)
+        val view = ToggleTabItemView(context)
 
         view.setTab(label, icon, initiallySelected)
         view.onCheck(initiallySelected)
         view.setOnClickListener {
-            selectItem(it as GradientTabItemView)
+            selectItem(it as ToggleTabItemView)
             clickListener?.onItemClicked()
         }
         addView(view, LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
         return view
     }
 
-    private fun selectItem(item: GradientTabItemView) {
+    private fun selectItem(item: ToggleTabItemView) {
         forEach { child ->
-            child as GradientTabItemView
+            child as ToggleTabItemView
             child.onCheck(child == item)
         }
     }

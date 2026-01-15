@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="1">
 
-        <com.concordium.wallet.uicore.view.GradientTabsView
+        <com.concordium.wallet.uicore.view.SegmentedTabsView
             android:id="@+id/transfer_tabs"
             android:layout_width="0dp"
             android:layout_height="44dp"

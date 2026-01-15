@@ -19,6 +19,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/mw24_segmented_tab_text_color"
         tools:src="@drawable/mw24_ic_receive_btn" />
 
     <TextView
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size6"
         android:textAppearance="@style/MW24_Typography_Text_Mid"
-        android:textColor="@color/mw24_plain_white_60"
+        android:textColor="@color/mw24_segmented_tab_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
