@@ -30,6 +30,9 @@
     <color name="mw24_gradient_center_color">#EDDABF</color>
     <color name="mw24_gradient_end_color">#A49AE3</color>
 
+    <color name="mw24_slider_button_thumb_background">#2667FF</color>
+    <color name="mw24_slider_button_background_default">#E2EDFF</color>
+
    <!-- Surface (background) colors -->
     <color name="mw24_surface_primary_disabled">#2F3437</color>
     <color name="mw24_surface_success_tertiary">#0C261D</color>

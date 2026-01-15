@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginTop="@dimen/size16"
-        android:background="@drawable/mw24_export_transaction_log_card_background"
+        android:background="@drawable/mw24_container_primary_background"
         android:orientation="vertical"
         android:padding="@dimen/size16">
 

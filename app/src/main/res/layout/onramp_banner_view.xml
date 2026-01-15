@@ -17,7 +17,6 @@
         android:layout_height="40dp"
         android:padding="@dimen/size8"
         android:background="@drawable/simple_circle_bg"
-        android:backgroundTint="@color/mw24_plain_white_10"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

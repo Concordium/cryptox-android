@@ -39,10 +39,12 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:imeOptions="actionDone"
-                    android:lineHeight="36sp"
-                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
-                    android:textColorHint="@color/cryptox_black_secondary"
-                    android:textSize="36sp"
+                    android:includeFontPadding="false"
+                    android:lineHeight="34sp"
+                    android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
+                    android:textColor="@color/mw24_content_accent_primary"
+                    android:textColorHint="@color/mw24_content_accent_primary"
+                    android:textSize="34sp"
                     app:layout_constraintEnd_toStartOf="@id/balance_symbol"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintHorizontal_chainStyle="packed"
@@ -52,17 +54,19 @@
                     tools:targetApi="p"
                     tools:text="12,455.00" />
 
-                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                <TextView
                     android:id="@+id/balance_symbol"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="16dp"
                     android:alpha="0.5"
-                    android:lineHeight="36sp"
+                    android:includeFontPadding="false"
+                    android:lineHeight="34sp"
                     android:text="@string/accounts_overview_balance_suffix"
-                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
-                    android:textSize="36sp"
+                    android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
+                    android:textColor="@color/mw24_content_accent_primary"
+                    android:textSize="34sp"
                     app:layout_constraintBottom_toBottomOf="@id/amount"
                     app:layout_constraintEnd_toStartOf="@id/max_amount_button"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -127,17 +131,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:paddingVertical="11dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="24dp">
+                android:background="@drawable/mw24_container_primary_background"
+                android:paddingVertical="@dimen/size12"
+                android:paddingStart="@dimen/size12"
+                android:paddingEnd="@dimen/size16">
 
                 <ImageView
                     android:id="@+id/token_icon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
+                    android:background="@drawable/simple_circle_bg"
                     android:contentDescription="@string/accounts_overview_balance_suffix"
-                    android:padding="10dp"
+                    android:padding="@dimen/size8"
                     android:scaleType="fitCenter"
                     android:src="@drawable/mw24_ic_ccd"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -150,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="@string/accounts_overview_balance_suffix"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_L_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/balance_amount"
@@ -164,10 +170,11 @@
                     android:id="@+id/balance_amount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:layout_marginEnd="@dimen/size12"
+                    android:textAppearance="@style/MW24_Typography_Label_L_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintBottom_toTopOf="@id/balance_amount_available_label"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ccd_selector_icon"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="132.955" />
 
@@ -180,8 +187,22 @@
                     android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
                     android:textColor="@color/mw24_blue_3_50"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/balance_amount"
                     app:layout_constraintTop_toBottomOf="@id/balance_amount" />
+
+                <ImageView
+                    android:id="@+id/ccd_selector_icon"
+                    android:layout_width="10dp"
+                    android:layout_height="@dimen/size16"
+                    android:layout_marginStart="@dimen/size8"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mw24_ic_account_selector"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/mw24_plain_white_40"
+                    tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

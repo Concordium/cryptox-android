@@ -24,17 +24,17 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-    <com.concordium.wallet.uicore.view.BalanceGradientTextView
+    <TextView
         android:id="@+id/total_balance_textview"
-        style="@style/MW24_Typography_IBM_Balance"
+        style="@style/MW24_Typography_Jakarta_Heading_2XL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:text="@string/accounts_overview_balance_placeholder"
-        android:textColor="@color/cryptox_deep_blue"
-        android:textSize="55sp"
-        app:autoSizeMaxTextSize="55sp"
-        app:autoSizeMinTextSize="10sp"
+        android:textColor="@color/mw24_content_accent_primary"
+        android:textSize="48sp"
+        app:autoSizeMaxTextSize="48sp"
+        app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,7 +48,7 @@
         android:id="@+id/disposalBlock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/size8"
         app:layout_constraintTop_toBottomOf="@id/total_balance_textview">
 
         <TextView

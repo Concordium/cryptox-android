@@ -2,9 +2,6 @@ package com.concordium.wallet.uicore.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.RadialGradient
-import android.graphics.Shader
 import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
@@ -69,30 +66,5 @@ class AmountEditText : EditText {
         context.theme.obtainStyledAttributes(attrs, R.styleable.AmountEditText, 0, 0).apply {
             isGradientTextColor = getBoolean(R.styleable.AmountEditText_isGradientTextColor, true)
         }
-    }
-
-    @SuppressLint("DrawAllocation")
-    override fun onDraw(canvas: Canvas) {
-        val radius = dpToPx(context, 250f)
-
-        val gradient = RadialGradient(
-            0f, 0f, radius,
-            intArrayOf(
-                0xE69EF2EB.toInt(),
-                0xE6EDDABF.toInt(),
-                0xE6A49AE3.toInt()
-            ),
-            null,
-            Shader.TileMode.CLAMP
-        )
-
-        if (isGradientTextColor) {
-            paint.shader = gradient
-        }
-        super.onDraw(canvas)
-    }
-
-    private fun dpToPx(context: Context, dp: Float): Float {
-        return dp * context.resources.displayMetrics.density
     }
 }

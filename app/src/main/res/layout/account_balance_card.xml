@@ -30,14 +30,12 @@
                 android:id="@+id/logo_image_view"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/simple_circle_bg"
                 android:backgroundTint="@color/mw24_surface_highlight_secondary"
                 android:importantForAccessibility="no"
-                android:padding="@dimen/size8"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/mw24_ic_ccd" />
+                app:srcCompat="@drawable/mw24_ic_ccd_with_background" />
 
             <TextView
                 android:id="@+id/ccd_symbol_label"
@@ -104,9 +102,9 @@
                 android:gravity="bottom"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:textAppearance="@style/MW24_Typography_Jakarta_Balance"
+                android:textAppearance="@style/MW24_Typography_Jakarta_Heading_2XL"
                 android:textColor="@color/mw24_content_primary"
-                app:autoSizeMaxTextSize="48sp"
+                app:autoSizeMaxTextSize="40sp"
                 app:autoSizeMinTextSize="12sp"
                 app:autoSizeStepGranularity="2sp"
                 app:autoSizeTextType="uniform"

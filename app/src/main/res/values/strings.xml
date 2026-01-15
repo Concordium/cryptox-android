@@ -613,7 +613,7 @@
     <string name="template_cis_transaction_not_sent">Transaction not sent\n%1$s</string>
     <string name="cis_fee_not_spent">Transaction fee was not spent</string>
     <string name="cis_transaction_details">Transaction details</string>
-    <string name="cis_submit_transaction">Submit transaction</string>
+    <string name="cis_submit_transaction">Submit Transaction</string>
     <string name="cis_slider_thumb">Slider thumb</string>
     <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Transaction fee ≈ %1$s CCD</string>
@@ -814,7 +814,7 @@
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
     <string name="delegation_register_delegation_amount_balance">Balance</string>
-    <string name="delegation_register_delegation_amount_available_label">Available for staking</string>
+    <string name="delegation_register_delegation_amount_available_label">At disposal</string>
     <string name="delegation_register_delegation_amount_delegation">Current delegation</string>
     <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
@@ -1219,7 +1219,7 @@
     <string name="saved_seed_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
     <string name="saved_seed_phrase_reveal_seed_phrase_show">Show seed phrase</string>
     <string name="saved_seed_phrase_reveal_title">@string/your_seed_phrase</string>
-    <string name="saved_seed_phrase_reveal_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
+    <string name="saved_seed_phrase_reveal_details">Your seed phrase is the access key to your wallet. If you lose it, you will lose access to all your funds. Make sure to store it in a secure place.</string>
     <string name="saved_seed_phrase_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_phrase_reveal_digital_copy">Digital copy</string>
     <string name="saved_seed_phrase_reveal_screenshot">Screenshot</string>

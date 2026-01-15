@@ -40,7 +40,6 @@ class SendTokenReceiptActivity : BaseActivity(
 
     companion object {
         const val SEND_TOKEN_DATA = "SEND_TOKEN_DATA"
-        const val PARENT_ACTIVITY = "PARENT_ACTIVITY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

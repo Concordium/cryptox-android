@@ -126,9 +126,9 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="MW24_Typography_Jakarta_Balance">
+    <style name="MW24_Typography_Jakarta_Heading_2XL">
         <item name="android:fontFamily">@font/jakarta_w700</item>
-        <item name="android:textSize">48sp</item>
+        <item name="android:textSize">40sp</item>
     </style>
 
     <style name="MW24_Typography_Jakarta_At_Disposal">
@@ -143,6 +143,11 @@
 
     <style name="MW24_Typography_Jakarta_Heading_L">
         <item name="android:fontFamily">@font/jakarta_w500</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_Heading_L_Bold">
+        <item name="android:fontFamily">@font/jakarta_w700</item>
         <item name="android:textSize">24sp</item>
     </style>
 
