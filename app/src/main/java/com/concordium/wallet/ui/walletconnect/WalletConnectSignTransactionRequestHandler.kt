@@ -9,6 +9,7 @@ import com.concordium.sdk.transactions.SignerEntry
 import com.concordium.sdk.transactions.TokenUpdate
 import com.concordium.sdk.transactions.TransactionFactory
 import com.concordium.sdk.transactions.TransactionSigner
+import com.concordium.sdk.transactions.Transfer
 import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.transactions.tokens.TokenOperation
 import com.concordium.sdk.types.AccountAddress
@@ -410,14 +411,18 @@ class WalletConnectSignTransactionRequestHandler(
         signer: SignerEntry,
     ): String =
         submitTransaction(
-            TransactionFactory.newTransfer()
+            TransactionFactory
+                .newTransfer(
+                    Transfer
+                        .builder()
+                        .amount(CCDAmount.fromMicro(transferPayload.amount.toString()))
+                        .receiver(AccountAddress.from(transferPayload.toAddress))
+                        .build()
+                )
                 .expiry(getTransactionExpiry())
                 .sender(AccountAddress.from(account.address))
                 .nonce(Nonce.from(transactionNonce.nonce.toLong()))
-                .signer(TransactionSigner.from(signer))
-                .amount(CCDAmount.fromMicro(transferPayload.amount.toString()))
-                .receiver(AccountAddress.from(transferPayload.toAddress))
-                .build()
+                .sign(TransactionSigner.from(signer))
         )
 
     private suspend fun submitContractUpdateTransaction(
@@ -425,13 +430,8 @@ class WalletConnectSignTransactionRequestHandler(
         signer: SignerEntry,
     ): String =
         submitTransaction(
-            TransactionFactory.newUpdateContract()
-                .expiry(getTransactionExpiry())
-                .sender(AccountAddress.from(account.address))
-                .nonce(Nonce.from(transactionNonce.nonce.toLong()))
-                .signer(TransactionSigner.from(signer))
-                .maxEnergyCost(UInt64.from(transactionCost.energy))
-                .payload(
+            TransactionFactory
+                .newUpdateContract(
                     UpdateContract.from(
                         CCDAmount.fromMicro(updatePayload.amount.toString()),
                         ContractAddress(
@@ -440,9 +440,13 @@ class WalletConnectSignTransactionRequestHandler(
                         ),
                         ReceiveName.parse(updatePayload.receiveName),
                         Parameter.from(updatePayload.message.hexToBytes())
-                    )
+                    ),
+                    UInt64.from(transactionCost.energy)
                 )
-                .build()
+                .expiry(getTransactionExpiry())
+                .sender(AccountAddress.from(account.address))
+                .nonce(Nonce.from(transactionNonce.nonce.toLong()))
+                .sign(TransactionSigner.from(signer))
         )
 
     private suspend fun submitProtocolLevelTokenTransferTransaction(
@@ -450,13 +454,12 @@ class WalletConnectSignTransactionRequestHandler(
         signer: SignerEntry,
     ): String =
         submitTransaction(
-            TransactionFactory.newTokenUpdate()
+            TransactionFactory
+                .newTokenUpdate(getProtocolLevelTokenTransferPayload(pltTransferPayload))
                 .expiry(getTransactionExpiry())
                 .sender(AccountAddress.from(account.address))
                 .nonce(Nonce.from(transactionNonce.nonce.toLong()))
-                .signer(TransactionSigner.from(signer))
-                .payload(getProtocolLevelTokenTransferPayload(pltTransferPayload))
-                .build()
+                .sign(TransactionSigner.from(signer))
         )
 
     private suspend fun submitTransaction(
@@ -546,7 +549,7 @@ class WalletConnectSignTransactionRequestHandler(
                 transactionPayload.receiveName
         }
 
-    companion object{
+    companion object {
         const val METHOD = "sign_and_send_transaction"
     }
 }
