@@ -37,7 +37,7 @@ class InputFieldView @JvmOverloads constructor(
                 binding.clearIcon.setImageDrawable(
                     iconTextFilled ?: ContextCompat.getDrawable(
                         context,
-                        R.drawable.mw24_ic_clear
+                        R.drawable.mw24_ic_dialog_close
                     )
                 )
 

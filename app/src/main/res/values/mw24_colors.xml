@@ -63,6 +63,7 @@
     <color name="mw24_border_primary_disabled">#4B5357</color>
     <color name="mw24_border_tertiary">#4B535D</color>
     <color name="mw24_border_tertiary_pressed">#363D44</color>
+    <color name="mw24_border_tertiary_selected">#9CA3AA</color>
     <color name="mw24_border_inverse_tertiary">#D0D4D6</color>
     <color name="mw24_border_inverse_tertiary_pressed">#D0D4D6</color>
     <color name="mw24_border_inverse_disabled">#D0D4D6</color>

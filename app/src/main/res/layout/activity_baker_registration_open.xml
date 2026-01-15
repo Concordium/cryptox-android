@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true" />
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/baker_registration_open_continue"
         android:layout_below="@id/toolbar_layout"
