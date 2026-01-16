@@ -188,7 +188,7 @@ class TokensInteractor(
         }
     }
 
-    private suspend fun getCCDDefaultToken(
+    suspend fun getCCDDefaultToken(
         accountAddress: String,
         withTotalBalance: Boolean = false,
     ): CCDToken {

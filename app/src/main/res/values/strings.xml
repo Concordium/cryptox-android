@@ -440,6 +440,8 @@
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
+    <string name="accounts_overview_balance_suffix_eur">€</string>
+    <string name="accounts_overview_total_balance">CCD</string>
     <string name="accounts_overview_staking_label">Staking</string>
     <string name="accounts_overview_staked_balance">Staked Balance</string>
     <string name="accounts_overview_staked_mode">Mode</string>

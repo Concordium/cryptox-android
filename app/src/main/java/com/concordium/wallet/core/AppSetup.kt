@@ -29,6 +29,8 @@ class AppSetup(
         get() = appSetupPreferences.getShowReviewDialogTime()
     val isHasAcceptedOnRampDisclaimer: Boolean
         get() = appSetupPreferences.getHasAcceptedOnRampDisclaimer()
+    val showBalanceInEur: Boolean
+        get() = appSetupPreferences.getShowBalanceInEur()
 
     fun finishInitialSetup() {
         appSetupPreferences.setHasCompletedInitialSetup(true)
@@ -98,5 +100,9 @@ class AppSetup(
 
     fun setHasAcceptedOnRampDisclaimer(value: Boolean) {
         appSetupPreferences.setHasAcceptedOnRampDisclaimer(value)
+    }
+
+    fun setShowBalanceInEur(value: Boolean) {
+        appSetupPreferences.setShowBalanceInEur(value)
     }
 }

@@ -29,8 +29,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
         const val CHANGED = "CHANGED"
-        const val PENDING_DELEGATION = "PENDING_DELEGATION"
-        const val PENDING_VALIDATION = "PENDING_VALIDATION"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,16 +47,6 @@ class TokenDetailsActivity : BaseActivity(R.layout.activity_token_details) {
         @Suppress("DEPRECATION")
         val token = intent.getSerializableExtra(TOKEN) as Token
         viewModel.tokenDetailsData.selectedToken = token
-
-        viewModel.tokenDetailsData.hasPendingDelegationTransactions =
-            requireNotNull(intent.getBooleanExtra(PENDING_DELEGATION, false)) {
-                "Missing delegation extra"
-            }
-
-        viewModel.tokenDetailsData.hasPendingValidationTransactions =
-            requireNotNull(intent.getBooleanExtra(PENDING_VALIDATION, false)) {
-                "Missing delegation extra"
-            }
 
         Log.d("TOKEN : ${viewModel.tokenDetailsData}")
         Log.d("ACCOUNT : ${viewModel.tokenDetailsData.account}")
