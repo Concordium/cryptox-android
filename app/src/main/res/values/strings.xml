@@ -285,7 +285,7 @@
     <!-- Transaction details -->
     <string name="transaction_title">Transaction</string>
     <string name="transaction_status">Status</string>
-    <string name="transaction_details_title">Transaction details</string>
+    <string name="transaction_details_title">Transaction Details</string>
     <string name="transaction_details_date">Date</string>
     <string name="transaction_details_memo">Memo</string>
     <string name="transaction_details_reject_reason">Reject Reason</string>
