@@ -33,19 +33,24 @@ class AccountBalanceCardView(context: Context, attrs: AttributeSet?) :
                 if (state.showBalanceInEur) {
                     state.eurBalance?.let {
                         balance.text = CurrencyUtil.toEURRate(
-                            amount = state.totalBalance, eurPerUnit = it
+                            amount = state.totalBalance,
+                            eurPerUnit = it
                         )
                         balanceAtDisposal.text = root.context.getString(
                             R.string.account_details_balance_eur_at_disposal,
                             CurrencyUtil.toEURRate(
-                                amount = state.atDisposalBalance, eurPerUnit = it
+                                amount = state.atDisposalBalance,
+                                eurPerUnit = it
                             )
                         )
                     }
-                    symbol.text =
-                        root.context.getString(R.string.accounts_overview_balance_suffix_eur)
+                    symbol.text = root.context.getString(
+                        R.string.accounts_overview_balance_suffix_eur
+                    )
                     changeRateText.text =
-                        root.context.getString(R.string.account_details_account_card_show_in_ccd)
+                        root.context.getString(
+                            R.string.account_details_account_card_show_in_ccd
+                        )
                 } else {
                     balance.text = CurrencyUtil.formatAndRoundGTU(
                         value = state.totalBalance,
@@ -60,14 +65,19 @@ class AccountBalanceCardView(context: Context, attrs: AttributeSet?) :
                             decimals = 6,
                         )
                     )
-                    symbol.text = root.context.getString(R.string.accounts_overview_balance_suffix)
-                    changeRateText.text =
-                        root.context.getString(R.string.account_details_account_card_show_in_eur)
+                    symbol.text = root.context.getString(
+                        R.string.accounts_overview_balance_suffix
+                    )
+                    changeRateText.text = root.context.getString(
+                        R.string.account_details_account_card_show_in_eur
+                    )
                 }
 
                 balanceAtDisposal.isVisible = state.totalBalance != state.atDisposalBalance
                 stakingButton.isVisible = state.isStaking
-                changeRateButton.setOnClickListener { viewModel.onChangeCurrencyClicked() }
+                changeRateButton.setOnClickListener {
+                    viewModel.onChangeCurrencyClicked()
+                }
 
                 if (state.account != null && state.ccdToken != null) {
                     tokenDetailsButton.setOnClickListener {
