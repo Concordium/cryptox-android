@@ -25,7 +25,7 @@ class TokensAccountDetailsAdapter(
     private val dataSet: MutableList<Token> = mutableListOf()
     private var dataSize = if (showManageButton) dataSet.size + 1 else dataSet.size
 
-    inner class ViewHolder(
+    class ViewHolder(
         val binding: ItemTokenAccountDetailsBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -71,8 +71,9 @@ class TokensAccountDetailsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when {
             dataSet.isEmpty() -> {
-                holder.binding.manageTokens.visibility = View.GONE
+                holder.binding.manageTokens.visibility = View.VISIBLE
                 holder.binding.content.visibility = View.GONE
+                holder.binding.concordiumNetworkLabel.visibility = View.GONE
                 return
             }
 
@@ -86,7 +87,8 @@ class TokensAccountDetailsAdapter(
             else -> {
                 holder.binding.manageTokens.visibility = View.GONE
                 holder.binding.content.visibility = View.VISIBLE
-                holder.binding.concordiumNetworkLabel.isVisible = (position == 1 && showManageButton)
+                holder.binding.concordiumNetworkLabel.isVisible =
+                    (position == 0 && showManageButton)
             }
         }
 
@@ -112,28 +114,6 @@ class TokensAccountDetailsAdapter(
                 subtitle.isVisible = false
             }
 
-            if (token is CCDToken) {
-                eurRate.isVisible = true
-                eurRate.text =
-                    if (showManageButton) {
-                        if (token.eurPerMicroCcd != null) {
-                            context.getString(
-                                R.string.cis_eur_rate,
-                                CurrencyUtil.toEURRate(
-                                    token.balance,
-                                    token.eurPerMicroCcd
-                                )
-                            )
-                        } else {
-                            ""
-                        }
-                    } else {
-                        context.getString(R.string.cis_at_disposal)
-                    }
-            } else {
-                eurRate.isVisible = false
-            }
-
             title.text =
                 if (token is ContractToken && token.isUnique)
                     token.metadata?.name ?: ""
@@ -147,6 +127,7 @@ class TokensAccountDetailsAdapter(
             holder.iconView.showTokenIcon(token)
             holder.typeView.showTokenType(token)
             subtitleLayout.isVisible = token !is CCDToken
+            atDisposalLabel.isVisible = token is CCDToken
 
             content.setOnClickListener {
                 tokenClickListener?.onRowClick(token)

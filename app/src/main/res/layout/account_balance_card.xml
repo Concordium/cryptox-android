@@ -89,7 +89,7 @@
             android:id="@+id/balance_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size24"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ccd_layout">
@@ -104,7 +104,8 @@
                 android:maxLines="1"
                 android:textAppearance="@style/MW24_Typography_Jakarta_Heading_2XL"
                 android:textColor="@color/mw24_content_primary"
-                app:autoSizeMaxTextSize="40sp"
+                android:textSize="@dimen/size48"
+                app:autoSizeMaxTextSize="48sp"
                 app:autoSizeMinTextSize="12sp"
                 app:autoSizeStepGranularity="2sp"
                 app:autoSizeTextType="uniform"
@@ -131,7 +132,7 @@
         <TextView
             android:id="@+id/balance_at_disposal"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size8"
             android:includeFontPadding="false"
             android:textAppearance="@style/MW24_Typography_Jakarta_At_Disposal"
@@ -139,6 +140,7 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/balance_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="30,100.00 CCD available"
             tools:visibility="visible" />
 
