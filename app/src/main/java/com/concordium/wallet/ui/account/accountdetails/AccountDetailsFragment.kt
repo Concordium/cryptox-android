@@ -16,17 +16,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.account.accountsoverview.AccountBalanceCardView
 import com.concordium.wallet.ui.account.accountsoverview.AccountBalanceViewModel
 import com.concordium.wallet.ui.account.accountsoverview.SeedPhraseBackupNoticeDialog
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
@@ -87,6 +91,11 @@ class AccountDetailsFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         resetWhenPaused()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.balanceCard.listener = null
     }
 
     private fun initToolbar() {
@@ -255,6 +264,15 @@ class AccountDetailsFragment : BaseFragment() {
         initBanners()
 
         binding.balanceCard.bind(accountBalanceViewModel)
+        binding.balanceCard.listener = object : AccountBalanceCardView.AccountBalanceCardListener {
+            override fun onTokenDetailsClicked(token: CCDToken, account: Account) {
+                gotoCCDTokenDetails(token, account)
+            }
+
+            override fun showUnlockFeatureDialog() {
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
+            }
+        }
         binding.accountRetryButton.setOnClickListener {
             (activity as BaseActivity).showAccountsList()
         }
@@ -452,6 +470,14 @@ class AccountDetailsFragment : BaseFragment() {
 
     private fun gotoSeedPhraseReveal() {
         val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun gotoCCDTokenDetails(token: CCDToken, account: Account) {
+        val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
+            putExtra(TokenDetailsActivity.TOKEN, token)
+            putExtra(TokenDetailsActivity.ACCOUNT, account)
+        }
         startActivity(intent)
     }
 }

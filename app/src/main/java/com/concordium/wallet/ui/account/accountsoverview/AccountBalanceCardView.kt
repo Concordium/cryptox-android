@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
 import android.content.Context
-import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,7 +12,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.AccountBalanceCardBinding
 import com.concordium.wallet.extension.collectWhenStarted
-import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 
 class AccountBalanceCardView(context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
@@ -23,6 +21,7 @@ class AccountBalanceCardView(context: Context, attrs: AttributeSet?) :
         this,
         true
     )
+    var listener: AccountBalanceCardListener? = null
 
     fun bind(viewModel: AccountBalanceViewModel) {
         val lifecycleOwner = findViewTreeLifecycleOwner()
@@ -81,22 +80,19 @@ class AccountBalanceCardView(context: Context, attrs: AttributeSet?) :
 
                 if (state.account != null && state.ccdToken != null) {
                     tokenDetailsButton.setOnClickListener {
-                        gotoTokenDetails(
-                            state.ccdToken,
-                            state.account
-                        )
+                        listener?.onTokenDetailsClicked(state.ccdToken, state.account)
                     }
                 } else {
-                    tokenDetailsButton.setOnClickListener(null)
+                    tokenDetailsButton.setOnClickListener {
+                        listener?.showUnlockFeatureDialog()
+                    }
                 }
             }
         }
     }
 
-    private fun gotoTokenDetails(token: CCDToken, account: Account) {
-        val intent = Intent(context, TokenDetailsActivity::class.java)
-        intent.putExtra(TokenDetailsActivity.ACCOUNT, account)
-        intent.putExtra(TokenDetailsActivity.TOKEN, token)
-        context.startActivity(intent)
+    interface AccountBalanceCardListener {
+        fun onTokenDetailsClicked(token: CCDToken, account: Account)
+        fun showUnlockFeatureDialog()
     }
 }

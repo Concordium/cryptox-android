@@ -69,7 +69,7 @@ class OnboardingDataProvider(val context: Context) {
             identityVerificationStatus = IdentityStatus.DONE,
             animateStatusIcon = false,
             showProgressBar = false,
-            showActionButton = false,
+            showActionButton = true,
             actionButtonTitle = context.getString(R.string.accounts_overview_create_account)
         ),
         OnboardingStateModel(
@@ -82,7 +82,7 @@ class OnboardingDataProvider(val context: Context) {
             identityVerificationStatus = IdentityStatus.DONE,
             animateStatusIcon = true,
             showProgressBar = false,
-            showActionButton = false,
+            showActionButton = true,
             actionButtonTitle = context.getString(R.string.accounts_overview_create_account)
         )
     )
