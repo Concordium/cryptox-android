@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/MW24_Typography_Additional_Capture_Small"
+    style="@style/MW24_Typography_Label_M_Medium"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/mw24_main_background"
@@ -9,5 +9,5 @@
     android:paddingTop="16dp"
     android:paddingHorizontal="@dimen/size16"
     android:paddingBottom="8dp"
-    android:textColor="@color/mw24_blue_3"
+    android:textColor="@color/mw24_content_secondary"
     tools:text="Today" />

@@ -137,7 +137,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:drawablePadding="6sp"
-        android:fontFamily="@font/w400"
+        android:fontFamily="@font/inter_w400"
         android:text="@string/seed_phrase_try_another_word"
         android:textColor="@color/cryptox_white_main"
         android:visibility="gone"

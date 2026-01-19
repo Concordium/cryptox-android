@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -198,19 +199,9 @@
                             app:drawableStartCompat="@drawable/mw24_ic_settings_wallet_connect" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/erase_data_layout"
-                        style="@style/SettingsOverviewItem">
-
-                        <TextView
-                            style="@style/SettingsOverviewItemTextView"
-                            android:text="@string/settings_overview_erase_data"
-                            app:drawableStartCompat="@drawable/mw24_ic_settings_erase_data" />
-                    </LinearLayout>
-
                     <TextView
                         style="@style/SettingsOverviewBlockItem"
-                        android:layout_marginTop="@dimen/size16"
+                        android:layout_marginTop="@dimen/size24"
                         android:text="@string/settings_overview_block_other" />
 
                     <LinearLayout
@@ -231,6 +222,37 @@
                             style="@style/SettingsOverviewItemTextView"
                             android:text="@string/settings_overview_item_about"
                             app:drawableStartCompat="@drawable/mw24_ic_settings_about" />
+                    </LinearLayout>
+
+                    <TextView
+                        style="@style/SettingsOverviewBlockItem"
+                        android:layout_marginTop="@dimen/size24"
+                        android:text="@string/settings_overview_block_danger_zone"
+                        android:textColor="@color/mw24_content_error_primary" />
+
+                    <LinearLayout
+                        android:id="@+id/erase_data_layout"
+                        style="@style/SettingsOverviewItem"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <TextView
+                            style="@style/SettingsOverviewItemTextView"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/settings_overview_erase_data"
+                            android:textColor="@color/mw24_content_error_primary"
+                            app:drawableEndCompat="@null"
+                            app:drawableStartCompat="@drawable/mw24_ic_settings_erase_data"
+                            app:drawableTint="@color/mw24_content_error_secondary" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/cryptox_ico_chevron_right"
+                            app:tint="@color/ccx_neutral_tint_9" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>

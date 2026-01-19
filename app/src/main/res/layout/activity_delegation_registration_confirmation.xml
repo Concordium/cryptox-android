@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingHorizontal="18dp"
+            android:paddingHorizontal="@dimen/size16"
             android:paddingTop="10dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="20dp"
                 android:background="@drawable/mw24_container_stroked_background"
-                android:paddingHorizontal="12dp"
+                android:paddingHorizontal="@dimen/size16"
                 android:paddingVertical="30dp">
 
                 <TextView
@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +60,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/account_to_delegate_from"
-                    app:tint="@color/mw24_blue_2" />
+                    app:tint="@color/mw24_content_accent_secondary" />
 
                 <TextView
                     android:id="@+id/target_pool"
@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -99,17 +99,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/amount_divider" />
 
-                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                <TextView
                     android:id="@+id/delegation_amount_confirmation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="6dp"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:maxLines="1"
-                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
-                    android:textSize="50sp"
-                    app:autoSizeMaxTextSize="50sp"
+                    android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
+                    android:textColor="@color/mw24_content_accent_primary"
+                    android:textSize="40sp"
+                    app:autoSizeMaxTextSize="40sp"
                     app:autoSizeMinTextSize="10sp"
                     app:autoSizeStepGranularity="2sp"
                     app:autoSizeTextType="uniform"
@@ -179,7 +181,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="18dp"
+        android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginVertical="20dp"
         android:orientation="horizontal">
 
@@ -199,6 +201,7 @@
             android:id="@+id/submit_delegation_transaction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size32"
             android:layout_marginTop="@dimen/size32"
             android:text="@string/delegation_register_delegation_submit_delegation_transaction"
             app:layout_constraintBottom_toBottomOf="parent"

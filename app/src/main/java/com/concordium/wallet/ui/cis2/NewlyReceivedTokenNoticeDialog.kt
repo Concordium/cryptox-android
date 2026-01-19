@@ -1,19 +1,12 @@
 package com.concordium.wallet.ui.cis2
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogNewlyReceivedTokenNoticeBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class NewlyReceivedTokenNoticeDialog : AppCompatDialogFragment() {
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
-
-    private lateinit var binding: DialogNewlyReceivedTokenNoticeBinding
+class NewlyReceivedTokenNoticeDialog : BaseDialogFragment() {
 
     private val tokenName: String by lazy {
         requireNotNull(arguments?.getString(TOKEN_NAME_KEY)) {
@@ -21,24 +14,20 @@ class NewlyReceivedTokenNoticeDialog : AppCompatDialogFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogNewlyReceivedTokenNoticeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.detailsTextView.text = getString(
-            R.string.template_cis_newly_received_notice_message,
-            tokenName
+        setViews(
+            title = getString(R.string.cis_newly_received_notice_title),
+            description = getString(
+                R.string.template_cis_newly_received_notice_message,
+                tokenName
+            ),
+            okButtonText = getString(R.string.cis_newly_received_notice_keep_token),
+            cancelButtonText = getString(R.string.cis_newly_received_notice_remove_token),
         )
 
-        binding.keepButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(
@@ -48,7 +37,7 @@ class NewlyReceivedTokenNoticeDialog : AppCompatDialogFragment() {
             dismiss()
         }
 
-        binding.removeButton.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(

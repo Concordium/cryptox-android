@@ -14,7 +14,7 @@
         android:paddingBottom="36dp"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/navigation_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,14 +25,5 @@
     <include
         android:id="@+id/loading"
         layout="@layout/progress" />
-
-    <View
-        android:id="@+id/navigation_divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/mw24_plain_white_10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

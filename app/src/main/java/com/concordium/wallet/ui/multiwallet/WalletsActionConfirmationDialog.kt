@@ -1,30 +1,16 @@
 package com.concordium.wallet.ui.multiwallet
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogWalletsActionConfirmationBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class WalletsActionConfirmationDialog : AppCompatDialogFragment() {
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
-
-    private lateinit var binding: DialogWalletsActionConfirmationBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogWalletsActionConfirmationBinding.inflate(inflater)
-        return binding.root
-    }
+class WalletsActionConfirmationDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         setFragmentResult(
             CONFIRMATION_REQUEST,
             getResultBundle(
@@ -32,10 +18,12 @@ class WalletsActionConfirmationDialog : AppCompatDialogFragment() {
             )
         )
 
-        binding.imageView.setImageResource(requireNotNull(arguments?.getInt(IMAGE_ID_EXTRA)))
-        binding.titleTextView.setText(requireNotNull(arguments?.getInt(TITLE_ID_EXTRA)))
-        binding.detailsTextView.setText(requireNotNull(arguments?.getInt(DETAILS_ID_EXTRA)))
-        binding.okButton.setText(requireNotNull(arguments?.getInt(OK_BUTTON_TEXT_ID_EXTRA)))
+        setViews(
+            title = getString(requireNotNull(arguments?.getInt(TITLE_ID_EXTRA))),
+            description = getString(requireNotNull(arguments?.getInt(DETAILS_ID_EXTRA))),
+            okButtonText = getString(requireNotNull(arguments?.getInt(OK_BUTTON_TEXT_ID_EXTRA))),
+            cancelButtonText = getString(R.string.wallets_action_go_back)
+        )
 
         listOf(binding.closeButton, binding.cancelButton).forEach {
             it.setOnClickListener {

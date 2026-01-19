@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingHorizontal="18dp"
+            android:paddingHorizontal="@dimen/size16"
             android:paddingTop="10dp"
             android:paddingBottom="80dp">
 
@@ -400,7 +400,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="18dp"
+        android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginVertical="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -410,7 +410,8 @@
         <com.concordium.wallet.uicore.button.SliderButton
             android:id="@+id/submit_baker_transaction"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size32"/>
 
         <Button
             android:id="@+id/submit_baker_finish"

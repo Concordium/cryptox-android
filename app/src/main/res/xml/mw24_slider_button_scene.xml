@@ -21,9 +21,9 @@
     <ConstraintSet android:id="@+id/start">
         <Constraint
             android:id="@+id/slider_thumb"
-            android:layout_width="51dp"
-            android:layout_height="51dp"
-            android:layout_marginStart="1dp"
+            android:layout_width="@dimen/size48"
+            android:layout_height="@dimen/size48"
+            android:layout_marginStart="3dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
@@ -31,20 +31,19 @@
         <Constraint
             android:id="@+id/slider_start_background"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="55dp"
             android:visibility="visible" />
 
         <Constraint
             android:id="@+id/slider_end_background"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="55dp"
             android:visibility="invisible"
             motion:layout_constraintStart_toEndOf="@id/slider_thumb" />
         <Constraint
             android:id="@+id/slider_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -55,10 +54,10 @@
     <ConstraintSet android:id="@+id/end">
         <Constraint
             android:id="@+id/slider_thumb"
-            android:layout_width="51dp"
-            android:layout_height="51dp"
-            android:layout_marginEnd="1dp"
-            android:translationZ="2dp"
+            android:layout_width="@dimen/size48"
+            android:layout_height="@dimen/size48"
+            android:layout_marginEnd="3dp"
+            android:translationZ="3dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
@@ -72,7 +71,7 @@
             android:id="@+id/slider_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:translationZ="2dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -81,7 +80,7 @@
         <Constraint
             android:id="@+id/slider_end_background"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="55dp"
             android:translationZ="1dp"
             android:visibility="visible"
             motion:layout_constraintStart_toEndOf="@id/slider_thumb" />

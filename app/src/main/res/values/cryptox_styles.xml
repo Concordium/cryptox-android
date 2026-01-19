@@ -33,7 +33,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textColor">@color/cryptox_grey_secondary</item>
     </style>
 
@@ -113,18 +113,16 @@
         <item name="android:background">@null</item>
         <item name="android:textSize">14sp</item>
         <item name="textAllCaps">false</item>
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textColor">@color/cryptox_white_main</item>
         <item name="android:drawablePadding">8sp</item>
     </style>
 
-    <style name="CryptoX_ImageButton">
-        <item name="android:background">@drawable/mw24_dialog_close_background</item>
+    <style name="CryptoX_Close_ImageButton">
         <item name="android:layout_width">20dp</item>
         <item name="android:layout_height">20dp</item>
         <item name="android:layout_margin">16dp</item>
-        <item name="android:padding">8dp</item>
-        <item name="tint">@color/mw24_content_inverse_primary</item>
+        <item name="tint">@color/mw24_black_20</item>
     </style>
 
     <!-- endregion Buttons -->

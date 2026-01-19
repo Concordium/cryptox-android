@@ -1,35 +1,22 @@
 package com.concordium.wallet.uicore.dialog
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogUnlockFeatureBinding
 
-class UnlockFeatureDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogUnlockFeatureBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogUnlockFeatureBinding.inflate(layoutInflater, container, false)
-        return binding.root
-    }
+class UnlockFeatureDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        listOf(binding.closeButton, binding.goBackButton).forEach {
-            it.setOnClickListener {
-                dismiss()
-            }
-        }
+        super.onViewCreated(view, savedInstanceState)
+
+        setViews(
+            title = getString(R.string.unlock_feature_title),
+            description = getString(R.string.unlock_feature_details),
+            okButtonText = getString(R.string.unlock_feature_go_back_button),
+            iconResId = R.drawable.mw24_ic_unlock_feature
+        )
+
         App.appCore.tracker.homeUnlockFeatureDialog()
     }
 

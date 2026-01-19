@@ -16,7 +16,4 @@ data class OnboardingStateModel(
     val progressCurrent: Int = 0,
     val showActionButton: Boolean,
     val actionButtonTitle: String,
-    val showInnerActionButton: Boolean,
-    val innerActionButtonTitle: String,
-    val innerActionButtonBackground: Int? = null
 )

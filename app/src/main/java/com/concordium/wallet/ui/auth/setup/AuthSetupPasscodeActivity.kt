@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.auth.setup
 
-import android.app.Activity
 import android.content.DialogInterface
 import android.content.DialogInterface.OnDismissListener
 import android.content.Intent
@@ -37,6 +36,9 @@ class AuthSetupPasscodeActivity :
 
         viewModel.isSeedPhraseWalletSetupRequired =
             intent.getBooleanExtra(SET_UP_SEED_PHRASE_WALLET_EXTRA, false)
+
+        hideActionBarBack(isVisible = true)
+        setActionBarTitle("")
 
         initInput()
         initButtons()
@@ -106,7 +108,7 @@ class AuthSetupPasscodeActivity :
     ) = viewModel.eventsFlow.collect(this) { event ->
         when (event) {
             AuthSetupPasscodeViewModel.Event.FinishWithSuccess -> {
-                setResult(Activity.RESULT_OK)
+                setResult(RESULT_OK)
                 finish()
             }
 
@@ -138,7 +140,7 @@ class AuthSetupPasscodeActivity :
 
     private fun onAuthSetupPasswordResult(result: ActivityResult) =
         viewModel.onFullPasswordSetUpResult(
-            isSetUpSuccessfully = result.resultCode == Activity.RESULT_OK
+            isSetUpSuccessfully = result.resultCode == RESULT_OK
         )
 
     override fun loggedOut() {

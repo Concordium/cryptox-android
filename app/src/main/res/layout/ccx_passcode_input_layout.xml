@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:gravity="center_horizontal"
+    tools:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/dots_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size24"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/ccx_neutral_tint_1"
+        tools:layout_height="@dimen/ccx_passcode_dot_size">
+        <!-- Dots are created programmatically -->
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/size24"
+        android:layout_weight="1"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        android:rowCount="4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dots_layout">
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="1" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="2" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="3" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="4" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="5" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="6" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="7" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="8" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="9" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/biometrics_button"
+            style="@style/CCX_Button_Passcode_Extra"
+            android:contentDescription="@string/passcode_biometrics_button"
+            android:padding="18dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_fingerprint"
+            app:tint="#DEE7E7" />
+
+        <Button
+            style="@style/CCX_Button_Passcode_Digit"
+            android:tag="0" />
+
+        <ImageView
+            android:id="@+id/backspace_button"
+            style="@style/CCX_Button_Passcode_Extra"
+            android:contentDescription="@string/passcode_backspace_button"
+            android:padding="20dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/mw24_ic_backspace" />
+
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

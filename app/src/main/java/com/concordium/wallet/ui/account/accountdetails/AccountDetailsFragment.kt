@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -11,27 +10,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
-import android.widget.ListPopupWindow.WRAP_CONTENT
-import android.widget.PopupWindow
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.rating.ReviewHelper
+import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.FragmentAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.account.accountsoverview.AccountBalanceCardView
+import com.concordium.wallet.ui.account.accountsoverview.AccountBalanceViewModel
 import com.concordium.wallet.ui.account.accountsoverview.SeedPhraseBackupNoticeDialog
 import com.concordium.wallet.ui.account.accountsoverview.UnshieldingNoticeDialog
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPermissionDialog
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.onboarding.OnboardingFragment
@@ -44,7 +43,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.core.parameter.parametersOf
-import java.math.BigInteger
 
 class AccountDetailsFragment : BaseFragment() {
 
@@ -59,6 +57,9 @@ class AccountDetailsFragment : BaseFragment() {
     }
     private val viewModelAccountDetails: AccountDetailsViewModel by activityViewModel {
         parametersOf(mainViewModel)
+    }
+    private val accountBalanceViewModel: AccountBalanceViewModel by activityViewModel {
+        parametersOf(viewModelAccountDetails)
     }
 
     override fun onCreateView(
@@ -78,7 +79,6 @@ class AccountDetailsFragment : BaseFragment() {
 
         initializeViewModels()
         initViews()
-        initTooltipBanner()
         initToolbar()
     }
 
@@ -92,6 +92,11 @@ class AccountDetailsFragment : BaseFragment() {
         resetWhenPaused()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.balanceCard.listener = null
+    }
+
     private fun initToolbar() {
         val baseActivity = (activity as BaseActivity)
 
@@ -103,17 +108,6 @@ class AccountDetailsFragment : BaseFragment() {
             }
         }
         baseActivity.hideSettings(isVisible = false)
-    }
-
-    private fun initTooltipBanner() {
-        binding.tooltipButton.setOnClickListener {
-            showTooltip(it)
-        }
-        listOf(binding.totalBalanceTextview, binding.atDisposalLabel).forEach {
-            it.setOnClickListener {
-                App.appCore.tracker.homeTotalBalanceClicked()
-            }
-        }
     }
 
     private fun initializeViewModels() {
@@ -175,7 +169,6 @@ class AccountDetailsFragment : BaseFragment() {
             mainViewModel.onEarnClicked()
         }
         viewModelAccountDetails.totalBalanceLiveData.observe(viewLifecycleOwner) {
-            showTotalBalance(it)
             updateBannersVisibility()
         }
 
@@ -213,10 +206,7 @@ class AccountDetailsFragment : BaseFragment() {
                     }
 
                     AccountDetailsViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                        NotificationsPermissionDialog().showSingle(
-                            childFragmentManager,
-                            NotificationsPermissionDialog.TAG
-                        )
+                        showNotificationDialog()
                     }
 
                     AccountDetailsViewModel.DialogToShow.SEED_PHRASE_BACKUP_NOTICE -> {
@@ -252,6 +242,10 @@ class AccountDetailsFragment : BaseFragment() {
         }
         viewModelAccountDetails.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
         mainViewModel.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
+        viewModelAccountDetails.showOnboardingNotificationDialog
+            .collectWhenStarted(viewLifecycleOwner) {
+                showNotificationDialog()
+            }
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
@@ -266,8 +260,10 @@ class AccountDetailsFragment : BaseFragment() {
         showWaiting(true)
         initializeAnimation()
         initSwipeToRefresh()
+        initBalanceViews()
         initContainer()
         initBanners()
+
         binding.accountRetryButton.setOnClickListener {
             (activity as BaseActivity).showAccountsList()
         }
@@ -290,33 +286,14 @@ class AccountDetailsFragment : BaseFragment() {
             null,
             TransactionStatus.UNKNOWN,
             TransactionStatus.ABSENT,
-            ->
-                setErrorMode()
+                -> setErrorMode()
 
-            TransactionStatus.FINALIZED ->
-                setFinalizedMode()
+            TransactionStatus.FINALIZED
+                -> setFinalizedMode()
 
             TransactionStatus.COMMITTED,
             TransactionStatus.RECEIVED,
-            ->
-                setPendingMode()
-        }
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showTooltip(anchorView: View) {
-        val inflater = LayoutInflater.from(anchorView.context)
-        val popupView = inflater.inflate(R.layout.tooltip_layout, null)
-
-        val popupWindow = PopupWindow(
-            popupView,
-            binding.rootLayout.width / 2,
-            WRAP_CONTENT,
-            true
-        )
-
-        anchorView.doOnLayout {
-            popupWindow.showAsDropDown(anchorView)
+                -> setPendingMode()
         }
     }
 
@@ -441,28 +418,6 @@ class AccountDetailsFragment : BaseFragment() {
         }
     }
 
-    private fun showTotalBalance(totalBalance: BigInteger) {
-        binding.totalBalanceTextview.text = getString(
-            R.string.account_details_total_balance,
-            CurrencyUtil.formatAndRoundGTU(
-                value = totalBalance,
-                roundDecimals = 2
-            )
-        )
-        if (viewModelAccountDetails.account.balanceAtDisposal != totalBalance) {
-            binding.atDisposalLabel.visibility = View.VISIBLE
-            binding.atDisposalLabel.text = getString(
-                R.string.account_details_balance_at_disposal,
-                CurrencyUtil.formatAndRoundGTU(
-                    value = viewModelAccountDetails.account.balanceAtDisposal,
-                    roundDecimals = 2
-                )
-            )
-        } else {
-            binding.atDisposalLabel.visibility = View.GONE
-        }
-    }
-
     private fun initBanners() {
         binding.includeOnrampBanner.root.setOnClickListener {
             mainViewModel.onOnrampClicked()
@@ -493,6 +448,19 @@ class AccountDetailsFragment : BaseFragment() {
         updateBannersVisibility()
     }
 
+    private fun initBalanceViews() {
+        binding.balanceCard.bind(accountBalanceViewModel)
+        binding.balanceCard.listener = object : AccountBalanceCardView.AccountBalanceCardListener {
+            override fun onTokenDetailsClicked(token: CCDToken, account: Account) {
+                gotoCCDTokenDetails(token, account)
+            }
+
+            override fun showUnlockFeatureDialog() {
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
+            }
+        }
+    }
+
     private fun updateBannersVisibility() {
         binding.includeEarnBanner.root.isVisible =
             viewModelAccountDetails.isEarnBannerVisible
@@ -504,8 +472,23 @@ class AccountDetailsFragment : BaseFragment() {
             viewModelAccountDetails.isSeedPhraseBackupBannerVisible
     }
 
+    private fun showNotificationDialog() {
+        NotificationsPermissionDialog().showSingle(
+            childFragmentManager,
+            NotificationsPermissionDialog.TAG
+        )
+    }
+
     private fun gotoSeedPhraseReveal() {
         val intent = Intent(activity, SavedSeedPhraseRevealActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun gotoCCDTokenDetails(token: CCDToken, account: Account) {
+        val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
+            putExtra(TokenDetailsActivity.TOKEN, token)
+            putExtra(TokenDetailsActivity.ACCOUNT, account)
+        }
         startActivity(intent)
     }
 }

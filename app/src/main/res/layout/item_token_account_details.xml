@@ -10,27 +10,26 @@
         android:id="@+id/concordium_network_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size24"
         android:paddingBottom="@dimen/size16"
         android:text="@string/cis_concordium_network"
-        android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+        android:textAppearance="@style/MW24_Typography_Text_Mid"
         android:textColor="@color/mw24_content_secondary"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
         android:background="@drawable/mw24_container_primary_background"
+        android:padding="12dp"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/concordium_network_label"
         tools:visibility="visible">
 
@@ -40,27 +39,27 @@
             android:layout_height="@dimen/cis_token_icon_size"
             android:layout_gravity="center_vertical"
             android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             tools:src="@drawable/ic_logo_placeholder" />
 
         <TextView
             android:id="@+id/title"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="@dimen/size8"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/cryptox_white_main"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@id/subtitle_layout"
             app:layout_constraintEnd_toStartOf="@id/notice"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/token_icon"
             app:layout_constraintTop_toTopOf="@id/token_icon"
-            app:layout_constrainedWidth="true"
             app:layout_goneMarginEnd="12dp"
             tools:text="wBTC" />
 
@@ -68,13 +67,13 @@
             android:id="@+id/earning_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
             android:layout_marginHorizontal="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:visibility="gone"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/title"
             app:layout_constraintTop_toTopOf="@id/title"
             tools:visibility="visible">
@@ -83,8 +82,8 @@
                 style="@style/MW24_Typography_Label_Main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/mw24_content_accent_secondary"
-                android:text="@string/cis_percent" />
+                android:text="@string/cis_percent"
+                android:textColor="@color/mw24_content_accent_secondary" />
         </LinearLayout>
 
         <View
@@ -96,8 +95,8 @@
             android:backgroundTint="@color/mw24_attention_red"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/plt_in_allow_list_icon"
             app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/plt_in_allow_list_icon"
             app:layout_constraintTop_toTopOf="@id/title" />
 
         <ImageView
@@ -118,8 +117,8 @@
             android:id="@+id/subtitle_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="4dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@id/token_icon"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintTop_toBottomOf="@id/title">
@@ -129,53 +128,58 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="4dp"
-                android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
                 android:textColor="@color/mw24_plain_white_40"
                 app:drawableStartCompat="@drawable/mw24_ic_cis2_token"
                 app:drawableTint="@color/mw24_plain_white_40"
                 tools:text="CIS-2" />
 
-            <TextView
-                android:id="@+id/subtitle"
-                style="@style/MW24_Typography_Text_Mid_Alternative"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textColor="@color/cryptox_grey_main"
-                app:layout_constraintBottom_toBottomOf="@id/token_icon"
-                app:layout_constraintStart_toStartOf="@id/title"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                tools:text="@string/cis_not_owned" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/balance"
-            style="@style/MW24_Typography_Label_Main"
+            style="@style/MW24_Typography_Label_L_Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_marginEnd="@dimen/size4"
             android:ellipsize="end"
+            android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@color/cryptox_white_main"
+            app:layout_constraintBottom_toTopOf="@id/at_disposal_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/eur_rate"
             app:layout_goneMarginEnd="12dp"
             tools:text="1234.35" />
 
         <TextView
-            android:id="@+id/eur_rate"
+            android:id="@+id/at_disposal_label"
             style="@style/MW24_Typography_Main_Capture_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/mw24_content_accent_secondary"
+            android:text="@string/cis_at_disposal"
+            android:textColor="@color/mw24_content_secondary"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/balance"
             app:layout_constraintTop_toBottomOf="@id/balance"
+            app:layout_goneMarginEnd="12dp" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            style="@style/MW24_Typography_Label_L_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="@dimen/size4"
+            android:textColor="@color/mw24_content_primary"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_goneMarginEnd="12dp"
-            tools:text="1234.35 EUR" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="@string/cis_not_owned"
+            tools:visibility="visible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -187,9 +191,9 @@
         android:clickable="true"
         android:text="@string/cis_manage"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content"
         tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

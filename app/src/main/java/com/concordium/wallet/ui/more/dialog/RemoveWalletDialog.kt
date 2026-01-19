@@ -1,31 +1,22 @@
 package com.concordium.wallet.ui.more.dialog
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogRemoveWalletBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class RemoveWalletDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogRemoveWalletBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogRemoveWalletBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+class RemoveWalletDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setViews(
+            title = getString(R.string.settings_overview_erase_data_confirmation_title),
+            description = getString(R.string.settings_overview_erase_wallet_confirmation_message),
+            okButtonText = getString(R.string.settings_overview_erase_data_continue),
+            cancelButtonText = getString(R.string.wallet_connect_clear_data_warning_cancel)
+        )
 
         listOf(binding.cancelButton, binding.closeButton).forEach {
             it.setOnClickListener {
@@ -37,7 +28,7 @@ class RemoveWalletDialog : AppCompatDialogFragment() {
             }
         }
 
-        binding.confirmButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 setResultBundle(true)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <solid android:color="#ffaaff" />
+    <solid android:color="@color/mw24_plain_white_10" />
     <!-- This drawable can be tinted into any non-transparent color -->
 </shape>

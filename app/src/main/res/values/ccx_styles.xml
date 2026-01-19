@@ -33,7 +33,7 @@
         <item name="android:layout_width">68dp</item>
         <item name="android:layout_height">68dp</item>
         <item name="android:background">@drawable/ccx_passcode_number_button_background</item>
-        <item name="fontFamily">@font/w500</item>
+        <item name="fontFamily">@font/inter_w500</item>
         <item name="android:textSize">28sp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/ccx_neutral_tint_7</item>
@@ -47,7 +47,7 @@
         <item name="android:layout_width">68dp</item>
         <item name="android:layout_height">68dp</item>
         <item name="android:background">@drawable/ccx_passcode_extra_button_background</item>
-        <item name="fontFamily">@font/w500</item>
+        <item name="fontFamily">@font/jakarta_w500</item>
         <item name="android:gravity">center</item>
         <item name="android:drawableTint">#DEE7E7</item>
         <item name="android:layout_marginStart">12dp</item>
@@ -84,6 +84,9 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <!-- The background @drawable/ccx_dialog_background must be set
         as the background of the content layout -->
+        <item name="android:layout_marginHorizontal">@dimen/size6</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
@@ -101,53 +104,53 @@
 
     <!-- region Typography -->
     <style name="CCX_Typography_Display">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">28sp</item>
     </style>
 
     <style name="CCX_Typography_H1">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">24sp</item>
     </style>
 
     <style name="CCX_Typography_H2">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">20sp</item>
     </style>
 
     <style name="CCX_Typography_H3">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="CCX_Typography_H3_Bold">
-        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:fontFamily">@font/inter_w700</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="CCX_Typography_Item">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="CCX_Typography_Body">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="CCX_Typography_Caption">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="CCX_Typography_Button_L">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/ccx_button_primary_text_color</item>
     </style>
 
     <style name="CCX_Typography_Button_M">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/ccx_button_primary_text_color</item>
     </style>
@@ -181,7 +184,7 @@
     </style>
 
     <style name="CCX_MainScreen" parent="CCX_Screen">
-        <item name="android:navigationBarColor">@color/mw24_black_60</item>
+        <item name="android:navigationBarColor">@color/mw24_main_background</item>
     </style>
 
     <!-- endregion -->

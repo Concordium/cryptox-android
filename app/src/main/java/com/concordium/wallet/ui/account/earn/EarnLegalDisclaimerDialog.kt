@@ -1,31 +1,27 @@
 package com.concordium.wallet.ui.account.earn
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.text.util.Linkify
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import com.concordium.wallet.databinding.DialogEarnLegalDisclaimerBinding
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.R
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.IntentUtil
 
-class EarnLegalDisclaimerDialog : BaseGradientDialogFragment() {
-
-    private lateinit var binding: DialogEarnLegalDisclaimerBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogEarnLegalDisclaimerBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+class EarnLegalDisclaimerDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.okButton.setOnClickListener { dismiss() }
+        setViews(
+            title = getString(R.string.earn_legal_disclaimer_title),
+            description = getString(R.string.earn_legal_disclaimer_description),
+            okButtonText = getString(R.string.earn_dialog_close)
+        )
+        binding.detailsTextView.gravity = Gravity.START
+
+        Linkify.addLinks(binding.detailsTextView, Linkify.WEB_URLS)
         binding.detailsTextView.handleUrlClicks { url ->
             IntentUtil.openUrl(requireActivity(), url)
         }

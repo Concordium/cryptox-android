@@ -21,7 +21,7 @@
     <!-- Text sizes  -->
 
     <dimen name="cis_token_icon_size">40dp</dimen>
-    <dimen name="ccx_modal_corner_radius">20dp</dimen>
+    <dimen name="ccx_modal_corner_radius">32dp</dimen>
     <dimen name="ccx_passcode_dot_size">8dp</dimen>
 
     <dimen name="size4">4dp</dimen>
@@ -32,6 +32,7 @@
     <dimen name="size24">24dp</dimen>
     <dimen name="size28">28dp</dimen>
     <dimen name="size32">32dp</dimen>
+    <dimen name="size40">40dp</dimen>
     <dimen name="size48">48dp</dimen>
     <dimen name="size64">64dp</dimen>
 

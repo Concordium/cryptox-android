@@ -1,19 +1,12 @@
 package com.concordium.wallet.ui.cis2
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogHidingTokenBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class HidingTokenDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogHidingTokenBinding
+class HidingTokenDialog : BaseDialogFragment() {
 
     private val tokenName: String by lazy {
         requireNotNull(arguments?.getString(TOKEN_NAME)) {
@@ -21,23 +14,20 @@ class HidingTokenDialog : AppCompatDialogFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogHidingTokenBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.detailsTextView.text = getString(
-            R.string.cis_hide_token_body,
-            tokenName
+
+        setViews(
+            title = getString(R.string.cis_hide_token_title),
+            description = getString(
+                R.string.cis_hide_token_body,
+                tokenName
+            ),
+            okButtonText = getString(R.string.cis_hide_token_confirm),
+            cancelButtonText = getString(R.string.cis_hide_token_cancel)
         )
 
-        listOf(binding.denyButton, binding.closeButton).forEach {
+        listOf(binding.cancelButton, binding.closeButton).forEach {
             it.setOnClickListener {
                 setFragmentResult(
                     ACTION_REQUEST,
@@ -47,7 +37,7 @@ class HidingTokenDialog : AppCompatDialogFragment() {
             }
         }
 
-        binding.hideButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(isHiding = true)

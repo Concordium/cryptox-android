@@ -34,7 +34,7 @@ class IdentityProviderListActivity : BaseActivity(
         showForFirstIdentity = intent.getBooleanExtra(SHOW_FOR_FIRST_IDENTITY, false)
 
         setActionBarTitle("")
-        hideActionBarBack(isVisible = !showForFirstIdentity)
+        hideActionBarBack(isVisible = true)
 
         initializeViewModel()
         initializeViews()

@@ -12,7 +12,7 @@ import com.concordium.wallet.databinding.FragmentTransferContainerBinding
 import com.concordium.wallet.ui.account.accountqrcode.ReceiveFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.send.SendTokenFragment
-import com.concordium.wallet.uicore.view.GradientTabsView
+import com.concordium.wallet.uicore.view.SegmentedTabsView
 
 class TransferFragment : Fragment() {
 
@@ -36,7 +36,7 @@ class TransferFragment : Fragment() {
         binding.transferTabs.addControl(
             label = getString(R.string.account_details_send),
             icon = requireContext().getDrawable(R.drawable.mw24_ic_send_btn),
-            clickListener = object : GradientTabsView.OnItemClickListener {
+            clickListener = object : SegmentedTabsView.OnItemClickListener {
                 override fun onItemClicked() {
                     replaceFragment(SendTokenFragment())
                 }
@@ -46,7 +46,7 @@ class TransferFragment : Fragment() {
         binding.transferTabs.addControl(
             label = getString(R.string.account_details_receive),
             icon = requireContext().getDrawable(R.drawable.mw24_ic_receive_btn),
-            clickListener = object : GradientTabsView.OnItemClickListener {
+            clickListener = object : SegmentedTabsView.OnItemClickListener {
                 override fun onItemClicked() {
                     replaceFragment(ReceiveFragment())
                 }
