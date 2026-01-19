@@ -42,7 +42,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class AccountDetailsFragment : BaseFragment() {
@@ -59,7 +58,7 @@ class AccountDetailsFragment : BaseFragment() {
     private val viewModelAccountDetails: AccountDetailsViewModel by activityViewModel {
         parametersOf(mainViewModel)
     }
-    private val accountBalanceViewModel: AccountBalanceViewModel by viewModel {
+    private val accountBalanceViewModel: AccountBalanceViewModel by activityViewModel {
         parametersOf(viewModelAccountDetails)
     }
 
