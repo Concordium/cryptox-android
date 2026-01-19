@@ -9,7 +9,7 @@
         android:id="@+id/onboarding_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/size24"
         android:background="@drawable/ccx_onboarding_status_card_background"
         android:padding="@dimen/size16"
         app:layout_constraintEnd_toEndOf="parent"

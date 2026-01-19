@@ -260,19 +260,10 @@ class AccountDetailsFragment : BaseFragment() {
         showWaiting(true)
         initializeAnimation()
         initSwipeToRefresh()
+        initBalanceViews()
         initContainer()
         initBanners()
 
-        binding.balanceCard.bind(accountBalanceViewModel)
-        binding.balanceCard.listener = object : AccountBalanceCardView.AccountBalanceCardListener {
-            override fun onTokenDetailsClicked(token: CCDToken, account: Account) {
-                gotoCCDTokenDetails(token, account)
-            }
-
-            override fun showUnlockFeatureDialog() {
-                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
-            }
-        }
         binding.accountRetryButton.setOnClickListener {
             (activity as BaseActivity).showAccountsList()
         }
@@ -455,6 +446,19 @@ class AccountDetailsFragment : BaseFragment() {
         }
 
         updateBannersVisibility()
+    }
+
+    private fun initBalanceViews() {
+        binding.balanceCard.bind(accountBalanceViewModel)
+        binding.balanceCard.listener = object : AccountBalanceCardView.AccountBalanceCardListener {
+            override fun onTokenDetailsClicked(token: CCDToken, account: Account) {
+                gotoCCDTokenDetails(token, account)
+            }
+
+            override fun showUnlockFeatureDialog() {
+                (requireActivity() as BaseActivity).showUnlockFeatureDialog()
+            }
+        }
     }
 
     private fun updateBannersVisibility() {
