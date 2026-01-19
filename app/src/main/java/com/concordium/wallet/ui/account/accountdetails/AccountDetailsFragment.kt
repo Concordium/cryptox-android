@@ -207,10 +207,7 @@ class AccountDetailsFragment : BaseFragment() {
                     }
 
                     AccountDetailsViewModel.DialogToShow.NOTIFICATIONS_PERMISSION -> {
-                        NotificationsPermissionDialog().showSingle(
-                            childFragmentManager,
-                            NotificationsPermissionDialog.TAG
-                        )
+                        showNotificationDialog()
                     }
 
                     AccountDetailsViewModel.DialogToShow.SEED_PHRASE_BACKUP_NOTICE -> {
@@ -246,6 +243,10 @@ class AccountDetailsFragment : BaseFragment() {
         }
         viewModelAccountDetails.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
         mainViewModel.showReviewDialog.observe(viewLifecycleOwner, reviewDialogObserver)
+        viewModelAccountDetails.showOnboardingNotificationDialog
+            .collectWhenStarted(viewLifecycleOwner) {
+                showNotificationDialog()
+            }
 
         onboardingViewModel.identityFlow.collectWhenStarted(viewLifecycleOwner) { identity ->
             onboardingStatusCard.updateViewsByIdentityStatus(identity)
@@ -470,6 +471,13 @@ class AccountDetailsFragment : BaseFragment() {
 
         binding.includeSeedPhraseBackupBanner.root.isVisible =
             viewModelAccountDetails.isSeedPhraseBackupBannerVisible
+    }
+
+    private fun showNotificationDialog() {
+        NotificationsPermissionDialog().showSingle(
+            childFragmentManager,
+            NotificationsPermissionDialog.TAG
+        )
     }
 
     private fun gotoSeedPhraseReveal() {
