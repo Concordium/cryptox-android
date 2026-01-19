@@ -67,7 +67,7 @@
 
     <TextView
         android:id="@+id/balance"
-        style="@style/MW24_Typography_Label_Main"
+        style="@style/MW24_Typography_Label_L_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"

@@ -23,15 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            android:paddingTop="20dp">
+            android:paddingHorizontal="@dimen/size16"
+            android:paddingTop="@dimen/size16">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/send_main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/mw24_container_stroked_background"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="@dimen/size16"
                 android:paddingVertical="30dp">
 
                 <TextView
@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="6dp"
                     android:gravity="center"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +54,7 @@
                     android:layout_marginHorizontal="6dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +71,8 @@
                     app:layout_constraintBottom_toTopOf="@id/receiver_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sender_address" />
+                    app:layout_constraintTop_toBottomOf="@id/sender_address"
+                    app:tint="@color/mw24_content_accent_secondary"/>
 
                 <TextView
                     android:id="@+id/receiver_name"
@@ -80,7 +81,7 @@
                     android:layout_marginHorizontal="6dp"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
                     android:textColor="@color/cryptox_white_main"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +97,7 @@
                     android:layout_marginHorizontal="6dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:textAppearance="@style/MW24_Typography_Label_Main"
+                    android:textAppearance="@style/MW24_Typography_Label_M_Medium"
                     android:textColor="@color/cryptox_white_main"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -127,17 +128,19 @@
                     app:layout_constraintTop_toBottomOf="@id/amount_divider"
                     tools:text="Amount (CCD):" />
 
-                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                <TextView
                     android:id="@+id/amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="6dp"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:maxLines="1"
-                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
-                    android:textSize="50sp"
-                    app:autoSizeMaxTextSize="50sp"
+                    android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
+                    android:textColor="@color/mw24_content_accent_primary"
+                    android:textSize="40sp"
+                    app:autoSizeMaxTextSize="40sp"
                     app:autoSizeMinTextSize="10sp"
                     app:autoSizeStepGranularity="2sp"
                     app:autoSizeTextType="uniform"
@@ -188,7 +191,8 @@
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/mw24_ic_send_memo" />
+                        app:srcCompat="@drawable/mw24_ic_send_memo"
+                        app:tint="@color/mw24_content_accent_secondary"/>
 
                     <TextView
                         android:id="@+id/memo"
@@ -196,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
-                        android:textColor="@color/mw24_blue_2"
+                        android:textColor="@color/mw24_content_accent_secondary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/memo_divider"
@@ -208,11 +212,11 @@
                 android:id="@+id/send_status_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/size16"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/mw24_container_stroked_background"
                 android:orientation="vertical"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="@dimen/size16"
                 android:paddingVertical="30dp">
 
                 <com.concordium.wallet.uicore.view.TransactionSubmittedHashView
@@ -258,7 +262,7 @@
                     app:layout_constraintTop_toBottomOf="@id/divider"
                     tools:text="Transaction failed to send" />
 
-                <com.concordium.wallet.uicore.view.BalanceGradientTextView
+                <TextView
                     android:id="@+id/status_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -266,9 +270,10 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:textAppearance="@style/MW24_Typography_IBM_Balance"
-                    android:textSize="50sp"
-                    app:autoSizeMaxTextSize="50sp"
+                    android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L"
+                    android:textColor="@color/mw24_content_accent_primary"
+                    android:textSize="40sp"
+                    app:autoSizeMaxTextSize="40sp"
                     app:autoSizeMinTextSize="10sp"
                     app:autoSizeStepGranularity="2sp"
                     app:autoSizeTextType="uniform"
@@ -343,7 +348,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="18dp"
+        android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginVertical="20dp"
         android:orientation="horizontal">
 
@@ -351,6 +356,7 @@
             android:id="@+id/send_funds"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size32"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

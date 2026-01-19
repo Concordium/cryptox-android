@@ -1,36 +1,26 @@
 package com.concordium.wallet.ui.bakerdelegation.dialog.baker
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogBakerErrorBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class BakerErrorDialog : AppCompatDialogFragment() {
+class BakerErrorDialog : BaseDialogFragment() {
 
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogBakerErrorBinding
-    private val errorMessage: String by lazy { arguments?.getString(ERROR_MESSAGE)?: "" }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogBakerErrorBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private val errorMessage: String by lazy { arguments?.getString(ERROR_MESSAGE) ?: "" }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.detailsTextView.text = errorMessage
+        setViews(
+            title = getString(R.string.delegation_register_delegation_failed_title),
+            description = errorMessage,
+            okButtonText = getString(R.string.delegation_register_delegation_failed_try_again),
+            cancelButtonText = getString(R.string.delegation_register_delegation_failed_later)
+        )
 
-        binding.tryAgainButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(tryAgain = true)
@@ -38,7 +28,7 @@ class BakerErrorDialog : AppCompatDialogFragment() {
             dismiss()
         }
 
-        binding.laterButton.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(tryAgain = false)

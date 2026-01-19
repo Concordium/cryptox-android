@@ -1,45 +1,28 @@
 package com.concordium.wallet.ui.bakerdelegation.dialog
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
-import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogDelegationWarningBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class WarningDialog : AppCompatDialogFragment() {
+class WarningDialog : BaseDialogFragment() {
 
-    override fun getTheme(): Int = R.style.CCX_Dialog
-
-    private lateinit var binding: DialogDelegationWarningBinding
-
-    private val title: String by lazy { arguments?.getString(TITLE)?: "" }
-    private val description: String by lazy { arguments?.getString(DESCRIPTION)?: "" }
-    private val confirmButtonText: String by lazy { arguments?.getString(CONFIRM_BUTTON)?: "" }
-    private val denyButtonText: String by lazy { arguments?.getString(DENY_BUTTON)?: "" }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogDelegationWarningBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private val title: String by lazy { arguments?.getString(TITLE) ?: "" }
+    private val description: String by lazy { arguments?.getString(DESCRIPTION) ?: "" }
+    private val confirmButtonText: String by lazy { arguments?.getString(CONFIRM_BUTTON) ?: "" }
+    private val denyButtonText: String by lazy { arguments?.getString(DENY_BUTTON) ?: "" }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            titleTextView.text = title
-            detailsTextView.text = description
-            confirmButton.text = confirmButtonText
-            denyButton.text = denyButtonText
-        }
+        setViews(
+            title = title,
+            description = description,
+            okButtonText = confirmButtonText,
+            cancelButtonText = denyButtonText
+        )
 
-        binding.confirmButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_REQUEST,
                 getResultBundle(isContinue = true)
@@ -47,12 +30,14 @@ class WarningDialog : AppCompatDialogFragment() {
             dismiss()
         }
 
-        binding.denyButton.setOnClickListener {
-            setFragmentResult(
-                ACTION_REQUEST,
-                getResultBundle(isContinue = false)
-            )
-            dismiss()
+        listOf(binding.cancelButton, binding.closeButton).forEach {
+            it.setOnClickListener {
+                setFragmentResult(
+                    ACTION_REQUEST,
+                    getResultBundle(isContinue = false)
+                )
+                dismiss()
+            }
         }
     }
 

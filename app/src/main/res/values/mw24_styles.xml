@@ -8,86 +8,89 @@
     <!-- end region -->
 
     <!-- region Typography -->
-    <style name="MW24_Typography_Headline_Large">
+    <style name="MW24_Typography_Headline_Large" parent="MW24_Typography_Label_L_Medium">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">19sp</item>
-        <item name="android:fontFamily">@font/w500</item>
         <item name="android:textColor">@color/cryptox_white_main</item>
     </style>
 
     <style name="MW24_Typography_H2">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">28sp</item>
     </style>
 
     <style name="MW24_Typography_H3">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">24sp</item>
     </style>
 
     <style name="MW24_Typography_H3_Bold">
-        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:fontFamily">@font/inter_w700</item>
         <item name="android:textSize">24sp</item>
     </style>
 
     <style name="MW24_Typography_H4">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">19sp</item>
     </style>
 
     <style name="MW24_Typography_Text_Main">
-        <item name="android:fontFamily">@font/w700</item>
+        <item name="android:fontFamily">@font/inter_w700</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Label_Main">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">15sp</item>
     </style>
 
     <style name="MW24_Typography_Label_Secondary">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">15sp</item>
     </style>
 
     <style name="MW24_Typography_Label_S">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Label_S_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Label_M_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Label_L_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="MW24_Typography_Label_XL_Medium">
+        <item name="android:fontFamily">@font/inter_w500</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <style name="MW24_Typography_Text_Mid">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Text_Mid_Alternative">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Additional_Capture_Small">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Main_Capture_Small">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">12sp</item>
     </style>
 
@@ -97,38 +100,78 @@
     </style>
 
     <style name="MW24_Typography_Title">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Title_Light">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MW24_Typography_Body_S_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">12sp</item>
     </style>
 
     <style name="MW24_Typography_Body_M_Regular">
-        <item name="android:fontFamily">@font/w400</item>
+        <item name="android:fontFamily">@font/inter_w400</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="MW24_Typography_Body_L_Medium">
-        <item name="android:fontFamily">@font/w500</item>
+        <item name="android:fontFamily">@font/inter_w500</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="MW24_Typography_Jakarta_Heading_2XL">
+        <item name="android:fontFamily">@font/jakarta_w700</item>
+        <item name="android:textSize">40sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_At_Disposal">
+        <item name="android:fontFamily">@font/jakarta_w400</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_Heading_M">
+        <item name="android:fontFamily">@font/jakarta_w500</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_Heading_L">
+        <item name="android:fontFamily">@font/jakarta_w500</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="MW24_Typography_Jakarta_Heading_L_Bold">
+        <item name="android:fontFamily">@font/jakarta_w700</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
     <!-- end region -->
 
+    <style name="MW24_Dialog_Title_Text" parent="MW24_Typography_Jakarta_Heading_M">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/mw24_content_inverse_primary</item>
+    </style>
 
-    <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Text_Mid_Alternative">
+    <style name="MW24_Dialog_Description_Text" parent="MW24_Typography_Body_M_Regular">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/mw24_content_inverse_primary</item>
+        <item name="android:textColorLink">@color/mw24_content_accent_primary</item>
+    </style>
+
+    <style name="MW24_Receive_Funds_To_Account" parent="MW24_Typography_Label_M_Medium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginHorizontal">@dimen/size16</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/mw24_content_accent_secondary</item>
+        <item name="android:textColor">@color/mw24_content_secondary</item>
     </style>
 
     <style name="MW24_Manage_Token_List_Button">
@@ -141,7 +184,7 @@
         <item name="android:drawablePadding">8dp</item>
         <item name="drawableStartCompat">@drawable/mw24_ic_manage_token_list</item>
         <item name="drawableTint">@color/mw24_button_tertiary_text_color</item>
-        <item name="android:textAppearance">@style/MW24_Typography_Label_Main</item>
+        <item name="android:textAppearance">@style/MW24_Typography_Label_M_Medium</item>
     </style>
 
     <style name="MW24_Receive_Funds_Account" parent="MW24_Typography_Label_M_Medium">

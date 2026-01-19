@@ -17,9 +17,13 @@
 
         <TextView
             android:id="@+id/show_qr_code_title"
-            style="@style/MW24_Receive_Funds_To_Account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:layout_gravity="center"
-            android:text="@string/account_qr_code_show_qr" />
+            android:text="@string/account_qr_code_show_qr"
+            android:textAppearance="@style/MW24_Typography_Text_Mid_Alternative"
+            android:textColor="@color/mw24_content_accent_secondary"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

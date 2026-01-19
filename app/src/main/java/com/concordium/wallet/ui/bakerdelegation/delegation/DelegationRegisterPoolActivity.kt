@@ -24,7 +24,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 @Suppress("KotlinConstantConditions")
 class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
-    R.layout.activity_delegation_registration_pool, R.string.delegation_register_staking_mode
+    R.layout.activity_delegation_registration_pool,
+    R.string.delegation_register_staking_mode
 ) {
     private lateinit var binding: ActivityDelegationRegistrationPoolBinding
 

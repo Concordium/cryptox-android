@@ -19,7 +19,7 @@
         android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginTop="@dimen/size16"
         android:text="@string/account_details_options"
-        android:textAppearance="@style/MW24_Typography_Title_Light"
+        android:textAppearance="@style/MW24_Typography_Body_L_Medium"
         android:textColor="@color/mw24_content_secondary" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -75,7 +75,7 @@
         android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginTop="@dimen/size24"
         android:text="@string/transactions_filters_label"
-        android:textAppearance="@style/MW24_Typography_Title_Light"
+        android:textAppearance="@style/MW24_Typography_Body_L_Medium"
         android:textColor="@color/mw24_content_secondary" />
 
     <LinearLayout
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginTop="@dimen/size16"
-        android:background="@drawable/mw24_export_transaction_log_card_background"
+        android:background="@drawable/mw24_container_primary_background"
         android:orientation="vertical"
         android:padding="@dimen/size16">
 

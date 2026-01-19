@@ -34,7 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/earn_delegation_title"
-                    android:textAppearance="@style/MW24_Typography_H3_Bold"
+                    android:textAppearance="@style/MW24_Typography_Jakarta_Heading_L_Bold"
                     android:textColor="@color/cryptox_white_main" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -71,7 +71,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/earn_delegation_rewarded_description"
                         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                        android:textColor="@color/mw24_blue_2"
+                        android:textColor="@color/mw24_content_accent_secondary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/rewarded_title"
                         app:layout_constraintTop_toBottomOf="@id/rewarded_title" />
@@ -111,7 +111,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/earn_delegation_options_description"
                         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                        android:textColor="@color/mw24_blue_2"
+                        android:textColor="@color/mw24_content_accent_secondary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/options_title"
                         app:layout_constraintTop_toBottomOf="@id/options_title" />
@@ -151,7 +151,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/earn_delegation_update_description"
                         android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-                        android:textColor="@color/mw24_blue_2"
+                        android:textColor="@color/mw24_content_accent_secondary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/update_title"
                         app:layout_constraintTop_toBottomOf="@id/update_title" />
@@ -202,7 +202,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/earn_legal_disclaimer_title"
-            android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
+            android:textAppearance="@style/MW24_Typography_Additional_Capture_Small"
             android:textColor="@color/mw24_content_secondary"/>
 
         <Button

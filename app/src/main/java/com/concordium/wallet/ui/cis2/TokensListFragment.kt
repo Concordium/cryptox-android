@@ -25,16 +25,14 @@ class TokensListFragment : Fragment() {
     private var _binding: FragmentTokensListBinding? = null
     private val binding get() = _binding!!
 
-private val mainViewModel: MainViewModel by lazy {
-    ViewModelProvider(requireActivity())[MainViewModel::class.java]
-}
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(requireActivity())[MainViewModel::class.java]
+    }
     private val accountDetailsViewModel: AccountDetailsViewModel by activityViewModel {
         parametersOf(mainViewModel)
     }
     private val viewModel: TokensListViewModel by viewModel {
-        parametersOf(
-            accountDetailsViewModel,
-        )
+        parametersOf(accountDetailsViewModel)
     }
 
     private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
@@ -109,14 +107,6 @@ private val mainViewModel: MainViewModel by lazy {
         val intent = Intent(requireActivity(), TokenDetailsActivity::class.java).apply {
             putExtra(TokenDetailsActivity.ACCOUNT, accountDetailsViewModel.account)
             putExtra(TokenDetailsActivity.TOKEN, token as Serializable)
-            putExtra(
-                TokenDetailsActivity.PENDING_DELEGATION,
-                accountDetailsViewModel.hasPendingDelegationTransactions
-            )
-            putExtra(
-                TokenDetailsActivity.PENDING_VALIDATION,
-                accountDetailsViewModel.hasPendingBakingTransactions
-            )
         }
         startActivity(intent)
     }

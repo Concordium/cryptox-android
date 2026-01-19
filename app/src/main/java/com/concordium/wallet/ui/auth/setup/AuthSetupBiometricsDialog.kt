@@ -2,35 +2,20 @@ package com.concordium.wallet.ui.auth.setup
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
-import com.concordium.wallet.databinding.DialogAuthSetupBiometricsBinding
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 import javax.crypto.Cipher
 
-class AuthSetupBiometricsDialog : AppCompatDialogFragment() {
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
+class AuthSetupBiometricsDialog : BaseDialogFragment() {
 
-    private lateinit var binding: DialogAuthSetupBiometricsBinding
     private lateinit var viewModel: AuthSetupBiometricsViewModel
     private lateinit var biometricPrompt: BiometricPrompt
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogAuthSetupBiometricsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(
@@ -42,16 +27,24 @@ class AuthSetupBiometricsDialog : AppCompatDialogFragment() {
             dismiss()
         }
 
+        setViews(
+            title = getString(R.string.passcode_create_setup_biometrics_title),
+            description = getString(R.string.passcode_create_setup_biometrics_details),
+            okButtonText = getString(R.string.passcode_create_setup_biometrics_allow),
+            cancelButtonText = getString(R.string.passcode_create_setup_biometrics_deny),
+            iconResId = R.drawable.mw24_ic_biometrics
+        )
+
         biometricPrompt = createBiometricPrompt()
 
-        listOf(binding.denyButton, binding.closeButton).forEach {
+        listOf(binding.cancelButton, binding.closeButton).forEach {
             it.setOnClickListener {
                 App.appCore.tracker.passcodeBiometricsRejected()
                 dismiss()
             }
         }
 
-        binding.allowButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             val promptInfo = createPromptInfo()
 
             val cipher = viewModel.getCipherForBiometrics()

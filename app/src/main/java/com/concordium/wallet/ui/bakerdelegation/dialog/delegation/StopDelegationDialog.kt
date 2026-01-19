@@ -1,30 +1,27 @@
 package com.concordium.wallet.ui.bakerdelegation.dialog.delegation
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResult
-import com.concordium.wallet.databinding.DialogStopDelegationBinding
-import com.concordium.wallet.uicore.dialog.BaseGradientDialogFragment
+import com.concordium.wallet.R
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class StopDelegationDialog : BaseGradientDialogFragment() {
-
-    private lateinit var binding: DialogStopDelegationBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogStopDelegationBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+class StopDelegationDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listOf(binding.closeButton, binding.goBackButton).forEach {
+        setViews(
+            title = getString(R.string.delegation_remove_subtitle1),
+            description = getString(R.string.delegation_remove_description),
+            okButtonText = getString(R.string.delegation_validation_continue_button),
+            cancelButtonText = getString(R.string.delegation_validation_go_back_button)
+        )
+
+        binding.detailsTextView.gravity = Gravity.START
+
+        listOf(binding.closeButton, binding.cancelButton).forEach {
             it.setOnClickListener {
                 setFragmentResult(
                     ACTION_KEY,
@@ -34,7 +31,7 @@ class StopDelegationDialog : BaseGradientDialogFragment() {
             }
         }
 
-        binding.continueButton.setOnClickListener {
+        binding.okButton.setOnClickListener {
             setFragmentResult(
                 ACTION_KEY,
                 setResultBundle(true)

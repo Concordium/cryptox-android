@@ -50,7 +50,7 @@ class PLTAllowDenyListView @JvmOverloads constructor(
             PLTListStatus.ON_ALLOW_LIST -> {
                 binding.pltListStatusLayout.background = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.plt_in_allow_list_background
+                    R.drawable.label_success_background
                 )
                 binding.listStatusTitle.text =
                     context.getString(R.string.account_details_account_on_allow_list)
@@ -66,7 +66,7 @@ class PLTAllowDenyListView @JvmOverloads constructor(
             PLTListStatus.NOT_ON_ALLOW_LIST -> {
                 binding.pltListStatusLayout.background = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.plt_not_in_allow_list_background
+                    R.drawable.label_warning_background
                 )
                 binding.listStatusTitle.text =
                     context.getString(R.string.account_details_account_not_on_allow_list)
@@ -82,7 +82,7 @@ class PLTAllowDenyListView @JvmOverloads constructor(
             PLTListStatus.ON_DENY_LIST -> {
                 binding.pltListStatusLayout.background = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.plt_in_deny_list_background
+                    R.drawable.label_error_background
                 )
                 binding.listStatusTitle.text =
                     context.getString(R.string.account_details_account_on_deny_list)

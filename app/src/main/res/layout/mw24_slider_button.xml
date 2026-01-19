@@ -12,7 +12,7 @@
     <View
         android:id="@+id/slider_start_background"
         android:layout_width="0dp"
-        android:layout_height="52dp"
+        android:layout_height="55dp"
         android:layout_gravity="center"
         android:background="@drawable/mw24_slider_background_start"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,9 +23,9 @@
     <View
         android:id="@+id/slider_end_background"
         android:layout_width="0dp"
-        android:layout_height="52dp"
+        android:layout_height="55dp"
         android:layout_gravity="center"
-        android:background="@drawable/mw24_slider_background_end"
+        android:background="@drawable/mw24_slider_background_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/slider_thumb"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,9 +46,9 @@
 
     <ImageView
         android:id="@+id/slider_thumb"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="1dp"
+        android:layout_width="@dimen/size48"
+        android:layout_height="@dimen/size48"
+        android:layout_margin="3dp"
         android:background="@drawable/mw24_thumb_background"
         android:clickable="false"
         android:contentDescription="@string/cis_slider_thumb"
@@ -58,6 +58,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/cryptox_grey_secondary" />
+        app:tint="@color/mw24_content_primary" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

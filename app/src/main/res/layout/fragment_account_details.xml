@@ -15,7 +15,7 @@
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toTopOf="@id/navigation_divider"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,11 +31,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:autoSizeMaxTextSize="55sp"
-                    app:autoSizeMinTextSize="10sp"
-                    app:autoSizeStepGranularity="2sp"
-                    app:autoSizeTextType="uniform">
+                    android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/suspension_notice"
@@ -53,63 +49,20 @@
                         android:textColor="@color/text_white"
                         android:visibility="gone"
                         app:drawableEndCompat="@drawable/mw24_ic_arrow_right_24"
-                        app:layout_constraintBottom_toTopOf="@id/total_balance_textview"
+                        app:layout_constraintBottom_toTopOf="@id/balance_card"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="@string/your_validation_has_been_suspended"
                         tools:visibility="visible" />
 
-                    <com.concordium.wallet.uicore.view.BalanceGradientTextView
-                        android:id="@+id/total_balance_textview"
-                        style="@style/MW24_Typography_IBM_Balance"
+                    <com.concordium.wallet.ui.account.accountsoverview.AccountBalanceCardView
+                        android:id="@+id/balance_card"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:text="@string/accounts_overview_balance_placeholder"
-                        android:textColor="@color/cryptox_deep_blue"
-                        app:autoSizeMaxTextSize="55sp"
-                        app:autoSizeMinTextSize="10sp"
-                        app:autoSizeStepGranularity="2sp"
-                        app:autoSizeTextType="uniform"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/tooltip_button"
-                        app:layout_constraintHorizontal_bias="0"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/suspension_notice"
-                        app:layout_constraintWidth_default="wrap"
-                        tools:text="12,678.234 CCD" />
-
-                    <ImageView
-                        android:id="@+id/tooltip_button"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginTop="16dp"
-                        android:contentDescription="@string/account_details_tooltip_description"
-                        android:padding="2dp"
-                        android:src="@drawable/mw24_ic_tooltip_info"
-                        app:layout_constraintBottom_toBottomOf="@id/total_balance_textview"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_chainStyle="spread_inside"
-                        app:layout_constraintStart_toEndOf="@id/total_balance_textview"
-                        app:layout_constraintTop_toTopOf="@id/total_balance_textview"
-                        app:layout_constraintVertical_bias="0"
-                        app:layout_constraintWidth_default="wrap" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/suspension_notice" />
 
-                <com.concordium.wallet.uicore.view.BalanceGradientTextView
-                    android:id="@+id/at_disposal_label"
-                    style="@style/MW24_Typography_Label_Main"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/accounts_overview_balance_placeholder"
-                    android:textColor="@color/cryptox_deep_blue"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/total_balance_textview"
-                    tools:text="203.00 CCD at disposal"
-                    tools:visibility="visible" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:id="@+id/file_wallet_migration_disclaimer_layout"
@@ -155,7 +108,7 @@
                     android:name="com.concordium.wallet.ui.cis2.TokensListFragment"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="@dimen/size24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -225,13 +178,5 @@
             app:lottie_autoPlay="false"
             app:lottie_rawRes="@raw/confetti" />
 
-        <View
-            android:id="@+id/navigation_divider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/mw24_plain_white_10"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

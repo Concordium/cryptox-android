@@ -118,7 +118,8 @@
     <string name="identity_create_default_name_prefix">Identity</string>
     <!-- Identity provider list -->
     <string name="identity_provider_list_title">Identity verification</string>
-    <string name="identity_provider_list_details">Select a provider to verify your identity</string>
+    <string name="identity_provider_list_details">Create your secure identification through one of our trusted external providers.</string>
+    <string name="identity_provider_list_description">You will be redirected after choosing an identity provider.</string>
     <!-- Identity Provider Webview -->
     <string name="identity_provider_webview_title">Identity verification</string>
     <!-- Identity confirmed -->
@@ -163,14 +164,14 @@
     <!-- ***** Account ***** -->
     <!-- Accounts overview -->
     <string name="accounts_overview_title">Accounts</string>
-    <string name="accounts_overview_create_identity">Verify identity</string>
-    <string name="accounts_overview_create_account">Create account</string>
+    <string name="accounts_overview_create_identity">Verify Identity</string>
+    <string name="accounts_overview_create_account">Create Account</string>
     <string name="accounts_overview_wallet_total">Wallet total</string>
     <string name="accounts_overview_balance_at_disposal">at disposal</string>
     <string name="total_amount">Total amount</string>
-    <string name="unshielding_notice_title">Transaction Shielding is going away</string>
+    <string name="unshielding_notice_title">Token Shielding is Going Away</string>
     <string name="unshielding_notice_message">We recommend that you unshield any Shielded balance today.</string>
-    <string name="unshielding_notice_unshield">Unshield assets</string>
+    <string name="unshielding_notice_unshield">Unshield Assets</string>
     <string name="accounts_list_title">Accounts</string>
     <string name="accounts_list_create_new_account">Create New Account</string>
     <!-- New account name -->
@@ -220,7 +221,8 @@
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
     <string name="account_details_total_balance">%1$s CCD</string>
-    <string name="account_details_balance_at_disposal">%1$s CCD available</string>
+    <string name="account_details_balance_ccd_at_disposal">%1$s CCD available</string>
+    <string name="account_details_balance_eur_at_disposal">%1$s € available</string>
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
     <string name="account_details_change_name_popup_cancel">Cancel</string>
@@ -247,11 +249,14 @@
     </string>
     <string name="account_details_dialog_done">Done</string>
     <string name="account_details_dialog_plt_list_title"><![CDATA[Allow & Deny Lists]]></string>
-    <string name="account_details_dialog_plt_list_description">Protocol-level tokens can optionally support allow and deny lists to control the ability of Concordium accounts to hold/transfer that PLT. Allow and deny lists are managed by the PLT issuer. </string>
+    <string name="account_details_dialog_plt_list_description">Protocol-level tokens can optionally support allow and deny lists to control the ability of Concordium accounts to hold/transfer that PLT. Allow and deny lists are managed by the token’s governance account.</string>
     <string name="token_type_plt">PLT</string>
     <string name="account_details_dialog_cis2_title">CIS-2 Tokens</string>
     <string name="account_details_dialog_cis2_description">CIS-2 (Concordium Implementation Standard 2) is the standard interface for both fungible and non-fungible tokens implemented in a smart contract. The interface provides functions for transferring token ownership, allowing other addresses to transfer tokens and for querying token balances, operators and token metadata. It allows for off-chain applications to track token balances and the location of token metadata using logged events.</string>
     <string name="account_details_cis2_token_type_label">CIS-2 Token</string>
+    <string name="account_details_account_card_show_in_eur">Show in EUR</string>
+    <string name="account_details_account_card_show_in_ccd">Show in CCD</string>
+    <string name="account_details_token_details_button">Token Details</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account Settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
@@ -280,7 +285,7 @@
     <!-- Transaction details -->
     <string name="transaction_title">Transaction</string>
     <string name="transaction_status">Status</string>
-    <string name="transaction_details_title">Transaction details</string>
+    <string name="transaction_details_title">Transaction Details</string>
     <string name="transaction_details_date">Date</string>
     <string name="transaction_details_memo">Memo</string>
     <string name="transaction_details_reject_reason">Reject Reason</string>
@@ -311,7 +316,7 @@
     <string name="settings_overview_item_alter_password"><![CDATA[App Passcode & Biometrics]]></string>
     <string name="settings_overview_item_clear_wallet_connect">Clear WalletConnect</string>
     <string name="settings_overview_item_recover">Recovery</string>
-    <string name="settings_overview_erase_data">Erase Data</string>
+    <string name="settings_overview_erase_data">Erase Wallet Data</string>
     <string name="settings_overview_erase_data_confirmation_title">Erasing all data</string>
     <string name="settings_overview_erase_wallet_confirmation_message">
         All your wallets will be erased from this device.
@@ -325,6 +330,7 @@
     <string name="settings_overview_block_options">Options</string>
     <string name="settings_overview_block_security">Security</string>
     <string name="settings_overview_block_other">Miscellaneous</string>
+    <string name="settings_overview_block_danger_zone">Danger Zone</string>
     <!-- Export -->
     <string name="export_title">Export</string>
     <string name="export_confirm">Export</string>
@@ -434,6 +440,8 @@
     <string name="accounts_overview_total_details_cooldown">Cooldown:</string>
     <string name="accounts_overview_balance_placeholder">0.00 CCD</string>
     <string name="accounts_overview_balance_suffix">CCD</string>
+    <string name="accounts_overview_balance_suffix_eur">€</string>
+    <string name="accounts_overview_total_balance">CCD</string>
     <string name="accounts_overview_staking_label">Staking</string>
     <string name="accounts_overview_staked_balance">Staked Balance</string>
     <string name="accounts_overview_staked_mode">Mode</string>
@@ -607,7 +615,7 @@
     <string name="template_cis_transaction_not_sent">Transaction not sent\n%1$s</string>
     <string name="cis_fee_not_spent">Transaction fee was not spent</string>
     <string name="cis_transaction_details">Transaction details</string>
-    <string name="cis_submit_transaction">Submit transaction</string>
+    <string name="cis_submit_transaction">Submit Transaction</string>
     <string name="cis_slider_thumb">Slider thumb</string>
     <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Transaction fee ≈ %1$s CCD</string>
@@ -808,7 +816,7 @@
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
     <string name="delegation_register_delegation_amount_balance">Balance</string>
-    <string name="delegation_register_delegation_amount_available_label">Available for staking</string>
+    <string name="delegation_register_delegation_amount_available_label">At disposal</string>
     <string name="delegation_register_delegation_amount_delegation">Current delegation</string>
     <string name="delegation_register_delegation_amount_enter_amount">Type the amount</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Type the new amount</string>
@@ -1044,9 +1052,9 @@
     <string name="baker_suspend_validation_dialog_title">Important</string>
     <string name="baker_suspend_validation_dialog_description">
         You are about to self-suspend your validation.\n\nPlease be aware that:\n\n
-        • Suspended nodes don’t earn rewards\n\n
-        • Your delegators will stop earning rewards\n\n
-        • Your delegators will be notified about the suspension\n\n
+        \t\t• Suspended nodes don’t earn rewards\n\n
+        \t\t• Your delegators will stop earning rewards\n\n
+        \t\t• Your delegators will be notified about the suspension
     </string>
     <string name="baker_suspend_validation_dialog_go_back_button">Go back</string>
     <string name="baker_suspend_validation_dialog_button">Continue</string>
@@ -1141,7 +1149,7 @@
     <string name="welcome_your_data_description">Verify your access, without exposing your identity.</string>
     <string name="welcome_speed_title">Speed Matters</string>
     <string name="welcome_speed_description">Make payments faster and cheaper using Stablecoins.</string>
-    <string name="welcome_greeting">Smart Money starts here</string>
+    <string name="welcome_greeting">Smart Money Starts Here</string>
     <string name="welcome_point_1">Create Passcode</string>
     <string name="welcome_point_1_details">Please enter a unique 6-digit passcode to secure your account.</string>
     <string name="welcome_point_2">Get Concordium ID</string>
@@ -1196,10 +1204,10 @@
     <string name="passcode_backspace_button">Delete</string>
     <string name="passcode_biometrics_button">Use biometrics</string>
     <string name="passcode_setup_failed">Failed to set up passcode, please contact \nsupport@concordium.com</string>
-    <string name="passcode_create_setup_biometrics_title">Enable biometrics for next time?</string>
+    <string name="passcode_create_setup_biometrics_title">Enable biometrics for easier log in</string>
     <string name="passcode_create_setup_biometrics_details">After you log out now, you’ll be able to sign in faster when you come back</string>
-    <string name="passcode_create_setup_biometrics_allow">Enable biometrics</string>
-    <string name="passcode_create_setup_biometrics_deny">Set up later in Settings</string>
+    <string name="passcode_create_setup_biometrics_allow">Enable Biometrics</string>
+    <string name="passcode_create_setup_biometrics_deny">Set up Later in Settings</string>
     <string name="setup_wallet_continue">Continue</string>
     <string name="setup_wallet_seed_phrase_consent">I have securely backed up my seed phrase</string>
     <string name="setup_wallet_seed_phrase_copy">Copy to clipboard</string>
@@ -1213,7 +1221,7 @@
     <string name="saved_seed_phrase_reveal_seed_phrase_copy">Copy to clipboard</string>
     <string name="saved_seed_phrase_reveal_seed_phrase_show">Show seed phrase</string>
     <string name="saved_seed_phrase_reveal_title">@string/your_seed_phrase</string>
-    <string name="saved_seed_phrase_reveal_details">Your seed phrase is the access key to all the funds in your wallet. If you forget it you will lose access to your wallet(s). Keep it somewhere safe</string>
+    <string name="saved_seed_phrase_reveal_details">Your seed phrase is the access key to your wallet. If you lose it, you will lose access to all your funds. Make sure to store it in a secure place.</string>
     <string name="saved_seed_phrase_reveal_transcribe">Transcribe</string>
     <string name="saved_seed_phrase_reveal_digital_copy">Digital copy</string>
     <string name="saved_seed_phrase_reveal_screenshot">Screenshot</string>
@@ -1368,9 +1376,9 @@
     </plurals>
     <string name="learn_more_icon">Learn more</string>
 
-    <string name="unlock_feature_title">Unlock this feature</string>
+    <string name="unlock_feature_title">Unlock This Feature</string>
     <string name="unlock_feature_details">To use all features please complete your wallet set-up.</string>
-    <string name="unlock_feature_go_back_button">Go back</string>
+    <string name="unlock_feature_go_back_button">Continue</string>
 
     <string name="onboarding_status_card_title">Your account will be here once your set-up is complete.</string>
     <string name="onboarding_status_card_description_first">Next step: Save your seed phrase</string>
@@ -1410,14 +1418,14 @@
         After adding it you will be able to switch between your seed phrase wallet and your file wallet.
         \n
     </string>
-    <string name="wallets_action_adding_file_wallet">Adding a file wallet</string>
+    <string name="wallets_action_adding_file_wallet">Adding a File Wallet</string>
     <string name="wallets_action_adding_file_wallet_explanation">
         You can add an existing Concordium file wallet.
         After adding it you will be able to switch between your seed phrase wallet and your file wallet.
         \n\n
         Be aware that you can not create new accounts or identities in your file wallet.
     </string>
-    <string name="wallets_action_importing_file_wallet">Importing a file wallet</string>
+    <string name="wallets_action_importing_file_wallet">Importing a File Wallet</string>
     <string name="wallets_action_importing_file_wallet_explanation">
         Be aware that you can not create new accounts or identities in your file wallet.
         \n\n
@@ -1425,7 +1433,7 @@
         which has full functionality. After connecting you will be able to switch
         between your seed phrase wallet and your file wallet.
     </string>
-    <string name="wallets_action_removing_wallet">Removing a wallet</string>
+    <string name="wallets_action_removing_wallet">Removing a Wallet</string>
     <string name="wallets_action_removing_wallet_explanation">
         After removing a wallet you will not be able to access it in Concordium Wallet.
         But you can restore it whenever you like.
@@ -1439,7 +1447,7 @@
     <string name="wallet_switch_seed_wallet_selected">Seed phrase wallet is selected</string>
     <string name="wallets_remove_seed_wallet">Remove your seed phrase wallet</string>
     <string name="wallets_remove_file_wallet">Remove your file wallet</string>
-    <string name="file_wallet_creation_limitation">File wallet limitations</string>
+    <string name="file_wallet_creation_limitation">File Wallet Limitations</string>
     <string name="file_wallet_creation_limitation_explanation">
         Be aware that you can not create new accounts or identities in your file wallet.
         \n\n

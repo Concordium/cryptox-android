@@ -2,7 +2,7 @@
     <!-- Background -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#181A1A" />
+            <solid android:color="@color/mw24_surface_tertiary" />
             <corners android:radius="16dp" />
         </shape>
     </item>
@@ -11,15 +11,7 @@
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <gradient
-                    android:angle="90"
-                    android:centerColor="#EDDABF"
-                    android:endColor="#A49AE3"
-                    android:gradientRadius="2500%"
-                    android:startColor="#9EF2EB"
-                    android:type="radial"
-                    android:centerX="0"
-                    android:centerY="0"/>
+                <solid android:color="@color/mw24_content_accent_primary" />
                 <corners android:radius="16dp" />
             </shape>
         </clip>

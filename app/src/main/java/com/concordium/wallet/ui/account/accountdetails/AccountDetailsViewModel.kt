@@ -114,6 +114,10 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
     private val _showReviewDialog = MutableLiveData<Event<Boolean>>()
     val showReviewDialog: LiveData<Event<Boolean>> = _showReviewDialog
 
+    private val _showOnboardingNotificationDialog =
+        MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
+    val showOnboardingNotificationDialog = _showOnboardingNotificationDialog.asSharedFlow()
+
     var hasPendingBakingTransactions = false
         private set
     var hasPendingDelegationTransactions = false
@@ -327,10 +331,14 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
             !App.appCore.session.walletStorage.setupPreferences.hasEncryptedSeed() ->
                 postState(OnboardingState.SAVE_PHRASE)
 
-            identityRepository.getCount() == 0 ->
+            identityRepository.getCount() == 0 -> {
                 postState(
                     OnboardingState.VERIFY_IDENTITY
                 )
+                if (!App.appCore.session.walletStorage.notificationsPreferences.hasEverShownPermissionDialog) {
+                    _showOnboardingNotificationDialog.emit(Unit)
+                }
+            }
 
             else ->
                 updateIdentityStatus()

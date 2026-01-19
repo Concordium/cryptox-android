@@ -2,41 +2,30 @@ package com.concordium.wallet.ui.account.accountsoverview
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.DialogSeedPhraseBackupNoticeBinding
 import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
+import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class SeedPhraseBackupNoticeDialog : AppCompatDialogFragment() {
-
-    override fun getTheme(): Int =
-        R.style.CCX_Dialog
-
-    private lateinit var binding: DialogSeedPhraseBackupNoticeBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogSeedPhraseBackupNoticeBinding.inflate(inflater)
-        return binding.root
-    }
+class SeedPhraseBackupNoticeDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.closeButton.setOnClickListener {
-            dismiss()
-        }
-        binding.backupButton.setOnClickListener {
+        super.onViewCreated(view, savedInstanceState)
+
+        setViews(
+            title = getString(R.string.seed_phrase_backup_notice_title),
+            description = getString(R.string.seed_phrase_backup_notice_message),
+            okButtonText = getString(R.string.seed_phrase_backup_notice_backup),
+            cancelButtonText = getString(R.string.seed_phrase_backup_notice_hide_anyway)
+        )
+
+        binding.okButton.setOnClickListener {
             startActivity(Intent(requireActivity(), SavedSeedPhraseRevealActivity::class.java))
             dismiss()
         }
-        binding.hideButton.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             App
                 .appCore
                 .session

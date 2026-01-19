@@ -9,7 +9,7 @@
         android:id="@+id/plt_label_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/plt_token_view_background"
+        android:background="@drawable/label_accented_background"
         android:clickable="true"
         android:paddingHorizontal="8dp"
         android:paddingVertical="6dp">
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:background="@drawable/plt_in_allow_list_background"
+        android:background="@drawable/label_success_background"
         android:clickable="true"
         android:paddingHorizontal="8dp"
         android:paddingVertical="6dp">

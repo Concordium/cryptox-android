@@ -29,15 +29,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingHorizontal="18dp"
-            android:paddingTop="10dp"
+            android:paddingHorizontal="@dimen/size16"
+            android:paddingTop="@dimen/size16"
             android:paddingBottom="20dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/receipt_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/mw24_container_stroked_background"
                 android:padding="18dp">
 
@@ -82,7 +81,7 @@
         android:id="@+id/button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
+        android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginBottom="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,7 +91,8 @@
         <com.concordium.wallet.uicore.button.SliderButton
             android:id="@+id/submit_delegation_transaction"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size32"/>
 
         <Button
             android:id="@+id/submit_delegation_finish"

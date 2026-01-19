@@ -65,7 +65,7 @@ class TokensListViewModel(
             _uiState.update { it.copy(isLoading = true) }
             tokensInteractor.loadTokens(
                 accountAddress = account.address,
-                ccdWithTotalBalance = true
+                addCCDToken = false
             )
                 .onSuccess { tokens ->
                     _uiState.update {

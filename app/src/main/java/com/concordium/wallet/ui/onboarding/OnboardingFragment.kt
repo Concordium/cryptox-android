@@ -1,16 +1,12 @@
 package com.concordium.wallet.ui.onboarding
 
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -67,7 +63,7 @@ class OnboardingFragment @JvmOverloads constructor(
     init {
         activity.lifecycleScope.launch {
             onboardingViewModel.identityFlow.collect { identity ->
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
@@ -136,14 +132,15 @@ class OnboardingFragment @JvmOverloads constructor(
             }
 
             OnboardingState.IDENTITY_UNSUCCESSFUL -> {
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
             }
 
             OnboardingState.FINALIZING_ACCOUNT -> {
-                binding.onboardingInnerActionButton.setOnClickListener(null)
+                binding.onboardingActionButton.setOnClickListener(null)
+                binding.onboardingActionButton.isEnabled = false
             }
 
             else -> {}
@@ -157,14 +154,14 @@ class OnboardingFragment @JvmOverloads constructor(
 
         when (identity.status) {
             IdentityStatus.DONE -> {
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeCreateAccountClicked()
                     createFirstAccount(identity)
                 }
             }
 
             IdentityStatus.ERROR -> {
-                binding.onboardingInnerActionButton.setOnClickListener {
+                binding.onboardingActionButton.setOnClickListener {
                     App.appCore.tracker.homeIdentityVerificationClicked()
                     goToFirstIdentityCreation()
                 }
@@ -177,7 +174,6 @@ class OnboardingFragment @JvmOverloads constructor(
         binding.onboardingStatusTitle.text = currentViewState.statusTitle
         binding.onboardingStatusTitle.setTextColor(currentViewState.statusTextColor)
         binding.onboardingActionButton.text = currentViewState.actionButtonTitle
-        binding.onboardingInnerActionButton.text = currentViewState.innerActionButtonTitle
         binding.identityVerificationStatusIcon.setImageDrawable(currentViewState.verificationStatusIcon)
 
         if (currentViewState.statusDescription.isNotEmpty()) {
@@ -189,22 +185,10 @@ class OnboardingFragment @JvmOverloads constructor(
 
         if (currentViewState.showProgressBar) {
             binding.onboardingStatusProgressBar.visibility = VISIBLE
-            binding.onboardingInnerActionButton.visibility = GONE
             animateProgressBar(currentViewState.progressPrevious, currentViewState.progressCurrent)
         } else {
-            currentViewState.innerActionButtonBackground?.let {
-                binding.onboardingInnerActionButton.setBackgroundResource(it)
-            }
-
-            activity.lifecycleScope.launch {
-                if (onboardingViewModel.animatedButtonFlow.value.not()) {
-                    animateProgressBarToButton()
-                    onboardingViewModel.setAnimatedButton(true)
-                } else {
-                    binding.onboardingStatusProgressBar.visibility = GONE
-                    binding.onboardingInnerActionButton.visibility = VISIBLE
-                }
-            }
+            binding.onboardingStatusProgressBar.visibility = GONE
+            binding.onboardingActionButton.visibility = VISIBLE
         }
 
         if (currentViewState.showVerificationStatusIcon) {
@@ -212,8 +196,10 @@ class OnboardingFragment @JvmOverloads constructor(
 
             if (currentViewState.animateStatusIcon) {
                 animateStatusIcon()
+                binding.onboardingActionButton.isEnabled = false
             } else {
                 pulsateAnimator.end()
+                binding.onboardingActionButton.isEnabled = true
             }
         } else {
             binding.identityVerificationStatusIcon.visibility = GONE
@@ -248,33 +234,6 @@ class OnboardingFragment @JvmOverloads constructor(
         // Add an interpolator for a smooth pulsating effect (ease-in-out)
         pulsateAnimator.interpolator = AccelerateDecelerateInterpolator()
         pulsateAnimator.start()
-    }
-
-    private fun animateProgressBarToButton() {
-        val fadeOutProgressBar = ObjectAnimator.ofFloat(
-            binding.onboardingStatusProgressBar, "alpha", 1f, 0f
-        ).apply {
-            duration = 200
-        }
-
-        val fadeInButton = ObjectAnimator.ofFloat(
-            binding.onboardingInnerActionButton, "alpha", 0f, 1f
-        ).apply {
-            duration = 500
-        }
-
-        fadeOutProgressBar.doOnEnd {
-            binding.onboardingStatusProgressBar.visibility = View.GONE
-        }
-
-        fadeInButton.doOnStart {
-            binding.onboardingInnerActionButton.visibility = View.VISIBLE
-        }
-
-        AnimatorSet().apply {
-            playTogether(fadeOutProgressBar, fadeInButton)
-            start()
-        }
     }
 
     private fun goToCreateWallet() {

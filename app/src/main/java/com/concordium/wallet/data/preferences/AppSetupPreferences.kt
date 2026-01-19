@@ -142,6 +142,14 @@ class AppSetupPreferences(
         return getBoolean(PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER, false)
     }
 
+    fun setShowBalanceInEur(value: Boolean) {
+        setBoolean(PREFKEY_SHOW_BALANCE_IN_EUR, value)
+    }
+
+    fun getShowBalanceInEur(): Boolean {
+        return getBoolean(PREFKEY_SHOW_BALANCE_IN_EUR, false)
+    }
+
     private companion object {
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
@@ -164,5 +172,6 @@ class AppSetupPreferences(
             "PREFKEY_HAS_SHOW_REVIEW_DIALOG_AFTER_EARN_SETUP"
         const val PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER =
             "PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER"
+        const val PREFKEY_SHOW_BALANCE_IN_EUR = "PREFKEY_SHOW_BALANCE_IN_EUR"
     }
 }

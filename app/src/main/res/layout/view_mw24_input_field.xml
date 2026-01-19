@@ -5,16 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
-    android:paddingEnd="8dp"
-    >
+    android:paddingEnd="8dp">
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textAppearance="@style/MW24_Typography_Main_Capture_Small"
-        android:textColor="@color/mw24_blue_3"
+        android:textAppearance="@style/MW24_Typography_Body_S_Medium"
+        android:textColor="@color/mw24_content_secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Label" />
@@ -28,40 +27,42 @@
         android:layout_marginBottom="12dp"
         android:autofillHints="Contract index"
         android:background="@null"
-        android:inputType="number"
         android:imeOptions="actionDone"
+        android:inputType="number"
         android:textAppearance="@style/MW24_Typography_Text_Mid"
         android:textColor="@color/cryptox_white_main"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/search_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label"
-        tools:text="https://whatevertheaddressIs.com"
-        tools:ignore="LabelFor" />
+        tools:ignore="LabelFor"
+        tools:text="https://whatevertheaddressIs.com" />
 
     <ImageView
         android:id="@+id/search_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:padding="4dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="6dp"
         android:contentDescription="@string/cis_find_tokens_hint"
-        android:src="@drawable/cryptox_ico_search"
+        android:padding="@dimen/size6"
+        android:src="@drawable/mw24_ic_search_for_tokens"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/clear_icon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/clear_icon"/>
+        app:tint="@color/mw24_content_secondary" />
 
     <ImageView
         android:id="@+id/clear_icon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="@dimen/size32"
+        android:layout_height="@dimen/size32"
         android:layout_marginEnd="8dp"
-        android:padding="4dp"
         android:contentDescription="@string/cis_find_tokens_hint"
-        android:src="@drawable/mw24_ic_clear"
+        android:padding="@dimen/size6"
+        android:src="@drawable/mw24_ic_dialog_close"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible"/>
+        app:tint="@color/mw24_content_secondary"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

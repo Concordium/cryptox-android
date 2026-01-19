@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated UI across the app with modernized UI components and the latest design system.
+
 ### Added
 
 - Support for verifiable presentations (proofs) from identities and accounts 
