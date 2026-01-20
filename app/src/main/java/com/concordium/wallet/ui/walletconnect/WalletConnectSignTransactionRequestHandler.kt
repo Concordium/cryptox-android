@@ -224,6 +224,7 @@ class WalletConnectSignTransactionRequestHandler(
                     account = account,
                     canShowDetails = false,
                     isEnoughFunds = transactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
+                    sponsor = null,
                     appMetadata = appMetadata,
                 )
 
@@ -237,6 +238,7 @@ class WalletConnectSignTransactionRequestHandler(
                     account = account,
                     canShowDetails = true,
                     isEnoughFunds = transactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
+                    sponsor = null,
                     appMetadata = appMetadata,
                 )
 
@@ -254,6 +256,7 @@ class WalletConnectSignTransactionRequestHandler(
                     canShowDetails = transactionPayload.transfer.memo.isPresent,
                     isEnoughFunds = transactionCost.cost <= accountAtDisposalBalance
                             && tokenAmount <= token.balance,
+                    sponsor = null,
                     appMetadata = appMetadata,
                 )
             }
@@ -387,6 +390,7 @@ class WalletConnectSignTransactionRequestHandler(
                 State.TransactionSubmitted(
                     submissionId = submissionId,
                     estimatedFee = transactionCost.cost,
+                    isSponsored = false,
                 )
             )
         } catch (error: Exception) {

@@ -94,6 +94,7 @@ private constructor(
         WalletConnectSignMessageRequestHandler.METHOD,
         WalletConnectVerifiablePresentationRequestHandler.METHOD,
         WalletConnectVerifiablePresentationV1RequestHandler.METHOD,
+        WalletConnectSignSponsoredTransactionRequestHandler.METHOD,
     )
 
     private val accountRepository: AccountRepository by lazy {
@@ -187,6 +188,20 @@ private constructor(
             identityRepository = identityRepository,
             walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences,
             activeWalletType = App.appCore.session.activeWallet.type,
+        )
+    }
+
+    private val signSponsoredTransactionRequestHandler: WalletConnectSignSponsoredTransactionRequestHandler by lazy {
+        WalletConnectSignSponsoredTransactionRequestHandler(
+            respondSuccess = ::respondSuccess,
+            respondError = ::respondError,
+            emitEvent = mutableEventsFlow::tryEmit,
+            emitState = mutableStateFlow::tryEmit,
+            onFinish = ::onSessionRequestHandlingFinished,
+            setIsSubmittingTransaction = isBusyFlow::tryEmit,
+            proxyRepository = proxyRepository,
+            tokensInteractor = tokensInteractor,
+            context = application,
         )
     }
 
@@ -801,6 +816,14 @@ private constructor(
                     )
                 }
 
+                WalletConnectSignSponsoredTransactionRequestHandler.METHOD -> {
+                    signSponsoredTransactionRequestHandler.start(
+                        params = params,
+                        account = account,
+                        appMetadata = sessionRequestAppMetadata,
+                    )
+                }
+
                 else ->
                     error("Missing a handler for the allowed method '$method'")
             }
@@ -947,7 +970,11 @@ private constructor(
                     signMessageRequestHandler.onAuthorizedForApproval(accountKeys)
 
                 is State.SessionRequestReview.TransactionRequestReview ->
-                    signTransactionRequestHandler.onAuthorizedForApproval(accountKeys)
+                    if (reviewState.isSponsored) {
+                        signSponsoredTransactionRequestHandler.onAuthorizedForApproval(accountKeys)
+                    } else {
+                        signTransactionRequestHandler.onAuthorizedForApproval(accountKeys)
+                    }
 
                 is State.SessionRequestReview.IdentityProofRequestReview -> {
                     if (reviewState.isV1) {
@@ -989,11 +1016,15 @@ private constructor(
                     "allowing showing the details"
         }
 
-        signTransactionRequestHandler.onShowDetailsClicked()
+        if (reviewState.isSponsored) {
+            signSponsoredTransactionRequestHandler.onShowDetailsClicked()
+        } else {
+            signTransactionRequestHandler.onShowDetailsClicked()
+        }
     }
 
     fun onDialogCancelled() {
-        when (state) {
+        when (val state = state) {
             State.Idle -> {
                 // Do nothing.
             }
@@ -1005,7 +1036,7 @@ private constructor(
             }
 
             is State.AccountSelection -> {
-                if ((state as State.AccountSelection).previousState is State.SessionRequestReview) {
+                if (state.previousState is State.SessionRequestReview) {
                     rejectSessionRequest()
                 } else {
                     rejectSessionProposal()
@@ -1013,7 +1044,7 @@ private constructor(
             }
 
             is State.IdentitySelection -> {
-                if ((state as State.IdentitySelection).previousState is State.SessionRequestReview) {
+                if (state.previousState is State.SessionRequestReview) {
                     rejectSessionRequest()
                 } else {
                     rejectSessionProposal()
@@ -1029,14 +1060,23 @@ private constructor(
             }
 
             is State.TransactionSubmitted -> {
-                signTransactionRequestHandler.onTransactionSubmittedViewClosed()
+                if (state.isSponsored) {
+                    signSponsoredTransactionRequestHandler.onTransactionSubmittedViewClosed()
+                } else {
+                    signTransactionRequestHandler.onTransactionSubmittedViewClosed()
+                }
             }
         }
         handleGoBack()
     }
 
-    fun onTransactionSubmittedFinishClicked() =
-        signTransactionRequestHandler.onTransactionSubmittedFinishClicked()
+    fun onTransactionSubmittedFinishClicked() {
+        if ((state as State.TransactionSubmitted).isSponsored) {
+            signSponsoredTransactionRequestHandler.onTransactionSubmittedFinishClicked()
+        } else {
+            signTransactionRequestHandler.onTransactionSubmittedFinishClicked()
+        }
+    }
 
     /**
      * @return true if the system back pressed handling must be intercepted.
@@ -1234,13 +1274,17 @@ private constructor(
                 val estimatedFee: BigInteger,
                 val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,
+                val sponsor: String?,
                 account: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
                 account = account,
                 appMetadata = appMetadata,
                 canApprove = isEnoughFunds,
-            )
+            ) {
+                val isSponsored: Boolean =
+                    sponsor != null
+            }
 
             class SignRequestReview(
                 val message: String,
@@ -1276,6 +1320,7 @@ private constructor(
         class TransactionSubmitted(
             val submissionId: String,
             val estimatedFee: BigInteger,
+            val isSponsored: Boolean,
         ) : State
     }
 
