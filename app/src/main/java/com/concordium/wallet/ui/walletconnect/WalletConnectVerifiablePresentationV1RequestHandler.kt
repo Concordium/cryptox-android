@@ -64,7 +64,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             Network.MAINNET
         else
             Network.TESTNET
-    private val isLoadingData: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isDataLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val isCreatingProof: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var requestCoroutineScope: CoroutineScope? = null
     private lateinit var deferredDataLoading: Deferred<LoadedData>
@@ -93,14 +93,14 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         requestCoroutineScope?.cancel()
         requestCoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-        isLoadingData.value = false
+        isDataLoaded.value = false
         isCreatingProof.value = false
 
         combine(
-            isLoadingData,
+            isDataLoaded,
             isCreatingProof,
-            transform = { one, another ->
-                one || another
+            transform = { isDataLoaded, isCreatingProof ->
+                !isDataLoaded || isCreatingProof
             }
         )
             .onEach(setIsLoading)
@@ -235,8 +235,6 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                 "No point in loading the data for unprovable proof"
             }
 
-            isLoadingData.value = true
-
             Log.d("Loading necessary data in background")
 
             val globalParams = async {
@@ -246,12 +244,24 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
                 getVerifiedAnchorBlockHash()
             }
 
-            LoadedData(
-                globalParams.await(),
-                verifiedAnchorBlockHash.await(),
-            ).also {
-                isLoadingData.value = false
-                Log.d("Necessary data loaded")
+            try {
+                LoadedData(
+                    globalParams.await(),
+                    verifiedAnchorBlockHash.await(),
+                ).also {
+                    isDataLoaded.value = true
+                    Log.d("Necessary data loaded")
+                }
+            } catch (e: Exception) {
+                Log.e("Failed loading necessary data", e)
+
+                emitEvent(
+                    Event.ShowFloatingError(
+                        Error.LoadingFailed
+                    )
+                )
+
+                throw e
             }
         }
 
@@ -277,7 +287,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
 
         // For now, the wallet needs to wait for a transaction to be included into a block.
         // Not necessarily finalized.
-        for (attempt in (1..5)) {
+        for (attempt in (1..10)) {
             Log.d("Attempt #$attempt to get the anchor transaction")
 
             delay(1000)
