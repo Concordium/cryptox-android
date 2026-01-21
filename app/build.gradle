@@ -339,15 +339,6 @@ dependencies {
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 
-    // Jackson
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.19.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.19.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.19.1'
-
-    // Jackson XML
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.14.2'
-    implementation 'javax.xml.stream:stax-api:1.0-2'
-
     // Push notifications (version lock for Kotlin version compatibility)
     implementation 'com.google.firebase:firebase-messaging:24.0.0!!'
     implementation 'com.google.android.gms:play-services-location:21.3.0'

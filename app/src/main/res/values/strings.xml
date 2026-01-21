@@ -1368,9 +1368,7 @@
     <string name="announcements_notification_channel_name">Announcements</string>
     <string name="template_transaction_received_notification_title">You received %1$s</string>
     <string name="transaction_received_notification_text">See the transaction details in your wallet</string>
-    <string name="news_overview_title">Discover</string>
     <string name="reload_data">Reload</string>
-    <string name="news_loading_failed">Failed loading news</string>
     <plurals name="days_left">
         <item quantity="one">%1$d day left</item>
         <item quantity="other">%1$d days left</item>

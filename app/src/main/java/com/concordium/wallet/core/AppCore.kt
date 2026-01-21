@@ -15,8 +15,6 @@ import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.airdrop.AirDropBackend
 import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
-import com.concordium.wallet.data.backend.news.NewsfeedRssBackend
-import com.concordium.wallet.data.backend.news.NewsfeedRssBackendConfig
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
 import com.concordium.wallet.data.backend.tokens.TokensBackend
@@ -41,7 +39,6 @@ class AppCore(val app: App) {
     val proxyBackendConfig = ProxyBackendConfig(gson)
     private val tokenBackendConfig = TokensBackendConfig(gson)
     private val airdropBackendConfig = AirDropBackendConfig(gson)
-    private val newsfeedRssBackendConfig: NewsfeedRssBackendConfig by lazy(::NewsfeedRssBackendConfig)
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     private val wertBackendConfig = WertBackendConfig(gson)
@@ -92,10 +89,6 @@ class AppCore(val app: App) {
 
     fun getNotificationsBackend(): NotificationsBackend {
         return notificationsBackendConfig.backend
-    }
-
-    fun getNewsfeedRssBackend(): NewsfeedRssBackend {
-        return newsfeedRssBackendConfig.backend
     }
 
     fun getTokensBackend(): TokensBackend {
