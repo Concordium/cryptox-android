@@ -131,6 +131,7 @@ class WalletConnectView(
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
+                    sponsor = state.sponsor,
                     account = state.account,
                     appMetadata = state.appMetadata,
                 )
@@ -348,6 +349,7 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        sponsor: String?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
@@ -362,6 +364,7 @@ class WalletConnectView(
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
+                sponsor = sponsor,
                 account = account,
                 appMetadata = appMetadata,
             )
@@ -379,6 +382,7 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        sponsor: String?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) = with(view) {
@@ -412,8 +416,16 @@ class WalletConnectView(
 
         amountTextView.text =
             "${CurrencyUtil.formatGTU(amount, token)} ${token.symbol}"
-        feeTextView.text =
-            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
+
+        if (sponsor != null) {
+            feeTextView.isVisible = false
+            sponsoredLabel.isVisible = true
+        } else {
+            feeTextView.isVisible = true
+            feeTextView.text =
+                root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
+            sponsoredLabel.isVisible = false
+        }
 
         errorTextView.isVisible = !isEnoughFunds
         errorTextView.text =
@@ -470,7 +482,10 @@ class WalletConnectView(
         totalAmountDivider.isVisible = false
 
         feeTextView.text =
-            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
+            if (estimatedFee.signum() == 0)
+                root.context.getString(R.string.wallet_connect_transaction_request_free_transaction)
+            else
+                root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
 
         transactionHashView.transactionHash = submissionId
 
