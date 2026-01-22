@@ -150,7 +150,7 @@
                     android:id="@+id/sponsored_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size16"
+                    android:layout_marginHorizontal="20dp"
                     android:background="@drawable/label_accented_background"
                     android:gravity="center"
                     android:orientation="horizontal"
@@ -172,7 +172,6 @@
                         android:textColor="@color/mw24_content_accent_secondary" />
 
                     <ImageView
-                        android:id="@+id/sponsored_question_icon"
                         android:layout_width="12dp"
                         android:layout_height="12dp"
                         android:alpha="0.5"

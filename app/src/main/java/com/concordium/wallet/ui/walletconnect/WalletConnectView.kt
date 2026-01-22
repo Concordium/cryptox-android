@@ -3,10 +3,15 @@ package com.concordium.wallet.ui.walletconnect
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.util.TypedValue
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.doOnLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
@@ -30,6 +35,7 @@ import com.concordium.wallet.databinding.FragmentWalletConnectSessionProposalRev
 import com.concordium.wallet.databinding.FragmentWalletConnectSignMessageReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionSubmittedFragmentBinding
+import com.concordium.wallet.databinding.TooltipBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
@@ -420,6 +426,35 @@ class WalletConnectView(
         if (sponsor != null) {
             feeTextView.isVisible = false
             sponsoredLabel.isVisible = true
+            sponsoredLabel.setOnClickListener {
+                val tooltip = TooltipBinding.inflate(LayoutInflater.from(root.context)).apply {
+                    title.setText(R.string.wallet_connect_transaction_request_free_transaction_tooltip_title)
+                    description.text = sponsor
+                }
+
+                dataLayout.doOnLayout {
+                    val tooltipWindow = PopupWindow(
+                        tooltip.root,
+                        dataLayout.width,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
+                    ).apply {
+                        animationStyle = R.style.Animation_AppCompat_Tooltip
+                    }
+
+                    // The only way I found to show the tooltip above the label,
+                    // gravity doesn't seem to work.
+                    val locationY =
+                        IntArray(2).also(receiverTextView::getLocationOnScreen)[1]
+
+                    tooltipWindow.showAtLocation(
+                        dataLayout,
+                        Gravity.TOP,
+                        0,
+                        locationY
+                    )
+                }
+            }
         } else {
             feeTextView.isVisible = true
             feeTextView.text =
