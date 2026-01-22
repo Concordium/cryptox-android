@@ -88,7 +88,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
             when (payload) {
                 is Transfer ->
                     AccountTransactionPayload.Transfer(
-                        amount = BigInteger(payload.amount.value.bytes),
+                        amount = BigInteger(1, payload.amount.value.bytes),
                         toAddress = payload.receiver.toString(),
                     )
 
