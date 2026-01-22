@@ -44,10 +44,6 @@ android {
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")
-        buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
-        buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
-        buildConfigField("boolean", "SHOW_NEWSFEED", "true")
-        buildConfigField("String", "URL_NEWSFEED_ARTICLES_RSS", "\"https://concordium-new.webflow.io/cryptox-news-articles/rss.xml\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -103,6 +99,7 @@ android {
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.stagenet.concordium.com\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://stagenet.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.stagenet.concordium.com/api/\"")
+            buildConfigField("String[]", "WC_CHAINS", "{\"ccd:stagenet\",\"ccd:853288fa5a45554d3cbbf8a756b85abc\"}")
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
@@ -137,6 +134,7 @@ android {
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.testnet.concordium.com\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://testnet.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.testnet.concordium.com/api/\"")
+            buildConfigField("String[]", "WC_CHAINS", "{\"ccd:testnet\",\"ccd:4221332d34e1694168c2a0c0b3fd0f27\"}")
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
@@ -168,6 +166,7 @@ android {
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.mainnet.concordium.software\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.mainnet.concordium.software/api/\"")
+            buildConfigField("String[]", "WC_CHAINS", "{\"ccd:mainnet\",\"ccd:9dd9ca4d19e9393877d2c44b70f89acb\"}")
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "false")
 

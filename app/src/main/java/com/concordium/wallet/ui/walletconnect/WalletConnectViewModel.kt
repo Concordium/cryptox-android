@@ -79,12 +79,8 @@ private constructor(
         defaultWalletDelegate = LoggingWalletConnectWalletDelegate(),
     )
 
-    @Suppress("KotlinConstantConditions")
     private val allowedChains: Set<String> =
-        if (BuildConfig.ENV_NAME == "production")
-            setOf("ccd:mainnet", "ccd:9dd9ca4d19e9393877d2c44b70f89acb")
-        else
-            setOf("ccd:testnet", "ccd:4221332d34e1694168c2a0c0b3fd0f27")
+        BuildConfig.WC_CHAINS.toSet()
     private val wcUriPrefixes = setOf(
         WC_URI_PREFIX,
         "${application.getString(R.string.wc_scheme)}:",
