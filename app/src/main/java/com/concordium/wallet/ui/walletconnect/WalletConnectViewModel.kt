@@ -431,10 +431,12 @@ private constructor(
         this@WalletConnectViewModel.sessionProposalNamespaceKey = singleNamespaceEntry.key
         this@WalletConnectViewModel.sessionProposalNamespace = singleNamespaceEntry.value
 
-        // Initially select the account with the biggest balance.
-        val initiallySelectedAccount = accounts.maxBy { account ->
-            account.balanceAtDisposal
-        }
+        // Initially select the current active account.
+        // Fall back to the first one if the active one is not yet ready.
+        val initiallySelectedAccount =
+            accounts
+                .firstOrNull(Account::isActive)
+                ?: accounts.first()
 
         Log.d(
             "handling_session_proposal:" +
@@ -450,7 +452,8 @@ private constructor(
     }.let { /* Return nothing */ }
 
     private suspend fun getAvailableAccounts(): List<Account> =
-        accountRepository.getAllDone()
+        accountRepository
+            .getAllDone()
             .filterNot(Account::readOnly)
 
     fun approveSessionProposal() {
