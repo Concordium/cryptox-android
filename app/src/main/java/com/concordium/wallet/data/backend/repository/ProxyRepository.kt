@@ -4,6 +4,8 @@ import com.concordium.sdk.transactions.Transaction
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountKeyData
@@ -418,4 +420,9 @@ class ProxyRepository {
      * @return token info and decoded module state
      */
     suspend fun getPLTTokenById(tokenId: String): PLTInfo = backend.getPLTTokenById(tokenId)
+
+    /**
+     * @return an object containing a URL that initiate the Transak on-ramp
+     */
+    suspend fun getTransakWidgetUrl(address: String) = backend.getTransakWidgetUrl(address)
 }
