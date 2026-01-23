@@ -9,12 +9,12 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ListItemCcdOnrampHeaderBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSectionBinding
 import com.concordium.wallet.databinding.ListItemCcdOnrampSiteBinding
 import com.concordium.wallet.uicore.handleUrlClicks
+import com.concordium.wallet.util.ImageUtil.loadLogo
 
 class CcdOnrampItemAdapter(
     private val onReadDisclaimerClicked: () -> Unit,
@@ -102,12 +102,7 @@ class CcdOnrampItemAdapter(
 
                 with(holder.binding) {
                     nameTextView.text = item.name
-
-                    Glide.with(logoImageView.context)
-                        .load(item.logoUrl)
-                        .placeholder(R.drawable.circle_bg)
-                        .circleCrop()
-                        .into(logoImageView)
+                    logoImageView.loadLogo(item.logo)
 
                     root.setOnClickListener {
                         onSiteClicked(item)
