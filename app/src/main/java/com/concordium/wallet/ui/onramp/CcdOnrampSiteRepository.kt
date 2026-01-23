@@ -14,14 +14,6 @@ class CcdOnrampSiteRepository {
             acceptsCreditCard = true,
         ),
         CcdOnrampSite(
-            name = "Transak",
-            // Base URL
-            url = "https://api-gateway.transak.com",
-            logo = LogoSource.Local(R.drawable.mw24_ic_transak_logomark),
-            type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
-            acceptsCreditCard = true,
-        ),
-        CcdOnrampSite(
             name = "Swipelux",
             url = "https://track.swipelux.com",
             logo = LogoSource.Remote("https://assets-global.website-files.com/64f060f3fc95f9d2081781db/65e825be9290e43f9d1bc29b_52c3517d-1bb0-4705-a952-8f0d2746b4c5.jpg"),
@@ -43,6 +35,14 @@ class CcdOnrampSiteRepository {
             // Base URL.
             url = "https://concordium.banxa-sandbox.com/",
             logo = LogoSource.Remote("https://cdn.prod.website-files.com/67d7fbcd510cf4a3a6267957/685a651d86ccc21ad06deb1b_banxa.jpg"),
+            type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
+            acceptsCreditCard = true,
+        ),
+        CcdOnrampSite(
+            name = "Transak Testnet",
+            // Base URL
+            url = "https://api-gateway.transak.com",
+            logo = LogoSource.Local(R.drawable.mw24_ic_transak_logomark),
             type = CcdOnrampSite.Type.PAYMENT_GATEWAY,
             acceptsCreditCard = true,
         ),

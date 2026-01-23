@@ -95,8 +95,6 @@ class CcdOnrampSitesViewModel(
         when {
             site.name == "Wert" -> openWert(accountAddress.value, site)
 
-            site.name == "Transak" -> openTransak(accountAddress.value, site)
-
             site.name == "Swipelux" -> _siteToOpen.emit(
                 site.copy(
                     url = SwipeluxSettingsHelper.getWidgetSettings(
@@ -113,6 +111,8 @@ class CcdOnrampSitesViewModel(
                     )
                 ) to false
             )
+
+            site.name.startsWith("Transak") -> openTransak(accountAddress.value, site)
 
             else -> _siteToOpen.emit(site to true)
         }
