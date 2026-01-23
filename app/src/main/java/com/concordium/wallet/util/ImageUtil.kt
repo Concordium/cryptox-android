@@ -5,8 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.util.Base64
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.onramp.LogoSource
 
 object ImageUtil {
 
@@ -30,5 +33,19 @@ object ImageUtil {
             9 -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_9)
             else -> ContextCompat.getDrawable(context, R.drawable.mw24_ic_account_profile_1)
         }
+    }
+
+    fun ImageView.loadLogo(logoSource: LogoSource) {
+        val logo = when (logoSource) {
+            is LogoSource.Remote -> logoSource.url
+            is LogoSource.Local -> logoSource.resId
+        }
+
+        Glide
+            .with(this)
+            .load(logo)
+            .placeholder(R.drawable.circle_bg)
+            .circleCrop()
+            .into(this)
     }
 }

@@ -20,14 +20,14 @@ sealed interface CcdOnrampListItem {
 
     class Site(
         val name: String,
-        val logoUrl: String,
+        val logo: LogoSource,
         val source: CcdOnrampSite?,
     ) : CcdOnrampListItem {
         constructor(
             source: CcdOnrampSite
         ) : this(
             name = source.name,
-            logoUrl = source.logoUrl,
+            logo = source.logo,
             source = source,
         )
     }

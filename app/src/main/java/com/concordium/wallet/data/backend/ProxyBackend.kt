@@ -19,11 +19,13 @@ import com.concordium.wallet.data.model.PassiveDelegation
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.SubmissionStatusResponse
 import com.concordium.wallet.data.model.TransactionCost
+import com.concordium.wallet.data.model.TransakWidgetResponse
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -147,4 +149,10 @@ interface ProxyBackend {
 
     @GET("/v0/plt/tokenInfo/{tokenId}")
     suspend fun getPLTTokenById(@Path("tokenId") tokenId: String): PLTInfo
+
+    @POST("/v0/transakOnRamp")
+    suspend fun getTransakWidgetUrl(
+        @Query("address") address: String
+    ): TransakWidgetResponse
+
 }

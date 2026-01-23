@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.wert.WertRepository
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -28,6 +29,7 @@ class CcdOnrampSitesViewModel(
 ) : AndroidViewModel(application) {
     private val ccdOnrampSiteRepository: CcdOnrampSiteRepository by lazy(::CcdOnrampSiteRepository)
     private val wertRepository: WertRepository by lazy(::WertRepository)
+    private val proxyRepository: ProxyRepository by lazy(::ProxyRepository)
 
     private val _listItemsLiveData = MutableLiveData<List<CcdOnrampListItem>>()
     val listItemsLiveData: LiveData<List<CcdOnrampListItem>> = _listItemsLiveData
@@ -72,6 +74,23 @@ class CcdOnrampSitesViewModel(
         }
     }
 
+    private fun openTransak(
+        accountAddress: String,
+        site: CcdOnrampSite,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        _sessionLoading.value = true
+        try {
+            val widgetUrl = proxyRepository.getTransakWidgetUrl(accountAddress).widgetUrl
+            _siteToOpen.emit(
+                site.copy(url = widgetUrl) to false
+            )
+        } catch (e: Exception) {
+            _error.emit(BackendErrorHandler.getExceptionStringRes(e))
+        } finally {
+            _sessionLoading.value = false
+        }
+    }
+
     fun onSiteClicked(site: CcdOnrampSite) = viewModelScope.launch {
         when {
             site.name == "Wert" -> openWert(accountAddress.value, site)
@@ -92,6 +111,8 @@ class CcdOnrampSitesViewModel(
                     )
                 ) to false
             )
+
+            site.name.startsWith("Transak") -> openTransak(accountAddress.value, site)
 
             else -> _siteToOpen.emit(site to true)
         }
