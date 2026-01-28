@@ -12,6 +12,7 @@ import com.concordium.sdk.transactions.SignerEntry
 import com.concordium.sdk.transactions.TokenUpdate
 import com.concordium.sdk.transactions.TransactionFactory
 import com.concordium.sdk.transactions.TransactionSigner
+import com.concordium.sdk.transactions.TransferWithMemo
 import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.transactions.tokens.CborMemo
 import com.concordium.sdk.transactions.tokens.TaggedTokenHolderAccount
@@ -173,24 +174,32 @@ class SendTokenReceiptViewModel(
 
         val transaction = try {
             if (memoHex != null)
-                TransactionFactory.newTransferWithMemo()
+                TransactionFactory
+                    .newTransferWithMemo(
+                        TransferWithMemo
+                            .builder()
+                            .amount(CCDAmount.fromMicro(sendTokenData.amount.toString()))
+                            .receiver(AccountAddress.from(sendTokenData.receiverAddress))
+                            .memo(Memo.from(memoHex))
+                            .build()
+                    )
                     .expiry(Expiry.from(sendTokenData.expiry))
                     .sender(AccountAddress.from(sendTokenData.account.address))
                     .nonce(Nonce.from(sendTokenData.accountNonce!!.nonce.toLong()))
-                    .signer(TransactionSigner.from(signer))
-                    .amount(CCDAmount.fromMicro(sendTokenData.amount.toString()))
-                    .receiver(AccountAddress.from(sendTokenData.receiverAddress))
-                    .memo(Memo.from(memoHex))
-                    .build()
+                    .sign(TransactionSigner.from(signer))
             else
-                TransactionFactory.newTransfer()
+                TransactionFactory
+                    .newTransfer(
+                        com.concordium.sdk.transactions.Transfer
+                            .builder()
+                            .amount(CCDAmount.fromMicro(sendTokenData.amount.toString()))
+                            .receiver(AccountAddress.from(sendTokenData.receiverAddress))
+                            .build()
+                    )
                     .expiry(Expiry.from(sendTokenData.expiry))
                     .sender(AccountAddress.from(sendTokenData.account.address))
                     .nonce(Nonce.from(sendTokenData.accountNonce!!.nonce.toLong()))
-                    .signer(TransactionSigner.from(signer))
-                    .amount(CCDAmount.fromMicro(sendTokenData.amount.toString()))
-                    .receiver(AccountAddress.from(sendTokenData.receiverAddress))
-                    .build()
+                    .sign(TransactionSigner.from(signer))
         } catch (e: Exception) {
             ensureActive()
             Log.e("Error creating transaction", e)
@@ -215,13 +224,8 @@ class SendTokenReceiptViewModel(
         }
 
         val transaction = try {
-            TransactionFactory.newUpdateContract()
-                .expiry(Expiry.from(sendTokenData.expiry))
-                .sender(AccountAddress.from(sendTokenData.account.address))
-                .nonce(Nonce.from(sendTokenData.accountNonce!!.nonce.toLong()))
-                .signer(TransactionSigner.from(signer))
-                .maxEnergyCost(UInt64.from(sendTokenData.maxEnergy!!))
-                .payload(
+            TransactionFactory
+                .newUpdateContract(
                     UpdateContract.from(
                         0L,
                         ContractAddress(
@@ -231,9 +235,13 @@ class SendTokenReceiptViewModel(
                         token.contractName,
                         "transfer",
                         parameterHex.hexToBytes(),
-                    )
+                    ),
+                    UInt64.from(sendTokenData.maxEnergy!!)
                 )
-                .build()
+                .expiry(Expiry.from(sendTokenData.expiry))
+                .sender(AccountAddress.from(sendTokenData.account.address))
+                .nonce(Nonce.from(sendTokenData.accountNonce!!.nonce.toLong()))
+                .sign(TransactionSigner.from(signer))
         } catch (e: Exception) {
             ensureActive()
             Log.e("Error creating transaction", e)
@@ -251,13 +259,12 @@ class SendTokenReceiptViewModel(
     ) = withContext(Dispatchers.Default) {
 
         val transaction = try {
-            TransactionFactory.newTokenUpdate()
+            TransactionFactory
+                .newTokenUpdate(getProtocolLevelTokenTransferPayload(token))
                 .expiry(Expiry.from(sendTokenData.expiry))
                 .sender(AccountAddress.from(sendTokenData.account.address))
                 .nonce(Nonce.from(sendTokenData.accountNonce!!.nonce.toLong()))
-                .signer(TransactionSigner.from(signer))
-                .payload(getProtocolLevelTokenTransferPayload(token))
-                .build()
+                .sign(TransactionSigner.from(signer))
         } catch (e: Exception) {
             ensureActive()
             Log.e("Error creating transaction", e)

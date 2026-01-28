@@ -3,10 +3,15 @@ package com.concordium.wallet.ui.walletconnect
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.util.TypedValue
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.doOnLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
@@ -30,6 +35,7 @@ import com.concordium.wallet.databinding.FragmentWalletConnectSessionProposalRev
 import com.concordium.wallet.databinding.FragmentWalletConnectSignMessageReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionRequestReviewBinding
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionSubmittedFragmentBinding
+import com.concordium.wallet.databinding.TooltipBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
@@ -131,6 +137,7 @@ class WalletConnectView(
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
+                    sponsor = state.sponsor,
                     account = state.account,
                     appMetadata = state.appMetadata,
                 )
@@ -348,6 +355,7 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        sponsor: String?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
@@ -362,6 +370,7 @@ class WalletConnectView(
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
+                sponsor = sponsor,
                 account = account,
                 appMetadata = appMetadata,
             )
@@ -379,6 +388,7 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        sponsor: String?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) = with(view) {
@@ -412,8 +422,45 @@ class WalletConnectView(
 
         amountTextView.text =
             "${CurrencyUtil.formatGTU(amount, token)} ${token.symbol}"
-        feeTextView.text =
-            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
+
+        if (sponsor != null) {
+            feeTextView.isVisible = false
+            sponsoredLabel.isVisible = true
+            sponsoredLabel.setOnClickListener {
+                val tooltip = TooltipBinding.inflate(LayoutInflater.from(root.context)).apply {
+                    title.setText(R.string.wallet_connect_transaction_request_free_transaction_tooltip_title)
+                    description.text = sponsor
+                }
+
+                dataLayout.doOnLayout {
+                    val tooltipWindow = PopupWindow(
+                        tooltip.root,
+                        dataLayout.width,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true
+                    ).apply {
+                        animationStyle = R.style.Animation_AppCompat_Tooltip
+                    }
+
+                    // The only way I found to show the tooltip above the label,
+                    // gravity doesn't seem to work.
+                    val locationY =
+                        IntArray(2).also(receiverTextView::getLocationOnScreen)[1]
+
+                    tooltipWindow.showAtLocation(
+                        dataLayout,
+                        Gravity.TOP,
+                        0,
+                        locationY
+                    )
+                }
+            }
+        } else {
+            feeTextView.isVisible = true
+            feeTextView.text =
+                root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
+            sponsoredLabel.isVisible = false
+        }
 
         errorTextView.isVisible = !isEnoughFunds
         errorTextView.text =
@@ -470,7 +517,10 @@ class WalletConnectView(
         totalAmountDivider.isVisible = false
 
         feeTextView.text =
-            root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
+            if (estimatedFee.signum() == 0)
+                root.context.getString(R.string.wallet_connect_transaction_request_free_transaction)
+            else
+                root.context.getString(R.string.amount, CurrencyUtil.formatGTU(estimatedFee))
 
         transactionHashView.transactionHash = submissionId
 

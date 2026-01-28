@@ -1,7 +1,6 @@
 package com.concordium.wallet.core
 
 import android.os.Handler
-import com.concordium.sdk.ClientV2
 import com.concordium.wallet.App
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
@@ -12,13 +11,10 @@ import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
 import com.concordium.wallet.data.AppWalletRepository
-import com.concordium.wallet.data.backend.GrpcBackendConfig
 import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.airdrop.AirDropBackend
 import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
-import com.concordium.wallet.data.backend.news.NewsfeedRssBackend
-import com.concordium.wallet.data.backend.news.NewsfeedRssBackendConfig
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
 import com.concordium.wallet.data.backend.tokens.TokensBackend
@@ -41,10 +37,8 @@ class AppCore(val app: App) {
 
     val gson: Gson = getGson()
     val proxyBackendConfig = ProxyBackendConfig(gson)
-    private val grpcBackendConfig = GrpcBackendConfig()
     private val tokenBackendConfig = TokensBackendConfig(gson)
     private val airdropBackendConfig = AirDropBackendConfig(gson)
-    private val newsfeedRssBackendConfig: NewsfeedRssBackendConfig by lazy(::NewsfeedRssBackendConfig)
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     private val wertBackendConfig = WertBackendConfig(gson)
@@ -97,10 +91,6 @@ class AppCore(val app: App) {
         return notificationsBackendConfig.backend
     }
 
-    fun getNewsfeedRssBackend(): NewsfeedRssBackend {
-        return newsfeedRssBackendConfig.backend
-    }
-
     fun getTokensBackend(): TokensBackend {
         return tokenBackendConfig.backend
     }
@@ -115,11 +105,6 @@ class AppCore(val app: App) {
 
     fun getWertBackend(): WertBackend {
         return wertBackendConfig.backend
-    }
-
-    @Deprecated("It's better to use ProxyBackend, as it is backed by a reliable node")
-    fun getGrpcClient(): ClientV2 {
-        return grpcBackendConfig.client
     }
 
     suspend fun startNewSession(

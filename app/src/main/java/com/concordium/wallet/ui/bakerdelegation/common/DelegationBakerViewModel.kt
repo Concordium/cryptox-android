@@ -17,11 +17,9 @@ import com.concordium.sdk.responses.transactionstatus.OpenStatus
 import com.concordium.sdk.responses.transactionstatus.PartsPerHundredThousand
 import com.concordium.sdk.transactions.AccountTransaction
 import com.concordium.sdk.transactions.CCDAmount
+import com.concordium.sdk.transactions.ConfigureBaker
 import com.concordium.sdk.transactions.ConfigureBakerKeysPayload
-import com.concordium.sdk.transactions.ConfigureBakerPayload
-import com.concordium.sdk.transactions.ConfigureBakerTransaction
-import com.concordium.sdk.transactions.ConfigureDelegationPayload
-import com.concordium.sdk.transactions.ConfigureDelegationTransaction
+import com.concordium.sdk.transactions.ConfigureDelegation
 import com.concordium.sdk.transactions.Expiry
 import com.concordium.sdk.transactions.SignerEntry
 import com.concordium.sdk.transactions.TransactionFactory
@@ -600,8 +598,8 @@ class DelegationBakerViewModel(
         val suspended = bakerDelegationData.toSetBakerSuspended
             ?.takeIf { bakerDelegationData.type == CONFIGURE_BAKER }
 
-        val transaction: ConfigureBakerTransaction = try {
-            val configureBakerPayload = ConfigureBakerPayload
+        val transaction: AccountTransaction = try {
+            val configureBakerPayload = ConfigureBaker
                 .builder()
                 .capital(capital?.let(CCDAmount::fromMicro))
                 .restakeEarnings(restakeEarnings)
@@ -647,13 +645,12 @@ class DelegationBakerViewModel(
                 .suspended(suspended)
                 .build()
 
-            TransactionFactory.newConfigureBaker()
+            TransactionFactory
+                .newConfigureBaker(configureBakerPayload)
                 .sender(AccountAddress.from(from))
-                .signer(TransactionSigner.from(signer))
                 .nonce(Nonce.from(nonce.nonce.toLong()))
                 .expiry(Expiry.from(expiry))
-                .payload(configureBakerPayload)
-                .build()
+                .sign(TransactionSigner.from(signer))
         } catch (e: Exception) {
             Log.e("Error creating transaction", e)
             _errorLiveData.value = Event(R.string.app_error_lib)
@@ -701,22 +698,20 @@ class DelegationBakerViewModel(
                 null
             }
 
-        val transaction: ConfigureDelegationTransaction = try {
+        val transaction: AccountTransaction = try {
             TransactionFactory
-                .newConfigureDelegation()
-                .sender(AccountAddress.from(from))
-                .signer(TransactionSigner.from(signer))
-                .nonce(Nonce.from(nonce.nonce.toLong()))
-                .expiry(Expiry.from(expiry))
-                .payload(
-                    ConfigureDelegationPayload
+                .newConfigureDelegation(
+                    ConfigureDelegation
                         .builder()
                         .capital(capital?.let(CCDAmount::fromMicro))
                         .restakeEarnings(restakeEarnings)
                         .delegationTarget(delegationTarget)
                         .build()
                 )
-                .build()
+                .sender(AccountAddress.from(from))
+                .nonce(Nonce.from(nonce.nonce.toLong()))
+                .expiry(Expiry.from(expiry))
+                .sign(TransactionSigner.from(signer))
         } catch (e: Exception) {
             Log.e("Error creating transaction", e)
             _errorLiveData.value = Event(R.string.app_error_lib)
