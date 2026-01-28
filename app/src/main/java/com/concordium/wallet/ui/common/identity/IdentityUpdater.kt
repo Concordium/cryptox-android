@@ -102,8 +102,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                         IdentityTokenContainer::class.java
                     )
 
-                    val newStatus =
-                        if (BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
+                    val newStatus = identityTokenContainer.status
 
                     if (newStatus != IdentityStatus.PENDING) {
                         identity.status = identityTokenContainer.status

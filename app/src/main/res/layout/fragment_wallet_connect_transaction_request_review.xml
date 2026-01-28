@@ -146,6 +146,40 @@
                     app:layout_constraintTop_toTopOf="@id/fee_title_text_view"
                     tools:text="1,2455 CCD" />
 
+                <LinearLayout
+                    android:id="@+id/sponsored_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="@drawable/label_accented_background"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/size8"
+                    android:paddingVertical="@dimen/size6"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/fee_title_text_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/fee_title_text_view"
+                    tools:ignore="UseCompoundDrawables"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/size6"
+                        android:text="@string/wallet_connect_transaction_request_free_transaction"
+                        android:textAppearance="@style/MW24_Typography_Label_S_Medium"
+                        android:textColor="@color/mw24_content_accent_secondary" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:alpha="0.5"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/mw24_ic_circled_question_mark"
+                        app:tint="@color/mw24_content_accent_secondary" />
+                </LinearLayout>
+
                 <Button
                     android:id="@+id/show_details_button"
                     style="@style/CryptoX_Button_Text_Small"

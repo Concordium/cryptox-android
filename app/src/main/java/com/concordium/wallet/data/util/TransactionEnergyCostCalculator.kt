@@ -4,6 +4,7 @@ import com.concordium.sdk.transactions.CCDAmount
 import com.concordium.sdk.transactions.Parameter
 import com.concordium.sdk.transactions.Payload
 import com.concordium.sdk.transactions.ReceiveName
+import com.concordium.sdk.transactions.TransactionHeader
 import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.types.ContractAddress
 import com.concordium.sdk.types.UInt64
@@ -52,7 +53,7 @@ object TransactionEnergyCostCalculator {
         payload: UpdateContract,
         maxContractExecutionEnergy: Long,
         numSignatures: Int = 1,
-    ): Long = Payload.calculateEnergyCost(
+    ): Long = TransactionHeader.calculateMaxEnergyCost(
         numSignatures,
         payload.bytes.size,
         UInt64.from(maxContractExecutionEnergy),
