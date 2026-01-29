@@ -31,7 +31,7 @@ object TransactionViewHelper {
         showDate: Boolean = false,
         titleFromReceipt: String = "",
         memoExpandButton: ImageView? = null,
-        isMemoExpanded: Boolean = false
+        isMemoExpanded: Boolean = false,
     ) {
         // Title
         titleTextView.text = titleFromReceipt.ifEmpty { ta.title }
@@ -42,7 +42,7 @@ object TransactionViewHelper {
                         ta.status == TransactionStatus.ABSENT ||
                         (ta.status == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
                         (ta.status == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
-                    -> ContextCompat.getColor(titleTextView.context, R.color.mw24_attention_red)
+                -> ContextCompat.getColor(titleTextView.context, R.color.mw24_attention_red)
 
                 else -> ContextCompat.getColor(titleTextView.context, R.color.cryptox_white_main)
             }
@@ -131,10 +131,13 @@ object TransactionViewHelper {
                 }
 
                 costTextView.text =
-                    costTextView.context.getString(R.string.account_details_fee) +
-                            " $prefix" +
-                            CurrencyUtil.formatGTU(ta.cost) +
-                            " ${CCDToken.SYMBOL}"
+                    if (ta.cost.signum() == 0)
+                        costTextView.context.getString(R.string.account_details_free_transaction)
+                    else
+                        costTextView.context.getString(R.string.account_details_fee) +
+                                " $prefix" +
+                                CurrencyUtil.formatGTU(ta.cost) +
+                                " ${CCDToken.SYMBOL}"
             }
 
             ta.fromAddress != null -> {
