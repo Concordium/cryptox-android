@@ -255,6 +255,7 @@
     <string name="account_details_account_card_show_in_eur">Show in EUR</string>
     <string name="account_details_account_card_show_in_ccd">Show in CCD</string>
     <string name="account_details_token_details_button">Token Details</string>
+    <string name="account_details_free_transaction">Free transaction</string>
     <!--  Account settings  -->
     <string name="account_settings_title">Account Settings</string>
     <string name="account_settings_name_changed">Account name changed</string>
@@ -537,7 +538,7 @@
     <string name="wallet_connect_transaction_request_amount">Amount</string>
     <string name="wallet_connect_transaction_request_approximate_fee">@string/approximate_fee</string>
     <string name="wallet_connect_transaction_request_show_details">Show details</string>
-    <string name="wallet_connect_transaction_request_free_transaction">Free transaction</string>
+    <string name="wallet_connect_transaction_request_free_transaction">@string/account_details_free_transaction</string>
     <string name="wallet_connect_transaction_request_free_transaction_tooltip_title">Transaction cost covered by:</string>
     <string name="wallet_connect_error_transaction_request_stringify_params_no_schema">Can\'t stringify the parameters as there is no schema</string>
     <string name="wallet_connect_error_transaction_request_stringify_params_failed">Failed to stringify the parameters</string>
