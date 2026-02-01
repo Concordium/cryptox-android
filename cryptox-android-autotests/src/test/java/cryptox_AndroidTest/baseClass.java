@@ -29,14 +29,14 @@ public static String PackageName = stagePackageName;
 log.info("This i value From File" + localExecution);
     if (localExecution) {
 
-        appURL = "C:\\Automation\\CryptoX-Android-Automation\\CryptoX-Android/stagenet.apk";
+        appURL = "/Users/maryammajeed/Downloads/wallet.apk";
         Device = EmulatorLocal;
 
     } else if (!localExecution) {
-        appURL = "/home/runner/work/CryptoX-Android-Automation/CryptoX-Android-Automation/CryptoX-Android/app.apk";
-        Device = EmulatorCloud;
+        appURL = "/Users/maryammajeed/Downloads/wallet.apk";
+        Device = EmulatorLocal;
     }
-
+    System.out.println("Starting tests on device: " + Device);
     openAppiumSession(Device, PackageName, activityName);
     getDeviceDimensions();
 }
@@ -45,12 +45,12 @@ log.info("This i value From File" + localExecution);
     public void tearDown(){
 ////    driver.removeApp(PackageName); // This will remove the app from the device
 //}
-    if(!localExecution){
-        driver.removeApp(PackageName); // This will remove the app from the device
-    }
-    else {
+//    if(!localExecution){
+//        driver.removeApp(PackageName); // This will remove the app from the device
+//    }
+//    else {
         driver.quit(); // This will close the appium driver.
-    }
+//    }
 }
 }
 
