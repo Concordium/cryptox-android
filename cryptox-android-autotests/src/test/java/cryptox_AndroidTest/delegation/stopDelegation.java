@@ -24,14 +24,14 @@ public class stopDelegation {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnEarnRewards());
         Assert.assertTrue(clickOnElement("stop_button",20));
-        Assert.assertTrue(clickOnElement("continue_button",20));
+        Assert.assertTrue(clickOnElement("ok_button",20));
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("submit_delegation_finish",20));
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
+        Assert.assertTrue(clickOnElement("token_details_button",20));
         Assert.assertTrue(elementShouldNotAvailable("accounts_overview_total_details_delegating",5));
         Assert.assertTrue(elementShouldNotAvailable("delegating_label",5));
     }

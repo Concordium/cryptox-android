@@ -10,8 +10,7 @@ import static cryptox_AndroidTest.baseClass.PackageName;
 import static pages.Transactions.requestCCDs.clickOnAccountWidget;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.appOperations.commands.swipe;
-import static pages.generalMethods.clickOnElement;
-import static pages.generalMethods.clickOnElementByXpath;
+import static pages.generalMethods.*;
 import static pages.login.loginCryptoX;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
@@ -23,8 +22,9 @@ public class settingsCases {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn",10));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@text=\"Erase Data\"]\n",10));
-        Assert.assertTrue(clickOnElement("confirm_button",10));
+        Assert.assertTrue(performScrollDown());
+        Assert.assertTrue(clickOnElement("erase_data_layout",20));
+        Assert.assertTrue(clickOnElement("ok_button",10));
         Assert.assertTrue(verifyPinAndPressOK());
 
     }

@@ -15,15 +15,14 @@ import static pages.Transactions.validation.stopValidation.clickOnValidationStat
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.appOperations.commands.performScroll;
 import static pages.appOperations.commands.swipe;
-import static pages.generalMethods.clickOnElement;
-import static pages.generalMethods.elementShouldNotAvailable;
+import static pages.generalMethods.*;
 import static pages.login.loginCryptoX;
 import static pages.popUps.clickOnAndroidDefaultPopUP;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class validatorWithOpenForDelegation {
 
-    public static String baker_id = "accounts_overview_total_details_baker_id";
+    public static String baker_id = "accounts_overview_total_details_delegating";
 
 
     @Test
@@ -32,7 +31,7 @@ public class validatorWithOpenForDelegation {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("btnBaker",20));
+        Assert.assertTrue(clickOnElement("delegation_update_button",20));
         Assert.assertTrue(performScroll());
         Thread.sleep(20000);
         Assert.assertTrue(clickOnValidationSetupButton());
@@ -52,8 +51,10 @@ public class validatorWithOpenForDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
-        Assert.assertTrue(verifyValidatorID());
+        Assert.assertTrue(clickOnElement("token_details_button",20));
+        Assert.assertTrue(verifyElementById("accounts_overview_total_details_delegating",20));
+//        Assert.assertTrue(clickOnAccountWidget());
+//        Assert.assertTrue(verifyValidatorID());
     }
 
     @Test
