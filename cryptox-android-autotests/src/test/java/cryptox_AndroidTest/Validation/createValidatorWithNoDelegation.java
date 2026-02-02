@@ -7,6 +7,8 @@ import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 
+import java.net.MalformedURLException;
+
 import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
 import static cryptox_AndroidTest.Validation.validatorWithOpenForDelegation.baker_id;

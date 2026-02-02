@@ -4,6 +4,8 @@ import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
+import java.net.MalformedURLException;
+
 import static config.appiumconnection.driver;
 import static cryptox_AndroidTest.baseClass.PackageName;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
