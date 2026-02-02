@@ -2,11 +2,19 @@ package pages;
 
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 import static config.appiumconnection.*;
@@ -124,8 +132,7 @@ public class generalMethods {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
 
             for (int i = 0; i < maxScrolls; i++) {
-
-                log.info("Fetching account list. Scroll attempt: {}", i + 1);
+                log.info("Fetching account list (Scroll Down attempt: {})", i + 1);
 
                 wait.until(ExpectedConditions.presenceOfElementLocated(
                         By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
@@ -151,12 +158,39 @@ public class generalMethods {
                 log.warn("Account '{}' not found in current view. Scrolling down...", expectedAccount);
 
                 if (!performScrollDown()) {
-                    log.warn("Scroll not possible further. Stopping search.");
+                    log.warn("Scroll down not possible further. Stopping downward search.");
                     break;
                 }
             }
 
-            log.error("Account '{}' not found after {} scroll attempts", expectedAccount, maxScrolls);
+            // If not found, try scrolling up
+            for (int i = 0; i < maxScrolls; i++) {
+                log.info("Fetching account list (Scroll Up attempt: {})", i + 1);
+
+                List<MobileElement> accounts = driver.findElements(
+                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
+                );
+
+                for (MobileElement account : accounts) {
+                    String actualName = account.getText();
+                    log.info("Found account name: {}", actualName);
+
+                    if (actualName.equalsIgnoreCase(expectedAccount)) {
+                        account.click();
+                        log.info("Successfully clicked account: {}", actualName);
+                        return true;
+                    }
+                }
+
+                log.warn("Account '{}' not found in current view. Scrolling up...", expectedAccount);
+
+                if (!performScrollUp()) {
+                    log.warn("Scroll up not possible further. Stopping upward search.");
+                    break;
+                }
+            }
+
+            log.error("Account '{}' not found after scrolling down and up {} times", expectedAccount, maxScrolls);
             return false;
 
         } catch (TimeoutException te) {
@@ -168,6 +202,37 @@ public class generalMethods {
             return false;
         }
     }
+
+    public static boolean performScrollUp() {
+        try {
+            Dimension size = driver.manage().window().getSize();
+
+            int centerX = size.width / 2;
+            int startY  = (int) (size.height * 0.42);
+            int endY    = (int) (size.height * 0.58); // slight upward scroll
+
+            PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+            Sequence swipe = new Sequence(finger, 1);
+
+            swipe.addAction(finger.createPointerMove(Duration.ZERO,
+                    PointerInput.Origin.viewport(), centerX, startY));
+            swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+            swipe.addAction(finger.createPointerMove(Duration.ofMillis(350),
+                    PointerInput.Origin.viewport(), centerX, endY));
+            swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+            driver.perform(Collections.singletonList(swipe));
+
+            log.info("Performed slight scroll up successfully (Appium 3).");
+            return true;
+
+        } catch (Exception e) {
+            log.error("Failed to perform slight scroll up (Appium 3)", e);
+            return false;
+        }
+    }
+
+
 
     public static boolean performScrollDown() {
         try {
