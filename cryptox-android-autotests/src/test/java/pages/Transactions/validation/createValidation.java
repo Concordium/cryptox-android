@@ -24,8 +24,8 @@ public class createValidation {
     static By exportKeyConsent = By.id("android:id/button1");
     static By validator_registration_export = By.id("baker_registration_export");
     static By submit_baker_transactionID = By.id("submit_baker_transaction");
-    static By submit_baker_finish = By.id("submit_delegation_finish");
-    static By validatorID = By.id("accounts_overview_total_details_delegating");
+    static By submit_baker_finish = By.id("submit_baker_finish");
+    static By validatorID = By.id("accounts_overview_total_details_staked");
 
 
     public static boolean login() {

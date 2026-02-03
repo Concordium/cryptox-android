@@ -22,7 +22,7 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class validatorWithOpenForDelegation {
 
-    public static String baker_id = "accounts_overview_total_details_delegating";
+    public static String baker_id = "accounts_overview_total_details_staked";
 
 
     @Test
@@ -31,7 +31,7 @@ public class validatorWithOpenForDelegation {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("delegation_update_button",20));
+        Assert.assertTrue(clickOnElement("btnBaker",20));
         Assert.assertTrue(performScroll());
         Thread.sleep(20000);
         Assert.assertTrue(clickOnValidationSetupButton());
@@ -52,7 +52,7 @@ public class validatorWithOpenForDelegation {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("token_details_button",20));
-        Assert.assertTrue(verifyElementById("accounts_overview_total_details_delegating",20));
+        Assert.assertTrue(verifyElementById("accounts_overview_total_details_staked",20));
 //        Assert.assertTrue(clickOnAccountWidget());
 //        Assert.assertTrue(verifyValidatorID());
     }
@@ -64,13 +64,14 @@ public class validatorWithOpenForDelegation {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnEarnRewards());
         Assert.assertTrue(clickOnElement("stop_button",20));
-        Assert.assertTrue(clickOnElement("continue_button",20));
+        Assert.assertTrue(clickOnElement("ok_button",20));
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnAccountWidget());
+//        Assert.assertTrue(clickOnAccountWidget());
+        Assert.assertTrue(clickOnElement("token_details_button",20));
         Assert.assertTrue(elementShouldNotAvailable(baker_id,2));
     }
 }
