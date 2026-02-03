@@ -98,7 +98,7 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
         Assert.assertTrue(clickOnAccount(PLT_ACCOUNT_ONE, 20));
         Assert.assertTrue(clickOnToken(PLT_LEVEL_TOKEN, 20));
-//        softAssert.assertTrue(clickOnElement("ok_button", 20));
+        softAssert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("raw_metadata_label", 20));
         Assert.assertTrue(verifyElementById("details_text_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
@@ -181,7 +181,7 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
         Assert.assertTrue(clickOnAccount(PLT_DENY_ACCOUNT, 20));
         Assert.assertTrue(clickOnToken(PLT_IN_DENY_TOKEN, 20));
-    //    softAssert.assertTrue(clickOnElement("ok_button", 20));
+        softAssert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(verifyTextById("list_status_title", TEXT_DENY_LIST_MEMBER, 20));
         Assert.assertTrue(clickOnElement("list_status_title", 20));
         Assert.assertTrue(verifyTextById("title_text_view", TITLE_ALLOW_DENY_LIST, 20));
@@ -209,7 +209,7 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
         Assert.assertTrue(clickOnAccount(PLT_PAUSED_ACCOUNT, 20));
         Assert.assertTrue(clickOnToken(PLT_PAUSED_TOKEN, 20));
-//        softAssert.assertTrue(clickOnElement("ok_button", 20));
+        softAssert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(verifyTextById("list_status_title", TEXT_TOKEN_PAUSED, 20));
         Assert.assertTrue(clickOnElement("list_status_title", 20));
         Assert.assertTrue(verifyTextById("title_text_view", TITLE_PAUSED_TOKENS, 20));
