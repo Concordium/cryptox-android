@@ -197,7 +197,6 @@ public class PLTTransactions {
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
         Assert.assertTrue(clickOnAccount(PLT_ACCOUNT_TWO, 20));
         Assert.assertTrue(clickOnToken(PLT_TOKEN, 20));
-      //  softAssert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertFalse(verifyTextById("list_status_title", TEXT_DENY_LIST_MEMBER, 20));
     }
 

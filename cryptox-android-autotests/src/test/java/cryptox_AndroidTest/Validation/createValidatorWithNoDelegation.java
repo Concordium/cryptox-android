@@ -33,31 +33,27 @@ public class createValidatorWithNoDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("ok_button",5));
+        Assert.assertTrue(clickOnElement("ok_button", 5));
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("btnBaker",20));
+        Assert.assertTrue(clickOnElement("btnBaker", 20));
         Assert.assertTrue(performScroll());
-        Assert.assertTrue(clickOnElement("continue_button",20));
+        Assert.assertTrue(clickOnElement("continue_button", 20));
         Assert.assertTrue(enterAmountForPool());
-        Assert.assertTrue(clickOnElement("baker_registration_continue",10));
-      //  Assert.assertTrue(clickOnContinueButtonOnRegisterValidatorScreen());
-       // String environment = "stagenet";
-       Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/baker_options\"]/android.view.ViewGroup[2]",20));
+        Assert.assertTrue(clickOnElement("baker_registration_continue", 10));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/baker_options\"]/android.view.ViewGroup[2]", 20));
         Assert.assertTrue(clickOnContinueButtonOnDelegationSScreen());
-        Assert.assertTrue(clickOnElement("ok_button",20));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnContinueButtonOnCValidatorCommissionScreen());
         Assert.assertTrue(saveValidatorKeys());
         Assert.assertTrue(clickOnAndroidDefaultPopUP());
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(ClickOnValidatorFinishButton());
-        Assert.assertTrue(clickOnElement("ok_button",20));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-//        Assert.assertTrue(clickOnAccountWidget());
-        Assert.assertTrue(clickOnElement("token_details_button",20));
-    //    Assert.assertTrue(verifyElementById("accounts_overview_total_details_delegating",20));
+        Assert.assertTrue(clickOnElement("token_details_button", 20));
         Assert.assertTrue(verifyValidatorID());
     }
 
@@ -67,17 +63,16 @@ public class createValidatorWithNoDelegation {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnEarnRewards());
-        Assert.assertTrue(clickOnElement("stop_button",20));
-        Assert.assertTrue(clickOnElement("ok_button",20));
+        Assert.assertTrue(clickOnElement("stop_button", 20));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(swipe());
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(ClickOnValidatorFinishButton());
-        Assert.assertTrue(clickOnElement("ok_button",20));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-      //  Assert.assertTrue(clickOnAccountWidget());
-        Assert.assertTrue(clickOnElement("token_details_button",20));
-        Assert.assertTrue(elementShouldNotAvailable(baker_id,2));
+        Assert.assertTrue(clickOnElement("token_details_button", 20));
+        Assert.assertTrue(elementShouldNotAvailable(baker_id, 2));
     }
 }

@@ -53,8 +53,6 @@ public class validatorWithOpenForDelegation {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("token_details_button",20));
         Assert.assertTrue(verifyElementById("accounts_overview_total_details_staked",20));
-//        Assert.assertTrue(clickOnAccountWidget());
-//        Assert.assertTrue(verifyValidatorID());
     }
 
     @Test
@@ -70,7 +68,6 @@ public class validatorWithOpenForDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-//        Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(clickOnElement("token_details_button",20));
         Assert.assertTrue(elementShouldNotAvailable(baker_id,2));
     }
