@@ -33,7 +33,7 @@ public class createValidatorWithNoDelegation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-//        Assert.assertTrue(clickOnElement("ok_button",5));
+        Assert.assertTrue(clickOnElement("ok_button",5));
         Assert.assertTrue(clickOnEarnRewards());
         Assert.assertTrue(clickOnElement("btnBaker",20));
         Assert.assertTrue(performScroll());
