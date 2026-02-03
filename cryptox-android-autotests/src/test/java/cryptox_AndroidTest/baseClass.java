@@ -23,34 +23,34 @@ public static String PackageName = stagePackageName;
 
 
 
-@BeforeTest
+    @BeforeTest
     public void setup() throws MalformedURLException, InterruptedException {
 
-log.info("This i value From File" + localExecution);
-    if (localExecution) {
+        log.info("This i value From File" + localExecution);
+        if (localExecution) {
 
-        appURL = "/Users/maryammajeed/Downloads/wallet.apk";
-        Device = EmulatorLocal;
+            appURL = "C:\\Automation\\CryptoX-Android-Automation\\CryptoX-Android/stagenet.apk";
+            Device = EmulatorLocal;
 
-    } else if (!localExecution) {
-        appURL = "/Users/maryammajeed/Downloads/wallet.apk";
-        Device = EmulatorLocal;
+        } else if (!localExecution) {
+            appURL = "/home/runner/work/CryptoX-Android-Automation/CryptoX-Android-Automation/CryptoX-Android/app.apk";
+            Device = EmulatorCloud;
+        }
+
+        openAppiumSession(Device, PackageName, activityName);
+        getDeviceDimensions();
     }
-    System.out.println("Starting tests on device: " + Device);
-    openAppiumSession(Device, PackageName, activityName);
-    getDeviceDimensions();
-}
 
-@AfterTest
+    @AfterTest
     public void tearDown(){
 ////    driver.removeApp(PackageName); // This will remove the app from the device
 //}
-//    if(!localExecution){
-//        driver.removeApp(PackageName); // This will remove the app from the device
-//    }
-//    else {
-        driver.quit(); // This will close the appium driver.
-//    }
-}
+        if(!localExecution){
+            driver.removeApp(PackageName); // This will remove the app from the device
+        }
+        else {
+            driver.quit(); // This will close the appium driver.
+        }
+    }
 }
 
