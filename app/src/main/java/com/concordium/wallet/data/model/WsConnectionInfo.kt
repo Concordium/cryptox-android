@@ -3,8 +3,8 @@ package com.concordium.wallet.data.model
 import android.os.Parcelable
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-@kotlinx.parcelize.Parcelize
 data class WsConnectionInfo(
     @SerializedName("site")
     val site: SiteInfo,
@@ -12,11 +12,10 @@ data class WsConnectionInfo(
     val connection: Connection,
     @SerializedName("ws_conn")
     val wsConnLink: String
-) : Parcelable {
+) : Serializable {
 
     fun toJson(): String = Gson().toJson(this)
 
-    @kotlinx.parcelize.Parcelize
     data class SiteInfo(
         @SerializedName("title")
         val title: String = "",
@@ -24,11 +23,10 @@ data class WsConnectionInfo(
         val description: String = "",
         @SerializedName("icon_link")
         val iconLink: String = ""
-    ) : Parcelable {
+    ) : Serializable {
         fun toJson(): String = Gson().toJson(this)
     }
 
-    @kotlinx.parcelize.Parcelize
     data class Connection(
         @SerializedName("ip")
         val ip: String,
@@ -42,7 +40,7 @@ data class WsConnectionInfo(
         val isPortable: Boolean,
         @SerializedName("opened_at")
         val openedAt: Long
-    ) : Parcelable {
+    ) : Serializable {
         fun toJson(): String = Gson().toJson(this)
     }
 }

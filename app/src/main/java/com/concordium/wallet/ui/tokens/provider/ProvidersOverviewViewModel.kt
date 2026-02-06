@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.tokens.provider
 
 import android.app.Application
-import android.os.Parcelable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,8 +15,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 data class Token(
     @SerializedName("blockchain_id")
@@ -54,7 +52,6 @@ data class Token(
     val saleStatus: String
 )
 
-@Parcelize
 data class ProviderMeta(
     @SerializedName("name")
     val name: String,
@@ -64,9 +61,8 @@ data class ProviderMeta(
     val system: Boolean = false,
     @SerializedName("wallets")
     var wallets: List<WalletMeta> = emptyList()
-) : Parcelable {
+) : Serializable {
 
-    @IgnoredOnParcel
     @Transient
     var isShowMenu = false
 }

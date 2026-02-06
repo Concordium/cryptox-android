@@ -1,14 +1,12 @@
 package com.concordium.wallet.data.model
 
-import android.os.Parcelable
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 import java.math.BigInteger
 
-@Parcelize
 data class WsMessageResponse(
     @SerializedName("originator")
     val originator: String = "CryptoX Wallet Android app",
@@ -21,7 +19,7 @@ data class WsMessageResponse(
     val messageType: String = "",
     @SerializedName("user_status")
     val userStatus: String = ""
-) : Parcelable {
+) : Serializable {
 
     companion object {
         const val MESSAGE_TYPE_ACCOUNT_INFO = "AccountInfo"
@@ -32,7 +30,6 @@ data class WsMessageResponse(
 
     fun toJson(): String = Gson().toJson(this)
 
-    @Parcelize
     data class Payload(
         @SerializedName("from")
         val from: String,
@@ -66,7 +63,7 @@ data class WsMessageResponse(
         val serializedParams: String? = null,
         @SerializedName("nrg_limit")
         val energyLimit: Long = 100501
-    ) : Parcelable {
+    ) : Serializable {
         val receiveName: String?
             get() {
                 return if (contractName != null && contractMethod != null)
@@ -77,7 +74,6 @@ data class WsMessageResponse(
 
         fun toJson(): String = Gson().toJson(this)
 
-        @Parcelize
         data class ContractAddress(
             @SerializedName("address")
             val address: String,
@@ -85,9 +81,8 @@ data class WsMessageResponse(
             val index: String,
             @SerializedName("sub_index")
             val subIndex: String
-        ) : Parcelable
+        ) : Serializable
 
-        @Parcelize
         data class Params(
             @SerializedName("param_name")
             val paramName: TypedName? = null,
@@ -95,7 +90,7 @@ data class WsMessageResponse(
             val paramType: String? = null,
             @SerializedName("param_value")
             val paramValue: String? = null
-        ) : Parcelable {
+        ) : Serializable {
             enum class TypedName {
                 @SerializedName("token_id")
                 TOKEN_ID,
