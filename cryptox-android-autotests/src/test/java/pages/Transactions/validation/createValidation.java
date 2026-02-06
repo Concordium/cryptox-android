@@ -25,7 +25,7 @@ public class createValidation {
     static By validator_registration_export = By.id("baker_registration_export");
     static By submit_baker_transactionID = By.id("submit_baker_transaction");
     static By submit_baker_finish = By.id("submit_baker_finish");
-    static By validatorID = By.id("accounts_overview_total_details_baker_id");
+    static By validatorID = By.id("accounts_overview_total_details_staked");
 
 
     public static boolean login() {
@@ -470,37 +470,31 @@ public class createValidation {
     }
 
     public static boolean verifyValidatorID() {
+        try {
+            MobileElement validator_ID = waitForElement(validatorID, 30);
 
-        {
-            try {
+            if (validator_ID != null && validator_ID.isDisplayed()) {
+                String validatorText = validator_ID.getText();
 
+                String numericText = validatorText.replaceAll("[^\\d]", "");
 
-                MobileElement validator_ID = waitForElement(validatorID, 30);
+                int validatorInt = Integer.parseInt(numericText);
 
-                assert validator_ID != null;
-                if (validator_ID.isDisplayed()) {
-                    String validateValidatorID = validator_ID.getText();
-                    int validateValidatorInt = Integer.parseInt(validateValidatorID);
-                    assert validateValidatorInt > 0;
+                if (validatorInt > 0) {
                     return true;
-
                 } else {
-
-                    System.out.println("Unable to find baker_registration_open_continueID element");
-                    return false;
+                    log.warn("Validator ID is not greater than 0: " + validatorInt);
                 }
-
-            } catch (Exception exp) {
-                log.error(String.valueOf(exp.getCause()));
-                System.out.println(exp.getMessage());
-                log.error(String.valueOf(exp.fillInStackTrace()));
+            } else {
+                log.warn("Validator element not found or not displayed: " + validatorID);
             }
-
-
-            return false;
+        } catch (NumberFormatException nfe) {
+            log.error("Validator ID is not a valid number: " + nfe.getMessage(), nfe);
+        } catch (Exception e) {
+            log.error("Exception occurred while verifying Validator ID: " + e.getMessage(), e);
         }
 
-
+        return false;
     }
 
 

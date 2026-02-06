@@ -8,7 +8,7 @@
             <class name="cryptox_AndroidTest.baseClass"/>
             <class name="cryptox_AndroidTest.RecoverAccounts.recoverAccountThroughSeedPhrase"/>
             <class name="cryptox_AndroidTest.Validation.createValidatorWithNoDelegation"/>
-            <class name="cryptox_AndroidTest.Validation.validatorWithOpenForDelegation"/>
+           <class name="cryptox_AndroidTest.Validation.validatorWithOpenForDelegation"/>
             <class name="cryptox_AndroidTest.delegation.createDelegation"/>
             <class name="cryptox_AndroidTest.delegation.stopDelegation"/>
             <class name="cryptox_AndroidTest.Transactions.CCDTransactions"/>

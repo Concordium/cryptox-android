@@ -31,6 +31,7 @@ public class recoverAccountThroughSeedPhrase {
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement(continueButton,20));
         Assert.assertTrue(verifyPinAndPressOK());
+        Thread.sleep(5);
         Assert.assertTrue(WaitForElement(continueButton,100));
         Assert.assertTrue(clickOnElement(continueButton,20));
         log.info("successfully recovered Account");
