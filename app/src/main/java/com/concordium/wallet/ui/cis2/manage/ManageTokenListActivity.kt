@@ -49,10 +49,10 @@ class ManageTokenListActivity : BaseActivity(
         manageTokenListViewModel.loadTokens(account.address)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        listUpdated = intent?.getBooleanExtra(LIST_UPDATED, false) == true
+        listUpdated = intent.getBooleanExtra(LIST_UPDATED, false) == true
         if (listUpdated) {
             showToast()
         }
