@@ -174,10 +174,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-
     packagingOptions {
         resources {
             excludes += [
@@ -225,26 +221,23 @@ android {
 }
 
 dependencies {
-    implementation("com.concordium.sdk:concordium-android-sdk:12.0.0-alpha.2") {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":mobile_wallet_lib-release")
+
+    implementation(libs.concordium.android.sdk) {
         exclude group: "org.bouncycastle"
         exclude group: "net.jcip"
     }
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    // Kotlin
     implementation libs.kotlin.stdlib
     implementation libs.kotlin.reflect
     api libs.kotlinx.coroutines.android
 
-    // Glide
     implementation libs.glide
     ksp libs.glide.ksp
     implementation libs.androidsvg
+    implementation libs.khash.sha256
 
-    implementation "com.github.komputing.khash:sha256:1.1.1"
-
-    // AndroidX
     implementation libs.androidx.appcompat
     implementation libs.androidx.core.ktx
     implementation libs.androidx.constraintlayout
@@ -254,86 +247,59 @@ dependencies {
     implementation libs.androidx.biometric
     implementation libs.flexbox
 
-    // Lifecycles
     implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.androidx.lifecycle.livedata.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation libs.androidx.legacy.support
     implementation libs.androidx.fragment.ktx
 
-    // Room
     implementation libs.androidx.room.runtime
     implementation libs.androidx.room.ktx
     ksp libs.androidx.room.compiler
-    androidTestImplementation "androidx.room:room-testing:${libs.versions.room.get()}"
+    androidTestImplementation libs.androidx.room.testing
 
-    // Barcode
     implementation libs.zxing.android
+    implementation libs.androidx.browser
+    implementation libs.snackbar
+    implementation libs.blur.view
 
-    // Chrome custom tabs
-    implementation 'androidx.browser:browser:1.4.0'
-
-    implementation 'com.github.Redman1037:TSnackBar:V2.0.0'
-    implementation 'com.github.Dimezis:BlurView:version-2.0.6'
-
-    // Networking
     implementation libs.okhttp.logging
-    implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
+    implementation(libs.logging.interceptor) {
         exclude group: 'org.json', module: 'json'
     }
     implementation libs.retrofit
     implementation libs.retrofit.converter.gson
     implementation libs.retrofit.converter.scalars
-    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21'
 
-    // Navigation
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx
 
-    // Crypto library
-    implementation project(":mobile_wallet_lib-release")
+    testImplementation libs.test.junit
+    androidTestImplementation libs.test.ext.junit
+    androidTestImplementation libs.test.espresso.core
+    androidTestImplementation libs.test.arch.core
+    testImplementation libs.test.room
 
-    // Test
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation "android.arch.persistence.room:testing:1.1.1"
-
-    // Reown (formerly WalletConnect)
-    implementation(platform "com.reown:android-bom:1.0.4")
-    implementation "com.reown:android-core"
-    implementation "com.reown:sign"
+    implementation(platform libs.reown.bom)
+    implementation libs.reown.core
+    implementation libs.reown.sign
 
     // Scarlet Gson adapter required for Spaceseven wallet connection.
-    implementation("com.tinder.scarlet:message-adapter-gson:0.1.12") {
+    implementation(libs.message.adapter.gson) {
         // Core must be excluded to avoid class duplication when using WalletConnect.
         exclude group: 'com.tinder.scarlet', module: 'scarlet-core'
     }
 
     implementation libs.eventbus
-
-    // BIP39
-    implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
-
-    // Firebase
-    implementation 'com.google.firebase:firebase-messaging:24.0.0!!'
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
-
-    // Room annotation processor
-    ksp libs.androidx.room.compiler
-
+    implementation libs.kotlin.bip39
+    implementation libs.firebase.messaging
+    implementation libs.play.services
     implementation libs.lottie
     implementation libs.androidx.swiperefreshlayout
-
-    // In-app rating
-    implementation 'com.google.android.play:review:2.0.2'
-    implementation 'com.google.android.play:review-ktx:2.0.2'
-
-    // Dot indicator for pagers.
-    implementation 'com.tbuonomo:dotsindicator:4.3!!'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    implementation libs.play.review
+    implementation libs.play.review.ktx
+    implementation libs.dotsindicator
+    annotationProcessor libs.lombok.processor
 }
 
 task printVersionName {
