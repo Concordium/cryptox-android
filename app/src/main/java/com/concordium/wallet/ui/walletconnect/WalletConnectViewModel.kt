@@ -19,7 +19,6 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.extension.collect
-import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectCoreDelegate
 import com.concordium.wallet.ui.walletconnect.delegate.LoggingWalletConnectWalletDelegate
 import com.concordium.wallet.util.Log
@@ -853,14 +852,14 @@ private constructor(
 
     private fun handleNextOldestPendingSessionRequest() {
         val activeSessions = SignClient.getListOfActiveSessions()
-        val pendingRequestWithMetaData: Pair<Sign.Model.PendingRequest, Core.Model.AppMetaData?>? =
+        val pendingRequestWithMetaData: Pair<Sign.Model.SessionRequest, Core.Model.AppMetaData?>? =
             activeSessions
                 .map { session ->
-                    SignClient.getPendingSessionRequests(session.topic)
-                        .filterIsInstance<Sign.Model.PendingRequest>() // Ensure the type matches
+                    SignClient
+                        .getPendingSessionRequests(session.topic)
                         .filter { pendingRequest ->
                             // Do not include requests just handled.
-                            pendingRequest.requestId !in handledRequests
+                            pendingRequest.request.id !in handledRequests
                         }
                         .map { pendingRequest ->
                             pendingRequest to session.metaData
@@ -868,10 +867,10 @@ private constructor(
                 }
                 .flatten()
                 .minByOrNull { (pendingRequest, _) ->
-                    pendingRequest.requestId
+                    pendingRequest.request.id
                 }
 
-        val pendingRequest: Sign.Model.PendingRequest? = pendingRequestWithMetaData?.first
+        val pendingRequest: Sign.Model.SessionRequest? = pendingRequestWithMetaData?.first
         if (pendingRequest == null) {
             Log.d("no_pending_requests_left")
             return
@@ -881,21 +880,21 @@ private constructor(
         if (peerMetaData == null) {
             Log.d(
                 "pending_request_has_no_metadata:" +
-                        "\nrequestId=${pendingRequest.requestId}"
+                        "\nrequestId=${pendingRequest.request.id}"
             )
             return
         }
 
         Log.d(
             "handling_pending_request:" +
-                    "\nrequestId=${pendingRequest.requestId}"
+                    "\nrequestId=${pendingRequest.request.id}"
         )
 
         handleSessionRequest(
             topic = pendingRequest.topic,
-            id = pendingRequest.requestId,
-            method = pendingRequest.method,
-            params = pendingRequest.params,
+            id = pendingRequest.request.id,
+            method = pendingRequest.request.method,
+            params = pendingRequest.request.params,
             peerMetadata = peerMetaData,
         )
     }
@@ -1184,7 +1183,7 @@ private constructor(
 
         constructor(metadata: Core.Model.AppMetaData) : this(
             name = metadata.name,
-            iconUrl = metadata.icons.firstOrNull()?.toString(),
+            iconUrl = metadata.icons.firstOrNull(),
             url = metadata.url,
         )
     }
