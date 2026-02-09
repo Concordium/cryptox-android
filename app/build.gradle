@@ -1,11 +1,13 @@
 import com.android.build.gradle.internal.tasks.FinalizeBundleTask
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.appdistribution'
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.firebase.appdistribution)
+    alias(libs.plugins.room)
+}
 
 def SCHEME_BASE = "cryptoxmwallet"
 def WC_SCHEME_BASE = "cryptox-wc"
@@ -45,18 +47,14 @@ android {
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [
-                        "room.schemaLocation": "$projectDir/schemas".toString(),
-                        "room.incremental"   : "true"]
-            }
-        }
-
         firebaseAppDistribution {
             // This file is created by CI.
             serviceCredentialsFile = file("app-distribution-credentials.json")
         }
+    }
+
+    room {
+        schemaDirectory "$projectDir/schemas"
     }
 
     signingConfigs {
@@ -93,20 +91,17 @@ android {
         stagenet {
             dimension "network"
             applicationIdSuffix ".stagenet"
-
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.stagenet.concordium.com\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://stagenet.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.stagenet.concordium.com/api/\"")
             buildConfigField("String[]", "WC_CHAINS", "{\"ccd:stagenet\",\"ccd:853288fa5a45554d3cbbf8a756b85abc\"}")
-
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
 
             def scheme = SCHEME_BASE + "-stagenet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
-
             resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-stagenet"}\""
 
             def providerAuthority = PROVIDER_AUTHORITY_BASE + "-stagenet"
@@ -128,29 +123,23 @@ android {
         tstnet {
             dimension "network"
             applicationIdSuffix ".testnet"
-
             buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
             buildConfigField("String", "ENV_NAME", "\"testnet\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.testnet.concordium.com\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://testnet.ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.testnet.concordium.com/api/\"")
             buildConfigField("String[]", "WC_CHAINS", "{\"ccd:testnet\",\"ccd:4221332d34e1694168c2a0c0b3fd0f27\"}")
-
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
-
             def scheme = SCHEME_BASE + "-testnet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
-
             resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-testnet"}\""
-
             def providerAuthority = PROVIDER_AUTHORITY_BASE + "-testnet"
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
             // Yes, stage. Spaceseven stage runs on Concordium Testnet.
             buildConfigField("String", "S7_DOMAIN", "\"https://stage.spaceseven.cloud\"")
-
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
                 groups = "concordium-team"
@@ -160,26 +149,22 @@ android {
         // Public Concordium network, real funds and identities. Spaceseven production.
         mainnet {
             dimension "network"
-
             buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
             buildConfigField("String", "ENV_NAME", "\"production\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.mainnet.concordium.software\"")
             buildConfigField("String", "URL_EXPLORER_BASE", "\"https://ccdscan.io/\"")
             buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.mainnet.concordium.software/api/\"")
             buildConfigField("String[]", "WC_CHAINS", "{\"ccd:mainnet\",\"ccd:9dd9ca4d19e9393877d2c44b70f89acb\"}")
-
             buildConfigField("boolean", "SHOW_GTU_DROP", "false")
 
             def scheme = SCHEME_BASE
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
-
             resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE}\""
 
             def providerAuthority = PROVIDER_AUTHORITY_BASE
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
-
             buildConfigField("String", "S7_DOMAIN", "\"https://spaceseven.com\"")
 
             firebaseAppDistribution {
@@ -189,20 +174,20 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     packagingOptions {
         resources {
-            excludes += ['META-INF/atomicfu.kotlin_module']
-            excludes += ['META-INF/INDEX.LIST']
-            excludes += ['META-INF/DEPENDENCIES']
-            excludes += ['META-INF/LICENSE.md']
-            excludes += ['META-INF/NOTICE.md']
-            excludes += ['META-INF/versions/**']
+            excludes += [
+                    'META-INF/atomicfu.kotlin_module',
+                    'META-INF/INDEX.LIST',
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE.md',
+                    'META-INF/NOTICE.md',
+                    'META-INF/versions/**'
+            ]
         }
-        doNotStrip "**/*.so"
+        jniLibs {
+            keepDebugSymbols += ['**/*.so']
+        }
     }
 
     dependenciesInfo {
@@ -210,7 +195,6 @@ android {
         includeInBundle false
     }
 
-    // Set meaningful names for build artifacts.
     applicationVariants.all { variant ->
         def flavor = variant.productFlavors[0].name
         def artifactName = "concordium-wallet-" +
@@ -226,137 +210,96 @@ android {
         // AAB.
         tasks.named("sign${variant.name.capitalize()}Bundle", FinalizeBundleTask) {
             File file = finalBundleFile.asFile.get()
-            File finalFile = new File(file.parentFile, artifactName + ".aab")
-            finalBundleFile.set(finalFile)
+            finalBundleFile.set(new File(file.parentFile, "${artifactName}.aab"))
         }
     }
-}
 
-allprojects {
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs).configureEach {
-        kotlinOptions.jvmTarget = "1.8"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":mobile_wallet_lib-release")
 
-    implementation("com.concordium.sdk:concordium-android-sdk:12.0.0-alpha.2") {
+    implementation(libs.concordium.android.sdk) {
         exclude group: "org.bouncycastle"
         exclude group: "net.jcip"
     }
 
-    def lifecycle_version = "2.4.0"
-    def room_version = "2.6.1"
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlin.reflect
+    api libs.kotlinx.coroutines.android
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libs.glide
+    ksp libs.glide.ksp
+    implementation libs.androidsvg
+    implementation libs.khash.sha256
 
-    // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.recyclerview
+    implementation libs.material
+    implementation libs.androidx.cardview
+    implementation libs.androidx.biometric
+    implementation libs.flexbox
 
-    // Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.legacy.support
+    implementation libs.androidx.fragment.ktx
 
-    implementation 'com.github.bumptech.glide:glide:4.14.2'
-    kapt 'com.github.bumptech.glide:compiler:4.14.2'
-    implementation 'com.caverock:androidsvg-aar:1.4'
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
+    androidTestImplementation libs.androidx.room.testing
 
-    implementation "com.github.komputing.khash:sha256:1.1.1"
+    implementation libs.zxing.android
+    implementation libs.androidx.browser
+    implementation libs.snackbar
+    implementation libs.blur.view
 
-    // Android/Google
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.biometric:biometric:1.1.0'
-    implementation 'com.google.android.flexbox:flexbox:3.0.0'
-
-    // Lifecycles
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    implementation 'androidx.fragment:fragment-ktx:1.4.0'
-
-    // Room
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    androidTestImplementation "androidx.room:room-testing:$room_version"
-
-    // Barcode
-    implementation "com.journeyapps:zxing-android-embedded:4.1.0"
-
-    // Chrome custom tabs
-    implementation 'androidx.browser:browser:1.4.0'
-
-    implementation 'com.github.Redman1037:TSnackBar:V2.0.0'
-    implementation 'com.github.Dimezis:BlurView:version-2.0.6'
-
-    // OkHttp/Retrofit
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
-    implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
+    implementation libs.okhttp.logging
+    implementation(libs.logging.interceptor) {
         exclude group: 'org.json', module: 'json'
     }
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
-    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21'
+    implementation libs.retrofit
+    implementation libs.retrofit.converter.gson
+    implementation libs.retrofit.converter.scalars
 
-    // Navigation
-    def navigationVersion = '2.3.5'
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
 
-    // Crypto library
-    implementation project(":mobile_wallet_lib-release")
+    testImplementation libs.test.junit
+    androidTestImplementation libs.test.ext.junit
+    androidTestImplementation libs.test.espresso.core
+    androidTestImplementation libs.test.arch.core
+    testImplementation libs.test.room
 
-    // Test
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation "android.arch.persistence.room:testing:1.1.1"
-
-    // Reown (formerly WalletConnect)
-    implementation(platform "com.reown:android-bom:1.0.4")
-    implementation "com.reown:android-core"
-    implementation "com.reown:sign"
+    implementation(platform libs.reown.bom)
+    implementation libs.reown.core
+    implementation libs.reown.sign
 
     // Scarlet Gson adapter required for Spaceseven wallet connection.
-    implementation("com.tinder.scarlet:message-adapter-gson:0.1.12") {
+    implementation(libs.message.adapter.gson) {
         // Core must be excluded to avoid class duplication when using WalletConnect.
         exclude group: 'com.tinder.scarlet', module: 'scarlet-core'
     }
 
-    // EventBus
-    implementation 'org.greenrobot:eventbus:3.1.1'
-
-    // BIP39
-    implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
-
-    // Push notifications (version lock for Kotlin version compatibility)
-    implementation 'com.google.firebase:firebase-messaging:24.0.0!!'
-    implementation 'com.google.android.gms:play-services-location:21.3.0'
-
-    // Lottie animations
-    implementation 'com.airbnb.android:lottie:6.0.0'
-
-    // Swipe to refresh
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
-
-    // In-app rating
-    implementation 'com.google.android.play:review:2.0.2'
-    implementation 'com.google.android.play:review-ktx:2.0.2'
-
-    // Dot indicator for pagers.
-    implementation 'com.tbuonomo:dotsindicator:4.3!!'
-
-    annotationProcessor 'org.projectlombok:lombok:1.18.38'
-    kapt 'org.projectlombok:lombok:1.18.38'
+    implementation libs.eventbus
+    implementation libs.kotlin.bip39
+    implementation libs.firebase.messaging
+    implementation libs.play.services
+    implementation libs.lottie
+    implementation libs.androidx.swiperefreshlayout
+    implementation libs.play.review
+    implementation libs.play.review.ktx
+    implementation libs.dotsindicator
+    annotationProcessor libs.lombok.processor
 }
 
 task printVersionName {

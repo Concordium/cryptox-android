@@ -1,0 +1,139 @@
+[versions]
+agp = "8.10.1"
+kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
+kotlinParcelize = "1.8.10"
+googleServices = "4.4.3"
+firebaseAppDistribution = "2.2.0"
+room = "2.7.1"
+lifecycle = "2.7.0"
+glide = "4.16.0"
+nav = "2.7.7"
+retrofit = "2.9.0"
+okhttp = "4.9.1"
+coroutines = "1.5.0"
+appcompat = "1.6.1"
+coreKtx = "1.9.0"
+constraintLayout = "2.2.0"
+material = "1.8.0"
+sha256 = "1.1.1"
+legacySupport = "1.0.0"
+browser = "1.4.0"
+biometric = "1.1.0"
+recyclerview = "1.2.1"
+cardview = "1.0.0"
+fragmentKtx = "1.7.1"
+swiperefreshlayout = "1.2.0"
+zxing = "4.1.0"
+lottie = "6.0.0"
+eventbus = "3.1.1"
+concordiumSdk = "12.0.0-alpha.2"
+snackbar = "V2.0.0"
+blurView = "version-2.0.6"
+loggingInterceptor = "3.1.0"
+reownBom = "1.0.4"
+scarlet = "0.1.12"
+bip39 = "1.0.4"
+firebaseMessaging = "24.0.0!!"
+playServices = "21.3.0"
+playReview = "2.0.2"
+dotsindicator = "4.3!!"
+lombok = "1.18.38"
+junit = "4.13.2"
+junitExt = "1.1.3"
+espressoCore = "3.4.0"
+archCoreTesting = "2.1.0"
+roomTesting = "1.1.1"
+androidsvg = "1.4"
+flexbox = "3.0.0"
+
+[libraries]
+# Kotlin & Coroutines
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# AndroidX
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-legacy-support = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupport" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
+
+# Google & Material
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+
+# Lifecycle
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+
+# Room
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+
+# Navigation
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "nav" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "nav" }
+
+# Networking
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit-converter-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "retrofit" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+logging-interceptor = { group = "com.github.ihsanbal", name = "LoggingInterceptor", version.ref = "loggingInterceptor" }
+
+# Image Loading
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
+androidsvg = { group = "com.caverock", name = "androidsvg-aar", version.ref = "androidsvg" }
+
+# Reown (formerly WalletConnect)
+reown-bom = { group = "com.reown", name = "android-bom", version.ref = "reownBom" }
+reown-core = { group = "com.reown", name = "android-core" }
+reown-sign = { group = "com.reown", name = "sign" }
+
+# Firebase
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+play-services = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices" }
+
+# In-app rating
+play-review = { group = "com.google.android.play", name = "review", version.ref = "playReview" }
+play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
+
+# Testing
+test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
+test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+test-arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
+test-room = { group = "android.arch.persistence.room", name = "testing", version.ref = "roomTesting" }
+
+# Others
+zxing-android = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxing" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
+khash-sha256 = { group = "com.github.komputing.khash", name = "sha256", version.ref = "sha256" }
+concordium-android-sdk = { group = "com.concordium.sdk", name = "concordium-android-sdk", version.ref = "concordiumSdk" }
+snackbar = { group = "com.github.Redman1037", name = "TSnackBar", version.ref = "snackbar" }
+blur-view = { group = "com.github.Dimezis", name = "BlurView", version.ref = "blurView" }
+message-adapter-gson = { group = "com.tinder.scarlet", name = "message-adapter-gson", version.ref = "scarlet" }
+kotlin-bip39 = { group = "cash.z.ecc.android", name = "kotlin-bip39", version.ref = "bip39" }
+dotsindicator = { group = "com.tbuonomo", name = "dotsindicator", version.ref = "dotsindicator" }
+lombok-processor = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "firebaseAppDistribution" }

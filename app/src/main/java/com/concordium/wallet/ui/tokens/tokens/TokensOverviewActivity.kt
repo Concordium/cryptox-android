@@ -14,6 +14,7 @@ import com.concordium.wallet.data.model.WalletMeta
 import com.concordium.wallet.databinding.ActivityTokensOverviewBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.tokens.provider.Token
+import com.concordium.wallet.util.getSerializable
 
 class TokensOverviewActivity : BaseActivity(R.layout.activity_tokens_overview),
     TokenItemView.ITokenItemView {
@@ -28,7 +29,7 @@ class TokensOverviewActivity : BaseActivity(R.layout.activity_tokens_overview),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val walletMeta = intent.getParcelableExtra<WalletMeta>(Constants.Extras.EXTRA_WALLET_DATA)
+        val walletMeta = intent.getSerializable(Constants.Extras.EXTRA_WALLET_DATA, WalletMeta::class.java)
         if (walletMeta == null) {
             finish()
             return

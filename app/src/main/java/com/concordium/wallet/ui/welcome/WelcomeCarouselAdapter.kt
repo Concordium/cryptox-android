@@ -56,11 +56,11 @@ class WelcomeCarouselAdapter : RecyclerView.Adapter<WelcomeCarouselAdapter.ViewH
     ) : RecyclerView.ViewHolder(binding.root)
 
     private class Page(
-        @DrawableRes
+        @param:DrawableRes
         val imageRes: Int,
-        @StringRes
+        @param:StringRes
         val titleRes: Int,
-        @StringRes
+        @param:StringRes
         val descriptionRes: Int,
     )
 }

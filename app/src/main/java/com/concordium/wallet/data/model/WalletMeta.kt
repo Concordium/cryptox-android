@@ -2,8 +2,8 @@ package com.concordium.wallet.data.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-@kotlinx.parcelize.Parcelize
 data class WalletMeta(
     @SerializedName("name")
     val name: String,
@@ -13,4 +13,4 @@ data class WalletMeta(
     var total: Int,
     @SerializedName("website")
     val website: String? = null
-) : Parcelable
+) : Serializable
