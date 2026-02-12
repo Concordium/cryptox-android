@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.walletconnect
 
-import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.AcceptableRequest
 import com.concordium.sdk.crypto.wallet.web3Id.AccountCommitmentInput
 import com.concordium.sdk.crypto.wallet.web3Id.Statement.IdentityQualifier
@@ -14,7 +13,6 @@ import com.concordium.sdk.responses.cryptographicparameters.CryptographicParamet
 import com.concordium.sdk.transactions.CredentialRegistrationId
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
@@ -40,12 +38,7 @@ class WalletConnectVerifiablePresentationRequestHandler(
     private val identityRepository: IdentityRepository,
     private val activeWalletType: AppWallet.Type,
 ) {
-    private val network =
-        if (BuildConfig.ENV_NAME.equals("production", ignoreCase = true))
-            Network.MAINNET
-        else
-            Network.TESTNET
-
+    private val network = App.appCore.session.network.hdWalletNetwork
     private lateinit var appMetadata: WalletConnectViewModel.AppMetadata
     private lateinit var identityProofRequest: UnqualifiedRequest
     private lateinit var identityProofProvableState: WalletConnectViewModel.ProofProvableState
@@ -385,18 +378,18 @@ class WalletConnectVerifiablePresentationRequestHandler(
             connectedAccount = accountsPerStatement.first(),
             appMetadata = appMetadata,
             claims =
-            identityProofRequest
-                .credentialStatements
-                .zip(accountsPerStatement)
-                .map { (credentialStatement, account) ->
-                    IdentityProofRequestClaims(
-                        statements = credentialStatement.statement,
-                        selectedCredential = IdentityProofRequestSelectedCredential.Account(
-                            account = account,
-                            identity = getIdentity(account),
-                        ),
-                    )
-                },
+                identityProofRequest
+                    .credentialStatements
+                    .zip(accountsPerStatement)
+                    .map { (credentialStatement, account) ->
+                        IdentityProofRequestClaims(
+                            statements = credentialStatement.statement,
+                            selectedCredential = IdentityProofRequestSelectedCredential.Account(
+                                account = account,
+                                identity = getIdentity(account),
+                            ),
+                        )
+                    },
             currentClaim = currentStatementIndex,
             provable = identityProofProvableState,
             isV1 = false,

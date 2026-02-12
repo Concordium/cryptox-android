@@ -1,5 +1,6 @@
 package com.concordium.wallet.core.multinetwork
 
+import com.concordium.sdk.crypto.wallet.Network
 import okhttp3.HttpUrl
 
 class AppNetwork(
@@ -16,6 +17,14 @@ class AppNetwork(
 
     val isTestnet: Boolean
         get() = genesisHash == "4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796"
+
+    val hdWalletNetwork: Network
+        get() =
+            // For the HD wallet, everything that's not the Mainnet is Testnet.
+            if (isMainnet)
+                Network.MAINNET
+            else
+                Network.TESTNET
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

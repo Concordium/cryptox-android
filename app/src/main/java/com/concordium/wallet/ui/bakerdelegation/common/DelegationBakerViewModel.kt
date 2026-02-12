@@ -74,7 +74,7 @@ import kotlin.math.roundToInt
 
 class DelegationBakerViewModel(
     private val tokenPriceRepository: TokenPriceRepository,
-    application: Application
+    application: Application,
 ) : AndroidViewModel(application),
     KoinComponent {
 
@@ -147,6 +147,8 @@ class DelegationBakerViewModel(
 
     val isHasShowReviewDialogAfterEarnSetup: Boolean
         get() = App.appCore.setup.isHasShowReviewDialogAfterEarnSetup
+    val canOpenValidatorExplorer: Boolean
+        get() = App.appCore.session.network.ccdScanFrontendUrl != null
 
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData
@@ -291,7 +293,8 @@ class DelegationBakerViewModel(
         } else {
             _waitingLiveData.value = true
             bakerPoolRequest?.dispose()
-            bakerPoolRequest = proxyRepository.getBakerPool(getPoolId(),
+            bakerPoolRequest = proxyRepository.getBakerPool(
+                getPoolId(),
                 {
                     bakerDelegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
@@ -331,7 +334,8 @@ class DelegationBakerViewModel(
     }
 
     fun getBakerPool(bakerId: String) {
-        proxyRepository.getBakerPool(bakerId,
+        proxyRepository.getBakerPool(
+            bakerId,
             {
                 _bakerPoolStatusLiveData.value = it
             }, {
@@ -489,7 +493,8 @@ class DelegationBakerViewModel(
         _waitingLiveData.value = true
         accountNonceRequest?.dispose()
         accountNonceRequest = bakerDelegationData.account.let { account ->
-            proxyRepository.getAccountNonce(account.address,
+            proxyRepository.getAccountNonce(
+                account.address,
                 { accountNonce ->
                     bakerDelegationData.accountNonce = accountNonce
                     _showAuthenticationLiveData.value = Event(true)
@@ -873,5 +878,12 @@ class DelegationBakerViewModel(
 
     fun setHasShowReviewDialogAfterEarnSetup() {
         App.appCore.setup.setHasShowReviewDialogAfterEarnSetup(true)
+    }
+
+    fun getValidatorExplorerUrl(): String {
+        return App.appCore.session.network.ccdScanFrontendUrl!!
+            .newBuilder()
+            .addPathSegment("staking")
+            .toString()
     }
 }

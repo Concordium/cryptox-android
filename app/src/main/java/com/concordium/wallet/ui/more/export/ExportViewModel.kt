@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
@@ -215,10 +214,14 @@ class ExportViewModel(application: Application) :
             }
             val exportValue = ExportValue(identityExportList, recipientExportSet.toList())
             val exportData = ExportData(
-                "concordium-mobile-wallet-data",
-                1,
-                exportValue,
-                BuildConfig.EXPORT_CHAIN
+                v = 1,
+                type = "concordium-mobile-wallet-data",
+                value = exportValue,
+                environment =
+                    if (App.appCore.session.network.isMainnet)
+                        "mainnet"
+                    else
+                        "testnet"
             )
             val jsonOutput = gson.toJson(exportData)
             Log.d("ExportData: $jsonOutput")
@@ -236,7 +239,8 @@ class ExportViewModel(application: Application) :
             _waitingLiveData.postValue(false)
             when (e) {
                 is JsonIOException,
-                is JsonSyntaxException -> {
+                is JsonSyntaxException,
+                    -> {
                     _errorLiveData.postValue(Event(R.string.app_error_json))
                 }
 
@@ -252,7 +256,7 @@ class ExportViewModel(application: Application) :
     private fun mapIdentityToExport(
         identity: Identity,
         privateIdObjectData: RawJson,
-        accountList: List<AccountExport>
+        accountList: List<AccountExport>,
     ): IdentityExport {
         return IdentityExport(
             identity.name,
@@ -266,7 +270,7 @@ class ExportViewModel(application: Application) :
 
     private fun mapAccountToExport(
         account: Account,
-        accountData: StorageAccountData
+        accountData: StorageAccountData,
     ): AccountExport {
         return AccountExport(
             account.name,

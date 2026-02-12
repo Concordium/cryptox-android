@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.account.accountdetails
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
@@ -92,6 +93,7 @@ class AccountSettingsActivity : BaseActivity(
         binding.exportKey.setOnClickListener {
             exportKey()
         }
+        binding.exportTransactionLog.isVisible = viewModel.canExportTransactionLogs
         binding.exportTransactionLog.setOnClickListener {
             exportTransactionLog()
         }

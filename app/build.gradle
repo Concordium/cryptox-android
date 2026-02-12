@@ -43,7 +43,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         buildConfigField("Long", "FAST_ACCOUNT_UPDATE_FREQUENCY_SEC", "5l")
 
@@ -87,59 +86,22 @@ android {
     }
 
     productFlavors {
-        // Unstable Concordium test network, fake funds and identities. No Spaceseven instance.
-        stagenet {
-            dimension "network"
-            applicationIdSuffix ".stagenet"
-            buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
-            buildConfigField("String", "ENV_NAME", "\"staging\"")
-            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.stagenet.concordium.com\"")
-            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://stagenet.ccdscan.io/\"")
-            buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.stagenet.concordium.com/api/\"")
-            buildConfigField("String[]", "WC_CHAINS", "{\"ccd:stagenet\",\"ccd:853288fa5a45554d3cbbf8a756b85abc\"}")
-            buildConfigField("boolean", "SHOW_GTU_DROP", "true")
-
-            def scheme = SCHEME_BASE + "-stagenet"
-            buildConfigField("String", "SCHEME", "\"${scheme}\"")
-            resValue "string", "scheme", "\"${scheme}\""
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-stagenet"}\""
-
-            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-stagenet"
-            resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
-            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
-
-            // There is no Spaceseven instance for Stagenet.
-            // This domain won't resolve.
-            buildConfigField("String", "S7_DOMAIN", "\"https://stagenet.spaceseven.cloud\"")
-
-            firebaseAppDistribution {
-                appId = '1:124880082147:android:44ec3892cba12e73c7e1d6'
-                groups = "concordium-team"
-            }
-        }
-
         // Public Concordium test network, fake funds and identities. Spaceseven stage.
         // It is called 'tstnet' because flavour names can't start with 'test'
         tstnet {
             dimension "network"
+
             applicationIdSuffix ".testnet"
-            buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
-            buildConfigField("String", "ENV_NAME", "\"testnet\"")
-            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.testnet.concordium.com\"")
-            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://testnet.ccdscan.io/\"")
-            buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.testnet.concordium.com/api/\"")
-            buildConfigField("String[]", "WC_CHAINS", "{\"ccd:testnet\",\"ccd:4221332d34e1694168c2a0c0b3fd0f27\"}")
-            buildConfigField("boolean", "SHOW_GTU_DROP", "true")
+
             def scheme = SCHEME_BASE + "-testnet"
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
             resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-testnet"}\""
+
             def providerAuthority = PROVIDER_AUTHORITY_BASE + "-testnet"
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
-            // Yes, stage. Spaceseven stage runs on Concordium Testnet.
-            buildConfigField("String", "S7_DOMAIN", "\"https://stage.spaceseven.cloud\"")
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
                 groups = "concordium-team"
@@ -149,13 +111,6 @@ android {
         // Public Concordium network, real funds and identities. Spaceseven production.
         mainnet {
             dimension "network"
-            buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
-            buildConfigField("String", "ENV_NAME", "\"production\"")
-            buildConfigField("String", "URL_PROXY_BASE", "\"https://wallet-proxy.mainnet.concordium.software\"")
-            buildConfigField("String", "URL_EXPLORER_BASE", "\"https://ccdscan.io/\"")
-            buildConfigField("String", "URL_NOTIFICATIONS_BASE", "\"https://notification-api.mainnet.concordium.software/api/\"")
-            buildConfigField("String[]", "WC_CHAINS", "{\"ccd:mainnet\",\"ccd:9dd9ca4d19e9393877d2c44b70f89acb\"}")
-            buildConfigField("boolean", "SHOW_GTU_DROP", "false")
 
             def scheme = SCHEME_BASE
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
@@ -165,7 +120,6 @@ android {
             def providerAuthority = PROVIDER_AUTHORITY_BASE
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
-            buildConfigField("String", "S7_DOMAIN", "\"https://spaceseven.com\"")
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'

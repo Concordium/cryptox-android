@@ -8,7 +8,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.AccountRepository
@@ -78,8 +77,14 @@ private constructor(
         defaultWalletDelegate = LoggingWalletConnectWalletDelegate(),
     )
 
-    private val allowedChains: Set<String> =
-        BuildConfig.WC_CHAINS.toSet()
+    private val allowedChains: Set<String> = buildSet {
+        add("ccd:" + App.appCore.session.network.genesisHash.take(32))
+        if (App.appCore.session.network.isMainnet) {
+            add("ccd:mainnet")
+        } else if (App.appCore.session.network.isTestnet) {
+            add("ccd:testnet")
+        }
+    }
     private val wcUriPrefixes = setOf(
         WC_URI_PREFIX,
         "${application.getString(R.string.wc_scheme)}:",
@@ -1029,7 +1034,7 @@ private constructor(
 
             State.WaitingForSessionProposal,
             State.WaitingForSessionRequest,
-            -> {
+                -> {
                 mutableStateFlow.tryEmit(State.Idle)
             }
 

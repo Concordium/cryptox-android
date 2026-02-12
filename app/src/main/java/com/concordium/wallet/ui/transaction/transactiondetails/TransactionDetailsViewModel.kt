@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.backend.repository.ProxyRepository
@@ -35,6 +35,9 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     val showDetailsLiveData: LiveData<Event<Boolean>>
         get() = _showDetailsLiveData
 
+    val canOpenExplorer: Boolean
+        get() = App.appCore.session.network.ccdScanFrontendUrl != null
+
     fun initialize(account: Account, transaction: Transaction) {
         this.account = account
         this.transaction = transaction
@@ -63,7 +66,8 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     private fun loadTransferSubmissionStatus(submissionId: String) {
         _waitingLiveData.value = true
         transferSubmissionStatusRequest?.dispose()
-        transferSubmissionStatusRequest = proxyRepository.getSubmissionStatus(submissionId,
+        transferSubmissionStatusRequest = proxyRepository.getSubmissionStatus(
+            submissionId,
             {
                 // Update the transaction - the changes are not saved (they will be updated elsewhere)
                 transaction.blockHashes = it.blockHashes
@@ -81,8 +85,10 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     }
 
     fun getExplorerUrl(): String =
-        BuildConfig.URL_EXPLORER_BASE +
-                "?dcount=1" +
-                "&dentity=transaction" +
-                "&dhash=${transaction.hash}"
+        App.appCore.session.network.ccdScanFrontendUrl!!
+            .newBuilder()
+            .addQueryParameter("dcount", "1")
+            .addQueryParameter("dentity", "transaction")
+            .addQueryParameter("dhash", transaction.hash)
+            .toString()
 }

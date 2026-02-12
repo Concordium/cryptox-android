@@ -293,11 +293,10 @@ class TransfersViewModel(
     }
 
     private fun updateGTUDropState() {
-        if (!BuildConfig.SHOW_GTU_DROP) {
+        if (App.appCore.session.network.isMainnet) {
             _showGTUDropFlow.value = false
         } else {
             _showGTUDropFlow.value = transferListFlow.value.isEmpty()
-
         }
     }
 

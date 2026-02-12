@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
@@ -73,7 +72,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private var accountGaps: ConcurrentHashMap<Int, Int> = ConcurrentHashMap()
     private var password = ""
     private var identityNamePrefix = ""
-    private val net = AppConfig.net
+    private val network = App.appCore.session.network.hdWalletNetwork
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var identityProvidersRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
     private var globalInfo: GlobalParamsWrapper? = null
@@ -214,7 +213,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             identityProvider.ipInfo,
             globalInfo.value,
             seed,
-            net,
+            network.value,
             identityIndex,
             System.currentTimeMillis() / 1000
         )
@@ -281,7 +280,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 identity.identityObject!!,
                 JsonArray(),
                 seed,
-                net,
+                network.value,
                 identity.identityIndex,
                 credNumber,
                 (DateTimeUtil.nowPlusMinutes(5).time) / 1000

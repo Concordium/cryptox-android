@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.isVisible
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.Session
@@ -70,7 +71,11 @@ class AccountTransactionsFiltersActivity : BaseActivity(
 
     private fun initViews() {
         setActionBarTitle(R.string.account_transaction_filters_title)
+        binding.exportTransactionLog.isVisible =
+            App.appCore.session.network.ccdScanBackendUrl != null
         binding.exportTransactionLog.setOnClickListener { exportTransactionLog() }
+        binding.optionsLabel.isVisible = binding.exportTransactionLog.isVisible
+        binding.transferFiltersLabel.isVisible =  binding.optionsLabel.isVisible
     }
 
     private fun exportTransactionLog() {

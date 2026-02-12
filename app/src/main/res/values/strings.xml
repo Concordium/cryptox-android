@@ -790,8 +790,8 @@
     <string name="delegation_status_content_cooldown_time">Cooldown time:</string>
 
     <string name="delegation_register_delegation_intro">Delegate to an open pool of your choice, or stake your CCD using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://ccdscan.io/staking">ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_testnet">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="https://testnet.ccdscan.io/staking">testnet.ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which validator pool you want to delegate an amount to, you can look on <a href="#ccdscan">CCDScan</a></string>
+    <string name="delegation_register_delegation_desc_no_ccdscan">If you don\'t already know which validator pool you want to delegate an amount to, you can look on CCDScan</string>
     <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific validator pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit <a href="https://docs.concordium.com/en/mainnet/docs/protocol/concepts-delegation.html">docs.concordium.com</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter validator pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New validator pool ID</string>

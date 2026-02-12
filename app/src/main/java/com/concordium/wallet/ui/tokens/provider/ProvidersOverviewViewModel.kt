@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.tokens.TokensRepository
 import com.concordium.wallet.data.model.WalletMeta
@@ -49,7 +48,7 @@ data class Token(
     @SerializedName("total_minted")
     val totalMinted: String,
     @SerializedName("sale_status")
-    val saleStatus: String
+    val saleStatus: String,
 )
 
 data class ProviderMeta(
@@ -60,7 +59,7 @@ data class ProviderMeta(
     @SerializedName("system")
     val system: Boolean = false,
     @SerializedName("wallets")
-    var wallets: List<WalletMeta> = emptyList()
+    var wallets: List<WalletMeta> = emptyList(),
 ) : Serializable {
 
     @Transient
@@ -71,10 +70,14 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
 
     private val tokensRepo = TokensRepository()
 
-    private val _onAccountReadyLiveData: MutableLiveData<Event<List<WalletMeta>>> = MutableLiveData()
+    private val _onAccountReadyLiveData: MutableLiveData<Event<List<WalletMeta>>> =
+        MutableLiveData()
+
     fun onAccountReady(): LiveData<Event<List<WalletMeta>>> = _onAccountReadyLiveData
 
-    private val _onProvidersReadyLiveData: MutableLiveData<Event<List<ProviderMeta>>> = MutableLiveData()
+    private val _onProvidersReadyLiveData: MutableLiveData<Event<List<ProviderMeta>>> =
+        MutableLiveData()
+
     fun onProvidersReady(): LiveData<Event<List<ProviderMeta>>> = _onProvidersReadyLiveData
 
     private val providers = mutableListOf<ProviderMeta>()
@@ -90,7 +93,13 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
 
     private fun getProviders(providers: List<ProviderMeta>) {
         this.providers.clear()
-        this.providers.add(ProviderMeta(name = "Spaceseven", website = BuildConfig.S7_DOMAIN, system = true))
+        this.providers.add(
+            ProviderMeta(
+                name = "Spaceseven",
+                website = App.appCore.session.network.spacesevenUrl!!.toString(),
+                system = true,
+            )
+        )
         this.providers.addAll(providers)
         processProviders()
     }
@@ -114,7 +123,8 @@ class ProvidersOverviewViewModel(application: Application) : AndroidViewModel(ap
     }
 
     private fun getAccount() = viewModelScope.launch(viewModelScope.coroutineContext) {
-        val accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao())
+        val accountRepository =
+            AccountRepository(App.appCore.session.walletStorage.database.accountDao())
         val acc = withContext(Dispatchers.IO) {
             accountRepository.getAll()
         }
