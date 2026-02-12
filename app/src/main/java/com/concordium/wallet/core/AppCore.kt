@@ -11,16 +11,6 @@ import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
 import com.concordium.wallet.data.AppWalletRepository
-import com.concordium.wallet.data.backend.ProxyBackend
-import com.concordium.wallet.data.backend.ProxyBackendConfig
-import com.concordium.wallet.data.backend.airdrop.AirDropBackend
-import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
-import com.concordium.wallet.data.backend.notifications.NotificationsBackend
-import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
-import com.concordium.wallet.data.backend.tokens.TokensBackend
-import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
-import com.concordium.wallet.data.backend.wert.WertBackend
-import com.concordium.wallet.data.backend.wert.WertBackendConfig
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.AppSetupPreferences
 import com.concordium.wallet.data.preferences.AppTrackingPreferences
@@ -36,12 +26,6 @@ import kotlin.coroutines.suspendCoroutine
 class AppCore(val app: App) {
 
     val gson: Gson = getGson()
-    val proxyBackendConfig = ProxyBackendConfig(gson)
-    private val tokenBackendConfig = TokensBackendConfig(gson)
-    private val airdropBackendConfig = AirDropBackendConfig(gson)
-    private val notificationsBackendConfig: NotificationsBackendConfig =
-        NotificationsBackendConfig(gson)
-    private val wertBackendConfig = WertBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary = CryptoLibraryReal(gson)
     val appTrackingPreferences = AppTrackingPreferences(App.appContext)
     private val noOpAppTracker: AppTracker = NoOpAppTracker()
@@ -72,6 +56,7 @@ class AppCore(val app: App) {
         runBlocking {
             Session(
                 context = app,
+                gson = gson,
                 activeWallet = walletRepository.getActiveWallet(),
             )
         }
@@ -87,26 +72,6 @@ class AppCore(val app: App) {
     val auth: AppAuth
         get() = setup.auth
 
-    fun getNotificationsBackend(): NotificationsBackend {
-        return notificationsBackendConfig.backend
-    }
-
-    fun getTokensBackend(): TokensBackend {
-        return tokenBackendConfig.backend
-    }
-
-    fun getAirdropBackend(): AirDropBackend {
-        return airdropBackendConfig.backend
-    }
-
-    fun getProxyBackend(): ProxyBackend {
-        return proxyBackendConfig.backend
-    }
-
-    fun getWertBackend(): WertBackend {
-        return wertBackendConfig.backend
-    }
-
     suspend fun startNewSession(
         activeWallet: AppWallet,
         isLoggedIn: Boolean = session.isLoggedIn.value == true,
@@ -118,6 +83,7 @@ class AppCore(val app: App) {
             session.inactivityCountDownTimer.cancel()
             session = Session(
                 context = app,
+                gson = gson,
                 activeWallet = activeWallet,
                 isLoggedIn = isLoggedIn,
             )

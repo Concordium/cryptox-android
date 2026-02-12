@@ -72,10 +72,10 @@ class AccountTransactionsFiltersActivity : BaseActivity(
     private fun initViews() {
         setActionBarTitle(R.string.account_transaction_filters_title)
         binding.exportTransactionLog.isVisible =
-            App.appCore.session.network.ccdScanBackendUrl != null
+            App.appCore.session.isTransactionLogsExportPossible()
         binding.exportTransactionLog.setOnClickListener { exportTransactionLog() }
         binding.optionsLabel.isVisible = binding.exportTransactionLog.isVisible
-        binding.transferFiltersLabel.isVisible =  binding.optionsLabel.isVisible
+        binding.transferFiltersLabel.isVisible = binding.optionsLabel.isVisible
     }
 
     private fun exportTransactionLog() {

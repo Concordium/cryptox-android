@@ -23,18 +23,6 @@ constructor(
     private val gson: Gson = App.appCore.gson,
 ) : Preferences(context, SharedPreferenceFiles.WALLET_SETUP.key + fileNameSuffix) {
 
-    fun areAccountsBackedUp(): Boolean {
-        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)
-    }
-
-    fun setAccountsBackedUp(value: Boolean) {
-        return setBoolean(PREFKEY_ACCOUNTS_BACKED_UP, value)
-    }
-
-    fun addAccountsBackedUpListener(listener: Listener) {
-        addListener(PREFKEY_ACCOUNTS_BACKED_UP, listener)
-    }
-
     /**
      * Saves the seed phrase as its entropy, so it is possible to later get
      * both the seed hex and the seed phrase.
@@ -170,7 +158,6 @@ constructor(
     }
 
     private companion object {
-        const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         const val PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON =
             "PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX_JSON"
         const val PREFKEY_ENCRYPTED_SEED_HEX_JSON = "PREFKEY_ENCRYPTED_SEED_HEX_JSON"

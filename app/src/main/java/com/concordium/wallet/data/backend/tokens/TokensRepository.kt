@@ -4,7 +4,7 @@ import com.concordium.wallet.App
 
 class TokensRepository {
 
-    private val backend = App.appCore.getTokensBackend()
+    private val backend = App.appCore.session.backends.tokens!!
 
     suspend fun getTokens(
         marketplaceDomain: String?,

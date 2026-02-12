@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.common.identity
 
 import android.app.Application
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository

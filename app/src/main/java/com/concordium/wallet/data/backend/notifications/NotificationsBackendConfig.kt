@@ -1,29 +1,32 @@
 package com.concordium.wallet.data.backend.notifications
 
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
 import com.google.gson.Gson
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class NotificationsBackendConfig(val gson: Gson) {
+class NotificationsBackendConfig(
+    val notificationsServiceUrl: HttpUrl,
+    val gson: Gson,
+) {
 
     val retrofit: Retrofit
     val backend: NotificationsBackend
 
     init {
-        retrofit = initializeRetrofit(BuildConfig.URL_NOTIFICATIONS_BASE)
+        retrofit = initializeRetrofit()
         backend = retrofit.create(NotificationsBackend::class.java)
     }
 
-    private fun initializeRetrofit(baseUrl: String): Retrofit {
+    private fun initializeRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(notificationsServiceUrl)
             .client(initializeOkkHttp())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

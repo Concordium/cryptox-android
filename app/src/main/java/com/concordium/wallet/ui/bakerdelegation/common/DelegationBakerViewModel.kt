@@ -148,7 +148,7 @@ class DelegationBakerViewModel(
     val isHasShowReviewDialogAfterEarnSetup: Boolean
         get() = App.appCore.setup.isHasShowReviewDialogAfterEarnSetup
     val canOpenValidatorExplorer: Boolean
-        get() = App.appCore.session.network.ccdScanFrontendUrl != null
+        get() = App.appCore.session.isOpeningExplorerPossible()
 
     fun initialize(bakerDelegationData: BakerDelegationData) {
         this.bakerDelegationData = bakerDelegationData

@@ -1,17 +1,20 @@
 package com.concordium.wallet.data.backend.airdrop
 
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
 import com.google.gson.Gson
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class AirDropBackendConfig(private val gson: Gson) {
+class AirDropBackendConfig(
+    private val spacesevenUrl: HttpUrl,
+    private val gson: Gson,
+) {
 
     private val retrofit: Retrofit
     val backend: AirDropBackend
@@ -23,7 +26,7 @@ class AirDropBackendConfig(private val gson: Gson) {
 
     private fun initializeRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.S7_DOMAIN)
+            .baseUrl(spacesevenUrl)
             .client(initializeOkkHttp())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

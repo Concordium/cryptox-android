@@ -7,25 +7,30 @@ import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.WalletStorage
-import com.concordium.wallet.data.preferences.Preferences
+import com.concordium.wallet.data.backend.AppBackends
 import com.concordium.wallet.data.room.Identity
+import com.google.gson.Gson
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class Session(
     context: Context,
+    gson: Gson,
     val activeWallet: AppWallet,
     isLoggedIn: Boolean = false,
 ) {
     val network = AppNetwork(
         genesisHash = "4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796",
         name = "Concordium Testnet",
-        walletProxyUrl = "https://wallet-proxy.testnet.concordium.com".toHttpUrl(),
-        ccdScanFrontendUrl = "https://testnet.ccdscan.io".toHttpUrl(),
-        ccdScanBackendUrl = "https://api-ccdscan.testnet.concordium.com/rest".toHttpUrl(),
-        notificationsServiceUrl = "https://notification-api.testnet.concordium.com/api".toHttpUrl(),
-        spacesevenUrl = "https://stage.spaceseven.cloud".toHttpUrl(),
+        walletProxyUrl = "https://wallet-proxy.testnet.concordium.com/".toHttpUrl(),
+        ccdScanFrontendUrl = "https://testnet.ccdscan.io/".toHttpUrl(),
+        ccdScanBackendUrl = "https://api-ccdscan.testnet.concordium.com/rest/".toHttpUrl(),
+        notificationsServiceUrl = "https://notification-api.testnet.concordium.com/api/".toHttpUrl(),
+        spacesevenUrl = "https://stage.spaceseven.cloud/".toHttpUrl(),
     )
-
+    val backends = AppBackends(
+        gson = gson,
+        network = network,
+    )
     val walletStorage = WalletStorage(
         activeWallet = activeWallet,
         context = context,
@@ -87,19 +92,11 @@ class Session(
         return activeWallet.type == AppWallet.Type.FILE
     }
 
-    fun areAccountsBackedUp(): Boolean {
-        return walletStorage.setupPreferences.areAccountsBackedUp()
+    fun isOpeningExplorerPossible(): Boolean {
+        return network.ccdScanFrontendUrl != null
     }
 
-    fun setAccountsBackedUp(value: Boolean) {
-        return walletStorage.setupPreferences.setAccountsBackedUp(value)
-    }
-
-    fun addAccountsBackedUpListener(listener: Preferences.Listener) {
-        walletStorage.setupPreferences.addAccountsBackedUpListener(listener)
-    }
-
-    fun removeAccountsBackedUpListener(listener: Preferences.Listener) {
-        walletStorage.setupPreferences.removeListener(listener)
+    fun isTransactionLogsExportPossible(): Boolean {
+        return network.ccdScanBackendUrl != null
     }
 }

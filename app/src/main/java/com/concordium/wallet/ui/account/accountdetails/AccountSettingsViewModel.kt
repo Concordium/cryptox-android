@@ -15,7 +15,7 @@ class AccountSettingsViewModel(application: Application) : AndroidViewModel(appl
     lateinit var account: Account
     var identityName: String = ""
     val canExportTransactionLogs: Boolean
-        get() = App.appCore.session.network.ccdScanBackendUrl != null
+        get() = App.appCore.session.isTransactionLogsExportPossible()
 
     val accountUpdated: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 

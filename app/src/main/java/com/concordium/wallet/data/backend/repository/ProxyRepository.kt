@@ -8,7 +8,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.C
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.AccountBalance
-import com.concordium.wallet.data.model.AccountKeyData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.AccountTransactions
 import com.concordium.wallet.data.model.BakerPoolStatus
@@ -28,7 +27,7 @@ import java.math.BigInteger
 
 class ProxyRepository {
 
-    private val backend = App.appCore.getProxyBackend()
+    private val backend = App.appCore.session.backends.proxy
 
     companion object {
         const val SIMPLE_TRANSFER = "simpleTransfer"
@@ -275,7 +274,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<AccountBalance>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -303,7 +302,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<AccountTransactions>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -327,7 +326,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<SubmissionData>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -338,34 +337,10 @@ class ProxyRepository {
         success: (GlobalParamsWrapper) -> Unit,
         failure: ((Throwable) -> Unit)?,
     ): BackendRequest<GlobalParamsWrapper> {
-        val call = App.appCore.getProxyBackend().getGlobalInfo()
+        val call = backend.getGlobalInfo()
         call.enqueue(object : BackendCallback<GlobalParamsWrapper>() {
 
             override fun onResponseData(response: GlobalParamsWrapper) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-
-        return BackendRequest<GlobalParamsWrapper>(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
-
-    fun getAccountEncryptedKey(
-        accountAddress: String,
-        success: (AccountKeyData) -> Unit,
-        failure: ((Throwable) -> Unit)?,
-    ): BackendRequest<AccountKeyData> {
-        val call = App.appCore.getProxyBackend().getAccountEncryptedKey(accountAddress)
-        call.enqueue(object : BackendCallback<AccountKeyData>() {
-
-            override fun onResponseData(response: AccountKeyData) {
                 success(response)
             }
 

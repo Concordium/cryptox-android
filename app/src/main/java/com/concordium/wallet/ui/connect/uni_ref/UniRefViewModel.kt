@@ -22,7 +22,6 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountData
-import com.concordium.wallet.data.model.AccountKeyData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
@@ -51,7 +50,7 @@ import java.util.Date
 data class WalletData(
     val name: String,
     val address: String,
-    val balance: BigInteger
+    val balance: BigInteger,
 )
 
 class UniRefViewModel(application: Application) : AndroidViewModel(application) {
@@ -70,7 +69,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private var transferSubmissionStatusRequest: BackendRequest<SubmissionStatusResponse>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
-    private var recipientEncryptedKeyRequest: BackendRequest<AccountKeyData>? = null
 
     lateinit var account: Account
     private var isShielded: Boolean = false
@@ -117,7 +115,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         var globalParams: GlobalParams? = null
         var createTransferOutput: CreateTransferOutput? = null
         var accountBalance: AccountBalance? = null
-        var receiverPublicKey: String? = null
         lateinit var origPayload: WsMessageResponse.Payload
         lateinit var messageType: String
     }
@@ -156,7 +153,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
 
     fun initialize(
         payload: WsMessageResponse.Payload,
-        messageType: String
+        messageType: String,
     ) = viewModelScope.launch {
         tempData.messageType = messageType
         tempData.origPayload = payload
@@ -170,7 +167,6 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         if (messageType == WsMessageResponse.MESSAGE_TYPE_SIMPLE_TRANSFER) {
             loadGlobalInfo()
             loadAccountBalance()
-            loadRecipientEncryptedKey()
         }
     }
 
@@ -260,7 +256,8 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         tempData.origPayload.toJson().prettyPrint()
 
     private fun loadAccountNonce() {
-        proxyRepository.getAccountNonce(account.address,
+        proxyRepository.getAccountNonce(
+            account.address,
             {
                 tempData.accountNonce = it
             },
@@ -315,7 +312,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun createTransfer(
         keys: AccountData,
-        encryptionSecretKey: String
+        encryptionSecretKey: String,
     ) {
         // Expiry should be now + 10 minutes (in seconds)
         tempData.expiry =
@@ -403,9 +400,7 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             },
             memo = null,
             global = tempData.globalParams,
-            receiverPublicKey = checkNotNull(tempData.receiverPublicKey) {
-                "The receiver public key must be loaded at this moment"
-            },
+            receiverPublicKey = null,
             senderSecretKey = encryptionSecretKey,
             inputEncryptedAmount = SendFundsViewModel.calculateInputEncryptedAmount(
                 accountBalance = checkNotNull(tempData.accountBalance) {
@@ -449,7 +444,8 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun loadAccountBalance() {
         accountBalanceRequest?.dispose()
-        accountBalanceRequest = proxyRepository.getAccountBalance(account.address,
+        accountBalanceRequest = proxyRepository.getAccountBalance(
+            account.address,
             {
                 tempData.accountBalance = it
             },
@@ -459,24 +455,10 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
         )
     }
 
-    private fun loadRecipientEncryptedKey() {
-        recipientEncryptedKeyRequest?.dispose()
-        recipientEncryptedKeyRequest = proxyRepository.getAccountEncryptedKey(
-            checkNotNull(tempData.origPayload.to) {
-                "There must be a recipient address (to) in the payload"
-            },
-            {
-                tempData.receiverPublicKey = it.accountEncryptionKey
-            },
-            {
-                handleBackendError(it)
-            }
-        )
-    }
-
     private fun submitTransfer(transfer: CreateTransferOutput) {
         submitCredentialRequest?.dispose()
-        submitCredentialRequest = proxyRepository.submitTransfer(transfer,
+        submitCredentialRequest = proxyRepository.submitTransfer(
+            transfer,
             {
                 tempData.submissionId = it.submissionId
                 submissionStatus(it.submissionId)
@@ -489,7 +471,8 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
     private fun submissionStatus(submissionId: String) {
         transferSubmissionStatusRequest?.dispose()
         transferSubmissionStatusRequest =
-            proxyRepository.getSubmissionStatus(submissionId,
+            proxyRepository.getSubmissionStatus(
+                submissionId,
                 {
                     tempData.transferSubmissionStatus = it
                     finishTransferCreation()

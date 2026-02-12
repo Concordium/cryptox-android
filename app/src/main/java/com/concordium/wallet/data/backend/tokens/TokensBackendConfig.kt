@@ -1,10 +1,10 @@
 package com.concordium.wallet.data.backend.tokens
 
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.backend.ModifyHeaderInterceptor
 import com.google.gson.Gson
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
@@ -13,7 +13,10 @@ import java.util.concurrent.TimeUnit
 
 // https://gitlab.com/tacans/spaceseven/services/protocol/proto/-/blob/master/api/v2/nft/api_get_by_address.proto
 
-class TokensBackendConfig(private val gson: Gson) {
+class TokensBackendConfig(
+    private val spacesevenUrl: HttpUrl,
+    private val gson: Gson,
+) {
 
     val retrofit: Retrofit
     val backend: TokensBackend
@@ -25,7 +28,7 @@ class TokensBackendConfig(private val gson: Gson) {
 
     private fun initializeRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.S7_DOMAIN)
+            .baseUrl(spacesevenUrl)
             .client(initializeOkkHttp())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

@@ -36,7 +36,7 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
         get() = _showDetailsLiveData
 
     val canOpenExplorer: Boolean
-        get() = App.appCore.session.network.ccdScanFrontendUrl != null
+        get() = App.appCore.session.isOpeningExplorerPossible()
 
     fun initialize(account: Account, transaction: Transaction) {
         this.account = account
