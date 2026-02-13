@@ -18,6 +18,9 @@ class AppNetwork(
     val isTestnet: Boolean
         get() = genesisHash == "4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796"
 
+    val isStagenet: Boolean
+        get() = genesisHash == "38bf770b4c247f09e1b62982bb71000c516480c5a2c5214dadac6da4b1ad50e5"
+
     val hdWalletNetwork: Network
         get() =
             // For the HD wallet, everything that's not the Mainnet is Testnet.

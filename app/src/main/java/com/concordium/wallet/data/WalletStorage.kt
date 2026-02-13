@@ -39,6 +39,7 @@ class WalletStorage(
     private val networkSpecificFileNameSuffix =
         walletWideFileNameSuffix +
                 if (BuildConfig.FLAVOR == "mainnet" && network.isMainnet
+                    // TODO change to "preview"
                     || BuildConfig.FLAVOR == "tstnet" && network.isTestnet
                 )
                     ""

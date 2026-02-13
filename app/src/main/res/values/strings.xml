@@ -524,7 +524,7 @@
     <string name="wallet_connect_error_response_failed">Could not send the response</string>
     <string name="wallet_connect_error_tx_submit_failed">Could not submit the transaction</string>
     <string name="wallet_connect_error_no_accounts">You must have at least one active account to continue</string>
-    <string name="wallet_connect_error_no_supported_chains">The wallet does not support the requested chains</string>
+    <string name="wallet_connect_error_chain_mismatch">The WalletConnect request doesn\'t match the current network</string>
     <string name="wallet_connect_error_unsupported_methods">The wallet does not support the requested methods</string>
     <string name="wallet_connect_error_internal_error">An internal error occurred</string>
     <string name="wallet_connect_error_not_seed_phrase_wallet">Only seed phrase wallets support this feature</string>

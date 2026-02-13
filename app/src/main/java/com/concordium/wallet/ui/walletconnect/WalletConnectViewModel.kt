@@ -77,12 +77,14 @@ private constructor(
         defaultWalletDelegate = LoggingWalletConnectWalletDelegate(),
     )
 
-    private val allowedChains: Set<String> = buildSet {
+    private val currentNetworkChains: Set<String> = buildSet {
         add("ccd:" + App.appCore.session.network.genesisHash.take(32))
         if (App.appCore.session.network.isMainnet) {
             add("ccd:mainnet")
         } else if (App.appCore.session.network.isTestnet) {
             add("ccd:testnet")
+        } else if (App.appCore.session.network.isStagenet) {
+            add("ccd:stagenet")
         }
     }
     private val wcUriPrefixes = setOf(
@@ -377,7 +379,7 @@ private constructor(
         val singleNamespaceEntry =
             (sessionProposal.requiredNamespaces.entries + sessionProposal.optionalNamespaces.entries)
                 .find { (_, namespace) ->
-                    allowedChains.containsAll(namespace.chains.orEmpty())
+                    currentNetworkChains.containsAll(namespace.chains.orEmpty())
                 }
 
         val proposerPublicKey = sessionProposal.proposerPublicKey
@@ -386,13 +388,13 @@ private constructor(
             Log.e("cant_find_supported_chains")
             mutableEventsFlow.tryEmit(
                 Event.ShowFloatingError(
-                    Error.NoSupportedChains
+                    Error.ChainMismatch
                 )
             )
             rejectSession(
                 proposerPublicKey,
                 "The proposal did not contain a namespace where all chains are supported. " +
-                        "Supported chains are: $allowedChains"
+                        "Supported chains are: $currentNetworkChains"
             )
             return@launch
         }
@@ -655,6 +657,7 @@ private constructor(
         handleSessionRequest(
             topic = sessionRequest.topic,
             id = sessionRequest.request.id,
+            chainId = sessionRequest.chainId ?: "unknown",
             method = sessionRequest.request.method,
             params = sessionRequest.request.params,
             peerMetadata = sessionRequestPeerMetadata
@@ -694,6 +697,7 @@ private constructor(
     private fun handleSessionRequest(
         topic: String,
         id: Long,
+        chainId: String,
         method: String,
         params: String,
         peerMetadata: Core.Model.AppMetaData,
@@ -703,6 +707,22 @@ private constructor(
         this@WalletConnectViewModel.sessionRequestTopic = topic
         this@WalletConnectViewModel.sessionRequestAppMetadata = peerMetadata
             .let(WalletConnectViewModel::AppMetadata)
+
+        if (chainId !in currentNetworkChains) {
+            Log.e("Received a request for a chain not matching the current network: Chain=$chainId")
+
+            respondError(message = "Chain $chainId doesn't match the current wallet network")
+
+            mutableEventsFlow.tryEmit(
+                Event.ShowFloatingError(
+                    Error.ChainMismatch
+                )
+            )
+
+            onSessionRequestHandlingFinished()
+
+            return@launch
+        }
 
         // Find the session that the request matches. The session will allow us to extract
         // the account that the request is for.
@@ -862,6 +882,7 @@ private constructor(
                 .map { session ->
                     SignClient
                         .getPendingSessionRequests(session.topic)
+                        .filter { it.chainId in currentNetworkChains }
                         .filter { pendingRequest ->
                             // Do not include requests just handled.
                             pendingRequest.request.id !in handledRequests
@@ -898,6 +919,7 @@ private constructor(
         handleSessionRequest(
             topic = pendingRequest.topic,
             id = pendingRequest.request.id,
+            chainId = pendingRequest.chainId ?: "unknown",
             method = pendingRequest.request.method,
             params = pendingRequest.request.params,
             peerMetadata = peerMetaData,
@@ -1334,9 +1356,9 @@ private constructor(
         object ConnectionFailed : Error
 
         /**
-         * The dApp sent a session proposal without any supported chains.
+         * The dApp sent a request for a chain that doesn't match the current network.
          */
-        object NoSupportedChains : Error
+        object ChainMismatch : Error
 
         /**
          * The dApp sent a session proposal requesting an unsupported method.

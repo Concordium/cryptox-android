@@ -207,8 +207,8 @@ class WalletConnectView(
                     WalletConnectViewModel.Error.TransactionSubmitFailed ->
                         R.string.wallet_connect_error_tx_submit_failed
 
-                    WalletConnectViewModel.Error.NoSupportedChains ->
-                        R.string.wallet_connect_error_no_supported_chains
+                    WalletConnectViewModel.Error.ChainMismatch ->
+                        R.string.wallet_connect_error_chain_mismatch
 
                     WalletConnectViewModel.Error.UnsupportedMethod ->
                         R.string.wallet_connect_error_unsupported_methods
