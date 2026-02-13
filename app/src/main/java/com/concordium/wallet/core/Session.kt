@@ -20,19 +20,38 @@ class Session(
 ) {
     val network = AppNetwork(
         genesisHash = "4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796",
-        name = "Concordium Testnet",
+        name = "Testnet",
         walletProxyUrl = "https://wallet-proxy.testnet.concordium.com/".toHttpUrl(),
         ccdScanFrontendUrl = "https://testnet.ccdscan.io/".toHttpUrl(),
         ccdScanBackendUrl = "https://api-ccdscan.testnet.concordium.com/rest/".toHttpUrl(),
         notificationsServiceUrl = "https://notification-api.testnet.concordium.com/api/".toHttpUrl(),
         spacesevenUrl = "https://stage.spaceseven.cloud/".toHttpUrl(),
     )
+//    val network = AppNetwork(
+//        genesisHash = "9dd9ca4d19e9393877d2c44b70f89acbfc0883c2243e5eeaecc0d1cd0503f478",
+//        name = "Mainnet",
+//        walletProxyUrl = "https://wallet-proxy.mainnet.concordium.software/".toHttpUrl(),
+//        ccdScanFrontendUrl = "https://ccdscan.io/".toHttpUrl(),
+//        ccdScanBackendUrl = "https://api-ccdscan.mainnet.concordium.software/rest/".toHttpUrl(),
+//        notificationsServiceUrl = "https://notification-api.mainnet.concordium.software/api/".toHttpUrl(),
+//        spacesevenUrl = "https://spaceseven.com/".toHttpUrl(),
+//    )
+//    val network = AppNetwork(
+//        genesisHash = "38bf770b4c247f09e1b62982bb71000c516480c5a2c5214dadac6da4b1ad50e5",
+//        name = "Stagenet",
+//        walletProxyUrl = "https://wallet-proxy.stagenet.concordium.com/".toHttpUrl(),
+//        ccdScanFrontendUrl = "https://stagenet.ccdscan.io/".toHttpUrl(),
+//        ccdScanBackendUrl = null,
+//        notificationsServiceUrl = null,
+//        spacesevenUrl = null,
+//    )
     val backends = AppBackends(
         gson = gson,
         network = network,
     )
     val walletStorage = WalletStorage(
-        activeWallet = activeWallet,
+        wallet = activeWallet,
+        network = network,
         context = context,
     )
     var newIdentities = mutableMapOf<Int, Identity>()
