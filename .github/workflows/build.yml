@@ -27,5 +27,5 @@ jobs:
           java-version: "${{env.java_version}}"
           distribution: corretto
 
-      - name: Build project (Stagenet)
-        run: ./gradlew app:assembleStagenetDebug --stacktrace
+      - name: Build preview
+        run: ./gradlew app:assemblePreviewDebug --stacktrace

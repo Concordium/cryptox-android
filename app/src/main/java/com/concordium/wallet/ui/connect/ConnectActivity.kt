@@ -23,6 +23,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.connect.add_wallet.AddWalletNftActivity
 import com.concordium.wallet.ui.connect.uni_ref.UniRefActivity
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -64,8 +65,8 @@ class ConnectActivity : BaseActivity(R.layout.activity_connect) {
         }
 
         val walletConnectPrefixes = setOf(
-            DEFAULT_WALLET_CONNECT_PREFIX,
-            "${getString(R.string.wc_scheme)}:",
+            WalletConnectViewModel.WC_URI_PREFIX,
+            WalletConnectViewModel.SPECIFIC_WC_URI_PREFIX
         )
         val supportedPrefixes = walletConnectPrefixes + MARKETPLACE_CONNECT_PREFIX
 

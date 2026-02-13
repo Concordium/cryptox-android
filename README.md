@@ -29,9 +29,8 @@ and organizations that require a reliable, efficient, and regulatory-compliant b
 The Concordium wallet was formerly known as "CryptoX".
 
 ## Download
-| Mainnet| Testnet|
-|:------:|:------:|
-|[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet&hl=en) &#124; [GitHub](https://github.com/Concordium/cryptox-android/releases/latest)|[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet.testnet&hl=en) &#124; [GitHub](https://github.com/Concordium/cryptox-android/releases/latest)|
+[Google Play](https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet&hl=en)
+[GitHub](https://github.com/Concordium/cryptox-android/releases/latest)
 
 *APKs attached to GitHub releases have signature different from the packages distributed through GooglePlay, therefore can't be installed over each other without manual uninstall.*
 
@@ -40,19 +39,19 @@ The Concordium wallet was formerly known as "CryptoX".
 Concordium Wallet can establish WalletConnect sessions initiated by [Wallet Connectors from the JS SDK](https://github.com/Concordium/concordium-node-sdk-js/tree/main/packages/wallet-connectors). 
 If you can't use the JS SDK, you can implement WalletConnect flow manually using the JS SDK as a reference implementation.
 
-On the device, the wallet responds to a general `wc:` or an explicit `cryptox-wc:` (or `cryptox-wc-testnet:` for Testnet) URI schemes.
+On the device, the wallet responds to a general `wc:` or an explicit `cryptox-wc:` URI schemes.
 Launching a `wc:` URI may require the user to select which app to use if they have multiple crypto wallets installed,
-while a `cryptox-wc:` (or `cryptox-wc-testnet:` for Testnet) URI explicitly launches Concordium Wallet.
+while a `cryptox-wc:` URI explicitly launches Concordium Wallet.
 
 To launch Concordium Wallet for WalletConnect session establishment from your app, either use:
 - An original `wc:` URI provided by WalletConnect or Concordium JS SDK
-- An explicit `cryptox-wc://wc?uri=...` (or `cryptox-wc-testnet:` for Testnet) URI, where the `uri` query param is the URL-encoded original `wc:` URI
+- An explicit `cryptox-wc://wc?uri=...` URI, where the `uri` query param is the URL-encoded original `wc:` URI
 
 The same URI can be turned into a QR code and scanned with the QR scanner from the Concordium Wallet main screen.
 
 To launch Concordium Wallet for WalletConnect session request handling (signing transaction, creating an ID proof) from your app, either use:
 - An original `wc:` URI provided by Concordium JS SDK
-- An explitit app redirect URI from the WalletConnect session metadata, adding `requestId` query parameter with the WalletConnect request ID (large number). For example, `cryptox-wc://r?requestId=1759846918165693`. Do not hardcode this URI, use the one from the session metadata.
+- An explicit app redirect URI from the WalletConnect session metadata, adding `requestId` query parameter with the WalletConnect request ID (large number). For example, `cryptox-wc://r?requestId=1759846918165693`. Do not hardcode this URI, use the one from the session metadata.
 
 To make Concordium Wallet go back to your app or the browser once the request handling is finished,
 add the `go_back=true` query parameter to the URI you launch.
@@ -64,14 +63,12 @@ A good example of WalletConnect integration is the [Testnet WalletConnect test b
 The app requires Java 17 JDK for development.
 
 ### Build variants
-- Testnet (`tstnet`) – Public Concordium test network, fake funds and identities. Spaceseven stage
-- Stagenet (`stagenet`) – Unstable Concordium test network, fake funds and identities.
-No Spaceseven instance
-- Mainnet (`mainnet`) – Public Concordium network, real funds and identities. Spaceseven production
+- Stable (`stable`) – A build that is tested and ready for Mainnet
+- Preview (`preview`) – A build that may contain unstable features or features not yet live on Mainnet
 
 ### Distribution for internal testing
 Builds for internal testing tagged as QA (`-qa.X`) are assembled and distributed through Firebase App distribution by the [corresponding pipeline](.github/workflows/firebase_internal_testing.yml).
-Update the version in `main`, tag the commit with the version name and push the changes.
+Update the version in `main` or the release branch, tag the commit with the version name and push the changes.
 
 [Track the Internal testing pipeline](https://github.com/Concordium/cryptox-android/deployments/Internal%20testing)
 
@@ -80,9 +77,10 @@ APKs can be downloaded from the GitHub workflow artifacts or from the Firebase c
 This project is tested with BrowserStack.
 
 ### Building for release
-Builds for releases tagged with semver version (`X.Y.Z`) or release candidate (`-rc.X`) 
-are assembled by the [corresponding pipeline](.github/workflows/release_build.yml). 
-Update the version in `main`, tag the commit with the version name and push the changes.
+Builds for releases are tagged with semver version (`X.Y.Z`) for stable release,
+or with release candidate version (`X.Y.Z-rc.X`) for preview release. 
+They are assembled by the [corresponding pipeline](.github/workflows/release_build.yml). 
+Update the version in `main` or the release branch, tag the commit with the version name and push the changes.
 
 [Track the Release pipeline](https://github.com/Concordium/cryptox-android/deployments/Releases)
 

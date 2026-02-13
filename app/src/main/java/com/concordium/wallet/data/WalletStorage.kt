@@ -35,13 +35,9 @@ class WalletStorage(
             "_${wallet.id}"
 
     // Primary network for the build flavour has no suffix for backward compatibility.
-    @Suppress("KotlinConstantConditions")
     private val networkSpecificFileNameSuffix =
         walletWideFileNameSuffix +
-                if (BuildConfig.FLAVOR == "mainnet" && network.isMainnet
-                    // TODO change to "preview"
-                    || BuildConfig.FLAVOR == "tstnet" && network.isTestnet
-                )
+                if (BuildConfig.DEFAULT_NETWORK_GENESIS_HASH == network.genesisHash)
                     ""
                 else
                     "_${network.genesisHash}"

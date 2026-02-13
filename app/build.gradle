@@ -10,7 +10,6 @@ plugins {
 }
 
 def SCHEME_BASE = "cryptoxmwallet"
-def WC_SCHEME_BASE = "cryptox-wc"
 def PROVIDER_AUTHORITY_BASE = "com.pioneeringtechventures.wallet.DataFileProvider"
 
 def configurableSigningProperties = new Properties()
@@ -82,40 +81,20 @@ android {
     buildFeatures {
         viewBinding true
         buildConfig true
-        flavorDimensions += "network"
+        flavorDimensions += "channel"
     }
 
     productFlavors {
-        // Public Concordium test network, fake funds and identities. Spaceseven stage.
-        // It is called 'tstnet' because flavour names can't start with 'test'
-        tstnet {
-            dimension "network"
+        // Stable channel – tested and ready for Mainnet.
+        stable {
+            dimension "channel"
 
-            applicationIdSuffix ".testnet"
-
-            def scheme = SCHEME_BASE + "-testnet"
-            buildConfigField("String", "SCHEME", "\"${scheme}\"")
-            resValue "string", "scheme", "\"${scheme}\""
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE + "-testnet"}\""
-
-            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-testnet"
-            resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
-            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
-
-            firebaseAppDistribution {
-                appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
-                groups = "concordium-team"
-            }
-        }
-
-        // Public Concordium network, real funds and identities. Spaceseven production.
-        mainnet {
-            dimension "network"
+            // Default network for the stable build is Mainnet.
+            buildConfigField("String", "DEFAULT_NETWORK_GENESIS_HASH", "\"9dd9ca4d19e9393877d2c44b70f89acbfc0883c2243e5eeaecc0d1cd0503f478\"")
 
             def scheme = SCHEME_BASE
             buildConfigField("String", "SCHEME", "\"${scheme}\"")
             resValue "string", "scheme", "\"${scheme}\""
-            resValue "string", "wc_scheme", "\"${WC_SCHEME_BASE}\""
 
             def providerAuthority = PROVIDER_AUTHORITY_BASE
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
@@ -123,6 +102,30 @@ android {
 
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
+                groups = "concordium-team"
+            }
+        }
+
+        // Preview channel – unstable features or features not yet live on Mainnet.
+        preview {
+            dimension "channel"
+
+            // Default network for the preview build is Testnet.
+            buildConfigField("String", "DEFAULT_NETWORK_GENESIS_HASH", "\"4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796\"")
+
+            // Keep "-testnet" for backward compatibility, used to be a Testnet wallet.
+            applicationIdSuffix ".testnet"
+
+            def scheme = SCHEME_BASE + "-preview"
+            buildConfigField("String", "SCHEME", "\"${scheme}\"")
+            resValue "string", "scheme", "\"${scheme}\""
+
+            def providerAuthority = PROVIDER_AUTHORITY_BASE + "-preview"
+            resValue "string", "provider_authority", "\"${providerAuthority}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
+
+            firebaseAppDistribution {
+                appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
                 groups = "concordium-team"
             }
         }

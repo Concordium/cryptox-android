@@ -8,7 +8,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.R
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -89,7 +88,7 @@ private constructor(
     }
     private val wcUriPrefixes = setOf(
         WC_URI_PREFIX,
-        "${application.getString(R.string.wc_scheme)}:",
+        SPECIFIC_WC_URI_PREFIX,
     )
     private val allowedRequestMethods = setOf(
         WalletConnectSignTransactionRequestHandler.METHOD,
@@ -1447,8 +1446,9 @@ private constructor(
         object GoBack : Event
     }
 
-    private companion object {
-        private const val WC_URI_PREFIX = "wc:"
+    companion object {
+        const val WC_URI_PREFIX = "wc:"
+        const val SPECIFIC_WC_URI_PREFIX = "cryptox-wc:"
         private const val WC_URI_REQUEST_ID_PARAM = "requestId"
         private const val DEFAULT_ERROR_RESPONSE_CODE = 500
         private const val WC_GO_BACK_PARAM = "go_back=true"

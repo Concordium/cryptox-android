@@ -84,10 +84,10 @@ class App : Application() {
         val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
         val appMetaData = Core.Model.AppMetaData(
             name = getString(R.string.app_name),
-            description = "CryptoX - Blockchain Wallet",
+            description = "Concordium blockchain wallet",
             url = "https://play.google.com/store/apps/details?id=com.pioneeringtechventures.wallet",
             icons = listOf(),
-            redirect = "${getString(R.string.wc_scheme)}://r"
+            redirect = "cryptox-wc://r"
         )
 
         CoreClient.initialize(
