@@ -90,6 +90,7 @@ android {
             dimension "channel"
 
             // Default network for the stable build is Mainnet.
+            // Must not be changed for backward compatibility.
             buildConfigField("String", "DEFAULT_NETWORK_GENESIS_HASH", "\"9dd9ca4d19e9393877d2c44b70f89acbfc0883c2243e5eeaecc0d1cd0503f478\"")
 
             def scheme = SCHEME_BASE
@@ -111,6 +112,7 @@ android {
             dimension "channel"
 
             // Default network for the preview build is Testnet.
+            // Must not be changed for backward compatibility.
             buildConfigField("String", "DEFAULT_NETWORK_GENESIS_HASH", "\"4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796\"")
 
             // Keep "-testnet" for backward compatibility, used to be a Testnet wallet.

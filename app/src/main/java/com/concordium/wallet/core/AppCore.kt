@@ -6,10 +6,13 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
+import com.concordium.wallet.core.migration.NetworkSwitchMigration
 import com.concordium.wallet.core.migration.TwoWalletsMigration
+import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.core.tracking.NoOpAppTracker
+import com.concordium.wallet.data.AppNetworkRepository
 import com.concordium.wallet.data.AppWalletRepository
 import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.preferences.AppSetupPreferences
@@ -47,10 +50,19 @@ class AppCore(val app: App) {
                 }
             }
         }
+
+        with(NetworkSwitchMigration(app)) {
+            runBlocking {
+                if (isAppDatabaseMigrationNeeded()) {
+                    migrateAppDatabaseOnce()
+                }
+            }
+        }
     }
 
     val database = AppDatabase.getDatabase(app)
     val walletRepository = AppWalletRepository(database.appWalletDao())
+    val networkRepository = AppNetworkRepository(database.appNetworkDao())
 
     var session: Session =
         runBlocking {
@@ -58,6 +70,7 @@ class AppCore(val app: App) {
                 context = app,
                 gson = gson,
                 activeWallet = walletRepository.getActiveWallet(),
+                network = networkRepository.getActiveNetwork(),
             )
         }
         private set
@@ -74,6 +87,7 @@ class AppCore(val app: App) {
 
     suspend fun startNewSession(
         activeWallet: AppWallet,
+        network: AppNetwork = session.network,
         isLoggedIn: Boolean = session.isLoggedIn.value == true,
     ) = suspendCoroutine { continuation ->
         // Session must be created in the main thread as it contains logout timer.
@@ -85,6 +99,7 @@ class AppCore(val app: App) {
                 context = app,
                 gson = gson,
                 activeWallet = activeWallet,
+                network = network,
                 isLoggedIn = isLoggedIn,
             )
 

@@ -2,10 +2,12 @@ package com.concordium.wallet.core.multinetwork
 
 import com.concordium.sdk.crypto.wallet.Network
 import okhttp3.HttpUrl
+import java.util.Date
 
 class AppNetwork(
     val genesisHash: String,
     val name: String,
+    val createdAt: Date,
     val walletProxyUrl: HttpUrl,
     val ccdScanFrontendUrl: HttpUrl?,
     val ccdScanBackendUrl: HttpUrl?,

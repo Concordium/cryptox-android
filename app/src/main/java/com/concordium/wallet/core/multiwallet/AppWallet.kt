@@ -36,6 +36,10 @@ private constructor(
         return id.hashCode()
     }
 
+    override fun toString(): String {
+        return "AppWallet(id='$id', type=$type)"
+    }
+
     enum class Type {
         FILE,
         SEED,
