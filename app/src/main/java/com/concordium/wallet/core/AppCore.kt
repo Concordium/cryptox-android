@@ -86,7 +86,7 @@ class AppCore(val app: App) {
         get() = setup.auth
 
     suspend fun startNewSession(
-        activeWallet: AppWallet,
+        activeWallet: AppWallet = session.activeWallet,
         network: AppNetwork = session.network,
         isLoggedIn: Boolean = session.isLoggedIn.value == true,
     ) = suspendCoroutine { continuation ->

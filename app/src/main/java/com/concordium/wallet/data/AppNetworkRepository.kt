@@ -12,4 +12,12 @@ class AppNetworkRepository(
         appNetworkDao
             .getActive()
             .toNetwork()
+
+    suspend fun activate(
+        newActiveNetwork: AppNetwork,
+    ) {
+        appNetworkDao.activate(
+            genesisHash = newActiveNetwork.genesisHash,
+        )
+    }
 }
