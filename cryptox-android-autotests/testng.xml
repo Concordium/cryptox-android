@@ -15,6 +15,9 @@
             <class name="cryptox_AndroidTest.Transactions.PLTTransactions"/>
             <class name="cryptox_AndroidTest.Settings.settingsCases"/>
             <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases"/>
+            <class name="cryptox_AndroidTest.AccountCreation.AccountCreation"/>
+            <class name="cryptox_AndroidTest.Settings.settingsCases"/>
+            <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountThroughFileWallet"/>
         </classes>
     </test>
 </suite>
