@@ -2,6 +2,8 @@ package com.concordium.wallet.core.multinetwork
 
 import com.concordium.wallet.App
 import com.concordium.wallet.core.AppCore
+import com.concordium.wallet.util.Log
+import com.google.firebase.messaging.FirebaseMessaging
 
 class SwitchNetworkUseCase {
 
@@ -15,6 +17,11 @@ class SwitchNetworkUseCase {
     suspend operator fun invoke(
         newNetwork: AppNetwork,
     ) {
+        try {
+            FirebaseMessaging.getInstance().deleteToken()
+        } catch (error: Exception) {
+            Log.e("failed_deleting_notification_token", error)
+        }
         App.appCore.networkRepository.activate(newNetwork)
         App.appCore.startNewSession(
             network = newNetwork,

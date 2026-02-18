@@ -3,6 +3,8 @@ package com.concordium.wallet.core.multiwallet
 import com.concordium.wallet.App
 import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.core.multinetwork.AppNetwork
+import com.concordium.wallet.util.Log
+import com.google.firebase.messaging.FirebaseMessaging
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.util.Date
 
@@ -45,6 +47,11 @@ class AddAndActivateNetworkUseCase {
             spacesevenUrl = null,
         )
 
+        try {
+            FirebaseMessaging.getInstance().deleteToken()
+        } catch (error: Exception) {
+            Log.e("failed_deleting_notification_token", error)
+        }
         App.appCore.networkRepository.addAndActivate(newNetwork)
         App.appCore.startNewSession(
             network = newNetwork,
