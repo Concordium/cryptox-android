@@ -50,7 +50,7 @@ public class RecoverAccountThroughFileWallet {
     }
 
     @Test
-    public void restoreWalletFromFileTest() throws IOException {
+    public void import_wallet_through_File() throws IOException {
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 20));
