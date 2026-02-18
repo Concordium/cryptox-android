@@ -2,6 +2,7 @@ package com.concordium.wallet.data
 
 import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.data.room.app.AppNetworkDao
+import com.concordium.wallet.data.room.app.AppNetworkEntity
 
 class AppNetworkRepository(
     private val appNetworkDao: AppNetworkDao,
@@ -12,6 +13,17 @@ class AppNetworkRepository(
         appNetworkDao
             .getActive()
             .toNetwork()
+
+    suspend fun addAndActivate(
+        newNetwork: AppNetwork,
+    ) {
+        appNetworkDao.insertAndActivate(
+            network = AppNetworkEntity(
+                network = newNetwork,
+                isActive = true,
+            ),
+        )
+    }
 
     suspend fun activate(
         newActiveNetwork: AppNetwork,
