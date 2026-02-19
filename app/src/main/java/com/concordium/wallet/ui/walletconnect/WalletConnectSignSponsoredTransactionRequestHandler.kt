@@ -15,18 +15,21 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.walletconnect.AccountTransactionParams
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import kotlin.jvm.optionals.getOrNull
@@ -112,7 +115,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                         amount = BigInteger(1, payload.amount.value.bytes),
                         maxEnergy = null,
                         maxContractExecutionEnergy = null,
-                        message = "",
+                        message = payload.param.bytes.toHexString(),
                         receiveName = payload.receiveName.toString(),
                     )
                 }
@@ -340,7 +343,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
             .submissionId
     }
 
-    fun onShowDetailsClicked() {
+    suspend fun onShowDetailsClicked() {
 
         when (val transactionPayload = this.transactionPayload) {
             is AccountTransactionPayload.PltTransfer -> {
@@ -355,8 +358,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                 )
             }
 
-            is AccountTransactionPayload.Transfer,
-            is AccountTransactionPayload.Update,
+            is AccountTransactionPayload.Transfer
                 -> {
                 Log.w("Nothing to show as details for ${transactionPayload::class.simpleName}")
 
@@ -364,6 +366,37 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     Event.ShowDetailsDialog(
                         title = getTransactionMethodName(transactionPayload),
                         prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
+                    )
+                )
+            }
+
+            is AccountTransactionPayload.Update -> {
+                val transactionParamSchema =
+                    AccountTransactionParams
+                        .fromSessionRequestParams(transactionPayload.message)
+                        .schema
+
+                val prettyPrintParams = if (transactionParamSchema != null)
+                    App.appCore.cryptoLibrary
+                        .parameterToJson(
+                            ParameterToJsonInput(
+                                parameter = transactionPayload.message,
+                                receiveName = transactionPayload.receiveName,
+                                schema = transactionParamSchema,
+                                schemaVersion = transactionParamSchema.version,
+                            )
+                        )
+                        ?.prettyPrint()
+                        ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
+                else if (transactionPayload.message == "")
+                    context.getString(R.string.wallet_connect_transaction_request_no_parameters)
+                else
+                    context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
+
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = getTransactionMethodName(transactionPayload),
+                        prettyPrintDetails = prettyPrintParams
                     )
                 )
             }
