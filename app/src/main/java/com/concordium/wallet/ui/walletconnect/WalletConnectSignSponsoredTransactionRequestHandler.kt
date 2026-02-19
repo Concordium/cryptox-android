@@ -24,6 +24,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.walletconnect.AccountTransactionParams
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
+import com.concordium.wallet.data.walletconnect.Schema
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
@@ -48,6 +49,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
     private lateinit var account: Account
     private lateinit var partiallySignedTransaction: PartiallySignedSponsoredTransaction
     private lateinit var transactionPayload: AccountTransactionPayload
+    private var transactionSchema: Schema? = null
 
     suspend fun start(
         params: String,
@@ -162,6 +164,9 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
         this.account = account
         this.partiallySignedTransaction = partiallySignedTransaction
         this.transactionPayload = transactionPayload
+        this.transactionSchema = AccountTransactionParams
+            .fromSessionRequestParams(params)
+            .schema
 
         loadDataAndPresentReview(appMetadata)
     }
@@ -371,27 +376,26 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
             }
 
             is AccountTransactionPayload.Update -> {
-                val transactionParamSchema =
-                    AccountTransactionParams
-                        .fromSessionRequestParams(transactionPayload.message)
-                        .schema
-
-                val prettyPrintParams = if (transactionParamSchema != null)
-                    App.appCore.cryptoLibrary
-                        .parameterToJson(
-                            ParameterToJsonInput(
-                                parameter = transactionPayload.message,
-                                receiveName = transactionPayload.receiveName,
-                                schema = transactionParamSchema,
-                                schemaVersion = transactionParamSchema.version,
+                val prettyPrintParams = when {
+                    transactionSchema != null ->
+                        App.appCore.cryptoLibrary
+                            .parameterToJson(
+                                ParameterToJsonInput(
+                                    parameter = transactionPayload.message,
+                                    receiveName = transactionPayload.receiveName,
+                                    schema = transactionSchema!!,
+                                    schemaVersion = transactionSchema?.version,
+                                )
                             )
-                        )
-                        ?.prettyPrint()
-                        ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
-                else if (transactionPayload.message == "")
-                    context.getString(R.string.wallet_connect_transaction_request_no_parameters)
-                else
-                    context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
+                            ?.prettyPrint()
+                            ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
+
+                    transactionPayload.message == "" ->
+                        context.getString(R.string.wallet_connect_transaction_request_no_parameters)
+
+                    else ->
+                        context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
+                }
 
                 emitEvent(
                     Event.ShowDetailsDialog(
