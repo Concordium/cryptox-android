@@ -9,6 +9,7 @@ import com.concordium.sdk.transactions.TokenUpdate
 import com.concordium.sdk.transactions.TransactionFactory
 import com.concordium.sdk.transactions.TransactionSigner
 import com.concordium.sdk.transactions.Transfer
+import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.transactions.tokens.TransferTokenOperation
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -16,6 +17,7 @@ import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.CCDToken
+import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -96,11 +98,22 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     AccountTransactionPayload.PltTransfer(
                         tokenId = payload.tokenSymbol,
                         transfer =
-                        payload
-                            .operations
-                            .takeIf { it.size == 1 }
-                            ?.let { it[0] as? TransferTokenOperation }
-                            ?: error("The wallet only supports a single token transfer"),
+                            payload
+                                .operations
+                                .takeIf { it.size == 1 }
+                                ?.let { it[0] as? TransferTokenOperation }
+                                ?: error("The wallet only supports a single token transfer"),
+                    )
+                }
+
+                is UpdateContract -> {
+                    AccountTransactionPayload.Update(
+                        address = payload.contractAddress,
+                        amount = BigInteger(1, payload.amount.value.bytes),
+                        maxEnergy = null,
+                        maxContractExecutionEnergy = null,
+                        message = "",
+                        receiveName = payload.receiveName.toString(),
                     )
                 }
 
@@ -160,9 +173,8 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
         try {
             token = try {
                 when (val transactionPayload = this.transactionPayload) {
-                    is AccountTransactionPayload.Transfer,
-                    is AccountTransactionPayload.Update,
-                    ->
+                    is AccountTransactionPayload.Transfer
+                        ->
                         CCDToken(
                             account = account,
                             withTotalBalance = true,
@@ -182,6 +194,23 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                                         && it.tokenId == transactionPayload.tokenId
                             }
                             ?: error("Missing the requested token ${transactionPayload.tokenId}")
+
+                    is AccountTransactionPayload.Update ->
+                        tokensInteractor
+                            .loadTokens(
+                                accountAddress = account.address,
+                                loadBalances = true,
+                                onlyTransferable = true,
+                                addCCDToken = false,
+                            )
+                            .getOrThrow()
+                            .firstOrNull {
+                                it is ContractToken &&
+                                        it.run { "$contractIndex, $subIndex" } ==
+                                        transactionPayload.address.run { "$index, $subIndex" }
+                            }
+                            ?: error("Missing the requested token ${transactionPayload.address.run { "$index, $subIndex" }}")
+
                 }
             } catch (error: Exception) {
                 Log.e("failed_loading_token", error)
@@ -328,7 +357,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
 
             is AccountTransactionPayload.Transfer,
             is AccountTransactionPayload.Update,
-            -> {
+                -> {
                 Log.w("Nothing to show as details for ${transactionPayload::class.simpleName}")
 
                 emitEvent(
@@ -353,8 +382,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
         when (transactionPayload) {
             is AccountTransactionPayload.Transfer,
             is AccountTransactionPayload.PltTransfer,
-            ->
-                context.getString(R.string.transaction_type_transfer)
+                -> context.getString(R.string.transaction_type_transfer)
 
             is AccountTransactionPayload.Update ->
                 transactionPayload.receiveName

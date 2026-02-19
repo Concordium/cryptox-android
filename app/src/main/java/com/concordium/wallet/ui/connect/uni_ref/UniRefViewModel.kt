@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.sdk.types.ContractAddress
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
@@ -15,7 +16,6 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.backend.ws.WsTransport
-import com.concordium.wallet.data.cryptolib.ContractAddress
 import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
@@ -358,10 +358,10 @@ class UniRefViewModel(application: Application) : AndroidViewModel(application) 
             },
             payload = AccountTransactionPayload.Update(
                 address = ContractAddress(
-                    index = checkNotNull(tempData.origPayload.contractAddress?.index?.toInt()) {
+                    checkNotNull(tempData.origPayload.contractAddress?.index?.toLong()) {
                         "There must be a contract index in the payload"
                     },
-                    subIndex = checkNotNull(tempData.origPayload.contractAddress?.subIndex?.toInt()) {
+                    checkNotNull(tempData.origPayload.contractAddress?.subIndex?.toLong()) {
                         "There must be a contract subindex in the payload"
                     },
                 ),
