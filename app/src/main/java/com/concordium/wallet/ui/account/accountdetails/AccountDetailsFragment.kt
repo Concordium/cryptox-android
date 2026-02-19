@@ -13,8 +13,11 @@ import android.view.animation.AccelerateInterpolator
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.core.multinetwork.SwitchNetworkUseCase
 import com.concordium.wallet.core.rating.ReviewHelper
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.TransactionStatus
@@ -23,6 +26,7 @@ import com.concordium.wallet.databinding.FragmentAccountDetailsBinding
 import com.concordium.wallet.databinding.FragmentOnboardingBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.extension.showSingle
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountsoverview.AccountBalanceCardView
 import com.concordium.wallet.ui.account.accountsoverview.AccountBalanceViewModel
@@ -40,7 +44,9 @@ import com.concordium.wallet.ui.seed.reveal.SavedSeedPhraseRevealActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -80,6 +86,26 @@ class AccountDetailsFragment : BaseFragment() {
         initializeViewModels()
         initViews()
         initToolbar()
+
+        binding.currentNetwork.text = "Current network: ${App.appCore.session.network.name}"
+        binding.switchToTestnet.setOnClickListener {
+            lifecycleScope.launch {
+                val testnet = App.appCore.networkRepository.getNetworksFlow().first()
+                    .first { it.isTestnet }
+                SwitchNetworkUseCase().invoke(testnet)
+                requireActivity().finishAffinity()
+                requireActivity().startActivity(Intent(requireActivity(), MainActivity::class.java))
+            }
+        }
+        binding.switchToStagenet.setOnClickListener {
+            lifecycleScope.launch {
+                val stagenet = App.appCore.networkRepository.getNetworksFlow().first()
+                    .first { it.isStagenet }
+                SwitchNetworkUseCase().invoke(stagenet)
+                requireActivity().finishAffinity()
+                requireActivity().startActivity(Intent(requireActivity(), MainActivity::class.java))
+            }
+        }
     }
 
     override fun onResume() {

@@ -47,6 +47,16 @@ class NetworkSwitchMigration(
                 notificationsServiceUrl = "https://notification-api.testnet.concordium.com/api/".toHttpUrl(),
                 spacesevenUrl = "https://stage.spaceseven.cloud/".toHttpUrl(),
             ),
+            AppNetwork(
+                genesisHash = "38bf770b4c247f09e1b62982bb71000c516480c5a2c5214dadac6da4b1ad50e5",
+                name = "Stagenet",
+                createdAt = Date(2),
+                walletProxyUrl = "https://wallet-proxy.stagenet.concordium.com/".toHttpUrl(),
+                ccdScanFrontendUrl = "https://stagenet.ccdscan.io/".toHttpUrl(),
+                ccdScanBackendUrl = null,
+                notificationsServiceUrl = "https://notification-api.stagenet.concordium.com/api/".toHttpUrl(),
+                spacesevenUrl = null,
+            ),
         )
 
         appNetworkDao.insert(
