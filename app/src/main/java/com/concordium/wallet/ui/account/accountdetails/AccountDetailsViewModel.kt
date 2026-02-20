@@ -10,6 +10,7 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.multiwallet.AppWallet
+import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.TransferRepository
@@ -118,6 +119,9 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         MutableSharedFlow<Unit>(replay = 0, extraBufferCapacity = 1)
     val showOnboardingNotificationDialog = _showOnboardingNotificationDialog.asSharedFlow()
 
+    private val updateNotificationsSubscriptionUseCase
+            by lazy(::UpdateNotificationsSubscriptionUseCase)
+
     var hasPendingBakingTransactions = false
         private set
     var hasPendingDelegationTransactions = false
@@ -135,6 +139,7 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
                 it?.let(::updateAccount)
             }
         }
+        updateNotificationSubscription()
     }
 
     val isSeedPhraseBackupBannerVisible: Boolean
@@ -484,6 +489,12 @@ class AccountDetailsViewModel(mainViewModel: MainViewModel, application: Applica
         if (elapsedDays >= 180 && App.appCore.setup.isHasShowReviewDialogAfterHalfYear.not()) {
             App.appCore.setup.setHasShowReviewDialogAfterHalfYear(true)
             _showReviewDialog.postValue(Event(true))
+        }
+    }
+
+    private fun updateNotificationSubscription() {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateNotificationsSubscriptionUseCase()
         }
     }
 }
