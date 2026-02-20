@@ -23,10 +23,10 @@ android {
     // This project uses semantic versioning
     // https://semver.org/
     def versionMajor = 1
-    def versionMinor = 17
+    def versionMinor = 18
     def versionPatch = 0
     def versionMeta = ""
-    def versionCodeIncremental = 1494
+    def versionCodeIncremental = 1498
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
