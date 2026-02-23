@@ -50,7 +50,7 @@ public class RecoverAccountThroughFileWallet {
     }
 
     @Test
-    public void import_wallet_through_File() throws IOException {
+    public void import_wallet_through_File() throws IOException, InterruptedException {
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 20));
@@ -63,8 +63,10 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("confirm_button", 200));
+        Assert.assertTrue(waitForLoaderToDisappear("message_text_view", 180));
+        Assert.assertTrue(WaitForElement("confirm_button", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         log.info("successfully recovered Account");
     }
+
 }
