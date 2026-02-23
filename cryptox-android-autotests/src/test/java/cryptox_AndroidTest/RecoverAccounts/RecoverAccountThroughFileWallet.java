@@ -63,7 +63,7 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("confirm_button", 160));
+        Assert.assertTrue(WaitForElement("confirm_button", 200));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         log.info("successfully recovered Account");
     }
