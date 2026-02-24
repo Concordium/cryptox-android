@@ -14,7 +14,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.DelicateCoroutinesApi
 
-class ConnectActivity : BaseActivity(R.layout.activity_connect) {
+class ConnectActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
