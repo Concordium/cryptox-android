@@ -23,10 +23,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.concordium.wallet.App
-import com.concordium.wallet.Constants
-import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
-import com.concordium.wallet.Constants.Extras.EXTRA_AIR_DROP_PAYLOAD
-import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
 import com.concordium.wallet.Constants.Extras.EXTRA_QR_CONNECT
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
@@ -35,9 +31,7 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsListFragment
-import com.concordium.wallet.ui.airdrop.AirdropActivity
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
-import com.concordium.wallet.ui.connect.ConnectActivity
 import com.concordium.wallet.ui.scanqr.ScanQRActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
@@ -91,7 +85,6 @@ abstract class BaseActivity(
         toastLayoutTopError = findViewById(R.id.toastLayoutTopError)
         toolbar = findViewById(R.id.toolbar)
         titleView = toolbar?.findViewById(R.id.toolbar_title)
-        searchView = toolbar?.findViewById(R.id.search_tokens_view)
         setSupportActionBar(toolbar)
 
         backBtn = toolbar?.findViewById(R.id.toolbar_back_btn)
@@ -280,17 +273,10 @@ abstract class BaseActivity(
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val data = result.data?.extras
-                val isAddContact = data?.let(ScanQRActivity.Companion::isAddContact)
                 val qrData = data?.let(ScanQRActivity.Companion::getScannedQrContent)
                     ?: return@registerForActivityResult
 
-                if (qrData.startsWith(Constants.QRPrefix.AIR_DROP)) { // airdrop://stage.spaceseven.cloud/api/v2/airdrop/register-wallet/3446112874593
-                    Intent(applicationContext, AirdropActivity::class.java).also {
-                        it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        it.putExtra(EXTRA_AIR_DROP_PAYLOAD, qrData)
-                        startActivity(it)
-                    }
-                } else if (App.appCore.cryptoLibrary.checkAccountAddress(qrData)) {
+                if (App.appCore.cryptoLibrary.checkAccountAddress(qrData)) {
                     val knownRecipient: Recipient? = runBlocking {
                         RecipientRepository(App.appCore.session.walletStorage.database.recipientDao())
                             .getRecipientByAddress(qrData)
@@ -309,13 +295,6 @@ abstract class BaseActivity(
                         )
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(intent)
-                } else {
-                    Intent(applicationContext, ConnectActivity::class.java).also {
-                        it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        it.putExtra(EXTRA_CONNECT_URL, qrData)
-                        it.putExtra(EXTRA_ADD_CONTACT, isAddContact)
-                        startActivity(it)
-                    }
                 }
             }
         }

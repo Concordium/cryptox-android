@@ -64,10 +64,9 @@ A good example of WalletConnect integration is the [Testnet WalletConnect test b
 The app requires Java 17 JDK for development.
 
 ### Build variants
-- Testnet (`tstnet`) – Public Concordium test network, fake funds and identities. Spaceseven stage
+- Testnet (`tstnet`) – Public Concordium test network, fake funds and identities. 
 - Stagenet (`stagenet`) – Unstable Concordium test network, fake funds and identities.
-No Spaceseven instance
-- Mainnet (`mainnet`) – Public Concordium network, real funds and identities. Spaceseven production
+- Mainnet (`mainnet`) – Public Concordium network, real funds and identities.
 
 ### Distribution for internal testing
 Builds for internal testing tagged as QA (`-qa.X`) are assembled and distributed through Firebase App distribution by the [corresponding pipeline](.github/workflows/firebase_internal_testing.yml).
