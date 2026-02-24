@@ -1089,10 +1089,7 @@ private constructor(
         }
 
     private fun respondSuccess(result: String) = viewModelScope.launch {
-        println("OOLEG responding to $sessionRequestId")
         handledRequests += sessionRequestId
-
-        println("OOLEG Sending da response")
 
         SignClient.respond(
             Sign.Params.Response(
@@ -1102,11 +1099,7 @@ private constructor(
                     result = result,
                 )
             ),
-            onSuccess = {
-                println("OOLEG success")
-            }
         ) { error ->
-            println("OOLEG error $error")
             Log.e("failed_responding_success", error.throwable)
 
             mutableEventsFlow.tryEmit(
