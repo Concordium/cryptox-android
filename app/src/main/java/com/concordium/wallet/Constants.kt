@@ -5,6 +5,7 @@ object Constants {
     object Extras {
         const val EXTRA_SCANNED_QR_CONTENT = "scanned_qr_content"
         const val EXTRA_QR_CONNECT = "qr_connect"
+        const val EXTRA_CONNECT_URL = "connect_url"
         const val EXTRA_ADD_CONTACT = "add_contact"
     }
 }
