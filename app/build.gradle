@@ -87,7 +87,7 @@ android {
     }
 
     productFlavors {
-        // Unstable Concordium test network, fake funds and identities. No Spaceseven instance.
+        // Unstable Concordium test network, fake funds and identities.
         stagenet {
             dimension "network"
             applicationIdSuffix ".stagenet"
@@ -108,17 +108,13 @@ android {
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
-            // There is no Spaceseven instance for Stagenet.
-            // This domain won't resolve.
-            buildConfigField("String", "S7_DOMAIN", "\"https://stagenet.spaceseven.cloud\"")
-
             firebaseAppDistribution {
                 appId = '1:124880082147:android:44ec3892cba12e73c7e1d6'
                 groups = "concordium-team"
             }
         }
 
-        // Public Concordium test network, fake funds and identities. Spaceseven stage.
+        // Public Concordium test network, fake funds and identities.
         // It is called 'tstnet' because flavour names can't start with 'test'
         tstnet {
             dimension "network"
@@ -138,15 +134,13 @@ android {
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
-            // Yes, stage. Spaceseven stage runs on Concordium Testnet.
-            buildConfigField("String", "S7_DOMAIN", "\"https://stage.spaceseven.cloud\"")
             firebaseAppDistribution {
                 appId = '1:124880082147:android:40bb3b4880d6aa92c7e1d6'
                 groups = "concordium-team"
             }
         }
 
-        // Public Concordium network, real funds and identities. Spaceseven production.
+        // Public Concordium network, real funds and identities.
         mainnet {
             dimension "network"
             buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
@@ -165,8 +159,6 @@ android {
             def providerAuthority = PROVIDER_AUTHORITY_BASE
             resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
-            buildConfigField("String", "S7_DOMAIN", "\"https://spaceseven.com\"")
-
             firebaseAppDistribution {
                 appId = '1:124880082147:android:250469ea97158747c7e1d6'
                 groups = "concordium-team"
@@ -283,13 +275,6 @@ dependencies {
     implementation(platform libs.reown.bom)
     implementation libs.reown.core
     implementation libs.reown.sign
-
-    // Scarlet Gson adapter required for Spaceseven wallet connection.
-    implementation(libs.message.adapter.gson) {
-        // Core must be excluded to avoid class duplication when using WalletConnect.
-        exclude group: 'com.tinder.scarlet', module: 'scarlet-core'
-    }
-
     implementation libs.eventbus
     implementation libs.kotlin.bip39
     implementation libs.firebase.messaging
