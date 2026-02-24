@@ -4,6 +4,7 @@ import com.concordium.sdk.transactions.Transaction
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
@@ -25,10 +26,9 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigInteger
 
-class ProxyRepository {
-
-    private val backend = App.appCore.session.backends.proxy
-
+class ProxyRepository(
+    private val backend: ProxyBackend = App.appCore.session.backends.proxy,
+) {
     companion object {
         const val SIMPLE_TRANSFER = "simpleTransfer"
         const val ENCRYPTED_TRANSFER = "encryptedTransfer"
