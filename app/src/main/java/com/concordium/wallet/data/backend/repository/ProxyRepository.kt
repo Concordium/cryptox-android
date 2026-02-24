@@ -400,4 +400,12 @@ class ProxyRepository {
      * @return an object containing a URL that initiate the Transak on-ramp
      */
     suspend fun getTransakWidgetUrl(address: String) = backend.getTransakWidgetUrl(address)
+
+    /**
+     * @return HEX-encoded network genesis block hash
+     */
+    suspend fun getGenesisHash(): String =
+        backend
+            .getGenesisHash()
+            .genesisBlock
 }

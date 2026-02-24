@@ -11,6 +11,7 @@ import com.concordium.wallet.data.model.CIS2TokensBalances
 import com.concordium.wallet.data.model.CIS2TokensMetadata
 import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.GenesisHashResponse
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
@@ -152,7 +153,9 @@ interface ProxyBackend {
 
     @POST("/v0/transakOnRamp")
     suspend fun getTransakWidgetUrl(
-        @Query("address") address: String
+        @Query("address") address: String,
     ): TransakWidgetResponse
 
+    @GET("/v0/genesisHash")
+    suspend fun getGenesisHash(): GenesisHashResponse
 }
