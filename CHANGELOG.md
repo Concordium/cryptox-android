@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Not sending responding to WalletConnect requests after switching between wallets 
+- Not responding to WalletConnect requests after switching wallets 
 
 ## [1.18.0] - 2026-02-11
 
