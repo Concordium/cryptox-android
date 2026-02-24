@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinComponent
@@ -116,7 +115,6 @@ private constructor(
     private lateinit var sessionRequestAccount: Account
     private lateinit var sessionRequestAppMetadata: AppMetadata
     private val handledRequests = mutableSetOf<Long>()
-    private val connectionAvailabilityFlow = MutableStateFlow(false)
 
     enum class ProofProvableState {
         Provable,
@@ -361,11 +359,6 @@ private constructor(
         if (state !is State.SessionRequestReview) {
             mutableStateFlow.tryEmit(State.WaitingForSessionRequest)
         }
-    }
-
-    override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
-        defaultWalletDelegate.onConnectionStateChange(state)
-        connectionAvailabilityFlow.tryEmit(state.isAvailable)
     }
 
     override fun onSessionProposal(
@@ -1124,9 +1117,6 @@ private constructor(
     private fun respondSuccess(result: String) = viewModelScope.launch {
         handledRequests += sessionRequestId
 
-        // Await the connection.
-        connectionAvailabilityFlow.first { it }
-
         SignClient.respond(
             Sign.Params.Response(
                 sessionTopic = sessionRequestTopic,
@@ -1134,7 +1124,7 @@ private constructor(
                     id = sessionRequestId,
                     result = result,
                 )
-            )
+            ),
         ) { error ->
             Log.e("failed_responding_success", error.throwable)
 
@@ -1152,9 +1142,6 @@ private constructor(
         sessionRequestTopic: String = this.sessionRequestTopic,
     ) = viewModelScope.launch {
         handledRequests += sessionRequestId
-
-        // Await the connection.
-        connectionAvailabilityFlow.first { it }
 
         SignClient.respond(
             Sign.Params.Response(
