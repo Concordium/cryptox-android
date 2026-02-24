@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.notifications.UpdateNotificationsSubscriptionUseCase
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.AccountWithIdentity
@@ -37,7 +36,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val accountsObserver: Observer<List<AccountWithIdentity>>
-    private val updateNotificationsSubscriptionUseCase by lazy(::UpdateNotificationsSubscriptionUseCase)
     private var updater: CountDownTimer? = null
 
     init {
