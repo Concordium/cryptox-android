@@ -35,7 +35,6 @@ class NetworkSwitchMigration(
                 ccdScanFrontendUrl = "https://ccdscan.io/".toHttpUrl(),
                 ccdScanBackendUrl = "https://api-ccdscan.mainnet.concordium.software/rest/".toHttpUrl(),
                 notificationsServiceUrl = "https://notification-api.mainnet.concordium.software/api/".toHttpUrl(),
-                spacesevenUrl = "https://spaceseven.com/".toHttpUrl(),
             ),
             AppNetwork(
                 genesisHash = "4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796",
@@ -45,7 +44,6 @@ class NetworkSwitchMigration(
                 ccdScanFrontendUrl = "https://testnet.ccdscan.io/".toHttpUrl(),
                 ccdScanBackendUrl = "https://api-ccdscan.testnet.concordium.com/rest/".toHttpUrl(),
                 notificationsServiceUrl = "https://notification-api.testnet.concordium.com/api/".toHttpUrl(),
-                spacesevenUrl = "https://stage.spaceseven.cloud/".toHttpUrl(),
             ),
             AppNetwork(
                 genesisHash = "38bf770b4c247f09e1b62982bb71000c516480c5a2c5214dadac6da4b1ad50e5",
@@ -55,7 +53,6 @@ class NetworkSwitchMigration(
                 ccdScanFrontendUrl = "https://stagenet.ccdscan.io/".toHttpUrl(),
                 ccdScanBackendUrl = null,
                 notificationsServiceUrl = "https://notification-api.stagenet.concordium.com/api/".toHttpUrl(),
-                spacesevenUrl = null,
             ),
         )
 

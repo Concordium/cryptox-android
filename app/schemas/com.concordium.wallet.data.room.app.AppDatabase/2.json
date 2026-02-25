@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "dd8b99934329662e438dff146e821280",
+    "identityHash": "506b069dead5a1cad5eb54e419cbef53",
     "entities": [
       {
         "tableName": "wallets",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "networks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genesis_hash` TEXT NOT NULL, `name` TEXT NOT NULL, `wallet_proxy_url` TEXT NOT NULL, `ccdscan_frontend_url` TEXT, `ccdscan_backend_url` TEXT, `notifications_service_url` TEXT, `spaceseven_url` TEXT, `created_at` INTEGER NOT NULL, `is_active` INTEGER NOT NULL, PRIMARY KEY(`genesis_hash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genesis_hash` TEXT NOT NULL, `name` TEXT NOT NULL, `wallet_proxy_url` TEXT NOT NULL, `ccdscan_frontend_url` TEXT, `ccdscan_backend_url` TEXT, `notifications_service_url` TEXT, `created_at` INTEGER NOT NULL, `is_active` INTEGER NOT NULL, PRIMARY KEY(`genesis_hash`))",
         "fields": [
           {
             "fieldPath": "genesisHash",
@@ -95,11 +95,6 @@
           {
             "fieldPath": "notificationsServiceUrl",
             "columnName": "notifications_service_url",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "spacesevenUrl",
-            "columnName": "spaceseven_url",
             "affinity": "TEXT"
           },
           {
@@ -136,7 +131,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd8b99934329662e438dff146e821280')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '506b069dead5a1cad5eb54e419cbef53')"
     ]
   }
 }

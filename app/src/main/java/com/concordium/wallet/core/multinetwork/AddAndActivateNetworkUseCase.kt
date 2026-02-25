@@ -31,7 +31,6 @@ class AddAndActivateNetworkUseCase {
             ccdScanFrontendUrl = ccdScanFrontendUrl,
             notificationsServiceUrl = notificationsServiceUrl,
             ccdScanBackendUrl = null,
-            spacesevenUrl = null,
         )
 
         Log.d("Adding new network: $newNetwork")

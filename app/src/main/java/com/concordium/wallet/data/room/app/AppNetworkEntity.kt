@@ -26,8 +26,6 @@ data class AppNetworkEntity(
     val ccdScanBackendUrl: String?,
     @ColumnInfo(name = "notifications_service_url")
     val notificationsServiceUrl: String?,
-    @ColumnInfo(name = "spaceseven_url")
-    val spacesevenUrl: String?,
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
     @ColumnInfo(name = "is_active")
@@ -43,7 +41,6 @@ data class AppNetworkEntity(
         ccdScanFrontendUrl = network.ccdScanFrontendUrl?.toString(),
         ccdScanBackendUrl = network.ccdScanBackendUrl?.toString(),
         notificationsServiceUrl = network.notificationsServiceUrl?.toString(),
-        spacesevenUrl = network.spacesevenUrl?.toString(),
         createdAt = network.createdAt.time,
         isActive = isActive,
     )
@@ -56,6 +53,5 @@ data class AppNetworkEntity(
         ccdScanFrontendUrl = ccdScanFrontendUrl?.toHttpUrl(),
         ccdScanBackendUrl = ccdScanBackendUrl?.toHttpUrl(),
         notificationsServiceUrl = notificationsServiceUrl?.toHttpUrl(),
-        spacesevenUrl = spacesevenUrl?.toHttpUrl(),
     )
 }
