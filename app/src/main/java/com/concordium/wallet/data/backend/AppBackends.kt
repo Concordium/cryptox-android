@@ -1,12 +1,8 @@
 package com.concordium.wallet.data.backend
 
 import com.concordium.wallet.core.multinetwork.AppNetwork
-import com.concordium.wallet.data.backend.airdrop.AirDropBackend
-import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
-import com.concordium.wallet.data.backend.tokens.TokensBackend
-import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.backend.wert.WertBackend
 import com.concordium.wallet.data.backend.wert.WertBackendConfig
 import com.google.gson.Gson
@@ -23,30 +19,6 @@ class AppBackends(
     }
     val proxy: ProxyBackend
         get() = proxyBackendConfig.backend
-
-    private val tokenBackendConfig by lazy {
-        if (network.spacesevenUrl != null)
-            TokensBackendConfig(
-                spacesevenUrl = network.spacesevenUrl,
-                gson = gson,
-            )
-        else
-            null
-    }
-    val tokens: TokensBackend?
-        get() = tokenBackendConfig?.backend
-
-    private val airdropBackendConfig by lazy {
-        if (network.spacesevenUrl != null)
-            AirDropBackendConfig(
-                spacesevenUrl = network.spacesevenUrl,
-                gson = gson,
-            )
-        else
-            null
-    }
-    val airdrop: AirDropBackend?
-        get() = airdropBackendConfig?.backend
 
     private val notificationsBackendConfig by lazy {
         if (network.notificationsServiceUrl != null)

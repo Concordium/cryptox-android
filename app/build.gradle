@@ -242,13 +242,6 @@ dependencies {
     implementation(platform libs.reown.bom)
     implementation libs.reown.core
     implementation libs.reown.sign
-
-    // Scarlet Gson adapter required for Spaceseven wallet connection.
-    implementation(libs.message.adapter.gson) {
-        // Core must be excluded to avoid class duplication when using WalletConnect.
-        exclude group: 'com.tinder.scarlet', module: 'scarlet-core'
-    }
-
     implementation libs.eventbus
     implementation libs.kotlin.bip39
     implementation libs.firebase.messaging

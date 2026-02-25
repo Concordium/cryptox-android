@@ -8,7 +8,6 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.WalletFilterPreferences
 import com.concordium.wallet.data.preferences.WalletIdentityCreationDataPreferences
 import com.concordium.wallet.data.preferences.WalletNotificationsPreferences
-import com.concordium.wallet.data.preferences.WalletProviderPreferences
 import com.concordium.wallet.data.preferences.WalletSendFundsPreferences
 import com.concordium.wallet.data.preferences.WalletSetupPreferences
 import com.concordium.wallet.data.room.WalletDatabase
@@ -62,10 +61,6 @@ class WalletStorage(
         WalletNotificationsPreferences(context, walletWideFileNameSuffix)
     }
 
-    val providerPreferences: WalletProviderPreferences by lazy {
-        WalletProviderPreferences(context, networkSpecificFileNameSuffix)
-    }
-
     val setupPreferences: WalletSetupPreferences by lazy {
         WalletSetupPreferences(context, walletWideFileNameSuffix)
     }
@@ -78,7 +73,6 @@ class WalletStorage(
             sendFundsPreferences,
             identityCreationDataPreferences,
             notificationsPreferences,
-            providerPreferences,
             setupPreferences,
         ).forEach(Preferences::clearAll)
     }
