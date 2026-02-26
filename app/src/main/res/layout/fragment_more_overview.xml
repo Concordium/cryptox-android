@@ -103,6 +103,16 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/networks_layout"
+                        style="@style/SettingsOverviewItem">
+
+                        <TextView
+                            style="@style/SettingsOverviewItemTextView"
+                            android:text="@string/networks_preference"
+                            app:drawableStartCompat="@drawable/mw24_ic_globe_world" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/address_book_layout"
                         style="@style/SettingsOverviewItem">
 

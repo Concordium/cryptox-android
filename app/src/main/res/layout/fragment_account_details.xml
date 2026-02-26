@@ -178,29 +178,5 @@
             app:lottie_autoPlay="false"
             app:lottie_rawRes="@raw/confetti" />
 
-        <Button
-            android:id="@+id/switch_to_testnet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
-            android:text="Switch to Testnet"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/switch_to_stagenet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Switch to Stagenet"
-            app:layout_constraintTop_toBottomOf="@id/switch_to_testnet" />
-
-        <TextView
-            android:background="@color/cryptox_white_main"
-            android:textColor="@color/ccx_mineral_blue_tint_4"
-            android:id="@+id/current_network"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Current network: "
-            android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@id/switch_to_stagenet" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

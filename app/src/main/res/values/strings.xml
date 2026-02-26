@@ -1529,4 +1529,5 @@
     </string>
     <string name="seed_phrase_backup_notice_backup">Backup Your Seed phrase</string>
     <string name="seed_phrase_backup_notice_hide_anyway">Hide anyway</string>
+    <string name="networks_preference">Networks</string>
 </resources>
