@@ -27,6 +27,7 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPreferencesActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
+import com.concordium.wallet.ui.multinetwork.NetworksActivity
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
@@ -125,6 +126,10 @@ class MenuSettingsFragment : BaseFragment() {
 
         binding.walletsLayout.setOnClickListener {
             openWallets()
+        }
+
+        binding.networksLayout.setOnClickListener {
+            openNetworks()
         }
 
         binding.addressBookLayout.setOnClickListener {
@@ -336,6 +341,11 @@ class MenuSettingsFragment : BaseFragment() {
 
     private fun openWallets() {
         val intent = Intent(activity, WalletsActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openNetworks() {
+        val intent = Intent(activity, NetworksActivity::class.java)
         startActivity(intent)
     }
 

@@ -1530,4 +1530,11 @@
     <string name="seed_phrase_backup_notice_backup">Backup Your Seed phrase</string>
     <string name="seed_phrase_backup_notice_hide_anyway">Hide anyway</string>
     <string name="networks_preference">Networks</string>
+    <string name="network_settings">Network Settings</string>
+    <string name="toolbar_edit">Edit</string>
+    <string name="toolbar_done">Done</string>
+    <string name="add_custom_network">Add Custom Network</string>
+    <string name="network_list_connect">Connect</string>
+    <string name="network_list_connected">Connected</string>
+    <string name="network_list_edit">Edit</string>
 </resources>

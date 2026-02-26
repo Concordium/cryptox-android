@@ -92,10 +92,10 @@
                 android:id="@+id/toolbar_account_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingVertical="8dp"
-                android:paddingHorizontal="@dimen/size12"
                 android:layout_marginHorizontal="72dp"
                 android:background="@drawable/mw24_toolbar_account_button_background"
+                android:paddingHorizontal="@dimen/size12"
+                android:paddingVertical="8dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -248,6 +248,30 @@
                     android:contentDescription="@string/transaction_details_view_on_explorer"
                     android:padding="8dp"
                     android:src="@drawable/mw24_ic_external_link"
+                    android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/toolbar_edit_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/toolbar_edit"
+                    android:padding="8dp"
+                    android:src="@drawable/mw24_ic_pencil_edit_write"
+                    android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/toolbar_done_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/toolbar_done"
+                    android:padding="8dp"
+                    android:src="@drawable/mw24_ic_check_done"
                     android:visibility="gone"
                     app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />

@@ -56,6 +56,7 @@ class NetworksViewModel : ViewModel() {
                     .invoke(
                         newNetwork = network,
                     )
+                _eventsFlow.tryEmit(Event.RestartOnSuccess)
             }
         }
     }
@@ -76,5 +77,7 @@ class NetworksViewModel : ViewModel() {
         class GoToEdit(
             val network: AppNetwork?,
         ) : Event
+
+        object RestartOnSuccess : Event
     }
 }
