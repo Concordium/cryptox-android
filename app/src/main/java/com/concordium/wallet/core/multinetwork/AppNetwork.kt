@@ -30,6 +30,9 @@ class AppNetwork(
             else
                 Network.TESTNET
 
+    val isPermanent: Boolean
+        get() = isMainnet || isTestnet
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AppNetwork) return false

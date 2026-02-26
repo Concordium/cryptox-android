@@ -10,6 +10,7 @@ import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class NewNetworkViewModel : ViewModel() {
+class EditNetworkViewModel : ViewModel() {
 
     private val networkRepository = App.appCore.networkRepository
     private val _isLoading = MutableLiveData(false)
