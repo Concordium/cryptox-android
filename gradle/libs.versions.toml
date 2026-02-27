@@ -2,7 +2,6 @@
 agp = "8.10.1"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
-kotlinParcelize = "1.8.10"
 googleServices = "4.4.3"
 firebaseAppDistribution = "2.2.0"
 room = "2.7.1"
@@ -124,7 +123,6 @@ khash-sha256 = { group = "com.github.komputing.khash", name = "sha256", version.
 concordium-android-sdk = { group = "com.concordium.sdk", name = "concordium-android-sdk", version.ref = "concordiumSdk" }
 snackbar = { group = "com.github.Redman1037", name = "TSnackBar", version.ref = "snackbar" }
 blur-view = { group = "com.github.Dimezis", name = "BlurView", version.ref = "blurView" }
-message-adapter-gson = { group = "com.tinder.scarlet", name = "message-adapter-gson", version.ref = "scarlet" }
 kotlin-bip39 = { group = "cash.z.ecc.android", name = "kotlin-bip39", version.ref = "bip39" }
 dotsindicator = { group = "com.tbuonomo", name = "dotsindicator", version.ref = "dotsindicator" }
 lombok-processor = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }

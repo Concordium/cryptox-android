@@ -13,12 +13,8 @@ import com.concordium.wallet.core.tracking.NoOpAppTracker
 import com.concordium.wallet.data.AppWalletRepository
 import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
-import com.concordium.wallet.data.backend.airdrop.AirDropBackend
-import com.concordium.wallet.data.backend.airdrop.AirDropBackendConfig
 import com.concordium.wallet.data.backend.notifications.NotificationsBackend
 import com.concordium.wallet.data.backend.notifications.NotificationsBackendConfig
-import com.concordium.wallet.data.backend.tokens.TokensBackend
-import com.concordium.wallet.data.backend.tokens.TokensBackendConfig
 import com.concordium.wallet.data.backend.wert.WertBackend
 import com.concordium.wallet.data.backend.wert.WertBackendConfig
 import com.concordium.wallet.data.model.RawJson
@@ -37,8 +33,6 @@ class AppCore(val app: App) {
 
     val gson: Gson = getGson()
     val proxyBackendConfig = ProxyBackendConfig(gson)
-    private val tokenBackendConfig = TokensBackendConfig(gson)
-    private val airdropBackendConfig = AirDropBackendConfig(gson)
     private val notificationsBackendConfig: NotificationsBackendConfig =
         NotificationsBackendConfig(gson)
     private val wertBackendConfig = WertBackendConfig(gson)
@@ -89,14 +83,6 @@ class AppCore(val app: App) {
 
     fun getNotificationsBackend(): NotificationsBackend {
         return notificationsBackendConfig.backend
-    }
-
-    fun getTokensBackend(): TokensBackend {
-        return tokenBackendConfig.backend
-    }
-
-    fun getAirdropBackend(): AirDropBackend {
-        return airdropBackendConfig.backend
     }
 
     fun getProxyBackend(): ProxyBackend {

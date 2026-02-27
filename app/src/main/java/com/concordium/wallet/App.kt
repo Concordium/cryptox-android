@@ -6,7 +6,6 @@ import com.concordium.wallet.core.AppCore
 import com.concordium.wallet.core.notifications.AnnouncementNotificationManager
 import com.concordium.wallet.core.tokens.tokensInteractorModule
 import com.concordium.wallet.data.backend.price.tokenPriceModule
-import com.concordium.wallet.data.backend.ws.WsCreds
 import com.concordium.wallet.ui.account.accountdetails.accountDetailsModule
 import com.concordium.wallet.ui.account.accountdetails.transfers.transfersModule
 import com.concordium.wallet.ui.account.accountqrcode.receiveModule
@@ -32,7 +31,6 @@ class App : Application() {
     companion object {
         lateinit var appContext: Context
         lateinit var appCore: AppCore
-        var wsCreds: WsCreds? = null
     }
 
     override fun onCreate() {

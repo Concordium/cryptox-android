@@ -72,13 +72,6 @@
 -keepclassmembers class com.concordium.wallet.data.model.** { <fields>; }
 -keepclassmembers class com.concordium.wallet.data.room.** { <fields>; }
 -keepclassmembers class com.concordium.wallet.data.export.** { <fields>; }
--keepclassmembers class com.concordium.wallet.data.backend.tokens.** { <fields>; }
--keepclassmembers class com.concordium.wallet.data.backend.airdrop.** { <fields>; }
--keepclassmembers class com.concordium.wallet.ui.tokens.provider.Token { <fields>; }
--keepclassmembers class com.concordium.wallet.ui.tokens.provider.ProviderMeta { <fields>; }
--keepclassmembers class com.concordium.wallet.ui.airdrop.AirDropPayload { <fields>; }
--keepclassmembers class com.concordium.wallet.data.backend.ws.IWsBridge { <fields>; }
-
 
 # --- Serializable //https://www.guardsquare.com/en/products/proguard/manual/examples#serializable
 
