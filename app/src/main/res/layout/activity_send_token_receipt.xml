@@ -72,7 +72,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/sender_address"
-                    app:tint="@color/mw24_content_accent_secondary"/>
+                    app:tint="@color/mw24_content_accent_secondary" />
 
                 <TextView
                     android:id="@+id/receiver_name"
@@ -163,6 +163,32 @@
                     app:layout_constraintTop_toBottomOf="@id/amount"
                     tools:text="Transaction fee ≈ 2.53 CCD" />
 
+
+                <LinearLayout
+                    android:id="@+id/network_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size32"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/fee">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="12dp"
+                        app:srcCompat="@drawable/mw24_ic_globe_world"
+                        app:tint="@color/mw24_content_accent_secondary" />
+
+                    <TextView
+                        android:id="@+id/network_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/MW24_Typography_Label_Main"
+                        android:textColor="@color/cryptox_white_main"
+                        tools:text="Mainnet" />
+                </LinearLayout>
+
                 <View
                     android:id="@+id/memo_divider"
                     android:layout_width="0dp"
@@ -172,7 +198,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/fee"
+                    app:layout_constraintTop_toBottomOf="@id/network_layout"
                     tools:visibility="visible" />
 
                 <LinearLayout
@@ -192,7 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/mw24_ic_send_memo"
-                        app:tint="@color/mw24_content_accent_secondary"/>
+                        app:tint="@color/mw24_content_accent_secondary" />
 
                     <TextView
                         android:id="@+id/memo"
