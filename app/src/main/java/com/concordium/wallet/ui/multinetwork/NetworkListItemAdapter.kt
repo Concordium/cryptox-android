@@ -69,6 +69,15 @@ class NetworkListItemAdapter(
                         1f
                     else
                         0.5f
+                root.isActivated = item.isConnected
+//                root.background = ContextCompat.getDrawable(
+//                    root.context,
+//                    if (item.isConnected)
+//                        R.drawable.mw24_container_primary_background_active
+//                    else
+//                        R.drawable.mw24_container_primary_background
+//                )
+
                 nameTextView.text = item.name
 
                 actionTextView.setText(
