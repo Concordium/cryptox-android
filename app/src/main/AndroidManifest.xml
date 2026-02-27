@@ -474,6 +474,10 @@
             android:name=".ui.multinetwork.NetworksActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.multinetwork.EditNetworkActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

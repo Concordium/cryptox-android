@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/size16"
             android:layout_marginTop="@dimen/size8"
-            android:background="@drawable/mw24_input_field_background_default"
             app:iconTextEmpty="@drawable/mw24_ic_search_for_tokens"
             app:iconTextFilled="@drawable/mw24_ic_dialog_close"
             app:labelText="@string/recipient_list_search_label"

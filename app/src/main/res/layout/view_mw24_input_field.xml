@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/mw24_input_field_background"
     android:paddingStart="16dp"
     android:paddingEnd="8dp">
 
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textAppearance="@style/MW24_Typography_Body_S_Medium"
-        android:textColor="@color/mw24_content_secondary"
+        android:textColor="@color/mw24_input_field_label_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Label" />
@@ -30,7 +31,7 @@
         android:imeOptions="actionDone"
         android:inputType="number"
         android:textAppearance="@style/MW24_Typography_Text_Mid"
-        android:textColor="@color/cryptox_white_main"
+        android:textColor="@color/mw24_input_field_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/search_icon"
         app:layout_constraintStart_toStartOf="parent"

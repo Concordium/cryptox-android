@@ -62,7 +62,6 @@
                     android:id="@+id/pool_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/mw24_input_field_background_default"
                     android:hint="@string/delegation_register_delegation_pool_id_hint"
                     android:imeOptions="actionDone"
                     android:importantForAutofill="no"

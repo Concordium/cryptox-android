@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.concordium.wallet.R
+import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.databinding.ActivityNetworksBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainActivity
@@ -64,7 +65,9 @@ class NetworksActivity : BaseActivity(
     ) = viewModel.eventsFlow.collectWhenStarted(this) { event ->
         when (event) {
             is NetworksViewModel.Event.GoToEdit -> {
-                // TODO
+                goToEdit(
+                    networkToEdit = event.network,
+                )
             }
 
             NetworksViewModel.Event.RestartOnSuccess -> {
@@ -75,5 +78,9 @@ class NetworksActivity : BaseActivity(
                 )
             }
         }
+    }
+
+    private fun goToEdit(networkToEdit: AppNetwork?) {
+        startActivity(Intent(this, EditNetworkActivity::class.java))
     }
 }
