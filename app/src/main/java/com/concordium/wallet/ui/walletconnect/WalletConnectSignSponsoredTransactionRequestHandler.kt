@@ -9,22 +9,27 @@ import com.concordium.sdk.transactions.TokenUpdate
 import com.concordium.sdk.transactions.TransactionFactory
 import com.concordium.sdk.transactions.TransactionSigner
 import com.concordium.sdk.transactions.Transfer
+import com.concordium.sdk.transactions.UpdateContract
 import com.concordium.sdk.transactions.tokens.TransferTokenOperation
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.tokens.TokensInteractor
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.walletconnect.AccountTransactionParams
 import com.concordium.wallet.data.walletconnect.AccountTransactionPayload
+import com.concordium.wallet.data.walletconnect.Schema
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Error
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Event
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.State
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import kotlin.jvm.optionals.getOrNull
@@ -43,6 +48,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
     private lateinit var account: Account
     private lateinit var partiallySignedTransaction: PartiallySignedSponsoredTransaction
     private lateinit var transactionPayload: AccountTransactionPayload
+    private var transactionSchema: Schema? = null
 
     suspend fun start(
         params: String,
@@ -96,11 +102,22 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     AccountTransactionPayload.PltTransfer(
                         tokenId = payload.tokenSymbol,
                         transfer =
-                        payload
-                            .operations
-                            .takeIf { it.size == 1 }
-                            ?.let { it[0] as? TransferTokenOperation }
-                            ?: error("The wallet only supports a single token transfer"),
+                            payload
+                                .operations
+                                .takeIf { it.size == 1 }
+                                ?.let { it[0] as? TransferTokenOperation }
+                                ?: error("The wallet only supports a single token transfer"),
+                    )
+                }
+
+                is UpdateContract -> {
+                    AccountTransactionPayload.Update(
+                        address = payload.contractAddress,
+                        amount = BigInteger(1, payload.amount.value.bytes),
+                        maxEnergy = null,
+                        maxContractExecutionEnergy = null,
+                        message = payload.param.bytes.toHexString(),
+                        receiveName = "${payload.receiveName.contractName}.${payload.receiveName.method}",
                     )
                 }
 
@@ -146,6 +163,9 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
         this.account = account
         this.partiallySignedTransaction = partiallySignedTransaction
         this.transactionPayload = transactionPayload
+        this.transactionSchema = AccountTransactionParams
+            .fromSessionRequestParams(params)
+            .schema
 
         loadDataAndPresentReview(appMetadata)
     }
@@ -161,8 +181,8 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
             token = try {
                 when (val transactionPayload = this.transactionPayload) {
                     is AccountTransactionPayload.Transfer,
-                    is AccountTransactionPayload.Update,
-                    ->
+                    is AccountTransactionPayload.Update
+                        ->
                         CCDToken(
                             account = account,
                             withTotalBalance = true,
@@ -311,7 +331,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
             .submissionId
     }
 
-    fun onShowDetailsClicked() {
+    suspend fun onShowDetailsClicked() {
 
         when (val transactionPayload = this.transactionPayload) {
             is AccountTransactionPayload.PltTransfer -> {
@@ -326,15 +346,47 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                 )
             }
 
-            is AccountTransactionPayload.Transfer,
-            is AccountTransactionPayload.Update,
-            -> {
+            is AccountTransactionPayload.Transfer
+                -> {
                 Log.w("Nothing to show as details for ${transactionPayload::class.simpleName}")
 
                 emitEvent(
                     Event.ShowDetailsDialog(
                         title = getTransactionMethodName(transactionPayload),
                         prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
+                    )
+                )
+            }
+
+            is AccountTransactionPayload.Update -> {
+                val prettyPrintParams = when {
+                    transactionSchema != null ->
+                        App.appCore.cryptoLibrary
+                            .parameterToJson(
+                                ParameterToJsonInput(
+                                    parameter = transactionPayload.message,
+                                    receiveName = transactionPayload.receiveName,
+                                    schema = transactionSchema!!,
+                                    schemaVersion = transactionSchema?.version,
+                                )
+                            )
+                            ?.prettyPrint()
+                            ?: context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_failed)
+
+                    transactionPayload.message == "" ->
+                        context.getString(R.string.wallet_connect_transaction_request_no_parameters)
+
+                    else ->
+                        context.getString(R.string.wallet_connect_error_transaction_request_stringify_params_no_schema)
+                }
+
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = getTransactionMethodName(transactionPayload),
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_sponsored_transaction_request_details,
+                            prettyPrintParams,
+                        ),
                     )
                 )
             }
@@ -353,8 +405,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
         when (transactionPayload) {
             is AccountTransactionPayload.Transfer,
             is AccountTransactionPayload.PltTransfer,
-            ->
-                context.getString(R.string.transaction_type_transfer)
+                -> context.getString(R.string.transaction_type_transfer)
 
             is AccountTransactionPayload.Update ->
                 transactionPayload.receiveName

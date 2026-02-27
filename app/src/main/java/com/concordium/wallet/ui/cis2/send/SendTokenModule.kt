@@ -4,7 +4,7 @@ import com.concordium.wallet.core.tokens.tokensInteractorModule
 import com.concordium.wallet.data.backend.price.tokenPriceModule
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val sendTokenModule = module {
