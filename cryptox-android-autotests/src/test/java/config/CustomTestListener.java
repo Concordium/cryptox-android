@@ -74,65 +74,65 @@ public class CustomTestListener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {
         System.out.println("Test suite finished: " + context.getName());
-        sendSlackNotification();
+      //  sendSlackNotification();
     }
 
     public List<ITestResult> getTestResults() {
         return testResults;
     }
 
-    private void sendSlackNotification() {
-        List<ITestResult> results = getTestResults();
-
-        StringBuilder resultMessage = new StringBuilder();
-        int passed = 0;
-        int failed = 0;
-        int skipped = 0;
-
-        for (ITestResult result : results) {
-            switch (result.getStatus()) {
-                case ITestResult.SUCCESS:
-                    passed++;
-                    break;
-                case ITestResult.FAILURE:
-                    failed++;
-                    break;
-                case ITestResult.SKIP:
-                    skipped++;
-                    break;
-            }
-        }
-
-        resultMessage.append("Automation Tests for CryptoX Android - Stagenet:\n")
-                .append("Executed at ").append(java.time.LocalDate.now()).append("\n")
-                .append("Passed: ").append(passed).append("\n")
-                .append("Failed: ").append(failed).append("\n")
-                .append("Skipped: ").append(skipped).append("\n");
-        if (!failedTests.isEmpty()) {
-            resultMessage.append("List of Failed Test Cases:\n");
-            for (ITestResult failedTest : failedTests) {
-                resultMessage.append("- ").append(failedTest.getName()).append("\n");
-            }
-        }
-
-        sendSlackMessage(resultMessage.toString());
-    }
-
-    private void sendSlackMessage(String message) {
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
-            final String SLACK_WEBHOOK_URL = System.getenv("SLACK_WEBHOOK");
-
-            HttpPost post = new HttpPost(SLACK_WEBHOOK_URL);
-            StringEntity entity = new StringEntity("{\"text\":\"" + message + "\"}");
-            post.setEntity(entity);
-            post.setHeader("Content-Type", "application/json");
-
-            client.execute(post);
-            System.out.println("Slack notification sent!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Failed to send Slack notification.");
-        }
-    }
+//    private void sendSlackNotification() {
+//        List<ITestResult> results = getTestResults();
+//
+//        StringBuilder resultMessage = new StringBuilder();
+//        int passed = 0;
+//        int failed = 0;
+//        int skipped = 0;
+//
+//        for (ITestResult result : results) {
+//            switch (result.getStatus()) {
+//                case ITestResult.SUCCESS:
+//                    passed++;
+//                    break;
+//                case ITestResult.FAILURE:
+//                    failed++;
+//                    break;
+//                case ITestResult.SKIP:
+//                    skipped++;
+//                    break;
+//            }
+//        }
+//
+//        resultMessage.append("Automation Tests for CryptoX Android - Stagenet:\n")
+//                .append("Executed at ").append(java.time.LocalDate.now()).append("\n")
+//                .append("Passed: ").append(passed).append("\n")
+//                .append("Failed: ").append(failed).append("\n")
+//                .append("Skipped: ").append(skipped).append("\n");
+//        if (!failedTests.isEmpty()) {
+//            resultMessage.append("List of Failed Test Cases:\n");
+//            for (ITestResult failedTest : failedTests) {
+//                resultMessage.append("- ").append(failedTest.getName()).append("\n");
+//            }
+//        }
+//
+//        sendSlackMessage(resultMessage.toString());
+//    }
+//
+//    private void sendSlackMessage(String message) {
+//        try {
+//            CloseableHttpClient client = HttpClients.createDefault();
+//            final String SLACK_WEBHOOK_URL = System.getenv("SLACK_WEBHOOK");
+//
+//            HttpPost post = new HttpPost(SLACK_WEBHOOK_URL);
+//            StringEntity entity = new StringEntity("{\"text\":\"" + message + "\"}");
+//            post.setEntity(entity);
+//            post.setHeader("Content-Type", "application/json");
+//
+//            client.execute(post);
+//            System.out.println("Slack notification sent!");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.err.println("Failed to send Slack notification.");
+//        }
+//    }
 }
