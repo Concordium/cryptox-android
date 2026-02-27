@@ -39,6 +39,7 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectView
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.ui.welcome.WelcomeActivity
 import com.concordium.wallet.ui.welcome.WelcomeRecoverWalletActivity
+import com.concordium.wallet.uicore.toast.showCustomToast
 import com.concordium.wallet.util.GestureDetectorUtil
 import com.concordium.wallet.util.ImageUtil
 import com.concordium.wallet.util.getOptionalSerializable
@@ -62,6 +63,7 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         const val EXTRA_GOTO_TRANSFER = "EXTRA_GOTO_TRANSFER"
         const val EXTRA_TRANSFER_RECIPIENT = "EXTRA_TRANSFER_RECIPIENT"
         const val DRAWER_TAG = "DRAWER_TAG"
+        const val EXTRA_SHOW_NETWORK_CONNECTED_TOAST = "EXTRA_SHOW_NETWORK_CONNECTED_TOAST"
     }
 
     private val binding by lazy {
@@ -112,6 +114,15 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         }
         initGestureDetectors()
         initObservers()
+
+        if (intent.getBooleanExtra(EXTRA_SHOW_NETWORK_CONNECTED_TOAST, false)) {
+            showCustomToast(
+                title = getString(
+                    R.string.template_network_connected,
+                    App.appCore.session.network.name,
+                )
+            )
+        }
     }
 
     override fun onResume() {

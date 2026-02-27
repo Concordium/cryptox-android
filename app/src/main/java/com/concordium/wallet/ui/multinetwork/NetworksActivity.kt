@@ -69,7 +69,10 @@ class NetworksActivity : BaseActivity(
 
             NetworksViewModel.Event.RestartOnSuccess -> {
                 finishAffinity()
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(
+                    Intent(this, MainActivity::class.java)
+                        .putExtra(MainActivity.EXTRA_SHOW_NETWORK_CONNECTED_TOAST, true)
+                )
             }
         }
     }
