@@ -163,7 +163,6 @@
                     app:layout_constraintTop_toBottomOf="@id/amount"
                     tools:text="Transaction fee ≈ 2.53 CCD" />
 
-
                 <LinearLayout
                     android:id="@+id/network_layout"
                     android:layout_width="match_parent"
