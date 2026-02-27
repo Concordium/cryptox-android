@@ -21,11 +21,11 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class RecoverAccountThroughFileWallet {
 
-    private static final String WALLET_RESOURCE_PATH = "wallet/exp_file_wallet.concordiumwallet";
-    private static final String WALLET_FILE_NAME = "//*[@resource-id='android:id/title' and contains(@text,'exp_file_wallet')]";
+    public static final String WALLET_RESOURCE_PATH = "wallet/exp_file_wallet.concordiumwallet";
+    public static final String WALLET_FILE_NAME = "//*[@resource-id='android:id/title' and contains(@text,'exp_file_wallet')]";
 
 
-    private void pushWalletFile() {
+    public void pushWalletFile() {
 
         try {
             File walletFile = new File(
