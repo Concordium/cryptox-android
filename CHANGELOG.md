@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for sponsored Smart contract updates
 
+### Fixed
+
+- Not responding to WalletConnect requests after switching wallets 
+
 ## [1.18.0] - 2026-02-11
 
 ### Added
