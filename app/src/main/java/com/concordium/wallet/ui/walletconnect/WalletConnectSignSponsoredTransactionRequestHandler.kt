@@ -18,7 +18,6 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.CCDToken
-import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.ProtocolLevelToken
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -118,7 +117,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                         maxEnergy = null,
                         maxContractExecutionEnergy = null,
                         message = payload.param.bytes.toHexString(),
-                        receiveName = payload.receiveName.toString(),
+                        receiveName = "${payload.receiveName.contractName}.${payload.receiveName.method}",
                     )
                 }
 
@@ -181,7 +180,8 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
         try {
             token = try {
                 when (val transactionPayload = this.transactionPayload) {
-                    is AccountTransactionPayload.Transfer
+                    is AccountTransactionPayload.Transfer,
+                    is AccountTransactionPayload.Update
                         ->
                         CCDToken(
                             account = account,
@@ -202,23 +202,6 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                                         && it.tokenId == transactionPayload.tokenId
                             }
                             ?: error("Missing the requested token ${transactionPayload.tokenId}")
-
-                    is AccountTransactionPayload.Update ->
-                        tokensInteractor
-                            .loadTokens(
-                                accountAddress = account.address,
-                                loadBalances = true,
-                                onlyTransferable = true,
-                                addCCDToken = false,
-                            )
-                            .getOrThrow()
-                            .firstOrNull {
-                                it is ContractToken &&
-                                        it.run { "$contractIndex, $subIndex" } ==
-                                        transactionPayload.address.run { "$index, $subIndex" }
-                            }
-                            ?: error("Missing the requested token ${transactionPayload.address.run { "$index, $subIndex" }}")
-
                 }
             } catch (error: Exception) {
                 Log.e("failed_loading_token", error)
@@ -400,7 +383,10 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                 emitEvent(
                     Event.ShowDetailsDialog(
                         title = getTransactionMethodName(transactionPayload),
-                        prettyPrintDetails = prettyPrintParams
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_sponsored_transaction_request_details,
+                            prettyPrintParams,
+                        ),
                     )
                 )
             }
