@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static config.appiumconnection.*;
+import static java.time.Duration.ofSeconds;
+import static org.openqa.selenium.By.id;
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 
 public class generalMethods {
 
@@ -396,6 +399,24 @@ public class generalMethods {
 
         } catch (Exception e) {
             log.error("Exception in verifyTextById: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean waitForLoaderToDisappear(String elementId, int timeoutInSeconds) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(elementId)));
+            log.info("Loader appeared");
+
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id(elementId)));
+            log.info("Loader disappeared");
+
+            return true;
+
+        } catch (TimeoutException e) {
+            log.warn("Loader did not disappear in time");
             return false;
         }
     }
