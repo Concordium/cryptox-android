@@ -24,6 +24,7 @@ class InputFieldView @JvmOverloads constructor(
 
     private var iconTextEmpty: Drawable? = null
     private var iconTextFilled: Drawable? = null
+    private var afterTextChanged: ((Editable?) -> Unit)? = null
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.InputFieldView, 0, 0).apply {
@@ -53,7 +54,9 @@ class InputFieldView @JvmOverloads constructor(
                 updateIconFromText(s)
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                afterTextChanged?.invoke(s)
+            }
         })
 
         // Initial icon state
@@ -110,6 +113,10 @@ class InputFieldView @JvmOverloads constructor(
 
     fun setTextChangeListener(textListener: TextWatcher) {
         binding.edittext.addTextChangedListener(textListener)
+    }
+
+    fun setTextChangeListener(afterTextChanged: (Editable?) -> Unit) {
+        this.afterTextChanged = afterTextChanged
     }
 
     fun setInputType(inputType: Int) {

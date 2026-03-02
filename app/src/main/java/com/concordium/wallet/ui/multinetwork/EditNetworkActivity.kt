@@ -28,10 +28,16 @@ class EditNetworkActivity : BaseActivity(
     private fun initFields() {
         with(binding.networkNameField) {
             setInputType(EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS)
+            setTextChangeListener {
+                viewModel.onNetworkNameChanged(it?.toString() ?: "")
+            }
         }
 
         with(binding.walletProxyUrlField) {
             setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI)
+            setTextChangeListener {
+                viewModel.onWalletProxyUrlChanged(it?.toString() ?: "")
+            }
         }
 
         with(binding.genesisHashField) {
@@ -41,10 +47,16 @@ class EditNetworkActivity : BaseActivity(
 
         with(binding.ccdscanUrlField) {
             setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI)
+            setTextChangeListener {
+                viewModel.onCcdScanUrlChanged(it?.toString() ?: "")
+            }
         }
 
         with(binding.notificationsServiceUrlField) {
             setInputType(EditorInfo.TYPE_TEXT_VARIATION_URI)
+            setTextChangeListener {
+                viewModel.onNotificationsServiceUrlChanged(it?.toString() ?: "")
+            }
         }
     }
 
