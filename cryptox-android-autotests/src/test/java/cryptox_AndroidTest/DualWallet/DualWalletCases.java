@@ -173,13 +173,13 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("import_wallet_button", 20));
         Assert.assertTrue(clickOnImportViaSeedPhrase());
-        Assert.assertTrue(SendTextToField("etTitle",getSeedPhrase(), 20));
+        Assert.assertTrue(SendTextToField("etTitle", getSeedPhrase(), 20));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(clickOnElement(continueButton,20));
+        Assert.assertTrue(clickOnElement(continueButton, 20));
         Assert.assertTrue(verifyPinAndPressOK());
         Thread.sleep(5);
-        Assert.assertTrue(WaitForElement(continueButton,100));
-        Assert.assertTrue(clickOnElement(continueButton,20));
+        Assert.assertTrue(WaitForElement(continueButton, 100));
+        Assert.assertTrue(clickOnElement(continueButton, 20));
         log.info("successfully recovered Account");
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -193,16 +193,16 @@ public class DualWalletCases {
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
-        Assert.assertTrue(clickOnElement("identities_layout",10));
-        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image",10));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]",30));
+        Assert.assertTrue(clickOnElement("identities_layout", 10));
+        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image", 10));
+        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]", 30));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder",20));
+        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder", 20));
         Assert.assertTrue(performScrollDown());
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]",10));
-        Assert.assertTrue(clickOnElement("ok_button",10));
-        Assert.assertTrue(clickOnElement("confirm_button",10));
-        Assert.assertTrue(clickOnElement("android:id/button2",10));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]", 10));
+        Assert.assertTrue(clickOnElement("ok_button", 10));
+        Assert.assertTrue(clickOnElement("confirm_button", 10));
+        Assert.assertTrue(clickOnElement("android:id/button2", 10));
         log.info("Successfully created new identity");
     }
 
@@ -226,16 +226,16 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("create_wallet_button", 20));
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));
-        Assert.assertTrue(clickOnElement("consent_check_box",20));
-        Assert.assertTrue(clickOnElement("continue_button",20));
+        Assert.assertTrue(clickOnElement("consent_check_box", 20));
+        Assert.assertTrue(clickOnElement("continue_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]",30));
+        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]", 30));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder",20));
+        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder", 20));
         Assert.assertTrue(performScrollDown());
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]",10));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]", 10));
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("title_text_view", 20));
@@ -246,11 +246,11 @@ public class DualWalletCases {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn",10));
+        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
         Assert.assertTrue(performScrollDown());
         Thread.sleep(3);
-        Assert.assertTrue(clickOnElement("erase_data_layout",20));
-        Assert.assertTrue(clickOnElement("ok_button",20));
+        Assert.assertTrue(clickOnElement("erase_data_layout", 20));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
     }
-    }
+}
