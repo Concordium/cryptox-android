@@ -6,6 +6,8 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.util.Base64;
 
 import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
@@ -22,11 +24,10 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 public class RecoverAccountThroughFileWallet {
 
     public static final String WALLET_RESOURCE_PATH = "wallet/exp_file_wallet.concordiumwallet";
-    public static final String WALLET_FILE_NAME = "//*[@resource-id='android:id/title' and contains(@text,'exp_file_wallet')]";
+    public static final String WALLET_FILE_NAME = "//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"exp_file_wallet.concordiumwallet\"]";
 
 
     public void pushWalletFile() {
-
         try {
             File walletFile = new File(
                     getClass()
@@ -34,16 +35,13 @@ public class RecoverAccountThroughFileWallet {
                             .getResource(WALLET_RESOURCE_PATH)
                             .toURI()
             );
-
             if (!walletFile.exists()) {
                 throw new RuntimeException("Wallet file not found in resources!");
             }
-
-            driver.pushFile(
-                    "/sdcard/Documents/exp_file_wallet.concordiumwallet",
-                    walletFile
-            );
-
+            byte[] fileContent = Files.readAllBytes(walletFile.toPath());
+            String base64Data = Base64.getEncoder().encodeToString(fileContent);
+            driver.pushFile("/sdcard/Download/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+            log.info("Wallet file pushed successfully!");
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
         }
@@ -59,6 +57,8 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
         Assert.assertTrue(clickOnElement("ok_button", 20));
+        Assert.assertTrue(clickOnElement("com.google.android.documentsui:id/option_menu_search", 20));
+        Assert.assertTrue(SendTextToField("com.google.android.documentsui:id/search_src_text", "exp_file_wallet", 20));
         Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));

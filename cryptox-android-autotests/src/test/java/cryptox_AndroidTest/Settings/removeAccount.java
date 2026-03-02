@@ -21,8 +21,9 @@ public class removeAccount {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn",10));
         Assert.assertTrue(performScrollDown());
+        Thread.sleep(3);
         Assert.assertTrue(clickOnElement("erase_data_layout",20));
-        Assert.assertTrue(clickOnElement("ok_button",10));
+        Assert.assertTrue(clickOnElement("ok_button",20));
         Assert.assertTrue(verifyPinAndPressOK());
     }
 }

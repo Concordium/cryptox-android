@@ -98,6 +98,31 @@ public class generalMethods {
         return false;
     }
 
+    public static boolean verifyElementId(String elementID, Integer timeout) {
+        try {
+            By elementIDs = By.id(elementID);
+
+            MobileElement elementToLookFor = waitForElement(elementIDs, timeout);
+
+            assert elementToLookFor != null;
+            if (elementToLookFor.isDisplayed()) {
+                log.info("Successfully verified element" + elementID);
+                return true;
+            } else {
+
+                System.out.println("unable to verify Element" + elementID);
+                return false;
+            }
+
+        } catch (Exception exp) {
+            log.error(String.valueOf(exp.getCause()));
+            System.out.println(exp.getMessage());
+            log.error(String.valueOf(exp.fillInStackTrace()));
+        }
+
+        return false;
+    }
+
     public static boolean verifyElementByXpath(String elementID, Integer timeout) {
         try {
             By elementIDs = By.xpath(elementID);
@@ -108,11 +133,11 @@ public class generalMethods {
             if (elementToLookFor.isDisplayed()) {
 
                 elementToLookFor.click();
+                log.info("Successfully verified element by xpath", elementID);
                 return true;
             } else {
 
                 System.out.println("unable to verify Element" + elementID);
-
                 return false;
             }
 
