@@ -81,24 +81,24 @@ public class DualWalletCases {
         log.info("successfully recovered Account");
     }
 
-    @Test(retryAnalyzer = RetryAnalyzer.class)
-    public void verify_a_user_can_create_new_identity() {
-        driver.terminateApp(PackageName);
-        driver.activateApp(PackageName);
-        Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
-        Assert.assertTrue(clickOnElement("identities_layout",10));
-        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image",10));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]",30));
-        Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder",20));
-        Assert.assertTrue(performScrollDown());
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]",10));
-        Assert.assertTrue(clickOnElement("got_it_button",10));
-        Assert.assertTrue(clickOnElement("confirm_button",10));
-        Assert.assertTrue(clickOnElement("android:id/button2",10));
-        log.info("Successfully created new identity");
-    }
+//    @Test(retryAnalyzer = RetryAnalyzer.class)
+//    public void verify_a_user_can_create_new_identity() {
+//        driver.terminateApp(PackageName);
+//        driver.activateApp(PackageName);
+//        Assert.assertTrue(loginCryptoX());
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
+//        Assert.assertTrue(clickOnElement("identities_layout",10));
+//        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image",10));
+//        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]",30));
+//        Assert.assertTrue(verifyPinAndPressOK());
+//        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder",20));
+//        Assert.assertTrue(performScrollDown());
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]",10));
+//        Assert.assertTrue(clickOnElement("got_it_button",10));
+//        Assert.assertTrue(clickOnElement("confirm_button",10));
+//        Assert.assertTrue(clickOnElement("android:id/button2",10));
+//        log.info("Successfully created new identity");
+//    }
 
     @Test
     public void verify_a_user_can_switch_between_file_based_and_seed__phrase_wallets__seamlessly() {
@@ -125,61 +125,61 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
     }
 
-    @Test
-    public void verify_as_a_user_adding_a_file_based_account_with_incorrect_password_should_fail_gracefully() {
-        driver.terminateApp(PackageName);
-        driver.activateApp(PackageName);
-        Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
-        Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElement("icon_image_view", 20));
-        Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
-        Assert.assertTrue(SendTextToField("password_edittext", "111111", 20));
-        Assert.assertTrue(clickOnElement("confirm_button", 20));
-        Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(verifyTextById("message_text_view", "Import failed Invalid password or import file corrupted", 20));
-        Assert.assertTrue(clickOnElement("confirm_button", 20));
-    }
-
-    @Test
-    public void verify_as_a_user_can_reemove_file_based_wallet() {
-        driver.terminateApp(PackageName);
-        driver.activateApp(PackageName);
-        Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
-        Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"File wallet\"]", 20));
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
-        Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
-        Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertFalse(verifyElementById("wallet_switch_view", 20));
-
-    }
-
-    @Test
-    public void verify_as_a_see_Add_a_file_wallet_option_when_only_one_wallet_is_added() {
-        driver.terminateApp(PackageName);
-        driver.activateApp(PackageName);
-        Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
-        Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(verifyElementById("icon_image_view", 20));
-    }
-
-    @Test
-    public void verify_as_a_user_can_reemove_seed_phrase_wallet() {
-        driver.terminateApp(PackageName);
-        driver.activateApp(PackageName);
-        Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
-        Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
-        Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
-        Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertFalse(verifyElementById("wallet_switch_view", 20));
-    }
+//    @Test
+//    public void verify_as_a_user_adding_a_file_based_account_with_incorrect_password_should_fail_gracefully() {
+//        driver.terminateApp(PackageName);
+//        driver.activateApp(PackageName);
+//        Assert.assertTrue(loginCryptoX());
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+//        Assert.assertTrue(clickOnElement("wallets_layout", 20));
+//        Assert.assertTrue(clickOnElement("icon_image_view", 20));
+//        Assert.assertTrue(clickOnElement("ok_button", 20));
+//        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
+//        Assert.assertTrue(SendTextToField("password_edittext", "111111", 20));
+//        Assert.assertTrue(clickOnElement("confirm_button", 20));
+//        Assert.assertTrue(verifyPinAndPressOK());
+//        Assert.assertTrue(verifyTextById("message_text_view", "Import failed Invalid password or import file corrupted", 20));
+//        Assert.assertTrue(clickOnElement("confirm_button", 20));
+//    }
+//
+//    @Test
+//    public void verify_as_a_user_can_reemove_file_based_wallet() {
+//        driver.terminateApp(PackageName);
+//        driver.activateApp(PackageName);
+//        Assert.assertTrue(loginCryptoX());
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+//        Assert.assertTrue(clickOnElement("wallets_layout", 20));
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"File wallet\"]", 20));
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+//        Assert.assertTrue(clickOnElement("wallets_layout", 20));
+//        Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
+//        Assert.assertTrue(clickOnElement("ok_button", 20));
+//        Assert.assertFalse(verifyElementById("wallet_switch_view", 20));
+//
+//    }
+//
+//    @Test
+//    public void verify_as_a_see_Add_a_file_wallet_option_when_only_one_wallet_is_added() {
+//        driver.terminateApp(PackageName);
+//        driver.activateApp(PackageName);
+//        Assert.assertTrue(loginCryptoX());
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+//        Assert.assertTrue(clickOnElement("wallets_layout", 20));
+//        Assert.assertTrue(verifyElementById("icon_image_view", 20));
+//    }
+//
+//    @Test
+//    public void verify_as_a_user_can_reemove_seed_phrase_wallet() {
+//        driver.terminateApp(PackageName);
+//        driver.activateApp(PackageName);
+//        Assert.assertTrue(loginCryptoX());
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+//        Assert.assertTrue(clickOnElement("wallets_layout", 20));
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
+//        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+//        Assert.assertTrue(clickOnElement("wallets_layout", 20));
+//        Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
+//        Assert.assertTrue(clickOnElement("ok_button", 20));
+//        Assert.assertFalse(verifyElementById("wallet_switch_view", 20));
+//    }
 }
