@@ -74,7 +74,7 @@ public class CustomTestListener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {
         System.out.println("Test suite finished: " + context.getName());
-        sendSlackNotification();
+      //  sendSlackNotification();
     }
 
     public List<ITestResult> getTestResults() {
@@ -115,7 +115,7 @@ public class CustomTestListener implements ITestListener {
             }
         }
 
-        sendSlackMessage(resultMessage.toString());
+      //  sendSlackMessage(resultMessage.toString());
     }
 
     private void sendSlackMessage(String message) {
