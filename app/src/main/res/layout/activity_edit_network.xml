@@ -14,7 +14,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fadingEdge="vertical"
         android:requiresFadingEdge="vertical">
 
@@ -32,12 +33,39 @@
                 app:labelText="@string/network_name" />
 
             <com.concordium.wallet.uicore.view.InputFieldView
+                android:id="@+id/wallet_proxy_url_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                app:labelText="@string/network_wallet_proxy_url" />
+
+            <com.concordium.wallet.uicore.view.InputFieldView
                 android:id="@+id/genesis_hash_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size8"
                 app:labelText="@string/network_genesis_hash" />
 
+            <com.concordium.wallet.uicore.view.InputFieldView
+                android:id="@+id/ccdscan_url_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                app:labelText="@string/network_ccdscan_url" />
+
+            <com.concordium.wallet.uicore.view.InputFieldView
+                android:id="@+id/notifications_service_url_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size8"
+                app:labelText="@string/network_notifications_service_url" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/save_button"
+        style="@style/MW24_Button_Primary"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/size16"
+        android:text="@string/save_network" />
 </LinearLayout>
