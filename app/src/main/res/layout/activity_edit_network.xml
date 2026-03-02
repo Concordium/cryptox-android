@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -32,12 +33,40 @@
                 android:layout_height="wrap_content"
                 app:labelText="@string/network_name" />
 
+            <TextView
+                android:id="@+id/network_name_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size6"
+                android:drawablePadding="@dimen/size6"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:text="Something is wrong"
+                tools:visibility="visible" />
+
             <com.concordium.wallet.uicore.view.InputFieldView
                 android:id="@+id/wallet_proxy_url_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size8"
                 app:labelText="@string/network_wallet_proxy_url" />
+
+            <TextView
+                android:id="@+id/wallet_proxy_url_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size6"
+                android:drawablePadding="@dimen/size6"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:text="Something is wrong"
+                tools:visibility="visible" />
 
             <com.concordium.wallet.uicore.view.InputFieldView
                 android:id="@+id/genesis_hash_field"
@@ -53,12 +82,40 @@
                 android:layout_marginTop="@dimen/size8"
                 app:labelText="@string/network_ccdscan_url" />
 
+            <TextView
+                android:id="@+id/ccdscan_url_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size6"
+                android:drawablePadding="@dimen/size6"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:text="Something is wrong"
+                tools:visibility="visible" />
+
             <com.concordium.wallet.uicore.view.InputFieldView
                 android:id="@+id/notifications_service_url_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size8"
                 app:labelText="@string/network_notifications_service_url" />
+
+            <TextView
+                android:id="@+id/notifications_service_url_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size6"
+                android:drawablePadding="@dimen/size6"
+                android:textAppearance="@style/MW24_Typography_Label_Main"
+                android:textColor="@color/mw24_content_error_primary"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation_14"
+                app:drawableTint="@color/mw24_content_error_primary"
+                tools:text="Something is wrong"
+                tools:visibility="visible" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
