@@ -40,7 +40,7 @@ public class RecoverAccountThroughFileWallet {
             }
             byte[] fileContent = Files.readAllBytes(walletFile.toPath());
             String base64Data = Base64.getEncoder().encodeToString(fileContent);
-            driver.pushFile("/sdcard/Download/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+            driver.pushFile("/sdcard/Documents/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
@@ -57,7 +57,7 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElement("com.google.android.documentsui:id/option_menu_search", 20));
+        Assert.assertTrue(clickOnElement("//android.widget.Button[@content-desc=\"Search\"]", 20));
         Assert.assertTrue(SendTextToField("com.google.android.documentsui:id/search_src_text", "exp_file_wallet", 20));
         Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
