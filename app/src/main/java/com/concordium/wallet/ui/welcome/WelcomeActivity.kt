@@ -13,6 +13,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupPasscodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.multinetwork.NetworksActivity
 
 class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
 
@@ -39,7 +40,11 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get()
 
-        initViews()
+        setActionBarTitle("")
+        hideActionBarBack(isVisible = false)
+        hideNetworks(isVisible = true) {
+            goToNetworks()
+        }
 
         supportFragmentManager.setFragmentResultListener(
             WelcomeGetStartedFragment.ACTION_REQUEST,
@@ -96,10 +101,6 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         App.appCore.tracker.welcomeScreen()
     }
 
-    private fun initViews() {
-
-    }
-
     override fun loggedOut() {
         // do nothing as we are one of the root activities
     }
@@ -113,5 +114,12 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
+    }
+
+    private fun goToNetworks() {
+        startActivity(
+            Intent(this, NetworksActivity::class.java)
+                .putExtra(NetworksActivity.IS_OPENED_FROM_WELCOME_EXTRA, true)
+        )
     }
 }

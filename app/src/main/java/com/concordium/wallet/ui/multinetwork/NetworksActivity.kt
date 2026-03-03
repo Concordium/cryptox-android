@@ -3,12 +3,14 @@ package com.concordium.wallet.ui.multinetwork
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.databinding.ActivityNetworksBinding
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.toast.showCustomToast
 
 class NetworksActivity : BaseActivity(
     R.layout.activity_networks,
@@ -21,6 +23,10 @@ class NetworksActivity : BaseActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.init(
+            isOpenedFromWelcome = intent.getBooleanExtra(IS_OPENED_FROM_WELCOME_EXTRA, false),
+        )
 
         hideActionBarBack(isVisible = true)
         initEditToggle()
@@ -77,10 +83,28 @@ class NetworksActivity : BaseActivity(
                         .putExtra(MainActivity.EXTRA_SHOW_NETWORK_CONNECTED_TOAST, true)
                 )
             }
+
+            NetworksViewModel.Event.FinishOnSuccess -> {
+                showCustomToast(
+                    title = getString(
+                        R.string.template_network_connected,
+                        App.appCore.session.network.name,
+                    )
+                )
+                finish()
+            }
         }
     }
 
     private fun goToEdit(networkToEdit: AppNetwork?) {
         startActivity(Intent(this, EditNetworkActivity::class.java))
+    }
+
+    override fun loggedOut() {
+        // Do nothing as the screen can be opened from the welcome.
+    }
+
+    companion object {
+        const val IS_OPENED_FROM_WELCOME_EXTRA = "IS_OPENED_FROM_WELCOME_EXTRA"
     }
 }

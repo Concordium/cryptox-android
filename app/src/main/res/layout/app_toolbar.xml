@@ -275,6 +275,18 @@
                     android:visibility="gone"
                     app:tint="@color/cryptox_white_main"
                     tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/toolbar_networks_btn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/networks_preference"
+                    android:padding="8dp"
+                    android:src="@drawable/mw24_ic_globe_world"
+                    android:visibility="gone"
+                    app:tint="@color/cryptox_white_main"
+                    tools:visibility="visible" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>

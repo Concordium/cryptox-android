@@ -71,6 +71,7 @@ abstract class BaseActivity(
     private var explorerBtn: ImageView? = null
     private var editBtn: ImageView? = null
     private var doneBtn: ImageView? = null
+    private var networksBtn: ImageView? = null
 
     private var toastLayoutTopError: ViewGroup? = null
 
@@ -107,6 +108,7 @@ abstract class BaseActivity(
         explorerBtn = toolbar?.findViewById(R.id.toolbar_explorer_btn)
         editBtn = toolbar?.findViewById(R.id.toolbar_edit_btn)
         doneBtn = toolbar?.findViewById(R.id.toolbar_done_btn)
+        networksBtn = toolbar?.findViewById(R.id.toolbar_networks_btn)
 
         setupActionBar(this, titleId)
 
@@ -282,6 +284,11 @@ abstract class BaseActivity(
     fun hideDone(isVisible: Boolean, listener: View.OnClickListener? = null) {
         doneBtn?.isVisible = isVisible
         doneBtn?.setOnClickListener(listener)
+    }
+
+    fun hideNetworks(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        networksBtn?.isVisible = isVisible
+        networksBtn?.setOnClickListener(listener)
     }
 
     private val scanQrResult =
