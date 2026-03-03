@@ -1545,4 +1545,5 @@
     <string name="network_notifications_service_url">Notifications Service URL (optional)</string>
     <string name="save_network">Save</string>
     <string name="custom_network">Custom Network</string>
+    <string name="dev_mode_preference">Developer Mode</string>
 </resources>

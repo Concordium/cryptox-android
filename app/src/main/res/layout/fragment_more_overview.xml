@@ -103,16 +103,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/networks_layout"
-                        style="@style/SettingsOverviewItem">
-
-                        <TextView
-                            style="@style/SettingsOverviewItemTextView"
-                            android:text="@string/networks_preference"
-                            app:drawableStartCompat="@drawable/mw24_ic_globe_world" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:id="@+id/address_book_layout"
                         style="@style/SettingsOverviewItem">
 
@@ -263,6 +253,39 @@
                             android:importantForAccessibility="no"
                             android:src="@drawable/cryptox_ico_chevron_right"
                             app:tint="@color/ccx_neutral_tint_9" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/dev_mode_layout"
+                        style="@style/SettingsOverviewItem"
+                        android:layout_marginTop="@dimen/size24"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/SettingsOverviewItemTextView"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/dev_mode_preference"
+                            app:drawableEndCompat="@null"
+                            app:drawableStartCompat="@drawable/mw24_ic_development_version_brackets" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/dev_mode_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:focusable="false"
+                            app:trackTint="@color/ccx_switch_track_color" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/networks_layout"
+                        style="@style/SettingsOverviewItem">
+
+                        <TextView
+                            style="@style/SettingsOverviewItemTextView"
+                            android:text="@string/networks_preference"
+                            app:drawableStartCompat="@drawable/mw24_ic_globe_world" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>

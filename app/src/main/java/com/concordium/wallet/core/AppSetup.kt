@@ -31,6 +31,8 @@ class AppSetup(
         get() = appSetupPreferences.getHasAcceptedOnRampDisclaimer()
     val showBalanceInEur: Boolean
         get() = appSetupPreferences.getShowBalanceInEur()
+    val isDevModeEnabled: Boolean
+        get() = appSetupPreferences.getDevModeEnabled()
 
     fun finishInitialSetup() {
         appSetupPreferences.setHasCompletedInitialSetup(true)
@@ -104,5 +106,9 @@ class AppSetup(
 
     fun setShowBalanceInEur(value: Boolean) {
         appSetupPreferences.setShowBalanceInEur(value)
+    }
+
+    fun setDevModeEnabled(value: Boolean) {
+        appSetupPreferences.setDevModeEnabled(value)
     }
 }

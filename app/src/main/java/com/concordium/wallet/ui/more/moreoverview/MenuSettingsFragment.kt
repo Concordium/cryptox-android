@@ -128,6 +128,10 @@ class MenuSettingsFragment : BaseFragment() {
             openWallets()
         }
 
+        viewModel.networksVisibilityLiveData.observe(
+            viewLifecycleOwner,
+            binding.networksLayout::isVisible::set
+        )
         binding.networksLayout.setOnClickListener {
             openNetworks()
         }
@@ -208,6 +212,14 @@ class MenuSettingsFragment : BaseFragment() {
         binding.eraseDataLayout.setOnClickListener {
             eraseDataAndExit()
         }
+
+        binding.devModeLayout.setOnClickListener {
+            viewModel.onDevModeClicked()
+        }
+        viewModel.devModeLiveData.observe(
+            viewLifecycleOwner,
+            binding.devModeSwitch::setChecked
+        )
     }
 
     private fun subscribeToEvents() = viewModel.eventsFlow.collect(this) { event ->
