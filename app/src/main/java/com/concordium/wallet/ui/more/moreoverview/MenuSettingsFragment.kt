@@ -358,6 +358,11 @@ class MenuSettingsFragment : BaseFragment() {
 
     private fun openNetworks() {
         val intent = Intent(activity, NetworksActivity::class.java)
+            .putExtras(
+                NetworksActivity.getBundle(
+                    shouldRestartOnConnect = true,
+                )
+            )
         startActivity(intent)
     }
 

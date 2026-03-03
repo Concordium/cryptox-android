@@ -106,7 +106,14 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
     }
 
     private fun goToImportWallet() {
-        startActivity(Intent(this, WelcomeRecoverWalletActivity::class.java))
+        startActivity(
+            Intent(this, WelcomeRecoverWalletActivity::class.java)
+                .putExtras(
+                    WelcomeRecoverWalletActivity.getBundle(
+                        canSwitchNetwork = true,
+                    )
+                )
+        )
     }
 
     private fun goToAccountOverview() {
@@ -119,7 +126,11 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
     private fun goToNetworks() {
         startActivity(
             Intent(this, NetworksActivity::class.java)
-                .putExtra(NetworksActivity.IS_OPENED_FROM_WELCOME_EXTRA, true)
+                .putExtras(
+                    NetworksActivity.getBundle(
+                        shouldRestartOnConnect = false,
+                    )
+                )
         )
     }
 }

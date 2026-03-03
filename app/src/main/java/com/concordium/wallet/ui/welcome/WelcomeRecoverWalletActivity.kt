@@ -8,6 +8,7 @@ import com.concordium.wallet.databinding.ActivityWelcomeRecoverWalletBinding
 import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
+import com.concordium.wallet.ui.multinetwork.NetworksActivity
 import com.concordium.wallet.ui.multiwallet.WalletsActionConfirmationDialog
 import com.concordium.wallet.ui.seed.recover.RecoverSeedPhraseWalletActivity
 import com.concordium.wallet.ui.seed.recover.seed.RecoverSeedWalletActivity
@@ -26,6 +27,9 @@ class WelcomeRecoverWalletActivity : BaseActivity(
         initViews()
 
         hideActionBarBack(isVisible = true)
+        hideNetworks(isVisible = intent.getBooleanExtra(EXTRA_CAN_SWITCH_NETWORK, false)) {
+            goToNetworks()
+        }
         setActionBarTitle("")
 
         supportFragmentManager.setFragmentResultListener(
@@ -99,13 +103,26 @@ class WelcomeRecoverWalletActivity : BaseActivity(
         startActivity(Intent(this, RecoverSeedWalletActivity::class.java))
     }
 
+    private fun goToNetworks() {
+        startActivity(
+            Intent(this, NetworksActivity::class.java)
+                .putExtras(
+                    NetworksActivity.getBundle(
+                        shouldRestartOnConnect = false,
+                    )
+                )
+        )
+    }
+
     companion object {
         private const val EXTRA_SHOW_SEED_OPTIONS = "show_seed_options"
         private const val EXTRA_SHOW_FILE_OPTIONS = "show_file_options"
+        private const val EXTRA_CAN_SWITCH_NETWORK = "can_switch_network"
 
         fun getBundle(
             showSeedOptions: Boolean = true,
             showFileOptions: Boolean = true,
+            canSwitchNetwork: Boolean = false,
         ) = Bundle().apply {
             require(showFileOptions || showSeedOptions) {
                 "No options to show"
@@ -113,6 +130,7 @@ class WelcomeRecoverWalletActivity : BaseActivity(
 
             putBoolean(EXTRA_SHOW_SEED_OPTIONS, showSeedOptions)
             putBoolean(EXTRA_SHOW_FILE_OPTIONS, showFileOptions)
+            putBoolean(EXTRA_CAN_SWITCH_NETWORK, canSwitchNetwork)
         }
     }
 }

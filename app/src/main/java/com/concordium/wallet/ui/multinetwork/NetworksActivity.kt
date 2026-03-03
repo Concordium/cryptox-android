@@ -25,7 +25,8 @@ class NetworksActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         viewModel.init(
-            isOpenedFromWelcome = intent.getBooleanExtra(IS_OPENED_FROM_WELCOME_EXTRA, false),
+            shouldRestartOnConnect =
+                intent.getBooleanExtra(EXTRA_SHOULD_RESTART_ON_CONNECT, true),
         )
 
         hideActionBarBack(isVisible = true)
@@ -77,23 +78,25 @@ class NetworksActivity : BaseActivity(
             }
 
             NetworksViewModel.Event.RestartOnSuccess -> {
+                showConnectionToast()
                 finishAffinity()
-                startActivity(
-                    Intent(this, MainActivity::class.java)
-                        .putExtra(MainActivity.EXTRA_SHOW_NETWORK_CONNECTED_TOAST, true)
-                )
+                startActivity(Intent(this, MainActivity::class.java))
             }
 
             NetworksViewModel.Event.FinishOnSuccess -> {
-                showCustomToast(
-                    title = getString(
-                        R.string.template_network_connected,
-                        App.appCore.session.network.name,
-                    )
-                )
+                showConnectionToast()
                 finish()
             }
         }
+    }
+
+    private fun showConnectionToast() {
+        showCustomToast(
+            title = getString(
+                R.string.template_network_connected,
+                App.appCore.session.network.name,
+            )
+        )
     }
 
     private fun goToEdit(networkToEdit: AppNetwork?) {
@@ -105,6 +108,12 @@ class NetworksActivity : BaseActivity(
     }
 
     companion object {
-        const val IS_OPENED_FROM_WELCOME_EXTRA = "IS_OPENED_FROM_WELCOME_EXTRA"
+        private const val EXTRA_SHOULD_RESTART_ON_CONNECT = "should_restart_on_connect"
+
+        fun getBundle(
+            shouldRestartOnConnect: Boolean,
+        ): Bundle = Bundle().apply {
+            putBoolean(EXTRA_SHOULD_RESTART_ON_CONNECT, shouldRestartOnConnect)
+        }
     }
 }

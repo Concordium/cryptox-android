@@ -23,7 +23,7 @@ class NetworksViewModel : ViewModel() {
     val isEditing: StateFlow<Boolean> = _isEditing
     private val _eventsFlow = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = _eventsFlow
-    private var isOpenedFromWelcome = false
+    private var shouldRestartOnConnect = false
 
     val items: StateFlow<List<NetworkListItem>> =
         combine(
@@ -45,8 +45,8 @@ class NetworksViewModel : ViewModel() {
             }
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    fun init(isOpenedFromWelcome: Boolean) {
-        this.isOpenedFromWelcome = isOpenedFromWelcome
+    fun init(shouldRestartOnConnect: Boolean) {
+        this.shouldRestartOnConnect = shouldRestartOnConnect
     }
 
     fun onNetworkItemClicked(item: NetworkListItem.Network) {
@@ -61,10 +61,10 @@ class NetworksViewModel : ViewModel() {
                     .invoke(
                         newNetwork = network,
                     )
-                if (isOpenedFromWelcome) {
-                    _eventsFlow.tryEmit(Event.FinishOnSuccess)
-                } else {
+                if (shouldRestartOnConnect) {
                     _eventsFlow.tryEmit(Event.RestartOnSuccess)
+                } else {
+                    _eventsFlow.tryEmit(Event.FinishOnSuccess)
                 }
             }
         }
