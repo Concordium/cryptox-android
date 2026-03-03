@@ -6,6 +6,7 @@ import config.RetryAnalyzer;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -157,6 +158,8 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
+        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+        Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
