@@ -76,8 +76,6 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElement("icon_image_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@content-desc=\"Search\"]", 20));
-        Assert.assertTrue(SendTextToField("com.google.android.documentsui:id/search_src_text", "exp_file_wallet", 20));
         Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
