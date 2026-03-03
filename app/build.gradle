@@ -174,7 +174,8 @@ android {
                     'META-INF/DEPENDENCIES',
                     'META-INF/LICENSE.md',
                     'META-INF/NOTICE.md',
-                    'META-INF/versions/**'
+                    'META-INF/versions/**',
+                    '**/DebugProbesKt.bin'
             ]
         }
         jniLibs {
@@ -284,6 +285,7 @@ dependencies {
     implementation libs.play.review
     implementation libs.play.review.ktx
     implementation libs.dotsindicator
+    implementation libs.rootbeer
     annotationProcessor libs.lombok.processor
 }
 
