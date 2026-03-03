@@ -94,6 +94,7 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
     override fun onResume() {
         super.onResume()
         App.appCore.tracker.welcomeScreen()
+        checkIsRooted()
     }
 
     private fun initViews() {

@@ -80,6 +80,7 @@ class AccountDetailsFragment : BaseFragment() {
         initializeViewModels()
         initViews()
         initToolbar()
+        checkIsRootDevice()
     }
 
     override fun onResume() {
@@ -477,6 +478,10 @@ class AccountDetailsFragment : BaseFragment() {
             childFragmentManager,
             NotificationsPermissionDialog.TAG
         )
+    }
+
+    private fun checkIsRootDevice() {
+        (requireActivity() as BaseActivity).checkIsRooted()
     }
 
     private fun gotoSeedPhraseReveal() {

@@ -1530,4 +1530,6 @@
     </string>
     <string name="seed_phrase_backup_notice_backup">Backup Your Seed phrase</string>
     <string name="seed_phrase_backup_notice_hide_anyway">Hide anyway</string>
+
+    <string name="device_root_detected">Running the wallet on a rooted device is not safe. Proceed at your own risk</string>
 </resources>
