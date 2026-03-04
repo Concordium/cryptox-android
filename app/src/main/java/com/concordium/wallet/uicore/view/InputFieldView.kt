@@ -103,7 +103,14 @@ class InputFieldView @JvmOverloads constructor(
 
     fun getText(): String = binding.edittext.text.toString()
 
-    fun setText(text: String) = binding.edittext.setText(text)
+    fun setText(text: String) = with(binding.edittext) {
+        if (selectionEnd == (this.text?.length ?: 0)) {
+            setText(text)
+            setSelection(text.length)
+        } else {
+            setTextKeepState(text)
+        }
+    }
 
     fun setSearchListener(listener: OnClickListener) {
         binding.searchIcon.setOnClickListener(listener)

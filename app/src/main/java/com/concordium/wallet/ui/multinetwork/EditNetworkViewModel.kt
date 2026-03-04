@@ -65,6 +65,7 @@ class EditNetworkViewModel : ViewModel() {
     private val _validNotificationsServiceHttpUrl = MutableStateFlow<HttpUrl?>(null)
     private val _loadedGenesisHash = MutableStateFlow<String?>(null)
     val loadedGenesisHash: StateFlow<String?> = _loadedGenesisHash
+    private val genesisHashByWalletProxyUrl = mutableMapOf<HttpUrl, String>()
 
     val canSave: StateFlow<Boolean> =
         combine(
@@ -145,14 +146,18 @@ class EditNetworkViewModel : ViewModel() {
         }
 
         if (networkToEditHash != null) {
-            networkToEdit = runBlocking {
+            val networkToEdit = runBlocking {
                 networkRepository
                     .getNetworksFlow()
                     .first()
                     .find { it.genesisHash == networkToEditHash }
                     ?: error("Network $networkToEditHash not found")
             }
+            _loadedGenesisHash.value = networkToEdit.genesisHash
+            genesisHashByWalletProxyUrl[networkToEdit.walletProxyUrl] = networkToEdit.genesisHash
+            this.networkToEdit = networkToEdit
         }
+
         this.shouldRestartOnConnect = shouldRestartOnConnect
     }
 
@@ -302,6 +307,10 @@ class EditNetworkViewModel : ViewModel() {
     }
 
     private suspend fun getGenesisHash(walletProxyUrl: HttpUrl): String {
+        if (genesisHashByWalletProxyUrl.containsKey(walletProxyUrl)) {
+            return genesisHashByWalletProxyUrl.getValue(walletProxyUrl)
+        }
+
         val proxyBackendConfig = ProxyBackendConfig(
             walletProxyUrl = walletProxyUrl,
             gson = App.appCore.gson,
@@ -316,13 +325,20 @@ class EditNetworkViewModel : ViewModel() {
     private var saveJob: Job? = null
     fun onSaveClicked() {
         saveJob?.cancel()
-        if (canSave.value) {
-            saveJob = viewModelScope.launch {
-                if (networkToEdit == null) {
-                    addNewNetwork()
-                } else {
-                    updateNetworkToEdit()
-                }
+        saveJob = viewModelScope.launch {
+            validateName()
+            validateWalletProxyUrlAndLoadGenesisHash()
+            validateCcdScanUrl()
+            validateNotificationsServiceUrl()
+
+            if (!canSave.value) {
+                return@launch
+            }
+
+            if (networkToEdit == null) {
+                addNewNetwork()
+            } else {
+                updateNetworkToEdit()
             }
         }
     }
