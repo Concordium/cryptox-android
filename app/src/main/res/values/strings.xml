@@ -1550,4 +1550,6 @@
     <string name="error_networks_invalid_url">Not a valid URL</string>
     <string name="template_error_network_already_exists">This configuration points to %1$s</string>
     <string name="device_root_detected">Running the wallet on a rooted device is not safe. Proceed at your own risk</string>
+    <string name="template_network_saved">%1$s Saved</string>
+    <string name="template_network_added">%1$s Added</string>
 </resources>

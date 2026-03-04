@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityEditNetworkBinding
+import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.toast.ToastType
+import com.concordium.wallet.uicore.toast.showCustomToast
 
 class EditNetworkActivity : BaseActivity(
     R.layout.activity_edit_network,
@@ -24,6 +28,7 @@ class EditNetworkActivity : BaseActivity(
         hideActionBarBack(isVisible = true)
         initFields()
         initSaveButton()
+        subscribeToEvents()
     }
 
     private fun initFields() {
@@ -101,6 +106,32 @@ class EditNetworkActivity : BaseActivity(
 
     private fun initSaveButton() {
         viewModel.canSave.collectWhenStarted(this, binding.saveButton::setEnabled)
+        binding.saveButton.setOnClickListener {
+            viewModel.onSaveClicked()
+        }
+    }
+
+    private fun subscribeToEvents(
+
+    ) = viewModel.eventsFlow.collect(lifecycleScope) { event ->
+        when (event) {
+            is EditNetworkViewModel.Event.FinishOnAdding -> {
+                showCustomToast(
+                    title = getString(
+                        R.string.template_network_added,
+                        event.addedNetworkName,
+                    )
+                )
+                finish()
+            }
+
+            is EditNetworkViewModel.Event.ShowFloatingError -> {
+                showCustomToast(
+                    title = event.error.message,
+                    toastType = ToastType.ERROR,
+                )
+            }
+        }
     }
 
     private val EditNetworkViewModel.Error.message: String

@@ -293,17 +293,18 @@ class EditNetworkViewModel : ViewModel() {
         saveJob?.cancel()
         if (canSave.value) {
             saveJob = viewModelScope.launch {
-                save()
+                addNewNetwork()
             }
         }
     }
 
-    private suspend fun save() {
+    private suspend fun addNewNetwork() {
+        val name = _validName.value
+            ?: return
         try {
             AddNetworkUseCase()
                 .invoke(
-                    name = _validName.value
-                        ?: return,
+                    name = name,
                     genesisHash = _loadedGenesisHash.value
                         ?: return,
                     walletProxyUrl = _validWalletProxyHttpUrl.value
@@ -320,7 +321,11 @@ class EditNetworkViewModel : ViewModel() {
             return
         }
 
-        _eventsFlow.tryEmit(Event.FinishOnSuccess)
+        _eventsFlow.tryEmit(
+            Event.FinishOnAdding(
+                addedNetworkName = name,
+            )
+        )
     }
 
     sealed interface Error {
@@ -332,6 +337,8 @@ class EditNetworkViewModel : ViewModel() {
 
     sealed interface Event {
         class ShowFloatingError(val error: Error) : Event
-        object FinishOnSuccess : Event
+        class FinishOnAdding(
+            val addedNetworkName: String,
+        ) : Event
     }
 }
