@@ -1546,6 +1546,7 @@
     <string name="network_notifications_service_url">Notifications Service URL (optional)</string>
     <string name="save_network">Save</string>
     <string name="custom_network">Custom Network</string>
+    <string name="edit_network">Edit Network</string>
     <string name="dev_mode_preference">Developer Mode</string>
     <string name="error_networks_invalid_url">Not a valid URL</string>
     <string name="template_error_network_already_exists">This configuration points to %1$s</string>

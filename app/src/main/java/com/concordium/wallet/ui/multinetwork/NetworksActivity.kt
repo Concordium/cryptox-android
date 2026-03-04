@@ -100,7 +100,15 @@ class NetworksActivity : BaseActivity(
     }
 
     private fun goToEdit(networkToEdit: AppNetwork?) {
-        startActivity(Intent(this, EditNetworkActivity::class.java))
+        startActivity(
+            Intent(this, EditNetworkActivity::class.java)
+                .putExtras(
+                    EditNetworkActivity.getBundle(
+                        networkToEditHash = networkToEdit?.genesisHash,
+                        shouldRestartOnConnect = viewModel.shouldRestartOnConnect,
+                    )
+                )
+        )
     }
 
     override fun loggedOut() {

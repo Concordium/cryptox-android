@@ -23,8 +23,8 @@ class NetworksViewModel : ViewModel() {
     val isEditing: StateFlow<Boolean> = _isEditing
     private val _eventsFlow = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = _eventsFlow
-    private var shouldRestartOnConnect = false
-
+    var shouldRestartOnConnect = false
+        private set
     val items: StateFlow<List<NetworkListItem>> =
         combine(
             networkRepository

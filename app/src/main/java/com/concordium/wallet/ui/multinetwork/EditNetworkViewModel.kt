@@ -3,8 +3,8 @@ package com.concordium.wallet.ui.multinetwork
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.core.multinetwork.AddNetworkUseCase
 import com.concordium.wallet.core.multinetwork.AppNetwork
+import com.concordium.wallet.core.multinetwork.SwitchNetworkUseCase
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -39,6 +40,9 @@ class EditNetworkViewModel : ViewModel() {
     private val networkRepository = App.appCore.networkRepository
     private val _eventsFlow = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = _eventsFlow
+    var networkToEdit: AppNetwork? = null
+        private set
+    private var shouldRestartOnConnect = false
     private val _nameInput = MutableStateFlow("")
     private val _nameDefocusEvents = MutableSharedFlow<Boolean>()
     private val _nameError = MutableStateFlow<Error?>(null)
@@ -131,6 +135,27 @@ class EditNetworkViewModel : ViewModel() {
             .launchIn(viewModelScope)
     }
 
+    private var isInitialized = false
+    fun init(
+        networkToEditHash: String?,
+        shouldRestartOnConnect: Boolean,
+    ) {
+        if (isInitialized) {
+            return
+        }
+
+        if (networkToEditHash != null) {
+            networkToEdit = runBlocking {
+                networkRepository
+                    .getNetworksFlow()
+                    .first()
+                    .find { it.genesisHash == networkToEditHash }
+                    ?: error("Network $networkToEditHash not found")
+            }
+        }
+        this.shouldRestartOnConnect = shouldRestartOnConnect
+    }
+
     fun onNetworkNameChanged(name: String) {
         _nameInput.value = name
     }
@@ -180,7 +205,7 @@ class EditNetworkViewModel : ViewModel() {
                 .getNetworksFlow()
                 .first()
                 .find { it.name == name }
-        if (existingNetwork != null) {
+        if (existingNetwork != null && existingNetwork != networkToEdit) {
             Log.d("Network already exists: $existingNetwork")
             _nameError.value = Error.NetworkAlreadyExists(existingNetwork)
             return
@@ -228,7 +253,7 @@ class EditNetworkViewModel : ViewModel() {
                 .getNetworksFlow()
                 .first()
                 .find { it.genesisHash == genesisHash }
-        if (existingNetwork != null) {
+        if (existingNetwork != null && existingNetwork != networkToEdit) {
             Log.d("Network already exists: $existingNetwork")
             _walletProxyUrlError.value = Error.NetworkAlreadyExists(existingNetwork)
             return
@@ -293,29 +318,32 @@ class EditNetworkViewModel : ViewModel() {
         saveJob?.cancel()
         if (canSave.value) {
             saveJob = viewModelScope.launch {
-                addNewNetwork()
+                if (networkToEdit == null) {
+                    addNewNetwork()
+                } else {
+                    updateNetworkToEdit()
+                }
             }
         }
     }
 
     private suspend fun addNewNetwork() {
-        val name = _validName.value
-            ?: return
+        val addedNetwork: AppNetwork
+
         try {
-            AddNetworkUseCase()
-                .invoke(
-                    name = name,
-                    genesisHash = _loadedGenesisHash.value
-                        ?: return,
-                    walletProxyUrl = _validWalletProxyHttpUrl.value
-                        ?: return,
-                    ccdScanFrontendUrl = _validCcdScanHttpUrl.value,
-                    notificationsServiceUrl = _validNotificationsServiceHttpUrl.value,
-                )
+            addedNetwork =
+                networkRepository
+                    .addInactive(
+                        name = _validName.value
+                            ?: return,
+                        genesisHash = _loadedGenesisHash.value
+                            ?: return,
+                        walletProxyUrl = _validWalletProxyHttpUrl.value
+                            ?: return,
+                        ccdScanFrontendUrl = _validCcdScanHttpUrl.value,
+                        notificationsServiceUrl = _validNotificationsServiceHttpUrl.value,
+                    )
         } catch (e: Exception) {
-            if (e is CancellationException) {
-                throw e
-            }
             Log.e("Failed adding network", e)
             _eventsFlow.tryEmit(Event.ShowFloatingError(Error.GenericError))
             return
@@ -323,8 +351,52 @@ class EditNetworkViewModel : ViewModel() {
 
         _eventsFlow.tryEmit(
             Event.FinishOnAdding(
-                addedNetworkName = name,
+                addedNetworkName = addedNetwork.name,
             )
+        )
+    }
+
+    private suspend fun updateNetworkToEdit() {
+        val updatedNetwork: AppNetwork
+        var isReconnected = false
+
+        try {
+            updatedNetwork =
+                networkRepository
+                    .update(
+                        currentGenesisHash = networkToEdit!!.genesisHash,
+                        newGenesisHash = _loadedGenesisHash.value
+                            ?: return,
+                        name = _validName.value
+                            ?: return,
+                        walletProxyUrl = _validWalletProxyHttpUrl.value
+                            ?: return,
+                        ccdScanFrontendUrl = _validCcdScanHttpUrl.value,
+                        notificationsServiceUrl = _validNotificationsServiceHttpUrl.value,
+                    )
+
+            if (networkToEdit == App.appCore.session.network) {
+                SwitchNetworkUseCase()
+                    .invoke(
+                        newNetwork = updatedNetwork,
+                    )
+                isReconnected = true
+            }
+        } catch (e: Exception) {
+            Log.e("Failed updating network", e)
+            _eventsFlow.tryEmit(Event.ShowFloatingError(Error.GenericError))
+            return
+        }
+
+        _eventsFlow.tryEmit(
+            if (isReconnected && shouldRestartOnConnect)
+                Event.RestartAfterEdited(
+                    editedNetworkName = updatedNetwork.name,
+                )
+            else
+                Event.FinishAfterEdited(
+                    editedNetworkName = updatedNetwork.name,
+                )
         )
     }
 
@@ -336,9 +408,20 @@ class EditNetworkViewModel : ViewModel() {
     }
 
     sealed interface Event {
-        class ShowFloatingError(val error: Error) : Event
+        class ShowFloatingError(
+            val error: Error,
+        ) : Event
+
         class FinishOnAdding(
             val addedNetworkName: String,
+        ) : Event
+
+        class RestartAfterEdited(
+            val editedNetworkName: String,
+        ) : Event
+
+        class FinishAfterEdited(
+            val editedNetworkName: String,
         ) : Event
     }
 }

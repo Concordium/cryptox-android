@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.multinetwork
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityEditNetworkBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.toast.ToastType
 import com.concordium.wallet.uicore.toast.showCustomToast
@@ -25,6 +27,17 @@ class EditNetworkActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel.init(
+            networkToEditHash = intent.getStringExtra(EXTRA_NETWORK_TO_EDIT_HASH),
+            shouldRestartOnConnect = intent.getBooleanExtra(EXTRA_SHOULD_RESTART_ON_CONNECT, true),
+        )
+
+        setActionBarTitle(
+            if (viewModel.networkToEdit != null)
+                R.string.edit_network
+            else
+                R.string.custom_network
+        )
         hideActionBarBack(isVisible = true)
         initFields()
         initSaveButton()
@@ -42,6 +55,9 @@ class EditNetworkActivity : BaseActivity(
                     viewModel.onNetworkNameLostFocus()
                 }
             }
+            if (viewModel.networkToEdit != null) {
+                setText(viewModel.networkToEdit!!.name)
+            }
         }
         viewModel.nameError.collectWhenStarted(this) { nameError ->
             binding.networkNameError.isVisible = nameError != null
@@ -57,6 +73,9 @@ class EditNetworkActivity : BaseActivity(
                 if (!isFocused) {
                     viewModel.onWalletProxyUrlLostFocus()
                 }
+            }
+            if (viewModel.networkToEdit != null) {
+                setText(viewModel.networkToEdit!!.walletProxyUrl.toString())
             }
         }
         viewModel.walletProxyUrlError.collectWhenStarted(this) { walletProxyUrlError ->
@@ -81,6 +100,9 @@ class EditNetworkActivity : BaseActivity(
                     viewModel.onCcdScanUrlLostFocus()
                 }
             }
+            if (viewModel.networkToEdit != null) {
+                setText(viewModel.networkToEdit!!.ccdScanFrontendUrl?.toString() ?: "")
+            }
         }
         viewModel.ccdScanUrlError.collectWhenStarted(this) { ccdScanUrlError ->
             binding.ccdscanUrlError.isVisible = ccdScanUrlError != null
@@ -96,6 +118,9 @@ class EditNetworkActivity : BaseActivity(
                 if (!isFocused) {
                     viewModel.onNotificationsServiceUrlLostFocus()
                 }
+            }
+            if (viewModel.networkToEdit != null) {
+                setText(viewModel.networkToEdit!!.notificationsServiceUrl?.toString() ?: "")
             }
         }
         viewModel.notificationsServiceUrlError.collectWhenStarted(this) { notificationsServiceUrlError ->
@@ -125,6 +150,27 @@ class EditNetworkActivity : BaseActivity(
                 finish()
             }
 
+            is EditNetworkViewModel.Event.FinishAfterEdited -> {
+                showCustomToast(
+                    title = getString(
+                        R.string.template_network_saved,
+                        event.editedNetworkName,
+                    )
+                )
+                finish()
+            }
+
+            is EditNetworkViewModel.Event.RestartAfterEdited -> {
+                showCustomToast(
+                    title = getString(
+                        R.string.template_network_saved,
+                        event.editedNetworkName,
+                    )
+                )
+                finishAffinity()
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+
             is EditNetworkViewModel.Event.ShowFloatingError -> {
                 showCustomToast(
                     title = event.error.message,
@@ -151,4 +197,25 @@ class EditNetworkActivity : BaseActivity(
             EditNetworkViewModel.Error.GenericError ->
                 getString(R.string.app_error_general)
         }
+
+    override fun loggedOut() {
+        // Do nothing as the screen can be opened from the welcome.
+    }
+
+    companion object {
+        private const val EXTRA_NETWORK_TO_EDIT_HASH = "network_to_edit_hash"
+        private const val EXTRA_SHOULD_RESTART_ON_CONNECT = "should_restart_on_connect"
+
+        /**
+         * @param networkToEditHash genesis hash of an existing network to edit,
+         * otherwise a new network is added
+         */
+        fun getBundle(
+            networkToEditHash: String?,
+            shouldRestartOnConnect: Boolean,
+        ): Bundle = Bundle().apply {
+            putString(EXTRA_NETWORK_TO_EDIT_HASH, networkToEditHash)
+            putBoolean(EXTRA_SHOULD_RESTART_ON_CONNECT, shouldRestartOnConnect)
+        }
+    }
 }

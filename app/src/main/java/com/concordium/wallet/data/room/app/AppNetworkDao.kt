@@ -21,4 +21,14 @@ abstract class AppNetworkDao {
 
     @Insert
     abstract suspend fun insert(vararg networks: AppNetworkEntity)
+
+    @Query("UPDATE networks SET genesis_hash=:newGenesisHash, name=:name, wallet_proxy_url=:walletProxyUrl, ccdscan_frontend_url=:ccdScanFrontendUrl, notifications_service_url=:notificationsServiceUrl WHERE genesis_hash=:currentGenesisHash")
+    abstract suspend fun update(
+        currentGenesisHash: String,
+        newGenesisHash: String,
+        name: String,
+        walletProxyUrl: String,
+        ccdScanFrontendUrl: String?,
+        notificationsServiceUrl: String?,
+    )
 }
