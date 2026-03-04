@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-     SLACK_TEST_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
+     SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
 
     environment:
       name: Autotests
@@ -34,13 +34,13 @@ jobs:
       - name: Slack Post
         uses: devtk0582/slack-post-action@v1.2
         with:
-          SLACK_TEST_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
           MESSAGE: "📱 Test Started on device set :${{ matrix.profile }} You can find results and logs here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Slack Post
         uses: devtk0582/slack-post-action@v1.2
         with:
-          SLACK_TEST_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
           MESSAGE: 🚀 Starting Stagenet Debug Build
 
       - name: Set up JDK
@@ -64,7 +64,7 @@ jobs:
       - name: Slack Post
         uses: devtk0582/slack-post-action@v1.2
         with:
-          SLACK_TEST_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
           MESSAGE: 📱 Test Started on device set :${{ matrix.profile }}
 
       - name: Enable KVM
