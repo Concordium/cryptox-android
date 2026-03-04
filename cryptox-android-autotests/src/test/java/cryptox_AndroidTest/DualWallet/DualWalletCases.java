@@ -52,7 +52,20 @@ public class DualWalletCases {
     }
 
     @Test
-    public void z_verify_a_user_can_managed_file_base_wallet_and_seed_phrase_wallet() throws MalformedURLException, InterruptedException {
+    public void z_verify_if_users_can_remove_wallet() throws MalformedURLException, InterruptedException {
+        driver.terminateApp(PackageName);
+        driver.activateApp(PackageName);
+        Assert.assertTrue(loginCryptoX());
+        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
+        Assert.assertTrue(performScrollDown());
+        Thread.sleep(3000);
+        Assert.assertTrue(clickOnElement("erase_data_layout", 20));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
+        Assert.assertTrue(verifyPinAndPressOK());
+    }
+
+    @Test
+    public void verify_a9_a_user_can_managed_file_base_wallet_and_seed_phrase_wallet() throws MalformedURLException, InterruptedException {
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 10));
@@ -93,7 +106,7 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
         Assert.assertTrue(clickOnElement("toolbar_back_btn", 20));
         Assert.assertTrue(verifyElementById("wallet_switch_view", 20));
-        Assert.assertTrue(verifyElementId("title_text_view", 20));
+        Assert.assertTrue(verifyElementId("manage_tokens", 20));
         Assert.assertTrue(verifyElementById("wallet_switch_view", 20));
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
     }
@@ -117,7 +130,7 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"File wallet\"]", 20));
         Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(verifyElementId("title_text_view", 20));
+        Assert.assertTrue(verifyElementId("manage_tokens", 20));
     }
 
     @Test
@@ -240,18 +253,5 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("title_text_view", 20));
-    }
-
-    @Test
-    public void a_verify_if_users_can_remove_wallet() throws MalformedURLException, InterruptedException {
-        driver.terminateApp(PackageName);
-        driver.activateApp(PackageName);
-        Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
-        Assert.assertTrue(performScrollDown());
-        Thread.sleep(3000);
-        Assert.assertTrue(clickOnElement("erase_data_layout", 20));
-        Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(verifyPinAndPressOK());
     }
 }
