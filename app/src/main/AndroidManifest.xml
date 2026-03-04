@@ -477,7 +477,8 @@
         <activity
             android:name=".ui.multinetwork.EditNetworkActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
     </application>
 
 </manifest>

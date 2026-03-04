@@ -25,6 +25,7 @@ class InputFieldView @JvmOverloads constructor(
     private var iconTextEmpty: Drawable? = null
     private var iconTextFilled: Drawable? = null
     private var afterTextChanged: ((Editable?) -> Unit)? = null
+    private var onFocusChange: ((Boolean) -> Unit)? = null
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.InputFieldView, 0, 0).apply {
@@ -64,6 +65,7 @@ class InputFieldView @JvmOverloads constructor(
 
         binding.edittext.setOnFocusChangeListener { _, hasFocus ->
             binding.root.isActivated = hasFocus
+            onFocusChange?.invoke(hasFocus)
         }
 
         binding.root.setOnClickListener {
@@ -132,6 +134,10 @@ class InputFieldView @JvmOverloads constructor(
                 false
             }
         }
+    }
+
+    fun setOnFocusChangeListener(listener: (Boolean) -> Unit) {
+        this.onFocusChange = listener
     }
 
     override fun setEnabled(enabled: Boolean) {

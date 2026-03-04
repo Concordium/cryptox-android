@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.multinetwork
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityEditNetworkBinding
 import com.concordium.wallet.extension.collectWhenStarted
@@ -31,6 +32,15 @@ class EditNetworkActivity : BaseActivity(
             setTextChangeListener {
                 viewModel.onNetworkNameChanged(it?.toString() ?: "")
             }
+            setOnFocusChangeListener { isFocused ->
+                if (!isFocused) {
+                    viewModel.onNetworkNameLostFocus()
+                }
+            }
+        }
+        viewModel.nameError.collectWhenStarted(this) { nameError ->
+            binding.networkNameError.isVisible = nameError != null
+            binding.networkNameError.text = nameError?.message
         }
 
         with(binding.walletProxyUrlField) {
@@ -38,11 +48,22 @@ class EditNetworkActivity : BaseActivity(
             setTextChangeListener {
                 viewModel.onWalletProxyUrlChanged(it?.toString() ?: "")
             }
+            setOnFocusChangeListener { isFocused ->
+                if (!isFocused) {
+                    viewModel.onWalletProxyUrlLostFocus()
+                }
+            }
+        }
+        viewModel.walletProxyUrlError.collectWhenStarted(this) { walletProxyUrlError ->
+            binding.walletProxyUrlError.isVisible = walletProxyUrlError != null
+            binding.walletProxyUrlError.text = walletProxyUrlError?.message
         }
 
         with(binding.genesisHashField) {
             isEnabled = false
-            setText("123456")
+            viewModel.loadedGenesisHash.collectWhenStarted(this@EditNetworkActivity) { genesisHash ->
+                setText(genesisHash ?: "")
+            }
         }
 
         with(binding.ccdscanUrlField) {
@@ -50,6 +71,15 @@ class EditNetworkActivity : BaseActivity(
             setTextChangeListener {
                 viewModel.onCcdScanUrlChanged(it?.toString() ?: "")
             }
+            setOnFocusChangeListener { isFocused ->
+                if (!isFocused) {
+                    viewModel.onCcdScanUrlLostFocus()
+                }
+            }
+        }
+        viewModel.ccdScanUrlError.collectWhenStarted(this) { ccdScanUrlError ->
+            binding.ccdscanUrlError.isVisible = ccdScanUrlError != null
+            binding.ccdscanUrlError.text = ccdScanUrlError?.message
         }
 
         with(binding.notificationsServiceUrlField) {
@@ -57,10 +87,34 @@ class EditNetworkActivity : BaseActivity(
             setTextChangeListener {
                 viewModel.onNotificationsServiceUrlChanged(it?.toString() ?: "")
             }
+            setOnFocusChangeListener { isFocused ->
+                if (!isFocused) {
+                    viewModel.onNotificationsServiceUrlLostFocus()
+                }
+            }
+        }
+        viewModel.notificationsServiceUrlError.collectWhenStarted(this) { notificationsServiceUrlError ->
+            binding.notificationsServiceUrlError.isVisible = notificationsServiceUrlError != null
+            binding.notificationsServiceUrlError.text = notificationsServiceUrlError?.message
         }
     }
 
     private fun initSaveButton() {
         viewModel.canSave.collectWhenStarted(this, binding.saveButton::setEnabled)
     }
+
+    private val EditNetworkViewModel.Error.message: String
+        get() = when (this) {
+            is EditNetworkViewModel.Error.BackendError ->
+                getString(stringRes)
+
+            EditNetworkViewModel.Error.InvalidUrl ->
+                getString(R.string.error_networks_invalid_url)
+
+            is EditNetworkViewModel.Error.NetworkAlreadyExists ->
+                getString(
+                    R.string.template_error_network_already_exists,
+                    existingNetwork.name,
+                )
+        }
 }
