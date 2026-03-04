@@ -3,7 +3,6 @@ package com.concordium.wallet.data.room.app
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -22,10 +21,4 @@ abstract class AppNetworkDao {
 
     @Insert
     abstract suspend fun insert(vararg networks: AppNetworkEntity)
-
-    @Transaction
-    open suspend fun insertAndActivate(network: AppNetworkEntity) {
-        insert(network)
-        activate(network.genesisHash)
-    }
 }

@@ -23,13 +23,13 @@ class AppNetworkRepository(
             .getActive()
             .toNetwork()
 
-    suspend fun addAndActivate(
+    suspend fun addInactive(
         newNetwork: AppNetwork,
     ) {
-        appNetworkDao.insertAndActivate(
-            network = AppNetworkEntity(
+        appNetworkDao.insert(
+            AppNetworkEntity(
                 network = newNetwork,
-                isActive = true,
+                isActive = false,
             ),
         )
     }

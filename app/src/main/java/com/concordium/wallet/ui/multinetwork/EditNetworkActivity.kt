@@ -116,5 +116,8 @@ class EditNetworkActivity : BaseActivity(
                     R.string.template_error_network_already_exists,
                     existingNetwork.name,
                 )
+
+            EditNetworkViewModel.Error.GenericError ->
+                getString(R.string.app_error_general)
         }
 }

@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.multinetwork
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.core.multinetwork.AddNetworkUseCase
 import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.backend.repository.ProxyRepository
@@ -11,6 +12,7 @@ import com.concordium.wallet.util.Log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -286,14 +288,50 @@ class EditNetworkViewModel : ViewModel() {
     private fun String.ensureTrailingSlash() =
         trimEnd('/') + '/'
 
+    private var saveJob: Job? = null
+    fun onSaveClicked() {
+        saveJob?.cancel()
+        if (canSave.value) {
+            saveJob = viewModelScope.launch {
+                save()
+            }
+        }
+    }
+
+    private suspend fun save() {
+        try {
+            AddNetworkUseCase()
+                .invoke(
+                    name = _validName.value
+                        ?: return,
+                    genesisHash = _loadedGenesisHash.value
+                        ?: return,
+                    walletProxyUrl = _validWalletProxyHttpUrl.value
+                        ?: return,
+                    ccdScanFrontendUrl = _validCcdScanHttpUrl.value,
+                    notificationsServiceUrl = _validNotificationsServiceHttpUrl.value,
+                )
+        } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
+            Log.e("Failed adding network", e)
+            _eventsFlow.tryEmit(Event.ShowFloatingError(Error.GenericError))
+            return
+        }
+
+        _eventsFlow.tryEmit(Event.FinishOnSuccess)
+    }
+
     sealed interface Error {
         object InvalidUrl : Error
         class NetworkAlreadyExists(val existingNetwork: AppNetwork) : Error
         class BackendError(val stringRes: Int) : Error
+        object GenericError : Error
     }
 
     sealed interface Event {
         class ShowFloatingError(val error: Error) : Event
-        object RestartOnSuccess : Event
+        object FinishOnSuccess : Event
     }
 }
