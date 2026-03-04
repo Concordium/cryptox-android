@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static config.appiumconnection.*;
+import static java.time.Duration.ofSeconds;
+import static org.openqa.selenium.By.id;
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 
 public class generalMethods {
 
@@ -95,6 +98,31 @@ public class generalMethods {
         return false;
     }
 
+    public static boolean verifyElementId(String elementID, Integer timeout) {
+        try {
+            By elementIDs = By.id(elementID);
+
+            MobileElement elementToLookFor = waitForElement(elementIDs, timeout);
+
+            assert elementToLookFor != null;
+            if (elementToLookFor.isDisplayed()) {
+                log.info("Successfully verified element" + elementID);
+                return true;
+            } else {
+
+                System.out.println("unable to verify Element" + elementID);
+                return false;
+            }
+
+        } catch (Exception exp) {
+            log.error(String.valueOf(exp.getCause()));
+            System.out.println(exp.getMessage());
+            log.error(String.valueOf(exp.fillInStackTrace()));
+        }
+
+        return false;
+    }
+
     public static boolean verifyElementByXpath(String elementID, Integer timeout) {
         try {
             By elementIDs = By.xpath(elementID);
@@ -105,11 +133,11 @@ public class generalMethods {
             if (elementToLookFor.isDisplayed()) {
 
                 elementToLookFor.click();
+                log.info("Successfully verified element by xpath", elementID);
                 return true;
             } else {
 
                 System.out.println("unable to verify Element" + elementID);
-
                 return false;
             }
 
@@ -396,6 +424,24 @@ public class generalMethods {
 
         } catch (Exception e) {
             log.error("Exception in verifyTextById: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean waitForLoaderToDisappear(String elementId, int timeoutInSeconds) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(elementId)));
+            log.info("Loader appeared");
+
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id(elementId)));
+            log.info("Loader disappeared");
+
+            return true;
+
+        } catch (TimeoutException e) {
+            log.warn("Loader did not disappear in time");
             return false;
         }
     }

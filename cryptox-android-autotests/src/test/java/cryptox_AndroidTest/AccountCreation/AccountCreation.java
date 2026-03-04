@@ -27,6 +27,7 @@ public class AccountCreation {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
+        Assert.assertTrue(clickOnElement("ok_button", 5));
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
         Assert.assertTrue(clickOnElement("create_account_button", 20));
         Assert.assertTrue(SendTextToField("account_name_edittext", "AutomationAccount", 20));

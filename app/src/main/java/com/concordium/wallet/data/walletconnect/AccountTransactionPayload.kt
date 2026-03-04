@@ -1,7 +1,7 @@
 package com.concordium.wallet.data.walletconnect
 
 import com.concordium.sdk.transactions.tokens.TransferTokenOperation
-import com.concordium.wallet.data.cryptolib.ContractAddress
+import com.concordium.sdk.types.ContractAddress
 import com.google.gson.annotations.SerializedName
 import java.math.BigInteger
 

@@ -39,6 +39,9 @@ import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.dialog.UnlockFeatureDialog
 import com.concordium.wallet.uicore.popup.Popup
+import com.concordium.wallet.uicore.toast.ToastType
+import com.concordium.wallet.uicore.toast.showCustomToast
+import com.scottyab.rootbeer.RootBeer
 import kotlinx.coroutines.runBlocking
 import java.io.Serializable
 import javax.crypto.Cipher
@@ -542,5 +545,12 @@ abstract class BaseActivity(
             supportFragmentManager,
             AccountsListFragment.TAG
         )
+    }
+
+    fun checkIsRooted() {
+        val rootBeer = RootBeer(this)
+        if (rootBeer.isRooted) {
+            showCustomToast(getString(R.string.device_root_detected), ToastType.ERROR)
+        }
     }
 }

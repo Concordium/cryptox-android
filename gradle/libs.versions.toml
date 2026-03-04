@@ -26,7 +26,7 @@ swiperefreshlayout = "1.2.0"
 zxing = "4.1.0"
 lottie = "6.0.0"
 eventbus = "3.1.1"
-concordiumSdk = "12.0.0-alpha.2"
+concordiumSdk = "12.1.0-alpha.1"
 snackbar = "V2.0.0"
 blurView = "version-2.0.6"
 loggingInterceptor = "3.1.0"
@@ -45,6 +45,7 @@ archCoreTesting = "2.1.0"
 roomTesting = "1.1.1"
 androidsvg = "1.4"
 flexbox = "3.0.0"
+rootbeer = "0.1.1"
 
 [libraries]
 # Kotlin & Coroutines
@@ -126,6 +127,7 @@ blur-view = { group = "com.github.Dimezis", name = "BlurView", version.ref = "bl
 kotlin-bip39 = { group = "cash.z.ecc.android", name = "kotlin-bip39", version.ref = "bip39" }
 dotsindicator = { group = "com.tbuonomo", name = "dotsindicator", version.ref = "dotsindicator" }
 lombok-processor = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+rootbeer = { group = "com.scottyab", name = "rootbeer-lib", version.ref = "rootbeer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

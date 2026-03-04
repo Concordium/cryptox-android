@@ -4,7 +4,8 @@ import com.concordium.wallet.data.backend.price.tokenPriceModule
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
+
 import org.koin.dsl.module
 
 val earnModule = module {
