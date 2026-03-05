@@ -116,7 +116,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                         amount = BigInteger(1, payload.amount.value.bytes),
                         maxEnergy = null,
                         maxContractExecutionEnergy = null,
-                        message = payload.param.bytes.toHexString(),
+                        message = payload.param.bytesForContractInvocation.toHexString(),
                         receiveName = "${payload.receiveName.contractName}.${payload.receiveName.method}",
                     )
                 }
