@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.multinetwork
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -20,6 +21,13 @@ class NetworksActivity : BaseActivity(
         ActivityNetworksBinding.bind(findViewById(R.id.root_layout))
     }
     private val viewModel: NetworksViewModel by viewModels()
+    private val editNetworkLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            viewModel.onEditedSuccessfully()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +108,7 @@ class NetworksActivity : BaseActivity(
     }
 
     private fun goToEdit(networkToEdit: AppNetwork?) {
-        startActivity(
+        editNetworkLauncher.launch(
             Intent(this, EditNetworkActivity::class.java)
                 .putExtras(
                     EditNetworkActivity.getBundle(

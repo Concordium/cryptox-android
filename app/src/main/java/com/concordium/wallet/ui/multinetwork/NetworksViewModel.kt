@@ -82,6 +82,10 @@ class NetworksViewModel : ViewModel() {
         _isEditing.value = false
     }
 
+    fun onEditedSuccessfully() {
+        _isEditing.value = false
+    }
+
     sealed interface Event {
         class GoToEdit(
             val network: AppNetwork?,

@@ -366,7 +366,7 @@ class EditNetworkViewModel : ViewModel() {
         }
 
         _eventsFlow.tryEmit(
-            Event.FinishOnAdding(
+            Event.FinishAfterAdded(
                 addedNetworkName = addedNetwork.name,
             )
         )
@@ -428,7 +428,7 @@ class EditNetworkViewModel : ViewModel() {
             val error: Error,
         ) : Event
 
-        class FinishOnAdding(
+        class FinishAfterAdded(
             val addedNetworkName: String,
         ) : Event
 

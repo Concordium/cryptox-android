@@ -140,13 +140,14 @@ class EditNetworkActivity : BaseActivity(
 
     ) = viewModel.eventsFlow.collect(lifecycleScope) { event ->
         when (event) {
-            is EditNetworkViewModel.Event.FinishOnAdding -> {
+            is EditNetworkViewModel.Event.FinishAfterAdded -> {
                 showCustomToast(
                     title = getString(
                         R.string.template_network_added,
                         event.addedNetworkName,
                     )
                 )
+                setResult(RESULT_OK)
                 finish()
             }
 
@@ -157,6 +158,7 @@ class EditNetworkActivity : BaseActivity(
                         event.editedNetworkName,
                     )
                 )
+                setResult(RESULT_OK)
                 finish()
             }
 
