@@ -21,6 +21,13 @@ class NetworksViewModel : ViewModel() {
     private val activeNetwork = App.appCore.session.network
     private val _isEditing = MutableStateFlow(false)
     val isEditing: StateFlow<Boolean> = _isEditing
+    val canEdit: StateFlow<Boolean> =
+        networkRepository
+            .getNetworksFlow()
+            .map { networks ->
+                networks.any { !it.isPermanent }
+            }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     private val _eventsFlow = MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = _eventsFlow
     var shouldRestartOnConnect = false

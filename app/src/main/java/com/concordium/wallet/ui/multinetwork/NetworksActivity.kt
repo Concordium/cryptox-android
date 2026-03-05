@@ -12,6 +12,7 @@ import com.concordium.wallet.extension.collectWhenStarted
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.toast.showCustomToast
+import kotlinx.coroutines.flow.combine
 
 class NetworksActivity : BaseActivity(
     R.layout.activity_networks,
@@ -45,24 +46,23 @@ class NetworksActivity : BaseActivity(
     }
 
     private fun initEditToggle() {
-        viewModel.isEditing.collectWhenStarted(this) { isEditing ->
-            if (isEditing) {
-                hideEdit(
-                    isVisible = false,
-                )
-                hideDone(
-                    isVisible = true,
-                    listener = { viewModel.onDoneClicked() },
-                )
-            } else {
-                hideEdit(
-                    isVisible = true,
-                    listener = { viewModel.onEditClicked() },
-                )
-                hideDone(
-                    isVisible = false,
-                )
+        combine(
+            viewModel.canEdit,
+            viewModel.isEditing,
+            transform = { canEdit, isEditing ->
+                canEdit && !isEditing
             }
+        ).collectWhenStarted(this) { isEditVisible ->
+            hideEdit(
+                isVisible = isEditVisible,
+                listener = { viewModel.onEditClicked() },
+            )
+        }
+        viewModel.isEditing.collectWhenStarted(this) { isEditing ->
+            hideDone(
+                isVisible = isEditing,
+                listener = { viewModel.onDoneClicked() },
+            )
         }
     }
 
