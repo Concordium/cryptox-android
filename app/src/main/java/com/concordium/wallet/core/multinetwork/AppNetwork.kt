@@ -20,7 +20,7 @@ class AppNetwork(
         get() = genesisHash == "4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796"
 
     val isStagenet: Boolean
-        get() = genesisHash == "38bf770b4c247f09e1b62982bb71000c516480c5a2c5214dadac6da4b1ad50e5"
+        get() = genesisHash == "853288fa5a45554d3cbbf8a756b85abcbfddf28e752b13223eb747209a4d0d3c"
 
     val hdWalletNetwork: Network
         get() =
