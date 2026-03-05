@@ -66,6 +66,8 @@ class EditNetworkViewModel : ViewModel() {
     private val _loadedGenesisHash = MutableStateFlow<String?>(null)
     val loadedGenesisHash: StateFlow<String?> = _loadedGenesisHash
     private val genesisHashByWalletProxyUrl = mutableMapOf<HttpUrl, String>()
+    val isDeleteVisible: Boolean
+        get() = networkToEdit != null
 
     val canSave: StateFlow<Boolean> =
         combine(
@@ -252,6 +254,7 @@ class EditNetworkViewModel : ViewModel() {
         }
 
         _loadedGenesisHash.value = genesisHash
+        genesisHashByWalletProxyUrl[walletProxyHttpUrl] = genesisHash
 
         val existingNetwork: AppNetwork? =
             networkRepository
@@ -416,6 +419,54 @@ class EditNetworkViewModel : ViewModel() {
         )
     }
 
+    private var deleteJob: Job? = null
+    fun onDeleteClicked() {
+        deleteJob?.cancel()
+        deleteJob = viewModelScope.launch {
+            deleteNetwork()
+        }
+    }
+
+    private suspend fun deleteNetwork() {
+        val networkConnectedInstead: AppNetwork?
+
+        try {
+            if (networkToEdit == App.appCore.session.network) {
+                networkConnectedInstead =
+                    networkRepository
+                        .getNetworksFlow()
+                        .first()
+                        .find(AppNetwork::isDefault)
+                        ?: error("No default network to connect after deleting this one")
+                SwitchNetworkUseCase()
+                    .invoke(
+                        newNetwork = networkConnectedInstead
+                    )
+            } else {
+                networkConnectedInstead = null
+            }
+
+            networkRepository.delete(networkToEdit!!)
+        } catch (e: Exception) {
+            Log.e("Failed deleting network", e)
+            _eventsFlow.tryEmit(Event.ShowFloatingError(Error.GenericError))
+            return
+        }
+
+        _eventsFlow.tryEmit(
+            if (networkConnectedInstead != null && shouldRestartOnConnect)
+                Event.RestartAfterDeleted(
+                    deletedNetworkName = networkToEdit!!.name,
+                    connectedNetworkName = networkConnectedInstead.name,
+                )
+            else
+                Event.FinishAfterDeleted(
+                    deletedNetworkName = networkToEdit!!.name,
+                    connectedNetworkName = networkConnectedInstead?.name,
+                )
+        )
+    }
+
     sealed interface Error {
         object InvalidUrl : Error
         class NetworkAlreadyExists(val existingNetwork: AppNetwork) : Error
@@ -438,6 +489,16 @@ class EditNetworkViewModel : ViewModel() {
 
         class FinishAfterEdited(
             val editedNetworkName: String,
+        ) : Event
+
+        class RestartAfterDeleted(
+            val deletedNetworkName: String,
+            val connectedNetworkName: String,
+        ) : Event
+
+        class FinishAfterDeleted(
+            val deletedNetworkName: String,
+            val connectedNetworkName: String?,
         ) : Event
     }
 }

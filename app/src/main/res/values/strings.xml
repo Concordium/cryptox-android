@@ -1553,4 +1553,7 @@
     <string name="device_root_detected">Running the wallet on a rooted device is not safe. Proceed at your own risk</string>
     <string name="template_network_saved">%1$s Saved</string>
     <string name="template_network_added">%1$s Added</string>
+    <string name="delete_network">Delete Network</string>
+    <string name="template_network_deleted">%1$s Deleted</string>
+    <string name="template_network_deleted_connected">%1$s Deleted. %2$s Connected</string>
 </resources>

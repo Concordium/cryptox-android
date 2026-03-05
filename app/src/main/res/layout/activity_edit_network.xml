@@ -116,6 +116,15 @@
                 app:drawableTint="@color/mw24_content_error_primary"
                 tools:text="Something is wrong"
                 tools:visibility="visible" />
+
+            <com.concordium.wallet.uicore.button.IconButton
+                android:id="@+id/delete_button"
+                style="@style/MW24_Button_Primary"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/size24"
+                app:buttonText="@string/delete_network"
+                app:iconStart="@drawable/mw24_ic_menu_trash_can_garbage_delete"
+                app:priority="tertiary" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

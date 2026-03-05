@@ -40,7 +40,7 @@ class EditNetworkActivity : BaseActivity(
         )
         hideActionBarBack(isVisible = true)
         initFields()
-        initSaveButton()
+        initButtons()
         subscribeToEvents()
     }
 
@@ -129,10 +129,15 @@ class EditNetworkActivity : BaseActivity(
         }
     }
 
-    private fun initSaveButton() {
+    private fun initButtons() {
         viewModel.canSave.collectWhenStarted(this, binding.saveButton::setEnabled)
         binding.saveButton.setOnClickListener {
             viewModel.onSaveClicked()
+        }
+
+        binding.deleteButton.isVisible = viewModel.isDeleteVisible
+        binding.deleteButton.setOnClickListener {
+            viewModel.onDeleteClicked()
         }
     }
 
@@ -167,6 +172,37 @@ class EditNetworkActivity : BaseActivity(
                     title = getString(
                         R.string.template_network_saved,
                         event.editedNetworkName,
+                    )
+                )
+                finishAffinity()
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+
+            is EditNetworkViewModel.Event.FinishAfterDeleted -> {
+                showCustomToast(
+                    title =
+                        if (event.connectedNetworkName != null)
+                            getString(
+                                R.string.template_network_deleted_connected,
+                                event.deletedNetworkName,
+                                event.connectedNetworkName,
+                            )
+                        else
+                            getString(
+                                R.string.template_network_deleted,
+                                event.deletedNetworkName
+                            )
+                )
+                setResult(RESULT_OK)
+                finish()
+            }
+
+            is EditNetworkViewModel.Event.RestartAfterDeleted -> {
+                showCustomToast(
+                    title = getString(
+                        R.string.template_network_deleted_connected,
+                        event.deletedNetworkName,
+                        event.connectedNetworkName,
                     )
                 )
                 finishAffinity()

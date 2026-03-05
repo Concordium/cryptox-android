@@ -79,4 +79,12 @@ class AppNetworkRepository(
             genesisHash = newActiveNetwork.genesisHash,
         )
     }
+
+    suspend fun delete(
+        networkToDelete: AppNetwork,
+    ) {
+        appNetworkDao.delete(
+            genesisHash = networkToDelete.genesisHash,
+        )
+    }
 }

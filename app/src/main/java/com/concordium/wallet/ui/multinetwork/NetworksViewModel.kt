@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 class NetworksViewModel : ViewModel() {
 
     private val networkRepository = App.appCore.networkRepository
-    private val activeNetwork = App.appCore.session.network
+    private val activeNetwork: AppNetwork
+        get() = App.appCore.session.network
     private val _isEditing = MutableStateFlow(false)
     val isEditing: StateFlow<Boolean> = _isEditing
     val canEdit: StateFlow<Boolean> =

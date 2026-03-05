@@ -31,4 +31,7 @@ abstract class AppNetworkDao {
         ccdScanFrontendUrl: String?,
         notificationsServiceUrl: String?,
     )
+
+    @Query("DELETE FROM networks WHERE genesis_hash=:genesisHash")
+    abstract suspend fun delete(genesisHash: String)
 }

@@ -1,6 +1,7 @@
 package com.concordium.wallet.core.multinetwork
 
 import com.concordium.sdk.crypto.wallet.Network
+import com.concordium.wallet.BuildConfig
 import okhttp3.HttpUrl
 import java.util.Date
 
@@ -32,6 +33,9 @@ class AppNetwork(
 
     val isPermanent: Boolean
         get() = isMainnet || isTestnet
+
+    val isDefault: Boolean
+        get() = genesisHash == BuildConfig.DEFAULT_NETWORK_GENESIS_HASH
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

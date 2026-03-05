@@ -1,7 +1,6 @@
 package com.concordium.wallet.core.migration
 
 import android.content.Context
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.data.room.app.AppDatabase
 import com.concordium.wallet.data.room.app.AppNetworkDao
@@ -53,7 +52,7 @@ class NetworkSwitchMigration(
                     .map { network ->
                         AppNetworkEntity(
                             network = network,
-                            isActive = network.genesisHash == BuildConfig.DEFAULT_NETWORK_GENESIS_HASH,
+                            isActive = network.isDefault,
                         )
                     }
                     .also { networksToInsert ->
