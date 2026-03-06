@@ -10,6 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityEditNetworkBinding
 import com.concordium.wallet.extension.collect
 import com.concordium.wallet.extension.collectWhenStarted
+import com.concordium.wallet.extension.showSingle
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.toast.ToastType
@@ -42,6 +43,15 @@ class EditNetworkActivity : BaseActivity(
         initFields()
         initButtons()
         subscribeToEvents()
+
+        supportFragmentManager.setFragmentResultListener(
+            DeleteNetworkConfirmationDialog.ACTION_REQUEST,
+            this
+        ) { _, result ->
+            if (DeleteNetworkConfirmationDialog.getResult(result)) {
+                viewModel.onDeleteConfirmed()
+            }
+        }
     }
 
     private fun initFields() {
@@ -176,6 +186,16 @@ class EditNetworkActivity : BaseActivity(
                 )
                 finishAffinity()
                 startActivity(Intent(this, MainActivity::class.java))
+            }
+
+            is EditNetworkViewModel.Event.RequestDeleteConfirmation -> {
+                DeleteNetworkConfirmationDialog
+                    .newInstance(
+                        DeleteNetworkConfirmationDialog.setBundle(
+                            networkName = event.networkName,
+                        )
+                    )
+                    .showSingle(supportFragmentManager, DeleteNetworkConfirmationDialog.TAG)
             }
 
             is EditNetworkViewModel.Event.FinishAfterDeleted -> {

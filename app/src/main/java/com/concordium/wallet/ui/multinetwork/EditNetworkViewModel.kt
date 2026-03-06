@@ -419,8 +419,16 @@ class EditNetworkViewModel : ViewModel() {
         )
     }
 
-    private var deleteJob: Job? = null
     fun onDeleteClicked() {
+        _eventsFlow.tryEmit(
+            Event.RequestDeleteConfirmation(
+                networkName = networkToEdit!!.name,
+            )
+        )
+    }
+
+    private var deleteJob: Job? = null
+    fun onDeleteConfirmed() {
         deleteJob?.cancel()
         deleteJob = viewModelScope.launch {
             deleteNetwork()
@@ -489,6 +497,10 @@ class EditNetworkViewModel : ViewModel() {
 
         class FinishAfterEdited(
             val editedNetworkName: String,
+        ) : Event
+
+        class RequestDeleteConfirmation(
+            val networkName: String,
         ) : Event
 
         class RestartAfterDeleted(

@@ -157,7 +157,7 @@
     <string name="identity_attribute_sex_female">Female</string>
     <string name="identity_attribute_unavailable">Unavailable</string>
     <string name="identity_attribute_doc_type_passport">Passport</string>
-    <string name="identity_attribute_doc_type_national_id">National id card\"</string>
+    <string name="identity_attribute_doc_type_national_id">National id card</string>
     <string name="identity_attribute_doc_type_driving_license">Driving license</string>
     <string name="identity_attribute_doc_type_immigration_card">Immigration card</string>
     <string name="identity_attribute_na">NA</string>
@@ -1556,4 +1556,5 @@
     <string name="delete_network">Delete Network</string>
     <string name="template_network_deleted">%1$s Deleted</string>
     <string name="template_network_deleted_connected">%1$s Deleted. %2$s Connected</string>
+    <string name="template_delete_network_confirmation">Are you sure you want to delete \"%1$s\"?</string>
 </resources>
