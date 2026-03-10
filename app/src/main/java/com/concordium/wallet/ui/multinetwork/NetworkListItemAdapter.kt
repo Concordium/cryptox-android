@@ -16,10 +16,17 @@ class NetworkListItemAdapter(
 ) : RecyclerView.Adapter<NetworkListItemAdapter.ViewHolder>() {
 
     private var data: List<NetworkListItem> = emptyList()
+    private var isDevMode: Boolean = false
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newData: List<NetworkListItem>) {
         data = newData
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setIsDevMode(isDevModeEnabled: Boolean) {
+        isDevMode = isDevModeEnabled
         notifyDataSetChanged()
     }
 
@@ -51,10 +58,12 @@ class NetworkListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = when (holder) {
-        is ViewHolder.AddButton ->
+        is ViewHolder.AddButton -> {
+            holder.button.isEnabled = isDevMode
             holder.button.setOnClickListener {
                 onAddClicked()
             }
+        }
 
         is ViewHolder.Network -> {
             val item = data[position] as NetworkListItem.Network
@@ -63,7 +72,7 @@ class NetworkListItemAdapter(
                 root.setOnClickListener {
                     onNetworkItemClicked(item)
                 }
-                root.isEnabled = !(item.isEditing && !item.isEditable)
+                root.isEnabled = !(item.isEditing && !item.isEditable) && isDevMode
                 root.alpha =
                     if (root.isEnabled)
                         1f

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.multinetwork.AppNetwork
@@ -29,6 +30,7 @@ class NetworksActivity : BaseActivity(
             viewModel.onEditedSuccessfully()
         }
     }
+    private lateinit var adapter: NetworkListItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +42,12 @@ class NetworksActivity : BaseActivity(
 
         hideActionBarBack(isVisible = true)
         initEditToggle()
-        initList()
+        initViews(
+            devModeVisible = intent.getBooleanExtra(
+                EXTRA_SHOULD_SHOW_DEV_MODE_LAYOUT,
+                false
+            )
+        )
 
         subscribeToEvents()
     }
@@ -66,8 +73,13 @@ class NetworksActivity : BaseActivity(
         }
     }
 
-    private fun initList() {
-        val adapter = NetworkListItemAdapter(
+    private fun initViews(devModeVisible: Boolean) {
+        binding.devModeLayout.isVisible = devModeVisible
+        binding.devModeLayout.setOnClickListener {
+            viewModel.onDevModeClicked()
+        }
+
+        adapter = NetworkListItemAdapter(
             onNetworkItemClicked = viewModel::onNetworkItemClicked,
             onAddClicked = viewModel::onAddClicked,
         )
@@ -75,26 +87,30 @@ class NetworksActivity : BaseActivity(
         viewModel.items.collectWhenStarted(this, adapter::setData)
     }
 
-    private fun subscribeToEvents(
+    private fun subscribeToEvents() {
+        viewModel.eventsFlow.collectWhenStarted(this) { event ->
+            when (event) {
+                is NetworksViewModel.Event.GoToEdit -> {
+                    goToEdit(
+                        networkToEdit = event.network,
+                    )
+                }
 
-    ) = viewModel.eventsFlow.collectWhenStarted(this) { event ->
-        when (event) {
-            is NetworksViewModel.Event.GoToEdit -> {
-                goToEdit(
-                    networkToEdit = event.network,
-                )
-            }
+                NetworksViewModel.Event.RestartOnSuccess -> {
+                    showConnectionToast()
+                    finishAffinity()
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
 
-            NetworksViewModel.Event.RestartOnSuccess -> {
-                showConnectionToast()
-                finishAffinity()
-                startActivity(Intent(this, MainActivity::class.java))
+                NetworksViewModel.Event.FinishOnSuccess -> {
+                    showConnectionToast()
+                    finish()
+                }
             }
-
-            NetworksViewModel.Event.FinishOnSuccess -> {
-                showConnectionToast()
-                finish()
-            }
+        }
+        viewModel.devModeFlow.collectWhenStarted(this) { isDevModeEnabled ->
+            binding.devModeSwitch.isChecked = isDevModeEnabled
+            adapter.setIsDevMode(isDevModeEnabled)
         }
     }
 
@@ -125,11 +141,14 @@ class NetworksActivity : BaseActivity(
 
     companion object {
         private const val EXTRA_SHOULD_RESTART_ON_CONNECT = "should_restart_on_connect"
+        private const val EXTRA_SHOULD_SHOW_DEV_MODE_LAYOUT = "should_show_dev_mode_layout"
 
         fun getBundle(
             shouldRestartOnConnect: Boolean,
+            shouldShowDevModeLayout: Boolean
         ): Bundle = Bundle().apply {
             putBoolean(EXTRA_SHOULD_RESTART_ON_CONNECT, shouldRestartOnConnect)
+            putBoolean(EXTRA_SHOULD_SHOW_DEV_MODE_LAYOUT, shouldShowDevModeLayout)
         }
     }
 }

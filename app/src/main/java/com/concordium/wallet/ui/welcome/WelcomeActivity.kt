@@ -130,6 +130,7 @@ class WelcomeActivity : BaseActivity(R.layout.activity_welcome) {
                 .putExtras(
                     NetworksActivity.getBundle(
                         shouldRestartOnConnect = false,
+                        shouldShowDevModeLayout = true
                     )
                 )
         )

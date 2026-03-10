@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -20,6 +21,9 @@ class NetworksViewModel : ViewModel() {
     private val networkRepository = App.appCore.networkRepository
     private val activeNetwork: AppNetwork
         get() = App.appCore.session.network
+    private val appSetup = App.appCore.setup
+    private val _devModeFlow = MutableStateFlow(false)
+    val devModeFlow = _devModeFlow.asStateFlow()
     private val _isEditing = MutableStateFlow(false)
     val isEditing: StateFlow<Boolean> = _isEditing
     val canEdit: StateFlow<Boolean> =
@@ -55,6 +59,7 @@ class NetworksViewModel : ViewModel() {
 
     fun init(shouldRestartOnConnect: Boolean) {
         this.shouldRestartOnConnect = shouldRestartOnConnect
+        _devModeFlow.tryEmit(appSetup.isDevModeEnabled)
     }
 
     fun onNetworkItemClicked(item: NetworkListItem.Network) {
@@ -92,6 +97,11 @@ class NetworksViewModel : ViewModel() {
 
     fun onEditedSuccessfully() {
         _isEditing.value = false
+    }
+
+    fun onDevModeClicked() {
+        appSetup.setDevModeEnabled(!appSetup.isDevModeEnabled)
+        _devModeFlow.tryEmit(appSetup.isDevModeEnabled)
     }
 
     sealed interface Event {

@@ -13,12 +13,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <LinearLayout
+        android:id="@+id/dev_mode_layout"
+        style="@style/SettingsOverviewItem"
+        android:layout_marginTop="@dimen/size8"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/SettingsOverviewItemTextView"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/dev_mode_preference"
+            app:drawableEndCompat="@null"
+            app:drawableStartCompat="@drawable/mw24_ic_development_version_brackets" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/dev_mode_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            app:trackTint="@color/ccx_switch_track_color" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/size16"
-        android:layout_marginTop="@dimen/size8"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="@dimen/size16"
         android:layout_weight="1"
         android:clipToPadding="false"
@@ -26,6 +50,7 @@
         android:requiresFadingEdge="vertical"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_goneMarginTop="@dimen/size8"
         tools:itemCount="4"
         tools:listitem="@layout/list_item_network_list_network"
         tools:visibility="visible" />

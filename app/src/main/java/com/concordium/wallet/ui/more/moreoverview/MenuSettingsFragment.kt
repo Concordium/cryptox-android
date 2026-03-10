@@ -361,6 +361,7 @@ class MenuSettingsFragment : BaseFragment() {
             .putExtras(
                 NetworksActivity.getBundle(
                     shouldRestartOnConnect = true,
+                    shouldShowDevModeLayout = false
                 )
             )
         startActivity(intent)

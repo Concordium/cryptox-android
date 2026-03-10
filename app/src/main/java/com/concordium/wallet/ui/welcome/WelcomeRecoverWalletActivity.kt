@@ -109,6 +109,7 @@ class WelcomeRecoverWalletActivity : BaseActivity(
                 .putExtras(
                     NetworksActivity.getBundle(
                         shouldRestartOnConnect = false,
+                        shouldShowDevModeLayout = true
                     )
                 )
         )
