@@ -91,6 +91,16 @@ class EditNetworkViewModel : ViewModel() {
         )
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    private val anyChanges: Boolean
+        get() =
+            _nameInput.value != (networkToEdit?.name ?: "")
+                    || _walletProxyUrlInput.value !=
+                    (networkToEdit?.walletProxyUrl?.toString() ?: "")
+                    || _ccdScanUrlInput.value !=
+                    (networkToEdit?.ccdScanFrontendUrl?.toString() ?: "")
+                    || _notificationsServiceUrlInput.value !=
+                    (networkToEdit?.notificationsServiceUrl?.toString() ?: "")
+
     init {
         merge(
             _nameInput
@@ -475,6 +485,18 @@ class EditNetworkViewModel : ViewModel() {
         )
     }
 
+    fun onBackClicked() {
+        if (!anyChanges) {
+            _eventsFlow.tryEmit(Event.FinishWithoutChanges)
+        } else {
+            _eventsFlow.tryEmit(Event.RequestDiscardChangesConfirmation)
+        }
+    }
+
+    fun onDiscardChangesConfirmed() {
+        _eventsFlow.tryEmit(Event.FinishWithoutChanges)
+    }
+
     sealed interface Error {
         object InvalidUrl : Error
         class NetworkAlreadyExists(val existingNetwork: AppNetwork) : Error
@@ -512,5 +534,9 @@ class EditNetworkViewModel : ViewModel() {
             val deletedNetworkName: String,
             val connectedNetworkName: String?,
         ) : Event
+
+        object RequestDiscardChangesConfirmation : Event
+
+        object FinishWithoutChanges : Event
     }
 }

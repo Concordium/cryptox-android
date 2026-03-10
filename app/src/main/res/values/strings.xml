@@ -1557,4 +1557,8 @@
     <string name="template_network_deleted">%1$s Deleted</string>
     <string name="template_network_deleted_connected">%1$s Deleted. %2$s Connected</string>
     <string name="template_delete_network_confirmation">Are you sure you want to delete \"%1$s\"?</string>
+    <string name="discard_network_changes">Discard Changes</string>
+    <string name="discard_network_changes_confirmation">Are you sure you want to discard the current Custom Network changes?</string>
+    <string name="keep_editing">Keep Editing</string>
+    <string name="discard">Discard</string>
 </resources>

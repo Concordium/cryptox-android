@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.multinetwork
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -39,7 +40,9 @@ class EditNetworkActivity : BaseActivity(
             else
                 R.string.custom_network
         )
-        hideActionBarBack(isVisible = true)
+        hideActionBarBack(isVisible = true) {
+            viewModel.onBackClicked()
+        }
         initFields()
         initButtons()
         subscribeToEvents()
@@ -52,6 +55,23 @@ class EditNetworkActivity : BaseActivity(
                 viewModel.onDeleteConfirmed()
             }
         }
+        supportFragmentManager.setFragmentResultListener(
+            DiscardNetworkChangesConfirmationDialog.ACTION_REQUEST,
+            this
+        ) { _, result ->
+            if (DiscardNetworkChangesConfirmationDialog.getResult(result)) {
+                viewModel.onDiscardChangesConfirmed()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    viewModel.onBackClicked()
+                }
+            }
+        )
     }
 
     private fun initFields() {
@@ -234,6 +254,17 @@ class EditNetworkActivity : BaseActivity(
                     title = event.error.message,
                     toastType = ToastType.ERROR,
                 )
+            }
+
+            is EditNetworkViewModel.Event.RequestDiscardChangesConfirmation -> {
+                DiscardNetworkChangesConfirmationDialog
+                    .newInstance()
+                    .showSingle(supportFragmentManager, DiscardNetworkChangesConfirmationDialog.TAG)
+            }
+
+            is EditNetworkViewModel.Event.FinishWithoutChanges -> {
+                setResult(RESULT_CANCELED)
+                finish()
             }
         }
     }
