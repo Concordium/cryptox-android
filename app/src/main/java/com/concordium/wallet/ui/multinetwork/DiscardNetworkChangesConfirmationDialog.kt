@@ -6,19 +6,16 @@ import androidx.fragment.app.setFragmentResult
 import com.concordium.wallet.R
 import com.concordium.wallet.uicore.dialog.BaseDialogFragment
 
-class DeleteNetworkConfirmationDialog : BaseDialogFragment() {
+class DiscardNetworkChangesConfirmationDialog : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setViews(
-            title = getString(R.string.delete_network),
-            description = getString(
-                R.string.template_delete_network_confirmation,
-                requireArguments().getString(NETWORK_NAME)!!,
-            ),
-            okButtonText = getString(R.string.delete_network),
-            cancelButtonText = getString(R.string.dialog_cancel)
+            title = getString(R.string.discard_network_changes),
+            description = getString(R.string.discard_network_changes_confirmation),
+            okButtonText = getString(R.string.discard),
+            cancelButtonText = getString(R.string.keep_editing)
         )
 
         listOf(binding.cancelButton, binding.closeButton).forEach {
@@ -41,22 +38,15 @@ class DeleteNetworkConfirmationDialog : BaseDialogFragment() {
     }
 
     companion object {
-        const val TAG = "DeleteNetworkConfirmationDialog"
-        const val ACTION_REQUEST = "delete_confirm_action"
+        const val TAG = "DiscardNetworkChangesConfirmationDialog"
+        const val ACTION_REQUEST = "discard_confirm_action"
         private const val IS_CONFIRMED = "is_confirmed"
-        private const val NETWORK_NAME = "network_name"
 
         private fun setResultBundle(isClearing: Boolean) = Bundle().apply {
             putBoolean(IS_CONFIRMED, isClearing)
         }
 
-        fun setBundle(networkName: String) = Bundle().apply {
-            putString(NETWORK_NAME, networkName)
-        }
-
-        fun newInstance(bundle: Bundle) = DeleteNetworkConfirmationDialog().apply {
-            arguments = bundle
-        }
+        fun newInstance() = DiscardNetworkChangesConfirmationDialog()
 
         fun getResult(bundle: Bundle): Boolean =
             bundle.getBoolean(IS_CONFIRMED, false)
