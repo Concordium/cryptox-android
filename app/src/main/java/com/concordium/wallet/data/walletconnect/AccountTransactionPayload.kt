@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.walletconnect
 
+import com.concordium.sdk.responses.transactionstatus.DelegationTarget
 import com.concordium.sdk.transactions.tokens.TransferTokenOperation
 import com.concordium.sdk.types.ContractAddress
 import com.google.gson.annotations.SerializedName
@@ -22,18 +23,24 @@ sealed interface AccountTransactionPayload {
         val maxContractExecutionEnergy: Long?,
         val message: String,
         val receiveName: String
-    ): AccountTransactionPayload
+    ) : AccountTransactionPayload
 
     data class Transfer(
         val amount: BigInteger,
         @SerializedName("to", alternate = ["toAddress"])
         val toAddress: String
-    ): AccountTransactionPayload
+    ) : AccountTransactionPayload
 
     data class PltTransfer(
         val tokenId: String,
         val transfer: TransferTokenOperation,
-    ): AccountTransactionPayload
+    ) : AccountTransactionPayload
+
+    data class ConfigureDelegation(
+        val amount: BigInteger,
+        val restakeEarnings: Boolean,
+        val delegationTarget: DelegationTarget?
+    ) : AccountTransactionPayload
 
     // InitContract is not needed for now.
 }

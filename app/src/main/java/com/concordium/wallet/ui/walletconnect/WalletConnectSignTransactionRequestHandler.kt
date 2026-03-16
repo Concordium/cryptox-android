@@ -163,7 +163,7 @@ class WalletConnectSignTransactionRequestHandler(
                 when (val transactionPayload = this.transactionPayload) {
                     is AccountTransactionPayload.Transfer,
                     is AccountTransactionPayload.Update,
-                    ->
+                        ->
                         CCDToken(
                             account = account,
                             withTotalBalance = true,
@@ -183,6 +183,8 @@ class WalletConnectSignTransactionRequestHandler(
                                         && it.tokenId == transactionPayload.tokenId
                             }
                             ?: error("Missing the requested token ${transactionPayload.tokenId}")
+
+                    else -> error("The wallet only supports CCD and token transfers")
                 }
             } catch (error: Exception) {
                 Log.e("failed_loading_token", error)
@@ -260,6 +262,8 @@ class WalletConnectSignTransactionRequestHandler(
                     appMetadata = appMetadata,
                 )
             }
+
+            else -> error("The wallet only supports CCD and token transfers")
         }
 
         emitState(reviewState)
@@ -278,6 +282,7 @@ class WalletConnectSignTransactionRequestHandler(
             is AccountTransactionPayload.PltTransfer -> getProtocolLevelTokenTransferCost(
                 pltTransferPayload = transactionPayload,
             )
+            else -> error("The wallet only supports CCD and token transfers")
         }
 
     private suspend fun getTransferCost(
@@ -382,6 +387,8 @@ class WalletConnectSignTransactionRequestHandler(
                         pltTransferPayload = transactionPayload,
                         signer = accountKeys.getSignerEntry(),
                     )
+
+                else -> error("The wallet only supports CCD and token transfers")
             }
 
             respondSuccess(App.appCore.gson.toJson(TransactionSuccess(submissionId)))
@@ -531,6 +538,8 @@ class WalletConnectSignTransactionRequestHandler(
                     )
                 )
             }
+
+            else -> error("The wallet only supports CCD and token transfers")
         }
     }
 
@@ -546,11 +555,13 @@ class WalletConnectSignTransactionRequestHandler(
         when (transactionPayload) {
             is AccountTransactionPayload.Transfer,
             is AccountTransactionPayload.PltTransfer,
-            ->
+                ->
                 context.getString(R.string.transaction_type_transfer)
 
             is AccountTransactionPayload.Update ->
                 transactionPayload.receiveName
+
+            else -> error("The wallet only supports CCD and token transfers")
         }
 
     companion object {

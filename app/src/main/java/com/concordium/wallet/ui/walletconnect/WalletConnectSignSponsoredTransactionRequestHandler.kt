@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.walletconnect
 
 import android.content.Context
 import com.concordium.sdk.serializing.JsonMapper
+import com.concordium.sdk.transactions.ConfigureDelegation
 import com.concordium.sdk.transactions.PartiallySignedSponsoredTransaction
 import com.concordium.sdk.transactions.Payload
 import com.concordium.sdk.transactions.SignerEntry
@@ -121,6 +122,14 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     )
                 }
 
+                is ConfigureDelegation -> {
+                    AccountTransactionPayload.ConfigureDelegation(
+                        amount = BigInteger(1, payload.capital?.value?.bytes),
+                        restakeEarnings = payload.restakeEarnings ?: false,
+                        delegationTarget = payload.delegationTarget
+                    )
+                }
+
                 else ->
                     error("The wallet only supports CCD and token transfers")
             }
@@ -181,7 +190,8 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
             token = try {
                 when (val transactionPayload = this.transactionPayload) {
                     is AccountTransactionPayload.Transfer,
-                    is AccountTransactionPayload.Update
+                    is AccountTransactionPayload.Update,
+                    is AccountTransactionPayload.ConfigureDelegation
                         ->
                         CCDToken(
                             account = account,
@@ -272,6 +282,21 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     account = account,
                     canShowDetails = transactionPayload.transfer.memo.isPresent,
                     isEnoughFunds = tokenAmount <= token.balance,
+                    sponsor = sponsorAddress,
+                    appMetadata = appMetadata,
+                )
+            }
+
+            is AccountTransactionPayload.ConfigureDelegation -> {
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = method,
+                    receiver = transactionPayload.delegationTarget?.type?.name ?: "",
+                    amount = transactionPayload.amount,
+                    token = token,
+                    estimatedFee = BigInteger.ZERO,
+                    account = account,
+                    canShowDetails = true,
+                    isEnoughFunds = transactionPayload.amount <= accountAtDisposalBalance,
                     sponsor = sponsorAddress,
                     appMetadata = appMetadata,
                 )
@@ -390,6 +415,16 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     )
                 )
             }
+
+            is AccountTransactionPayload.ConfigureDelegation -> {
+
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = getTransactionMethodName(transactionPayload),
+                        prettyPrintDetails = context.getString(R.string.wallet_connect_transaction_request_no_details),
+                    )
+                )
+            }
         }
     }
 
@@ -409,6 +444,9 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
 
             is AccountTransactionPayload.Update ->
                 transactionPayload.receiveName
+
+            is AccountTransactionPayload.ConfigureDelegation ->
+                context.getString(R.string.wallet_connect_delegation_configuration)
         }
 
     companion object {
