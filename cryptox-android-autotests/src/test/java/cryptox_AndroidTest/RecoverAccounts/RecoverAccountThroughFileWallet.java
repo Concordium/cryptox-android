@@ -25,7 +25,7 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 public class RecoverAccountThroughFileWallet {
 
     public static final String WALLET_RESOURCE_PATH = "wallet/exp_file_wallet.concordiumwallet";
-    public static final String WALLET_FILE_NAME = "//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"exp_file_wallet.concordiumwallet\"]";
+    public static final String WALLET_FILE_NAME = "//android.widget.TextView[@text='exp_file_wallet.concordiumwallet']";
 
 
     public void pushWalletFile() {
@@ -41,7 +41,7 @@ public class RecoverAccountThroughFileWallet {
             }
             byte[] fileContent = Files.readAllBytes(walletFile.toPath());
             String base64Data = Base64.getEncoder().encodeToString(fileContent);
-            driver.pushFile("/sdcard/Documents/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+            driver.pushFile("/sdcard/Documents/export/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
@@ -57,10 +57,12 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(createPassCodeNow());
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
-        driver.terminateApp("com.google.android.documentsui"); // 👈 here
         driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
+        Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
+        Thread.sleep(10000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.google.android.documentsui:id/nameplate\"]/android.widget.RelativeLayout",20));
+        Thread.sleep(10000);
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());

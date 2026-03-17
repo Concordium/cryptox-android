@@ -89,7 +89,10 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElement("icon_image_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
+        Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
+        Thread.sleep(10000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.google.android.documentsui:id/nameplate\"]/android.widget.RelativeLayout",20));
+        Thread.sleep(10000);
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
@@ -144,7 +147,7 @@ public class DualWalletCases {
     }
 
     @Test
-    public void verify_a4_a_user_adding_a_file_based_account_with_incorrect_password_should_fail_gracefully() {
+    public void verify_a4_a_user_adding_a_file_based_account_with_incorrect_password_should_fail_gracefully() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
@@ -152,7 +155,10 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElement("icon_image_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
+        Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
+        Thread.sleep(10000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.google.android.documentsui:id/nameplate\"]/android.widget.RelativeLayout",20));
+        Thread.sleep(10000);
         Assert.assertTrue(SendTextToField("password_edittext", "111111", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
