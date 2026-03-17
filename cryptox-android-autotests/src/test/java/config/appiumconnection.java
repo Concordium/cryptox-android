@@ -73,6 +73,9 @@ public class appiumconnection {
         cap.setCapability("fullReset", false);
         grantNotificationPermission("emulator-5554", packageName);
         cap.setCapability("unicodeKeyboard", true);
+        cap.setCapability("appium:uiautomator2ServerLaunchTimeout", 60000);
+        cap.setCapability("appium:adbExecTimeout", 60000);
+        cap.setCapability("appium:newCommandTimeout", 300);
         return cap;
     }
 

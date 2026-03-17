@@ -13,6 +13,7 @@ import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
 import static config.systemInfo.getSeedPhrase;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.continueButton;
+import static cryptox_AndroidTest.baseClass.stagePackageName;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaBackupFile;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaSeedPhrase;
 import static pages.createPassCodeScreen.createPassCodeNow;
@@ -56,6 +57,8 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(createPassCodeNow());
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
+        driver.terminateApp("com.google.android.documentsui"); // 👈 here
+        driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
