@@ -25,7 +25,7 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 public class RecoverAccountThroughFileWallet {
 
     public static final String WALLET_RESOURCE_PATH = "wallet/exp_file_wallet.concordiumwallet";
-    public static final String WALLET_FILE_NAME = "//android.widget.TextView[@text='exp_file_wallet.concordiumwallet']";
+    public static final String WALLET_FILE_NAME = "//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"exp_file_wallet.concordiumwallet\"]";
 
 
     public void pushWalletFile() {
@@ -57,9 +57,8 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(createPassCodeNow());
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
-        driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageView[@resource-id=\"com.google.android.documentsui:id/icon_thumb\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
