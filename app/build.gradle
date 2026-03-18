@@ -98,7 +98,7 @@ android {
             resValue "string", "scheme", "\"${scheme}\""
 
             def providerAuthority = PROVIDER_AUTHORITY_BASE
-            resValue "string", "PROVIDER_AUTHORITY", "\"${providerAuthority}\""
+            resValue "string", "provider_authority", "\"${providerAuthority}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${providerAuthority}\"")
 
             firebaseAppDistribution {
