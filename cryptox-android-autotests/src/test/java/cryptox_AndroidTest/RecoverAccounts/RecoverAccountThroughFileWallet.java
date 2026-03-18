@@ -59,10 +59,7 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(clickOnImportViaBackupFile());
         driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
-        Thread.sleep(10000);
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.google.android.documentsui:id/nameplate\"]/android.widget.RelativeLayout",20));
-        Thread.sleep(10000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageView[@resource-id=\"com.google.android.documentsui:id/icon_thumb\"]", 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
