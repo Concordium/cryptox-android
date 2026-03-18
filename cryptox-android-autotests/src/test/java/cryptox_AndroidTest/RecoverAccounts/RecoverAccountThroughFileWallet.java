@@ -60,7 +60,7 @@ public class RecoverAccountThroughFileWallet {
         driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageButton[@content-desc=\"Show roots\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"sdk_gphone64_x86_64\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"Android SDK built for x86_64\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"Documents\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageView[@resource-id=\"com.google.android.documentsui:id/icon_thumb\"]", 20));
