@@ -13,6 +13,7 @@ import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
 import static config.systemInfo.getSeedPhrase;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.continueButton;
+import static cryptox_AndroidTest.baseClass.stagePackageName;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaBackupFile;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaSeedPhrase;
 import static pages.createPassCodeScreen.createPassCodeNow;
@@ -40,7 +41,7 @@ public class RecoverAccountThroughFileWallet {
             }
             byte[] fileContent = Files.readAllBytes(walletFile.toPath());
             String base64Data = Base64.getEncoder().encodeToString(fileContent);
-            driver.pushFile("/sdcard/Documents/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+            driver.pushFile("/sdcard/Documents/export/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
@@ -56,8 +57,13 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(createPassCodeNow());
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
+        driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageButton[@content-desc=\"Show roots\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"Android SDK built for x86_64\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"Documents\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageView[@resource-id=\"com.google.android.documentsui:id/icon_thumb\"]", 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());

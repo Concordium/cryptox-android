@@ -236,8 +236,8 @@ public class generalMethods {
             Dimension size = driver.manage().window().getSize();
 
             int centerX = size.width / 2;
-            int startY  = (int) (size.height * 0.42);
-            int endY    = (int) (size.height * 0.58); // slight upward scroll
+            int startY = (int) (size.height * 0.42);
+            int endY = (int) (size.height * 0.58); // slight upward scroll
 
             PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
             Sequence swipe = new Sequence(finger, 1);
@@ -259,7 +259,6 @@ public class generalMethods {
             return false;
         }
     }
-
 
 
     public static boolean performScrollDown() {
@@ -309,27 +308,21 @@ public class generalMethods {
         return false;
     }
 
-    public static boolean SendTextToField(String elementID, String Text, Integer timeout)
-
-    {
-        try
-        {
+    public static boolean SendTextToField(String elementID, String Text, Integer timeout) {
+        try {
             By elementIDs = By.id(elementID);
 
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
+            MobileElement elementToLookFor = waitForElement(elementIDs, timeout);
 
             assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
+            if (elementToLookFor.isDisplayed()) {
                 elementToLookFor.clear();
                 elementToLookFor.click();
                 elementToLookFor.sendKeys(Text);
                 return true;
-            }
+            } else {
 
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
+                System.out.println("unable to find Element" + elementID);
 
                 return false;
             }
@@ -343,27 +336,21 @@ public class generalMethods {
         return false;
     }
 
-    public static boolean SendTextToFieldByClassName(String elementID, String Text, Integer timeout)
-
-    {
-        try
-        {
+    public static boolean SendTextToFieldByClassName(String elementID, String Text, Integer timeout) {
+        try {
             By elementIDs = By.className(elementID);
 
-            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
+            MobileElement elementToLookFor = waitForElement(elementIDs, timeout);
 
             assert elementToLookFor != null;
-            if (elementToLookFor.isDisplayed()){
+            if (elementToLookFor.isDisplayed()) {
                 elementToLookFor.clear();
                 elementToLookFor.click();
                 elementToLookFor.sendKeys(Text);
                 return true;
-            }
+            } else {
 
-
-            else {
-
-                System.out.println("unable to find Element" + elementID );
+                System.out.println("unable to find Element" + elementID);
 
                 return false;
             }
@@ -390,7 +377,7 @@ public class generalMethods {
                 return true;
             } else {
 
-                log.error("unable to find Element{}", elementID , "While waiting for element");
+                log.error("unable to find Element{}", elementID, "While waiting for element");
                 return false;
             }
 
@@ -432,15 +419,13 @@ public class generalMethods {
         try {
             WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
 
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(elementId)));
-            log.info("Loader appeared");
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                    By.id(elementId)
+            ));
 
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id(elementId)));
             log.info("Loader disappeared");
-
             return true;
-
-        } catch (TimeoutException e) {
+        } catch (Exception e) {
             log.warn("Loader did not disappear in time");
             return false;
         }
