@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.RecoverAccounts;
 
+import io.appium.java_client.MobileBy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -59,15 +60,15 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(clickOnImportViaBackupFile());
         driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageButton[@content-desc=\"Show roots\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"Android SDK built for x86_64\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"Documents\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//androidx.cardview.widget.CardView[@resource-id=\"com.google.android.documentsui:id/item_root\"]/androidx.cardview.widget.CardView/android.widget.LinearLayout", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.ImageView[@resource-id=\"com.google.android.documentsui:id/icon_thumb\"]", 20));
+        Thread.sleep(5000);
+        driver.findElement(MobileBy.AndroidUIAutomator(
+                "new UiSelector().text(\"exp_file_wallet.concordiumwallet\")"
+        )).click();
+        Thread.sleep(8000);
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(waitForLoaderToDisappear("message_text_view", 200));
+        Assert.assertTrue(waitForLoaderToDisappear("message_text_view", 300));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         log.info("successfully recovered Account");
     }
