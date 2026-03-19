@@ -226,6 +226,7 @@ class WalletConnectSignTransactionRequestHandler(
                     account = account,
                     canShowDetails = false,
                     isEnoughFunds = transactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
+                    showCooldownWarning = false,
                     sponsor = null,
                     appMetadata = appMetadata,
                 )
@@ -240,6 +241,7 @@ class WalletConnectSignTransactionRequestHandler(
                     account = account,
                     canShowDetails = true,
                     isEnoughFunds = transactionPayload.amount + transactionCost.cost <= accountAtDisposalBalance,
+                    showCooldownWarning = false,
                     sponsor = null,
                     appMetadata = appMetadata,
                 )
@@ -258,6 +260,7 @@ class WalletConnectSignTransactionRequestHandler(
                     canShowDetails = transactionPayload.transfer.memo.isPresent,
                     isEnoughFunds = transactionCost.cost <= accountAtDisposalBalance
                             && tokenAmount <= token.balance,
+                    showCooldownWarning = false,
                     sponsor = null,
                     appMetadata = appMetadata,
                 )

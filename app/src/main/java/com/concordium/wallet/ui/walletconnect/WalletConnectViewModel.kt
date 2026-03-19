@@ -1259,6 +1259,7 @@ private constructor(
                 val estimatedFee: BigInteger,
                 val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,
+                val showCooldownWarning: Boolean,
                 val sponsor: String?,
                 account: Account,
                 appMetadata: AppMetadata,

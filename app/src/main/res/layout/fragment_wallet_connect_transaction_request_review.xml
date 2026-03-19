@@ -101,6 +101,20 @@
 
             </LinearLayout>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/delegation_warning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/account_private_key_warning_background"
+                android:drawablePadding="12dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:text="@string/delegation_register_delegation_reduce_warning_content"
+                android:textAppearance="@style/MW24_Typography_Body_M_Regular"
+                android:textColor="@color/mw24_content_warning_primary"
+                app:drawableStartCompat="@drawable/mw24_ic_circled_warning_exclamation" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/amounts_layout"
                 style="@style/CryptoX_Container_Stroked"

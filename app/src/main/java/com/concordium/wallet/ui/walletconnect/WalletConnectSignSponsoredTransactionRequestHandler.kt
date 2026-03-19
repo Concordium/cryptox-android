@@ -238,6 +238,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
 
         val method = getTransactionMethodName(transactionPayload)
         val accountAtDisposalBalance = account.balanceAtDisposal
+        val accountCooldownBalance = account.cooldownAmount
         val sponsorAddress = partiallySignedTransaction.header.sponsor.get().toString()
 
         val reviewState = when (val transactionPayload = this.transactionPayload) {
@@ -251,6 +252,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     account = account,
                     canShowDetails = false,
                     isEnoughFunds = transactionPayload.amount <= accountAtDisposalBalance,
+                    showCooldownWarning = false,
                     sponsor = sponsorAddress,
                     appMetadata = appMetadata,
                 )
@@ -265,6 +267,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     account = account,
                     canShowDetails = true,
                     isEnoughFunds = transactionPayload.amount <= accountAtDisposalBalance,
+                    showCooldownWarning = false,
                     sponsor = sponsorAddress,
                     appMetadata = appMetadata,
                 )
@@ -282,6 +285,7 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     account = account,
                     canShowDetails = transactionPayload.transfer.memo.isPresent,
                     isEnoughFunds = tokenAmount <= token.balance,
+                    showCooldownWarning = false,
                     sponsor = sponsorAddress,
                     appMetadata = appMetadata,
                 )
@@ -296,7 +300,8 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     estimatedFee = BigInteger.ZERO,
                     account = account,
                     canShowDetails = true,
-                    isEnoughFunds = transactionPayload.amount <= accountAtDisposalBalance,
+                    isEnoughFunds = transactionPayload.amount <= accountAtDisposalBalance + accountCooldownBalance,
+                    showCooldownWarning = transactionPayload.amount < account.delegatedAmount,
                     sponsor = sponsorAddress,
                     appMetadata = appMetadata,
                 )

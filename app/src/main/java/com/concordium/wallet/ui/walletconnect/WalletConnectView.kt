@@ -137,6 +137,7 @@ class WalletConnectView(
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
+                    showCooldownWarning = state.showCooldownWarning,
                     sponsor = state.sponsor,
                     account = state.account,
                     appMetadata = state.appMetadata,
@@ -355,6 +356,7 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        showCooldownWarning: Boolean,
         sponsor: String?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -370,6 +372,7 @@ class WalletConnectView(
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
+                showCooldownWarning = showCooldownWarning,
                 sponsor = sponsor,
                 account = account,
                 appMetadata = appMetadata,
@@ -388,6 +391,7 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        showCooldownWarning: Boolean,
         sponsor: String?,
         account: Account,
         appMetadata: WalletConnectViewModel.AppMetadata,
@@ -480,6 +484,8 @@ class WalletConnectView(
                 }
             }
         }
+
+        delegationWarning.isVisible = showCooldownWarning
 
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()
