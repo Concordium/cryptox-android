@@ -303,6 +303,10 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     isEnoughFunds = transactionPayload.amount <= accountAtDisposalBalance + accountCooldownBalance,
                     showCooldownWarning = transactionPayload.amount < account.delegatedAmount,
                     sponsor = sponsorAddress,
+                    delegationRestakeEarnings = transactionPayload.restakeEarnings,
+                    delegationType = transactionPayload.delegationTarget?.bakerId?.id?.toString()
+                        ?: context.getString(R.string.delegation_register_delegation_passive_long),
+                    delegationPoolId = transactionPayload.delegationTarget?.bakerId?.id?.toString() ?: "",
                     appMetadata = appMetadata,
                 )
             }
