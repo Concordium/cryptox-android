@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Set;
+
 import static config.appiumconnection.driver;
 import static cryptox_AndroidTest.baseClass.stagePackageName;
 import static pages.generalMethods.clickOnElementByXpath;
@@ -38,7 +40,22 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -62,7 +79,18 @@ public class sponsoredTransactionTest {
         System.out.println("Hash from App: " + appHash);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/finish_button\"]", 20));
         driver.activateApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         driver.get("https://stagenet.ccdscan.io/transactions");
         Thread.sleep(5000);
         driver.navigate().refresh();
@@ -100,14 +128,29 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/decline_button\"]", 20));
         driver.activateApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         boolean isPresent = driver.findElements(By.xpath("//android.widget.Button[@text='Select Wallet']")).size() > 0;
         Assert.assertFalse(isPresent, "Select Wallet button should not appear");
     }
 
     @Test
     public void verify_sponsored_transaction_when_user_rejects_transaction_signing() throws Exception {
-        driver.terminateApp(stagePackageName);
+//        driver.terminateApp(stagePackageName);
         driver.activateApp(stagePackageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
@@ -121,7 +164,22 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
+        Thread.sleep(8000);
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -153,7 +211,22 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -183,7 +256,22 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -213,7 +301,22 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -243,7 +346,22 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+           for (int i = 0; i < 3; i++) {
+
+            Set<String> contexts = driver.getContextHandles();
+
+            for (String context : contexts) {
+
+                System.out.println("Context found: " + context);
+
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
