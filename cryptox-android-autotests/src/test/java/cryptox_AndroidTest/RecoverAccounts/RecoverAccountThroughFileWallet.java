@@ -61,10 +61,10 @@ public class RecoverAccountThroughFileWallet {
         driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Thread.sleep(5000);
-        driver.findElement(MobileBy.AndroidUIAutomator(
-                "new UiSelector().text(\"exp_file_wallet.concordiumwallet\")"
-        )).click();
-        Thread.sleep(8000);
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"exp_file_wallet.concordiumwallet\")")).click();
+        Thread.sleep(3000);
+        driver.terminateApp("com.google.android.documentsui");
+        driver.activateApp(stagePackageName);
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
