@@ -137,7 +137,7 @@ public class generalMethods {
                 return true;
             } else {
 
-                System.out.println("unable to verify Element" + elementID);
+                log.error("unable to verify Element" + elementID);
                 return false;
             }
 
@@ -295,7 +295,7 @@ public class generalMethods {
                 return true;
             } else {
 
-                System.out.println("unable to find Element" + elementID);
+                log.error("unable to find Element" + elementID);
 
                 return false;
             }
@@ -342,6 +342,41 @@ public class generalMethods {
 
         return false;
     }
+
+    public static boolean SendTextToFieldByXpath(String elementID, String Text, Integer timeout)
+
+    {
+        try
+        {
+            By elementIDs = By.xpath(elementID);
+
+            MobileElement elementToLookFor = waitForElement(elementIDs,timeout);
+
+            assert elementToLookFor != null;
+            if (elementToLookFor.isDisplayed()){
+                elementToLookFor.clear();
+                elementToLookFor.click();
+                elementToLookFor.sendKeys(Text);
+                return true;
+            }
+
+
+            else {
+
+                System.out.println("unable to find Element" + elementID );
+
+                return false;
+            }
+
+        } catch (Exception exp) {
+            log.error(String.valueOf(exp.getCause()));
+            System.out.println(exp.getMessage());
+            log.error(String.valueOf(exp.fillInStackTrace()));
+        }
+
+        return false;
+    }
+
 
     public static boolean SendTextToFieldByClassName(String elementID, String Text, Integer timeout)
 
