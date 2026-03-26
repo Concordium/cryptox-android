@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for sponsored Smart contract updates
 - Support for sponsored delegation configuration transaction
+- Support for switching networks in the Developer mode 
 
 ### Fixed
 
