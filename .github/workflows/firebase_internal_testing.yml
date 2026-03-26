@@ -49,6 +49,9 @@ jobs:
       - name: Build and distribute Preview APK
         run: ./gradlew app:assemblePreviewRelease app:appDistributionUploadPreviewRelease --stacktrace
 
+      - name: Build and distribute Stable APK
+        run: ./gradlew app:assembleStableRelease app:appDistributionUploadStableRelease --stacktrace
+
       - name: Upload the APKs
         uses: actions/upload-artifact@v4
         with:
