@@ -27,6 +27,7 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.notifications.NotificationsPreferencesActivity
 import com.concordium.wallet.ui.more.tracking.TrackingPreferencesActivity
 import com.concordium.wallet.ui.more.unshielding.UnshieldingAccountsActivity
+import com.concordium.wallet.ui.multinetwork.NetworksActivity
 import com.concordium.wallet.ui.multiwallet.WalletsActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.seed.recoverprocess.RecoverProcessActivity
@@ -127,6 +128,14 @@ class MenuSettingsFragment : BaseFragment() {
             openWallets()
         }
 
+        viewModel.networksVisibilityLiveData.observe(
+            viewLifecycleOwner,
+            binding.networksLayout::isVisible::set
+        )
+        binding.networksLayout.setOnClickListener {
+            openNetworks()
+        }
+
         binding.addressBookLayout.setOnClickListener {
             gotoAddressBook()
         }
@@ -203,6 +212,14 @@ class MenuSettingsFragment : BaseFragment() {
         binding.eraseDataLayout.setOnClickListener {
             eraseDataAndExit()
         }
+
+        binding.devModeLayout.setOnClickListener {
+            viewModel.onDevModeClicked()
+        }
+        viewModel.devModeLiveData.observe(
+            viewLifecycleOwner,
+            binding.devModeSwitch::setChecked
+        )
     }
 
     private fun subscribeToEvents() = viewModel.eventsFlow.collect(this) { event ->
@@ -336,6 +353,17 @@ class MenuSettingsFragment : BaseFragment() {
 
     private fun openWallets() {
         val intent = Intent(activity, WalletsActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openNetworks() {
+        val intent = Intent(activity, NetworksActivity::class.java)
+            .putExtras(
+                NetworksActivity.getBundle(
+                    shouldRestartOnConnect = true,
+                    shouldShowDevModeLayout = false
+                )
+            )
         startActivity(intent)
     }
 

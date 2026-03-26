@@ -150,6 +150,14 @@ class AppSetupPreferences(
         return getBoolean(PREFKEY_SHOW_BALANCE_IN_EUR, false)
     }
 
+    fun setDevModeEnabled(value: Boolean) {
+        setBoolean(PREFKEY_DEV_MODE_ENABLED, value)
+    }
+
+    fun getDevModeEnabled(): Boolean {
+        return getBoolean(PREFKEY_DEV_MODE_ENABLED, false)
+    }
+
     private companion object {
         const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
         const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
@@ -173,5 +181,6 @@ class AppSetupPreferences(
         const val PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER =
             "PREFKEY_HAS_ACCEPTED_ONRAMP_DISCLAIMER"
         const val PREFKEY_SHOW_BALANCE_IN_EUR = "PREFKEY_SHOW_BALANCE_IN_EUR"
+        const val PREFKEY_DEV_MODE_ENABLED = "PREFKEY_DEV_MODE_ENABLED"
     }
 }

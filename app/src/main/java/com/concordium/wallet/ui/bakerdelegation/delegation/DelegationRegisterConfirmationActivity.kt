@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
@@ -57,6 +58,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity(
         binding.legalDisclaimerButton.setOnClickListener {
             showLegalDisclaimerDialog()
         }
+        binding.networkTextView.text = App.appCore.session.network.name
     }
 
     private fun updateViews() {

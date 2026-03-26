@@ -63,7 +63,6 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch(Dispatchers.IO) {
                     _newFinalizedAccountLiveData.postValue(accountName)
-                    App.appCore.session.setAccountsBackedUp(false)
                 }
             }
         }

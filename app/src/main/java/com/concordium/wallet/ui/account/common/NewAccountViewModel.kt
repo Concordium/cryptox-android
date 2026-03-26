@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendError
@@ -150,7 +149,7 @@ open class NewAccountViewModel(application: Application) :
 
     private suspend fun createCredentials(
         password: String,
-        globalParams: GlobalParams
+        globalParams: GlobalParams,
     ) {
         val identityProvider = identity.identityProvider
         val identityObject = identity.identityObject
@@ -166,7 +165,7 @@ open class NewAccountViewModel(application: Application) :
 
         tempData.nextCredNumber = accountRepository.nextCredNumber(identity.id)
 
-        val net = AppConfig.net
+        val net = App.appCore.session.network.hdWalletNetwork
         val seed = App.appCore.session.walletStorage.setupPreferences.getSeedHex(password)
 
         val credentialInput = CreateCredentialInputV1(
@@ -176,7 +175,7 @@ open class NewAccountViewModel(application: Application) :
             identityObject = identityObject,
             revealedAttributes = JsonArray(),
             seed = seed,
-            net = net,
+            net = net.value,
             identityIndex = identity.identityIndex,
             accountNumber = tempData.nextCredNumber ?: 0,
             expiry = (DateTimeUtil.nowPlusMinutes(5).time) / 1000,
@@ -218,7 +217,8 @@ open class NewAccountViewModel(application: Application) :
     private fun submitCredential(credentialWrapper: CredentialWrapper) {
         _waitingLiveData.postValue(true)
         submitCredentialRequest?.dispose()
-        submitCredentialRequest = proxyRepository.submitCredential(credentialWrapper,
+        submitCredentialRequest = proxyRepository.submitCredential(
+            credentialWrapper,
             {
                 tempData.submissionId = it.submissionId
                 finishAccountCreation()

@@ -7,7 +7,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.core.view.isVisible
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
@@ -94,7 +93,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
                     s: CharSequence?,
                     start: Int,
                     count: Int,
-                    after: Int
+                    after: Int,
                 ) {
                 }
 
@@ -216,16 +215,19 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity(
             binding.poolDesc.text = ""
         } else {
             binding.poolDesc.setText(
-                if (BuildConfig.ENV_NAME == "production")
+                if (viewModel.canOpenValidatorExplorer)
                     R.string.delegation_register_delegation_desc
                 else
-                    R.string.delegation_register_delegation_desc_testnet
+                    R.string.delegation_register_delegation_desc_no_ccdscan
             )
             viewModel.selectBakerPool()
         }
 
         binding.poolDesc.handleUrlClicks { url ->
-            IntentUtil.openUrl(this, url)
+            when (url) {
+                "#ccdscan" ->
+                    IntentUtil.openUrl(this, viewModel.getValidatorExplorerUrl())
+            }
         }
         binding.poolRegistrationContinue.isEnabled = binding.checkbox.isChecked &&
                 (viewModel.isInitialSetup() || isModeValid())

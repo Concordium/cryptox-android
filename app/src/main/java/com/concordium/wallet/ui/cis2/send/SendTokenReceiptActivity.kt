@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.airbnb.lottie.LottieDrawable
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.ContractToken
 import com.concordium.wallet.data.model.Transaction
@@ -111,6 +112,7 @@ class SendTokenReceiptActivity : BaseActivity(
                 binding.memoLayout.visibility = View.GONE
             }
         }
+        binding.networkTextView.text = App.appCore.session.network.name
     }
 
     private fun onSend() {

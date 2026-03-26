@@ -11,11 +11,16 @@
     tools:context=".ui.welcome.WelcomeActivity"
     tools:viewBindingIgnore="true">
 
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:id="@+id/logo_image_view"
         android:layout_width="wrap_content"
         android:layout_height="64dp"
-        android:layout_marginTop="52dp"
         android:importantForAccessibility="no"
         app:srcCompat="@drawable/mw24_app_logo" />
 

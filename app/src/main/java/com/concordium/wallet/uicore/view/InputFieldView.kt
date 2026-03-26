@@ -6,7 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.concordium.wallet.R
@@ -16,14 +16,16 @@ import com.concordium.wallet.util.KeyboardUtil.showKeyboard
 class InputFieldView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+    defStyleAttr: Int = 0,
+) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val binding: ViewMw24InputFieldBinding =
         ViewMw24InputFieldBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var iconTextEmpty: Drawable? = null
     private var iconTextFilled: Drawable? = null
+    private var afterTextChanged: ((Editable?) -> Unit)? = null
+    private var onFocusChange: ((Boolean) -> Unit)? = null
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.InputFieldView, 0, 0).apply {
@@ -53,18 +55,17 @@ class InputFieldView @JvmOverloads constructor(
                 updateIconFromText(s)
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                afterTextChanged?.invoke(s)
+            }
         })
 
         // Initial icon state
         updateIconFromText(binding.edittext.text)
 
         binding.edittext.setOnFocusChangeListener { _, hasFocus ->
-            binding.root.background = if (hasFocus) {
-                ContextCompat.getDrawable(context, R.drawable.mw24_input_field_background_active)
-            } else {
-                ContextCompat.getDrawable(context, R.drawable.mw24_input_field_background_default)
-            }
+            binding.root.isActivated = hasFocus
+            onFocusChange?.invoke(hasFocus)
         }
 
         binding.root.setOnClickListener {
@@ -75,7 +76,7 @@ class InputFieldView @JvmOverloads constructor(
     }
 
     private fun updateIconFromText(text: CharSequence?) {
-        binding.clearIcon.isVisible = !text.isNullOrEmpty()
+        binding.clearIcon.isVisible = isEnabled && !text.isNullOrEmpty()
     }
 
     private fun clearSearchText() {
@@ -83,8 +84,7 @@ class InputFieldView @JvmOverloads constructor(
     }
 
     fun updateSearchIconFromText(text: CharSequence?) {
-        binding.searchIcon.isVisible = text.isNullOrEmpty()
-
+        binding.searchIcon.isVisible = isEnabled && text.isNullOrEmpty()
     }
 
     fun setLabelText(text: String) {
@@ -103,7 +103,14 @@ class InputFieldView @JvmOverloads constructor(
 
     fun getText(): String = binding.edittext.text.toString()
 
-    fun setText(text: String) = binding.edittext.setText(text)
+    fun setText(text: String) = with(binding.edittext) {
+        if (selectionEnd == (this.text?.length ?: 0)) {
+            setText(text)
+            setSelection(text.length)
+        } else {
+            setTextKeepState(text)
+        }
+    }
 
     fun setSearchListener(listener: OnClickListener) {
         binding.searchIcon.setOnClickListener(listener)
@@ -115,6 +122,10 @@ class InputFieldView @JvmOverloads constructor(
 
     fun setTextChangeListener(textListener: TextWatcher) {
         binding.edittext.addTextChangedListener(textListener)
+    }
+
+    fun setTextChangeListener(afterTextChanged: (Editable?) -> Unit) {
+        this.afterTextChanged = afterTextChanged
     }
 
     fun setInputType(inputType: Int) {
@@ -130,5 +141,16 @@ class InputFieldView @JvmOverloads constructor(
                 false
             }
         }
+    }
+
+    fun setOnFocusChangeListener(listener: (Boolean) -> Unit) {
+        this.onFocusChange = listener
+    }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        binding.root.isEnabled = enabled
+        binding.label.isEnabled = enabled
+        binding.edittext.isEnabled = enabled
     }
 }

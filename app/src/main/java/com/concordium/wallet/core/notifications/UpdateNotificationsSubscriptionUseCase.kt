@@ -19,13 +19,13 @@ import java.net.HttpURLConnection
 class UpdateNotificationsSubscriptionUseCase(
     private val accountRepository: AccountRepository,
     private val walletNotificationsPreferences: WalletNotificationsPreferences,
-    private val notificationsBackend: NotificationsBackend,
+    private val notificationsBackend: NotificationsBackend?,
     private val context: Context,
 ) {
     constructor() : this(
         accountRepository = AccountRepository(App.appCore.session.walletStorage.database.accountDao()),
         walletNotificationsPreferences = App.appCore.session.walletStorage.notificationsPreferences,
-        notificationsBackend = App.appCore.getNotificationsBackend(),
+        notificationsBackend = App.appCore.session.backends.notifications,
         context = App.appContext,
     )
 
@@ -35,8 +35,13 @@ class UpdateNotificationsSubscriptionUseCase(
     suspend operator fun invoke(
         isCcdTxEnabled: Boolean = walletNotificationsPreferences.areCcdTxNotificationsEnabled,
         isCis2TxEnabled: Boolean = walletNotificationsPreferences.areCis2TxNotificationsEnabled,
-        isPltTxEnabled: Boolean = walletNotificationsPreferences.arePltTxNotificationsEnabled
+        isPltTxEnabled: Boolean = walletNotificationsPreferences.arePltTxNotificationsEnabled,
     ): Boolean {
+        if (notificationsBackend == null) {
+            Log.w("no_backend")
+            return false
+        }
+
         val googleApiAvailability = GoogleApiAvailability.getInstance()
         val fcmToken = when (googleApiAvailability.isGooglePlayServicesAvailable(context)) {
             ConnectionResult.SUCCESS -> {

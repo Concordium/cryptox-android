@@ -4,21 +4,39 @@ import android.content.Context
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.concordium.wallet.core.multinetwork.AppNetwork
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.WalletStorage
-import com.concordium.wallet.data.preferences.Preferences
+import com.concordium.wallet.data.backend.AppBackends
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.util.Log
+import com.google.gson.Gson
 
 class Session(
     context: Context,
+    gson: Gson,
     val activeWallet: AppWallet,
+    val network: AppNetwork,
     isLoggedIn: Boolean = false,
 ) {
+    val backends = AppBackends(
+        gson = gson,
+        network = network,
+    )
     val walletStorage = WalletStorage(
-        activeWallet = activeWallet,
+        wallet = activeWallet,
+        network = network,
         context = context,
     )
     var newIdentities = mutableMapOf<Int, Identity>()
+
+    init {
+        Log.d(
+            "Session initialized:" +
+                    "\nactiveWallet=$activeWallet," +
+                    "\nnetwork=$network"
+        )
+    }
 
     private val _isLoggedIn = MutableLiveData(isLoggedIn)
     val isLoggedIn: LiveData<Boolean>
@@ -75,19 +93,11 @@ class Session(
         return activeWallet.type == AppWallet.Type.FILE
     }
 
-    fun areAccountsBackedUp(): Boolean {
-        return walletStorage.setupPreferences.areAccountsBackedUp()
+    fun isOpeningExplorerPossible(): Boolean {
+        return network.ccdScanFrontendUrl != null
     }
 
-    fun setAccountsBackedUp(value: Boolean) {
-        return walletStorage.setupPreferences.setAccountsBackedUp(value)
-    }
-
-    fun addAccountsBackedUpListener(listener: Preferences.Listener) {
-        walletStorage.setupPreferences.addAccountsBackedUpListener(listener)
-    }
-
-    fun removeAccountsBackedUpListener(listener: Preferences.Listener) {
-        walletStorage.setupPreferences.removeListener(listener)
+    fun isTransactionLogsExportPossible(): Boolean {
+        return network.ccdScanBackendUrl != null
     }
 }
