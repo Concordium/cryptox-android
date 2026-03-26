@@ -8,9 +8,9 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
 import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
-import com.concordium.wallet.R
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.DelicateCoroutinesApi
 
@@ -20,8 +20,8 @@ class ConnectActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val walletConnectPrefixes = setOf(
-            DEFAULT_WALLET_CONNECT_PREFIX,
-            "${getString(R.string.wc_scheme)}:",
+            WalletConnectViewModel.WC_URI_PREFIX,
+            WalletConnectViewModel.SPECIFIC_WC_URI_PREFIX
         )
         val supportedPrefixes = walletConnectPrefixes + MARKETPLACE_CONNECT_PREFIX
 
@@ -104,6 +104,5 @@ class ConnectActivity : BaseActivity() {
 
     private companion object {
         private const val MARKETPLACE_CONNECT_PREFIX = "https://"
-        private const val DEFAULT_WALLET_CONNECT_PREFIX = "wc:"
     }
 }

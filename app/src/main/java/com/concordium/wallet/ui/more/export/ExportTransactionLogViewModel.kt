@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.util.Log
@@ -185,14 +184,7 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
         .flowOn(Dispatchers.IO)
         .distinctUntilChanged()
 
-    @Suppress("KotlinConstantConditions")
     private fun createRetrofitApi() {
-        val baseUrl =
-            if (BuildConfig.ENV_NAME == "production")
-                "https://api-ccdscan.mainnet.concordium.software/rest/"
-            else
-                "https://api-ccdscan.testnet.concordium.com/rest/"
-
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
         api = Retrofit.Builder()
@@ -203,11 +195,11 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
                     .addInterceptor(loggingInterceptor)
                     .build()
             )
-            .baseUrl(baseUrl)
+            .baseUrl(App.appCore.session.network.ccdScanBackendUrl!!)
             .build()
             .create(CcdScanRestApi::class.java)
     }
 
     fun getExplorerUrl(): String =
-        BuildConfig.URL_EXPLORER_BASE
+        App.appCore.session.network.ccdScanFrontendUrl!!.toString()
 }

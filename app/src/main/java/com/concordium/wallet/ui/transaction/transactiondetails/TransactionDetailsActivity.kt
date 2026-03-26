@@ -281,7 +281,9 @@ class TransactionDetailsActivity : BaseActivity(
     }
 
     private fun showExplorerButton(ta: Transaction) {
-        hideExplorer(isVisible = ta.hash != null) {
+        hideExplorer(
+            isVisible = ta.hash != null && viewModel.canOpenExplorer,
+        ) {
             val browserIntent = Intent(Intent.ACTION_VIEW, viewModel.getExplorerUrl().toUri())
             ContextCompat.startActivity(this, browserIntent, null)
         }

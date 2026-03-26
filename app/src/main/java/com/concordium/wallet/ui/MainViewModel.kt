@@ -170,9 +170,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             override fun onNewAccountFinalized(accountName: String) {
-                viewModelScope.launch {
-                    App.appCore.session.setAccountsBackedUp(false)
-                }
             }
         }
         identityUpdater.checkPendingIdentities(updateListener)

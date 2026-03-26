@@ -94,7 +94,6 @@ class TwoWalletsMigration(
 
         // Wallet setup.
         newWalletSetupPreferences.setHasCompletedOnboarding(oldAuthPreferences.hasCompletedOnboarding)
-        newWalletSetupPreferences.setAccountsBackedUp(oldAuthPreferences.areAccountsBackedUp)
         newWalletSetupPreferences.setHasShownInitialAnimation(oldAuthPreferences.hasShownInitialAnimation)
         oldAuthPreferences.encryptedSeedEntropyHexBase64
             ?.let(::migrateOldEncryptedData)
@@ -183,9 +182,6 @@ class TwoWalletsMigration(
 
         val hasCompletedOnboarding: Boolean
             get() = getBoolean("PREFKEY_HAS_COMPLETED_ONBOARDING", false)
-
-        val areAccountsBackedUp: Boolean
-            get() = getBoolean("PREFKEY_ACCOUNTS_BACKED_UP", true)
 
         val encryptedSeedEntropyHexBase64: String?
             get() = getString("PREFKEY_ENCRYPTED_SEED_ENTROPY_HEX")

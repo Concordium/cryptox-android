@@ -1,6 +1,6 @@
 package com.concordium.wallet.ui.cis2.defaults
 
-import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.App
 import com.concordium.wallet.data.ContractTokensRepository
 
 class DefaultTokensManagerFactory(
@@ -32,13 +32,11 @@ class DefaultTokensManagerFactory(
         ),
     )
 
-    @Suppress("KotlinConstantConditions")
     fun getDefaultFungibleTokensManager() =
         DefaultContractTokensManager(
-            defaults =
-            when (BuildConfig.ENV_NAME) {
-                "production" -> mainnetDefaultContractTokens
-                "testnet" -> testnetDefaultContractTokens
+            defaults = when {
+                App.appCore.session.network.isMainnet -> mainnetDefaultContractTokens
+                App.appCore.session.network.isTestnet -> testnetDefaultContractTokens
                 else -> emptyList()
             },
             contractTokensRepository = contractTokensRepository,

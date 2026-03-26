@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.Session
 import com.concordium.wallet.core.arch.Event
@@ -188,7 +187,7 @@ class ImportViewModel(application: Application) :
             when (e) {
                 is JsonIOException,
                 is JsonSyntaxException,
-                -> {
+                    -> {
                     Log.e("Unexpected json format")
                     _errorAndFinishLiveData.postValue(Event(R.string.import_error_password_or_file_content))
                 }
@@ -214,13 +213,13 @@ class ImportViewModel(application: Application) :
             return@launch
         }
 
-        @Suppress("KotlinConstantConditions") val allowedEnvironments =
         // To eliminate confusion of "CryptoX Stage" working on testnet chain,
-            // allow both testnet and stage exports to be used when using testnet or stage.
-            if (BuildConfig.ENV_NAME == "staging" || BuildConfig.ENV_NAME == "testnet")
-                setOf("staging", "testnet")
+        // allow both testnet and stage exports to be used when using testnet or stage.
+        val allowedEnvironments =
+            if (App.appCore.session.network.isMainnet)
+                setOf("mainnet")
             else
-                setOf(BuildConfig.EXPORT_CHAIN)
+                setOf("staging", "testnet")
 
         if (exportData.environment !in allowedEnvironments) {
             _waitingLiveData.postValue(false)

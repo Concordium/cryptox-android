@@ -49,23 +49,23 @@ jobs:
         env:
           SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
 
-      - name: Build Testnet APK for standalone release
-        run: ./gradlew app:assembleTstnetRelease --stacktrace
+      - name: Build Preview APK for standalone release
+        run: ./gradlew app:assemblePreviewRelease --stacktrace
         env:
           CONFIGURABLE_SIGNING_PROPERTIES_FILE: standalone-release-signing.properties
 
-      - name: Build Testnet bundle for Google Play upload
-        run: ./gradlew app:bundleTstnetRelease --stacktrace
+      - name: Build Preview bundle for Google Play upload
+        run: ./gradlew app:bundlePreviewRelease --stacktrace
         env:
           CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
 
-      - name: Build Mainnet APK for standalone release
-        run: ./gradlew app:assembleMainnetRelease --stacktrace
+      - name: Build Stable APK for standalone release
+        run: ./gradlew app:assembleStableRelease --stacktrace
         env:
           CONFIGURABLE_SIGNING_PROPERTIES_FILE: standalone-release-signing.properties
 
-      - name: Build Mainnet bundle for Google Play upload
-        run: ./gradlew app:bundleMainnetRelease --stacktrace
+      - name: Build Stable bundle for Google Play upload
+        run: ./gradlew app:bundleStableRelease --stacktrace
         env:
           CONFIGURABLE_SIGNING_PROPERTIES_FILE: play-upload-signing.properties
 

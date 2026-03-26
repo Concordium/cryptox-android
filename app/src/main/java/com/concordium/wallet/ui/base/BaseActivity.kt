@@ -72,6 +72,9 @@ abstract class BaseActivity(
     private var settingsBtn: ImageView? = null
     private var menuDrawerBtn: ImageView? = null
     private var explorerBtn: ImageView? = null
+    private var editBtn: ImageView? = null
+    private var doneBtn: ImageView? = null
+    private var networksBtn: ImageView? = null
 
     private var toastLayoutTopError: ViewGroup? = null
 
@@ -106,6 +109,9 @@ abstract class BaseActivity(
         accountBtnImage = toolbar?.findViewById(R.id.toolbar_account_btn_image)
         menuDrawerBtn = toolbar?.findViewById(R.id.toolbar_menu_drawer_btn)
         explorerBtn = toolbar?.findViewById(R.id.toolbar_explorer_btn)
+        editBtn = toolbar?.findViewById(R.id.toolbar_edit_btn)
+        doneBtn = toolbar?.findViewById(R.id.toolbar_done_btn)
+        networksBtn = toolbar?.findViewById(R.id.toolbar_networks_btn)
 
         setupActionBar(this, titleId)
 
@@ -271,6 +277,21 @@ abstract class BaseActivity(
     fun hideExplorer(isVisible: Boolean, listener: View.OnClickListener? = null) {
         explorerBtn?.isVisible = isVisible
         explorerBtn?.setOnClickListener(listener)
+    }
+
+    fun hideEdit(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        editBtn?.isVisible = isVisible
+        editBtn?.setOnClickListener(listener)
+    }
+
+    fun hideDone(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        doneBtn?.isVisible = isVisible
+        doneBtn?.setOnClickListener(listener)
+    }
+
+    fun hideNetworks(isVisible: Boolean, listener: View.OnClickListener? = null) {
+        networksBtn?.isVisible = isVisible
+        networksBtn?.setOnClickListener(listener)
     }
 
     private val scanQrResult =

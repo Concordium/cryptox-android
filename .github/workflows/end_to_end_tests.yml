@@ -50,7 +50,7 @@ jobs:
           distribution: corretto
 
       - name: Build project (Stagenet)
-        run: chmod +x ./gradlew && ./gradlew app:assembleStagenetDebug --stacktrace
+        run: chmod +x ./gradlew && ./gradlew app:assemblePreviewDebug --stacktrace
 
       # Log APK Path and store it as an environment variable
       - name: Log APK Path

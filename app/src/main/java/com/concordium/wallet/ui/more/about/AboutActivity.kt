@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.App
-import com.concordium.wallet.AppConfig
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityAboutBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -61,7 +61,14 @@ class AboutActivity : BaseActivity(
             }
         }
 
-        binding.aboutVersionText.text = AppConfig.appVersion
+        binding.aboutVersionText.text = buildString {
+            append(BuildConfig.VERSION_NAME)
+            append(" ")
+            append(BuildConfig.FLAVOR)
+            if (BuildConfig.DEBUG) {
+                append(" (debug)")
+            }
+        }
 
         binding.aboutContactText.handleUrlClicks(::onUrlClicked)
         binding.aboutSupportText.handleUrlClicks(::onUrlClicked)

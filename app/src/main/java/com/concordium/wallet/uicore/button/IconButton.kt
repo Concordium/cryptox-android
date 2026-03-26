@@ -123,4 +123,11 @@ class IconButton @JvmOverloads constructor(
         else ->
             error("Unknown priority $priority")
     }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        binding.buttonText.isEnabled = enabled
+        binding.iconStart.isEnabled = enabled
+        binding.iconEnd.isEnabled = enabled
+    }
 }

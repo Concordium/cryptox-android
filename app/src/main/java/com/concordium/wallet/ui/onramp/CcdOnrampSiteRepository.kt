@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.onramp
 
+import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 
@@ -67,10 +68,10 @@ class CcdOnrampSiteRepository {
             BuildConfig.DEBUG ->
                 testnetSites + mainnetSites
 
-            BuildConfig.ENV_NAME == "production" ->
+            App.appCore.session.network.isMainnet ->
                 mainnetSites
 
-            BuildConfig.ENV_NAME == "testnet" ->
+            App.appCore.session.network.isTestnet ->
                 testnetSites
 
             else ->

@@ -41,10 +41,14 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
             val value = Value(accountKeys, credentials, account.address)
             val fileContent = Gson().toJson(
                 ExportAccountKeys(
-                    "concordium-browser-wallet-account",
-                    account.credential?.v ?: 0,
-                    BuildConfig.EXPORT_CHAIN,
-                    value
+                    v = account.credential?.v ?: 0,
+                    type = "concordium-browser-wallet-account",
+                    value = value,
+                    environment =
+                        if (App.appCore.session.network.isMainnet)
+                            "mainnet"
+                        else
+                            "testnet",
                 )
             )
             FileUtil.writeFile(destinationUri, "${account.address}.export", fileContent)

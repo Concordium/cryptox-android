@@ -85,13 +85,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="@string/wc_scheme" />
+                <data android:scheme="cryptox-wc" />
             </intent-filter>
         </activity>
 
         <provider
             android:name=".DataFileProvider"
-            android:authorities="@string/PROVIDER_AUTHORITY"
+            android:authorities="@string/provider_authority"
             android:enabled="true"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -469,9 +469,19 @@
             android:name=".ui.cis2.send.SelectTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.onramp.CcdOnrampDisclaimerActivity"
+        <activity
+            android:name=".ui.onramp.CcdOnrampDisclaimerActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.multinetwork.NetworksActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.multinetwork.EditNetworkActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
     </application>
 
 </manifest>

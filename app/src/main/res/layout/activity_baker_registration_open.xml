@@ -50,7 +50,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/mw24_input_field_background_default"
                 android:importantForAutofill="no"
                 android:inputType="textUri|textWebEmailAddress"
                 app:labelText="@string/baker_registration_open_url_hint" />

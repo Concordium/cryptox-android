@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
 import com.concordium.sdk.crypto.wallet.ConcordiumHdWallet
-import com.concordium.sdk.crypto.wallet.Network
 import com.concordium.sdk.crypto.wallet.web3Id.GivenContext
 import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaims
 import com.concordium.sdk.crypto.wallet.web3Id.IdentityClaimsAccountProofInput
@@ -16,7 +15,6 @@ import com.concordium.sdk.serializing.JsonMapper
 import com.concordium.sdk.transactions.CredentialRegistrationId
 import com.concordium.sdk.types.UInt32
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.multiwallet.AppWallet
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
@@ -59,11 +57,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
     private val walletSetupPreferences: WalletSetupPreferences,
     private val activeWalletType: AppWallet.Type,
 ) {
-    private val network =
-        if (BuildConfig.ENV_NAME.equals("production", ignoreCase = true))
-            Network.MAINNET
-        else
-            Network.TESTNET
+    private val network = App.appCore.session.network.hdWalletNetwork
     private val isDataLoaded: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val isCreatingProof: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var requestCoroutineScope: CoroutineScope? = null
@@ -229,7 +223,7 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
         loadDataAndPresentReview()
     }
 
-    private suspend fun loadDataAndPresentReview() {
+    private fun loadDataAndPresentReview() {
         deferredDataLoading = requestCoroutineScope!!.async {
             check(identityProofProvableState == WalletConnectViewModel.ProofProvableState.Provable) {
                 "No point in loading the data for unprovable proof"
@@ -614,13 +608,13 @@ class WalletConnectVerifiablePresentationV1RequestHandler(
             connectedAccount = connectedAccount,
             appMetadata = appMetadata,
             claims =
-            identityClaims
-                .map { claims ->
-                    IdentityProofRequestClaims(
-                        statements = claims.statements,
-                        selectedCredential = credentialsByClaims.getValue(claims),
-                    )
-                },
+                identityClaims
+                    .map { claims ->
+                        IdentityProofRequestClaims(
+                            statements = claims.statements,
+                            selectedCredential = credentialsByClaims.getValue(claims),
+                        )
+                    },
             currentClaim = currentClaimIndex,
             provable = identityProofProvableState,
             isV1 = true,

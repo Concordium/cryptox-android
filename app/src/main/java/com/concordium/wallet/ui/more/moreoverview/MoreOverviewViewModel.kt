@@ -22,6 +22,7 @@ import kotlin.system.exitProcess
 
 class MoreOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val appSetup = App.appCore.setup
     private val walletSetupPreferences = App.appCore.session.walletStorage.setupPreferences
     private val accountRepository: AccountRepository by lazy {
         AccountRepository(App.appCore.session.walletStorage.database.accountDao())
@@ -41,6 +42,10 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean> = _waitingLiveData
     private val _passwordAlterVisibilityLiveData = MutableLiveData<Boolean>()
+    private val _devModeLiveData = MutableLiveData<Boolean>()
+    val devModeLiveData: LiveData<Boolean> = _devModeLiveData
+    private val _networksVisibilityLiveData = MutableLiveData<Boolean>()
+    val networksVisibilityLiveData: LiveData<Boolean> = _networksVisibilityLiveData
     private val mutableEventsFlow =
         MutableSharedFlow<Event>(extraBufferCapacity = 10)
     val eventsFlow: Flow<Event> = mutableEventsFlow
@@ -69,6 +74,11 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
         _unshieldingVisibilityLiveData.postValue(
             accountRepository.getAllDone().any(Account::mayNeedUnshielding)
         )
+        _devModeLiveData.postValue(appSetup.isDevModeEnabled)
+
+        _devModeLiveData.observeForever { isDevModeEnabled ->
+            _networksVisibilityLiveData.postValue(isDevModeEnabled)
+        }
     }
 
     fun deleteWCDatabaseAndExit() {
@@ -115,13 +125,17 @@ class MoreOverviewViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-
     private fun clearNotificationToken() {
         try {
             FirebaseMessaging.getInstance().deleteToken()
         } catch (error: Exception) {
             Log.e("failed_deleting_notification_token", error)
         }
+    }
+
+    fun onDevModeClicked() {
+        appSetup.setDevModeEnabled(!appSetup.isDevModeEnabled)
+        _devModeLiveData.postValue(appSetup.isDevModeEnabled)
     }
 
     sealed interface Event {

@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
@@ -137,7 +136,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             return null
         }
 
-        val net = AppConfig.net
+        val net = App.appCore.session.network.hdWalletNetwork
         tempData.identityIndex =
             identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
         tempData.identityName =
@@ -149,7 +148,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             identityProvider.arsInfos,
             global,
             seed,
-            net,
+            net.value,
             tempData.identityIndex
         )
         return if (output != null) {

@@ -4,11 +4,11 @@ import com.concordium.sdk.transactions.Transaction
 import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.AccountBalance
-import com.concordium.wallet.data.model.AccountKeyData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.AccountTransactions
 import com.concordium.wallet.data.model.BakerPoolStatus
@@ -26,10 +26,9 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigInteger
 
-class ProxyRepository {
-
-    private val backend = App.appCore.getProxyBackend()
-
+class ProxyRepository(
+    private val backend: ProxyBackend = App.appCore.session.backends.proxy,
+) {
     companion object {
         const val SIMPLE_TRANSFER = "simpleTransfer"
         const val ENCRYPTED_TRANSFER = "encryptedTransfer"
@@ -275,7 +274,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<AccountBalance>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -303,7 +302,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<AccountTransactions>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -327,7 +326,7 @@ class ProxyRepository {
             }
         })
 
-        return BackendRequest<SubmissionData>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -338,34 +337,10 @@ class ProxyRepository {
         success: (GlobalParamsWrapper) -> Unit,
         failure: ((Throwable) -> Unit)?,
     ): BackendRequest<GlobalParamsWrapper> {
-        val call = App.appCore.getProxyBackend().getGlobalInfo()
+        val call = backend.getGlobalInfo()
         call.enqueue(object : BackendCallback<GlobalParamsWrapper>() {
 
             override fun onResponseData(response: GlobalParamsWrapper) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-
-        return BackendRequest<GlobalParamsWrapper>(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
-
-    fun getAccountEncryptedKey(
-        accountAddress: String,
-        success: (AccountKeyData) -> Unit,
-        failure: ((Throwable) -> Unit)?,
-    ): BackendRequest<AccountKeyData> {
-        val call = App.appCore.getProxyBackend().getAccountEncryptedKey(accountAddress)
-        call.enqueue(object : BackendCallback<AccountKeyData>() {
-
-            override fun onResponseData(response: AccountKeyData) {
                 success(response)
             }
 
@@ -425,4 +400,12 @@ class ProxyRepository {
      * @return an object containing a URL that initiate the Transak on-ramp
      */
     suspend fun getTransakWidgetUrl(address: String) = backend.getTransakWidgetUrl(address)
+
+    /**
+     * @return HEX-encoded network genesis block hash
+     */
+    suspend fun getGenesisHash(): String =
+        backend
+            .getGenesisHash()
+            .genesisBlock
 }

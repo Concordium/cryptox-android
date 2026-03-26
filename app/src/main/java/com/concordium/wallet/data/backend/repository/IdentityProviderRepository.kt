@@ -8,8 +8,7 @@ import com.concordium.wallet.data.model.IdentityProvider
 
 class IdentityProviderRepository {
 
-    private val gson = App.appCore.gson
-    private val backend = App.appCore.getProxyBackend()
+    private val backend = App.appCore.session.backends.proxy
 
     fun getIdentityProviderInfo(
         success: (ArrayList<IdentityProvider>) -> Unit,

@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.concordium.wallet.App
 import com.concordium.wallet.DataFileProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -184,7 +183,6 @@ class ExportActivity : BaseActivity(
             )
         }
         startActivity(Intent.createChooser(share, null))
-        App.appCore.session.setAccountsBackedUp(true)
         isShareFlowActive = true
     }
 
