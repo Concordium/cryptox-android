@@ -72,7 +72,7 @@ class WalletConnectView(
             when (state) {
                 is WalletConnectViewModel.State.SessionProposalReview,
                 is WalletConnectViewModel.State.SessionRequestReview,
-                -> {
+                    -> {
                     val lifecycleState = lifecycle.currentState
                     if (lifecycleState >= Lifecycle.State.CREATED
                         && lifecycleState < Lifecycle.State.STARTED
@@ -137,8 +137,12 @@ class WalletConnectView(
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
                     isEnoughFunds = state.isEnoughFunds,
+                    showCooldownWarning = state.showCooldownWarning,
                     sponsor = state.sponsor,
                     account = state.account,
+                    delegationRestakeEarnings = state.delegationRestakeEarnings,
+                    delegationType = state.delegationType,
+                    delegationPoolId = state.delegationPoolId,
                     appMetadata = state.appMetadata,
                 )
             }
@@ -223,7 +227,7 @@ class WalletConnectView(
                 val duration = when (event.error) {
                     WalletConnectViewModel.Error.ConnectionFailed,
                     WalletConnectViewModel.Error.AccountNotFound,
-                    ->
+                        ->
                         Toast.LENGTH_LONG
 
                     else ->
@@ -355,8 +359,12 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        showCooldownWarning: Boolean,
         sponsor: String?,
         account: Account,
+        delegationRestakeEarnings: Boolean,
+        delegationType: String,
+        delegationPoolId: String,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) {
         getShownBottomSheet().showTransactionRequestReview { (view, lifecycleOwner) ->
@@ -370,8 +378,12 @@ class WalletConnectView(
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
                 isEnoughFunds = isEnoughFunds,
+                showCooldownWarning = showCooldownWarning,
                 sponsor = sponsor,
                 account = account,
+                delegationRestakeEarnings = delegationRestakeEarnings,
+                delegationType = delegationType,
+                delegationPoolId = delegationPoolId,
                 appMetadata = appMetadata,
             )
         }
@@ -388,8 +400,12 @@ class WalletConnectView(
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
         isEnoughFunds: Boolean,
+        showCooldownWarning: Boolean,
         sponsor: String?,
         account: Account,
+        delegationRestakeEarnings: Boolean,
+        delegationType: String,
+        delegationPoolId: String,
         appMetadata: WalletConnectViewModel.AppMetadata,
     ) = with(view) {
         Glide.with(appIconImageView.context)
@@ -462,6 +478,17 @@ class WalletConnectView(
             sponsoredLabel.isVisible = false
         }
 
+        if (delegationType.isNotEmpty()) {
+            transactionDataLayout.isVisible = false
+            delegationDataLayout.isVisible = true
+            delegationTarget.text = delegationPoolId.ifEmpty { delegationType }
+            delegationRewards.text =
+                if (delegationRestakeEarnings) root.context.getString(R.string.delegation_status_added_to_delegation_amount)
+                else root.context.getString(R.string.delegation_status_at_disposal)
+        } else {
+            delegationDataLayout.isVisible = false
+        }
+
         errorTextView.isVisible = !isEnoughFunds
         errorTextView.text =
             when {
@@ -480,6 +507,8 @@ class WalletConnectView(
                 }
             }
         }
+
+        delegationWarning.isVisible = showCooldownWarning
 
         declineButton.setOnClickListener {
             viewModel.rejectSessionRequest()

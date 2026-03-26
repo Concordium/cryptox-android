@@ -563,6 +563,7 @@
     <string name="wallet_connect_template_signature_request_details">Binary message:\n%1$s</string>
     <string name="wallet_connect_connecting">Connecting…</string>
     <string name="wallet_connect_pending_request_notice">New WalletConnect request is waiting on the home screen</string>
+    <string name="wallet_connect_delegation_configuration">Delegation configuration</string>
 
     <string name="allow">Allow</string>
     <string name="decline">Decline</string>

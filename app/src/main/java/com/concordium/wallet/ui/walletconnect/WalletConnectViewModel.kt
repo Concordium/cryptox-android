@@ -1285,7 +1285,11 @@ private constructor(
                 val estimatedFee: BigInteger,
                 val canShowDetails: Boolean,
                 val isEnoughFunds: Boolean,
+                val showCooldownWarning: Boolean,
                 val sponsor: String?,
+                val delegationRestakeEarnings: Boolean = false,
+                val delegationType: String = "",
+                val delegationPoolId: String = "",
                 account: Account,
                 appMetadata: AppMetadata,
             ) : SessionRequestReview(
