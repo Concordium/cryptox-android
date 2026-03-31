@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.RecoverAccounts;
 
+import io.appium.java_client.MobileBy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -13,6 +14,7 @@ import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
 import static config.systemInfo.getSeedPhrase;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.continueButton;
+import static cryptox_AndroidTest.baseClass.stagePackageName;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaBackupFile;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaSeedPhrase;
 import static pages.createPassCodeScreen.createPassCodeNow;
@@ -40,7 +42,7 @@ public class RecoverAccountThroughFileWallet {
             }
             byte[] fileContent = Files.readAllBytes(walletFile.toPath());
             String base64Data = Base64.getEncoder().encodeToString(fileContent);
-            driver.pushFile("/sdcard/Documents/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+            driver.pushFile("/sdcard/Documents/export/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
@@ -56,12 +58,17 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(createPassCodeNow());
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
+        driver.activateApp(stagePackageName);
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
+        Thread.sleep(5000);
+        driver.findElement(MobileBy.AndroidUIAutomator("new UiSelector().text(\"exp_file_wallet.concordiumwallet\")")).click();
+        Thread.sleep(3000);
+        driver.terminateApp("com.google.android.documentsui");
+        driver.activateApp(stagePackageName);
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(waitForLoaderToDisappear("message_text_view", 200));
+        Assert.assertTrue(waitForLoaderToDisappear("message_text_view", 300));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         log.info("successfully recovered Account");
     }

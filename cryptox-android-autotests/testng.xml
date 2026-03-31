@@ -9,6 +9,7 @@
 <!--            <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountThroughFileWallet"/>-->
 <!--            <class name="cryptox_AndroidTest.Settings.settingsCases"/>-->
             <class name="cryptox_AndroidTest.RecoverAccounts.recoverAccountThroughSeedPhrase"/>
+            <class name="cryptox_AndroidTest.SponsoredTransaction.sponsoredTransactionTest"/>
             <class name="cryptox_AndroidTest.Validation.createValidatorWithNoDelegation"/>
             <class name="cryptox_AndroidTest.Validation.validatorWithOpenForDelegation"/>
             <class name="cryptox_AndroidTest.delegation.createDelegation"/>
