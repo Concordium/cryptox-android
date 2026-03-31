@@ -73,9 +73,12 @@ public class appiumconnection {
         cap.setCapability("fullReset", false);
         grantNotificationPermission("emulator-5554", packageName);
         cap.setCapability("unicodeKeyboard", true);
-        cap.setCapability("appium:uiautomator2ServerLaunchTimeout", 60000);
+      //  cap.setCapability("appium:chromedriverExecutable", System.getProperty("user.dir") + "/drivers/chromedriver");        cap.setCapability("appium:uiautomator2ServerLaunchTimeout", 60000);
         cap.setCapability("appium:adbExecTimeout", 60000);
         cap.setCapability("appium:newCommandTimeout", 300);
+        cap.setCapability("appium:chromedriverExecutable", System.getProperty("user.dir") + "/drivers/chromedriver_146/chromedriver_mac64");
+        cap.setCapability("appium:chromedriverAutodownload", false);
+
         return cap;
     }
 

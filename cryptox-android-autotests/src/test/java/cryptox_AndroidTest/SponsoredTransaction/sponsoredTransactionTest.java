@@ -5,13 +5,16 @@ import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
 import static config.appiumconnection.driver;
 import static cryptox_AndroidTest.baseClass.stagePackageName;
+import static pages.generalMethods.clickOnElement;
 import static pages.generalMethods.clickOnElementByXpath;
 import static pages.login.loginCryptoX;
 import static pages.sponsoredTransaction.*;
@@ -150,9 +153,10 @@ public class sponsoredTransactionTest {
 
     @Test
     public void verify_sponsored_transaction_when_user_rejects_transaction_signing() throws Exception {
-//        driver.terminateApp(stagePackageName);
+        driver.terminateApp(stagePackageName);
         driver.activateApp(stagePackageName);
         loginCryptoX();
+        Assert.assertTrue(clickOnElement("ok_button", 5));
         switchBackToApp("com.android.chrome");
         Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
@@ -165,6 +169,7 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
         for (int i = 0; i < 3; i++) {
+
             Set<String> contexts = driver.getContextHandles();
 
             for (String context : contexts) {
@@ -179,7 +184,6 @@ public class sponsoredTransactionTest {
             }
             Thread.sleep(3000);
         }
-        Thread.sleep(8000);
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
