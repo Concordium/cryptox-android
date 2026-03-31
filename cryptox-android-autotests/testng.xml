@@ -6,7 +6,7 @@
     <test name="CryptoX - Android">
         <classes>
             <class name="cryptox_AndroidTest.baseClass"/>
-<!--            <class name="cryptox_AndroidTest.RecoverAccounts.recoverAccountThroughSeedPhrase"/>-->
+            <class name="cryptox_AndroidTest.RecoverAccounts.recoverAccountThroughSeedPhrase"/>
             <class name="cryptox_AndroidTest.SponsoredTransaction.sponsoredTransactionTest"/>
         </classes>
     </test>
