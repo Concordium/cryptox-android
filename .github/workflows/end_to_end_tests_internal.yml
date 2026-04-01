@@ -134,7 +134,7 @@ jobs:
             --results "target/surefire-reports/**/*.xml"
         env:
           TESTMO_PROJECT_URL: ${{ secrets.TESTMO_PROJECT_URL }}
-          TESTMO_API_TOKEN: ${{ secrets.TESTMO_API_TOKEN}}
+          TESTMO_API_TOKEN: ${{ secrets.TESTMO_API_TOKEN }}
           TESTMO_PROJECT_ID: ${{ secrets.TESTMO_PROJECT_ID }}
 
       
