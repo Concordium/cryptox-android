@@ -24,7 +24,7 @@ public static String EmulatorCloud = "emulator-5554"; // Change to your device I
 public static String appURL;
 public static String Device;
 public static String testnetPackageName = "com.pioneeringtechventures.wallet.testnet";
-public static String stagePackageName = "com.pioneeringtechventures.wallet.testnet"; //"com.pioneeringtechventures.wallet.stagenet";
+public static String stagePackageName = "com.pioneeringtechventures.wallet.stagenet"; //"com.pioneeringtechventures.wallet.stagenet";
 public static String activityName = "com.concordium.wallet.ui.MainActivity";
 public static String PackageName = stagePackageName;
 
