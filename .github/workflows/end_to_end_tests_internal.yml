@@ -117,18 +117,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: |
-            adb devices
-            adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
-            adb wait-for-device
-            while [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]; do sleep 5; done
-            adb install -r "$APK_PATH"
-            PACKAGE_NAME=$(adb shell pm list packages | grep wallet | tr -d '\r')
-            MAIN_ACTIVITY=$(adb shell cmd package resolve-activity --brief $PACKAGE_NAME | tr -d '\r')
-            echo "Package: $PACKAGE_NAME, Main Activity: $MAIN_ACTIVITY"
-            adb shell am start -n $MAIN_ACTIVITY
-            cd cryptox-android-autotests
-            mvn clean install
+          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
 
       - name: Submit TestNG results to Testmo
         if: always()
