@@ -121,7 +121,7 @@ jobs:
             adb devices
             adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
 
-            # Wait for device boot
+            # Wait for device boot (Bash syntax)
             until adb shell getprop sys.boot_completed | grep -m 1 1; do
               echo "Waiting for device to finish booting..."
               sleep 5
@@ -131,25 +131,21 @@ jobs:
             adb install -r "$APK_PATH"
             sleep 5
 
-            # Verify APK installation
             echo "Checking if app package is installed..."
             adb shell pm list packages -3 | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
 
-            # Launch app
-            echo "Resolving main activity..."
             MAIN_ACTIVITY=$(adb shell cmd package resolve-activity --brief com.pioneeringtechventures.wallet.stagenet)
             echo "Resolved activity: $MAIN_ACTIVITY"
             if [ -z "$MAIN_ACTIVITY" ]; then
               echo "Main activity not found! Exiting..."
               exit 1
             fi
-            echo "Launching app..."
             adb shell am start -n $MAIN_ACTIVITY
             sleep 5
 
-            # Run tests
             cd cryptox-android-autotests
             mvn clean install
+          shell: bash
 
       - name: Submit TestNG results to Testmo
         if: always()
