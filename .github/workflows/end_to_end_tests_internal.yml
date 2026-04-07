@@ -108,9 +108,6 @@ jobs:
       - name: Appium Driver List
         run: appium driver list
 
-      - name: Appium Driver List
-        run: appium driver list
-
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -120,8 +117,30 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
-      
+          script: |
+            avdmanager list device
+            adb devices
+            adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
+            sleep 10
+            adb wait-for-device
+            adb install "$APK_PATH"
+            echo "Checking if app package is installed..."
+            adb shell pm list packages | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
+
+            echo "Resolving main activity..."
+            MAIN_ACTIVITY=$(adb shell cmd package resolve-activity --brief com.pioneeringtechventures.wallet.stagenet)
+            echo "Resolved activity: $MAIN_ACTIVITY"
+            if [ -z "$MAIN_ACTIVITY" ]; then
+              echo "Main activity not found! Exiting..."
+              exit 1
+            fi
+
+            echo "Launching app to verify..."
+            adb shell am start -n $MAIN_ACTIVITY
+            sleep 5
+            cd cryptox-android-autotests
+            mvn clean install
+
       - name: Submit TestNG results to Testmo
         if: always() 
         working-directory: cryptox-android-autotests
