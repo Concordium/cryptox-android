@@ -61,6 +61,11 @@ jobs:
           echo "APK_PATH=$APK_PATH"
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
+      - name: Install Android Build Tools (aapt)
+        run: |
+          yes | sdkmanager "build-tools;34.0.0"
+          echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
+
       - name: Check correct activity
         run: |
           aapt dump badging "$APK_PATH" | grep -E "package:|launchable-activity"
@@ -122,7 +127,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
+          script: adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && adb wait-for-device && while [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]; do sleep 5; done && adb install -r "$APK_PATH" && cd cryptox-android-autotests && mvn clean install
 
       - name: Submit TestNG results to Testmo
         if: always()
