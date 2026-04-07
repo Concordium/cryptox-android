@@ -61,6 +61,11 @@ jobs:
           echo "APK_PATH=$APK_PATH"
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
+      - name: Check correct activity
+        run: |
+          aapt dump badging "$APK_PATH" | grep -E "package:|launchable-activity"
+
+
       - name: Slack Post
         uses: devtk0582/slack-post-action@v1.2
         with:
@@ -107,10 +112,6 @@ jobs:
 
       - name: Appium Driver List
         run: appium driver list
-
-      - name: Check correct activity
-        run: |
-          aapt dump badging "$APK_PATH" | grep -E "package:|launchable-activity"
 
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
