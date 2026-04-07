@@ -6,7 +6,7 @@ on:
       branch:
         description: 'The branch to run the workflow on'
         required: true
-        default: 'main'  # Default to 'main' branch
+        default: 'main'
 
 env:
   java_version: "17"
@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-     SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_WEBHOOK }}
 
     environment:
       name: Autotests
@@ -52,7 +52,6 @@ jobs:
       - name: Build preview
         run: ./gradlew app:assemblePreviewDebug --stacktrace
 
-      # Log APK Path and store it as an environment variable
       - name: Log APK Path
         id: log_apk
         run: |
@@ -95,16 +94,16 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Install Appium Dependencies
-        run: npm install -g appium  # Install Appium globally
+        run: npm install -g appium
 
       - name: Install uiautomator2
-        run: appium driver install uiautomator2  # Install Appium driver globally
+        run: appium driver install uiautomator2
 
       - name: Start Appium
         run: |
-          appium --log-level debug &  # Start Appium in the background
-          sleep 10  # Wait for Appium to initialize
-          
+          appium --log-level debug &
+          sleep 10
+
       - name: Appium Driver List
         run: appium driver list
 
@@ -121,12 +120,22 @@ jobs:
             avdmanager list device
             adb devices
             adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
-            sleep 10
-            adb wait-for-device
-            adb install "$APK_PATH"
-            echo "Checking if app package is installed..."
-            adb shell pm list packages | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
 
+            # Wait for device boot
+            until adb shell getprop sys.boot_completed | grep -m 1 1; do
+              echo "Waiting for device to finish booting..."
+              sleep 5
+            done
+
+            adb wait-for-device
+            adb install -r "$APK_PATH"
+            sleep 5
+
+            # Verify APK installation
+            echo "Checking if app package is installed..."
+            adb shell pm list packages -3 | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
+
+            # Launch app
             echo "Resolving main activity..."
             MAIN_ACTIVITY=$(adb shell cmd package resolve-activity --brief com.pioneeringtechventures.wallet.stagenet)
             echo "Resolved activity: $MAIN_ACTIVITY"
@@ -134,15 +143,16 @@ jobs:
               echo "Main activity not found! Exiting..."
               exit 1
             fi
-
-            echo "Launching app to verify..."
+            echo "Launching app..."
             adb shell am start -n $MAIN_ACTIVITY
             sleep 5
+
+            # Run tests
             cd cryptox-android-autotests
             mvn clean install
 
       - name: Submit TestNG results to Testmo
-        if: always() 
+        if: always()
         working-directory: cryptox-android-autotests
         run: |
           npx @testmo/testmo-cli automation:run:submit \
@@ -156,10 +166,9 @@ jobs:
           TESTMO_TOKEN: ${{ secrets.TESTMO_API_TOKEN }}
           TESTMO_PROJECT_ID: ${{ secrets.TESTMO_PROJECT_ID }}
 
-      
       - name: Upload Screenshots on Failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-              name: failed-test-screenshots
-              path: cryptox-android-autotests/screenshots/
+          name: failed-test-screenshots
+          path: cryptox-android-autotests/screenshots/
