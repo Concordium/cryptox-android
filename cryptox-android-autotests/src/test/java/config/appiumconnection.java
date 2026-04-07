@@ -63,7 +63,7 @@ public class appiumconnection {
         cap.setCapability("platformName", "Android");
         cap.setCapability("platformVersion", "10");
         cap.setCapability("appPackage", packageName);
-        cap.setCapability("noReset", false);
+        cap.setCapability("noReset", true);
         cap.setCapability("appActivity", activityName);
         cap.setCapability("automationName", "UiAutomator2");
         cap.setCapability("autoGrantPermissions", true);

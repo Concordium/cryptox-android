@@ -108,6 +108,10 @@ jobs:
       - name: Appium Driver List
         run: appium driver list
 
+      - name: Check correct activity
+        run: |
+          aapt dump badging "$APK_PATH" | grep -E "package:|launchable-activity"
+
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
