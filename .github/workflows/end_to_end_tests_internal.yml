@@ -107,7 +107,7 @@ jobs:
       - name: Appium Driver List
         run: appium driver list
 
-      - name: Run tests
+      - name: Run Tests on Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -117,35 +117,46 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            echo "Listing available devices..."
             avdmanager list device
             adb devices
+
+            echo "Reset hidden API policies..."
             adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
 
-            # Wait for device boot (Bash syntax)
-            until adb shell getprop sys.boot_completed | grep -m 1 1; do
-              echo "Waiting for device to finish booting..."
-              sleep 5
+            echo "Waiting for emulator to finish booting..."
+            BOOTED=0
+            while [ $BOOTED -eq 0 ]; do
+              if adb shell getprop sys.boot_completed | grep -q 1; then
+                BOOTED=1
+              else
+                echo "Emulator not ready yet. Waiting 5s..."
+                sleep 5
+              fi
             done
 
             adb wait-for-device
-            adb install -r "$APK_PATH"
-            sleep 5
+            echo "Installing APK..."
+            adb install "$APK_PATH"
 
             echo "Checking if app package is installed..."
-            adb shell pm list packages -3 | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
+            adb shell pm list packages | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
 
+            echo "Resolving main activity..."
             MAIN_ACTIVITY=$(adb shell cmd package resolve-activity --brief com.pioneeringtechventures.wallet.stagenet)
-            echo "Resolved activity: $MAIN_ACTIVITY"
+            echo "Resolved main activity: $MAIN_ACTIVITY"
             if [ -z "$MAIN_ACTIVITY" ]; then
               echo "Main activity not found! Exiting..."
               exit 1
             fi
+
+            echo "Launching app to verify..."
             adb shell am start -n $MAIN_ACTIVITY
             sleep 5
 
+            echo "Running Maven tests..."
             cd cryptox-android-autotests
             mvn clean install
-          shell: bash
 
       - name: Submit TestNG results to Testmo
         if: always()
