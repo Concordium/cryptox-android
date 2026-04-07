@@ -117,44 +117,27 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            echo "Listing available devices..."
-            avdmanager list device
-            adb devices
-
-            echo "Reset hidden API policies..."
-            adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
-
-            echo "Waiting for emulator to finish booting..."
-            BOOTED=0
-            while [ $BOOTED -eq 0 ]; do
-              if adb shell getprop sys.boot_completed | grep -q 1; then
-                BOOTED=1
-              else
-                echo "Emulator not ready yet. Waiting 5s..."
-                sleep 5
-              fi
-            done
-
-            adb wait-for-device
-            echo "Installing APK..."
-            adb install "$APK_PATH"
-
-            echo "Checking if app package is installed..."
-            adb shell pm list packages | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
-
-            echo "Resolving main activity..."
-            MAIN_ACTIVITY=$(adb shell cmd package resolve-activity --brief com.pioneeringtechventures.wallet.stagenet)
-            echo "Resolved main activity: $MAIN_ACTIVITY"
-            if [ -z "$MAIN_ACTIVITY" ]; then
-              echo "Main activity not found! Exiting..."
-              exit 1
-            fi
-
-            echo "Launching app to verify..."
-            adb shell am start -n $MAIN_ACTIVITY
+            EMULATOR_SERIAL=$(adb devices | grep emulator | cut -f1)
+            echo "Using emulator: $EMULATOR_SERIAL"
+            
+            echo "Waiting for boot..."
+            adb -s $EMULATOR_SERIAL wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 3; done'
+            echo "Emulator booted."
+            
+            adb -s $EMULATOR_SERIAL shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
+            
+            APK_PATH=$(find $GITHUB_WORKSPACE/app/build/outputs/apk -type f -name "*.apk" | head -1)
+            echo "Installing APK: $APK_PATH"
+            adb -s $EMULATOR_SERIAL install "$APK_PATH"
+            
+            adb -s $EMULATOR_SERIAL shell pm list packages | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
+            
+            adb -s $EMULATOR_SERIAL shell monkey -p com.pioneeringtechventures.wallet.stagenet -c android.intent.category.LAUNCHER 1
             sleep 5
-
-            echo "Running Maven tests..."
+            
+            appium --log-level debug &
+            sleep 10
+            
             cd cryptox-android-autotests
             mvn clean install
 
