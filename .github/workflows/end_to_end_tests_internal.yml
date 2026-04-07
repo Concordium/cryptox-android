@@ -105,9 +105,6 @@ jobs:
           appium --log-level debug &  # Start Appium in the background
           sleep 10  # Wait for Appium to initialize
 
-      - name: Appium Driver List
-        run: appium driver list
-
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
