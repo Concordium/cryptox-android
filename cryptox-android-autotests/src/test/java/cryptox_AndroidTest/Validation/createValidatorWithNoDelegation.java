@@ -40,7 +40,7 @@ public class createValidatorWithNoDelegation {
         Assert.assertTrue(clickOnElement("continue_button", 20));
         Assert.assertTrue(enterAmountForPool());
         Assert.assertTrue(clickOnElement("baker_registration_continue", 10));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/baker_options\"]/android.view.ViewGroup[2]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.LinearLayout[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/baker_options\"]/android.view.ViewGroup[2]", 20));
         Assert.assertTrue(clickOnContinueButtonOnDelegationSScreen());
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnContinueButtonOnCValidatorCommissionScreen());

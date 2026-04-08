@@ -127,7 +127,7 @@ public class DualWalletCases {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"File wallet\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"File wallet\"]", 20));
         Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(verifyElementId("manage_tokens", 20));
@@ -168,7 +168,7 @@ public class DualWalletCases {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
@@ -227,7 +227,7 @@ public class DualWalletCases {
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Seed phrase wallet\"]", 20));
         Assert.assertTrue(clickOnElement("remove_button_text_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));

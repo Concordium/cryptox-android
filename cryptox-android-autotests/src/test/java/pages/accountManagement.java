@@ -23,7 +23,7 @@ public class accountManagement {
 
     public static boolean verifyAccountName(String accountName, int timeout) {
         String xpath = String.format(
-                "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/account_name' and @text='%s']",
+                "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/account_name' and @text='%s']",
                 accountName
         );
 
@@ -48,7 +48,7 @@ public class accountManagement {
             }
 
             By identityLocator = By.xpath(
-                    "//android.widget.LinearLayout[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/identity_view']"
+                    "//android.widget.LinearLayout[@resource-id='com.pioneeringtechventures.wallet.testnet:id/identity_view']"
             );
 
             List<MobileElement> identities = driver.findElements(identityLocator);
@@ -78,7 +78,7 @@ public class accountManagement {
             }
 
             By identityLocator = By.xpath(
-                    "//android.widget.LinearLayout[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/identity_view']"
+                    "//android.widget.LinearLayout[@resource-id='com.pioneeringtechventures.wallet.testnet:id/identity_view']"
             );
 
             List<MobileElement> identities = driver.findElements(identityLocator);
@@ -91,7 +91,7 @@ public class accountManagement {
             MobileElement lastIdentity = identities.get(identities.size() - 1);
 
             MobileElement nameTextView = lastIdentity.findElement(
-                    By.id("com.pioneeringtechventures.wallet.stagenet:id/name_textview")
+                    By.id("com.pioneeringtechventures.wallet.testnet:id/name_textview")
             );
 
             String actualName = nameTextView.getText();
