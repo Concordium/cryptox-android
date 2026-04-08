@@ -6,8 +6,8 @@
     <test name="CryptoX - Android">
         <classes>
             <class name="cryptox_AndroidTest.baseClass"/>
-<!--            <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountThroughFileWallet"/>-->
-<!--            <class name="cryptox_AndroidTest.Settings.settingsCases"/>-->
+           <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountThroughFileWallet"/>
+           <class name="cryptox_AndroidTest.Settings.settingsCases"/>
             <class name="cryptox_AndroidTest.RecoverAccounts.recoverAccountThroughSeedPhrase"/>
             <class name="cryptox_AndroidTest.Validation.createValidatorWithNoDelegation"/>
             <class name="cryptox_AndroidTest.Validation.validatorWithOpenForDelegation"/>
@@ -18,7 +18,7 @@
             <class name="cryptox_AndroidTest.Settings.removeAccount"/>
             <class name="cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases"/>
             <class name="cryptox_AndroidTest.AccountCreation.AccountCreation"/>
-<!--            <class name="cryptox_AndroidTest.DualWallet.DualWalletCases"/>-->
+         <class name="cryptox_AndroidTest.DualWallet.DualWalletCases"/>
         </classes>
     </test>
 </suite>
