@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.net.MalformedURLException;
 
 import static config.appiumconnection.driver;
+import static cryptox_AndroidTest.baseClass.packageName;
 import static cryptox_AndroidTest.createAccount.*;
 import static org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.setup;
 import static pages.Transactions.requestCCDs.clickOnAccountWidget;
@@ -18,8 +19,8 @@ public class createValidator {
 
     @Ignore
     public void create_validator_with_no_deligation() throws MalformedURLException {
-        driver.terminateApp(stageNetPackageName);
-        driver.activateApp(stageNetPackageName);
+        driver.terminateApp(packageName);
+        driver.activateApp(packageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnAccountWidget());
         Assert.assertTrue(clickOnEarnRewards());

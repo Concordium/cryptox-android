@@ -1,9 +1,7 @@
 package cryptox_AndroidTest;
 
-import config.appiumconnection;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -24,9 +22,9 @@ public static String EmulatorCloud = "emulator-5554"; // Change to your device I
 public static String appURL;
 public static String Device;
 public static String testnetPackageName = "com.pioneeringtechventures.wallet.testnet";
-public static String stagePackageName = "com.pioneeringtechventures.wallet.testnet"; //"com.pioneeringtechventures.wallet.stagenet";
+public static String packageName = "com.pioneeringtechventures.wallet.testnet";
 public static String activityName = "com.concordium.wallet.ui.MainActivity";
-public static String PackageName = stagePackageName;
+public static String PackageName = packageName;
 
 
 
@@ -67,15 +65,15 @@ public static String PackageName = stagePackageName;
             clickOnElement("toolbar_networks_btn", 20);
             turnOnToggle("dev_mode_switch", 20);
             clickOnElement("add_button", 20);
-            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[1]", "Stagenet", 20);
-            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[2]", "https://wallet-proxy.stagenet.concordium.com/", 20);
-            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]", "https://stagenet.ccdscan.io/", 20);
+            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[1]", "Testnet", 20);
+            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[2]", "https://wallet-proxy.testnet.concordium.com/", 20);
+            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]", "https://testnet.ccdscan.io/", 20);
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(By.id("save_button")));
             saveBtn.click();
             saveBtn.click();
             Thread.sleep(3000);
-            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
+            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Testnet\"]", 20));
         } else {
             System.out.println("toolbar_networks_btn not visible — skipping custom network setup.");
         }
