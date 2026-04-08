@@ -73,7 +73,7 @@ public static String PackageName = packageName;
             saveBtn.click();
             saveBtn.click();
             Thread.sleep(3000);
-            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Testnet\"]", 20));
+            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
         } else {
             System.out.println("toolbar_networks_btn not visible — skipping custom network setup.");
         }
