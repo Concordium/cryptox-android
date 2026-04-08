@@ -103,7 +103,7 @@ public class CustomTestListener implements ITestListener {
             }
         }
 
-        resultMessage.append("Automation Tests for CryptoX Android - Stagenet:\n")
+        resultMessage.append("Automation Tests for CryptoX Android - Testnet:\n")
                 .append("Executed at ").append(java.time.LocalDate.now()).append("\n")
                 .append("Passed: ").append(passed).append("\n")
                 .append("Failed: ").append(failed).append("\n")

@@ -23,7 +23,7 @@ public class PLTTransactions {
     public String PLT_IN_DENY_TOKEN = "PLTinDenyList";
     public String PLT_PAUSED_TOKEN = "PLTPaused";
     public String PLT_LEVEL_TOKEN = "PLTLEVEL";
-    public String PLT_TRANSFER_VALIDATION = "(//android.view.ViewGroup[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/main_container\"])[1]";
+    public String PLT_TRANSFER_VALIDATION = "(//android.view.ViewGroup[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/main_container\"])[1]";
     public String PLT_ACCOUNT_ONE = "4j5R…eNHj";
     public String PLT_ACCOUNT_TWO = "4kRC…YSRt";
     public String PLT_DENY_ACCOUNT = "3s9F…BApW";

@@ -23,7 +23,7 @@ public static String deviceOne = "18131FDF6000EZ";
 public static String deviceTwo = "ZT322PQS55";
 
 public static String testnetPackageName = "com.pioneeringtechventures.wallet.testnet";
-public static String stageNetPackageName = "com.pioneeringtechventures.wallet.stagenet";
+public static String stageNetPackageName = "com.pioneeringtechventures.wallet.testnet";
 
 
 

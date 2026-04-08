@@ -6,7 +6,7 @@ on:
       branch:
         description: 'The branch to run the workflow on'
         required: true
-        default: 'main'
+        default: 'main'  # Default to 'main' branch
 
 env:
   java_version: "17"
@@ -52,6 +52,7 @@ jobs:
       - name: Build preview
         run: ./gradlew app:assemblePreviewDebug --stacktrace
 
+      # Log APK Path and store it as an environment variable
       - name: Log APK Path
         id: log_apk
         run: |
@@ -94,20 +95,17 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Install Appium Dependencies
-        run: npm install -g appium
+        run: npm install -g appium  # Install Appium globally
 
       - name: Install uiautomator2
-        run: appium driver install uiautomator2
+        run: appium driver install uiautomator2  # Install Appium driver globally
 
       - name: Start Appium
         run: |
-          appium --log-level debug &
-          sleep 10
+          appium --log-level debug &  # Start Appium in the background
+          sleep 10  # Wait for Appium to initialize
 
-      - name: Appium Driver List
-        run: appium driver list
-
-      - name: Run Tests on Emulator
+      - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -116,30 +114,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: |
-            EMULATOR_SERIAL=$(adb devices | grep emulator | cut -f1)
-            echo "Using emulator: $EMULATOR_SERIAL"
-            
-            echo "Waiting for boot..."
-            adb -s $EMULATOR_SERIAL wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 3; done'
-            echo "Emulator booted."
-            
-            adb -s $EMULATOR_SERIAL shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy'
-            
-            APK_PATH=$(find $GITHUB_WORKSPACE/app/build/outputs/apk -type f -name "*.apk" | head -1)
-            echo "Installing APK: $APK_PATH"
-            adb -s $EMULATOR_SERIAL install "$APK_PATH"
-            
-            adb -s $EMULATOR_SERIAL shell pm list packages | grep com.pioneeringtechventures.wallet.stagenet || { echo "APK not installed!"; exit 1; }
-            
-            adb -s $EMULATOR_SERIAL shell monkey -p com.pioneeringtechventures.wallet.stagenet -c android.intent.category.LAUNCHER 1
-            sleep 5
-            
-            appium --log-level debug &
-            sleep 10
-            
-            cd cryptox-android-autotests
-            mvn clean install
+          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
 
       - name: Submit TestNG results to Testmo
         if: always()

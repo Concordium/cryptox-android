@@ -163,11 +163,11 @@ public class generalMethods {
                 log.info("Fetching account list (Scroll Down attempt: {})", i + 1);
 
                 wait.until(ExpectedConditions.presenceOfElementLocated(
-                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
+                        By.id("com.pioneeringtechventures.wallet.testnet:id/account_name")
                 ));
 
                 List<MobileElement> accounts = driver.findElements(
-                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
+                        By.id("com.pioneeringtechventures.wallet.testnet:id/account_name")
                 );
 
                 log.info("Number of accounts found on screen: {}", accounts.size());
@@ -196,7 +196,7 @@ public class generalMethods {
                 log.info("Fetching account list (Scroll Up attempt: {})", i + 1);
 
                 List<MobileElement> accounts = driver.findElements(
-                        By.id("com.pioneeringtechventures.wallet.stagenet:id/account_name")
+                        By.id("com.pioneeringtechventures.wallet.testnet:id/account_name")
                 );
 
                 for (MobileElement account : accounts) {
@@ -276,7 +276,7 @@ public class generalMethods {
 
     public static boolean clickOnToken(String tokenName, int timeoutInSeconds) {
         String xpath = String.format(
-                "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.stagenet:id/title' and @text='%s']",
+                "//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/title' and @text='%s']",
                 tokenName
         );
         return clickOnElementByXpath(xpath, timeoutInSeconds);

@@ -18,7 +18,7 @@ import static pages.appOperations.commands.swipe;
 
 public class createDelegation {
 
-    public String Checkbox = "//android.widget.CheckBox[@resource-id=\"com.pioneeringtechventures.wallet.stagenet:id/checkbox\" and @text=\"I confirm I am not a resident of a restricted jurisdiction and that I am eligible to use staking services under applicable law. I agree to the Staking Terms of Use.\"]";
+    public String Checkbox = "//android.widget.CheckBox[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/checkbox\" and @text=\"I confirm I am not a resident of a restricted jurisdiction and that I am eligible to use staking services under applicable law. I agree to the Staking Terms of Use.\"]";
 
     @Test
     public void Verify_if_user_can_create_a_passive_delegator() throws MalformedURLException, InterruptedException {
