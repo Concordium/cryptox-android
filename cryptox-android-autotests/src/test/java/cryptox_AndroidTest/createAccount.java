@@ -23,7 +23,7 @@ public static String deviceOne = "18131FDF6000EZ";
 public static String deviceTwo = "ZT322PQS55";
 
 public static String testnetPackageName = "com.pioneeringtechventures.wallet.testnet";
-public static String stageNetPackageName = "com.pioneeringtechventures.wallet.testnet";
+public static String packageName = "com.pioneeringtechventures.wallet.testnet";
 
 
 
@@ -33,7 +33,7 @@ public static String loginActivity = "com.concordium.wallet.ui.auth.login.AuthLo
 
 @BeforeTest
     public void setup() throws MalformedURLException {
-    openAppiumSession(deviceOne, stageNetPackageName, activityName);
+    openAppiumSession(deviceOne, packageName, activityName);
 //    openAppiumSession(deviceTwo,packageName,activityName,"4723");
       createConcordionAccount();
 
