@@ -107,14 +107,18 @@ jobs:
 
       - name: Download ChromeDriver 146 for Linux CI
         run: |
-         curl -L -o /tmp/cd.zip \
-         "https://storage.googleapis.com/chrome-for-testing-public/146.0.7680.165/linux64/chromedriver-linux64.zip"
-         unzip /tmp/cd.zip -d /tmp/cd
-         cp /tmp/cd/chromedriver-linux64/chromedriver ${{ github.workspace }}/drivers/chromedriver_linux
-         chmod +x ${{ github.workspace }}/drivers/chromedriver_linux
+          curl -L -o /tmp/cd.zip \
+            "https://storage.googleapis.com/chrome-for-testing-public/146.0.7680.165/linux64/chromedriver-linux64.zip"
+          unzip /tmp/cd.zip -d /tmp/cd
+          mkdir -p ${{ github.workspace }}/drivers
+          cp /tmp/cd/chromedriver-linux64/chromedriver ${{ github.workspace }}/drivers/chromedriver_linux
+          chmod +x ${{ github.workspace }}/drivers/chromedriver_linux
+          echo "ChromeDriver version: $(${{ github.workspace }}/drivers/chromedriver_linux --version)"
 
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          CHROMEDRIVER_PATH: "${{ github.workspace }}/drivers/chromedriver_linux"
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
