@@ -126,7 +126,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
+          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 &&  adb uninstall com.pioneeringtechventures.wallet.testnet || true && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
 
       - name: Submit TestNG results to Testmo
         if: always()
