@@ -105,6 +105,14 @@ jobs:
           appium --log-level debug &  # Start Appium in the background
           sleep 10  # Wait for Appium to initialize
 
+      - name: Download ChromeDriver 146 for Linux CI
+        run: |
+         curl -L -o /tmp/cd.zip \
+         "https://storage.googleapis.com/chrome-for-testing-public/146.0.7680.165/linux64/chromedriver-linux64.zip"
+         unzip /tmp/cd.zip -d /tmp/cd
+         cp /tmp/cd/chromedriver-linux64/chromedriver ${{ github.workspace }}/drivers/chromedriver_linux
+         chmod +x ${{ github.workspace }}/drivers/chromedriver_linux
+
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
