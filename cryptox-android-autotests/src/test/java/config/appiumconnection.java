@@ -10,8 +10,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openqa.selenium.Capabilities;
 
 
@@ -56,23 +62,63 @@ public class appiumconnection {
         return false;
     }
 
+    private static String getChromedriverPath() {
+        String envPath = System.getenv("CHROMEDRIVER_PATH");
+        if (envPath != null && !envPath.isEmpty()) return envPath;
+
+        String projectRoot = System.getProperty("user.dir");
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("mac")
+                ? projectRoot + "/drivers/chromedriver_mac"
+                : projectRoot + "/drivers/chromedriver_linux";
+    }
+
     private static DesiredCapabilities getDesiredCapabilities(String deviceName, String packageName, String activityName) {
         DesiredCapabilities cap = new DesiredCapabilities();
-        cap.setCapability("deviceName", "emulator-5554");
-        cap.setCapability("udid", deviceName);
-        cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "10");
-        cap.setCapability("appPackage", packageName);
-        cap.setCapability("noReset", true);
-        cap.setCapability("appActivity", activityName);
-        cap.setCapability("automationName", "UiAutomator2");
-        cap.setCapability("autoGrantPermissions", true);
-        cap.setCapability("autoAcceptAlerts", true);
-        cap.setCapability("autoDismissAlerts", true);
-        cap.setCapability("fullReset", false);
-        grantNotificationPermission("emulator-5554", packageName);
-        cap.setCapability("unicodeKeyboard", true);
+
+        String resolvedUdid    = getEnv("DEVICE_UDID", deviceName);
+        String resolvedDevice  = getEnv("DEVICE_NAME", deviceName);
+        String resolvedVersion = getEnv("ANDROID_VERSION", getDeviceApiLevel(resolvedUdid));
+
+        cap.setCapability("appium:deviceName",           resolvedDevice);
+        cap.setCapability("appium:udid",                 resolvedUdid);
+        cap.setCapability("platformName",                "Android");  // no prefix — W3C standard
+        cap.setCapability("appium:platformVersion",      resolvedVersion);
+        cap.setCapability("appium:appPackage",           packageName);
+        cap.setCapability("appium:appActivity",          activityName);
+        cap.setCapability("appium:noReset",              true);
+        cap.setCapability("appium:fullReset",            false);
+        cap.setCapability("appium:automationName",       "UiAutomator2");
+        cap.setCapability("appium:autoGrantPermissions", true);
+        cap.setCapability("appium:autoAcceptAlerts",     true);
+        cap.setCapability("appium:autoDismissAlerts",    true);
+        cap.setCapability("appium:unicodeKeyboard",      true);
+        cap.setCapability("appium:chromedriverAutodownload", true); // ✅ Appium 2.x prefix
+        cap.setCapability("appium:chromedriverExecutable", getChromedriverPath());
+        grantNotificationPermission(resolvedUdid, packageName);
         return cap;
+    }
+
+    private static String getDeviceApiLevel(String udid) {
+        try {
+            String command = "adb -s " + udid + " shell getprop ro.build.version.release";
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String version = reader.readLine();
+            if (version != null && !version.trim().isEmpty()) {
+                System.out.println("Detected Android version: " + version.trim());
+                return version.trim();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to detect Android version: " + e.getMessage());
+        }
+        return "10"; // fallback
+    }
+
+
+    private static String getEnv(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return (value != null && !value.isEmpty()) ? value : defaultValue;
     }
 
     public static void  grantNotificationPermission(String emulatorId, String appPackage) {

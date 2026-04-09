@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Set;
+
 import static config.appiumconnection.driver;
 import static config.appiumconnection.switchBackToApp;
 import static cryptox_AndroidTest.baseClass.packageName;
@@ -122,7 +124,20 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
         switchBackToApp("com.android.chrome");
-        switchToWebView();
+        for (int i = 0; i < 10; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                if (context.contains("WEBVIEW")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            if (driver.getContext().contains("WEBVIEW")) {
+                break;
+            }
+            Thread.sleep(5000);
+        }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -136,6 +151,7 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
         Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/amount_text_view\"]"), amount, 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/decline_button\"]", 5));
+
     }
 
     @Test

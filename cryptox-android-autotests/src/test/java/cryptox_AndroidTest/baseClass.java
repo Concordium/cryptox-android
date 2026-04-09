@@ -30,21 +30,25 @@ public static String PackageName = packageName;
 
     @BeforeTest
     public void setup() throws MalformedURLException, InterruptedException {
+        log.info("isLocalExecution: " + localExecution);
 
-        log.info("This i value From File" + localExecution);
         if (localExecution) {
-
-            appURL = "C:\\Automation\\CryptoX-Android-Automation\\CryptoX-Android/stagenet.apk";
-            Device = EmulatorLocal;
-
-        } else if (!localExecution) {
-            appURL = "/home/runner/work/CryptoX-Android-Automation/CryptoX-Android-Automation/CryptoX-Android/app.apk";
-            Device = EmulatorCloud;
+            appURL = getEnvOrDefault("APP_URL", "C:\\Automation\\CryptoX-Android-Automation\\CryptoX-Android\\stagenet.apk");
+            Device = getEnvOrDefault("DEVICE_UDID", EmulatorLocal);
+        } else {
+            appURL = getEnvOrDefault("APP_URL", "/home/runner/work/CryptoX-Android-Automation/CryptoX-Android-Automation/CryptoX-Android/app.apk");
+            Device = getEnvOrDefault("DEVICE_UDID", EmulatorCloud);
         }
 
         openAppiumSession(Device, PackageName, activityName);
         getDeviceDimensions();
         getCustomNetwork();
+    }
+
+    // ✅ Helper — reads from env or returns default
+    private String getEnvOrDefault(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return (value != null && !value.isEmpty()) ? value : defaultValue;
     }
 
     @AfterTest
