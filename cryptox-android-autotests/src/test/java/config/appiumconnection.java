@@ -143,4 +143,14 @@ public class appiumconnection {
             return null;
         }
     }
+
+    public static void switchBackToApp(String packageName){
+        try{
+            driver.activateApp(packageName);
+            System.out.println("Switched back to App");
+        }
+        catch(Exception e){
+            System.out.println("Failed to switch to App: "+e.getMessage());
+        }
+    }
 }
