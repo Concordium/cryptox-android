@@ -13,6 +13,7 @@ import java.util.Set;
 import static config.appiumconnection.driver;
 import static config.appiumconnection.switchBackToApp;
 import static cryptox_AndroidTest.baseClass.packageName;
+import static pages.generalMethods.clickOnElement;
 import static pages.generalMethods.clickOnElementByXpath;
 import static pages.login.loginCryptoX;
 import static pages.sponsoredTransaction.*;
@@ -113,6 +114,7 @@ public class sponsoredTransactionTest {
         driver.terminateApp(packageName);
         driver.activateApp(packageName);
         loginCryptoX();
+        Assert.assertTrue(clickOnElement("ok_button", 5));
         switchBackToApp("com.android.chrome");
         Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");

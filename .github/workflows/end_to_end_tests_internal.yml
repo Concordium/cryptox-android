@@ -26,6 +26,7 @@ jobs:
       matrix:
         api-level: [ 31 ]
         profile: [ pixel_7_pro ]
+        target: [ google_apis ]       # ✅ CHANGE 1: added target to matrix
 
     steps:
       - name: Checkout
@@ -52,7 +53,6 @@ jobs:
       - name: Build preview
         run: ./gradlew app:assemblePreviewDebug --stacktrace
 
-      # Log APK Path and store it as an environment variable
       - name: Log APK Path
         id: log_apk
         run: |
@@ -80,13 +80,14 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
           arch: x86_64
           profile: ${{ matrix.profile }}
           force-avd-creation: false
@@ -95,22 +96,22 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Install Appium Dependencies
-        run: npm install -g appium  # Install Appium globally
+        run: npm install -g appium
 
       - name: Install uiautomator2
-        run: appium driver install uiautomator2  # Install Appium driver globally
+        run: appium driver install uiautomator2
 
       - name: Start Appium
         run: |
-          appium --log-level debug &  # Start Appium in the background
-          sleep 10  # Wait for Appium to initialize
+          appium --log-level debug &
+          sleep 10
 
       - name: Download ChromeDriver 146 for Linux CI
         run: |
           curl -L -o /tmp/cd.zip \
             "https://storage.googleapis.com/chrome-for-testing-public/146.0.7680.165/linux64/chromedriver-linux64.zip"
           unzip /tmp/cd.zip -d /tmp/cd
-          mkdir -p ${{ github.workspace }}/drivers
+          mkdir -p ${{ github.workspace }}/drivers     
           cp /tmp/cd/chromedriver-linux64/chromedriver ${{ github.workspace }}/drivers/chromedriver_linux
           chmod +x ${{ github.workspace }}/drivers/chromedriver_linux
           echo "ChromeDriver version: $(${{ github.workspace }}/drivers/chromedriver_linux --version)"
@@ -121,12 +122,13 @@ jobs:
           CHROMEDRIVER_PATH: "${{ github.workspace }}/drivers/chromedriver_linux"
         with:
           api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
           arch: x86_64
           profile: ${{ matrix.profile }}
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: avdmanager list device && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 &&  adb uninstall com.pioneeringtechventures.wallet.testnet || true && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install  # Run tests
+          script: adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb uninstall com.pioneeringtechventures.wallet.testnet || true && adb install "$APK_PATH" && cd cryptox-android-autotests && mvn clean install
 
       - name: Submit TestNG results to Testmo
         if: always()
