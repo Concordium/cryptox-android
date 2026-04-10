@@ -37,20 +37,23 @@ public class sponsoredTransactionTest {
                         put("args", Arrays.asList(
                                 "start",
                                 "-a", "android.intent.action.VIEW",
-                                "-d", url
+                                "-d", url,
+                                "--activity-clear-task",
+                                "--activity-clear-top",
+                                "com.android.chrome"
                         ));
                     }}
             );
             System.out.println("Chrome launched via intent: " + url);
         } catch (Exception e) {
-            System.out.println("Intent launch failed, trying ADB fallback: " + e.getMessage());
+            System.out.println("Intent launch failed: " + e.getMessage());
             try {
-                String command = "adb -s emulator-5554 shell am start -a android.intent.action.VIEW -d \"" + url + "\"";
+                String command = "adb -s emulator-5554 shell am start -a android.intent.action.VIEW -d \"" + url + "\" com.android.chrome";
                 Process process = Runtime.getRuntime().exec(command);
                 process.waitFor();
                 System.out.println("Chrome launched via ADB fallback");
             } catch (Exception ex) {
-                System.out.println("ADB fallback also failed: " + ex.getMessage());
+                System.out.println("ADB fallback failed: " + ex.getMessage());
             }
         }
         Thread.sleep(5000);
@@ -220,4 +223,6 @@ public class sponsoredTransactionTest {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
-        driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys("3sZEtP1WekFREMmuK8BcF9kTZF8oKuKE7bh")
+        driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys("3sZEtP1WekFREMmuK8BcF9kTZF8oKuKE7bh");
+    }
+}
