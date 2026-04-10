@@ -101,30 +101,6 @@ jobs:
       - name: Install uiautomator2
         run: appium driver install uiautomator2
 
-      - name: Start Appium
-        run: |
-          appium --allow-insecure adb_shell,chromedriver_autodownload --log-level debug &
-          sleep 10
-
-      - name: Detect Chrome activity name
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86_64
-          profile: ${{ matrix.profile }}
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: |
-            echo "=== Installed Chrome packages ==="
-            adb shell pm list packages | grep chrome
-            echo "=== Chrome launchable activity ==="
-            adb shell cmd package resolve-activity --brief -a android.intent.action.VIEW -d https://google.com | grep chrome
-            echo "=== Launch Chrome via intent ==="
-            adb shell am start -a android.intent.action.VIEW -d "https://google.com"
-            sleep 3
-            adb shell dumpsys window | grep mCurrentFocus
-
       - name: Download ChromeDriver 146 for Linux CI
         run: |
           curl -L -o /tmp/cd.zip \
@@ -147,7 +123,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb uninstall com.pioneeringtechventures.wallet.testnet || true && adb install "$APK_PATH" && echo "=== Dismiss Chrome first run ===" && adb shell 'echo "chrome --disable-fre --no-default-browser-check --no-first-run" > /data/local/tmp/chrome-command-line' && adb shell am start -a android.intent.action.VIEW -d "https://wallet-test-bench.testnet.concordium.com/" com.android.chrome && sleep 8 && adb shell input keyevent 4 && sleep 2 && cd cryptox-android-autotests && mvn clean install
+          script: appium --allow-insecure adb_shell,chromedriver_autodownload --log-level info & sleep 15 && adb devices && adb -s emulator-5554 shell 'settings delete global hidden_api_policy_pre_p_apps; settings delete global hidden_api_policy_p_apps; settings delete global hidden_api_policy' && sleep 10 && adb uninstall com.pioneeringtechventures.wallet.testnet || true && adb install "$APK_PATH" && adb shell 'echo "chrome --disable-fre --no-default-browser-check --no-first-run" > /data/local/tmp/chrome-command-line' && adb shell am start -a android.intent.action.VIEW -d "https://wallet-test-bench.testnet.concordium.com/" com.android.chrome && sleep 8 && adb shell input keyevent 4 && sleep 2 && cd cryptox-android-autotests && mvn clean install
 
       - name: Submit TestNG results to Testmo
         if: always()
