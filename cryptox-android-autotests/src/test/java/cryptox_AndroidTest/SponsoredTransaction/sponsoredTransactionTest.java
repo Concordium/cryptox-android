@@ -32,7 +32,7 @@ public class sponsoredTransactionTest {
         driver.activateApp(packageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
@@ -94,7 +94,7 @@ public class sponsoredTransactionTest {
         driver.activateApp(packageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
@@ -116,7 +116,7 @@ public class sponsoredTransactionTest {
         loginCryptoX();
         Assert.assertTrue(clickOnElement("ok_button", 5));
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
@@ -162,7 +162,7 @@ public class sponsoredTransactionTest {
         driver.activateApp(packageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
@@ -192,7 +192,7 @@ public class sponsoredTransactionTest {
         driver.activateApp(packageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
@@ -222,7 +222,7 @@ public class sponsoredTransactionTest {
         driver.activateApp(packageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
@@ -252,7 +252,7 @@ public class sponsoredTransactionTest {
         driver.activateApp(packageName);
         loginCryptoX();
         switchBackToApp("com.android.chrome");
-        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.IntentDispatcher");
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
         System.out.println("Chrome launched with URL...");
