@@ -40,7 +40,10 @@ public static String PackageName = packageName;
             Device = getEnvOrDefault("DEVICE_UDID", EmulatorCloud);
         }
 
-        openAppiumSession(Device, PackageName, activityName);
+        boolean connected = openAppiumSession(Device, PackageName, activityName);
+        if (!connected || driver == null) {
+            throw new RuntimeException("Appium driver failed to initialize. Check Appium server is running on port 4723.");
+        }
         getDeviceDimensions();
         getCustomNetwork();
     }
@@ -52,15 +55,10 @@ public static String PackageName = packageName;
     }
 
     @AfterTest
-    public void tearDown(){
-////    driver.removeApp(PackageName); // This will remove the app from the device
-//}
-//        if(!localExecution){
-//            driver.removeApp(PackageName); // This will remove the app from the device
-//        }
-//        else {
-            driver.quit(); // This will close the appium driver.
-//        }
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     public void getCustomNetwork() throws InterruptedException {
