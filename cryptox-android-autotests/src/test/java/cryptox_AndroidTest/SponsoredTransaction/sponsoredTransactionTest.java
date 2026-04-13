@@ -164,7 +164,7 @@ public class sponsoredTransactionTest {
 
     @Test
     public void verify_sponsored_transaction_when_user_rejects_transaction_signing() throws Exception {
-      //  driver.terminateApp(packageName);
+        driver.terminateApp(packageName);
 //        driver.activateApp(packageName);
 //        loginCryptoX();
 //        launchChromeWithUrl(DAPP_URL);
