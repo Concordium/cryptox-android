@@ -35,10 +35,11 @@ public class sponsoredTransaction {
         for (int i = 0; i < 3; i++) {
             Set<String> contexts = driver.getContextHandles();
             for (String context : contexts) {
+                System.out.println("Context found: " + context);
                 if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
                     driver.context(context);
-                    log.info("Switched to WebView: " + context);
-                    return;
+                    System.out.println("Switched to WebView: " + context);
+                    break;
                 }
             }
             Thread.sleep(3000);

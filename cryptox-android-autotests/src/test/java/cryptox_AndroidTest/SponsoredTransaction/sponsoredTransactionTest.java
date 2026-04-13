@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.SponsoredTransaction;
 
+import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -59,26 +60,57 @@ public class sponsoredTransactionTest {
         Thread.sleep(5000);
     }
 
+    private void switchToWebViewWithWait() throws InterruptedException {
+        int maxRetries = 15;
+        for (int i = 0; i < maxRetries; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            System.out.println("Available contexts (attempt " + (i + 1) + "): " + contexts);
+            for (String context : contexts) {
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to context: " + context);
+                    Thread.sleep(3000); // ✅ wait after switching for page to stabilize
+                    return;
+                }
+            }
+            Thread.sleep(3000);
+        }
+        System.out.println("WARNING: Could not switch to WebView context");
+    }
+
     @Test
     public void verify_end_to_end_sponsored_CCD_transfer_successful_Flow() throws Exception {
-        driver.terminateApp(packageName);
         driver.activateApp(packageName);
-        loginCryptoX();
-        launchChromeWithUrl(DAPP_URL);
+    //    loginCryptoX();
+        switchBackToApp("com.android.chrome");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
+        ((AndroidDriver) driver).startActivity(chromeActivity);
+        System.out.println("Chrome launched with URL...");
+        Thread.sleep(3000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
-        driver.activateApp("com.android.chrome");
-        switchToWebView();
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,24000)");
-        Thread.sleep(2000);
+        Assert.assertTrue(clickOnElement("allow_button", 50));
+        switchBackToApp("com.android.chrome");
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys(sponsoredAccount);
         driver.findElement(By.xpath("//input[@id='sponsorPrivateKeyCcd']")).sendKeys(PRIVATE_KEY);
         driver.findElement(By.xpath("(//input[@id='sponsoredRecipientCcd'])[1]")).sendKeys(recipientAddress);
         driver.findElement(By.xpath("//input[@id='sponsoredCcdAmount']")).sendKeys(amount);
         WebElement submitBtn = driver.findElement(By.xpath("//button[normalize-space()='Sign And Submit Sponsored CCD Transfer']"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", submitBtn);
         Thread.sleep(10000);
         Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
@@ -92,7 +124,7 @@ public class sponsoredTransactionTest {
         System.out.println("Hash from App: " + appHash);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/finish_button\"]", 20));
         driver.activateApp("com.android.chrome");
-        switchToWebView();
+        switchToWebViewWithWait();
         driver.get("https://testnet.ccdscan.io/transactions");
         Thread.sleep(5000);
         driver.navigate().refresh();
@@ -116,33 +148,58 @@ public class sponsoredTransactionTest {
 
     @Test
     public void verify_sponsored_transaction_when_user_decline_Test_bench_connection() throws Exception {
-        driver.terminateApp(packageName);
+   //     driver.terminateApp(packageName);
         driver.activateApp(packageName);
-        loginCryptoX();
+ //       loginCryptoX();
         launchChromeWithUrl(DAPP_URL);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/decline_button\"]", 20));
         driver.activateApp("com.android.chrome");
-        switchToWebView();
+        switchToWebViewWithWait();
         boolean isPresent = driver.findElements(By.xpath("//android.widget.Button[@text='Select Wallet']")).size() > 0;
         Assert.assertFalse(isPresent, "Select Wallet button should not appear");
     }
 
     @Test
     public void verify_sponsored_transaction_when_user_rejects_transaction_signing() throws Exception {
-        driver.terminateApp(packageName);
+      //  driver.terminateApp(packageName);
+//        driver.activateApp(packageName);
+//        loginCryptoX();
+//        launchChromeWithUrl(DAPP_URL);
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
+//        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
+//        driver.activateApp("com.android.chrome");
+//        switchToWebViewWithWait();
         driver.activateApp(packageName);
         loginCryptoX();
-        Assert.assertTrue(clickOnElement("ok_button", 5));
-        launchChromeWithUrl(DAPP_URL);
+        switchBackToApp("com.android.chrome");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
+        ((AndroidDriver) driver).startActivity(chromeActivity);
+        System.out.println("Chrome launched with URL...");
+        Thread.sleep(3000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
-        driver.activateApp("com.android.chrome");
-        switchToWebView();
+        Assert.assertTrue(clickOnElement("allow_button", 50));
+        switchBackToApp("com.android.chrome");
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
+
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,24000)");
         Thread.sleep(2000);
@@ -153,31 +210,44 @@ public class sponsoredTransactionTest {
         WebElement submitBtn = driver.findElement(By.xpath("//button[normalize-space()='Sign And Submit Sponsored CCD Transfer']"));
         js.executeScript("arguments[0].click();", submitBtn);
         Thread.sleep(10000);
-        Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
-        Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/amount_text_view\"]"), amount, 20));
+        Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 30));
+        Assert.assertTrue(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/amount_text_view\"]"), amount, 30));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/decline_button\"]", 5));
     }
 
     @Test
     public void verify_sponsored_transaction_when_user_enter_incorrect_sponsor_private_key() throws Exception {
-        driver.terminateApp(packageName);
         driver.activateApp(packageName);
-        loginCryptoX();
-        launchChromeWithUrl(DAPP_URL);
+//        loginCryptoX();
+        switchBackToApp("com.android.chrome");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
+        ((AndroidDriver) driver).startActivity(chromeActivity);
+        System.out.println("Chrome launched with URL...");
+        Thread.sleep(3000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
-        driver.activateApp("com.android.chrome");
-        switchToWebView();
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,24000)");
-        Thread.sleep(2000);
+        Assert.assertTrue(clickOnElement("allow_button", 50));
+        switchBackToApp("com.android.chrome");
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys(sponsoredAccount);
         driver.findElement(By.xpath("//input[@id='sponsorPrivateKeyCcd']")).sendKeys("7f06f1b4a168f3cb306b550af50c988eeca61eda22bc56a7b2f5afa4b4");
         driver.findElement(By.xpath("(//input[@id='sponsoredRecipientCcd'])[1]")).sendKeys(recipientAddress);
         driver.findElement(By.xpath("//input[@id='sponsoredCcdAmount']")).sendKeys(amount);
         WebElement submitBtn = driver.findElement(By.xpath("//button[normalize-space()='Sign And Submit Sponsored CCD Transfer']"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", submitBtn);
         Thread.sleep(10000);
         Assert.assertFalse(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
@@ -185,24 +255,38 @@ public class sponsoredTransactionTest {
 
     @Test
     public void verify_sponsored_transaction_when_user_enter_invalid_recipient_address() throws Exception {
-        driver.terminateApp(packageName);
+//        driver.terminateApp(packageName);
         driver.activateApp(packageName);
-        loginCryptoX();
-        launchChromeWithUrl(DAPP_URL);
+//        loginCryptoX();
+        switchBackToApp("com.android.chrome");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
+        ((AndroidDriver) driver).startActivity(chromeActivity);
+        System.out.println("Chrome launched with URL...");
+        Thread.sleep(3000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
-        driver.activateApp("com.android.chrome");
-        switchToWebView();
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,24000)");
-        Thread.sleep(2000);
+        Assert.assertTrue(clickOnElement("allow_button", 50));
+        switchBackToApp("com.android.chrome");
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys(sponsoredAccount);
         driver.findElement(By.xpath("//input[@id='sponsorPrivateKeyCcd']")).sendKeys(PRIVATE_KEY);
         driver.findElement(By.xpath("(//input[@id='sponsoredRecipientCcd'])[1]")).sendKeys("3s9FrQovscu4qR2a8bU5oL42YLZvxcVAuBApW");
         driver.findElement(By.xpath("//input[@id='sponsoredCcdAmount']")).sendKeys(amount);
         WebElement submitBtn = driver.findElement(By.xpath("//button[normalize-space()='Sign And Submit Sponsored CCD Transfer']"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", submitBtn);
         Thread.sleep(10000);
         Assert.assertFalse(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
@@ -210,19 +294,78 @@ public class sponsoredTransactionTest {
 
     @Test
     public void verify_sponsored_transaction_when_user_enter_invalid_sponsored_address() throws Exception {
-        driver.terminateApp(packageName);
+       // driver.terminateApp(packageName);
         driver.activateApp(packageName);
-        loginCryptoX();
-        launchChromeWithUrl(DAPP_URL);
+      //  loginCryptoX();
+        switchBackToApp("com.android.chrome");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
+        ((AndroidDriver) driver).startActivity(chromeActivity);
+        System.out.println("Chrome launched with URL...");
+        Thread.sleep(3000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
-        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/allow_button\"]", 20));
-        driver.activateApp("com.android.chrome");
-        switchToWebView();
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,24000)");
-        Thread.sleep(2000);
+        Assert.assertTrue(clickOnElement("allow_button", 50));
+        switchBackToApp("com.android.chrome");
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
         driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys("3sZEtP1WekFREMmuK8BcF9kTZF8oKuKE7bh");
+        driver.findElement(By.xpath("//input[@id='sponsorPrivateKeyCcd']")).sendKeys(PRIVATE_KEY);
+        driver.findElement(By.xpath("(//input[@id='sponsoredRecipientCcd'])[1]")).sendKeys(recipientAddress);
+        driver.findElement(By.xpath("//input[@id='sponsoredCcdAmount']")).sendKeys(amount);
+        WebElement submitBtn = driver.findElement(By.xpath("//button[normalize-space()='Sign And Submit Sponsored CCD Transfer']"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", submitBtn);
+        Thread.sleep(10000);
+        Assert.assertFalse(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
+    }
+
+    @Test
+    public void verify_sponsored_transaction_when_user_enter_invalid_amount() throws Exception {
+        driver.activateApp(packageName);
+     //   loginCryptoX();
+        switchBackToApp("com.android.chrome");
+        Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+        chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
+        ((AndroidDriver) driver).startActivity(chromeActivity);
+        System.out.println("Chrome launched with URL...");
+        Thread.sleep(3000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
+        Assert.assertTrue(clickOnElement("allow_button", 50));
+        switchBackToApp("com.android.chrome");
+        for (int i = 0; i < 3; i++) {
+            Set<String> contexts = driver.getContextHandles();
+            for (String context : contexts) {
+                System.out.println("Context found: " + context);
+                if (context.contains("WEBVIEW") || context.contains("CHROMIUM")) {
+                    driver.context(context);
+                    System.out.println("Switched to WebView: " + context);
+                    break;
+                }
+            }
+            Thread.sleep(3000);
+        }
+        driver.findElement(By.xpath("(//input[@id='sponsorAccountCcd'])[1]")).sendKeys(sponsoredAccount);
+        driver.findElement(By.xpath("//input[@id='sponsorPrivateKeyCcd']")).sendKeys(PRIVATE_KEY);
+        driver.findElement(By.xpath("(//input[@id='sponsoredRecipientCcd'])[1]")).sendKeys(recipientAddress);
+        driver.findElement(By.xpath("//input[@id='sponsoredCcdAmount']")).sendKeys("  ");
+        WebElement submitBtn = driver.findElement(By.xpath("//button[normalize-space()='Sign And Submit Sponsored CCD Transfer']"));
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", submitBtn);
+        Thread.sleep(10000);
+        Assert.assertFalse(verifyTextOnApp(By.xpath("//android.widget.TextView[@resource-id='com.pioneeringtechventures.wallet.testnet:id/receiver_text_view']"), recipientAddress, 20));
     }
 }
