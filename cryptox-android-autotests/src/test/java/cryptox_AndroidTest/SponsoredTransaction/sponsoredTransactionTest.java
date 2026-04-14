@@ -87,7 +87,9 @@ public class sponsoredTransactionTest {
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        driver.navigate().refresh();
+        Thread.sleep(15000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
@@ -179,16 +181,12 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElement("ok_button", 5));
         switchBackToApp("com.android.chrome");
         Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
-//        Adding this for testing
-        chromeActivity.setOptionalIntentArguments("https://www.google.com/");
-        Thread.sleep(5000);
-        Assert.assertTrue(clickOnElementByXpath("//a[normalize-space()='Gmail']", 20));
-        Thread.sleep(5000);
-//         Adding this for testing
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        driver.navigate().refresh();
+        Thread.sleep(15000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
@@ -231,7 +229,9 @@ public class sponsoredTransactionTest {
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        driver.navigate().refresh();
+        Thread.sleep(15000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
@@ -270,7 +270,9 @@ public class sponsoredTransactionTest {
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        driver.navigate().refresh();
+        Thread.sleep(15000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
@@ -309,7 +311,9 @@ public class sponsoredTransactionTest {
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        driver.navigate().refresh();
+        Thread.sleep(15000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
@@ -347,7 +351,9 @@ public class sponsoredTransactionTest {
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
-        Thread.sleep(5000);
+        Thread.sleep(10000);
+        driver.navigate().refresh();
+        Thread.sleep(15000);
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Use Wallet Connect\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Connect Mobile Wallet\"]", 20));
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Select Wallet\"]", 20));
