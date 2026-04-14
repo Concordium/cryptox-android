@@ -1,6 +1,7 @@
 package cryptox_AndroidTest.RecoverAccounts;
 
 import config.RetryAnalyzer;
+import cryptox_AndroidTest.baseClass;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -17,7 +18,7 @@ import static pages.repeatPassCodeScreen.repeatPassCodeNow;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
 
-public class RecoverAccountCases {
+public class RecoverAccountCases extends baseClass {
 
     public static String newsTabButton = "menuitem_news";
     public static String navigation_bar_item_large_label_view = "bottom_navigation_view";
@@ -26,6 +27,8 @@ public class RecoverAccountCases {
 
     @Test(retryAnalyzer = RetryAnalyzer.class)
     public void import_wallets_through_Private_key() throws MalformedURLException, InterruptedException {
+        getCustomNetwork();
+        Thread.sleep(3000);
         log.info("Starting import_wallets_through_Private_key test");
 
         boolean isSuccess;
