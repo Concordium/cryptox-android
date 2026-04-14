@@ -23,27 +23,30 @@ import static pages.walletAccountCreationScreen.activateAccount;
 public class AccountCreation {
 
     @Test(retryAnalyzer = RetryAnalyzer.class)
-    public void Z_verify_if_a_user_can_create_an_account() {
+    public void Z_verify_if_a_user_can_create_an_account() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("ok_button", 5));
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
         Assert.assertTrue(clickOnElement("create_account_button", 20));
         Assert.assertTrue(SendTextToField("account_name_edittext", "AutomationAccount", 20));
         Assert.assertTrue(clickOnElement("next_button", 20));
+        Thread.sleep(5000);
         Assert.assertTrue(clickOnMostRecentIdentity());
         Assert.assertTrue(clickOnElement("confirm_submit_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
+        Thread.sleep(5000);
         Assert.assertTrue(verifyTextById("account_name", "AutomationAccount", 20));
     }
 
     @Test(retryAnalyzer = RetryAnalyzer.class)
-    public void A_verify_if_user_can_rename_an_account() {
+    public void A_verify_if_user_can_rename_an_account() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
         Assert.assertTrue(clickOnElement("toolbar_account_btn_image", 20));
+        Thread.sleep(5000);
         Assert.assertTrue(clickOnElementByXpath("(//android.widget.ImageView[@content-desc=\"Account Settings\"])[1]", 20));
         Assert.assertTrue(clickOnElement("change_name", 20));
         Assert.assertTrue(SendTextToField("input_edittext", "AutomationTest", 20));
