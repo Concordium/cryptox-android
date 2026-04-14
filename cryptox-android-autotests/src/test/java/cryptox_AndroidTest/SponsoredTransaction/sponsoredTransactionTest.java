@@ -179,6 +179,12 @@ public class sponsoredTransactionTest {
         Assert.assertTrue(clickOnElement("ok_button", 5));
         switchBackToApp("com.android.chrome");
         Activity chromeActivity = new Activity("com.android.chrome", "com.google.android.apps.chrome.Main");
+//        Adding this for testing
+        chromeActivity.setOptionalIntentArguments("https://www.google.com/");
+        Thread.sleep(5000);
+        Assert.assertTrue(clickOnElementByXpath("//a[normalize-space()='Gmail']", 20));
+        Thread.sleep(5000);
+//         Adding this for testing
         chromeActivity.setOptionalIntentArguments("https://wallet-test-bench.testnet.concordium.com/");
         ((AndroidDriver) driver).startActivity(chromeActivity);
          System.out.println("Chrome launched with URL...");
