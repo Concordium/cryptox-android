@@ -44,7 +44,7 @@ public class accountManagement {
     public static boolean clickOnMostRecentIdentity() {
         try {
             for (int i = 0; i < 5; i++) {
-              //  performScrollDown();
+                performScrollDown();
             }
 
             By identityLocator = By.xpath(
