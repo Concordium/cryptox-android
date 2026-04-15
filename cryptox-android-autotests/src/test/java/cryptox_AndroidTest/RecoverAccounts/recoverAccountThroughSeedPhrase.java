@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.RecoverAccounts;
 
+import cryptox_AndroidTest.baseClass;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -18,9 +19,10 @@ import static pages.landingScreen.clickGetStarted;
 import static pages.repeatPassCodeScreen.repeatPassCodeNow;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
-public class recoverAccountThroughSeedPhrase {
+public class recoverAccountThroughSeedPhrase extends baseClass {
     @Test
     public void import_wallets_through_Seed_Phrase() throws MalformedURLException, InterruptedException {
+        getCustomNetwork();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box",10));
         Assert.assertTrue(clickOnElement("import_wallet_button",10));
