@@ -49,14 +49,13 @@ public static String PackageName = packageName;
 
     @AfterTest
     public void tearDown(){
-////    driver.removeApp(PackageName); // This will remove the app from the device
-//}
-//        if(!localExecution){
-//            driver.removeApp(PackageName); // This will remove the app from the device
-//        }
-//        else {
+   driver.removeApp(PackageName); // This will remove the app from the device
+        if(!localExecution){
+            driver.removeApp(PackageName); // This will remove the app from the device
+       }
+       else {
             driver.quit(); // This will close the appium driver.
-//        }
+        }
     }
 
     public void getCustomNetwork() throws InterruptedException {
