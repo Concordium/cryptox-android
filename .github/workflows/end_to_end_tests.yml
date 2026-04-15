@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [ 31 ]
+        api-level: [ 32 ]
         profile: [ pixel_7_pro ]
 
     steps:
