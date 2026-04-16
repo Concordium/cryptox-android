@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.Map;
 
 import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
@@ -40,8 +41,15 @@ public class RecoverAccountThroughFileWallet {
             }
             byte[] fileContent = Files.readAllBytes(walletFile.toPath());
             String base64Data = Base64.getEncoder().encodeToString(fileContent);
-            driver.pushFile("/sdcard/Documents/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+
+            driver.pushFile("/sdcard/Download/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
+
+            driver.executeScript("mobile: shell",
+                    Map.of("command", "am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Download/exp_file_wallet.concordiumwallet")
+            );
+            log.info("Media store refreshed!");
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
         }
