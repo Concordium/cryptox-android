@@ -23,6 +23,7 @@ public class recoverAccountThroughSeedPhrase extends baseClass {
     @Test
     public void import_wallets_through_Seed_Phrase() throws MalformedURLException, InterruptedException {
         getCustomNetwork();
+        Thread.sleep(5000);
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box",10));
         Assert.assertTrue(clickOnElement("import_wallet_button",10));

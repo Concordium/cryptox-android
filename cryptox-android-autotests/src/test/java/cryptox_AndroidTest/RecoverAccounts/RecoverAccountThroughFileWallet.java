@@ -71,6 +71,7 @@ public class RecoverAccountThroughFileWallet {
     @Test
     public void import_wallet_through_File() throws IOException, InterruptedException {
         pushWalletFile();
+        Thread.sleep(5000);
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 20));
         Assert.assertTrue(clickOnElement("import_wallet_button", 20));
