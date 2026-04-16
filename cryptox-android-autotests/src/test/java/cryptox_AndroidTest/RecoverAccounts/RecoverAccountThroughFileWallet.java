@@ -55,6 +55,19 @@ public class RecoverAccountThroughFileWallet {
         }
     }
 
+    private void navigateToDownloadsInFilePicker() {
+        try {
+            Thread.sleep(2000);
+            clickOnElementByXpath("//android.widget.ImageButton[@content-desc=\"Show roots\"]", 10);
+            Thread.sleep(1000);
+            clickOnElementByXpath("//android.widget.TextView[@text=\"Downloads\"]", 10);
+            Thread.sleep(1000);
+            log.info("Navigated to Downloads in file picker");
+        } catch (Exception e) {
+            log.info("Could not navigate to Downloads - file picker may already be there");
+        }
+    }
+
     @Test
     public void import_wallet_through_File() throws IOException, InterruptedException {
         pushWalletFile();
@@ -65,6 +78,7 @@ public class RecoverAccountThroughFileWallet {
         Assert.assertTrue(repeatPassCodeNow());
         Assert.assertTrue(clickOnImportViaBackupFile());
         Assert.assertTrue(clickOnElement("ok_button", 20));
+        navigateToDownloadsInFilePicker();
         Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
         Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
