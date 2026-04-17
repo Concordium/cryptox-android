@@ -67,11 +67,14 @@ public static String PackageName = packageName;
             SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[1]", "Stagenet", 20);
             SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[2]", "https://wallet-proxy.stagenet.concordium.com/", 20);
             SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]", "https://stagenet.ccdscan.io/", 20);
+            System.out.println("Successfully entered custom network details.");
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(By.id("save_button")));
             saveBtn.click();
-            Thread.sleep(5000);
+            System.out.println("Successfully clicked on save network button");
+            Thread.sleep(10000);
             Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
+            System.out.println("Successfully switched to custom network.");
         } else {
             System.out.println("toolbar_networks_btn not visible — skipping custom network setup.");
         }
