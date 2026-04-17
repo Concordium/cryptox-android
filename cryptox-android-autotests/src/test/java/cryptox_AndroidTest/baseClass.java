@@ -70,8 +70,7 @@ public static String PackageName = packageName;
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(By.id("save_button")));
             saveBtn.click();
-            saveBtn.click();
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
         } else {
             System.out.println("toolbar_networks_btn not visible — skipping custom network setup.");
