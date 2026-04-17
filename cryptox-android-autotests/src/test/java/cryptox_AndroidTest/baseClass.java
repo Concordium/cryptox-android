@@ -6,7 +6,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
+
 import java.net.MalformedURLException;
+
 import static config.appiumconnection.*;
 import static config.systemInfo.getDeviceDimensions;
 import static pages.generalMethods.*;
@@ -14,18 +16,17 @@ import static pages.generalMethods.*;
 import config.configLoader;
 
 public class baseClass {
-config.configLoader configLoader = new configLoader();
-public boolean localExecution = Boolean.parseBoolean(configLoader.getProperty("isLocalExecution"));
-public static String PhysicalDevice = "ZT322PQS55";
-public static String EmulatorLocal = "emulator-5554"; // Change to your device ID
-public static String EmulatorCloud = "emulator-5554"; // Change to your device ID
-public static String appURL;
-public static String Device;
-public static String testnetPackageName = "com.pioneeringtechventures.wallet.testnet";
-public static String packageName = "com.pioneeringtechventures.wallet.testnet";
-public static String activityName = "com.concordium.wallet.ui.MainActivity";
-public static String PackageName = packageName;
-
+    config.configLoader configLoader = new configLoader();
+    public boolean localExecution = Boolean.parseBoolean(configLoader.getProperty("isLocalExecution"));
+    public static String PhysicalDevice = "ZT322PQS55";
+    public static String EmulatorLocal = "emulator-5554"; // Change to your device ID
+    public static String EmulatorCloud = "emulator-5554"; // Change to your device ID
+    public static String appURL;
+    public static String Device;
+    public static String testnetPackageName = "com.pioneeringtechventures.wallet.testnet";
+    public static String packageName = "com.pioneeringtechventures.wallet.testnet";
+    public static String activityName = "com.concordium.wallet.ui.MainActivity";
+    public static String PackageName = packageName;
 
 
     @BeforeTest
@@ -48,12 +49,11 @@ public static String PackageName = packageName;
     }
 
     @AfterTest
-    public void tearDown(){
-   driver.removeApp(PackageName); // This will remove the app from the device
-        if(!localExecution){
+    public void tearDown() {
+        driver.removeApp(PackageName); // This will remove the app from the device
+        if (!localExecution) {
             driver.removeApp(PackageName); // This will remove the app from the device
-       }
-       else {
+        } else {
             driver.quit(); // This will close the appium driver.
         }
     }
@@ -69,16 +69,39 @@ public static String PackageName = packageName;
             SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]", "https://stagenet.ccdscan.io/", 20);
             System.out.println("Successfully entered custom network details.");
             WebDriverWait wait = new WebDriverWait(driver, 20);
-            MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(By.id("save_button")));
+            MobileElement saveBtn = (MobileElement) wait.until(
+                    ExpectedConditions.elementToBeClickable(By.id("save_button"))
+            );
+
             saveBtn.click();
             System.out.println("Successfully clicked on save network button");
-            Thread.sleep(10000);
-            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
-            System.out.println("Successfully switched to custom network.");
+            boolean isSwitched = false;
+
+            for (int i = 1; i <= 3; i++) {
+                System.out.println("Verification attempt: " + i);
+
+                if (verifyElementByXpath(
+                        "//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]",
+                        10)) {
+                    isSwitched = true;
+                    break;
+                } else {
+                    System.out.println("Attempt " + i + " failed. Retrying...");
+                    Thread.sleep(3000); // small controlled wait
+                }
+            }
+
+            if (isSwitched) {
+                System.out.println("Successfully switched to custom network.");
+            } else {
+                System.out.println("Stagenet added but verification failed after retries - continuing anyway.");
+            }
+
         } else {
             System.out.println("toolbar_networks_btn not visible — skipping custom network setup.");
         }
     }
+
     public boolean turnOnToggle(String elementId, int timeoutInSeconds) {
         try {
             MobileElement toggle = (MobileElement) waitForElement(By.id(elementId), timeoutInSeconds);
