@@ -45,16 +45,20 @@ public class RecoverAccountThroughFileWallet {
             driver.pushFile("/sdcard/Download/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
 
-            driver.executeScript("mobile: shell",
-                    Map.of("command", "am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Download/exp_file_wallet.concordiumwallet")
-            );
+            String udid = driver.getCapabilities().getCapability("udid").toString();
+            Process process = Runtime.getRuntime().exec(new String[]{
+                    "adb", "-s", udid, "shell",
+                    "am", "broadcast", "-a",
+                    "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
+                    "-d", "file:///sdcard/Download/exp_file_wallet.concordiumwallet"
+            });
+            process.waitFor();
             log.info("Media store refreshed!");
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
         }
     }
-
     private void navigateToDownloadsInFilePicker() {
         try {
             Thread.sleep(2000);
