@@ -73,6 +73,7 @@ public class baseClass {
                     ExpectedConditions.elementToBeClickable(By.id("save_button"))
             );
             saveBtn.click();
+            saveBtn.click();
             System.out.println("Successfully clicked on save network button");
             Thread.sleep(5000);
             Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
