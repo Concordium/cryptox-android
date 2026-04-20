@@ -206,6 +206,7 @@ public class DualWalletCases {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
+        Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
         Assert.assertTrue(clickOnElement("identities_layout", 20));
         Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image", 20));
