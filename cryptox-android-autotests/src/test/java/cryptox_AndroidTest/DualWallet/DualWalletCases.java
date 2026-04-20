@@ -202,14 +202,15 @@ public class DualWalletCases {
     }
 
     @Test
-    public void verify_a1_user_can_create_new_identity() {
+    public void verify_a1_user_can_create_new_identity() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
-        Assert.assertTrue(clickOnElement("identities_layout", 10));
-        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image", 10));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]", 30));
+        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+        Assert.assertTrue(clickOnElement("identities_layout", 20));
+        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image", 20));
+        Thread.sleep(5000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/header_textview\" and @text=\"Generated IP 0\"]", 20));
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder", 20));
         Assert.assertTrue(performScrollDown());
@@ -245,7 +246,8 @@ public class DualWalletCases {
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]", 30));
+        Thread.sleep(5000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/header_textview\" and @text=\"Generated IP 0\"]", 30));
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder", 20));
         Assert.assertTrue(performScrollDown());
