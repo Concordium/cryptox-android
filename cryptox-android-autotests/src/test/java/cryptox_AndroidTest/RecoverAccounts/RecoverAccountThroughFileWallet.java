@@ -75,8 +75,6 @@ public class RecoverAccountThroughFileWallet extends baseClass {
 
     @Test
     public void import_wallet_through_File() throws IOException, InterruptedException {
-        getCustomNetwork();
-        Thread.sleep(10000);
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 20));
