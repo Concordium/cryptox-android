@@ -60,7 +60,7 @@ public class baseClass {
 
     public void getCustomNetwork() throws InterruptedException {
         driver.activateApp(PackageName);
-        if (isElementPresent("toolbar_networks_btn", 5)) {
+        if (isElementPresent("toolbar_networks_btn", 20)) {
             clickOnElement("toolbar_networks_btn", 20);
             turnOnToggle("dev_mode_switch", 20);
             clickOnElement("add_button", 20);
@@ -75,7 +75,7 @@ public class baseClass {
             saveBtn.click();
             saveBtn.click();
             System.out.println("Successfully clicked on save network button");
-            Thread.sleep(5000);
+            Thread.sleep(10000);
             Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
             System.out.println("Successfully switched to the custom network setup.");
         }
