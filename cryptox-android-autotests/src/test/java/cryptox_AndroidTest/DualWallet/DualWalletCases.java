@@ -57,6 +57,7 @@ public class DualWalletCases extends baseClass {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
+        Assert.assertTrue(clickOnElement("ok_button", 5));
         Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
         Assert.assertTrue(performScrollDown());
         Thread.sleep(3000);
