@@ -3,6 +3,7 @@ package cryptox_AndroidTest.DualWallet;
 
 import com.beust.ah.A;
 import config.RetryAnalyzer;
+import cryptox_AndroidTest.baseClass;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -29,7 +30,7 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 import java.nio.file.Files;
 import java.util.Base64;
 
-public class DualWalletCases {
+public class DualWalletCases extends baseClass {
 
     public void pushWalletFile() {
         try {
@@ -51,7 +52,7 @@ public class DualWalletCases {
         }
     }
 
-    @Ignore
+    @Test
     public void z_verify_if_users_can_remove_wallet() throws MalformedURLException, InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -64,8 +65,10 @@ public class DualWalletCases {
         Assert.assertTrue(verifyPinAndPressOK());
     }
 
-    @Ignore
+    @Test
     public void verify_a9_a_user_can_managed_file_base_wallet_and_seed_phrase_wallet() throws MalformedURLException, InterruptedException {
+        getCustomNetwork();
+        Thread.sleep(10000);
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 10));
@@ -98,7 +101,7 @@ public class DualWalletCases {
         log.info("successfully recovered Account");
     }
 
-    @Ignore
+    @Test
     public void verify_a8_user_can_switch_between_file_based_and_seed_phrase_wallets_seamlessly() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -111,7 +114,7 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
     }
 
-    @Ignore
+    @Test
     public void verify_a7_user_selected_file_based_wallet_should_remain_loaded_after_app_relaunch() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -120,7 +123,7 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
     }
 
-    @Ignore
+    @Test
     public void verify_a6_a_user_can_remove_file_based_wallet() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -133,7 +136,7 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementId("manage_tokens", 20));
     }
 
-    @Ignore
+    @Test
     public void verify_a5_a_see_Add_a_file_wallet_option_when_only_one_wallet_is_added() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -143,7 +146,7 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementById("icon_image_view", 20));
     }
 
-    @Ignore
+    @Test
     public void verify_a4_a_user_adding_a_file_based_account_with_incorrect_password_should_fail_gracefully() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -161,7 +164,7 @@ public class DualWalletCases {
     }
 
 
-    @Ignore
+    @Test
     public void verify_a3_a_user_can_remove_seed_phrase_wallet() {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -176,7 +179,7 @@ public class DualWalletCases {
         Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@text=\"We recommend that you migrate to a seed phrase wallet in order to make use of the full range of Concordium Wallet features.\"]", 20));
     }
 
-    @Ignore
+    @Test
     public void verify_a2_a_user_can_import_seed_phrase_wallet() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
