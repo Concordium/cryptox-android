@@ -72,33 +72,11 @@ public class baseClass {
             MobileElement saveBtn = (MobileElement) wait.until(
                     ExpectedConditions.elementToBeClickable(By.id("save_button"))
             );
-
             saveBtn.click();
             System.out.println("Successfully clicked on save network button");
-            boolean isSwitched = false;
-
-            for (int i = 1; i <= 3; i++) {
-                System.out.println("Verification attempt: " + i);
-
-                if (verifyElementByXpath(
-                        "//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]",
-                        10)) {
-                    isSwitched = true;
-                    break;
-                } else {
-                    System.out.println("Attempt " + i + " failed. Retrying...");
-                    Thread.sleep(3000); // small controlled wait
-                }
-            }
-
-            if (isSwitched) {
-                System.out.println("Successfully switched to custom network.");
-            } else {
-                System.out.println("Stagenet added but verification failed after retries - continuing anyway.");
-            }
-
-        } else {
-            System.out.println("toolbar_networks_btn not visible — skipping custom network setup.");
+            Thread.sleep(5000);
+            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
+            System.out.println("Successfully switched to the custom network setup.");
         }
     }
 

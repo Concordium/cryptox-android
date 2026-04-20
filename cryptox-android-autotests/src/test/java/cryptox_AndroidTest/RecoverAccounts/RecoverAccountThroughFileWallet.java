@@ -1,5 +1,6 @@
 package cryptox_AndroidTest.RecoverAccounts;
 
+import cryptox_AndroidTest.baseClass;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -22,7 +23,7 @@ import static pages.landingScreen.clickGetStarted;
 import static pages.repeatPassCodeScreen.repeatPassCodeNow;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
-public class RecoverAccountThroughFileWallet {
+public class RecoverAccountThroughFileWallet extends baseClass {
 
     public static final String WALLET_RESOURCE_PATH = "wallet/exp_file_wallet.concordiumwallet";
     public static final String WALLET_FILE_NAME = "//android.widget.TextView[@resource-id=\"android:id/title\" and @text=\"exp_file_wallet.concordiumwallet\"]";
@@ -74,6 +75,7 @@ public class RecoverAccountThroughFileWallet {
 
     @Test
     public void import_wallet_through_File() throws IOException, InterruptedException {
+        getCustomNetwork();
         Thread.sleep(10000);
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
