@@ -75,7 +75,7 @@ public class baseClass {
             saveBtn.click();
             saveBtn.click();
             System.out.println("Successfully clicked on save network button");
-            Thread.sleep(10000);
+            Thread.sleep(5000);
             Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
             System.out.println("Successfully switched to the custom network setup.");
         }
