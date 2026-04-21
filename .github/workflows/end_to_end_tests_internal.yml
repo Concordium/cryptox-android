@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [ 31 ]
+        api-level: [ 32 ]
         profile: [ pixel_7_pro ]
 
     steps:
@@ -49,8 +49,8 @@ jobs:
           java-version: "${{ env.java_version }}"
           distribution: corretto
 
-      - name: Build preview
-        run: ./gradlew app:assemblePreviewDebug --stacktrace
+      - name: Build project (Stagenet)
+        run: chmod +x ./gradlew && ./gradlew app:assemblePreviewDebug --stacktrace
 
       # Log APK Path and store it as an environment variable
       - name: Log APK Path
