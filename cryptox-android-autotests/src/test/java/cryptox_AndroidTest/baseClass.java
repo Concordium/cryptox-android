@@ -80,6 +80,18 @@ public class baseClass {
                     "https://stagenet.ccdscan.io/", 20);
 
             System.out.println("Successfully entered custom network details.");
+
+            try {
+                if (driver.isKeyboardShown()) {
+                    driver.hideKeyboard();
+                    System.out.println("Keyboard was visible, hidden successfully.");
+                } else {
+                    System.out.println("Keyboard was not visible, skipping hide.");
+                }
+            } catch (Exception e) {
+                System.out.println("Could not check/hide keyboard: " + e.getMessage());
+            }
+
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(
                     ExpectedConditions.elementToBeClickable(MobileBy.id("save_button"))
