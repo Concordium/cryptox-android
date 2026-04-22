@@ -1,13 +1,16 @@
 package cryptox_AndroidTest;
 
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.net.MalformedURLException;
+import java.time.Duration;
 
 import static config.appiumconnection.*;
 import static config.systemInfo.getDeviceDimensions;
@@ -65,28 +68,40 @@ public class baseClass {
             clickOnElement("toolbar_networks_btn", 20);
             turnOnToggle("dev_mode_switch", 20);
             clickOnElement("add_button", 20);
-            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[1]", "Stagenet", 20);
-            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[2]", "https://wallet-proxy.stagenet.concordium.com/", 20);
-            SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]", "https://stagenet.ccdscan.io/", 20);
+
+            SendTextToFieldByXpath(
+                    "(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[1]",
+                    "Stagenet", 20);
+            SendTextToFieldByXpath(
+                    "(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[2]",
+                    "https://wallet-proxy.stagenet.concordium.com/", 20);
+            SendTextToFieldByXpath(
+                    "(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]",
+                    "https://stagenet.ccdscan.io/", 20);
+
             System.out.println("Successfully entered custom network details.");
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(
-                    ExpectedConditions.elementToBeClickable(By.id("save_button"))
+                    ExpectedConditions.elementToBeClickable(MobileBy.id("save_button"))
             );
             saveBtn.click();
-            saveBtn.click();
-            System.out.println("Successfully clicked on save network button");
-            Thread.sleep(5000);
-            for (int i = 0; i < 3; i++) {
-                if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
-                    isSwitched = true;
-                    System.out.println("Successfully switched to the custom network setup.");
-                    break;
-                } else {
-                    System.out.println("Retry " + (i + 1) + ": Not switched yet...");
-                    Thread.sleep(2000);
-                }
+            System.out.println("Successfully clicked on save network button.");
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(MobileBy.id("save_button")));
+            String stagenetXpath =
+                    "//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]";
+
+            try {
+                WebDriverWait stagenetWait = new WebDriverWait(driver, 15);
+                stagenetWait.until(
+                        ExpectedConditions.visibilityOfElementLocated(By.xpath(stagenetXpath))
+                );
+                isSwitched = true;
+                System.out.println("Successfully switched to the custom network setup.");
+            } catch (TimeoutException e) {
+                System.out.println("Stagenet network entry not found within timeout.");
+                isSwitched = false;
             }
+
             Assert.assertTrue(isSwitched, "Failed to switch to Stagenet after retries");
         }
     }
