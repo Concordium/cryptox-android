@@ -2,6 +2,9 @@ package cryptox_AndroidTest;
 
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -83,8 +86,8 @@ public class baseClass {
 
             try {
                 if (driver.isKeyboardShown()) {
-                    System.out.println("Keyboard is visible, dismissing via BACK key.");
-                    driver.navigate().back();
+                    System.out.println("Keyboard is visible, dismissing via AndroidKey.BACK.");
+                    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.BACK));
                     System.out.println("Keyboard dismissed successfully.");
                 } else {
                     System.out.println("Keyboard was not visible, skipping dismiss.");
