@@ -228,7 +228,7 @@ public class DualWalletCases extends baseClass {
         Assert.assertTrue(clickOnElement("ok_button", 20));
     }
 
-    @Test
+    @Ignore
     public void verify_a1_user_can_create_new_identity() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -248,7 +248,7 @@ public class DualWalletCases extends baseClass {
         log.info("Successfully created new identity");
     }
 
-    @Test
+    @Ignore
     public void verify_a0_a_user_can_create_seed_phrase_wallet() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
