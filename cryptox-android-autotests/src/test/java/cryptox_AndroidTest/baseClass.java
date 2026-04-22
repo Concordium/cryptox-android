@@ -69,7 +69,6 @@ public class baseClass {
             SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[2]", "https://wallet-proxy.stagenet.concordium.com/", 20);
             SendTextToFieldByXpath("(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[4]", "https://stagenet.ccdscan.io/", 20);
             System.out.println("Successfully entered custom network details.");
-            Thread.sleep(5000);
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(
                     ExpectedConditions.elementToBeClickable(By.id("save_button"))
