@@ -75,6 +75,8 @@ public class RecoverAccountThroughFileWallet extends baseClass {
 
     @Test
     public void import_wallet_through_File() throws IOException, InterruptedException {
+        driver.terminateApp(PackageName);
+        driver.activateApp(PackageName);
         getCustomNetwork();
         Thread.sleep(10000);
         pushWalletFile();

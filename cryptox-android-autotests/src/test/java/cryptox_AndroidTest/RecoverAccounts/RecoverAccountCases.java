@@ -27,6 +27,8 @@ public class RecoverAccountCases extends baseClass {
 
     @Test(retryAnalyzer = RetryAnalyzer.class)
     public void import_wallets_through_Private_key() throws MalformedURLException, InterruptedException {
+        driver.terminateApp(PackageName);
+        driver.activateApp(PackageName);
         getCustomNetwork();
         Thread.sleep(10000);
         log.info("Starting import_wallets_through_Private_key test");
