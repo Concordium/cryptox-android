@@ -17,6 +17,7 @@ import java.time.Duration;
 
 import static config.appiumconnection.*;
 import static config.systemInfo.getDeviceDimensions;
+import static org.openqa.selenium.By.id;
 import static pages.generalMethods.*;
 
 import config.configLoader;
@@ -95,15 +96,13 @@ public class baseClass {
             } catch (Exception e) {
                 System.out.println("Could not dismiss keyboard: " + e.getMessage());
             }
-
+            Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 20);
-            MobileElement saveBtn = (MobileElement) wait.until(
-                    ExpectedConditions.elementToBeClickable(MobileBy.id("save_button"))
-            );
+            MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
             saveBtn.click();
             System.out.println("Successfully clicked on save network button.");
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(MobileBy.id("save_button")));
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
             boolean isSwitched = false;
             for (int i = 0; i < 3; i++) {
                 if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
@@ -121,7 +120,7 @@ public class baseClass {
 
     public boolean turnOnToggle(String elementId, int timeoutInSeconds) {
         try {
-            MobileElement toggle = (MobileElement) waitForElement(By.id(elementId), timeoutInSeconds);
+            MobileElement toggle = (MobileElement) waitForElement(id(elementId), timeoutInSeconds);
             if (toggle.getAttribute("checked").equals("false")) {
                 toggle.click();
             }
@@ -137,7 +136,7 @@ public class baseClass {
     public boolean isElementPresent(String locatorKey, int timeout) {
         try {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(locatorKey)));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(id(locatorKey)));
             log.info("Network button {} is visible. Proceeding with the flow of setting a customized network.", locatorKey);
             return true;
         } catch (Exception e) {
