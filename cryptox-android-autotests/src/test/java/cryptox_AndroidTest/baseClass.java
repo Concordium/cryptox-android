@@ -83,13 +83,14 @@ public class baseClass {
 
             try {
                 if (driver.isKeyboardShown()) {
-                    driver.hideKeyboard();
-                    System.out.println("Keyboard was visible, hidden successfully.");
+                    System.out.println("Keyboard is visible, dismissing via BACK key.");
+                    driver.navigate().back();
+                    System.out.println("Keyboard dismissed successfully.");
                 } else {
-                    System.out.println("Keyboard was not visible, skipping hide.");
+                    System.out.println("Keyboard was not visible, skipping dismiss.");
                 }
             } catch (Exception e) {
-                System.out.println("Could not check/hide keyboard: " + e.getMessage());
+                System.out.println("Could not dismiss keyboard: " + e.getMessage());
             }
 
             WebDriverWait wait = new WebDriverWait(driver, 20);
@@ -111,7 +112,8 @@ public class baseClass {
                     Thread.sleep(2000); // important wait before retry
                 }
             }
-            Assert.assertTrue(isSwitched, "Failed to switch to Stagenet after retries");        }
+            Assert.assertTrue(isSwitched, "Failed to switch to Stagenet after retries");
+        }
     }
 
     public boolean turnOnToggle(String elementId, int timeoutInSeconds) {
