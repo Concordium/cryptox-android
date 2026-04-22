@@ -85,25 +85,21 @@ public class baseClass {
                     ExpectedConditions.elementToBeClickable(MobileBy.id("save_button"))
             );
             saveBtn.click();
+            saveBtn.click();
             System.out.println("Successfully clicked on save network button.");
             wait.until(ExpectedConditions.invisibilityOfElementLocated(MobileBy.id("save_button")));
-            String stagenetXpath =
-                    "//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]";
-
-            try {
-                WebDriverWait stagenetWait = new WebDriverWait(driver, 15);
-                stagenetWait.until(
-                        ExpectedConditions.visibilityOfElementLocated(By.xpath(stagenetXpath))
-                );
-                isSwitched = true;
-                System.out.println("Successfully switched to the custom network setup.");
-            } catch (TimeoutException e) {
-                System.out.println("Stagenet network entry not found within timeout.");
-                isSwitched = false;
+            boolean isSwitched = false;
+            for (int i = 0; i < 3; i++) {
+                if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
+                    isSwitched = true;
+                    System.out.println("Successfully switched to the custom network setup.");
+                    break;
+                } else {
+                    System.out.println("Retry " + (i + 1) + ": Not switched yet...");
+                    Thread.sleep(2000); // important wait before retry
+                }
             }
-
-            Assert.assertTrue(isSwitched, "Failed to switch to Stagenet after retries");
-        }
+            Assert.assertTrue(isSwitched, "Failed to switch to Stagenet after retries");        }
     }
 
     public boolean turnOnToggle(String elementId, int timeoutInSeconds) {
