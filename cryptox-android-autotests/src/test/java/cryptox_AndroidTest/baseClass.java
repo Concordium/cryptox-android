@@ -27,6 +27,7 @@ public class baseClass {
     public static String packageName = "com.pioneeringtechventures.wallet.testnet";
     public static String activityName = "com.concordium.wallet.ui.MainActivity";
     public static String PackageName = packageName;
+    boolean isSwitched = false;
 
 
     @BeforeTest
@@ -76,8 +77,17 @@ public class baseClass {
             saveBtn.click();
             System.out.println("Successfully clicked on save network button");
             Thread.sleep(5000);
-            Assert.assertTrue(verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 20));
-            System.out.println("Successfully switched to the custom network setup.");
+            for (int i = 0; i < 3; i++) {
+                if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
+                    isSwitched = true;
+                    System.out.println("Successfully switched to the custom network setup.");
+                    break;
+                } else {
+                    System.out.println("Retry " + (i + 1) + ": Not switched yet...");
+                    Thread.sleep(2000);
+                }
+            }
+            Assert.assertTrue(isSwitched, "Failed to switch to Stagenet after retries");
         }
     }
 
