@@ -96,7 +96,15 @@ public class baseClass {
             } catch (Exception e) {
                 System.out.println("Could not dismiss keyboard: " + e.getMessage());
             }
+            if (isElementPresent("cancel_button", 20)) {
+                clickOnElement("cancel_button", 20);
+                System.out.println("Successfully click on keep editing button");
+            }
+            else {
+                System.out.println("unable to click on keep editing button");
+            }
             Thread.sleep(3000);
+
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
