@@ -105,7 +105,10 @@ public class baseClass {
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
+            saveBtn.click();
+            System.out.println("Successfully click on save button");
             wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
+            System.out.println("Save button is invisible");
             Thread.sleep(3000);
             boolean isSwitched = false;
             for (int i = 0; i < 3; i++) {
