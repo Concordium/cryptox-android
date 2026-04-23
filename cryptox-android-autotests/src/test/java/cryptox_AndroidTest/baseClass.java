@@ -102,13 +102,21 @@ public class baseClass {
                 System.out.println("unable to click on keep editing button");
             }
             WebDriverWait wait = new WebDriverWait(driver, 20);
-            MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
-            saveBtn.click();
-            saveBtn.click();
-            System.out.println("Successfully click on save button");
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
+            MobileElement saveBtn = (MobileElement) wait.until(
+                    ExpectedConditions.elementToBeClickable(id("save_button")));
+
+            int maxAttempts = 10;
+            int attempt = 0;
+            while (!driver.findElements(id("save_button")).isEmpty() && attempt < maxAttempts) {
+                saveBtn.click();
+                saveBtn.click();
+                System.out.println("Clicked save button, attempt " + (attempt + 1) + ", waiting for it to disappear...");
+                Thread.sleep(1000);
+                attempt++;
+            }
+
+            Assert.assertTrue(driver.findElements(id("save_button")).isEmpty(), "Save button did not disappear after " + maxAttempts + " attempts");
             System.out.println("Save button is not visible");
-            Thread.sleep(3000);
             boolean isSwitched = false;
             for (int i = 0; i < 3; i++) {
                 if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
