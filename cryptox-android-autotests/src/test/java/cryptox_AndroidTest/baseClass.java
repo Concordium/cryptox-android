@@ -101,13 +101,14 @@ public class baseClass {
             else {
                 System.out.println("unable to click on keep editing button");
             }
-            Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
             saveBtn.click();
-            System.out.println("Successfully clicked on save network button.");
+            System.out.println("Successfully click on save button");
             wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
+            System.out.println("Save button is not visible");
+            Thread.sleep(3000);
             boolean isSwitched = false;
             for (int i = 0; i < 3; i++) {
                 if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
