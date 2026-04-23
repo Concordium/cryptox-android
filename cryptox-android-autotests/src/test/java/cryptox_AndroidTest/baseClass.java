@@ -103,11 +103,11 @@ public class baseClass {
             }
             Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 20);
-            MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
+            MobileElement saveBtn = (MobileElement) wait.until(
+                    ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
-            saveBtn.click();
-            System.out.println("Successfully clicked on save network button.");
             wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
+            Thread.sleep(3000);
             boolean isSwitched = false;
             for (int i = 0; i < 3; i++) {
                 if (verifyElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/name_text_view\" and @text=\"Stagenet\"]", 5)) {
