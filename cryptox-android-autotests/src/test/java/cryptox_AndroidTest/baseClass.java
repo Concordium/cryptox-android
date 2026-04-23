@@ -72,7 +72,6 @@ public class baseClass {
             clickOnElement("toolbar_networks_btn", 20);
             turnOnToggle("dev_mode_switch", 20);
             clickOnElement("add_button", 20);
-
             SendTextToFieldByXpath(
                     "(//android.widget.EditText[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/edittext\"])[1]",
                     "Stagenet", 20);
@@ -84,7 +83,6 @@ public class baseClass {
                     "https://stagenet.ccdscan.io/", 20);
 
             System.out.println("Successfully entered custom network details.");
-
             try {
                 if (driver.isKeyboardShown()) {
                     System.out.println("Keyboard is visible, dismissing via AndroidKey.BACK.");
@@ -104,7 +102,6 @@ public class baseClass {
                 System.out.println("unable to click on keep editing button");
             }
             Thread.sleep(3000);
-
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
