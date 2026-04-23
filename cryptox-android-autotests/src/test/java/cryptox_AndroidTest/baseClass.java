@@ -101,9 +101,9 @@ public class baseClass {
             else {
                 System.out.println("unable to click on keep editing button");
             }
-            Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 20);
             MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
+            saveBtn.click();
             saveBtn.click();
             System.out.println("Successfully click on save button");
             wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
