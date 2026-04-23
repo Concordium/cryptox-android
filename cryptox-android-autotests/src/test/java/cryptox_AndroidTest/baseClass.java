@@ -103,8 +103,7 @@ public class baseClass {
             }
             Thread.sleep(3000);
             WebDriverWait wait = new WebDriverWait(driver, 20);
-            MobileElement saveBtn = (MobileElement) wait.until(
-                    ExpectedConditions.elementToBeClickable(id("save_button")));
+            MobileElement saveBtn = (MobileElement) wait.until(ExpectedConditions.elementToBeClickable(id("save_button")));
             saveBtn.click();
             wait.until(ExpectedConditions.invisibilityOfElementLocated(id("save_button")));
             Thread.sleep(3000);
