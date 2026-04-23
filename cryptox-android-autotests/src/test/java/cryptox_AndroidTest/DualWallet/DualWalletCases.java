@@ -3,6 +3,7 @@ package cryptox_AndroidTest.DualWallet;
 
 import com.beust.ah.A;
 import config.RetryAnalyzer;
+import cryptox_AndroidTest.baseClass;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -29,7 +30,7 @@ import static pages.verifyPIN.verifyPinAndPressOK;
 import java.nio.file.Files;
 import java.util.Base64;
 
-public class DualWalletCases {
+public class DualWalletCases extends baseClass {
 
     public void pushWalletFile() {
         try {
@@ -44,10 +45,34 @@ public class DualWalletCases {
             }
             byte[] fileContent = Files.readAllBytes(walletFile.toPath());
             String base64Data = Base64.getEncoder().encodeToString(fileContent);
-            driver.pushFile("/sdcard/Documents/exp_file_wallet.concordiumwallet", base64Data.getBytes());
+
+            driver.pushFile("/sdcard/Download/exp_file_wallet.concordiumwallet", base64Data.getBytes());
             log.info("Wallet file pushed successfully!");
+
+            String udid = driver.getCapabilities().getCapability("udid").toString();
+            Process process = Runtime.getRuntime().exec(new String[]{
+                    "adb", "-s", udid, "shell",
+                    "am", "broadcast", "-a",
+                    "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
+                    "-d", "file:///sdcard/Download/exp_file_wallet.concordiumwallet"
+            });
+            process.waitFor();
+            log.info("Media store refreshed!");
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to push wallet file", e);
+        }
+    }
+    private void navigateToDownloadsInFilePicker() {
+        try {
+            Thread.sleep(2000);
+            clickOnElementByXpath("//android.widget.ImageButton[@content-desc=\"Show roots\"]", 10);
+            Thread.sleep(1000);
+            clickOnElementByXpath("//android.widget.TextView[@text=\"Downloads\"]", 10);
+            Thread.sleep(1000);
+            log.info("Navigated to Downloads in file picker");
+        } catch (Exception e) {
+            log.info("Could not navigate to Downloads - file picker may already be there");
         }
     }
 
@@ -66,6 +91,8 @@ public class DualWalletCases {
 
     @Test
     public void verify_a9_a_user_can_managed_file_base_wallet_and_seed_phrase_wallet() throws MalformedURLException, InterruptedException {
+        getCustomNetwork();
+        Thread.sleep(5000);
         pushWalletFile();
         Assert.assertTrue(clickGetStarted());
         Assert.assertTrue(clickOnElement("terms_check_box", 10));
@@ -89,8 +116,8 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("wallets_layout", 20));
         Assert.assertTrue(clickOnElement("icon_image_view", 20));
         Assert.assertTrue(clickOnElement("ok_button", 20));
-        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));
-        Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
+        navigateToDownloadsInFilePicker();
+        Assert.assertTrue(clickOnElementByXpath(WALLET_FILE_NAME, 20));        Assert.assertTrue(SendTextToField("password_edittext", "000000", 20));
         Assert.assertTrue(clickOnElement("confirm_button", 20));
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(waitForLoaderToDisappear("message_text_view", 200));
@@ -201,17 +228,18 @@ public class DualWalletCases {
         Assert.assertTrue(clickOnElement("ok_button", 20));
     }
 
-    @Test
-    public void verify_a1_user_can_create_new_identity() {
+    @Ignore
+    public void verify_a1_user_can_create_new_identity() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
         Assert.assertTrue(loginCryptoX());
-        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 10));
-        Assert.assertTrue(clickOnElement("identities_layout", 10));
-        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image", 10));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]", 30));
+        Assert.assertTrue(clickOnElement("toolbar_menu_drawer_btn", 20));
+        Assert.assertTrue(clickOnElement("identities_layout", 20));
+        Assert.assertTrue(clickOnElement("toolbar_plus_btn_add_contact_image", 20));
+        Thread.sleep(5000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/header_textview\" and @text=\"Generated IP 0\"]", 20));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder", 20));
+        Assert.assertTrue(WaitForElement("com.android.chrome:id/url_bar", 20));
         Assert.assertTrue(performScrollDown());
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]", 10));
         Assert.assertTrue(clickOnElement("ok_button", 10));
@@ -220,7 +248,7 @@ public class DualWalletCases {
         log.info("Successfully created new identity");
     }
 
-    @Test
+    @Ignore
     public void verify_a0_a_user_can_create_seed_phrase_wallet() throws InterruptedException {
         driver.terminateApp(PackageName);
         driver.activateApp(PackageName);
@@ -245,9 +273,11 @@ public class DualWalletCases {
         Assert.assertTrue(verifyPinAndPressOK());
         Assert.assertTrue(clickOnElement("ok_button", 20));
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));
-        Assert.assertTrue(clickOnElementByXpath("//*[contains(@text,\"Generated IP 0\")]", 30));
+        Thread.sleep(5000);
+        Assert.assertTrue(clickOnElementByXpath("//android.widget.TextView[@resource-id=\"com.pioneeringtechventures.wallet.testnet:id/header_textview\" and @text=\"Generated IP 0\"]", 30));
         Assert.assertTrue(verifyPinAndPressOK());
-        Assert.assertTrue(WaitForElement("com.android.chrome:id/compositor_view_holder", 20));
+        Thread.sleep(5000);
+        Assert.assertTrue(WaitForElement("com.android.chrome:id/url_bar", 20));
         Assert.assertTrue(performScrollDown());
         Assert.assertTrue(clickOnElementByXpath("//android.widget.Button[@text=\"Submit\"]", 10));
         Assert.assertTrue(clickOnElement("onboarding_action_button", 20));

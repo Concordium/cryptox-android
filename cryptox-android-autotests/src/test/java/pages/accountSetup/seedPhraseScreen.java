@@ -77,9 +77,6 @@ public class seedPhraseScreen {
             log.error(String.valueOf(exp.fillInStackTrace()));
         }
 
-
-
-
         return false;
     }
 
