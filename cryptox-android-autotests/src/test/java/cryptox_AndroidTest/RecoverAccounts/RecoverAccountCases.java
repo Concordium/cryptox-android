@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import java.net.MalformedURLException;
 
 import static config.appiumconnection.*;
+import static config.systemInfo.getCustomNetwork;
 import static pages.accountRecovery.recoveryThroughPrivateKey.*;
 import static pages.createPassCodeScreen.createPassCodeNow;
 

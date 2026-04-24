@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
+import static config.systemInfo.getCustomNetwork;
 import static config.systemInfo.getSeedPhrase;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.continueButton;
 import static pages.accountRecovery.recoveryThroughPrivateKey.clickOnImportViaBackupFile;
