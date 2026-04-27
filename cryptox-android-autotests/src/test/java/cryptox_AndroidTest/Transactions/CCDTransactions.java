@@ -1,28 +1,21 @@
 package cryptox_AndroidTest.Transactions;
 
-import config.configLoader;
-import org.openqa.selenium.WebElement;
+
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import java.net.MalformedURLException;
 import static config.appiumconnection.driver;
-import static config.appiumconnection.openAppiumSession;
-import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.navigation_bar_item_large_label_view;
-import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.newsTabButton;
+
 import static cryptox_AndroidTest.baseClass.*;
-import static pages.Transactions.requestCCDs.clickOnAccountWidget;
-import static pages.accountRecovery.recoveryThroughPrivateKey.*;
-import static pages.appOperations.commands.performScroll;
+
 import static pages.appOperations.commands.swipe;
 import static pages.generalMethods.*;
 import static pages.login.loginCryptoX;
 import static pages.verifyPIN.verifyPinAndPressOK;
 
 public class CCDTransactions {
-//    config.configLoader configLoader = new configLoader("src/main/resources/setupData.properties");
-//    String RecoveryAccount = configLoader.getProperty("RecoveryAccountAddress");
-//    public String RecoveryAccount = "4Ek1LdFtdbkSwowStM73fMp6ZZd1RLTvQpRr1ZLJMVgPjUx4JT";
+
 
 
 

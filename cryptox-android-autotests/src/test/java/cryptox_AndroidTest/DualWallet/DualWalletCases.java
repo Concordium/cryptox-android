@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 
 import static config.appiumconnection.driver;
 import static config.appiumconnection.log;
+import static config.systemInfo.getCustomNetwork;
 import static config.systemInfo.getSeedPhrase;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountCases.continueButton;
 import static cryptox_AndroidTest.RecoverAccounts.RecoverAccountThroughFileWallet.WALLET_FILE_NAME;
