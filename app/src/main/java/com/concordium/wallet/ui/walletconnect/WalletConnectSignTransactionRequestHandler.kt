@@ -16,6 +16,9 @@ import com.concordium.sdk.types.AccountAddress
 import com.concordium.sdk.types.ContractAddress
 import com.concordium.sdk.types.Nonce
 import com.concordium.sdk.types.UInt64
+import com.concordium.sdk.responses.modulelist.ModuleRef
+import com.concordium.sdk.transactions.InitContract
+import com.concordium.sdk.transactions.InitName
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.tokens.TokensInteractor
@@ -163,6 +166,7 @@ class WalletConnectSignTransactionRequestHandler(
                 when (val transactionPayload = this.transactionPayload) {
                     is AccountTransactionPayload.Transfer,
                     is AccountTransactionPayload.Update,
+                    is AccountTransactionPayload.InitContract,
                         ->
                         CCDToken(
                             account = account,
@@ -246,6 +250,26 @@ class WalletConnectSignTransactionRequestHandler(
                     appMetadata = appMetadata,
                 )
 
+            is AccountTransactionPayload.InitContract ->
+                State.SessionRequestReview.TransactionRequestReview(
+                    method = method,
+                    receiver = TransactionEnergyCostCalculator.normalizeModuleRef(
+                        transactionPayload.moduleRef,
+                    ),
+                    amount = transactionPayload.amount,
+                    token = token,
+                    estimatedFee = transactionCost.cost,
+                    account = account,
+                    canShowDetails = true,
+                    isContractInit = true,
+                    isEnoughFunds =
+                        transactionPayload.amount + transactionCost.cost <=
+                            accountAtDisposalBalance,
+                    showCooldownWarning = false,
+                    sponsor = null,
+                    appMetadata = appMetadata,
+                )
+
             is AccountTransactionPayload.PltTransfer -> {
                 val tokenAmount =
                     BigInteger(1, transactionPayload.transfer.amount.value.bytes)
@@ -280,6 +304,11 @@ class WalletConnectSignTransactionRequestHandler(
             is AccountTransactionPayload.Update ->
                 getContractUpdateCost(
                     updatePayload = transactionPayload,
+                )
+
+            is AccountTransactionPayload.InitContract ->
+                getContractInitCost(
+                    initPayload = transactionPayload,
                 )
 
             is AccountTransactionPayload.PltTransfer -> getProtocolLevelTokenTransferCost(
@@ -318,6 +347,28 @@ class WalletConnectSignTransactionRequestHandler(
             } else {
                 error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
             }
+
+        return TransactionCost(
+            energy = maxEnergy,
+            euroPerEnergy = chainParameters.euroPerEnergy,
+            microGTUPerEuro = chainParameters.microGtuPerEuro,
+        )
+    }
+
+    private suspend fun getContractInitCost(
+        initPayload: AccountTransactionPayload.InitContract,
+    ): TransactionCost {
+        val chainParameters = proxyRepository.getChainParameters()
+
+        val maxEnergy =
+            TransactionEnergyCostCalculator.getContractInitMaxEnergy(
+                initName = initPayload.initName,
+                amount = initPayload.amount,
+                moduleRef = initPayload.moduleRef,
+                paramHex = initPayload.param,
+                maxContractExecutionEnergy =
+                    initPayload.maxContractExecutionEnergy,
+            )
 
         return TransactionCost(
             energy = maxEnergy,
@@ -382,6 +433,12 @@ class WalletConnectSignTransactionRequestHandler(
                 is AccountTransactionPayload.Update ->
                     submitContractUpdateTransaction(
                         updatePayload = transactionPayload,
+                        signer = accountKeys.getSignerEntry(),
+                    )
+
+                is AccountTransactionPayload.InitContract ->
+                    submitContractInitTransaction(
+                        initPayload = transactionPayload,
                         signer = accountKeys.getSignerEntry(),
                     )
 
@@ -456,6 +513,47 @@ class WalletConnectSignTransactionRequestHandler(
                         Parameter.from(updatePayload.message.hexToBytes())
                     ),
                     UInt64.from(transactionCost.energy)
+                )
+                .expiry(getTransactionExpiry())
+                .sender(AccountAddress.from(account.address))
+                .nonce(Nonce.from(transactionNonce.nonce.toLong()))
+                .sign(TransactionSigner.from(signer))
+        )
+
+    private suspend fun submitContractInitTransaction(
+        initPayload: AccountTransactionPayload.InitContract,
+        signer: SignerEntry,
+    ): String =
+        submitTransaction(
+            TransactionFactory
+                .newInitContract(
+                    InitContract.from(
+                        CCDAmount.fromMicro(
+                            TransactionEnergyCostCalculator.validateInitAmount(
+                                initPayload.amount,
+                            ).toString(),
+                        ),
+                        ModuleRef.from(
+                            TransactionEnergyCostCalculator.normalizeModuleRef(
+                                initPayload.moduleRef,
+                            ),
+                        ),
+                        InitName.from(
+                            TransactionEnergyCostCalculator.normalizeInitName(
+                                initPayload.initName,
+                            ),
+                        ),
+                        Parameter.from(
+                            TransactionEnergyCostCalculator.validateInitParamHex(
+                                initPayload.param,
+                            ).hexToBytes(),
+                        ),
+                    ),
+                    UInt64.from(
+                        TransactionEnergyCostCalculator.validateInitMaxContractExecutionEnergy(
+                            initPayload.maxContractExecutionEnergy,
+                        ),
+                    ),
                 )
                 .expiry(getTransactionExpiry())
                 .sender(AccountAddress.from(account.address))
@@ -542,6 +640,46 @@ class WalletConnectSignTransactionRequestHandler(
                 )
             }
 
+            is AccountTransactionPayload.InitContract -> {
+                val transactionParamsSchema = this.transactionParams.schema
+
+                val prettyPrintParams =
+                    when {
+                        transactionPayload.param.isEmpty() ->
+                            context.getString(
+                                R.string.wallet_connect_transaction_request_no_parameters
+                            )
+
+                        transactionParamsSchema != null ->
+                            App.appCore.cryptoLibrary
+                                .parameterToJson(
+                                    ParameterToJsonInput(
+                                        parameter = transactionPayload.param,
+                                        schema = transactionParamsSchema,
+                                        schemaVersion = transactionParamsSchema.version,
+                                    )
+                                )
+                                ?.prettyPrint()
+                                ?: transactionPayload.param
+
+                        else ->
+                            transactionPayload.param
+                    }
+
+                emitEvent(
+                    Event.ShowDetailsDialog(
+                        title = TransactionEnergyCostCalculator.normalizeInitName(
+                            transactionPayload.initName,
+                        ),
+                        prettyPrintDetails = context.getString(
+                            R.string.wallet_connect_template_transaction_request_details,
+                            transactionCost.energy.toString(),
+                            prettyPrintParams,
+                        ),
+                    )
+                )
+            }
+
             else -> error("The wallet only supports CCD and token transfers")
         }
     }
@@ -554,7 +692,9 @@ class WalletConnectSignTransactionRequestHandler(
         onFinish()
     }
 
-    private fun getTransactionMethodName(transactionPayload: AccountTransactionPayload) =
+    private fun getTransactionMethodName(
+        transactionPayload: AccountTransactionPayload,
+    ) =
         when (transactionPayload) {
             is AccountTransactionPayload.Transfer,
             is AccountTransactionPayload.PltTransfer,
@@ -564,7 +704,13 @@ class WalletConnectSignTransactionRequestHandler(
             is AccountTransactionPayload.Update ->
                 transactionPayload.receiveName
 
-            else -> error("The wallet only supports CCD and token transfers")
+            is AccountTransactionPayload.InitContract ->
+                TransactionEnergyCostCalculator.normalizeInitName(
+                    transactionPayload.initName,
+                )
+
+            else ->
+                error("The wallet only supports CCD and token transfers")
         }
 
     companion object {

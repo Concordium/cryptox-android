@@ -23,6 +23,9 @@ data class AccountTransactionParams(
             .create()
 
         return when (type) {
+            TransactionType.INIT_CONTRACT ->
+                gson.fromJson(payload, AccountTransactionPayload.InitContract::class.java)
+
             TransactionType.TRANSFER ->
                 gson.fromJson(payload, AccountTransactionPayload.Transfer::class.java)
 

@@ -556,6 +556,8 @@
     <string name="wallet_connect_transaction_submitted_hash_copied">Transaction hash copied</string>
     <string name="wallet_connect_transaction_method">Method</string>
     <string name="wallet_connect_transaction_receiver">Receiver</string>
+    <string name="wallet_connect_transaction_init_name">Init name</string>
+    <string name="wallet_connect_transaction_module_reference">Module reference</string>
     <string name="wallet_connect_sign_transaction">Sign transaction</string>
     <string name="wallet_connect_signature_request">Signature request</string>
     <string name="wallet_connect_signature_request_message">Message</string>

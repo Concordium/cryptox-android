@@ -24,6 +24,9 @@ enum class TransactionType {
     @SerializedName("update", alternate = ["Update"])
     UPDATE,
 
+    @SerializedName("initContract")
+    INIT_CONTRACT,
+
     @SerializedName("delegation")
     LOCAL_DELEGATION,
 

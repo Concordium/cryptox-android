@@ -212,6 +212,11 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                                         && it.tokenId == transactionPayload.tokenId
                             }
                             ?: error("Missing the requested token ${transactionPayload.tokenId}")
+
+                    is AccountTransactionPayload.InitContract ->
+                        error(
+                            "InitContract is not supported for sponsored transactions"
+                        )
                 }
             } catch (error: Exception) {
                 Log.e("failed_loading_token", error)
@@ -310,6 +315,11 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     appMetadata = appMetadata,
                 )
             }
+
+            is AccountTransactionPayload.InitContract ->
+                error(
+                    "InitContract is not supported for sponsored transactions"
+                )
         }
 
         emitState(reviewState)
@@ -434,6 +444,11 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
                     )
                 )
             }
+
+            is AccountTransactionPayload.InitContract ->
+                error(
+                    "InitContract is not supported for sponsored transactions"
+                )
         }
     }
 
@@ -456,6 +471,11 @@ class WalletConnectSignSponsoredTransactionRequestHandler(
 
             is AccountTransactionPayload.ConfigureDelegation ->
                 context.getString(R.string.wallet_connect_delegation_configuration)
+
+            is AccountTransactionPayload.InitContract ->
+                error(
+                    "InitContract is not supported for sponsored transactions"
+                )
         }
 
     companion object {

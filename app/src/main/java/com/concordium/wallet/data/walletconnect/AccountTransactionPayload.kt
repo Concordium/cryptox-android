@@ -42,5 +42,11 @@ sealed interface AccountTransactionPayload {
         val delegationTarget: DelegationTarget?
     ) : AccountTransactionPayload
 
-    // InitContract is not needed for now.
+    data class InitContract(
+        val initName: String,
+        val amount: BigInteger,
+        val maxContractExecutionEnergy: Long,
+        val moduleRef: String,
+        val param: String,
+    ) : AccountTransactionPayload
 }
