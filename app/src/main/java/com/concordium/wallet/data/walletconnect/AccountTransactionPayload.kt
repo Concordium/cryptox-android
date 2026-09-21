@@ -66,7 +66,8 @@ sealed interface AccountTransactionPayload {
              * @param moduleRef module reference, optionally prefixed by its serialized length
              * @param param serialized contract parameter in hexadecimal format
              * @return parsed payload ready for energy calculation and transaction construction
-             * @throws IllegalArgumentException when the SDK rejects a field
+             * @throws IllegalArgumentException if hexadecimal input is invalid,
+             * the parameter exceeds the maximum supported size, or the SDK rejects a field
              */
             fun parse(
                 initName: String,
@@ -83,6 +84,24 @@ sealed interface AccountTransactionPayload {
                     }
                 val normalizedInitName =
                     if (initName.startsWith("init_")) initName else "init_$initName"
+
+                require(normalizedModuleRef.length == 64) {
+                    "Module reference must contain exactly 64 hexadecimal characters"
+                }
+                require(normalizedModuleRef.all { it.isAsciiHexDigit() }) {
+                    "Module reference must contain only ASCII hexadecimal characters"
+                }
+
+                require(param.length % 2 == 0) {
+                    "InitContract parameter must contain an even number of hexadecimal characters"
+                }
+                require(param.length <= Parameter.MAX_SIZE * 2) {
+                    "InitContract parameter exceeds the maximum supported size"
+                }
+                require(param.all { it.isAsciiHexDigit() }) {
+                    "InitContract parameter must contain only ASCII hexadecimal characters"
+                }
+
                 val payload = com.concordium.sdk.transactions.InitContract.from(
                     CCDAmount.fromMicro(amount.toString()),
                     ModuleRef.from(normalizedModuleRef),
@@ -99,6 +118,11 @@ sealed interface AccountTransactionPayload {
                     payload = payload,
                 )
             }
+
+            private fun Char.isAsciiHexDigit(): Boolean =
+                this in '0'..'9' ||
+                    this in 'a'..'f' ||
+                    this in 'A'..'F'
         }
     }
 }
