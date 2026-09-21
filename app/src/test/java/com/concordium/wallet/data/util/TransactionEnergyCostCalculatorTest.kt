@@ -102,4 +102,84 @@ class TransactionEnergyCostCalculatorTest {
         }
     }
 
+    @Test
+    fun `payload parsing rejects empty init name`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            payload(initName = "")
+        }
+    }
+
+    @Test
+    fun `payload parsing rejects negative execution energy`() {
+        listOf(-1L, Long.MIN_VALUE).forEach { invalid ->
+            assertThrows("energy=$invalid", IllegalArgumentException::class.java) {
+                payload(maxContractExecutionEnergy = invalid)
+            }
+        }
+    }
+
+    @Test
+    fun `payload parsing preserves valid execution energy`() {
+        listOf(0L, 6000L).forEach { energy ->
+            assertEquals(
+                energy,
+                payload(maxContractExecutionEnergy = energy)
+                    .maxContractExecutionEnergy.value,
+            )
+        }
+    }
+
+    @Test
+    fun `payload parsing rejects invalid module reference lengths`() {
+        listOf(
+            "",
+            "abcd",
+            "a".repeat(63),
+            "a".repeat(65),
+            "00000021$moduleRef",
+        ).forEach { invalid ->
+            assertThrows(
+                "moduleRef=$invalid",
+                IllegalArgumentException::class.java,
+            ) {
+                payload(moduleRef = invalid)
+            }
+        }
+    }
+
+    @Test
+    fun `module reference prefix preserves payload bytes and energy`() {
+        val canonical = payload(moduleRef = moduleRef)
+        val prefixed = payload(moduleRef = "00000020$moduleRef")
+
+        assertTrue(
+            canonical.payload.bytes.contentEquals(prefixed.payload.bytes)
+        )
+        assertEquals(
+            TransactionEnergyCostCalculator.getContractTransactionMaxEnergy(
+                payload = canonical.payload,
+                maxContractExecutionEnergy = canonical.maxContractExecutionEnergy,
+            ),
+            TransactionEnergyCostCalculator.getContractTransactionMaxEnergy(
+                payload = prefixed.payload,
+                maxContractExecutionEnergy = prefixed.maxContractExecutionEnergy,
+            ),
+        )
+    }
+
+    @Test
+    fun `hex letter case preserves payload bytes`() {
+        val lowercase = payload(
+            moduleRef = moduleRef,
+            param = "00abcdef",
+        )
+        val uppercase = payload(
+            moduleRef = moduleRef.uppercase(java.util.Locale.ROOT),
+            param = "00ABCDEF",
+        )
+
+        assertTrue(
+            lowercase.payload.bytes.contentEquals(uppercase.payload.bytes)
+        )
+    }
 }
