@@ -1,9 +1,15 @@
 package com.concordium.wallet.data.walletconnect
 
+import com.concordium.sdk.responses.modulelist.ModuleRef
 import com.concordium.sdk.responses.transactionstatus.DelegationTarget
+import com.concordium.sdk.transactions.CCDAmount
+import com.concordium.sdk.transactions.InitName
+import com.concordium.sdk.transactions.Parameter
 import com.concordium.sdk.transactions.tokens.TransferTokenOperation
 import com.concordium.sdk.types.ContractAddress
+import com.concordium.sdk.types.UInt64
 import com.google.gson.annotations.SerializedName
+import com.reown.util.hexToBytes
 import java.math.BigInteger
 
 sealed interface AccountTransactionPayload {
@@ -42,5 +48,88 @@ sealed interface AccountTransactionPayload {
         val delegationTarget: DelegationTarget?
     ) : AccountTransactionPayload
 
-    // InitContract is not needed for now.
+    data class InitContract private constructor(
+        val initName: String,
+        val amount: BigInteger,
+        val maxContractExecutionEnergy: UInt64,
+        val moduleRef: String,
+        val param: String,
+        val payload: com.concordium.sdk.transactions.InitContract,
+    ) : AccountTransactionPayload {
+        companion object {
+            /**
+             * Parse a WalletConnect InitContract DTO into SDK types.
+             *
+             * @param initName contract name, with or without the `init_` prefix
+             * @param amount attached amount in microCCD
+             * @param maxContractExecutionEnergy energy available for contract execution
+             * @param moduleRef module reference, optionally prefixed by its serialized length
+             * @param param serialized contract parameter in hexadecimal format
+             * @return parsed payload ready for energy calculation and transaction construction
+             * @throws IllegalArgumentException if hexadecimal input is invalid,
+             * the parameter exceeds the maximum supported size, or the SDK rejects a field
+             */
+            fun parse(
+                initName: String,
+                amount: BigInteger,
+                maxContractExecutionEnergy: Long,
+                moduleRef: String,
+                param: String,
+            ): InitContract {
+                require(initName.isNotEmpty()) {
+                    "InitContract initName must not be empty"
+                }
+                require(maxContractExecutionEnergy >= 0L) {
+                    "InitContract maxContractExecutionEnergy must not be negative"
+                }
+
+                val normalizedModuleRef =
+                    if (moduleRef.length == 72 && moduleRef.startsWith("00000020")) {
+                        moduleRef.substring(8)
+                    } else {
+                        moduleRef
+                    }
+                val normalizedInitName =
+                    if (initName.startsWith("init_")) initName else "init_$initName"
+
+                require(normalizedModuleRef.length == 64) {
+                    "Module reference must contain exactly 64 hexadecimal characters"
+                }
+                require(normalizedModuleRef.all { it.isAsciiHexDigit() }) {
+                    "Module reference must contain only ASCII hexadecimal characters"
+                }
+
+                require(param.length % 2 == 0) {
+                    "InitContract parameter must contain an even number of hexadecimal characters"
+                }
+                require(param.length <= Parameter.MAX_SIZE * 2) {
+                    "InitContract parameter exceeds the maximum supported size"
+                }
+                require(param.all { it.isAsciiHexDigit() }) {
+                    "InitContract parameter must contain only ASCII hexadecimal characters"
+                }
+
+                val payload = com.concordium.sdk.transactions.InitContract.from(
+                    CCDAmount.fromMicro(amount.toString()),
+                    ModuleRef.from(normalizedModuleRef),
+                    InitName.from(normalizedInitName),
+                    Parameter.from(param.hexToBytes()),
+                )
+
+                return InitContract(
+                    initName = normalizedInitName,
+                    amount = amount,
+                    maxContractExecutionEnergy = UInt64.from(maxContractExecutionEnergy),
+                    moduleRef = normalizedModuleRef,
+                    param = param,
+                    payload = payload,
+                )
+            }
+
+            private fun Char.isAsciiHexDigit(): Boolean =
+                this in '0'..'9' ||
+                    this in 'a'..'f' ||
+                    this in 'A'..'F'
+        }
+    }
 }

@@ -1284,6 +1284,7 @@ private constructor(
                 val token: Token,
                 val estimatedFee: BigInteger,
                 val canShowDetails: Boolean,
+                val isContractInit: Boolean = false,
                 val isEnoughFunds: Boolean,
                 val showCooldownWarning: Boolean,
                 val sponsor: String?,

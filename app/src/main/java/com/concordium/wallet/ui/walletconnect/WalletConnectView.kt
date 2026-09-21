@@ -136,6 +136,7 @@ class WalletConnectView(
                     token = state.token,
                     estimatedFee = state.estimatedFee,
                     canShowDetails = state.canShowDetails,
+                    isContractInit = state.isContractInit,
                     isEnoughFunds = state.isEnoughFunds,
                     showCooldownWarning = state.showCooldownWarning,
                     sponsor = state.sponsor,
@@ -358,6 +359,7 @@ class WalletConnectView(
         token: Token,
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
+        isContractInit: Boolean,
         isEnoughFunds: Boolean,
         showCooldownWarning: Boolean,
         sponsor: String?,
@@ -377,6 +379,7 @@ class WalletConnectView(
                 token = token,
                 estimatedFee = estimatedFee,
                 canShowDetails = canShowDetails,
+                isContractInit = isContractInit,
                 isEnoughFunds = isEnoughFunds,
                 showCooldownWarning = showCooldownWarning,
                 sponsor = sponsor,
@@ -399,6 +402,7 @@ class WalletConnectView(
         token: Token,
         estimatedFee: BigInteger,
         canShowDetails: Boolean,
+        isContractInit: Boolean,
         isEnoughFunds: Boolean,
         showCooldownWarning: Boolean,
         sponsor: String?,
@@ -418,6 +422,22 @@ class WalletConnectView(
 
         methodTextView.text = method
         receiverTextView.text = receiver
+
+        if (isContractInit) {
+            methodLabelTextView.setText(
+                R.string.wallet_connect_transaction_init_name,
+            )
+            receiverLabelTextView.setText(
+                R.string.wallet_connect_transaction_module_reference,
+            )
+        } else {
+            methodLabelTextView.setText(
+                R.string.wallet_connect_transaction_method,
+            )
+            receiverLabelTextView.setText(
+                R.string.wallet_connect_transaction_receiver,
+            )
+        }
 
         with(selectedAccountInclude) {
             accAddress.text = account.getAccountName()

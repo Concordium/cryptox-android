@@ -74,6 +74,7 @@
                 android:padding="20dp">
 
                 <TextView
+                    android:id="@+id/method_label_text_view"
                     style="@style/CryptoX_Typography_Body_Medium"
                     android:layout_width="wrap_content"
                     android:text="@string/wallet_connect_transaction_method" />
@@ -87,6 +88,7 @@
                     tools:text="CIS2-TOKEN.mint" />
 
                 <TextView
+                    android:id="@+id/receiver_label_text_view"
                     style="@style/CryptoX_Typography_Body_Medium"
                     android:layout_width="wrap_content"
                     android:layout_marginTop="16dp"

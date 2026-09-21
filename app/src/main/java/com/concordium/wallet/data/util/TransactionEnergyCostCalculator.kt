@@ -36,26 +36,27 @@ object TransactionEnergyCostCalculator {
             CCDAmount.from(0L),
             ContractAddress(0L, 0L),
             ReceiveName.parse(receiveName),
-            Parameter.from(messageHex.hexToBytes())
+            Parameter.from(messageHex.hexToBytes()),
         ),
-        maxContractExecutionEnergy = maxContractExecutionEnergy,
+        maxContractExecutionEnergy = UInt64.from(maxContractExecutionEnergy),
         numSignatures = numSignatures,
     )
 
     /**
-     * @param payload contract transaction payload
-     * @param maxContractExecutionEnergy the corresponding value provided by a dApp
-     * @param numSignatures number of signatures, which is 1 unless we implement multisig in the wallet.
+     * Calculate max energy for a parsed smart contract transaction payload.
      *
-     * @return max energy (NRG) which can be spent by this transaction.
+     * @param payload parsed SDK transaction payload
+     * @param maxContractExecutionEnergy parsed energy available for contract execution
+     * @param numSignatures number of transaction signatures
+     * @return max energy (NRG) which can be spent by this transaction
      */
-    private fun getContractTransactionMaxEnergy(
-        payload: UpdateContract,
-        maxContractExecutionEnergy: Long,
+    fun getContractTransactionMaxEnergy(
+        payload: Payload,
+        maxContractExecutionEnergy: UInt64,
         numSignatures: Int = 1,
     ): Long = TransactionHeader.calculateMaxEnergyCost(
         numSignatures,
         payload.bytes.size,
-        UInt64.from(maxContractExecutionEnergy),
+        maxContractExecutionEnergy,
     ).value
 }

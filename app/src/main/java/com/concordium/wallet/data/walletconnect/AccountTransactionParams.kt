@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import com.reown.util.hexToBytes
 import java.io.Serializable
+import java.math.BigInteger
 
 data class AccountTransactionParams(
     val type: TransactionType,
@@ -23,6 +24,17 @@ data class AccountTransactionParams(
             .create()
 
         return when (type) {
+            TransactionType.INIT_CONTRACT ->
+                gson.fromJson(payload, InitContractDto::class.java).run {
+                    AccountTransactionPayload.InitContract.parse(
+                        initName = initName,
+                        amount = amount,
+                        maxContractExecutionEnergy = maxContractExecutionEnergy,
+                        moduleRef = moduleRef,
+                        param = param,
+                    )
+                }
+
             TransactionType.TRANSFER ->
                 gson.fromJson(payload, AccountTransactionPayload.Transfer::class.java)
 
@@ -51,6 +63,14 @@ data class AccountTransactionParams(
                 error("Can't parse payload for unsupported type: $type")
         }
     }
+
+    private data class InitContractDto(
+        val initName: String,
+        val amount: BigInteger,
+        val maxContractExecutionEnergy: Long,
+        val moduleRef: String,
+        val param: String,
+    )
 
     companion object {
         private val gson by lazy {
