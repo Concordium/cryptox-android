@@ -76,6 +76,13 @@ sealed interface AccountTransactionPayload {
                 moduleRef: String,
                 param: String,
             ): InitContract {
+                require(initName.isNotEmpty()) {
+                    "InitContract initName must not be empty"
+                }
+                require(maxContractExecutionEnergy >= 0L) {
+                    "InitContract maxContractExecutionEnergy must not be negative"
+                }
+
                 val normalizedModuleRef =
                     if (moduleRef.length == 72 && moduleRef.startsWith("00000020")) {
                         moduleRef.substring(8)
