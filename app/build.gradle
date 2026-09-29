@@ -32,9 +32,9 @@ android {
         applicationId "com.pioneeringtechventures.wallet"
 
         //noinspection OldTargetApi
-        targetSdk 35
+        targetSdk 36
         //noinspection GradleDependency
-        compileSdk 35
+        compileSdk 36
         minSdk 26
 
         versionCode versionCodeIncremental
