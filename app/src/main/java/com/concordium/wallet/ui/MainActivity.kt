@@ -93,6 +93,8 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         walletConnectViewModel.initialize()
 
         initializeViews()
+        initGestureDetectors()
+        initObservers()
 
         // If we're being restored from a previous state,
         // then we don't want to add fragments and should return or else
@@ -110,8 +112,6 @@ class MainActivity : BaseActivity(R.layout.activity_main),
         } else if (intent.getBooleanExtra(EXTRA_IMPORT_FROM_SEED, false)) {
             goToImportFromSeed()
         }
-        initGestureDetectors()
-        initObservers()
     }
 
     override fun onResume() {
