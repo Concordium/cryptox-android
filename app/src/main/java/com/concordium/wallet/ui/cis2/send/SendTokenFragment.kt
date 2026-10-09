@@ -103,6 +103,10 @@ class SendTokenFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun initializeAmount() {
         binding.amount.addTextChangedListener { amountText ->
+            if (!viewModel.isSendTokenDataInitialized) {
+                return@addTextChangedListener
+            }
+
             val amountString = amountText.toString()
             val token = viewModel.sendTokenData.token
 
@@ -119,7 +123,7 @@ class SendTokenFragment : Fragment() {
             setEstimatedAmountInEur()
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
+            if (hasFocus && viewModel.isSendTokenDataInitialized) {
                 if (viewModel.sendTokenData.amount.signum() == 0) {
                     binding.amount.setText("")
                 }
@@ -157,6 +161,11 @@ class SendTokenFragment : Fragment() {
     }
 
     private fun enableSendAll() {
+        if (!viewModel.isSendTokenDataInitialized) {
+            binding.sendAllButton.isEnabled = false
+            return
+        }
+
         binding.sendAllButton.isEnabled =
             viewModel.sendTokenData.token !is CCDToken
                     || viewModel.sendTokenData.fee != null
@@ -363,6 +372,11 @@ class SendTokenFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setEstimatedAmountInEur() {
+        if (!viewModel.isSendTokenDataInitialized) {
+            binding.eurRate.text = ""
+            return
+        }
+
         val rate = viewModel.tokenEurRate.value
 
         if (rate != null) {

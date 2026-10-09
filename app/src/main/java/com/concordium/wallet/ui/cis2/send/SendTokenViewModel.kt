@@ -61,6 +61,10 @@ class SendTokenViewModel(
     private var submitTransaction: BackendRequest<*>? = null
     private var feeRequest: BackendRequest<*>? = null
     lateinit var sendTokenData: SendTokenData
+    private var pendingToken: Token? = null
+
+    val isSendTokenDataInitialized: Boolean
+        get() = ::sendTokenData.isInitialized
 
     val token: MutableLiveData<Token> = MutableLiveData<Token>()
     val waiting: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
@@ -78,12 +82,18 @@ class SendTokenViewModel(
     val hasEnoughFunds = _hasEnoughFunds.asStateFlow()
 
     val canSend: Boolean
-        get() = with(sendTokenData) {
-            receiverAddress != null
-                    && amount.signum() > 0
-                    && fee != null
-                    && hasEnoughFunds.value
-        } && recipientError.value == -1
+        get() {
+            if (!::sendTokenData.isInitialized) {
+                return false
+            }
+
+            return with(sendTokenData) {
+                receiverAddress != null
+                        && amount.signum() > 0
+                        && fee != null
+                        && hasEnoughFunds.value
+            } && recipientError.value == -1
+        }
 
     init {
         viewModelScope.launch {
@@ -95,11 +105,9 @@ class SendTokenViewModel(
         }
 
         feeReady.observeForever {
-            checkIfEnoughFunds()
-        }
-
-        if (sendTokenData.fee == null) {
-            loadFee()
+            if (::sendTokenData.isInitialized) {
+                checkIfEnoughFunds()
+            }
         }
     }
 
@@ -111,7 +119,14 @@ class SendTokenViewModel(
             account = account,
             token = ccdToken
         )
-        onTokenSelected(ccdToken)
+
+        val tokenToSelect = pendingToken
+            ?.takeIf { it.accountAddress == account.address }
+            ?: ccdToken
+
+        pendingToken = null
+
+        applySelectedToken(tokenToSelect)
         _accountUpdated.tryEmit(true)
     }
 
@@ -164,11 +179,22 @@ class SendTokenViewModel(
     }
 
     fun onTokenSelected(token: Token) {
+        if (!::sendTokenData.isInitialized) {
+            pendingToken = token
+            return
+        }
+
+        applySelectedToken(token)
+    }
+
+    private fun applySelectedToken(token: Token) {
         sendTokenData.token = token
         sendTokenData.maxAmount = if (token is CCDToken) null else token.balance
+
         if (token is ContractToken) {
             sendTokenData.memoHex = null
         }
+
         this.token.value = token
 
         loadFee()
