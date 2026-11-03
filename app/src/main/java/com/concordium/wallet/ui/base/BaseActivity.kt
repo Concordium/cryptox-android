@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.base
 
+
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -21,6 +22,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.concordium.wallet.App
 import com.concordium.wallet.Constants.Extras.EXTRA_ADD_CONTACT
 import com.concordium.wallet.Constants.Extras.EXTRA_CONNECT_URL
@@ -87,6 +90,35 @@ abstract class BaseActivity(
 
         if (layout != null) {
             setContentView(layout)
+        }
+
+        if (Build.VERSION.SDK_INT >= 36) {
+            val content = findViewById<ViewGroup>(android.R.id.content)
+            val root = content.getChildAt(0)
+
+            if (root != null && !root.fitsSystemWindows) {
+                val initialLeft = root.paddingLeft
+                val initialTop = root.paddingTop
+                val initialRight = root.paddingRight
+                val initialBottom = root.paddingBottom
+
+                ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+                    val systemBarInsets = insets.getInsets(
+                        WindowInsetsCompat.Type.systemBars()
+                    )
+
+                    view.setPadding(
+                        initialLeft + systemBarInsets.left,
+                        initialTop + systemBarInsets.top,
+                        initialRight + systemBarInsets.right,
+                        initialBottom + systemBarInsets.bottom
+                    )
+
+                    insets
+                }
+
+                ViewCompat.requestApplyInsets(root)
+            }
         }
 
         toastLayoutTopError = findViewById(R.id.toastLayoutTopError)
