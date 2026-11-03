@@ -36,4 +36,6 @@
     <dimen name="size48">48dp</dimen>
     <dimen name="size64">64dp</dimen>
 
+    <dimen name="bottom_navigation_vertical_padding">12dp</dimen>
+
 </resources>
