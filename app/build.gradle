@@ -24,9 +24,9 @@ android {
     // https://semver.org/
     def versionMajor = 1
     def versionMinor = 20
-    def versionPatch = 1
+    def versionPatch = 2
     def versionMeta = ""
-    def versionCodeIncremental = 1507
+    def versionCodeIncremental = 1508
 
     defaultConfig {
         applicationId "com.pioneeringtechventures.wallet"
