@@ -40,7 +40,7 @@
         android:layout_width="0dp"
         android:layout_height="86dp"
         android:background="@color/mw24_main_background"
-        android:paddingVertical="@dimen/size12"
+        android:paddingVertical="@dimen/bottom_navigation_vertical_padding"
         app:itemBackground="@drawable/mw24_navigation_item_background"
         app:itemIconSize="20dp"
         app:itemTextAppearanceActive="@style/MW24_Typography_Label_S_Medium"
