@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.request.Request
+import com.bumptech.glide.request.target.Target
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.CCDToken
 import com.concordium.wallet.data.model.Token
@@ -23,14 +25,24 @@ class TokenIconView(
             R.dimen.cis_token_icon_size
         )
 
+    private val loadingPlaceholder by lazy {
+        ThemedCircularProgressDrawable(context)
+    }
+
     private var lastThumbnailUrl: String? = null
-    private var thumbnailInitialized = false
+    private var thumbnailTarget: Target<Drawable>? = null
+    private var thumbnailRequest: Request? = null
+
+    private fun resetThumbnailState() {
+        lastThumbnailUrl = null
+        thumbnailTarget = null
+        thumbnailRequest = null
+    }
 
     fun showTokenIcon(token: Token) {
         when (token) {
             is CCDToken -> {
-                lastThumbnailUrl = null
-                thumbnailInitialized = false
+                resetThumbnailState()
 
                 Glide.with(context)
                     .load(R.drawable.mw24_ic_ccd)
@@ -39,27 +51,37 @@ class TokenIconView(
 
             is WithThumbnail -> {
                 val originalUrl = token.thumbnailUrl
+                val previousRequest = thumbnailRequest
 
-                if (!thumbnailInitialized || originalUrl != lastThumbnailUrl) {
-                    lastThumbnailUrl = originalUrl
-                    thumbnailInitialized = true
-
-                    val urls = if (originalUrl != null) {
-                        IpfsGatewayFallback.getUrls(originalUrl)
-                    } else {
-                        emptyList()
-                    }
-
-                    buildImageRequest(urls)
-                        .placeholder(ThemedCircularProgressDrawable(context))
-                        .error(R.drawable.mw24_ic_token_placeholder)
-                        .into(iconImageView)
+                // Keep successful or running requests for the same URL.
+                // Failed or cleared requests can be retried.
+                if (
+                    originalUrl == lastThumbnailUrl &&
+                    previousRequest != null &&
+                    thumbnailTarget?.request === previousRequest &&
+                    (previousRequest.isComplete || previousRequest.isRunning)
+                ) {
+                    return
                 }
+
+                resetThumbnailState()
+                lastThumbnailUrl = originalUrl
+
+                val urls = originalUrl?.let {
+                    IpfsGatewayFallback.getUrls(it)
+                } ?: emptyList()
+
+                val target = buildImageRequest(urls)
+                    .placeholder(loadingPlaceholder)
+                    .error(R.drawable.mw24_ic_token_placeholder)
+                    .into(iconImageView)
+
+                thumbnailTarget = target
+                thumbnailRequest = target.request
             }
 
             else -> {
-                lastThumbnailUrl = null
-                thumbnailInitialized = false
+                resetThumbnailState()
 
                 Glide.with(context)
                     .load(R.drawable.mw24_ic_token_placeholder)
@@ -77,7 +99,6 @@ class TokenIconView(
                 .load(R.drawable.mw24_ic_token_placeholder)
         }
 
-        // First try cached images from all available gateways.
         var networkRequest: RequestBuilder<Drawable>? = null
 
         for (url in urls.asReversed()) {
@@ -87,7 +108,10 @@ class TokenIconView(
                 .override(iconSize)
                 .fitCenter()
 
-            if (networkRequest != null) {
+            if (networkRequest == null) {
+                // Display the token placeholder if every gateway fails.
+                nextRequest.error(R.drawable.mw24_ic_token_placeholder)
+            } else {
                 nextRequest.error(networkRequest)
             }
 
